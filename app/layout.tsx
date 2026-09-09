@@ -3,10 +3,10 @@ import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "APT-LABS — Your learning has a receipt",
+  title: "APT-LABS — Hire verified youth. Proof, not promises.",
   description:
-    "Osawi Ledger: proof of learning, skills and work for youth in Kirinyaga. For partners, schools and donors. No unicorns.",
-  keywords: ["APT-LABS", "Osawi Ledger", "Kenya", "education", "partners", "donate"]
+    "The APT-LABS ledger: registered youth by trade and town, community-voted tasks, fast hiring for pilot schools. Lose your certificate? We kept the hash.",
+  keywords: ["APT-LABS", "youth jobs", "skills ledger", "Kenya schools", "verify certificate"]
 };
 
 function Nav() {
@@ -18,11 +18,10 @@ function Nav() {
           APT-LABS
         </Link>
         <nav className="flex items-center gap-5 text-sm text-muted">
-          <Link href="/papers" className="hover:text-ink transition">Papers</Link>
-          <Link href="/community" className="hover:text-ink transition">Community</Link>
-          <Link href="/#partners" className="hidden sm:inline hover:text-ink transition">Partners</Link>
-          <Link href="/#donate" className="rounded-full bg-ink px-4 py-2 text-white text-[13px] hover:bg-river transition">
-            Donate
+          <Link href="/ledger" className="hover:text-ink transition">Ledger</Link>
+          <Link href="/work" className="hover:text-ink transition">Work</Link>
+          <Link href="/work#hire" className="rounded-full bg-ink px-4 py-2 text-white text-[13px] hover:bg-river transition">
+            Post work
           </Link>
         </nav>
       </div>
@@ -37,9 +36,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Nav />
         {children}
         <footer className="border-t border-black/5">
-          <div className="mx-auto max-w-5xl px-6 py-10 flex flex-col sm:flex-row justify-between gap-4 text-sm text-muted">
-            <span>APT-LABS · Osawi · Kirinyaga 2026 — no unicorns, only goats that read.</span>
-            <span>Osawi in one line: feed, power, teach, own — together.</span>
+          <div className="mx-auto max-w-5xl px-6 py-10 flex flex-col sm:flex-row justify-between gap-3 text-sm text-muted">
+            <span>APT-LABS · Kirinyaga, Kenya</span>
+            <span className="flex gap-5">
+              <Link href="/ledger" className="hover:text-ink">Ledger</Link>
+              <Link href="/work" className="hover:text-ink">Work</Link>
+            </span>
+            <span>Proof of work, not promises.</span>
           </div>
         </footer>
       </body>

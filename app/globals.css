@@ -17,10 +17,3 @@ body {
   background: #0e7c5b;
   color: #fff;
 }
-
-/* One quiet spiral. That's the whole math budget. r = a·e^(0.306θ) */
-.spiral-bg {
-  position: absolute;
-  pointer-events: none;
-  opacity: 0.08;
-}
