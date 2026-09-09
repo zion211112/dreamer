@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #ffffff;
+  color: #111310;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: #0e7c5b;
+  color: #fff;
+}
+
+/* One quiet spiral. That's the whole math budget. r = a·e^(0.306θ) */
+.spiral-bg {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.08;
+}
