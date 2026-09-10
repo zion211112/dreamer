@@ -1,18 +1,16 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import GeoArt from "../../components/GeoArt";
-import RootAccess from "../../components/RootAccess";
+import ZionChamber from "../../components/ZionChamber";
 import {
   KEYS,
-  LEARNER_FEE,
   LOCATIONS,
   Member,
   OCCUPATIONS,
   SEED_MEMBERS,
-  TILL,
-  ULTRA_QS,
-  isMpesaCode,
+  TEST_FEE,
   loadStored,
   saveStored,
   seal,
@@ -35,7 +33,7 @@ function MemberCard({ m }: { m: Member }) {
       <div className="flex items-center justify-between text-xs">
         <span className="font-mono font-bold text-ivory">{m.id}</span>
         {m.verified ? (
-          <span className="rounded-full bg-river/15 px-3 py-1 font-semibold text-emerald-300">● SEALED</span>
+          <span className="rounded-full bg-river/15 px-3 py-1 font-semibold text-emerald-300">● SEALED{m.tier ? ` · ${m.tier.toUpperCase()}` : ""}</span>
         ) : m.paid ? (
           <span className="rounded-full bg-gold/15 px-3 py-1 font-semibold text-gold">● PAID · UNSEALED</span>
         ) : (
@@ -60,14 +58,11 @@ export default function Ledger() {
   const [q, setQ] = useState("");
   const [rootOpen, setRootOpen] = useState(false);
 
-  // Join flow: claim slot → gap test → M-Pesa → seal
   const [name, setName] = useState("");
   const [regOcc, setRegOcc] = useState(OCCUPATIONS[0]);
   const [regLoc, setRegLoc] = useState(LOCATIONS[0]);
   const [skill, setSkill] = useState("");
   const [draftId, setDraftId] = useState("");
-  const [code, setCode] = useState("");
-  const [answers, setAnswers] = useState<string[]>(["", "", ""]);
   const [notice, setNotice] = useState("");
 
   const [vid, setVid] = useState("");
@@ -79,7 +74,6 @@ export default function Ledger() {
   }, [members]);
 
   const draft = all.find((m) => m.id === draftId) || null;
-  const answered = answers.every((a) => a.trim().length >= 10);
 
   const filtered = all.filter(
     (m) =>
@@ -111,37 +105,12 @@ export default function Ledger() {
     const m: Member = {
       ...base,
       skills: skill.trim() ? [skill.trim().slice(0, 40)] : ["General support"],
-      paid: false, verified: false, answers: [], hash: seal(base)
+      paid: false, verified: false, tier: null, testScore: null, testTs: 0, answers: [], hash: seal(base)
     };
     setMembers([m, ...members]);
     setDraftId(id);
-    setNotice(`${id} penciled in. Now the gap test — then the Till.`);
-  }
-
-  function saveAnswers(e: React.FormEvent) {
-    e.preventDefault();
-    if (!draft) return;
-    if (!answered) { setNotice("Each answer needs at least a full thought (10 characters). The seal can tell."); return; }
-    const clean = answers.map((a) => a.trim().slice(0, 280));
-    setMembers(members.map((m) =>
-      m.id === draft.id ? { ...m, answers: clean, verified: m.paid } : m
-    ));
-    setNotice(draft.paid
-      ? `${draft.id} sealed. Kemet-OS and Zep-Tepi are open — go take work.`
-      : "Answers on file. Now pay the Till and the seal lands.");
-  }
-
-  function pay(e: React.FormEvent) {
-    e.preventDefault();
-    if (!draft) return;
-    if (!isMpesaCode(code)) { setNotice("Code should be 10 letters/numbers, like your M-Pesa SMS shows."); return; }
-    setMembers(members.map((m) =>
-      m.id === draft.id ? { ...m, paid: true, verified: m.answers.length === 3 } : m
-    ));
-    const ok = draft.answers.length === 3;
-    setNotice(ok
-      ? `${draft.id} sealed. Kemet-OS and Zep-Tepi are open — go take work.`
-      : "Paid. Finish the gap test above and the seal lands.");
+    setNotice(`${id} penciled in — playground for now. The crucible decides the rest.`);
+    setName(""); setSkill("");
   }
 
   function verify(e: React.FormEvent) {
@@ -193,8 +162,8 @@ export default function Ledger() {
 
           {/* JOIN */}
           <div id="join" className="mt-14 rounded-3xl border border-white/10 bg-panel p-7 md:p-9">
-            <div className="text-xs font-bold tracking-widest text-river">JOIN THE LEDGER · {LEARNER_FEE}</div>
-            <h2 className="mt-2 text-2xl md:text-3xl font-extrabold tracking-tight">Answer. Pay. Seal.</h2>
+            <div className="text-xs font-bold tracking-widest text-river">JOIN THE LEDGER · {TEST_FEE} TEST FEE</div>
+            <h2 className="mt-2 text-2xl md:text-3xl font-extrabold tracking-tight">Claim a slot. Face the crucible.</h2>
 
             {!draft && (
               <form onSubmit={startDraft} className="mt-5">
@@ -214,36 +183,18 @@ export default function Ledger() {
             )}
 
             {draft && !draft.verified && (
-              <form onSubmit={saveAnswers} className="mt-5 rounded-2xl bg-obsidian border border-white/10 p-6">
-                <div className="text-sm font-bold">Step 2 — the gap test ({draft.id})</div>
-                <p className="mt-1 text-sm text-muted">Ambition is cheap. Show us the gap between yours and your resources — then close it.</p>
-                <div className="mt-3 space-y-3">
-                  {ULTRA_QS.map((qs, i) => (
-                    <div key={i}>
-                      <label className="text-sm text-muted">{i + 1}. {qs}</label>
-                      <textarea value={answers[i]} onChange={(e) => setAnswers(answers.map((a, j) => (j === i ? e.target.value : a)))} rows={2} maxLength={280} className={`${field} mt-1 w-full`} />
-                    </div>
-                  ))}
-                </div>
-                <button className="mt-3 rounded-full bg-obsidian border border-white/25 px-8 py-3 text-sm font-semibold text-ivory hover:border-ivory transition">File answers →</button>
-              </form>
-            )}
-
-            {draft && !draft.verified && (
-              <form onSubmit={pay} className="mt-4 rounded-2xl bg-obsidian border border-white/10 p-6">
-                <div className="text-sm font-bold">Step 3 — pay the Till ({draft.id})</div>
-                <p className="mt-1 text-sm text-muted">Send {LEARNER_FEE} to Till {TILL}. Enter the M-Pesa code exactly as the SMS shows it. Demo check: format only — live confirmation arrives with Daraja.</p>
-                <div className="mt-3 flex gap-2">
-                  <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="M-Pesa code (10 characters)" maxLength={10} className={`${field} flex-1 font-mono uppercase`} />
-                  <button className="rounded-2xl bg-river px-6 text-sm font-semibold text-white hover:bg-ivory hover:text-black transition">Seal me →</button>
-                </div>
-                {!answered && <p className="mt-2 text-xs text-muted">The seal needs paid + answered. Finish step 2 first.</p>}
-              </form>
+              <div className="mt-5 rounded-2xl bg-obsidian border border-white/10 p-6">
+                <div className="text-sm font-bold">Step 2 — the crucible ({draft.id})</div>
+                <p className="mt-1 text-sm text-muted">Pay {TEST_FEE}, answer eight questions, get scored. Pass enters the halls. Fail stays in the playground. There is no other door.</p>
+                <Link href="/crucible" className="mt-4 inline-block rounded-full bg-river px-8 py-3.5 text-sm font-bold text-white hover:bg-ivory hover:text-black transition">
+                  Face the crucible →
+                </Link>
+              </div>
             )}
 
             {draft && draft.verified && (
               <div className="mt-5 rounded-2xl bg-river/15 border border-river/30 p-6 text-sm font-semibold text-emerald-300">
-                {draft.id} sealed. <a href="/work" className="underline">Take work →</a> · <a href="/kemet" className="underline">Enter Kemet-OS →</a> · <a href="/dashboard" className="underline">Dashboard →</a>
+                {draft.id} sealed{draft.tier ? ` · ${draft.tier}` : ""}. <a href="/halls" className="underline">Enter the halls →</a> · <a href="/work" className="underline">Take work →</a> · <a href="/dashboard" className="underline">Dashboard →</a>
               </div>
             )}
 
@@ -283,7 +234,7 @@ export default function Ledger() {
         </div>
       </div>
 
-      {rootOpen && <RootAccess members={all} onClose={() => setRootOpen(false)} />}
+      {rootOpen && <ZionChamber members={all} onClose={() => setRootOpen(false)} />}
     </main>
   );
 }

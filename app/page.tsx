@@ -86,8 +86,8 @@ export default function Home() {
           <h2 className="mt-6 text-2xl md:text-3xl font-bold tracking-tight">Three steps. No speeches.</h2>
           <div className="mt-8 grid sm:grid-cols-3 gap-4">
             {[
-              ["1. Answer hard", "Three questions no certificate asks. The gap test first — ambition, resources, proof."],
-              ["2. Pay the Till", "KES 20/week. Code in, seal lands. Unpaid? Browse and comment — voting and jobs wait."],
+              ["1. Enter with phone", "One code, no passwords. Visitors keep the porch and the contacts — members get the machine."],
+              ["2. Pay 50, pass 8", "Eight questions, zero memorization. Pass enters the halls. Fail stays in the playground."],
               ["3. Work", "Kemet-OS opens the research. Zep-Tepi assigns the jobs. The list grows."]
             ].map(([t, d]) => (
               <div key={t} className="rounded-3xl bg-panel border border-white/10 p-7">
@@ -109,9 +109,8 @@ export default function Home() {
               Bring your school. We bring the paperwork done.
             </h2>
             <ul className="mt-6 space-y-3 text-[15px] text-ivory/85">
-              <li>→ <strong>Teachers</strong> — assistant with animations, exams, planning. KES 500/month.</li>
+              <li>→ <strong>Teachers</strong> — assistant with animations, exams, planning. KES 250/month.</li>
               <li>→ <strong>Schools</strong> — classroom design, edtech tools, teacher management.</li>
-              <li>→ <strong>Parents</strong> — free score checks where the school is subscribed.</li>
             </ul>
           </div>
           <div className="rounded-3xl bg-panel border border-white/10 p-8">

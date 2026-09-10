@@ -12,7 +12,7 @@ const SHELF: { cat: string; items: string[] }[] = [
 
 const field = "rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-river";
 
-// Teacher door: describe your class, take the shelf. KES 500/month.
+// Teacher door: describe your class, take the shelf. KES 250/month.
 export default function Teacher() {
   const [school, setSchool] = useState("");
   const [subjects, setSubjects] = useState("");

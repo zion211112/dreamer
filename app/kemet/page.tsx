@@ -10,7 +10,7 @@ const PAPERS = [
     id: "K-01",
     title: "Receipts > reports: a ledger model for rural learning",
     meta: "2026 · 8 pages · field data, Kirinyaga",
-    abstract: "Grades evaporate. Hashes don't. Fifty learners, daily questions, sealed records. Parents believed the PDF more than the report card. Small science. Very practical."
+    abstract: "Grades evaporate. Hashes don't. Fifty learners, daily questions, sealed records. Headteachers believed the PDF more than the report card. Small science. Very practical."
   },
   {
     id: "K-02",

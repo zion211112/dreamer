@@ -7,7 +7,7 @@ import { SCHOOL_FEE, SUBSCRIBED_SCHOOLS, TILL, isMpesaCode } from "../../../lib/
 
 const PRODUCTS = [
   { t: "Classroom design", d: "Desk layouts, wall charts, garden beds. Quoted per school, built by ledger youth." },
-  { t: "Edtech tools", d: "Daily drills on WhatsApp, parent reports, quiz banks matched to your syllabus." },
+  { t: "Edtech tools", d: "Daily drills on WhatsApp, reports, quiz banks matched to your syllabus." },
   { t: "Teacher management", d: "Attendance, schemes, cover rosters. One screen the headteacher actually opens." }
 ];
 

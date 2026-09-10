@@ -6,13 +6,11 @@ import { KEYS, saveStored } from "../lib/ledger";
 
 const DOORS: { label: string; href: string | null; note: string }[] = [
   { label: "Individual", href: null, note: "Your door opens next." },
-  { label: "Teacher", href: "/build/teacher", note: "Assistant · KES 500/month" },
+  { label: "Teacher", href: "/build/teacher", note: "Assistant · KES 250/month" },
   { label: "Team", href: null, note: "Your door opens next." },
   { label: "Public School", href: "/build/school?type=public", note: "Products + subscription" },
   { label: "Private School", href: "/build/school?type=private", note: "Products + subscription" },
-  { label: "College", href: null, note: "Your door opens next." },
-  { label: "Government", href: null, note: "Your door opens next." },
-  { label: "Parent", href: "/build/parent", note: "Free · check kid scores" }
+  { label: "College", href: null, note: "Your door opens next." }
 ];
 
 // BUILD CAPACITY pops the choice. Three doors are furnished, five take a contact.

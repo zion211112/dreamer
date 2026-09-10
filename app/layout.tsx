@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Gate } from "../components/AuthGate";
 import { Nav } from "../components/Nav";
 import Link from "next/link";
 import "./globals.css";
@@ -15,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className="bg-obsidian text-ivory antialiased">
         <Nav />
-        {children}
+        <Gate>{children}</Gate>
         <footer className="border-t border-white/10">
           <div className="mx-auto max-w-5xl px-6 py-10 flex flex-col sm:flex-row justify-between gap-3 text-sm text-muted">
             <span>APT-LABS · Kirinyaga, Kenya</span>
@@ -23,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/ledger" className="hover:text-ivory">Ledger</Link>
               <Link href="/work" className="hover:text-ivory">Zep-Tepi</Link>
               <Link href="/kemet" className="hover:text-ivory">Kemet-OS</Link>
-              <Link href="/dashboard" className="hover:text-ivory">Dashboard</Link>
+              <Link href="/contact" className="hover:text-ivory">Contact</Link>
             </span>
             <span>Proof of work, not promises.</span>
           </div>
