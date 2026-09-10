@@ -17,3 +17,26 @@ body {
   background: #0e7c5b;
   color: #fff;
 }
+
+/* Living geometry: slow orbit, soft pulse, filling bar. Restrained. */
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+.spin-slow {
+  animation: spin-slow 90s linear infinite;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+.pulse-soft {
+  animation: pulse-soft 2.4s ease-in-out infinite;
+}
+
+@keyframes bar-fill {
+  from { width: 0; }
+}
+.bar-fill {
+  animation: bar-fill 1.2s ease-out;
+}

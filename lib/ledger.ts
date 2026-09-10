@@ -142,7 +142,8 @@ export const KEYS = {
   comments: "aptlabs-comments-v1",
   queue: "aptlabs-queue-v1",
   myid: "aptlabs-myid",
-  identity: "aptlabs-identity"
+  identity: "aptlabs-identity",
+  benben: "aptlabs-benben-v1"
 };
 
 export function canonical(m: Pick<Member, "id" | "name" | "occupation" | "location">): string {
@@ -232,4 +233,21 @@ export function ledgerVersion(count: number): string {
 
 export function isMpesaCode(s: string): boolean {
   return /^[A-Z0-9]{10}$/.test(s.trim().toUpperCase());
+}
+
+// Snapshot ground truth. Schools + treasury are demo figures;
+// individuals, projects, current build and master hash are live.
+export type SchoolStat = { name: string; students: number };
+
+export const SCHOOL_STATS: SchoolStat[] = [
+  { name: "Ngurubani Primary", students: 420 },
+  { name: "Kagio Secondary", students: 650 },
+  { name: "Mugumo Primary", students: 310 }
+];
+
+export const TREASURY = { total: 250000, usedPct: 70 };
+
+// Master hash: rolling seal over every member hash on the roll.
+export function masterHash(hashes: string[]): string {
+  return sha256(hashes.join("|"));
 }

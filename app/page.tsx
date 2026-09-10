@@ -5,10 +5,17 @@ import { useEffect, useState } from "react";
 import DoorsModal from "../components/DoorsModal";
 import GeoArt from "../components/GeoArt";
 import JoinLink from "../components/JoinLink";
-import { KEYS, Member, SEED_MEMBERS, SEED_NEEDS, SEED_TASKS, ledgerVersion, loadStored } from "../lib/ledger";
+import {
+  KEYS,
+  Member,
+  SCHOOL_STATS,
+  SEED_MEMBERS,
+  SEED_TASKS,
+  TREASURY,
+  loadStored
+} from "../lib/ledger";
 
-// Landing: fool-plain on obsidian. Ledger line lives HERE only.
-// Three entries: build, verify, join (gated).
+// Landing: fool-plain on obsidian. Two entries: build, join.
 
 export default function Home() {
   const [doors, setDoors] = useState(false);
@@ -21,22 +28,22 @@ export default function Home() {
     setCount(SEED_MEMBERS.length + customs.length);
   }, []);
 
-  const verified = SEED_MEMBERS.filter((m) => m.verified).length;
-  const openWork =
-    SEED_TASKS.filter((t) => t.status !== "done").length + SEED_NEEDS.length;
+  const students = SCHOOL_STATS.reduce((n, s) => n + s.students, 0);
+  const done = SEED_TASKS.filter((t) => t.status === "done").length;
+  const current = SEED_TASKS.find((t) => t.status === "in_progress") || SEED_TASKS[0];
 
   return (
     <main className="bg-obsidian text-ivory">
       {/* LEDGER LINE — landing only */}
       <div className="border-b border-white/10">
         <div className="mx-auto max-w-5xl px-6 py-2 text-center font-mono text-[11px] tracking-[0.2em] text-muted">
-          APT-LABS · LEDGER {ledgerVersion(count)} · KIRINYAGA, KENYA
+          LEDGER 1.254 · KENYA
         </div>
       </div>
 
       {/* 1 — HERO */}
       <section className="relative overflow-hidden border-b border-white/10">
-        <GeoArt variant="ring" className="pointer-events-none absolute -right-24 -top-24 h-[380px] w-[380px] text-ivory opacity-[0.07]" />
+        <GeoArt variant="ring" className="spin-slow pointer-events-none absolute -right-24 -top-24 h-[380px] w-[380px] text-ivory opacity-[0.08]" />
         <GeoArt variant="grid" className="pointer-events-none absolute inset-0 h-full w-full text-ivory opacity-[0.04]" />
         <div className="relative mx-auto max-w-5xl px-6 pt-16 pb-14 md:pt-24 md:pb-20 grid md:grid-cols-[1.618fr_1fr] gap-10 items-center">
           <div>
@@ -51,105 +58,128 @@ export default function Home() {
               <button onClick={() => setDoors(true)} className="rounded-full bg-ivory px-7 py-3.5 text-sm font-semibold text-black hover:bg-river hover:text-white transition">
                 BUILD CAPACITY
               </button>
-              <Link href="/ledger#join" className="rounded-full bg-river px-7 py-3.5 text-sm font-semibold text-white hover:bg-ivory hover:text-black transition">
-                VERIFY CAPABILITY
-              </Link>
-              <JoinLink className="rounded-full border border-white/25 px-7 py-3.5 text-sm font-semibold text-ivory hover:border-ivory transition">
+              <JoinLink className="rounded-full bg-river px-7 py-3.5 text-sm font-semibold text-white hover:bg-ivory hover:text-black transition">
                 JOIN THE LEDGER
               </JoinLink>
             </div>
             <p className="mt-4 text-sm text-muted">{count} on the list. You&apos;re next.</p>
           </div>
-          <div className="rounded-3xl border border-white/10 bg-panel p-6">
-            <div className="text-xs font-bold tracking-widest text-muted">THE LIST SO FAR</div>
-            <div className="mt-4 space-y-3">
-              {[
-                [`${SEED_MEMBERS.length} registered`, "trade + town on file"],
-                [`${verified} sealed`, "answered + paid"],
-                [`${openWork} open jobs`, "tasks + institution needs"]
-              ].map(([v, l]) => (
-                <div key={l} className="flex items-baseline justify-between border-b border-white/10 pb-3">
-                  <span className="text-xl font-extrabold">{v}</span>
-                  <span className="text-[13px] text-muted">{l}</span>
+
+          {/* SNAPSHOT */}
+          <div className="relative rounded-3xl border border-white/15 bg-panel p-6 overflow-hidden">
+            <GeoArt variant="corner" className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 text-ivory opacity-[0.07]" />
+            <div className="relative">
+              <div className="text-xs font-bold tracking-widest text-muted">LEDGER SNAPSHOT · LIVE</div>
+              <div className="mt-4 space-y-3">
+                <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
+                  <span className="text-xl font-extrabold">{SCHOOL_STATS.length} schools</span>
+                  <span className="text-[13px] text-muted">involved</span>
                 </div>
-              ))}
-            </div>
-            <p className="mt-4 text-xs text-muted">Demo figures. Real hashes.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* 2 — HOW IT WORKS */}
-      <section className="border-b border-white/10 bg-panel/40">
-        <div className="mx-auto max-w-5xl px-6 py-14 md:py-20">
-          <GeoArt variant="band" className="h-10 w-full text-ivory opacity-[0.08]" />
-          <h2 className="mt-6 text-2xl md:text-3xl font-bold tracking-tight">Three steps. No speeches.</h2>
-          <div className="mt-8 grid sm:grid-cols-3 gap-4">
-            {[
-              ["1. Enter with phone", "One code, no passwords. Visitors keep the porch and the contacts — members get the machine."],
-              ["2. Pay 50, pass 8", "Eight questions, zero memorization. Pass enters the halls. Fail stays in the playground."],
-              ["3. Work", "Kemet-OS opens the research. Zep-Tepi assigns the jobs. The list grows."]
-            ].map(([t, d]) => (
-              <div key={t} className="rounded-3xl bg-panel border border-white/10 p-7">
-                <div className="font-bold">{t}</div>
-                <p className="mt-2 text-sm text-muted leading-relaxed">{d}</p>
+                <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
+                  <span className="text-xl font-extrabold">{students.toLocaleString()} students</span>
+                  <span className="text-[13px] text-muted">under them</span>
+                </div>
+                <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
+                  <span className="text-xl font-extrabold">{count} individuals</span>
+                  <span className="text-[13px] text-muted">on the ledger</span>
+                </div>
+                <div className="border-b border-white/10 pb-3">
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-xl font-extrabold">KES {TREASURY.total.toLocaleString()}</span>
+                    <span className="text-[13px] text-muted">{TREASURY.usedPct}% used</span>
+                  </div>
+                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
+                    <div className="bar-fill h-full rounded-full bg-river" style={{ width: `${TREASURY.usedPct}%` }} />
+                  </div>
+                </div>
+                <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
+                  <span className="text-xl font-extrabold">{done} completed</span>
+                  <span className="text-[13px] text-muted">projects</span>
+                </div>
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="text-sm font-bold truncate">{current.title}</span>
+                  <span className="shrink-0 text-[11px] font-mono text-gold">CURRENT BUILD</span>
+                </div>
               </div>
-            ))}
+              <p className="mt-4 text-xs text-muted">Schools + treasury demo. Individuals, builds live.</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 3 — INSTITUTIONS */}
+      {/* 2 — WHO IT'S FOR */}
       <section className="relative overflow-hidden border-b border-white/10">
-        <GeoArt variant="corner" className="pointer-events-none absolute -left-10 -bottom-10 h-[220px] w-[220px] text-ivory opacity-[0.06]" />
-        <div className="relative mx-auto max-w-5xl px-6 py-14 md:py-20 grid md:grid-cols-2 gap-10 items-start">
+        <GeoArt variant="band" className="mx-auto mt-10 h-10 max-w-5xl px-6 w-full text-ivory opacity-[0.08]" />
+        <div className="relative mx-auto max-w-3xl px-6 py-14 md:py-20">
           <div>
-            <p className="text-xs font-bold tracking-widest text-river">FOR INSTITUTIONS — PILOT SCHOOLS FIRST</p>
-            <h2 className="mt-3 text-2xl md:text-3xl font-bold tracking-tight">
-              Bring your school. We bring the paperwork done.
-            </h2>
-            <ul className="mt-6 space-y-3 text-[15px] text-ivory/85">
-              <li>→ <strong>Teachers</strong> — assistant with animations, exams, planning. KES 250/month.</li>
-              <li>→ <strong>Schools</strong> — classroom design, edtech tools, teacher management.</li>
+            <p className="text-xs font-bold tracking-widest text-river">1 · FOR THE YOUTH: PROOF, NOT PROMISES</p>
+            <ul className="mt-4 space-y-1.5 text-[15px] text-ivory/85">
+              <li>· Take the test and break through into the subterranean halls.</li>
+              <li>· Your capability verified on a ledger.</li>
             </ul>
+            <Link href="/ledger#join" className="mt-4 inline-block text-sm font-bold text-emerald-300 hover:text-ivory transition">join now →</Link>
           </div>
-          <div className="rounded-3xl bg-panel border border-white/10 p-8">
-            <div className="text-sm text-muted">One receipt for everything</div>
-            <div className="mt-2 text-2xl font-extrabold">Who came. What they did. What you paid.</div>
-            <p className="mt-3 text-sm text-muted leading-relaxed">
-              You pay the youth directly via M-Pesa. We keep the receipt — obviously, we&apos;re a list.
+
+          <div className="mt-12">
+            <p className="text-xs font-bold tracking-widest text-river">2 · FOR THE TEACHER: YOUR LIFE BACK</p>
+            <p className="mt-4 text-[15px] text-ivory/85 leading-relaxed">
+              If you spent last weekend marking two hundred identical scripts wondering why you didn&apos;t become a charcoal burner instead, we see you.
             </p>
-            <button onClick={() => setDoors(true)} className="mt-5 block w-full text-center rounded-full bg-river px-6 py-3.5 text-sm font-semibold text-white hover:bg-ivory hover:text-black transition">
-              Open your door →
-            </button>
+            <ul className="mt-4 space-y-1.5 text-[15px] text-ivory/85">
+              <li>· Two hundred and fifty bob a month.</li>
+              <li>· Link-drop your tests, let the machine auto-marking bleed for you, and map every student&apos;s hidden intellectual weakness before the holiday bell rings.</li>
+              <li>· You teach. The code does the suffering.</li>
+            </ul>
+            <Link href="/build/teacher" className="mt-4 inline-block text-sm font-bold text-emerald-300 hover:text-ivory transition">open the teacher door →</Link>
+          </div>
+
+          <div className="mt-12">
+            <p className="text-xs font-bold tracking-widest text-river">3 · FOR THE SCHOOL: ABSOLUTE OPERATIONAL SOVEREIGNTY</p>
+            <p className="mt-4 text-[15px] text-ivory/85 leading-relaxed">
+              Ministry audits, missing fees, teachers on the verge of mutiny, and a library ledger that looks like a crime scene.
+            </p>
+            <ul className="mt-4 space-y-1.5 text-[15px] text-ivory/85">
+              <li>· Bring your campus. We bring the absolute operational spine.</li>
+              <li>· One annual anchor. Instant digital roster control, science-backed retention timetables, automated M-Pesa fee tracking, and one-click inspection modes that make auditors pack up and leave.</li>
+            </ul>
+            <button onClick={() => setDoors(true)} className="mt-4 inline-block text-sm font-bold text-emerald-300 hover:text-ivory transition">open your door →</button>
+          </div>
+
+          <p className="mt-14 text-center font-display italic text-2xl md:text-3xl">The tower is groundless.<br />The ledger is immutable.</p>
+
+          <div className="mt-10 grid sm:grid-cols-3 gap-4">
+            <div className="rounded-3xl border border-white/10 bg-panel p-7">
+              <div className="text-xs font-bold tracking-widest text-muted">INSTITUTIONS</div>
+              <p className="mt-2 text-sm text-muted">Bring your school.</p>
+              <Link href="/build/school" className="mt-4 block text-center rounded-full bg-ivory px-6 py-3 text-sm font-bold text-black hover:bg-river hover:text-white transition">Anchor Campus</Link>
+            </div>
+            <div className="rounded-3xl border border-white/10 bg-panel p-7">
+              <div className="text-xs font-bold tracking-widest text-muted">INDIVIDUALS</div>
+              <p className="mt-2 text-sm text-muted">Hustling with a record. Hold YOUR hash.</p>
+              <Link href="/ledger#join" className="mt-4 block text-center rounded-full bg-river px-6 py-3 text-sm font-bold text-white hover:bg-ivory hover:text-black transition">Get On List</Link>
+            </div>
+            <div className="rounded-3xl border border-white/10 bg-panel p-7">
+              <div className="text-xs font-bold tracking-widest text-muted">SPECTATORS</div>
+              <p className="mt-2 text-sm text-muted">Welcome to the yard. The campfire is free.</p>
+              <Link href="/benben" className="mt-4 block text-center rounded-full border border-white/25 px-6 py-3 text-sm font-bold hover:border-ivory transition">Enter BenBen</Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 4 — VERIFY */}
-      <section className="border-b border-white/10 bg-panel/40">
-        <div className="mx-auto max-w-5xl px-6 py-14 md:py-16 text-center">
-          <p className="font-display italic text-3xl md:text-4xl">Lose your certificate? We kept the hash.</p>
-          <p className="mt-3 text-muted">Enter any member ID on the ledger and watch the record prove itself.</p>
-          <Link href="/ledger#verify" className="mt-6 inline-block rounded-full bg-ivory px-8 py-3.5 text-sm font-semibold text-black hover:bg-river hover:text-white transition">
-            Verify a certificate →
-          </Link>
-        </div>
-      </section>
-
-      {/* 5 — ENTER */}
+      {/* 3 — ENTER */}
       <section>
         <div className="mx-auto max-w-5xl px-6 py-14 grid sm:grid-cols-3 gap-4">
           <button onClick={() => setDoors(true)} className="rounded-3xl border border-white/10 bg-panel p-8 text-left hover:border-river transition">
             <div className="text-xs font-bold tracking-widest text-river">INSTITUTIONS</div>
             <div className="mt-2 text-xl font-bold">Build capacity →</div>
-            <p className="mt-1 text-sm text-muted">Eight doors. Yours is open.</p>
+            <p className="mt-1 text-sm text-muted">Four doors. Who are you?</p>
           </button>
-          <Link href="/ledger#join" className="rounded-3xl border border-white/10 bg-panel p-8 hover:border-river transition">
+          <div className="rounded-3xl border border-white/10 bg-panel p-8">
             <div className="text-xs font-bold tracking-widest text-river">YOUTH</div>
-            <div className="mt-2 text-xl font-bold">Verify capability →</div>
-            <p className="mt-1 text-sm text-muted">Answer, pay, seal. Then work.</p>
-          </Link>
+            <JoinLink className="mt-2 block text-left text-xl font-bold hover:text-emerald-300 transition">Join the ledger →</JoinLink>
+            <p className="mt-1 text-sm text-muted">Claim, test, seal. Then work.</p>
+          </div>
           <Link href="/work" className="rounded-3xl border border-white/10 bg-panel p-8 hover:border-river transition">
             <div className="text-xs font-bold tracking-widest text-river">EVERYONE</div>
             <div className="mt-2 text-xl font-bold">See the work →</div>

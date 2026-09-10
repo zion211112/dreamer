@@ -5,15 +5,13 @@ import { useState } from "react";
 import { KEYS, saveStored } from "../lib/ledger";
 
 const DOORS: { label: string; href: string | null; note: string }[] = [
-  { label: "Individual", href: null, note: "Your door opens next." },
   { label: "Teacher", href: "/build/teacher", note: "Assistant · KES 250/month" },
-  { label: "Team", href: null, note: "Your door opens next." },
   { label: "Public School", href: "/build/school?type=public", note: "Products + subscription" },
   { label: "Private School", href: "/build/school?type=private", note: "Products + subscription" },
-  { label: "College", href: null, note: "Your door opens next." }
+  { label: "Government", href: null, note: "Your door opens next." }
 ];
 
-// BUILD CAPACITY pops the choice. Three doors are furnished, five take a contact.
+// BUILD CAPACITY pops the choice. Four doors. Who are you?
 export default function DoorsModal({ onClose }: { onClose: () => void }) {
   const [picked, setPicked] = useState<string | null>(null);
   const [contact, setContact] = useState("");
@@ -40,7 +38,7 @@ export default function DoorsModal({ onClose }: { onClose: () => void }) {
         <div className="flex items-start justify-between">
           <div>
             <div className="text-xs font-bold tracking-widest text-river">BUILD CAPACITY</div>
-            <h2 className="mt-2 text-2xl md:text-3xl font-extrabold tracking-tight text-ivory">Who are you bringing?</h2>
+            <h2 className="mt-2 text-2xl md:text-3xl font-extrabold tracking-tight text-ivory">Who are you?</h2>
           </div>
           <button onClick={onClose} className="rounded-full border border-white/20 px-3 py-1 text-sm text-ivory" aria-label="Close">✕</button>
         </div>

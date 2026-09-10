@@ -10,11 +10,9 @@ import {
   Member,
   OCCUPATIONS,
   SEED_MEMBERS,
-  TEST_FEE,
   loadStored,
   saveStored,
-  seal,
-  shortHash
+  seal
 } from "../../lib/ledger";
 
 function useStoredList<T>(key: string, seeds: T[]): [T[], (v: T[]) => void] {
@@ -27,35 +25,8 @@ function useStoredList<T>(key: string, seeds: T[]): [T[], (v: T[]) => void] {
   return [list, (v: T[]) => { setList(v); saveStored(key, v); }];
 }
 
-function MemberCard({ m }: { m: Member }) {
-  return (
-    <div className="rounded-3xl border border-white/10 bg-panel p-6">
-      <div className="flex items-center justify-between text-xs">
-        <span className="font-mono font-bold text-ivory">{m.id}</span>
-        {m.verified ? (
-          <span className="rounded-full bg-river/15 px-3 py-1 font-semibold text-emerald-300">● SEALED{m.tier ? ` · ${m.tier.toUpperCase()}` : ""}</span>
-        ) : m.paid ? (
-          <span className="rounded-full bg-gold/15 px-3 py-1 font-semibold text-gold">● PAID · UNSEALED</span>
-        ) : (
-          <span className="rounded-full bg-white/5 px-3 py-1 font-semibold text-muted">○ PLAYGROUND</span>
-        )}
-      </div>
-      <div className="mt-3 text-xl font-bold text-ivory">{m.name}</div>
-      <div className="mt-1 flex flex-wrap gap-2 text-[13px]">
-        <span className="rounded-full bg-obsidian border border-white/10 px-3 py-1 font-semibold text-ivory">{m.occupation}</span>
-        <span className="rounded-full bg-obsidian border border-white/10 px-3 py-1 text-muted">{m.location}</span>
-      </div>
-      <div className="mt-3 text-[13px] text-muted">{m.skills.join(" · ")}</div>
-      <div className="mt-3 font-mono text-xs text-muted">hash {shortHash(m.hash)}</div>
-    </div>
-  );
-}
-
 export default function Ledger() {
   const [members, setMembers] = useStoredList<Member>(KEYS.members, SEED_MEMBERS);
-  const [occ, setOcc] = useState("All trades");
-  const [loc, setLoc] = useState("All towns");
-  const [q, setQ] = useState("");
   const [rootOpen, setRootOpen] = useState(false);
 
   const [name, setName] = useState("");
@@ -74,23 +45,6 @@ export default function Ledger() {
   }, [members]);
 
   const draft = all.find((m) => m.id === draftId) || null;
-
-  const filtered = all.filter(
-    (m) =>
-      (occ === "All trades" || m.occupation === occ) &&
-      (loc === "All towns" || m.location === loc) &&
-      (q.trim() === "" ||
-        (m.name + " " + m.id + " " + m.skills.join(" ")).toLowerCase().includes(q.toLowerCase()))
-  );
-
-  function onSearch(v: string) {
-    if (v.trim().toLowerCase() === "root") {
-      setQ("");
-      setRootOpen(true);
-      return;
-    }
-    setQ(v);
-  }
 
   function startDraft(e: React.FormEvent) {
     e.preventDefault();
@@ -130,45 +84,22 @@ export default function Ledger() {
       <div className="relative overflow-hidden">
         <GeoArt variant="grid" className="pointer-events-none absolute inset-0 h-full w-full text-ivory opacity-[0.035]" />
         <div className="relative mx-auto max-w-5xl px-6 py-14">
-          <p className="text-xs font-bold tracking-widest text-river">THE LEDGER · THE ENTRY POINT</p>
+          <p className="font-mono text-xs tracking-[0.2em] text-muted">LEDGER 1.254 · ENTRY POINT</p>
           <h1 className="mt-3 text-4xl md:text-5xl font-extrabold tracking-tight">Who can do what, where.</h1>
           <p className="mt-4 max-w-2xl text-muted leading-relaxed">
-            {all.length} on the list · {sealedCount} sealed.
-            Unpaid? The playground: browse everything, comment anywhere — no seal, no vote, no jobs.
-            Only paid, verified names join the ledger proper.
+            {all.length} on the list · {sealedCount} sealed. Unpaid? The playground: browse everything, comment anywhere — no seal, no vote, no jobs. Only paid, verified names join the ledger proper.
           </p>
 
-          {/* SEARCH */}
-          <div className="mt-8 grid sm:grid-cols-[1fr_1fr_1.618fr] gap-3">
-            <select value={occ} onChange={(e) => setOcc(e.target.value)} className={`${field} font-semibold [&>option]:bg-obsidian`}>
-              <option>All trades</option>
-              {OCCUPATIONS.map((o) => <option key={o}>{o}</option>)}
-            </select>
-            <select value={loc} onChange={(e) => setLoc(e.target.value)} className={`${field} font-semibold [&>option]:bg-obsidian`}>
-              <option>All towns</option>
-              {LOCATIONS.map((l) => <option key={l}>{l}</option>)}
-            </select>
-            <input value={q} onChange={(e) => onSearch(e.target.value)} placeholder="Search name, ID, skill…" className={field} />
-          </div>
-
-          <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filtered.map((m) => <MemberCard key={m.id} m={m} />)}
-          </div>
-          {filtered.length === 0 && (
-            <p className="mt-6 rounded-2xl bg-panel border border-white/10 p-6 text-sm text-muted">
-              Nobody matches that yet. Get on the list below — or post the work at <a href="/work#hire" className="underline">/work</a> and someone will.
-            </p>
-          )}
-
           {/* JOIN */}
-          <div id="join" className="mt-14 rounded-3xl border border-white/10 bg-panel p-7 md:p-9">
-            <div className="text-xs font-bold tracking-widest text-river">JOIN THE LEDGER · {TEST_FEE} TEST FEE</div>
+          <div id="join" className="mt-10 rounded-3xl border border-white/10 bg-panel p-7 md:p-9">
+            <div className="text-xs font-bold tracking-widest text-river">JOIN THE LEDGER · KES 50 ACTIVATION</div>
             <h2 className="mt-2 text-2xl md:text-3xl font-extrabold tracking-tight">Claim a slot. Face the crucible.</h2>
 
             {!draft && (
               <form onSubmit={startDraft} className="mt-5">
                 <div className="text-sm font-bold">Step 1 — claim your slot</div>
-                <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name or handle" maxLength={40} className={`${field} mt-2 w-full`} />
+                <label className="mt-3 block text-sm text-muted">Full name or ID</label>
+                <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. JUST A NOBODY" maxLength={40} className={`${field} mt-1 w-full`} />
                 <div className="mt-2 grid grid-cols-2 gap-2">
                   <select value={regOcc} onChange={(e) => setRegOcc(e.target.value)} className={`${field} [&>option]:bg-obsidian`}>
                     {OCCUPATIONS.map((o) => <option key={o}>{o}</option>)}
@@ -177,7 +108,7 @@ export default function Ledger() {
                     {LOCATIONS.map((l) => <option key={l}>{l}</option>)}
                   </select>
                 </div>
-                <input value={skill} onChange={(e) => setSkill(e.target.value)} placeholder="Top skill (e.g. KCSE Physics)" maxLength={40} className={`${field} mt-2 w-full`} />
+                <input value={skill} onChange={(e) => setSkill(e.target.value)} placeholder="Top skill (e.g. THINKING AND PROCRASTINATING)" maxLength={40} className={`${field} mt-2 w-full`} />
                 <button className="mt-3 rounded-full bg-ivory px-8 py-3.5 text-sm font-semibold text-black hover:bg-river hover:text-white transition">Claim slot →</button>
               </form>
             )}
@@ -185,7 +116,7 @@ export default function Ledger() {
             {draft && !draft.verified && (
               <div className="mt-5 rounded-2xl bg-obsidian border border-white/10 p-6">
                 <div className="text-sm font-bold">Step 2 — the crucible ({draft.id})</div>
-                <p className="mt-1 text-sm text-muted">Pay {TEST_FEE}, answer eight questions, get scored. Pass enters the halls. Fail stays in the playground. There is no other door.</p>
+                <p className="mt-1 text-sm text-muted">Pay KES 50, answer eight questions, get scored. Pass enters the halls. Fail stays in the playground. There is no other door.</p>
                 <Link href="/crucible" className="mt-4 inline-block rounded-full bg-river px-8 py-3.5 text-sm font-bold text-white hover:bg-ivory hover:text-black transition">
                   Face the crucible →
                 </Link>
@@ -201,9 +132,9 @@ export default function Ledger() {
             {notice && <p className="mt-4 text-sm text-muted">{notice}</p>}
           </div>
 
-          {/* CERTIFICATE CHECK */}
-          <div id="verify" className="mt-6 rounded-3xl bg-panel border border-white/10 p-7 md:p-9">
-            <div className="text-xs font-bold tracking-widest text-muted">VERIFY · PROOF</div>
+          {/* VERIFY */}
+          <div className="mt-6 rounded-3xl bg-panel border border-white/10 p-7 md:p-9">
+            <div className="text-xs font-bold tracking-widest text-muted">VERIFY ·</div>
             <h2 className="mt-2 font-display italic text-2xl md:text-3xl">Lose your certificate? We kept the hash.</h2>
             <form onSubmit={verify} className="mt-5 flex gap-2">
               <input value={vid} onChange={(e) => setVid(e.target.value)} placeholder="Enter member ID (e.g. AL-0042)" className={`${field} flex-1`} />

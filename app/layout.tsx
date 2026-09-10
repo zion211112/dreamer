@@ -24,9 +24,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/ledger" className="hover:text-ivory">Ledger</Link>
               <Link href="/work" className="hover:text-ivory">Zep-Tepi</Link>
               <Link href="/kemet" className="hover:text-ivory">Kemet-OS</Link>
+              <Link href="/benben" className="hover:text-ivory">Ben-Ben</Link>
               <Link href="/contact" className="hover:text-ivory">Contact</Link>
             </span>
-            <span>Proof of work, not promises.</span>
           </div>
         </footer>
       </body>

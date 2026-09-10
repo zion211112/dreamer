@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GeoArt from "../../components/GeoArt";
 import { KEYS, Member, SEED_MEMBERS, loadStored } from "../../lib/ledger";
+import { SOURCE_TEXT } from "../../lib/source";
 
 const PAPERS = [
   {
@@ -26,11 +27,18 @@ const PAPERS = [
   }
 ];
 
-// Kemet-OS hosts the research. Shelf open to all; the vault needs a seal.
+// Kemet-OS: the secret backgate. Research shelf + the Source.
+// Registered members enter. The vault needs a seal.
 export default function Kemet() {
+  const [slot, setSlot] = useState<boolean | null>(null);
   const [id, setId] = useState("");
   const [open, setOpen] = useState(false);
   const [miss, setMiss] = useState(false);
+
+  useEffect(() => {
+    const stored = loadStored<Member>(KEYS.members);
+    setSlot(stored.some((m) => !SEED_MEMBERS.some((s) => s.id === m.id)));
+  }, []);
 
   function unlock(e: React.FormEvent) {
     e.preventDefault();
@@ -43,6 +51,21 @@ export default function Kemet() {
   }
 
   const field = "rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-river";
+
+  if (slot === null) return <main className="bg-obsidian text-ivory min-h-screen" />;
+
+  if (!slot) {
+    return (
+      <main className="bg-obsidian text-ivory">
+        <div className="mx-auto max-w-md px-6 py-24 text-center">
+          <p className="font-mono text-xs tracking-[0.2em] text-muted">KEMET-OS · BACKGATE</p>
+          <h1 className="mt-4 text-4xl font-extrabold tracking-tight">No slot, no stacks.</h1>
+          <p className="mt-3 text-muted">The research wing opens for registered members. Claim your slot first.</p>
+          <a href="/ledger#join" className="mt-8 inline-block rounded-full bg-river px-8 py-3.5 text-sm font-bold text-white hover:bg-ivory hover:text-black transition">Claim a slot →</a>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="bg-obsidian text-ivory">
@@ -67,10 +90,10 @@ export default function Kemet() {
           </div>
 
           <div className="mt-6 rounded-3xl bg-panel border border-white/10 p-7">
-            <div className="text-xs font-bold tracking-widest text-muted">PAST-PAPER VAULT · SEALED ONLY</div>
+            <div className="text-xs font-bold tracking-widest text-muted">THE VAULT · SEALED ONLY</div>
             {!open ? (
               <form onSubmit={unlock} className="mt-3">
-                <p className="text-sm text-muted">Revision vaults open for sealed members. Enter your ID:</p>
+                <p className="text-sm text-muted">Past papers + the Source. Enter your sealed ID:</p>
                 <div className="mt-3 flex gap-2">
                   <input value={id} onChange={(e) => setId(e.target.value.toUpperCase())} placeholder="e.g. AL-0042" maxLength={10} className={`${field} flex-1 font-mono uppercase`} />
                   <button className="rounded-2xl bg-river px-6 text-sm font-semibold text-white hover:bg-ivory hover:text-black transition">Unlock</button>
@@ -78,13 +101,17 @@ export default function Kemet() {
                 {miss && <p className="mt-3 text-sm text-muted">That ID isn&apos;t sealed. <Link href="/ledger#join" className="underline">Get sealed →</Link></p>}
               </form>
             ) : (
-              <div className="mt-3 text-sm">
-                <p className="text-emerald-300 font-bold">Vault open. First papers land with the pilots.</p>
-                <ul className="mt-3 space-y-1.5 text-muted">
+              <div className="mt-4">
+                <p className="text-emerald-300 font-bold text-sm">Vault open. First papers land with the pilots.</p>
+                <ul className="mt-3 space-y-1.5 text-sm text-muted">
                   <li>→ KCSE Maths Paper 1 — 2019–2024, worked</li>
                   <li>→ KCSE Physics — topical drills</li>
                   <li>→ Std 8 Science — term mocks</li>
                 </ul>
+                <div className="mt-6 text-xs font-bold tracking-widest text-gold">THE SOURCE · UNREDACTED</div>
+                <pre className="mt-3 max-h-[50vh] overflow-y-auto whitespace-pre-wrap border border-gold/20 bg-obsidian p-5 font-mono text-xs leading-relaxed text-ivory/85">
+                  {SOURCE_TEXT}
+                </pre>
               </div>
             )}
           </div>

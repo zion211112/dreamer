@@ -140,6 +140,20 @@ export default function Work() {
   }
 
   const ordered = [...tasks].sort((a, b) => b.votes - a.votes);
+  const customs = members.filter((m) => !SEED_MEMBERS.some((s) => s.id === m.id));
+
+  if (customs.length === 0) {
+    return (
+      <main className="bg-obsidian text-ivory">
+        <div className="mx-auto max-w-md px-6 py-24 text-center">
+          <p className="font-mono text-xs tracking-[0.2em] text-muted">ZEP-TEPI · REGISTERED ONLY</p>
+          <h1 className="mt-4 text-4xl font-extrabold tracking-tight">No slot, no work.</h1>
+          <p className="mt-3 text-muted">Zep-Tepi opens for registered members. Claim your slot on the ledger first.</p>
+          <a href="/ledger#join" className="mt-8 inline-block rounded-full bg-river px-8 py-3.5 text-sm font-bold text-white hover:bg-ivory hover:text-black transition">Claim a slot →</a>
+        </div>
+      </main>
+    );
+  }
   const field = "rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-river";
 
   return (

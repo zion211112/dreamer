@@ -149,3 +149,5 @@ Teacher lighter. Parent calmer. School safer. Government clearer. Youth richer. 
 4. **The test:** pay KES 50 → 8 scored choice questions (pass 5/8) → tiers Sand/Clay/Stone/Crystal/Diamond, retry 30/14 days for fails. Gap-test essays retired.
 5. **No Void.** The chamber is `/ZION`: Source + raw ledger only. Nothing is kept there.
 6. **Visitors get landing + contacts only.** Everything else needs phone OTP identity. Playground (browse + comment) vs sealed (vote, claim, jobs, halls, vault).
+7. **Join = phone modal → slot → test → halls.** JOIN THE LEDGER pops signup/signin (phone OTP), registers, sends to the crucible. Sealed members pass straight to dashboard.
+8. **The true roll lives in BenBen's paid vault.** Public ledger shows counts + join + checker only; browsing names needs registered + paid. Kemet-OS is the secret backgate: research shelf + the Source (manifesto) behind the sealed vault. Zep-Tepi and Kemet shelf need a claimed slot.

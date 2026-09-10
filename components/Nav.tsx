@@ -2,7 +2,12 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import JoinLink from "./JoinLink";
+
+const LINKS: [string, string][] = [
+  ["/work", "Zep-Tepi"],
+  ["/kemet", "Kemet-OS"],
+  ["/benben", "Ben-Ben"]
+];
 
 export function Nav() {
   const [open, setOpen] = useState(false);
@@ -14,14 +19,11 @@ export function Nav() {
           APT-LABS
         </Link>
         <nav className="hidden md:flex items-center gap-5 text-sm text-muted">
-          <Link href="/ledger" className="hover:text-ivory transition">Ledger</Link>
-          <Link href="/work" className="hover:text-ivory transition">Zep-Tepi</Link>
-          <Link href="/kemet" className="hover:text-ivory transition">Kemet-OS</Link>
-          <Link href="/ledger" className="hover:text-ivory transition" aria-label="Search">Search ⌕</Link>
-          <Link href="/dashboard" className="hover:text-ivory transition">Dashboard</Link>
-          <JoinLink className="rounded-full bg-ivory px-4 py-2 text-black text-[13px] font-semibold hover:bg-river hover:text-white transition">
-            Join
-          </JoinLink>
+          {LINKS.map(([href, label]) => (
+            <Link key={href} href={href} className="hover:text-ivory transition">{label}</Link>
+          ))}
+          <Link href="/ledger" className="hover:text-ivory transition" aria-label="Search">⌕ Search</Link>
+          <Link href="/dashboard" className="hover:text-ivory transition">My Profile</Link>
         </nav>
         <button onClick={() => setOpen(!open)} className="md:hidden rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-ivory" aria-label="Menu">
           {open ? "✕" : "☰"}
@@ -29,22 +31,11 @@ export function Nav() {
       </div>
       {open && (
         <nav className="md:hidden border-t border-white/10 bg-obsidian px-6 py-4 flex flex-col gap-3 text-sm">
-          {[
-            ["/ledger", "Ledger"],
-            ["/work", "Zep-Tepi (work)"],
-            ["/kemet", "Kemet-OS (research)"],
-            ["/dashboard", "Dashboard"],
-            ["/build/teacher", "Teacher assistant"],
-            ["/build/parent", "Parents"],
-            ["/build/school", "Schools"]
-          ].map(([href, label]) => (
+          {[...LINKS, ["/ledger", "Search ⌕"] as [string, string], ["/dashboard", "My Profile"] as [string, string]].map(([href, label]) => (
             <Link key={href} href={href} onClick={() => setOpen(false)} className="py-1 text-ivory/80">
               {label}
             </Link>
           ))}
-          <Link href="/work#hire" onClick={() => setOpen(false)} className="mt-1 rounded-full bg-ivory px-4 py-2.5 text-black text-center text-sm font-semibold">
-            Post work
-          </Link>
         </nav>
       )}
     </header>
