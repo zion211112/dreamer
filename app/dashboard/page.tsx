@@ -68,14 +68,22 @@ export default function Dashboard() {
                     {me.verified ? "● SEALED" : me.paid ? "● PAID · UNSEALED" : "○ PLAYGROUND"}
                   </span>
                 </div>
-                <div className="mt-3 text-2xl font-extrabold">{me.name}</div>
-                <div className="mt-1 text-sm text-muted">{me.occupation} · {me.location}</div>
+                <div className="mt-3 text-2xl font-extrabold">@{me.username || me.id}</div>
+                <div className="mt-1 text-sm text-muted">{me.name} · {me.occupation} · {me.location}</div>
                 <div className="mt-1 text-sm text-muted">{me.skills.join(" · ")}</div>
                 <div className="mt-3 font-mono text-xs text-muted break-all">hash {shortHash(me.hash)}</div>
                 {!me.verified && (
-                  <Link href="/ledger#join" className="mt-4 inline-block rounded-full bg-river px-6 py-2.5 text-sm font-semibold text-white hover:bg-ivory hover:text-black transition">
-                    {me.paid ? "Answer the questions →" : "Pay + seal →"}
+                  <Link href="/cert" className="mt-4 inline-block rounded-full bg-river px-6 py-2.5 text-sm font-semibold text-white hover:bg-ivory hover:text-black transition">
+                    Get certified · 50 →
                   </Link>
+                )}
+                {me.verified && !me.hall && (
+                  <Link href="/crucible" className="mt-4 inline-block rounded-full border border-white/20 px-6 py-2.5 text-sm font-semibold hover:border-gold transition">
+                    Eye the halls · 100 exam →
+                  </Link>
+                )}
+                {me.hall && (
+                  <p className="mt-4 font-mono text-xs font-bold text-gold">{me.hall.toUpperCase()} · YOUR HALL</p>
                 )}
               </div>
 

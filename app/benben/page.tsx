@@ -1,198 +1,192 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import BuildCard from "../../components/BuildCard";
 import GeoArt from "../../components/GeoArt";
-import MemberCard from "../../components/MemberCard";
 import {
-  KEYS,
-  LOCATIONS,
-  Member,
-  OCCUPATIONS,
-  SEED_MEMBERS,
-  SEED_TASKS,
-  Task,
-  loadStored,
-  saveStored
-} from "../../lib/ledger";
+  BENBEN_NOMS_KEY,
+  Build,
+  Nomination,
+  SEED_BUILDS,
+  allMembers,
+  castVote,
+  isLive,
+  loadBuilds,
+  memberByUsername,
+  myUsername,
+  persistBuilds,
+  rankFeed,
+  tierOf
+} from "../../lib/benben";
+import { HALLS } from "../../lib/halls";
 
-type Thread = { id: string; title: string; text: string; ts: number; comments: { name: string; text: string }[] };
+type Sort = "velocity" | "new" | "needs" | "solved";
 
-const SEED_THREADS: Thread[] = [
-  { id: "B-01", title: "Nightly problem: the 47-pupil classroom", text: "30 desks. 47 pupils. Monday. Best seating wins — sharpest answer gets quoted on the ledger.", ts: 0, comments: [] },
-  { id: "B-02", title: "Shadow board: what should Zep-Tepi build next?", text: "No budgets, no permission. Name the work worth doing and say why in two lines.", ts: 0, comments: [] },
-  { id: "B-03", title: "Telemetry from the ground", text: "Mwea, Kagio, Kerugoya, Embu, Sagana, Mugumo — report what you see: prices, rains, blackouts, wins.", ts: 0, comments: [] }
-];
-
-// Ben-Ben: the yard. The campfire is free — read, post, comment.
-// Voting and claiming live on Zep-Tepi, behind the seal.
+// BenBen: the floor. Velocity-ranked builds, no karma, nothing deleted.
 export default function BenBen() {
-  const [tasks, setTasks] = useState<Task[]>(SEED_TASKS);
-  const [threads, setThreads] = useState<Thread[]>(SEED_THREADS);
-  const [open, setOpen] = useState<string | null>(null);
-  const [ttitle, setTtitle] = useState("");
-  const [ttext, setTtext] = useState("");
-  const [cname, setCname] = useState("");
-  const [ctext, setCtext] = useState("");
-  const [members, setMembers] = useState<Member[]>(SEED_MEMBERS);
-  const [vaultId, setVaultId] = useState("");
-  const [vaultOpen, setVaultOpen] = useState(false);
-  const [vocc, setVocc] = useState("All trades");
-  const [vloc, setVloc] = useState("All towns");
-  const [vq, setVq] = useState("");
+  const [builds, setBuilds] = useState<Build[]>([]);
+  const [sort, setSort] = useState<Sort>("velocity");
+  const [me, setMe] = useState("");
+  const [tier, setTier] = useState<"visitor" | "certified" | "hall">("visitor");
+  const [nomFor, setNomFor] = useState<string | null>(null);
+  const [nomHall, setNomHall] = useState(HALLS[0].name);
+  const [nomWhy, setNomWhy] = useState("");
+  const [errId, setErrId] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
-    const t = loadStored<Task>(KEYS.tasks);
-    if (t.length > 0) setTasks(t);
-    const b = loadStored<Thread>(KEYS.benben);
-    if (b.length > 0) {
-      const customs = b.filter((x) => !SEED_THREADS.some((s) => s.id === x.id));
-      const merged = [...customs, ...SEED_THREADS.map((s) => {
-        const live = b.find((x) => x.id === s.id);
-        return live ? { ...s, comments: live.comments } : s;
-      })];
-      setThreads(merged);
-    }
-    const m = loadStored<Member>(KEYS.members);
-    if (m.length > 0) {
-      const customs = m.filter((x) => !SEED_MEMBERS.some((s) => s.id === x.id));
-      setMembers([...customs, ...SEED_MEMBERS]);
-    }
+    const stored = loadBuilds().filter(
+      (b) => b && typeof b.id === "string" && b.needs && typeof b.domain === "string" && Array.isArray(b.comments)
+    );
+    const ids = new Set(stored.map((b) => b.id));
+    const merged = [...stored, ...SEED_BUILDS.filter((s) => !ids.has(s.id))];
+    setBuilds(merged.length > 0 ? merged : SEED_BUILDS);
+    const u = myUsername() || "";
+    setMe(u);
+    const all = allMembers();
+    setTier(tierOf(u || null, (x) => memberByUsername(all, x)));
+    const t = window.setInterval(() => setNow(Date.now()), 60000);
+    return () => window.clearInterval(t);
   }, []);
 
-  function persist(v: Thread[]) { setThreads(v); saveStored(KEYS.benben, v); }
-
-  function postTopic(e: React.FormEvent) {
-    e.preventDefault();
-    if (!ttitle.trim()) return;
-    const id = "B-" + String(Math.floor(10 + Math.random() * 89));
-    persist([{ id, title: ttitle.trim().slice(0, 80), text: ttext.trim().slice(0, 280), ts: Date.now(), comments: [] }, ...threads]);
-    setTtitle(""); setTtext("");
+  function save(v: Build[]) {
+    setBuilds(v);
+    persistBuilds(v);
   }
 
-  function postComment(id: string, e: React.FormEvent) {
-    e.preventDefault();
-    if (!ctext.trim()) return;
-    persist(threads.map((t) =>
-      t.id === id
-        ? { ...t, comments: [...t.comments, { name: (cname.trim() || "Anonymous").slice(0, 30), text: ctext.trim().slice(0, 280) }].slice(-30) }
-        : t
-    ));
-    setCtext("");
+  function vote(id: string, value: 1 | -1) {
+    if (tier === "visitor") return;
+    const { list, err: e } = castVote(builds, id, me, value, Date.now());
+    if (e) { setErrId(id); setErr(e); return; }
+    setErrId(null); setErr(null);
+    save(list);
   }
 
-  const ticker = [...tasks].filter((t) => t.status === "open").sort((a, b) => b.votes - a.votes).slice(0, 3);
-  const field = "rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-river";
-
-  function unlock(e: React.FormEvent) {
+  function nominate(e: React.FormEvent) {
     e.preventDefault();
-    const m = members.find((x) => x.id.toUpperCase() === vaultId.trim().toUpperCase());
-    setVaultOpen(!!(m && m.paid && m.verified));
+    if (!nomFor || !nomWhy.trim()) return;
+    try {
+      const raw = window.localStorage.getItem(BENBEN_NOMS_KEY);
+      const arr: Nomination[] = raw ? JSON.parse(raw) : [];
+      arr.push({ postId: nomFor, hall: nomHall, reason: nomWhy.trim().slice(0, 140), by: me, ts: Date.now(), yes: [] });
+      window.localStorage.setItem(BENBEN_NOMS_KEY, JSON.stringify(arr));
+    } catch { /* the hall didn't hear */ }
+    setNomFor(null); setNomWhy("");
   }
 
-  const vaultList = members.filter(
-    (m) =>
-      (vocc === "All trades" || m.occupation === vocc) &&
-      (vloc === "All towns" || m.location === vloc) &&
-      (vq.trim() === "" || (m.name + " " + m.id + " " + m.skills.join(" ")).toLowerCase().includes(vq.toLowerCase()))
-  );
+  const feed = useMemo(() => {
+    if (sort === "new")
+      return [...builds]
+        .filter((b) => isLive(b, b.tierAtPost, Date.now()))
+        .sort((a, z) => z.createdTs - a.createdTs);
+    if (sort === "needs")
+      return builds
+        .filter((b) => !b.needs.nothing && isLive(b, b.tierAtPost, Date.now()))
+        .sort((a, z) => {
+          const rank = (x: Build) => (x.needs.funds > 0 ? 3 : x.needs.intellect.trim() ? 2 : x.needs.materials.trim() ? 1 : 0);
+          return rank(z) - rank(a) || z.createdTs - a.createdTs;
+        });
+    if (sort === "solved")
+      return builds
+        .filter((b) => b.type === "SOLUTION" && isLive(b, b.tierAtPost, Date.now()))
+        .sort((a, z) => z.votes - a.votes);
+    return rankFeed(builds, now);
+  }, [builds, sort, now]);
+
+  const visible = feed;
+
+  const myVotes: Record<string, number> = {};
+  builds.forEach((b) => {
+    const v = b.votedBy[me];
+    if (v) myVotes[b.id] = v.value;
+  });
 
   return (
     <main className="bg-obsidian text-ivory">
       <div className="relative overflow-hidden">
         <GeoArt variant="grid" className="pointer-events-none absolute inset-0 h-full w-full text-ivory opacity-[0.035]" />
-        <div className="relative mx-auto max-w-3xl px-6 py-14">
-          <p className="text-xs font-bold tracking-widest text-river">BEN-BEN · THE YARD</p>
-          <h1 className="mt-3 text-4xl md:text-5xl font-extrabold tracking-tight">Welcome to the yard. The campfire is free.</h1>
-          <p className="mt-4 text-muted leading-relaxed">Read everything. Say anything useful. Voting and claiming happen on Zep-Tepi, behind the seal — here, the fire is enough.</p>
+        <div className="relative mx-auto max-w-3xl px-6 py-14" style={{ width: "100%" }}>
+          <p className="text-xs font-bold tracking-widest text-river">BEN-BEN · HALL 0 · THE FLOOR</p>
+          <h1 className="mt-3 font-display text-4xl md:text-5xl font-semibold tracking-tight">Every post is a build.</h1>
+          <p className="mt-3 max-w-2xl text-muted leading-relaxed">
+            Name the problem. Name what&apos;s missing. Name what done looks like.
+            Signed in as <span className="font-mono text-gold">@{me || "…"}</span>
+            {tier === "visitor" ? " · playground" : tier === "certified" ? " · certified" : " · hall"}.
+          </p>
 
-          {/* JOBS TICKER */}
-          <div className="mt-8 rounded-3xl border border-gold/25 bg-gold/[0.06] p-6">
-            <div className="text-xs font-bold tracking-widest text-gold">JOBS TICKER · LIVE FROM ZEP-TEPI</div>
-            <div className="mt-3 space-y-2 text-sm">
-              {ticker.map((t) => (
-                <div key={t.id} className="flex justify-between gap-3">
-                  <span className="font-semibold">{t.title}</span>
-                  <span className="shrink-0 font-mono text-muted">▲{t.votes}{t.pay > 0 ? ` · ${t.pay.toLocaleString()}` : ""}</span>
-                </div>
-              ))}
-            </div>
+          <div className="mt-6 flex flex-wrap gap-2">
+            {(["velocity", "new", "needs", "solved"] as Sort[]).map((s) => (
+              <button
+                key={s}
+                onClick={() => setSort(s)}
+                className={`rounded-full px-5 py-2 font-mono text-[11px] font-bold uppercase tracking-wider transition ${sort === s ? "bg-ivory text-black" : "border border-white/15 text-muted hover:border-gold hover:text-ivory"}`}
+              >
+                {s === "needs" ? "Needs work" : s}
+              </button>
+            ))}
+            <Link href="/benben/shelf" className="rounded-full px-5 py-2 font-mono text-[11px] font-bold uppercase tracking-wider border border-white/15 text-muted hover:border-gold hover:text-ivory transition">
+              Shelf
+            </Link>
+            <Link href="/benben/me" className="rounded-full px-5 py-2 font-mono text-[11px] font-bold uppercase tracking-wider border border-white/15 text-muted hover:border-gold hover:text-ivory transition">
+              Slot
+            </Link>
           </div>
 
-          {/* TRUE LEDGER VAULT */}
-          <div className="mt-6 rounded-3xl bg-panel border border-gold/25 p-6">
-            <div className="text-xs font-bold tracking-widest text-gold">THE LEDGER 1.254 · SEALED EYES ONLY</div>
-            {!vaultOpen ? (
-              <form onSubmit={unlock} className="mt-3">
-                <p className="text-sm text-muted">The true roll opens for registered, paid members only. Enter your sealed ID:</p>
-                <div className="mt-3 flex gap-2">
-                  <input value={vaultId} onChange={(e) => setVaultId(e.target.value.toUpperCase())} placeholder="e.g. AL-0042" maxLength={10} className={`${field} flex-1 font-mono uppercase`} />
-                  <button className="rounded-2xl bg-gold px-6 text-sm font-bold text-black hover:bg-ivory transition">Open →</button>
-                </div>
-              </form>
-            ) : (
-              <div className="mt-4">
-                <div className="grid sm:grid-cols-[1fr_1fr_1.618fr] gap-2">
-                  <select value={vocc} onChange={(e) => setVocc(e.target.value)} className={`${field} font-semibold [&>option]:bg-obsidian`}>
-                    <option>All trades</option>
-                    {OCCUPATIONS.map((o) => <option key={o}>{o}</option>)}
-                  </select>
-                  <select value={vloc} onChange={(e) => setVloc(e.target.value)} className={`${field} font-semibold [&>option]:bg-obsidian`}>
-                    <option>All towns</option>
-                    {LOCATIONS.map((l) => <option key={l}>{l}</option>)}
-                  </select>
-                  <input value={vq} onChange={(e) => setVq(e.target.value)} placeholder="Search name, ID, skill…" className={field} />
-                </div>
-                <div className="mt-4 grid gap-3">
-                  {vaultList.map((m) => <MemberCard key={m.id} m={m} />)}
-                </div>
-                {vaultList.length === 0 && <p className="mt-4 text-sm text-muted">Nobody matches that yet.</p>}
-              </div>
+          <div className="mt-6 space-y-2">
+            {visible.map((b) => (
+              <BuildCard
+                key={b.id}
+                b={b}
+                now={now}
+                tier={tier}
+                myVote={myVotes[b.id] || 0}
+                voteErr={errId === b.id ? err : null}
+                onVote={vote}
+                onNominate={(id) => setNomFor(id)}
+                canNominate={tier !== "visitor"}
+              />
+            ))}
+            {visible.length === 0 && (
+              <p className="rounded-3xl border border-white/10 bg-panel p-8 text-center text-sm text-muted">
+                The floor is quiet. Light the first fire. <Link href="/benben/new" className="underline">Post a build →</Link>
+              </p>
             )}
           </div>
 
-          {/* NEW TOPIC */}
-          <form onSubmit={postTopic} className="mt-6 rounded-3xl border border-white/10 bg-panel p-6">
-            <div className="font-bold">Start a fire.</div>
-            <input value={ttitle} onChange={(e) => setTtitle(e.target.value)} placeholder="Topic (e.g. Who fixes the borehole?)" maxLength={80} className={`${field} mt-3 w-full`} />
-            <textarea value={ttext} onChange={(e) => setTtext(e.target.value)} placeholder="Two lines of context…" rows={2} maxLength={280} className={`${field} mt-2 w-full`} />
-            <button className="mt-3 rounded-full bg-ivory px-6 py-2.5 text-sm font-semibold text-black hover:bg-river hover:text-white transition">Light it →</button>
-          </form>
-
-          {/* THREADS */}
-          <div className="mt-6 space-y-3">
-            {threads.map((t) => {
-              const isOpen = open === t.id;
-              return (
-                <article key={t.id} className="rounded-3xl border border-white/10 bg-panel p-6">
-                  <button onClick={() => setOpen(isOpen ? null : t.id)} className="w-full text-left">
-                    <div className="font-mono text-xs text-muted">{t.id}</div>
-                    <h2 className="mt-1 text-lg font-bold">{t.title}</h2>
-                    <p className="mt-1 text-sm text-muted">{t.text}</p>
-                    <div className="mt-2 text-xs text-muted underline">{t.comments.length} repl{t.comments.length === 1 ? "y" : "ies"} {isOpen ? "· close" : ""}</div>
-                  </button>
-                  {isOpen && (
-                    <div className="mt-4 border-t border-white/10 pt-4">
-                      <div className="space-y-2">
-                        {t.comments.map((c, i) => (
-                          <div key={i} className="rounded-2xl bg-obsidian px-4 py-2.5 text-sm">
-                            <span className="font-bold">{c.name}</span> <span className="text-ivory/80">{c.text}</span>
-                          </div>
-                        ))}
-                        {t.comments.length === 0 && <p className="text-sm text-muted">Silence. The fire waits.</p>}
-                      </div>
-                      <form onSubmit={(e) => postComment(t.id, e)} className="mt-3 flex gap-2">
-                        <input value={cname} onChange={(e) => setCname(e.target.value)} placeholder="Name" maxLength={30} className={`${field} w-28 px-3 py-2.5`} />
-                        <input value={ctext} onChange={(e) => setCtext(e.target.value)} placeholder="Say something useful…" maxLength={280} className={`${field} flex-1`} />
-                        <button className="rounded-2xl border border-white/20 px-5 text-sm font-semibold hover:border-ivory transition">Post</button>
-                      </form>
-                    </div>
-                  )}
-                </article>
-              );
-            })}
-          </div>
+          <p className="mt-8 text-center font-mono text-xs text-dim">
+            Velocity-ranked. No karma. Nothing deleted — old builds rest on the <Link href="/benben/shelf" className="underline">cold shelf</Link>.
+          </p>
         </div>
       </div>
+
+      <Link
+        href="/benben/new"
+        className="fixed bottom-6 right-6 z-40 rounded-full bg-gold px-7 text-black font-bold shadow-[0_10px_40px_-10px_rgba(212,175,55,0.6)] hover:bg-ivory transition hidden md:block"
+        style={{ height: 55, lineHeight: "55px" }}
+      >
+        + POST A BUILD
+      </Link>
+      <div className="md:hidden sticky bottom-0 z-40 border-t border-white/10 bg-obsidian/95 p-3 backdrop-blur">
+        <Link href="/benben/new" className="block rounded-full bg-gold py-3.5 text-center font-bold text-black">
+          + POST A BUILD
+        </Link>
+      </div>
+
+      {nomFor && (
+        <div className="fixed inset-0 z-[90] overflow-y-auto bg-black/70 p-4" onClick={() => setNomFor(null)}>
+          <form onSubmit={nominate} onClick={(e) => e.stopPropagation()} className="mx-auto mt-16 max-w-md rounded-3xl bg-panel border border-white/10 p-7">
+            <div className="text-xs font-bold tracking-widest text-gold">SILENT NOMINATION</div>
+            <p className="mt-2 text-sm text-muted">Which hall should see this? The poster is never told — no shortlists, no rejections, no noise.</p>
+            <select value={nomHall} onChange={(e) => setNomHall(e.target.value)} className="mt-4 w-full rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-gold [&>option]:bg-obsidian">
+              {HALLS.map((h) => <option key={h.name} value={h.name}>{h.name}</option>)}
+            </select>
+            <input value={nomWhy} onChange={(e) => setNomWhy(e.target.value)} placeholder="One line: why this hall? (e.g. Fits Builders — needs hands)" maxLength={140} className="mt-2 w-full rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-gold" />
+            <button className="mt-3 w-full rounded-full bg-gold py-3 text-sm font-bold text-black hover:bg-ivory transition">Nominate silently →</button>
+          </form>
+        </div>
+      )}
     </main>
   );
 }

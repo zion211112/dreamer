@@ -8,8 +8,8 @@ html {
 
 body {
   background: #08080a;
-  color: #f2ede0;
-  font-family: Inter, system-ui, -apple-system, sans-serif;
+  color: #f5f0e6;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 

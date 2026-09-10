@@ -24,9 +24,14 @@ function statusChip(s: Task["status"]) {
   return <span className="rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-muted">OPEN</span>;
 }
 
-function sealedId(members: Member[], id: string): Member | null {
+function certId(members: Member[], id: string): Member | null {
   const m = members.find((x) => x.id.toUpperCase() === id.trim().toUpperCase());
   return m && m.paid && m.verified ? m : null;
+}
+
+function hallId(members: Member[], id: string): Member | null {
+  const m = certId(members, id);
+  return m && m.hallPaid && m.tier ? m : null;
 }
 
 // Zep-Tepi designs, assigns, manages. Sealed members vote and claim.
@@ -79,10 +84,22 @@ export default function Work() {
     saveStored(KEYS.comments, Object.entries(v).map(([task, list]) => ({ task, list: list.slice(-30) })));
   }
 
-  function requireSeal(): Member | null {
-    const m = sealedId(members, myId);
+  // Certified (50) votes and proposes. Claiming takes a hall pass.
+  function requireCert(): Member | null {
+    const m = certId(members, myId);
     if (!m) {
-      setGate("That needs a seal. Enter your sealed member ID above — playground can browse and comment, not vote or claim.");
+      setGate("That needs certification. Enter your certified member ID above — playground can browse and comment, not vote.");
+      return null;
+    }
+    setGate("");
+    window.localStorage.setItem(KEYS.myid, m.id);
+    return m;
+  }
+
+  function requireHall(): Member | null {
+    const m = hallId(members, myId);
+    if (!m) {
+      setGate("Claiming takes a hall pass — 100 bob and the examination. The halls hold the work.");
       return null;
     }
     setGate("");
@@ -91,12 +108,12 @@ export default function Work() {
   }
 
   function vote(id: string) {
-    if (!requireSeal()) return;
+    if (!requireCert()) return;
     persistTasks(tasks.map((t) => (t.id === id ? { ...t, votes: t.votes + 1 } : t)));
   }
 
   function claim(id: string) {
-    const m = requireSeal();
+    const m = requireHall();
     if (!m) return;
     persistTasks(tasks.map((t) =>
       t.id === id && t.status === "open" ? { ...t, status: "in_progress", claimedBy: m.id } : t
@@ -105,7 +122,7 @@ export default function Work() {
 
   function propose(e: React.FormEvent) {
     e.preventDefault();
-    if (!requireSeal() || !pTitle.trim()) return;
+    if (!requireCert() || !pTitle.trim()) return;
     const id = "T-" + String(Math.floor(10 + Math.random() * 89));
     persistTasks([
       { id, title: pTitle.trim().slice(0, 80), trade: pTrade, location: pLoc, pay: Number(pPay) || 0, votes: 1, status: "open", claimedBy: "" },
@@ -170,9 +187,9 @@ export default function Work() {
           </p>
 
           <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center rounded-2xl border border-white/10 bg-panel p-4">
-            <label className="text-sm font-semibold whitespace-nowrap">My sealed ID</label>
+            <label className="text-sm font-semibold whitespace-nowrap">My member ID</label>
             <input value={myId} onChange={(e) => setMyId(e.target.value)} placeholder="e.g. AL-0042" className={`${field} flex-1 font-mono uppercase`} />
-            <span className="text-xs text-muted">Voting + claiming need a seal. <a href="/ledger#join" className="underline">Get sealed →</a></span>
+            <span className="text-xs text-muted">Voting needs certification · claiming needs a hall. <a href="/cert" className="underline">Get certified →</a></span>
           </div>
           {gate && <p className="mt-3 rounded-2xl bg-gold/10 border border-gold/30 p-4 text-sm text-ivory/85">{gate}</p>}
 
@@ -250,7 +267,7 @@ export default function Work() {
 
           {/* PROPOSE */}
           <form onSubmit={propose} className="mt-6 rounded-3xl border border-white/10 bg-panel p-7">
-            <h2 className="text-xl font-bold">Propose work worth doing. <span className="text-sm font-normal text-muted">(sealed only)</span></h2>
+            <h2 className="text-xl font-bold">Propose work worth doing. <span className="text-sm font-normal text-muted">(certified only)</span></h2>
             <div className="mt-4 grid sm:grid-cols-2 gap-2">
               <input value={pTitle} onChange={(e) => setPTitle(e.target.value)} placeholder="Task title (e.g. Till Block C shamba)" maxLength={80} className={`${field} sm:col-span-2`} />
               <select value={pTrade} onChange={(e) => setPTrade(e.target.value)} className={`${field} [&>option]:bg-obsidian`}>

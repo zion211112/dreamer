@@ -5,59 +5,56 @@ import { useEffect, useState } from "react";
 import GeoArt from "../../components/GeoArt";
 import {
   CRUCIBLE_QS,
+  HALL_FEE,
   KEYS,
   Member,
   SEED_MEMBERS,
-  TEST_FEE,
   TILL,
   isMpesaCode,
   loadStored,
   saveStored,
   tierFor
 } from "../../lib/ledger";
+import { allMembers, memberByUsername, myUsername } from "../../lib/benben";
 
 function daysLeft(ts: number, waitDays: number): number {
   const due = ts + waitDays * 86400000;
   return Math.max(0, Math.ceil((due - Date.now()) / 86400000));
 }
 
-// The Crucible: pay 50 → 8 questions → scored. Pass enters the halls.
-// Fail stays in the playground until the retry window opens.
+// The hall examination: KES 100 per sitting, 8 questions, scored.
+// Pass (5+) enters ONE hall. Sand and Clay return to the floor —
+// 30 and 14 days. No paid doors anywhere past this point.
 export default function Crucible() {
   const [members, setMembers] = useState<Member[]>(SEED_MEMBERS);
-  const [id, setId] = useState("");
   const [me, setMe] = useState<Member | null>(null);
   const [code, setCode] = useState("");
+  const [sitting, setSitting] = useState(false);
   const [picks, setPicks] = useState<number[]>(Array(CRUCIBLE_QS.length).fill(-1));
   const [result, setResult] = useState<null | { score: number; tier: string; pass: boolean; retryDays: number }>(null);
   const [showWhy, setShowWhy] = useState(false);
   const [msg, setMsg] = useState("");
 
   useEffect(() => {
-    const stored = loadStored<Member>(KEYS.members);
-    if (stored.length > 0) {
-      const customs = stored.filter((m) => !SEED_MEMBERS.some((s) => s.id === m.id));
-      setMembers([...customs, ...SEED_MEMBERS]);
-    }
+    const all = allMembers();
+    setMembers(all);
+    const u = myUsername();
+    if (u) setMe(memberByUsername(all, u));
   }, []);
 
-  function persist(v: Member[]) { setMembers(v); saveStored(KEYS.members, v); }
-
-  function find(e: React.FormEvent) {
-    e.preventDefault();
-    const m = members.find((x) => x.id.toUpperCase() === id.trim().toUpperCase()) || null;
-    setMe(m);
-    setResult(null);
-    setMsg(m ? "" : "No slot with that ID. Claim one on the ledger first.");
+  function persist(v: Member[]) {
+    setMembers(v);
+    saveStored(KEYS.members, v);
   }
 
   function pay(e: React.FormEvent) {
     e.preventDefault();
     if (!me) return;
     if (!isMpesaCode(code)) { setMsg("Code should be 10 letters/numbers, like your M-Pesa SMS shows."); return; }
-    persist(members.map((m) => (m.id === me.id ? { ...m, paid: true } : m)));
-    setMe({ ...me, paid: true });
-    setMsg("Paid. Eight questions. No memorizing — just friction.");
+    persist(members.map((m) => (m.id === me.id ? { ...m, hallPaid: true } : m)));
+    setMe({ ...me, hallPaid: true });
+    setSitting(true);
+    setMsg("");
   }
 
   function submit(e: React.FormEvent) {
@@ -75,6 +72,7 @@ export default function Crucible() {
     ));
     setMe({ ...me, testScore: score, testTs: now, tier: t.tier, verified: t.pass ? true : me.verified });
     setResult({ score, ...t });
+    setSitting(false);
     setMsg("");
   }
 
@@ -87,48 +85,46 @@ export default function Crucible() {
     ? { days: daysLeft(me.testTs, tierFor(me.testScore).retryDays), tier: tierFor(me.testScore).tier }
     : null;
 
-  const field = "rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-river";
+  const field = "rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-gold";
 
   return (
     <main className="bg-obsidian text-ivory">
       <div className="relative overflow-hidden">
         <GeoArt variant="grid" className="pointer-events-none absolute inset-0 h-full w-full text-ivory opacity-[0.035]" />
         <div className="relative mx-auto max-w-2xl px-6 py-14">
-          <p className="text-xs font-bold tracking-widest text-river">THE CRUCIBLE · {TEST_FEE} TO ENTER</p>
-          <h1 className="mt-3 text-4xl md:text-5xl font-extrabold tracking-tight">Eight questions. Zero memorization.</h1>
-          <p className="mt-4 text-muted leading-relaxed">Pay {TEST_FEE}, answer eight, get scored. Pass (5+) enters the halls. Fail stays in the playground — Sand returns in 30 days, Clay in 14.</p>
+          <p className="text-xs font-bold tracking-widest text-gold">THE HALL EXAMINATION · {HALL_FEE} PER SITTING</p>
+          <h1 className="mt-3 font-display text-4xl md:text-5xl font-semibold tracking-tight">Eight questions. Zero memorization.</h1>
+          <p className="mt-4 text-muted leading-relaxed">
+            Signed in as <span className="font-mono text-gold">@{myUsername() || "…"}</span>.
+            Pass (5+) enters one hall. Sand returns in 30 days, Clay in 14 — each sitting costs {HALL_FEE} again.
+          </p>
 
-          {!me && (
-            <form onSubmit={find} className="mt-8 rounded-3xl border border-white/10 bg-panel p-7">
-              <label className="text-sm font-bold">Your ledger ID</label>
-              <div className="mt-2 flex gap-2">
-                <input value={id} onChange={(e) => setId(e.target.value.toUpperCase())} placeholder="e.g. AL-0042" maxLength={10} className={`${field} flex-1 font-mono uppercase`} />
-                <button className="rounded-2xl bg-ivory px-6 text-sm font-semibold text-black hover:bg-river hover:text-white transition">Find me →</button>
-              </div>
-              {msg && <p className="mt-3 text-sm text-muted">{msg}</p>}
-              <p className="mt-3 text-xs text-muted">No ID? <Link href="/ledger#join" className="underline">Claim a slot →</Link></p>
-            </form>
-          )}
-
-          {me && !me.paid && (
-            <form onSubmit={pay} className="mt-8 rounded-3xl border border-white/10 bg-panel p-7">
-              <p className="text-sm"><strong>{me.id}</strong> found, unpaid. Send {TEST_FEE} to Till {TILL}:</p>
-              <div className="mt-3 flex gap-2">
-                <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="M-Pesa code (10 characters)" maxLength={10} className={`${field} flex-1 font-mono uppercase`} />
-                <button className="rounded-2xl bg-river px-6 text-sm font-semibold text-white hover:bg-ivory hover:text-black transition">Confirm →</button>
-              </div>
-              {msg && <p className="mt-3 text-sm text-muted">{msg}</p>}
-            </form>
-          )}
-
-          {me && me.paid && !me.verified && blocked && waitInfo && (
-            <div className="mt-8 rounded-3xl border border-gold/30 bg-gold/10 p-7">
-              <p className="font-bold text-lg">{me.id} — {waitInfo.tier}. Not yet.</p>
-              <p className="mt-2 text-sm text-ivory/85">The crucible keeps its calendar. Return in <strong>{waitInfo.days} day{waitInfo.days === 1 ? "" : "s"}</strong>. The playground is open meanwhile — browse, comment, sharpen.</p>
+          {me && !(me.paid && me.verified) && (
+            <div className="mt-8 rounded-3xl border border-white/10 bg-panel p-7 text-center">
+              <p className="text-muted">The examination is for certified members. Seal your name first — 50 bob, no test.</p>
+              <Link href="/cert" className="mt-4 inline-block rounded-full bg-gold px-8 py-3 text-sm font-bold text-black hover:bg-ivory transition">Get certified →</Link>
             </div>
           )}
 
-          {me && me.paid && !me.verified && !blocked && !result && (
+          {me && me.paid && me.verified && !sitting && !result && !(blocked) && (
+            <form onSubmit={pay} className="mt-8 rounded-3xl border border-white/10 bg-panel p-7">
+              <p className="text-sm">Sitting fee {HALL_FEE} to Till {TILL}:</p>
+              <div className="mt-3 flex gap-2">
+                <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="M-Pesa code (10 characters)" maxLength={10} className={`${field} flex-1 font-mono uppercase`} />
+                <button className="rounded-2xl bg-gold px-6 text-sm font-bold text-black hover:bg-ivory transition">Begin →</button>
+              </div>
+              {msg && <p className="mt-3 text-sm text-red-400">{msg}</p>}
+            </form>
+          )}
+
+          {me && blocked && waitInfo && (
+            <div className="mt-8 rounded-3xl border border-gold/30 bg-gold/10 p-7">
+              <p className="font-bold text-lg">@{me.username} — {waitInfo.tier}. Not yet.</p>
+              <p className="mt-2 text-sm text-ivory/85">The crucible keeps its calendar. Return in <strong>{waitInfo.days} day{waitInfo.days === 1 ? "" : "s"}</strong> with another {HALL_FEE}. The floor is open meanwhile.</p>
+            </div>
+          )}
+
+          {sitting && (
             <form onSubmit={submit} className="mt-8 space-y-4">
               {CRUCIBLE_QS.map((qs, i) => (
                 <div key={i} className="rounded-3xl border border-white/10 bg-panel p-6">
@@ -139,7 +135,7 @@ export default function Crucible() {
                         type="button"
                         key={j}
                         onClick={() => setPicks(picks.map((p, k) => (k === i ? j : p)))}
-                        className={`rounded-2xl border px-4 py-3 text-left text-sm transition ${picks[i] === j ? "border-river bg-river/15" : "border-white/10 bg-obsidian hover:border-ivory"}`}
+                        className={`rounded-2xl border px-4 py-3 text-left text-sm transition ${picks[i] === j ? "border-gold bg-gold/15" : "border-white/10 bg-obsidian hover:border-ivory"}`}
                       >
                         {op}
                       </button>
@@ -147,22 +143,22 @@ export default function Crucible() {
                   </div>
                 </div>
               ))}
-              {msg && <p className="text-sm text-muted">{msg}</p>}
-              <button className="w-full rounded-full bg-river py-4 text-sm font-bold text-white hover:bg-ivory hover:text-black transition">Score me →</button>
+              {msg && <p className="text-sm text-red-400">{msg}</p>}
+              <button className="w-full rounded-full bg-gold py-4 text-sm font-bold text-black hover:bg-ivory transition" style={{ height: 55 }}>Score me →</button>
             </form>
           )}
 
           {me && result && (
-            <div className={`mt-8 rounded-3xl border p-8 text-center ${result.pass ? "border-river/40 bg-river/10" : "border-gold/30 bg-gold/10"}`}>
+            <div className={`mt-8 rounded-3xl border p-8 text-center ${result.pass ? "border-gold/40 bg-gold/10" : "border-white/10 bg-panel"}`}>
               <div className="font-mono text-5xl font-extrabold">{result.score}/8</div>
-              <div className="mt-2 text-2xl font-extrabold">{result.tier}</div>
+              <div className="mt-2 font-display text-2xl font-semibold">{result.tier}</div>
               {result.pass ? (
                 <>
-                  <p className="mt-3 text-muted">Pass. The halls open.</p>
-                  <Link href="/halls" className="mt-5 inline-block rounded-full bg-river px-8 py-3.5 text-sm font-bold text-white hover:bg-ivory hover:text-black transition">Enter the halls →</Link>
+                  <p className="mt-3 text-muted">Pass. One hall opens — choose it well, it keeps you.</p>
+                  <Link href="/halls" className="mt-5 inline-block rounded-full bg-gold px-8 py-3.5 text-sm font-bold text-black hover:bg-ivory transition">Choose your hall →</Link>
                 </>
               ) : (
-                <p className="mt-3 text-muted">Fail. Back to the playground — {result.retryDays} days. {result.tier === "Sand" ? "Unformed is not an insult. It is a starting material." : "Moldable beats brittle. Come back sharper."}</p>
+                <p className="mt-3 text-muted">Fail. Back to the floor — {result.retryDays} days. {result.tier === "Sand" ? "Unformed is not an insult. It is a starting material." : "Moldable beats brittle. Come back sharper."}</p>
               )}
               <button onClick={() => setShowWhy(!showWhy)} className="mt-4 text-sm text-muted underline">
                 {showWhy ? "Hide the workings" : "Show the workings"}
@@ -177,16 +173,6 @@ export default function Crucible() {
                   ))}
                 </div>
               )}
-            </div>
-          )}
-
-          {me && me.verified && !result && (
-            <div className="mt-8 rounded-3xl border border-river/40 bg-river/10 p-7 text-center">
-              <p className="font-bold text-lg text-emerald-300">{me.id} is sealed{me.tier ? ` · ${me.tier}` : ""}.</p>
-              <div className="mt-4 flex justify-center gap-3 text-sm">
-                <Link href="/halls" className="rounded-full bg-river px-6 py-2.5 font-semibold text-white hover:bg-ivory hover:text-black transition">Halls →</Link>
-                <Link href="/work" className="rounded-full border border-white/25 px-6 py-2.5 font-semibold hover:border-ivory transition">Work →</Link>
-              </div>
             </div>
           )}
         </div>

@@ -114,8 +114,8 @@ export default function Home() {
           <div>
             <p className="text-xs font-bold tracking-widest text-river">1 · FOR THE YOUTH: PROOF, NOT PROMISES</p>
             <ul className="mt-4 space-y-1.5 text-[15px] text-ivory/85">
-              <li>· Take the test and break through into the subterranean halls.</li>
-              <li>· Your capability verified on a ledger.</li>
+              <li>· Playground&apos;s free: BenBen, builds, votes with certification.</li>
+              <li>· 50 bob seals your name on a certificate. 100 + the test opens one hall.</li>
             </ul>
             <Link href="/ledger#join" className="mt-4 inline-block text-sm font-bold text-emerald-300 hover:text-ivory transition">join now →</Link>
           </div>

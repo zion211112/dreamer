@@ -151,3 +151,18 @@ Teacher lighter. Parent calmer. School safer. Government clearer. Youth richer. 
 6. **Visitors get landing + contacts only.** Everything else needs phone OTP identity. Playground (browse + comment) vs sealed (vote, claim, jobs, halls, vault).
 7. **Join = phone modal → slot → test → halls.** JOIN THE LEDGER pops signup/signin (phone OTP), registers, sends to the crucible. Sealed members pass straight to dashboard.
 8. **The true roll lives in BenBen's paid vault.** Public ledger shows counts + join + checker only; browsing names needs registered + paid. Kemet-OS is the secret backgate: research shelf + the Source (manifesto) behind the sealed vault. Zep-Tepi and Kemet shelf need a claimed slot.
+
+---
+
+## AMENDMENT 9 — BENBEN v3: HALL 0 (binding, supersedes 4/6/7/8 where they conflict)
+
+**Identity: NO ANON.** Signup = phone OTP, then the user sets a username or takes the yard's suggestion (`Mgeni_4821`-style defaults). Phones are checked at the door and **never rendered anywhere** — no public directory, no bulk surface, WhatsApp revealed only to accepted requesters. `robots.txt` bars crawlers from everything but `/` and `/contact`. Server stage adds real rate limits; nothing faked meanwhile.
+
+**The ladder (localStorage now):**
+- **Visitor (free):** read everything, comment, post 72h builds. No vote.
+- **Certified — KES 50, no test:** voting, 7-day posts, silent hall nominations, downloadable canvas certificate (obsidian, gold, 12-cell geometry, Playfair name, mono hash, *"Carried, not crowned."*).
+- **Hall — KES 100 + 8Q exam:** pass 5/8 → tiers → **one hall**; claim Zep-Tepi tasks; bank-facing weight. Fail → playground, Sand 30d / Clay 14d, retest costs 100 again.
+
+**BenBen = the floor.** Every post is a build: 12 domains × 5 types (NEED/OFFER/SOLUTION/FAILURE/QUESTION) × needs checklist. Velocity-ranked (`votes6h/hours × recency`), tier weight always 1.0, ties shuffled per load, 3-per-domain-per-20 cap. FORK comments are the only currency. Silent nominations: certified+ nominate to a hall, 3 hall yes-votes invite, poster never sees rejection. Cold Shelf (`/benben/shelf`) searchable, never browsable. Your slot (`/benben/me`): private stats, yearly rename, upgrade CTAs. 8 seed builds set the standard. Routes: `/benben`, `/benben/new`, `/benben/post/[id]`, `/benben/shelf`, `/benben/me`. WhatsApp reveal: request → poster accepts in slot → shown to accepter alone.
+
+**Also shipped:** Playfair Display / Inter / JetBrains Mono; gold `#d4af37`; Fibonacci spacing `fb1–fb6`; public `/verify/[hash]` record check (same-browser full, network staged).

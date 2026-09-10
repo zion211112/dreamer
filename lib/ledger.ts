@@ -3,14 +3,18 @@ import { sha256 } from "./hash";
 export type Member = {
   id: string;
   name: string;
+  username: string;
   occupation: string;
   location: string;
   skills: string[];
-  paid: boolean;
-  verified: boolean;
+  paid: boolean; // KES 50 certificate — unlocks voting
+  verified: boolean; // certified: hash sealed, can vote + propose
+  hallPaid: boolean; // KES 100 hall exam fee
   tier: string | null;
   testScore: number | null;
   testTs: number;
+  hall: string | null; // the one hall entered
+  certNo: string | null;
   answers: string[];
   hash: string;
 };
@@ -50,9 +54,36 @@ export const OCCUPATIONS: string[] = [
 export const LOCATIONS: string[] = ["Mwea", "Kagio", "Kerugoya", "Embu", "Sagana", "Mugumo"];
 
 export const TILL = "555 019";
-export const TEST_FEE = "KES 50";
+export const CERT_FEE = "KES 50";
+export const HALL_FEE = "KES 100";
 export const TEACHER_FEE = "KES 250/month";
 export const SCHOOL_FEE = "from KES 3,000/month";
+
+// Default usernames for those who'd rather pick from the yard than invent.
+// Usernames are public. Phone numbers never leave the OTP gate.
+export const DEFAULT_NAMES: string[] = [
+  "Mgeni", "Jirani", "Mkulima", "Fundi", "Mwalimu",
+  "Mvuvi", "Mchuuzi", "Dereva", "Kijana", "Mama",
+  "Jemedari", "Mshamba", "Dalali", "Seremala", "Mhunzi"
+];
+
+export function suggestUsername(taken: string[]): string {
+  const lower = taken.map((t) => t.toLowerCase());
+  for (let i = 0; i < 40; i++) {
+    const cand = `${DEFAULT_NAMES[Math.floor(Math.random() * DEFAULT_NAMES.length)]}_${Math.floor(1000 + Math.random() * 9000)}`;
+    if (!lower.includes(cand.toLowerCase())) return cand;
+  }
+  return `Mgeni_${Date.now().toString(36).toUpperCase()}`;
+}
+
+export function validUsername(s: string, taken: string[]): string | null {
+  const v = s.trim().replace(/^@/, "");
+  if (v.length < 3) return "At least 3 characters. Even the yard needs a name with weight.";
+  if (v.length > 20) return "20 characters max. Say it short.";
+  if (!/^[A-Za-z0-9_]+$/.test(v)) return "Letters, numbers, underscore only.";
+  if (taken.some((t) => t.toLowerCase() === v.toLowerCase())) return "Taken on this roll. Pick another.";
+  return null;
+}
 
 export const SUBSCRIBED_SCHOOLS: string[] = [
   "Ngurubani Primary",
@@ -157,27 +188,29 @@ export function seal(m: Pick<Member, "id" | "name" | "occupation" | "location">)
 function member(
   id: string,
   name: string,
+  username: string,
   occupation: string,
   location: string,
   skills: string[],
   paid: boolean,
   verified: boolean,
-  tier: string | null = null
+  tier: string | null = null,
+  hallPaid = false
 ): Member {
   const base = { id, name, occupation, location };
-  return { ...base, skills, paid, verified, tier, testScore: verified ? 6 : null, testTs: 0, answers: [], hash: seal(base) };
+  return { ...base, username, skills, paid, verified, hallPaid, tier, testScore: verified ? 6 : null, testTs: 0, hall: null, certNo: null, answers: [], hash: seal(base) };
 }
 
 // The founding roll. Eight handles. Everywhere.
 export const SEED_MEMBERS: Member[] = [
-  member("AL-0042", "@Shemsu_Node", "Maths Tutor", "Mwea", ["KCSE Maths", "Revision drills"], true, true, "Stone"),
-  member("AL-0137", "@ZepTepi_Zero", "Solar Assistant", "Kagio", ["Lantern assembly", "Maintenance"], true, true, "Stone"),
-  member("AL-0201", "@KeeperOfRostau", "Data Enumerator", "Sagana", ["Surveys", "Entry"], true, true, "Stone"),
-  member("AL-0311", "@VrilToSekhem", "Masonry Assistant", "Embu", ["Block work", "Repairs"], false, false),
-  member("AL-0420", "@Thoth_Architect", "Animator", "Mwea", ["Explainer clips", "Posters"], true, true, "Stone"),
-  member("AL-0488", "@BenBen_Codex", "Tailor", "Kerugoya", ["Uniforms", "Repairs"], true, true, "Stone"),
-  member("AL-0513", "@Iunu_Sunset", "Maths Tutor", "Kerugoya", ["KCSE Physics", "Drills"], false, false),
-  member("AL-0777", "@The_Osirion", "Solar Assistant", "Mwea", ["Installation", "Wiring"], false, false)
+  member("AL-0042", "@Shemsu_Node", "Shemsu_Node", "Maths Tutor", "Mwea", ["KCSE Maths", "Revision drills"], true, true, "Stone", true),
+  member("AL-0137", "@ZepTepi_Zero", "ZepTepi_Zero", "Solar Assistant", "Kagio", ["Lantern assembly", "Maintenance"], true, true, "Stone", true),
+  member("AL-0201", "@KeeperOfRostau", "KeeperOfRostau", "Data Enumerator", "Sagana", ["Surveys", "Entry"], true, true, "Stone", true),
+  member("AL-0311", "@VrilToSekhem", "VrilToSekhem", "Masonry Assistant", "Embu", ["Block work", "Repairs"], false, false),
+  member("AL-0420", "@Thoth_Architect", "Thoth_Architect", "Animator", "Mwea", ["Explainer clips", "Posters"], true, true, "Stone", true),
+  member("AL-0488", "@BenBen_Codex", "BenBen_Codex", "Tailor", "Kerugoya", ["Uniforms", "Repairs"], true, true, "Stone", true),
+  member("AL-0513", "@Iunu_Sunset", "Iunu_Sunset", "Maths Tutor", "Kerugoya", ["KCSE Physics", "Drills"], false, false),
+  member("AL-0777", "@The_Osirion", "The_Osirion", "Solar Assistant", "Mwea", ["Installation", "Wiring"], false, false)
 ];
 
 export const SEED_TASKS: Task[] = [
