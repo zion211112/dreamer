@@ -7,8 +7,11 @@ const config = {
   theme: {
     extend: {
       colors: {
+        obsidian: "#08080A",
+        panel: "#141417",
         ink: "#111310",
-        muted: "#6B7280",
+        ivory: "#F2EDE0",
+        muted: "#9CA3AF",
         paper: "#FFFFFF",
         cream: "#FAF7F0",
         river: "#0E7C5B",
@@ -19,7 +22,6 @@ const config = {
         body: ["Inter", "system-ui", "-apple-system", "sans-serif"]
       },
       spacing: {
-        // φ-scaled whitespace: 1, 1.618, 2.618
         phi: "1.618rem",
         philg: "2.618rem",
         phixl: "4.236rem"
