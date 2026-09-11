@@ -99,7 +99,7 @@ export default function Dashboard() {
               <div className="rounded-3xl border border-white/10 bg-panel p-7">
                 <div className="text-xs font-bold tracking-widest text-muted">TASKS YOU CLAIMED ({claimed.length})</div>
                 {claimed.length === 0 ? (
-                  <p className="mt-3 text-sm text-muted">None yet. <Link href="/work" className="underline">Zep-Tepi is waiting →</Link></p>
+                  <p className="mt-3 text-sm text-muted">None yet. <Link href="/benben/jobs" className="underline">The jobs board is waiting →</Link></p>
                 ) : (
                   <div className="mt-3 space-y-2 text-sm">
                     {claimed.map((t) => (

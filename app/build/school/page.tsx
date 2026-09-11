@@ -61,7 +61,7 @@ export default function School({ searchParams }: { searchParams: { type?: string
             <span className="font-bold">On the list already: </span>
             <span className="text-muted">{SUBSCRIBED_SCHOOLS.join(" · ")}</span>
             <div className="mt-3">
-              <Link href="/work#hire" className="font-semibold text-emerald-300 hover:text-ivory transition">Post a need →</Link>
+              <Link href="/benben/jobs#hire" className="font-semibold text-emerald-300 hover:text-ivory transition">Post a need →</Link>
             </div>
           </div>
         </div>

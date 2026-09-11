@@ -11,6 +11,7 @@ import {
   suggestUsername,
   validUsername
 } from "../lib/ledger";
+import { RESERVED_HANDLES } from "../lib/halls";
 
 const PUBLIC_PATHS = ["/", "/contact"];
 const PUBLIC_PREFIXES = ["/verify/"];
@@ -50,7 +51,7 @@ function takenUsernames(): string[] {
       if (p && p.username) names.push(p.username);
     }
   } catch { /* the yard is quiet */ }
-  return names;
+  return [...names, ...RESERVED_HANDLES];
 }
 
 function AuthGate({ children }: { children: React.ReactNode }) {

@@ -7,6 +7,18 @@ export type Hall = {
   funds: string;
 };
 
+// Canonical Atlantean-hybrid guardian identities. Egyptian names are
+// banner masks only and stay claimable. These seven never are.
+export const RESERVED_HANDLES: string[] = [
+  "Thoth_Atlas",
+  "Poseidon_Ptah",
+  "Nereus_Imhotep",
+  "Triton_Ra",
+  "Oceanus_Sekhmet",
+  "Proteus_Osiris",
+  "Amphitrite_Thoth"
+];
+
 export const HALLS: Hall[] = [
   { n: "I", name: "Hall of Analysts", discipline: "STEM / Logic", admin: "@Thoth_Atlas", gate: "An impossible math paradox. Bring a pencil.", funds: "Research micro-grants ride on cited proofs." },
   { n: "II", name: "Hall of Architects", discipline: "Systems / Design", admin: "@Poseidon_Ptah", gate: "A structural test across space and time.", funds: "Design retainers from subscribed schools." },

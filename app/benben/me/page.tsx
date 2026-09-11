@@ -13,6 +13,7 @@ import {
   tierOf
 } from "../../../lib/benben";
 import { suggestUsername, validUsername } from "../../../lib/ledger";
+import { RESERVED_HANDLES } from "../../../lib/halls";
 
 // Your Slot: private stats. No public profile. No followers. No about-me.
 // Just your numbers, your upgrades, and one rename a year.
@@ -23,6 +24,7 @@ export default function Slot() {
   const [certAt, setCertAt] = useState<string | null>(null);
   const [newName, setNewName] = useState("");
   const [msg, setMsg] = useState("");
+  const [claimsDone, setClaimsDone] = useState(0);
 
   useEffect(() => {
     const u = myUsername() || "";
@@ -35,6 +37,10 @@ export default function Slot() {
     setBuilds(all);
     const members = allMembers();
     setTier(tierOf(u || null, (x) => memberByUsername(members, x)));
+    try {
+      const zp = window.localStorage.getItem("aptlabs-zep-profile-v1");
+      if (zp) setClaimsDone(JSON.parse(zp).claimsCompleted || 0);
+    } catch { /* uncounted */ }
     const m = memberByUsername(members, u);
     if (m && m.paid) {
       try {
@@ -62,7 +68,7 @@ export default function Slot() {
         setMsg("One rename a year. Yours is spent — the yard remembers.");
         return;
       }
-      const taken = allMembers().map((m) => m.username);
+      const taken = [...allMembers().map((m) => m.username), ...RESERVED_HANDLES];
       builds.forEach((b) => { if (!taken.includes(b.by)) taken.push(b.by); });
       const bad = validUsername(newName, taken.filter((t) => t.toLowerCase() !== me.toLowerCase()));
       if (bad) { setMsg(bad); return; }
@@ -101,7 +107,8 @@ export default function Slot() {
             <div className="flex justify-between border-b border-white/10 pb-2"><span className="text-muted">POSTS</span><span>{active} active · {mine.length - active} on shelf</span></div>
             <div className="flex justify-between border-b border-white/10 pb-2"><span className="text-muted">FORKS RECEIVED</span><span>{forksGot}</span></div>
             <div className="flex justify-between border-b border-white/10 pb-2"><span className="text-muted">FORKS GIVEN</span><span>{forksGiven}</span></div>
-            <div className="flex justify-between"><span className="text-muted">VOTES CAST</span><span>{myVotes}</span></div>
+            <div className="flex justify-between border-b border-white/10 pb-2"><span className="text-muted">VOTES CAST</span><span>{myVotes}</span></div>
+            <div className="flex justify-between"><span className="text-muted">CLAIMS COMPLETED</span><span>{claimsDone}</span></div>
           </div>
 
           <div className="mt-6 grid gap-2">

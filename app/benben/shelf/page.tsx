@@ -3,11 +3,14 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Build, DOMAINS, SEED_BUILDS, TYPES, loadBuilds } from "../../../lib/benben";
+import { PAPERS } from "../../../lib/research";
+import { HallClaim, loadClaims } from "../../../lib/zeptepi";
 
 // The Cold Shelf: nothing is deleted, nothing is browsed.
 // You come with a question, you find the answer, you leave.
 export default function Shelf() {
   const [builds, setBuilds] = useState<Build[]>([]);
+  const [archived, setArchived] = useState<HallClaim[]>([]);
   const [q, setQ] = useState("");
   const [domain, setDomain] = useState("All");
   const [type, setType] = useState("All");
@@ -19,6 +22,7 @@ export default function Shelf() {
     );
     const ids = new Set(stored.map((b) => b.id));
     setBuilds([...stored, ...SEED_BUILDS.filter((s) => !ids.has(s.id))]);
+    setArchived(loadClaims().filter((c) => c.status === "archived"));
   }, []);
 
   const now = Date.now();
@@ -67,6 +71,43 @@ export default function Shelf() {
             </Link>
           ))}
           {results.length === 0 && <p className="py-8 text-center font-mono text-sm text-dim">Nothing cold matches. The floor is still warm — <Link href="/benben" className="underline">go look</Link>.</p>}
+        </div>
+
+        {archived.filter((c) => !q.trim() || (c.title + " " + c.body).toLowerCase().includes(q.toLowerCase())).length > 0 && (
+          <div className="mt-8">
+            <h2 className="font-mono text-[11px] font-bold uppercase tracking-widest text-dim">Completed crew claims · from Hall 7</h2>
+            <div className="mt-3 space-y-1">
+              {archived
+                .filter((c) => !q.trim() || (c.title + " " + c.body).toLowerCase().includes(q.toLowerCase()))
+                .map((c) => (
+                  <div key={c.id} className="rounded-xl px-3 py-2.5">
+                    <span className="font-mono text-xs text-dim">[HALL-7] </span>
+                    <span className="text-[15px] text-ivory/90">{c.title}</span>
+                    <span className="font-mono text-xs text-dim"> · crew {c.crew.join(", ")}</span>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+
+        <div className="mt-12 border-t border-white/10 pt-8">
+          <h2 className="font-display text-2xl font-semibold">Research shelf.</h2>
+          <p className="mt-1 text-sm text-muted">Short papers, readable by a Form 2 student and a professor.</p>
+          <div className="mt-4 space-y-3">
+            {PAPERS.filter((p) => {
+              if (!q.trim()) return true;
+              return (p.title + " " + p.abstract).toLowerCase().includes(q.toLowerCase());
+            }).map((p) => (
+              <article key={p.id} className="rounded-2xl border border-white/10 bg-panel p-5">
+                <div className="font-mono text-xs text-dim">{p.id} · {p.meta}</div>
+                <h3 className="mt-1 font-bold">{p.title}</h3>
+                <p className="mt-1 text-sm text-muted">{p.abstract}</p>
+                <a href="mailto:partners@apt-labs.ke?subject=Paper%20request" className="mt-3 inline-block font-mono text-xs text-gold hover:underline">
+                  Request full text →
+                </a>
+              </article>
+            ))}
+          </div>
         </div>
       </div>
     </main>

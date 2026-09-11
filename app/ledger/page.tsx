@@ -147,7 +147,7 @@ export default function Ledger() {
 
             {mine && mine.hall && (
               <div className="mt-5 rounded-2xl bg-gold/10 border border-gold/30 p-6 text-sm font-semibold text-gold">
-                {mine.id} · {mine.hall}. <a href="/work" className="underline">Take work →</a> · <a href="/dashboard" className="underline">Dashboard →</a>
+                {mine.id} · {mine.hall}. <a href="/benben/jobs" className="underline">Take work →</a> · <a href="/dashboard" className="underline">Dashboard →</a>
               </div>
             )}
 

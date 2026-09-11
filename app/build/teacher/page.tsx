@@ -37,7 +37,7 @@ export default function Teacher() {
         <div className="relative mx-auto max-w-3xl px-6 py-14">
           <p className="text-xs font-bold tracking-widest text-river">TEACHER DOOR · {TEACHER_FEE}</p>
           <h1 className="mt-3 text-4xl md:text-5xl font-extrabold tracking-tight">Tell us your class. We do the paperwork.</h1>
-          <p className="mt-4 text-muted leading-relaxed">You teach. The assistant brings animations, exams and planning from the Zep-Tepi shelf — made by the community, matched to your subjects.</p>
+          <p className="mt-4 text-muted leading-relaxed">You teach. The assistant brings animations, exams and planning from the community shelf — made by the community, matched to your subjects.</p>
 
           <form onSubmit={subscribe} className="mt-8 rounded-3xl border border-white/10 bg-panel p-7">
             <input value={school} onChange={(e) => setSchool(e.target.value)} placeholder="School name" maxLength={60} className={`${field} w-full`} />

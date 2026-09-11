@@ -102,6 +102,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="mt-4 text-xs text-muted">Schools + treasury demo. Individuals, builds live.</p>
+              <Link href="/zep-tepi/gate" className="mt-3 inline-block font-mono text-xs text-gold hover:text-ivory transition">Zep Tepi →</Link>
             </div>
           </div>
         </div>
@@ -126,8 +127,8 @@ export default function Home() {
               If you spent last weekend marking two hundred identical scripts wondering why you didn&apos;t become a charcoal burner instead, we see you.
             </p>
             <ul className="mt-4 space-y-1.5 text-[15px] text-ivory/85">
-              <li>· Two hundred and fifty bob a month.</li>
-              <li>· Link-drop your tests, let the machine auto-marking bleed for you, and map every student&apos;s hidden intellectual weakness before the holiday bell rings.</li>
+              <li>· 250 bob. You teach. The code marks.</li>
+              <li>· Drop a test link. The machine marks it. You get the weakness map before the bell.</li>
               <li>· You teach. The code does the suffering.</li>
             </ul>
             <Link href="/build/teacher" className="mt-4 inline-block text-sm font-bold text-emerald-300 hover:text-ivory transition">open the teacher door →</Link>
@@ -140,7 +141,7 @@ export default function Home() {
             </p>
             <ul className="mt-4 space-y-1.5 text-[15px] text-ivory/85">
               <li>· Bring your campus. We bring the absolute operational spine.</li>
-              <li>· One annual anchor. Instant digital roster control, science-backed retention timetables, automated M-Pesa fee tracking, and one-click inspection modes that make auditors pack up and leave.</li>
+              <li>· One payment. The whole spine. Instant digital roster control, science-backed retention timetables, automated M-Pesa fee tracking, and one-click inspection modes that make auditors pack up and leave.</li>
             </ul>
             <button onClick={() => setDoors(true)} className="mt-4 inline-block text-sm font-bold text-emerald-300 hover:text-ivory transition">open your door →</button>
           </div>
@@ -180,7 +181,7 @@ export default function Home() {
             <JoinLink className="mt-2 block text-left text-xl font-bold hover:text-emerald-300 transition">Join the ledger →</JoinLink>
             <p className="mt-1 text-sm text-muted">Claim, test, seal. Then work.</p>
           </div>
-          <Link href="/work" className="rounded-3xl border border-white/10 bg-panel p-8 hover:border-river transition">
+          <Link href="/benben/jobs" className="rounded-3xl border border-white/10 bg-panel p-8 hover:border-river transition">
             <div className="text-xs font-bold tracking-widest text-river">EVERYONE</div>
             <div className="mt-2 text-xl font-bold">See the work →</div>
             <p className="mt-1 text-sm text-muted">Comment freely. Vote sealed.</p>

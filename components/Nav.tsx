@@ -4,8 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 const LINKS: [string, string][] = [
-  ["/work", "Zep-Tepi"],
-  ["/kemet", "Kemet-OS"],
+  ["/benben/jobs", "Jobs"],
   ["/benben", "Ben-Ben"]
 ];
 

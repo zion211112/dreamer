@@ -107,7 +107,8 @@ export default function BenBen() {
     <main className="bg-obsidian text-ivory">
       <div className="relative overflow-hidden">
         <GeoArt variant="grid" className="pointer-events-none absolute inset-0 h-full w-full text-ivory opacity-[0.035]" />
-        <div className="relative mx-auto max-w-3xl px-6 py-14" style={{ width: "100%" }}>
+        <div className="relative mx-auto max-w-5xl px-6 py-14 lg:grid lg:grid-cols-[1fr_280px] lg:gap-8 lg:items-start" style={{ width: "100%" }}>
+        <div>
           <p className="text-xs font-bold tracking-widest text-river">BEN-BEN · HALL 0 · THE FLOOR</p>
           <h1 className="mt-3 font-display text-4xl md:text-5xl font-semibold tracking-tight">Every post is a build.</h1>
           <p className="mt-3 max-w-2xl text-muted leading-relaxed">
@@ -158,6 +159,16 @@ export default function BenBen() {
           <p className="mt-8 text-center font-mono text-xs text-dim">
             Velocity-ranked. No karma. Nothing deleted — old builds rest on the <Link href="/benben/shelf" className="underline">cold shelf</Link>.
           </p>
+        </div>
+        <aside className="mt-8 lg:mt-0 lg:sticky lg:top-24">
+          <div className="rounded-3xl border border-white/10 bg-panel p-6">
+            <div className="font-mono text-xs font-bold tracking-[0.2em] text-muted">ZEP TEPI</div>
+            <p className="mt-2 text-sm text-muted">Not for everyone.</p>
+            <Link href="/zep-tepi/gate" className="mt-4 block text-center rounded-full border border-gold/50 px-5 py-2.5 text-sm font-bold text-gold hover:bg-gold hover:text-black transition">
+              Enter the gate →
+            </Link>
+          </div>
+        </aside>
         </div>
       </div>
 

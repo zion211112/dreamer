@@ -14,6 +14,7 @@ import {
   suggestUsername,
   validUsername
 } from "../lib/ledger";
+import { RESERVED_HANDLES } from "../lib/halls";
 
 // JOIN THE LEDGER, one press: phone → username → slot → playground.
 // No test at the door. Certification (50) and halls (100) come later,
@@ -53,7 +54,7 @@ export default function JoinLink({
         if (p && p.username) names.push(p.username);
       }
     } catch { /* quiet yard */ }
-    return names;
+    return [...names, ...RESERVED_HANDLES];
   }
 
   function send(e: React.FormEvent) {

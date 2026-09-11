@@ -85,7 +85,7 @@ No alternatives. No competing designs. Portico → phone → BenBen → seal 100
 
 ---
 
-## DUAL ENGINE: INSTITUTIONAL CORE (KemetOS CatalytIQ Apt-labs)
+## DUAL ENGINE: INSTITUTIONAL CORE (Apt-labs)
 
 - Schools don't buy software — they buy operational sovereignty. **100,000 KES/year** master anchor unlocks everything for teachers + students. Zero individual teacher fees.
 
@@ -150,7 +150,7 @@ Teacher lighter. Parent calmer. School safer. Government clearer. Youth richer. 
 5. **No Void.** The chamber is `/ZION`: Source + raw ledger only. Nothing is kept there.
 6. **Visitors get landing + contacts only.** Everything else needs phone OTP identity. Playground (browse + comment) vs sealed (vote, claim, jobs, halls, vault).
 7. **Join = phone modal → slot → test → halls.** JOIN THE LEDGER pops signup/signin (phone OTP), registers, sends to the crucible. Sealed members pass straight to dashboard.
-8. **The true roll lives in BenBen's paid vault.** Public ledger shows counts + join + checker only; browsing names needs registered + paid. Kemet-OS is the secret backgate: research shelf + the Source (manifesto) behind the sealed vault. Zep-Tepi and Kemet shelf need a claimed slot.
+8. **The true roll lives in BenBen's paid vault.** Public ledger shows counts + join + checker only; browsing names needs registered + paid. Zep-Tepi Forest is the gated deep layer; the jobs board lives at `/benben/jobs` and needs a claimed slot. [Superseded in part by Amendment 10: Kemet-OS branch deleted.]
 
 ---
 
@@ -166,3 +166,17 @@ Teacher lighter. Parent calmer. School safer. Government clearer. Youth richer. 
 **BenBen = the floor.** Every post is a build: 12 domains × 5 types (NEED/OFFER/SOLUTION/FAILURE/QUESTION) × needs checklist. Velocity-ranked (`votes6h/hours × recency`), tier weight always 1.0, ties shuffled per load, 3-per-domain-per-20 cap. FORK comments are the only currency. Silent nominations: certified+ nominate to a hall, 3 hall yes-votes invite, poster never sees rejection. Cold Shelf (`/benben/shelf`) searchable, never browsable. Your slot (`/benben/me`): private stats, yearly rename, upgrade CTAs. 8 seed builds set the standard. Routes: `/benben`, `/benben/new`, `/benben/post/[id]`, `/benben/shelf`, `/benben/me`. WhatsApp reveal: request → poster accepts in slot → shown to accepter alone.
 
 **Also shipped:** Playfair Display / Inter / JetBrains Mono; gold `#d4af37`; Fibonacci spacing `fb1–fb6`; public `/verify/[hash]` record check (same-browser full, network staged).
+
+---
+
+## AMENDMENT 10 — FINAL BUILD v4: ZEP TEPI GATE + 4D FOREST (binding)
+
+**Removals:** `/kemet` route deleted; Kemet-OS scrubbed from nav, footer, robots, docs. Papers migrated to the BenBen Cold Shelf. `/work` renamed to `/benben/jobs` with a 30-day redirect. OSAWI branches: **Zep Tepi only** (gated).
+
+**The gate:** `/zep-tepi/gate` → `/zep-tepi/test` → `/zep-tepi/test/result`. OTP required. 12 questions, one at a time, no back, 180s. HD max 24, ES max 35. Pass = HD ≥ 16 AND ES ≤ 14. Fail shows totals only + 7-day retry. Local-first fallback is explicitly labeled DEMO; production enforces server timer, single-use tokens, per-phone cooldown, RLS.
+
+**The Forest:** `/zep-tepi` gated on pass. Octagon: Hall 8 center open, Halls 1–7 locked ring. Forest-only visual system (void/depth palette, copper/emerald/amber/pearl, Cormorant headings, diamond cards, triple Metatron layers, scroll emergence, cursor ripple, slow transitions, optional sound off by default). Hall 8 = claims + commitments + votes + fund widget + POST A CLAIM. Claim completes + crew confirmed → crew graduates to `/zep-tepi/hall-7` (private thread, updates/artifacts/learnings); on crew completion the claim archives to the Cold Shelf and each member's `Claims completed` increments. Halls 1–6 stay locked banners. Stop at Hall 7.
+
+**Handles:** Atlantean-hybrid canonical (`@Thoth_Atlas`, `@Poseidon_Ptah`, `@Nereus_Imhotep`, `@Triton_Ra`, `@Oceanus_Sekhmet`, `@Proteus_Osiris`, `@Amphitrite_Thoth`); Egyptian names are banner masks only and stay claimable. Reserved in signup validation.
+
+**Discovery:** landing `Zep Tepi →` below KES snapshot; BenBen sidebar card. Customer lane (teacher/school/parent/roster/fees) stays outside the gate, no test required.

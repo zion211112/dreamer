@@ -1,0 +1,95 @@
+/* Zep Tepi Forest — scoped to /zep-tepi only. Nothing here leaks out. */
+.forest {
+  --void: #06060f;
+  --depth-1: #0a0a25;
+  --depth-2: #1a1540;
+  --copper: #c8763c;
+  --emerald: #1a7a5c;
+  --amber: #e0a040;
+  --pearl: #e8e0d8;
+  --blood: #6b2020;
+  background: var(--void);
+  color: var(--pearl);
+  min-height: 100vh;
+}
+
+.forest-fade {
+  animation: forest-fade 1.2s ease-out;
+}
+@keyframes forest-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.metatron {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+}
+.metatron svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.spin-5 { animation: forest-spin 300s linear infinite; }
+.spin-8 { animation: forest-spin 480s linear infinite reverse; }
+.spin-13 { animation: forest-spin 780s linear infinite; }
+@keyframes forest-spin {
+  to { transform: rotate(360deg); }
+}
+
+.reveal {
+  opacity: 0.6;
+  transform: translateY(12px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.reveal.seen {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hall-banner {
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+button:hover > .hall-banner,
+.hall-card:hover .hall-banner {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.diamond {
+  transform: rotate(45deg);
+}
+.diamond-inner {
+  transform: rotate(-45deg);
+}
+
+.ripple-dot {
+  position: fixed;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border: 1px solid rgba(200, 118, 60, 0.55);
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 5;
+  animation: ripple-fade 2.4s ease-out forwards;
+}
+@keyframes ripple-fade {
+  from { opacity: 0.8; transform: scale(0.4); }
+  to { opacity: 0; transform: scale(3.2); }
+}
+
+.center-pulse {
+  animation: center-pulse 4s ease-in-out infinite;
+}
+@keyframes center-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(200, 118, 60, 0.45); }
+  50% { box-shadow: 0 0 0 14px rgba(200, 118, 60, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spin-5, .spin-8, .spin-13, .center-pulse, .forest-fade { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
