@@ -80,90 +80,40 @@ export default function Home() {
                   <span className="shrink-0 text-[11px] font-mono text-gold">CURRENT BUILD</span>
                 </div>
               </div>
-              <Link href="/zep-tepi/gate" className="mt-3 inline-block font-mono text-xs text-gold hover:text-ivory transition">Zep Tepi →</Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2 — WHO IT'S FOR */}
-      <section className="relative overflow-hidden border-b border-white/10">
-        <GeoArt variant="band" className="mx-auto mt-10 h-10 max-w-5xl px-6 w-full text-ivory opacity-[0.08]" />
-        <div className="relative mx-auto max-w-3xl px-6 py-14 md:py-20">
+      {/* 2 — WHO IT'S FOR, distilled */}
+      <section className="border-b border-white/10">
+        <div className="mx-auto max-w-3xl px-6 py-14 md:py-20 space-y-12">
           <div>
-            <p className="text-xs font-bold tracking-widest text-river">1 · FOR THE YOUTH: PROOF, NOT PROMISES</p>
-            <ul className="mt-4 space-y-1.5 text-[15px] text-ivory/85">
-              <li>· Playground&apos;s free: BenBen, builds, votes with certification.</li>
-              <li>· 50 bob seals your name on a certificate. 100 + the test opens one hall.</li>
-            </ul>
-            <Link href="/ledger#join" className="mt-4 inline-block text-sm font-bold text-emerald-300 hover:text-ivory transition">join now →</Link>
+            <p className="text-xs font-bold tracking-widest text-muted">FOR THE RESTLESS</p>
+            <p className="mt-2 font-display text-2xl md:text-3xl">Young. Able. Unlisted — until now.</p>
+            <Link href="/ledger#join" className="mt-3 inline-block text-sm font-bold text-emerald-300 hover:text-ivory transition">join now →</Link>
           </div>
-
-          <div className="mt-12">
-            <p className="text-xs font-bold tracking-widest text-river">2 · FOR THE TEACHER: YOUR LIFE BACK</p>
-            <p className="mt-4 text-[15px] text-ivory/85 leading-relaxed">
-              If you spent last weekend marking two hundred identical scripts wondering why you didn&apos;t become a charcoal burner instead, we see you.
-            </p>
-            <ul className="mt-4 space-y-1.5 text-[15px] text-ivory/85">
-              <li>· 250 bob. You teach. The code marks.</li>
-              <li>· Drop a test link. The machine marks it. You get the weakness map before the bell.</li>
-              <li>· You teach. The code does the suffering.</li>
-            </ul>
-            <Link href="/build/teacher" className="mt-4 inline-block text-sm font-bold text-emerald-300 hover:text-ivory transition">open the teacher door →</Link>
+          <div>
+            <p className="text-xs font-bold tracking-widest text-muted">FOR THE TIRED</p>
+            <p className="mt-2 font-display text-2xl md:text-3xl">Two hundred scripts. Weekends gone. We counted.</p>
+            <Link href="/build/teacher" className="mt-3 inline-block text-sm font-bold text-emerald-300 hover:text-ivory transition">open the teacher door →</Link>
           </div>
-
-          <div className="mt-12">
-            <p className="text-xs font-bold tracking-widest text-river">3 · FOR THE SCHOOL: ABSOLUTE OPERATIONAL SOVEREIGNTY</p>
-            <p className="mt-4 text-[15px] text-ivory/85 leading-relaxed">
-              Ministry audits, missing fees, teachers on the verge of mutiny, and a library ledger that looks like a crime scene.
-            </p>
-            <ul className="mt-4 space-y-1.5 text-[15px] text-ivory/85">
-              <li>· Bring your campus. We bring the absolute operational spine.</li>
-              <li>· One payment. The whole spine. Instant digital roster control, science-backed retention timetables, automated M-Pesa fee tracking, and one-click inspection modes that make auditors pack up and leave.</li>
-            </ul>
-            <button onClick={() => setDoors(true)} className="mt-4 inline-block text-sm font-bold text-emerald-300 hover:text-ivory transition">open your door →</button>
-          </div>
-
-          <p className="mt-14 text-center font-display italic text-2xl md:text-3xl">The tower is groundless.<br />The ledger is immutable.</p>
-
-          <div className="mt-10 grid sm:grid-cols-3 gap-4">
-            <div className="rounded-3xl border border-white/10 bg-panel p-7">
-              <div className="text-xs font-bold tracking-widest text-muted">INSTITUTIONS</div>
-              <p className="mt-2 text-sm text-muted">Bring your school.</p>
-              <Link href="/build/school" className="mt-4 block text-center rounded-full bg-ivory px-6 py-3 text-sm font-bold text-black hover:bg-river hover:text-white transition">Anchor Campus</Link>
-            </div>
-            <div className="rounded-3xl border border-white/10 bg-panel p-7">
-              <div className="text-xs font-bold tracking-widest text-muted">INDIVIDUALS</div>
-              <p className="mt-2 text-sm text-muted">Hustling with a record. Hold YOUR hash.</p>
-              <Link href="/ledger#join" className="mt-4 block text-center rounded-full bg-river px-6 py-3 text-sm font-bold text-white hover:bg-ivory hover:text-black transition">Get On List</Link>
-            </div>
-            <div className="rounded-3xl border border-white/10 bg-panel p-7">
-              <div className="text-xs font-bold tracking-widest text-muted">SPECTATORS</div>
-              <p className="mt-2 text-sm text-muted">Welcome to the yard. The campfire is free.</p>
-              <Link href="/benben" className="mt-4 block text-center rounded-full border border-white/25 px-6 py-3 text-sm font-bold hover:border-ivory transition">Enter BenBen</Link>
-            </div>
+          <div>
+            <p className="text-xs font-bold tracking-widest text-muted">FOR THE BRAVE</p>
+            <p className="mt-2 font-display text-2xl md:text-3xl">Three schools opened the door. The rest are watching.</p>
+            <button onClick={() => setDoors(true)} className="mt-3 inline-block text-sm font-bold text-emerald-300 hover:text-ivory transition">open your door →</button>
           </div>
         </div>
       </section>
 
-      {/* 3 — ENTER */}
+      {/* 3 — ENTER, one line */}
       <section>
-        <div className="mx-auto max-w-5xl px-6 py-14 grid sm:grid-cols-3 gap-4">
-          <button onClick={() => setDoors(true)} className="rounded-3xl border border-white/10 bg-panel p-8 text-left hover:border-river transition">
-            <div className="text-xs font-bold tracking-widest text-river">INSTITUTIONS</div>
-            <div className="mt-2 text-xl font-bold">Build capacity →</div>
-            <p className="mt-1 text-sm text-muted">Four doors. Who are you?</p>
-          </button>
-          <div className="rounded-3xl border border-white/10 bg-panel p-8">
-            <div className="text-xs font-bold tracking-widest text-river">YOUTH</div>
-            <JoinLink className="mt-2 block text-left text-xl font-bold hover:text-emerald-300 transition">Join the ledger →</JoinLink>
-            <p className="mt-1 text-sm text-muted">Claim, test, seal. Then work.</p>
-          </div>
-          <Link href="/benben" className="rounded-3xl border border-white/10 bg-panel p-8 hover:border-river transition">
-            <div className="text-xs font-bold tracking-widest text-river">EVERYONE</div>
-            <div className="mt-2 text-xl font-bold">See the floor →</div>
-            <p className="mt-1 text-sm text-muted">Builds, votes, forks.</p>
-          </Link>
+        <div className="mx-auto max-w-5xl px-6 py-12 text-center text-sm text-muted">
+          <button onClick={() => setDoors(true)} className="hover:text-ivory transition">Build capacity</button>
+          <span className="mx-3 text-dim">·</span>
+          <JoinLink className="hover:text-ivory transition">Join the ledger</JoinLink>
+          <span className="mx-3 text-dim">·</span>
+          <Link href="/benben" className="hover:text-ivory transition">See the floor</Link>
         </div>
       </section>
 

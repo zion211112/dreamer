@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import CursorRipple from "../../components/forest/CursorRipple";
-import HallBanner, { Doorway } from "../../components/forest/HallBanner";
+import HallBanner from "../../components/forest/HallBanner";
 import Metatron from "../../components/forest/Metatron";
 import Reveal from "../../components/forest/Reveal";
 import { myUsername } from "../../lib/benben";
@@ -222,12 +222,8 @@ export default function Forest() {
           {hall8Open && (
             <Reveal className="mt-6">
               <div className="rounded-3xl border border-[#c8763c]/30 bg-[#0a0a25]/70 p-7 md:p-9">
-                <Doorway />
-                <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-                  <p className="max-w-xl text-[15px] text-[#e8e0d8]/80">
-                    Claims are posted, voted, committed, and executed here. When a claim completes
-                    and its crew is confirmed, the crew graduates to Hall 7.
-                  </p>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="font-mono text-xs tracking-[0.25em] text-[#c8763c]">HALL 8 · CLAIMS</div>
                   <button onClick={() => setShowForm(!showForm)} className="rounded-full bg-[#c8763c] px-6 py-3 text-sm font-bold text-black hover:bg-[#e8e0d8] transition">
                     + POST A CLAIM
                   </button>
@@ -252,7 +248,7 @@ export default function Forest() {
                 <div className="mt-6 grid gap-3">
                   {active.length === 0 && (
                     <p className="rounded-2xl border border-white/10 p-6 text-center text-sm text-white/50">
-                      No claims yet. The vestibule waits for the first crew.
+                      No claims yet.
                     </p>
                   )}
                   {active.map((c) => {

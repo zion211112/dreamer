@@ -148,31 +148,6 @@ function Seal7() {
   );
 }
 
-export function Doorway() {
-  // Hall 8: a doorway with light beyond. No figure. No guardian.
-  return (
-    <svg viewBox="0 0 720 405" className="h-auto w-full" role="img" aria-label="You are the door.">
-      <rect x="0" y="0" width="720" height="405" fill="#06060f" />
-      <rect x="14" y="14" width="692" height="377" fill="none" stroke={C} strokeWidth="1.5" opacity="0.7" />
-      <defs>
-        <linearGradient id="doorlight" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#e0a040" stopOpacity="0.9" />
-          <stop offset="100%" stopColor="#e0a040" stopOpacity="0.08" />
-        </linearGradient>
-      </defs>
-      <rect x={310} y={90} width={100} height={220} fill="url(#doorlight)" opacity="0.85" />
-      <rect x={285} y={65} width={150} height={270} fill="none" stroke={C} strokeWidth="2.5" />
-      <rect x={270} y={50} width={180} height={300} fill="none" stroke={E} strokeWidth="1" opacity="0.7" />
-      {[0, 1, 2, 3, 4, 5].map((i) => (
-        <circle key={i} cx={120 + i * 96} cy={352} r={2.5} fill={A} opacity="0.7" />
-      ))}
-      <text x="360" y="368" textAnchor="middle" fill={A} fontSize="15" letterSpacing="3" style={{ fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase" }}>
-        You are the door.
-      </text>
-    </svg>
-  );
-}
-
 const SEALS = [Seal1, Seal2, Seal3, Seal4, Seal5, Seal6, Seal7];
 
 export default function HallBanner({ hall }: { hall: number }) {
