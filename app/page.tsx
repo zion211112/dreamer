@@ -85,23 +85,80 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2 — WHO IT'S FOR, distilled */}
+      {/* 1 — TALENT / RECORD / PATIENT */}
       <section className="border-b border-white/10">
         <div className="mx-auto max-w-3xl px-6 py-14 md:py-20 space-y-12">
           <div>
-            <p className="text-xs font-bold tracking-widest text-muted">FOR THE RESTLESS</p>
-            <p className="mt-2 font-display text-2xl md:text-3xl">Young. Able. Unlisted — until now.</p>
+            <p className="text-xs font-bold tracking-widest text-muted">01</p>
+            <p className="mt-2 font-display text-2xl md:text-3xl">Talent: present. Record: absent. Patient: stable.</p>
+          </div>
+          <div>
+            <p className="text-xs font-bold tracking-widest text-muted">02</p>
+            <p className="mt-2 font-display text-2xl md:text-3xl">Symptom: exhaustion. Cause: paperwork. Fix: available.</p>
+          </div>
+          <div>
+            <p className="text-xs font-bold tracking-widest text-muted">03</p>
+            <p className="mt-2 font-display text-2xl md:text-3xl">Time of discovery: this page. Time of loss: too early to say.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 2 — WHO IT'S FOR, revised */}
+      <section className="border-b border-white/10">
+        <div className="mx-auto max-w-3xl px-6 py-14 md:py-20 space-y-12">
+          <div>
+            <p className="text-xs font-bold tracking-widest text-muted">JOIN</p>
+            <p className="mt-2 font-display text-2xl md:text-3xl">Build capacity → Four doors. Who are you?</p>
             <Link href="/ledger#join" className="mt-3 inline-block text-sm font-bold text-emerald-300 hover:text-ivory transition">join now →</Link>
           </div>
           <div>
-            <p className="text-xs font-bold tracking-widest text-muted">FOR THE TIRED</p>
-            <p className="mt-2 font-display text-2xl md:text-3xl">Two hundred scripts. Weekends gone. We counted.</p>
-            <Link href="/build/teacher" className="mt-3 inline-block text-sm font-bold text-emerald-300 hover:text-ivory transition">open the teacher door →</Link>
+            <p className="text-xs font-bold tracking-widest text-muted">YOUTH</p>
+            <p className="mt-2 font-display text-2xl md:text-3xl">Join the ledger → Claim, test, seal. Then work.</p>
           </div>
           <div>
-            <p className="text-xs font-bold tracking-widest text-muted">FOR THE BRAVE</p>
-            <p className="mt-2 font-display text-2xl md:text-3xl">Three schools opened the door. The rest are watching.</p>
-            <button onClick={() => setDoors(true)} className="mt-3 inline-block text-sm font-bold text-emerald-300 hover:text-ivory transition">open your door →</button>
+            <p className="text-xs font-bold tracking-widest text-muted">EVERYONE</p>
+            <p className="mt-2 font-display text-2xl md:text-3xl">See the floor → Builds, votes, forks.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 2 — TEACHER: YOUR LIFE BACK */}
+      <section className="border-b border-white/10">
+        <div className="mx-auto max-w-3xl px-6 py-14 md:py-20 space-y-12">
+          <div>
+            <p className="text-xs font-bold tracking-widest text-muted">2</p>
+            <p className="mt-2 font-display text-2xl md:text-3xl">FOR THE TEACHER: YOUR LIFE BACK</p>
+          </div>
+          <div>
+            <p className="mt-4 text-[15px] text-ivory/85 leading-relaxed">
+              If you spent last weekend marking two hundred identical scripts wondering why you didn&apos;t become a charcoal burner instead, we see you.
+            </p>
+            <ul className="mt-4 space-y-1.5 text-[15px] text-ivory/85">
+              <li>· 250 bob. You teach. The code marks.</li>
+              <li>· Drop a test link. The machine marks it. You get the weakness map before the bell.</li>
+              <li>· You teach. The code does the suffering.</li>
+            </ul>
+            <Link href="/build/teacher" className="mt-4 inline-block text-sm font-bold text-emerald-300 hover:text-ivory transition">open the teacher door →</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 3 — SCHOOL: ABSOLUTE OPERATIONAL SOVEREIGNTY */}
+      <section className="border-b border-white/10">
+        <div className="mx-auto max-w-3xl px-6 py-14 md:py-20 space-y-12">
+          <div>
+            <p className="text-xs font-bold tracking-widest text-muted">3</p>
+            <p className="mt-2 font-display text-2xl md:text-3xl">FOR THE SCHOOL: ABSOLUTE OPERATIONAL SOVEREIGNTY</p>
+          </div>
+          <div>
+            <p className="mt-4 text-[15px] text-ivory/85 leading-relaxed">
+              Ministry audits, missing fees, teachers on the verge of mutiny, and a library ledger that looks like a crime scene.
+            </p>
+            <ul className="mt-4 space-y-1.5 text-[15px] text-ivory/85">
+              <li>· Bring your campus. We bring the absolute operational spine.</li>
+              <li>· One payment. The whole spine. Instant digital roster control, science-backed retention timetables, automated M-Pesa fee tracking, and one-click inspection modes that make auditors pack up and leave.</li>
+            </ul>
+            <button onClick={() => setDoors(true)} className="mt-4 inline-block text-sm font-bold text-emerald-300 hover:text-ivory transition">open your door →</button>
           </div>
         </div>
       </section>
