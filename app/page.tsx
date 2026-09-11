@@ -1,37 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DoorsModal from "../components/DoorsModal";
 import GeoArt from "../components/GeoArt";
 import JoinLink from "../components/JoinLink";
-import {
-  KEYS,
-  Member,
-  SCHOOL_STATS,
-  SEED_MEMBERS,
-  SEED_TASKS,
-  TREASURY,
-  loadStored
-} from "../lib/ledger";
 
 // Landing: fool-plain on obsidian. Two entries: build, join.
 
 export default function Home() {
   const [doors, setDoors] = useState(false);
-  const [count, setCount] = useState(SEED_MEMBERS.length);
 
-  useEffect(() => {
-    const customs = loadStored<Member>(KEYS.members).filter(
-      (m) => !SEED_MEMBERS.some((s) => s.id === m.id)
-    );
-    setCount(SEED_MEMBERS.length + customs.length);
-  }, []);
-
-  const students = SCHOOL_STATS.reduce((n, s) => n + s.students, 0);
-  const done = SEED_TASKS.filter((t) => t.status === "done").length;
-  const current = SEED_TASKS.find((t) => t.status === "in_progress") || SEED_TASKS[0];
-
+  // Counters start at zero everywhere on this page. First entries land here.
   return (
     <main className="bg-obsidian text-ivory">
       {/* LEDGER LINE — landing only */}
@@ -62,7 +42,7 @@ export default function Home() {
                 JOIN THE LEDGER
               </JoinLink>
             </div>
-            <p className="mt-4 text-sm text-muted">{count} on the list. You&apos;re next.</p>
+            <p className="mt-4 text-sm text-muted">0 on the list. You&apos;re next.</p>
           </div>
 
           {/* SNAPSHOT */}
@@ -72,36 +52,36 @@ export default function Home() {
               <div className="text-xs font-bold tracking-widest text-muted">LEDGER SNAPSHOT · LIVE</div>
               <div className="mt-4 space-y-3">
                 <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-                  <span className="text-xl font-extrabold">{SCHOOL_STATS.length} schools</span>
+                  <span className="text-xl font-extrabold">0 schools</span>
                   <span className="text-[13px] text-muted">involved</span>
                 </div>
                 <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-                  <span className="text-xl font-extrabold">{students.toLocaleString()} students</span>
+                  <span className="text-xl font-extrabold">0 students</span>
                   <span className="text-[13px] text-muted">under them</span>
                 </div>
                 <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-                  <span className="text-xl font-extrabold">{count} individuals</span>
+                  <span className="text-xl font-extrabold">0 individuals</span>
                   <span className="text-[13px] text-muted">on the ledger</span>
                 </div>
                 <div className="border-b border-white/10 pb-3">
                   <div className="flex items-baseline justify-between">
-                    <span className="text-xl font-extrabold">KES {TREASURY.total.toLocaleString()}</span>
-                    <span className="text-[13px] text-muted">{TREASURY.usedPct}% used</span>
+                    <span className="text-xl font-extrabold">KES 0</span>
+                    <span className="text-[13px] text-muted">0% used</span>
                   </div>
                   <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
-                    <div className="bar-fill h-full rounded-full bg-river" style={{ width: `${TREASURY.usedPct}%` }} />
+                    <div className="bar-fill h-full rounded-full bg-river" style={{ width: "0%" }} />
                   </div>
                 </div>
                 <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-                  <span className="text-xl font-extrabold">{done} completed</span>
+                  <span className="text-xl font-extrabold">0 completed</span>
                   <span className="text-[13px] text-muted">projects</span>
                 </div>
                 <div className="flex items-baseline justify-between gap-3">
-                  <span className="text-sm font-bold truncate">{current.title}</span>
+                  <span className="text-sm font-bold truncate">No active build</span>
                   <span className="shrink-0 text-[11px] font-mono text-gold">CURRENT BUILD</span>
                 </div>
               </div>
-              <p className="mt-4 text-xs text-muted">Schools + treasury demo. Individuals, builds live.</p>
+              <p className="mt-4 text-xs text-muted">Counters start at zero. First entries land here.</p>
               <Link href="/zep-tepi/gate" className="mt-3 inline-block font-mono text-xs text-gold hover:text-ivory transition">Zep Tepi →</Link>
             </div>
           </div>
@@ -181,10 +161,10 @@ export default function Home() {
             <JoinLink className="mt-2 block text-left text-xl font-bold hover:text-emerald-300 transition">Join the ledger →</JoinLink>
             <p className="mt-1 text-sm text-muted">Claim, test, seal. Then work.</p>
           </div>
-          <Link href="/benben/jobs" className="rounded-3xl border border-white/10 bg-panel p-8 hover:border-river transition">
+          <Link href="/benben" className="rounded-3xl border border-white/10 bg-panel p-8 hover:border-river transition">
             <div className="text-xs font-bold tracking-widest text-river">EVERYONE</div>
-            <div className="mt-2 text-xl font-bold">See the work →</div>
-            <p className="mt-1 text-sm text-muted">Comment freely. Vote sealed.</p>
+            <div className="mt-2 text-xl font-bold">See the floor →</div>
+            <p className="mt-1 text-sm text-muted">Builds, votes, forks.</p>
           </Link>
         </div>
       </section>

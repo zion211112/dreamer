@@ -40,3 +40,21 @@ body {
 .bar-fill {
   animation: bar-fill 1.2s ease-out;
 }
+
+/* BenBen floor theme: teal → purple gradient, royal-brown earth. */
+.bb-gradient-text {
+  background: linear-gradient(90deg, #2dd4bf, #a78bfa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.bb-btn {
+  background: linear-gradient(90deg, #14b8a6, #8b5cf6);
+  color: #04100e;
+}
+.bb-btn:hover {
+  background: linear-gradient(90deg, #2dd4bf, #a78bfa);
+}
+.bb-glow {
+  box-shadow: 0 10px 40px -12px rgba(45, 212, 191, 0.45);
+}

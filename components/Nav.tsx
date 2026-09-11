@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState } from "react";
 
 const LINKS: [string, string][] = [
-  ["/benben/jobs", "Jobs"],
   ["/benben", "Ben-Ben"]
 ];
 
@@ -21,7 +20,7 @@ export function Nav() {
           {LINKS.map(([href, label]) => (
             <Link key={href} href={href} className="hover:text-ivory transition">{label}</Link>
           ))}
-          <Link href="/ledger" className="hover:text-ivory transition" aria-label="Search">⌕ Search</Link>
+          <Link href="/search" className="hover:text-ivory transition" aria-label="Search">⌕ Search</Link>
           <Link href="/dashboard" className="hover:text-ivory transition">My Profile</Link>
         </nav>
         <button onClick={() => setOpen(!open)} className="md:hidden rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-ivory" aria-label="Menu">
@@ -30,7 +29,7 @@ export function Nav() {
       </div>
       {open && (
         <nav className="md:hidden border-t border-white/10 bg-obsidian px-6 py-4 flex flex-col gap-3 text-sm">
-          {[...LINKS, ["/ledger", "Search ⌕"] as [string, string], ["/dashboard", "My Profile"] as [string, string]].map(([href, label]) => (
+          {[...LINKS, ["/search", "Search ⌕"] as [string, string], ["/dashboard", "My Profile"] as [string, string]].map(([href, label]) => (
             <Link key={href} href={href} onClick={() => setOpen(false)} className="py-1 text-ivory/80">
               {label}
             </Link>

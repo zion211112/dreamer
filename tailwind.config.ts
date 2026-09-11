@@ -20,6 +20,7 @@ const config = {
         river: "#0E7C5B",
         forest: "#1a3c2a",
         earth: "#8b3a2f",
+        royal: "#6B4226",
         gold: "#d4af37"
       },
       fontFamily: {

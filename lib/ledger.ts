@@ -19,28 +19,6 @@ export type Member = {
   hash: string;
 };
 
-export type Task = {
-  id: string;
-  title: string;
-  trade: string;
-  location: string;
-  pay: number;
-  votes: number;
-  status: "open" | "in_progress" | "done";
-  claimedBy: string;
-};
-
-export type Need = {
-  id: string;
-  school: string;
-  need: string;
-  occupation: string;
-  location: string;
-  contact: string;
-};
-
-export type Comment = { name: string; text: string; ts: number };
-
 export const OCCUPATIONS: string[] = [
   "Maths Tutor",
   "Solar Assistant",
@@ -168,9 +146,6 @@ export function tierFor(score: number): { tier: string; pass: boolean; retryDays
 
 export const KEYS = {
   members: "aptlabs-members-v3",
-  tasks: "aptlabs-tasks-v2",
-  needs: "aptlabs-needs-v2",
-  comments: "aptlabs-comments-v1",
   queue: "aptlabs-queue-v1",
   myid: "aptlabs-myid",
   identity: "aptlabs-identity",
@@ -211,27 +186,6 @@ export const SEED_MEMBERS: Member[] = [
   member("AL-0488", "@BenBen_Codex", "BenBen_Codex", "Tailor", "Kerugoya", ["Uniforms", "Repairs"], true, true, "Stone", true),
   member("AL-0513", "@Iunu_Sunset", "Iunu_Sunset", "Maths Tutor", "Kerugoya", ["KCSE Physics", "Drills"], false, false),
   member("AL-0777", "@The_Osirion", "The_Osirion", "Solar Assistant", "Mwea", ["Installation", "Wiring"], false, false)
-];
-
-export const SEED_TASKS: Task[] = [
-  { id: "T-01", title: "Solar lantern assembly for evening classes", trade: "Solar Assistant", location: "Kagio", pay: 9500, votes: 52, status: "in_progress", claimedBy: "AL-0137" },
-  { id: "T-02", title: "Desk repair sprint — Ngurubani Primary", trade: "Masonry Assistant", location: "Mwea", pay: 6000, votes: 48, status: "open", claimedBy: "" },
-  { id: "T-03", title: "40 KCSE maths drill questions", trade: "Maths Tutor", location: "Mwea", pay: 4000, votes: 37, status: "open", claimedBy: "" },
-  { id: "T-04", title: "Uniform repairs — Kerugoya Primary", trade: "Tailor", location: "Kerugoya", pay: 5000, votes: 29, status: "done", claimedBy: "AL-0488" },
-  { id: "T-05", title: "Community tractor: vote the first ward it tills", trade: "Tractor Operator", location: "Kagio", pay: 0, votes: 21, status: "open", claimedBy: "" },
-  { id: "T-06", title: "Lantern v2: iterate from field failures", trade: "Solar Assistant", location: "Kagio", pay: 7500, votes: 18, status: "open", claimedBy: "" }
-];
-
-export const SEED_NEEDS: Need[] = [
-  { id: "N-01", school: "Ngurubani Primary", need: "Saturday maths revision support", occupation: "Maths Tutor", location: "Mwea", contact: "0712 000 321" },
-  { id: "N-02", school: "Kagio Secondary", need: "Solar system maintenance check", occupation: "Solar Assistant", location: "Kagio", contact: "0733 000 654" },
-  { id: "N-03", school: "Mugumo Primary", need: "Micro-hydro feasibility study (lecturer-directed)", occupation: "Solar Assistant", location: "Mugumo", contact: "0722 000 987" }
-];
-
-export const WILD_NOTES: { title: string; text: string }[] = [
-  { title: "AGI study cell", text: "Open notebook. What would village-scale machine intelligence run on?" },
-  { title: "Antigravity notes", text: "Open notebook. Collect the failed experiments first." },
-  { title: "New transport sketches", text: "Open notebook. Draw how the harvest moves without matatus." }
 ];
 
 export function loadStored<T>(key: string): T[] {

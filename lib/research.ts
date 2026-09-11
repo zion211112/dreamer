@@ -10,20 +10,20 @@ export type Paper = {
 export const PAPERS: Paper[] = [
   {
     id: "K-01",
-    title: "Receipts > reports: a ledger model for rural learning",
-    meta: "2026 · 8 pages · field data, Kirinyaga",
-    abstract: "Grades evaporate. Hashes don't. Fifty learners, daily questions, sealed records. Headteachers believed the PDF more than the report card. Small science. Very practical."
+    title: "RECURSIVE DENSITY, BIFURCATION, RECURSIVE ZEROING AND CRYSTALIZATION: PRACTICAL APPLICATIONS",
+    meta: "2026 · 12 pages · systems + recursion",
+    abstract: "Density schedules, bifurcation points, zeroing loops, crystal records. The math the ledger runs on, written plain enough to argue with."
   },
   {
     id: "K-02",
     title: "What sunflowers know about attention",
     meta: "2026 · 6 pages · geometry + teaching",
-    abstract: "Five-minute drills, spaced like seeds. Early signal: +22% recall. Same math, fewer bees."
+    abstract: "Same math, fewer bees."
   },
   {
     id: "K-03",
     title: "Goats vs unicorns: a practical youth economy",
-    meta: "2026 · 10 pages · cooperatives + M-Pesa",
+    meta: "2026 · 10 pages · cooperatives + NYOTA",
     abstract: "Unicorns need venture capital. Goats need grass. Real KES 50,000 modeled: who earned, who learned, who maintains the tools."
   }
 ];

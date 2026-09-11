@@ -2,8 +2,8 @@ import Link from "next/link";
 import { Build, FloorTier, timeAgo } from "../lib/benben";
 
 function typeStyle(t: string): string {
-  if (t === "SOLUTION") return "bg-gold/15 text-gold border-gold/30";
-  if (t === "NEED") return "bg-earth/20 text-[#e08a7d] border-earth/40";
+  if (t === "SOLUTION") return "bg-violet-500/15 text-violet-300 border-violet-500/30";
+  if (t === "NEED") return "bg-royal/25 text-[#d9a066] border-royal/60";
   return "bg-white/5 text-muted border-white/10";
 }
 
@@ -53,7 +53,7 @@ export default function BuildCard({
 
       {detailLink ? (
         <Link href={`/benben/post/${b.id}`}>
-          <h3 className="mt-fb2 font-display text-[21px] font-semibold leading-snug text-cream hover:text-gold transition">{b.title}</h3>
+          <h3 className="mt-fb2 font-display text-[21px] font-semibold leading-snug text-cream hover:text-teal-300 transition">{b.title}</h3>
         </Link>
       ) : (
         <h3 className="mt-fb2 font-display text-[21px] font-semibold leading-snug text-cream">{b.title}</h3>
@@ -70,7 +70,7 @@ export default function BuildCard({
             disabled={!canVote}
             title={canVote ? "Upvote" : "Certified unlocks voting"}
             aria-label="Upvote"
-            className={`px-1 text-lg leading-none transition ${!canVote ? "cursor-not-allowed opacity-30" : myVote === 1 ? "text-gold" : "text-muted hover:text-gold"}`}
+            className={`px-1 text-lg leading-none transition ${!canVote ? "cursor-not-allowed opacity-30" : myVote === 1 ? "text-teal-300" : "text-muted hover:text-teal-300"}`}
           >
             ▲
           </button>
@@ -90,11 +90,11 @@ export default function BuildCard({
         </Link>
         <span className="font-mono text-[13px] text-dim">[Open]</span>
         {canNominate && (
-          <button onClick={() => onNominate(b.id)} className="ml-auto font-mono text-[13px] text-gold hover:underline">
+          <button onClick={() => onNominate(b.id)} className="ml-auto font-mono text-[13px] text-teal-300 hover:underline">
             [ Nominate ]
           </button>
         )}
-        <span className="w-full text-right font-mono text-[13px] font-bold text-gold">@{b.by}</span>
+        <span className="w-full text-right font-mono text-[13px] font-bold text-teal-300">@{b.by}</span>
       </div>
       {voteErr && <p className="mt-2 font-mono text-xs text-red-400">{voteErr}</p>}
       {!canVote && (

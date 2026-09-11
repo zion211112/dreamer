@@ -31,6 +31,15 @@ export type BuildNeeds = {
 
 export type BuildComment = { by: string; text: string; ts: number; fork: boolean };
 
+export type Visibility = "public" | "hall8" | "private";
+
+export type BuildFile = { name: string; size: number; type: string; dataUrl: string };
+
+// Attachments ride inside the build record. Browsers carry ~5MB of
+// localStorage, so the floor caps files at 1MB total per build —
+// big files stay on your device. Server stage lifts the cap.
+export const MAX_ATTACH_BYTES = 1_000_000;
+
 export type Build = {
   id: string;
   by: string; // username — never a phone number
@@ -48,9 +57,20 @@ export type Build = {
   votedBy: Record<string, { value: number; ts: number }>;
   comments: BuildComment[];
   nominated?: { hall: string; reason: string; by: string; ts: number };
+  visibility: Visibility;
+  attachments: BuildFile[];
   createdTs: number;
   tierAtPost: string; // visitor | certified | hall
 };
+
+// Who may open a build: everyone for public; the author always;
+// sealed hall-8 builds open for hall-tier members reviewing for the admin.
+export function canView(b: Build, username: string, tier: FloorTier): boolean {
+  if (b.visibility === "public") return true;
+  if (b.by === username) return true;
+  if (b.visibility === "hall8" && tier === "hall") return true;
+  return false;
+}
 
 export const BENBEN_KEY = "aptlabs-benben-builds-v1";
 export const BENBEN_NOMS_KEY = "aptlabs-benben-noms-v1";
@@ -194,13 +214,21 @@ export function loadBuilds(): Build[] {
     const raw = window.localStorage.getItem(BENBEN_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as Build[]) : [];
+    if (!Array.isArray(parsed)) return [];
+    // Old records predate seals and files — default them open and empty.
+    return (parsed as Build[]).map((b) => ({
+      ...b,
+      visibility: (b.visibility === "hall8" || b.visibility === "private" ? b.visibility : "public") as Visibility,
+      attachments: Array.isArray(b.attachments) ? b.attachments : [],
+      waRequests: Array.isArray(b.waRequests) ? b.waRequests : [],
+      votedBy: b.votedBy && typeof b.votedBy === "object" ? b.votedBy : {}
+    }));
   } catch {
     return [];
   }
 }
 
-// ---- the 8 seeds: posted day one, they set the standard ----
+// ---- the 3 seeds: posted day one, they set the standard ----
 
 function seed(
   id: string,
@@ -216,29 +244,18 @@ function seed(
   return {
     id, by, title, body, domain, type, needs, location, done,
     contact: "dm", waRequests: [], votes: 12, votedBy: {},
-    comments: [], createdTs: Date.now() - 2 * 3600000, tierAtPost: "visitor"
+    comments: [], visibility: "public" as Visibility, attachments: [],
+    createdTs: Date.now() - 2 * 3600000, tierAtPost: "visitor"
   };
 }
 
 const none = (): BuildNeeds => ({ labor: 0, materials: "", funds: 0, intellect: "", nothing: true });
 
 export const SEED_BUILDS: Build[] = [
-  seed("BB-01", "Jirani_0001", "Kagio canal gate broken — need 4 welders for 3 days",
-    "The gate at the Mwea canal near Kagio broke last Thursday. Water is flooding 3 acres of maize. We have the steel plates (donated by Kimani). We need 4 people with arc welding experience for 3 days. Food and transport covered.",
-    "Water", "NEED", { labor: 4, materials: "", funds: 0, intellect: "", nothing: false }, "Kagio, Mwea",
-    "Gate welded shut and canal holding for 30 days"),
   seed("BB-02", "Fundi_0002", "Bike-powered phone charger for 1,800 KES — parts list and wiring",
     "Dynamo 800, rectifier 350, regulator 250, casing and wire 400. Mount on the rear fork, output 5V 1A at walking pace. Full wiring order inside the comments on request.",
     "Power", "SOLUTION", none(), "Mwea",
     "Anyone can build this with local parts"),
-  seed("BB-03", "Mkulima_0003", "Weevils in stored maize — what works without chemicals?",
-    "Lost half a bag last season to weevils. Heard about ash layering and neem leaves but never tried properly. Need something that actually holds.",
-    "Food", "QUESTION", { labor: 0, materials: "", funds: 0, intellect: "post-harvest storage", nothing: false }, "Kerugoya",
-    "A method that keeps 90kg clean for 6 months"),
-  seed("BB-04", "Mama_0004", "Nearest clinic to Kutus is 12km. Need help designing a mobile kit.",
-    "Mothers walk 12km with sick children. A kit that fits on a boda-boda and treats 5 common issues would change everything. Need a nurse or CO to spec it.",
-    "Health", "NEED", { labor: 0, materials: "", funds: 0, intellect: "nursing / clinical", nothing: false }, "Kutus",
-    "Kit that fits on a boda-boda, treats 5 common issues"),
   seed("BB-05", "Mwalimu_0005", "I can animate 3-minute KCSE explainers — free in exchange for skill certification",
     "Ten explainers queued: matrices, photosynthesis, Sarufi. I want them certified on the ledger instead of cash. Reviewers welcome.",
     "Education", "OFFER", none(), "Mwea",
@@ -246,13 +263,5 @@ export const SEED_BUILDS: Build[] = [
   seed("BB-06", "Seremala_0006", "Stabilized soil block recipe after 6 months of tests — 7% cement, 2% lime",
     "Tested across two rainy seasons. Passes county building standards, costs 40% less than fired brick. Full ratios and curing schedule in thread.",
     "Housing", "SOLUTION", none(), "Embu",
-    "Blocks that pass county standards, 40% cheaper than brick"),
-  seed("BB-07", "Dereva_0007", "Boda-boda GPS tracker drained battery in 2 days — here's why and what to try",
-    "Cheap tracker plus always-on GSM equals dead battery. Fix: deep-sleep firmware and a 2000mAh cell. Don't buy the blue one from Luthuli.",
-    "Mobility", "FAILURE", none(), "Sagana",
-    "A tracker that lasts 14 days on one charge"),
-  seed("BB-08", "Dalali_0008", "How do chamas handle a member who wants out mid-cycle?",
-    "Our chama of 14 has one member leaving in month 7 of 12. Need a fair rule that doesn't break the group or punish the exit.",
-    "Finance", "QUESTION", { labor: 0, materials: "", funds: 0, intellect: "chama governance", nothing: false }, "Kagio",
-    "A fair rule that doesn't break the group or the exit member")
+    "Blocks that pass county standards, 40% cheaper than brick")
 ];

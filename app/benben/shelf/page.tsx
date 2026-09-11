@@ -27,6 +27,7 @@ export default function Shelf() {
 
   const now = Date.now();
   const results = builds.filter((b) => {
+    if ((b.visibility || "public") !== "public") return false;
     const cold = now - b.createdTs >= (b.tierAtPost === "visitor" ? 72 : 168) * 3600000;
     if (!cold) return false;
     if (domain !== "All" && b.domain !== domain) return false;
@@ -47,17 +48,17 @@ export default function Shelf() {
         <p className="mt-2 text-muted">Everything ever posted, searchable. Not ranked, not browsed. Ask and leave.</p>
 
         <div className="mt-6 space-y-2">
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search the archive…" className="w-full rounded-2xl border border-white/15 bg-panel px-4 py-3 text-sm text-ivory outline-none focus:border-gold" />
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search the archive…" className="w-full rounded-2xl border border-white/15 bg-panel px-4 py-3 text-sm text-ivory outline-none focus:border-teal-300" />
           <div className="flex flex-wrap gap-2">
-            <select value={domain} onChange={(e) => setDomain(e.target.value)} className="rounded-2xl border border-white/15 bg-panel px-4 py-2.5 text-sm text-ivory outline-none focus:border-gold [&>option]:bg-obsidian">
+            <select value={domain} onChange={(e) => setDomain(e.target.value)} className="rounded-2xl border border-white/15 bg-panel px-4 py-2.5 text-sm text-ivory outline-none focus:border-teal-300 [&>option]:bg-obsidian">
               <option>All</option>
               {DOMAINS.map((d) => <option key={d}>{d}</option>)}
             </select>
-            <select value={type} onChange={(e) => setType(e.target.value)} className="rounded-2xl border border-white/15 bg-panel px-4 py-2.5 text-sm text-ivory outline-none focus:border-gold [&>option]:bg-obsidian">
+            <select value={type} onChange={(e) => setType(e.target.value)} className="rounded-2xl border border-white/15 bg-panel px-4 py-2.5 text-sm text-ivory outline-none focus:border-teal-300 [&>option]:bg-obsidian">
               <option>All</option>
               {TYPES.map((t) => <option key={t}>{t}</option>)}
             </select>
-            <button onClick={() => setForks(!forks)} className={`rounded-2xl border px-4 py-2.5 font-mono text-xs transition ${forks ? "border-gold text-gold" : "border-white/15 text-muted"}`}>
+            <button onClick={() => setForks(!forks)} className={`rounded-2xl border px-4 py-2.5 font-mono text-xs transition ${forks ? "border-teal-300 text-teal-300" : "border-white/15 text-muted"}`}>
               has-forks {forks ? "✓" : ""}
             </button>
           </div>
@@ -102,7 +103,7 @@ export default function Shelf() {
                 <div className="font-mono text-xs text-dim">{p.id} · {p.meta}</div>
                 <h3 className="mt-1 font-bold">{p.title}</h3>
                 <p className="mt-1 text-sm text-muted">{p.abstract}</p>
-                <a href="mailto:partners@apt-labs.ke?subject=Paper%20request" className="mt-3 inline-block font-mono text-xs text-gold hover:underline">
+                <a href="mailto:partners@apt-labs.ke?subject=Paper%20request" className="mt-3 inline-block font-mono text-xs text-teal-300 hover:underline">
                   Request full text →
                 </a>
               </article>

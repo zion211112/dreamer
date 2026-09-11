@@ -93,7 +93,7 @@ export default function Slot() {
         <Link href="/benben" className="font-mono text-sm text-muted hover:text-ivory">← the floor</Link>
         <div className="mt-4 rounded-3xl border border-white/10 bg-panel p-7">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-lg font-bold text-gold">@{me}</span>
+            <span className="font-mono text-lg font-bold bb-gradient-text">@{me}</span>
             <button
               onClick={() => { try { window.localStorage.removeItem("aptlabs-identity"); } catch { /* gone */ } window.location.href = "/"; }}
               className="font-mono text-xs text-muted underline"
@@ -112,20 +112,36 @@ export default function Slot() {
           </div>
 
           <div className="mt-6 grid gap-2">
-            <Link href="/benben" className="rounded-full border border-white/15 py-3 text-center text-sm font-semibold hover:border-gold transition">Your Posts live on the floor →</Link>
+            <Link href="/benben" className="rounded-full border border-white/15 py-3 text-center text-sm font-semibold hover:border-teal-300 transition">Your Posts live on the floor →</Link>
             {tier === "visitor" && (
-              <Link href="/cert" className="rounded-full bg-gold py-3 text-center text-sm font-bold text-black hover:bg-ivory transition">Get Certified — 50 KES →</Link>
+              <Link href="/cert" className="rounded-full bb-btn py-3 text-center text-sm font-bold transition">Get Certified — 50 KES →</Link>
             )}
             {tier === "certified" && (
-              <Link href="/crucible" className="rounded-full bg-gold py-3 text-center text-sm font-bold text-black hover:bg-ivory transition">Enter the Halls — 100 KES →</Link>
+              <Link href="/crucible" className="rounded-full bb-btn py-3 text-center text-sm font-bold transition">Enter the Halls — 100 KES →</Link>
             )}
           </div>
+
+          {mine.length > 0 && (
+            <div className="mt-6 border-t border-white/10 pt-6">
+              <div className="font-mono text-[11px] font-bold uppercase tracking-widest text-muted">Your builds · {mine.length}</div>
+              <div className="mt-3 space-y-1.5">
+                {mine.map((b) => (
+                  <Link key={b.id} href={`/benben/post/${b.id}`} className="flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 hover:bg-obsidian transition">
+                    <span className="truncate text-[15px] text-ivory/90">{b.title}</span>
+                    <span className={`shrink-0 rounded-md border px-2 py-0.5 font-mono text-[11px] font-bold uppercase ${(b.visibility || "public") === "public" ? "border-white/10 text-muted" : "border-violet-500/40 text-violet-300"}`}>
+                      {(b.visibility || "public") === "public" ? "Public" : b.visibility === "hall8" ? "Hall 8" : "Private"}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
 
           <form onSubmit={rename} className="mt-6 border-t border-white/10 pt-6">
             <label className="font-mono text-[11px] font-bold uppercase tracking-wider text-muted">Rename (once a year)</label>
             <div className="mt-2 flex gap-2">
-              <input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="New username" maxLength={20} className="flex-1 rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm font-mono text-ivory outline-none focus:border-gold" />
-              <button className="rounded-2xl border border-white/20 px-5 text-sm font-semibold hover:border-gold transition">Rename</button>
+              <input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="New username" maxLength={20} className="flex-1 rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm font-mono text-ivory outline-none focus:border-teal-300" />
+              <button className="rounded-2xl border border-white/20 px-5 text-sm font-semibold hover:border-teal-300 transition">Rename</button>
             </div>
             {msg && <p className="mt-3 text-sm text-muted">{msg}</p>}
           </form>

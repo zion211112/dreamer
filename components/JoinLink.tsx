@@ -16,7 +16,7 @@ import {
 } from "../lib/ledger";
 import { RESERVED_HANDLES } from "../lib/halls";
 
-// JOIN THE LEDGER, one press: phone → username → slot → playground.
+// JOIN THE LEDGER, one press: phone → name → Hall 0.
 // No test at the door. Certification (50) and halls (100) come later,
 // when the yard has shown you why they're worth it.
 export default function JoinLink({
@@ -128,7 +128,7 @@ export default function JoinLink({
             <div className="flex items-start justify-between">
               <div>
                 <div className="text-xs font-bold tracking-widest text-gold">JOIN THE LEDGER</div>
-                <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-ivory">Phone. Name. Floor.</h2>
+                <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-ivory">Phone. Name. Hall 0.</h2>
               </div>
               <button onClick={() => setOpen(false)} className="rounded-full border border-white/20 px-3 py-1 text-sm text-ivory" aria-label="Close">✕</button>
             </div>
@@ -159,12 +159,13 @@ export default function JoinLink({
 
             {confirmed && !doneId && (
               <form onSubmit={register} className="mt-5">
-                <label className="text-sm font-bold text-ivory">Username <span className="font-normal text-muted">— yours, or the yard&apos;s</span></label>
+                <label className="text-sm font-bold text-ivory">Full name</label>
+                <input value={name} onChange={(e) => setName(e.target.value)} placeholder="The name on your certificate" maxLength={40} className={`${field} mt-2 w-full`} />
+                <label className="mt-4 block text-sm font-bold text-ivory">Username <span className="font-normal text-muted">— yours, or the yard&apos;s</span></label>
                 <div className="mt-2 flex gap-2">
                   <input value={uname} onChange={(e) => setUname(e.target.value)} placeholder="e.g. Jirani_4821" maxLength={20} className={`${field} flex-1 font-mono`} />
                   <button type="button" onClick={() => setUname(suggestUsername(taken()))} className="rounded-2xl border border-white/20 px-4 text-sm font-semibold hover:border-gold transition">Suggest</button>
                 </div>
-                <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name or handle" maxLength={40} className={`${field} mt-2 w-full`} />
                 <div className="mt-2 grid grid-cols-2 gap-2">
                   <select value={occ} onChange={(e) => setOcc(e.target.value)} className={`${field} [&>option]:bg-obsidian`}>
                     {OCCUPATIONS.map((o) => <option key={o}>{o}</option>)}
@@ -182,7 +183,7 @@ export default function JoinLink({
             {confirmed && doneId && (
               <div className="mt-5 rounded-2xl bg-gold/10 border border-gold/30 p-6 text-center">
                 <p className="font-mono font-bold text-gold">{doneId} — you&apos;re on the floor.</p>
-                <p className="mt-2 text-sm text-muted">Playground&apos;s open: read, post, comment. Certification (50) and halls (100) when you&apos;re ready.</p>
+                <p className="mt-2 text-sm text-muted">Playground&apos;s open: read, post, comment.</p>
                 <button onClick={goFloor} className="mt-4 w-full rounded-full bg-gold py-3.5 text-sm font-bold text-black hover:bg-ivory transition">Enter BenBen →</button>
               </div>
             )}
