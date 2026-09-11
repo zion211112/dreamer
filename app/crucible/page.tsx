@@ -9,7 +9,6 @@ import {
   KEYS,
   Member,
   SEED_MEMBERS,
-  TILL,
   isMpesaCode,
   loadStored,
   saveStored,
@@ -108,7 +107,7 @@ export default function Crucible() {
 
           {me && me.paid && me.verified && !sitting && !result && !(blocked) && (
             <form onSubmit={pay} className="mt-8 rounded-3xl border border-white/10 bg-panel p-7">
-              <p className="text-sm">Sitting fee {HALL_FEE} to Till {TILL}:</p>
+              <p className="text-sm">Sitting fee {HALL_FEE}. Enter the M-Pesa code:</p>
               <div className="mt-3 flex gap-2">
                 <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="M-Pesa code (10 characters)" maxLength={10} className={`${field} flex-1 font-mono uppercase`} />
                 <button className="rounded-2xl bg-gold px-6 text-sm font-bold text-black hover:bg-ivory transition">Begin →</button>

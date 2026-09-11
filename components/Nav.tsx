@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 
 const LINKS: [string, string][] = [
-  ["/benben", "Ben-Ben"]
+  ["/benben", "Ben-Ben"],
+  ["/zep-tepi", "Zep Tepi"]
 ];
 
 export function Nav() {

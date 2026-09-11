@@ -13,17 +13,11 @@ export default function Contact() {
             <div className="rounded-3xl border border-white/10 bg-panel p-7">
               <div className="text-xs font-bold tracking-widest text-muted">SCHOOLS + PARTNERS</div>
               <a href="mailto:partners@apt-labs.ke" className="mt-2 block text-xl font-bold hover:text-emerald-300 transition">partners@apt-labs.ke</a>
-              <p className="mt-1 text-sm text-muted">Subscriptions, pilots, impossible questions welcome.</p>
-            </div>
-            <div className="rounded-3xl border border-white/10 bg-panel p-7">
-              <div className="text-xs font-bold tracking-widest text-muted">PAYMENTS</div>
-              <div className="mt-2 text-xl font-bold font-mono">Till 555 019</div>
-              <p className="mt-1 text-sm text-muted">Test fees, teacher subscriptions, school plans. Keep your SMS.</p>
+              <p className="mt-1 text-sm text-muted">Subscriptions and pilots welcome.</p>
             </div>
             <div className="rounded-3xl border border-white/10 bg-panel p-7">
               <div className="text-xs font-bold tracking-widest text-muted">GROUND</div>
               <div className="mt-2 text-xl font-bold">Kirinyaga, Kenya</div>
-              <p className="mt-1 text-sm text-muted">Everything else is behind the gate. That&apos;s intentional.</p>
             </div>
           </div>
         </div>

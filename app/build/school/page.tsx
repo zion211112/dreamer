@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { SCHOOL_FEE, SUBSCRIBED_SCHOOLS, TILL, isMpesaCode } from "../../../lib/ledger";
+import { SCHOOL_FEE, SUBSCRIBED_SCHOOLS, isMpesaCode } from "../../../lib/ledger";
 
 // School door: stripped to the bone. Price, subscribe, console link.
 // Public + private share the page, badge differs. The console does the working.
@@ -29,9 +29,8 @@ export default function School({ searchParams }: { searchParams: { type?: string
         <p className="font-mono text-xs tracking-[0.2em] text-muted">{type.toUpperCase()} SCHOOL DOOR ·</p>
         <h1 className="mt-4 font-display text-4xl md:text-5xl font-semibold leading-tight">Access the collective.</h1>
         <form onSubmit={subscribe} className="mt-8 rounded-3xl border border-white/10 bg-panel p-7 text-left">
-          <div className="font-bold">Subscribe the school — {SCHOOL_FEE}</div>
-          <p className="mt-1 text-sm text-muted">Send to Till {TILL}, enter school name + M-Pesa code.</p>
-          <div className="mt-4 grid sm:grid-cols-2 gap-2">
+            <div className="font-bold">Subscribe the school — {SCHOOL_FEE}</div>
+            <div className="mt-4 grid sm:grid-cols-2 gap-2">
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="School name" maxLength={60} className={field} />
             <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="M-Pesa code" maxLength={10} className={`${field} font-mono uppercase`} />
           </div>

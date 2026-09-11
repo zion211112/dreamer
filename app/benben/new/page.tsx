@@ -22,7 +22,7 @@ import {
   validateBuild
 } from "../../../lib/benben";
 
-// The sacred area. Every post is a build — an MVP, a company, an invention.
+// Composer: title, body, domain, type, needs, seal, files, contact.
 // Name the dream plainly, seal who may see it, attach what proves it.
 export default function NewBuild() {
   const router = useRouter();
@@ -141,12 +141,11 @@ export default function NewBuild() {
       <div className="mx-auto max-w-2xl px-4 md:px-6 py-8 md:py-12">
         <div className="flex items-center justify-between">
           <div>
-            <p className="font-mono text-[11px] font-bold uppercase tracking-widest text-teal-300">The sacred area</p>
-            <h1 className="mt-1 font-display text-2xl md:text-3xl font-semibold">Submit your dream.</h1>
+            <h1 className="font-display text-2xl md:text-3xl font-semibold">Submit your dream.</h1>
           </div>
           <button onClick={() => router.back()} className="font-mono text-sm text-muted hover:text-ivory" aria-label="Close">[X]</button>
         </div>
-        <p className="mt-2 text-sm text-muted">Every post is a build — an MVP, a company, an invention. Name it plainly. Posting as <span className="font-mono text-teal-300">@{me}</span>.</p>
+        <p className="mt-2 text-sm text-muted">Posting as <span className="font-mono text-teal-300">@{me}</span>.</p>
 
         <form onSubmit={post} className="mt-6 space-y-5">
           <div>
@@ -281,7 +280,6 @@ export default function NewBuild() {
 
           {err && <p className="rounded-2xl bg-red-950/40 border border-red-900 p-4 text-sm text-red-300">{err}</p>}
           <button className="w-full rounded-full bb-btn py-4 text-sm font-bold transition" style={{ height: 55 }}>Submit the dream →</button>
-          <p className="text-center font-mono text-xs text-dim">No emojis. No links. {myTier === "visitor" ? "Lives 72 hours." : "Certified — lives 7 days."}</p>
         </form>
       </div>
     </main>

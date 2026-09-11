@@ -31,7 +31,6 @@ export const OCCUPATIONS: string[] = [
 
 export const LOCATIONS: string[] = ["Mwea", "Kagio", "Kerugoya", "Embu", "Sagana", "Mugumo"];
 
-export const TILL = "555 019";
 export const CERT_FEE = "KES 50";
 export const HALL_FEE = "KES 100";
 export const TEACHER_FEE = "KES 250/month";

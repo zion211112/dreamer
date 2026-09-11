@@ -11,7 +11,6 @@ import JoinLink from "../components/JoinLink";
 export default function Home() {
   const [doors, setDoors] = useState(false);
 
-  // Counters start at zero everywhere on this page. First entries land here.
   return (
     <main className="bg-obsidian text-ivory">
       {/* LEDGER LINE — landing only */}
@@ -81,7 +80,6 @@ export default function Home() {
                   <span className="shrink-0 text-[11px] font-mono text-gold">CURRENT BUILD</span>
                 </div>
               </div>
-              <p className="mt-4 text-xs text-muted">Counters start at zero. First entries land here.</p>
               <Link href="/zep-tepi/gate" className="mt-3 inline-block font-mono text-xs text-gold hover:text-ivory transition">Zep Tepi →</Link>
             </div>
           </div>

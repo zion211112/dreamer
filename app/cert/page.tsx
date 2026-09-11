@@ -9,7 +9,6 @@ import {
   KEYS,
   Member,
   SEED_MEMBERS,
-  TILL,
   isMpesaCode,
   loadStored,
   saveStored
@@ -82,7 +81,6 @@ export default function Cert() {
           <p className="text-xs font-bold tracking-widest text-gold">CERTIFICATION · {CERT_FEE} · NO TEST</p>
           <h1 className="mt-3 font-display text-4xl md:text-5xl font-semibold tracking-tight">Proof you exist on the list.</h1>
           <p className="mt-4 text-muted leading-relaxed">
-            Fifty bob seals your name, trade and town into a certificate you can download, print, and pin to a shop wall.
             No examination. No ranking. Carried, not crowned.
           </p>
 
@@ -95,7 +93,7 @@ export default function Cert() {
 
           {me && !me.paid && (
             <form onSubmit={pay} className="mt-8 rounded-3xl border border-white/10 bg-panel p-7">
-              <p className="text-sm">Certifying <strong className="font-mono text-gold">@{me.username}</strong> ({me.id}). Send {CERT_FEE} to Till {TILL}:</p>
+              <p className="text-sm">Certifying <strong className="font-mono text-gold">@{me.username}</strong> ({me.id}). Enter the M-Pesa code:</p>
               <div className="mt-3 flex gap-2">
                 <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="M-Pesa code (10 characters)" maxLength={10} className={`${field} flex-1 font-mono uppercase`} />
                 <button className="rounded-2xl bg-gold px-6 text-sm font-bold text-black hover:bg-ivory transition">Seal →</button>
