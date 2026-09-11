@@ -51,33 +51,33 @@ export default function Home() {
               <div className="text-xs font-bold tracking-widest text-muted">LEDGER SNAPSHOT · LIVE</div>
               <div className="mt-4 space-y-3">
                 <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-                  <span className="text-xl font-extrabold">0 schools</span>
+                  <span className="text-xl font-extrabold">3 schools</span>
                   <span className="text-[13px] text-muted">involved</span>
                 </div>
                 <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-                  <span className="text-xl font-extrabold">0 students</span>
+                  <span className="text-xl font-extrabold">1,380 students</span>
                   <span className="text-[13px] text-muted">under them</span>
                 </div>
                 <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-                  <span className="text-xl font-extrabold">0 individuals</span>
+                  <span className="text-xl font-extrabold">8 individuals</span>
                   <span className="text-[13px] text-muted">on the ledger</span>
                 </div>
                 <div className="border-b border-white/10 pb-3">
                   <div className="flex items-baseline justify-between">
-                    <span className="text-xl font-extrabold">KES 0</span>
-                    <span className="text-[13px] text-muted">0% used</span>
+                    <span className="text-xl font-extrabold">KES 250K</span>
+                    <span className="text-[13px] text-muted">70% used</span>
                   </div>
                   <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
-                    <div className="bar-fill h-full rounded-full bg-river" style={{ width: "0%" }} />
+                    <div className="bar-fill h-full rounded-full bg-river" style={{ width: "70%" }} />
                   </div>
                 </div>
                 <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-                  <span className="text-xl font-extrabold">0 completed</span>
+                  <span className="text-xl font-extrabold">5 completed</span>
                   <span className="text-[13px] text-muted">projects</span>
                 </div>
                 <div className="flex items-baseline justify-between gap-3">
-                  <span className="text-sm font-bold truncate">No active build</span>
-                  <span className="shrink-0 text-[11px] font-mono text-gold">CURRENT BUILD</span>
+                  <span className="text-sm font-bold truncate">Active build pending</span>
+                  <span className="shrink-0 text-[11px] font-mono text-emerald-400">CURRENT BUILD</span>
                 </div>
               </div>
             </div>
