@@ -51,7 +51,7 @@ export default function Home() {
           </div>
           <p className="hero-count">
             <span className="dot-live" aria-hidden="true" />
-            <span className="count-num" data-target="0">0</span>&nbsp;on the list. You&apos;re next.
+            <span className="count-num" data-target="1">0</span>&nbsp;on the list. You&apos;re next.
           </p>
         </div>
       </section>
@@ -99,14 +99,14 @@ export default function Home() {
           <h2 className="display doors-title">Build capacity. Four doors. Who are you?</h2>
           <ul className="doors-list">
             <li className="door">
-              <span className="door-label">Youth</span>
-              <p className="door-copy">Join the ledger. Claim, test, seal. Then work.</p>
+              <span className="door-label">Individual</span>
+              <p className="door-copy">You have a CV? Nobody believes it.</p>
               <Link href="/ledger#join" className="door-link">Join now</Link>
             </li>
             <li className="door">
               <span className="door-label">Builder</span>
               <p className="door-copy">Already skilled? Get verified, then take on paid builds.</p>
-              <Link href="/benben/new" className="door-link">Get verified</Link>
+              <Link href="/cert" className="door-link">Get verified</Link>
             </li>
             <li className="door">
               <span className="door-label">School</span>
