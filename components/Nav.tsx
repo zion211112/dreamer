@@ -5,7 +5,7 @@ import { useState } from "react";
 
 const LINKS: [string, string][] = [
   ["/benben", "Ben-Ben"],
-  ["/zep-tepi", "Zep Tepi"]
+  ["/ledger/1.254", "ledger 1.254"]
 ];
 
 export function Nav() {
