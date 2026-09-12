@@ -79,7 +79,7 @@ export default function Dashboard() {
           {me && !me.paid && (
             <div className="mt-8 rounded-3xl border border-white/10 bg-panel p-7 text-center">
               <p className="font-display text-2xl">@{me.username} exists — uncertified.</p>
-              <Link href="/cert" className="mt-5 inline-block rounded-full bg-gold px-8 py-3 text-sm font-bold text-black hover:bg-ivory transition">
+              <Link href="/zep-tepi/gate" className="mt-5 inline-block rounded-full bg-gold px-8 py-3 text-sm font-bold text-black hover:bg-ivory transition">
                 Get certified →
               </Link>
               <div>

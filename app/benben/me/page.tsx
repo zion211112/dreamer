@@ -114,7 +114,7 @@ export default function Slot() {
           <div className="mt-6 grid gap-2">
             <Link href="/benben" className="rounded-full border border-white/15 py-3 text-center text-sm font-semibold hover:border-teal-300 transition">Your Posts live on the floor →</Link>
             {tier === "visitor" && (
-              <Link href="/cert" className="rounded-full bb-btn py-3 text-center text-sm font-bold transition">Get Certified — 50 KES →</Link>
+              <Link href="/zep-tepi/gate" className="rounded-full bb-btn py-3 text-center text-sm font-bold transition">Get verified →</Link>
             )}
             {tier === "certified" && (
               <Link href="/crucible" className="rounded-full bb-btn py-3 text-center text-sm font-bold transition">Enter the Halls — 100 KES →</Link>

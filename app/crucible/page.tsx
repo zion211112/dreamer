@@ -101,7 +101,7 @@ export default function Crucible() {
           {me && !(me.paid && me.verified) && (
             <div className="mt-8 rounded-3xl border border-white/10 bg-panel p-7 text-center">
               <p className="text-muted">The examination is for certified members. Seal your name first — 50 bob, no test.</p>
-              <Link href="/cert" className="mt-4 inline-block rounded-full bg-gold px-8 py-3 text-sm font-bold text-black hover:bg-ivory transition">Get certified →</Link>
+              <Link href="/zep-tepi/gate" className="mt-4 inline-block rounded-full bg-gold px-8 py-3 text-sm font-bold text-black hover:bg-ivory transition">Get certified →</Link>
             </div>
           )}
 

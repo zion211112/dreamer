@@ -102,11 +102,11 @@ export default function Ledger() {
           {mine ? (
             <div className="mt-4 text-center">
               <p className="font-display text-2xl md:text-3xl">Welcome back, @{mine.username}.</p>
-              {!mine.paid ? (
-                <Link href="/cert" className="mt-6 inline-block rounded-full bg-gold px-8 py-3.5 text-sm font-bold text-black hover:bg-ivory transition">
-                  Get certified →
-                </Link>
-              ) : (
+{!mine.paid ? (
+                  <Link href="/zep-tepi/gate" className="mt-6 inline-block rounded-full bg-gold px-8 py-3.5 text-sm font-bold text-black hover:bg-ivory transition">
+                    Get certified →
+                  </Link>
+                ) : (
                 <Link href="/dashboard" className="mt-6 inline-block rounded-full border border-white/20 px-8 py-3.5 text-sm font-semibold hover:border-gold transition">
                   Dashboard →
                 </Link>
