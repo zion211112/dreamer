@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import CursorRipple from "../../components/forest/CursorRipple";
-import HallBanner from "../../components/forest/HallBanner";
 import Metatron from "../../components/forest/Metatron";
 import Reveal from "../../components/forest/Reveal";
 import { myUsername } from "../../lib/benben";
@@ -158,9 +157,9 @@ export default function Forest() {
           <h1 className="mt-6 text-7xl md:text-9xl font-light tracking-wide" style={{ fontFamily: "Cormorant Garamond, Georgia, serif" }}>
             African
           </h1>
-          <button onClick={() => setEntered(true)} className="mt-10 rounded-full bg-[#c8763c] px-10 py-4 text-sm font-bold text-black hover:bg-[#e8e0d8] transition">
-            Enter the Forest →
-          </button>
+<button onClick={() => setEntered(true)} className="mt-10 rounded-full bg-[#c8763c] px-10 py-4 text-sm font-bold text-black hover:bg-[#e8e0d8] transition">
+              Get verified →
+            </button>
         </div>
       ) : (
         <div className="relative mx-auto max-w-5xl px-6 py-14">
@@ -303,7 +302,6 @@ export default function Forest() {
               const hall = HALLS[openBanner - 1];
               return (
                 <div>
-                  <HallBanner hall={openBanner} />
                   <p className="mt-4 text-center font-mono text-sm text-[#c8763c]">@{hall.admin} · mask “{MASKS[openBanner - 1]}”</p>
                   <p className="mt-1 text-center text-sm text-white/50">{LINES[openBanner - 1]} — locked. No entry. No hint.</p>
                   <button onClick={() => setOpenBanner(null)} className="mx-auto mt-4 block rounded-full border border-white/20 px-6 py-2 text-sm hover:border-white transition">Return →</button>

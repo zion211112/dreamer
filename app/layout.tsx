@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${playfair.variable} ${inter.variable} ${jetbrains.variable} bg-obsidian text-ivory font-body antialiased`}>
+      <body className={`${playfair.variable} ${inter.variable} ${jetbrains.variable} ${fraunces.variable} ${plex.variable} bg-obsidian text-ivory font-body antialiased`}>
         <Nav />
         <Gate>{children}</Gate>
         <footer className="border-t border-white/10">

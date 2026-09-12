@@ -6,29 +6,11 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Paper theme (opt-in via .theme-paper on body) */
-:root{
-  --paper:#EDE6D6;
-  --ink:#211C15;
-  --ink-muted:#6B6252;
-  --green:#204734;
-  --green-deep:#16332A;
-  --ochre:#8B5E24;
-  --ochre-text:#F4EFE3;
-  --rule:#C7BBA0;
-  --radius:3px;
-  --maxw:920px;
-}
-.theme-paper body{
-  background:var(--paper);
-  color:var(--ink);
-  font-family:var(--font-inter),system-ui,-apple-system,sans-serif;
-}
-/* Obsidian floor (default, no class) */
-body:not(.theme-paper){
-  background:#08080a;
-  color:#f5f0e6;
-  font-family:var(--font-inter),system-ui,-apple-system,sans-serif;
+body {
+  background: #08080a;
+  color: #f5f0e6;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
@@ -75,4 +57,78 @@ body:not(.theme-paper){
 }
 .bb-glow {
   box-shadow: 0 10px 40px -12px rgba(45, 212, 191, 0.45);
+}
+
+/* Paper Portico (landing only): Fraunces + Plex on #EDE6D6. BenBen stays obsidian. */
+.theme-paper {
+  --paper: #EDE6D6;
+  --paper-ink: #211C15;
+  --paper-muted: #6B6252;
+  --paper-green: #204734;
+  --paper-green-deep: #16332A;
+  --paper-ochre: #8B5E24;
+  --paper-ochre-text: #F4EFE3;
+  --paper-rule: #C7BBA0;
+  background: var(--paper);
+  color: var(--paper-ink);
+  font-family: var(--font-plex), system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.theme-paper .display {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-optical-sizing: auto;
+}
+.theme-paper .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+.theme-paper a { color: inherit; text-decoration: none; }
+.theme-paper :focus-visible { outline: 2px solid var(--paper-green); outline-offset: 3px; }
+.theme-paper .hero { padding: 88px 0 64px; }
+.theme-paper .hero-title { font-size: clamp(2.6rem, 6vw, 5rem); font-weight: 500; line-height: 1.04; margin: 0 0 20px; letter-spacing: -0.01em; }
+.theme-paper .hero-sub { font-size: 1.15rem; color: var(--paper-muted); max-width: 38ch; margin: 0 0 34px; }
+.theme-paper .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 28px; }
+.theme-paper .btn { display: inline-flex; align-items: center; padding: 13px 22px; font-size: 0.95rem; font-weight: 500; border-radius: 3px; transition: background 0.15s ease, color 0.15s ease; cursor: pointer; border: 0; font-family: inherit; }
+.theme-paper .btn-primary { background: var(--paper-green); color: var(--paper); }
+.theme-paper .btn-primary:hover { background: var(--paper-green-deep); }
+.theme-paper .btn-secondary { border: 1px solid var(--paper-ink); color: var(--paper-ink); background: transparent; }
+.theme-paper .btn-secondary:hover { background: var(--paper-ink); color: var(--paper); }
+.theme-paper .hero-count { display: flex; align-items: center; gap: 9px; font-size: 0.9rem; color: var(--paper-muted); margin: 0; }
+.theme-paper .dot-live { width: 7px; height: 7px; border-radius: 50%; background: var(--paper-green); flex: none; position: relative; }
+.theme-paper .dot-live::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid var(--paper-green); opacity: 0.5; animation: paper-pulse 2.2s ease-out infinite; }
+@keyframes paper-pulse { 0% { transform: scale(0.6); opacity: 0.6; } 100% { transform: scale(1.9); opacity: 0; } }
+
+/* Landing top-right corner links */
+.top-right { display: flex; gap: 12px; margin-top: 8px; }
+.top-link {
+  display: inline-flex; padding: 6px 12px; border-radius: 9999px;
+  font-size: 0.75rem; font-weight: 600; color: var(--ivory);
+  background: var(--emerald); transition: background 0.15s ease;
+}
+.top-link:hover { background: #1F8A5B; }
+.top-link:focus-visible { outline: 2px solid var(--emerald); outline-offset: 2px; }
+.theme-paper .count-num { font-variant-numeric: tabular-nums; color: var(--paper-ink); font-weight: 600; }
+.theme-paper .snapshot { padding: 52px 0; border-top: 1px solid var(--paper-rule); }
+.theme-paper .snapshot-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 26px; gap: 16px; flex-wrap: wrap; }
+.theme-paper .snapshot-title { font-size: 1.5rem; font-weight: 500; margin: 0; }
+.theme-paper .live-tag { display: inline-flex; align-items: center; gap: 7px; font-size: 0.82rem; color: var(--paper-muted); }
+.theme-paper .ledger-rows { margin: 0; }
+.theme-paper .ledger-row { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 0; border-top: 1px solid var(--paper-rule); gap: 24px; }
+.theme-paper .ledger-row:last-child { border-bottom: 1px solid var(--paper-rule); }
+.theme-paper .ledger-row dt { margin: 0; color: var(--paper-muted); font-size: 0.95rem; }
+.theme-paper .ledger-row dd { margin: 0; font-size: 1.05rem; font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
+.theme-paper .ochre-tag { display: inline-block; background: var(--paper-ochre); color: var(--paper-ochre-text); font-size: 0.75rem; font-weight: 600; padding: 2px 7px; border-radius: 2px; margin-left: 8px; }
+.theme-paper .doors { padding: 52px 0 72px; border-top: 1px solid var(--paper-rule); }
+.theme-paper .doors-title { font-size: 1.5rem; font-weight: 500; margin: 0 0 28px; max-width: 32ch; }
+.theme-paper .doors-list { list-style: none; margin: 0; padding: 0; }
+.theme-paper .door { display: grid; grid-template-columns: 110px 1fr auto; align-items: baseline; gap: 20px; padding: 20px 0; border-top: 1px solid var(--paper-rule); }
+.theme-paper .doors-list li:last-child { border-bottom: 1px solid var(--paper-rule); }
+.theme-paper .door-label { font-weight: 600; font-size: 0.95rem; }
+.theme-paper .door-copy { margin: 0; color: var(--paper-muted); font-size: 0.95rem; max-width: 46ch; }
+.theme-paper .door-link { font-weight: 500; font-size: 0.9rem; border-bottom: 1px solid var(--paper-ink); white-space: nowrap; }
+.theme-paper .door-link:hover { color: var(--paper-green); border-color: var(--paper-green); }
+.theme-paper .entry-no { font-size: 0.78rem; color: var(--paper-muted); font-variant-numeric: tabular-nums; }
+@media (max-width: 640px) {
+  .theme-paper .door { grid-template-columns: 1fr; gap: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .theme-paper .dot-live::after { animation: none; }
 }
