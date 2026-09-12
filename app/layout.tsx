@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Playfair_Display, Fraunces } from "next/font/google";
+import { Inter, JetBrains_Mono, Playfair_Display, Fraunces, IBM_Plex_Sans } from "next/font/google";
 import { Gate } from "../components/AuthGate";
 import { Nav } from "../components/Nav";
 import Link from "next/link";
 import "./globals.css";
 
+const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600", "700"], variable: "--font-playfair" });
 const fraunces = Fraunces({ subsets: ["latin"], weight: ["600", "700"], variable: "--font-fraunces" });
+const plex = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-plex" });
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const jetbrains = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-jetbrains" });
 
