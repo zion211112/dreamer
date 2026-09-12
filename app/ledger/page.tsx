@@ -91,12 +91,10 @@ export default function Ledger() {
     setName(""); setSkill("");
   }
 
-  const totalStudents = SCHOOL_STATS.reduce((n, s) => n + s.students, 0);
-
   return (
     <main className="bg-obsidian text-ivory">
       <div className="mx-auto max-w-2xl px-6 py-16 md:py-24">
-        <p className="text-center font-mono text-xs tracking-[0.2em] text-muted">LEDGER 1.254 · ENTRY POINT</p>
+        <p className="text-center font-mono text-xs tracking-[0.2em] text-muted">LEDGER 1.001 · ENTRY POINT</p>
 
         {/* JOIN — one line if known, one form if new */}
         <div id="join" className="mt-10">
@@ -134,26 +132,26 @@ export default function Ledger() {
 
         {/* PILOT SCHOOLS — central snapshot */}
         <section className="mt-20 md:mt-28">
-          <p className="text-center text-xs font-bold tracking-widest text-muted">THREE SCHOOLS · PILOTS</p>
+          <p className="text-center text-xs font-bold tracking-widest text-muted">ONE SCHOOL · PILOT</p>
           <div className="mt-6">
-            {SCHOOL_STATS.map((s) => (
+            {SCHOOL_STATS.slice(0, 1).map((s) => (
               <div key={s.name} className="flex items-baseline justify-between gap-4 border-b border-white/10 py-5">
                 <span className="font-display text-xl md:text-2xl">{s.name}</span>
                 <span className="shrink-0 font-mono text-sm text-muted">{rough(s.students)} students</span>
               </div>
             ))}
             <div className="flex items-baseline justify-between gap-4 py-5">
-              <span className="font-mono text-xs tracking-widest text-muted">UNDER THREE ROOFS</span>
-              <span className="font-display text-2xl md:text-3xl text-gold">{rough(totalStudents)}</span>
+              <span className="font-mono text-xs tracking-widest text-muted">UNDER ONE ROOF</span>
+              <span className="font-display text-2xl md:text-3xl text-gold">{rough(SCHOOL_STATS[0].students)}</span>
             </div>
           </div>
         </section>
 
         {/* THE EIGHT — admins of the roll */}
         <section className="mt-20 md:mt-28">
-          <p className="text-center text-xs font-bold tracking-widest text-muted">THE EIGHT · ADMINS OF THE ROLL</p>
+          <p className="text-center text-xs font-bold tracking-widest text-muted">FIRST NAME · THE ROLL BEGINS</p>
           <ol className="mt-6">
-            {SEED_MEMBERS.map((m, i) => (
+            {SEED_MEMBERS.slice(0, 1).map((m, i) => (
               <li key={m.id} className="flex items-baseline gap-4 border-b border-white/10 py-5 md:gap-6">
                 <span className="shrink-0 font-mono text-xs text-dim">{String(i + 1).padStart(2, "0")}</span>
                 <div className="min-w-0 flex-1">

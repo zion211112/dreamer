@@ -16,7 +16,7 @@ export default function Home() {
       {/* LEDGER LINE — landing only */}
       <div className="border-b border-white/10">
         <div className="mx-auto max-w-5xl px-6 py-2 text-center font-mono text-[11px] tracking-[0.2em] text-muted">
-          LEDGER 1.254 · KENYA
+          LEDGER 1.001 · KENYA
         </div>
       </div>
 
@@ -41,7 +41,7 @@ export default function Home() {
                 JOIN THE LEDGER
               </JoinLink>
             </div>
-            <p className="mt-4 text-sm text-muted">0 on the list. You&apos;re next.</p>
+            <p className="mt-4 text-sm text-muted">1 on the list. You&apos;re next.</p>
           </div>
 
           {/* SNAPSHOT */}
@@ -51,32 +51,24 @@ export default function Home() {
               <div className="text-xs font-bold tracking-widest text-muted">LEDGER SNAPSHOT · LIVE</div>
               <div className="mt-4 space-y-3">
                 <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-                  <span className="text-xl font-extrabold">3 schools</span>
-                  <span className="text-[13px] text-muted">involved</span>
+                  <span className="text-xl font-extrabold">1 school</span>
+                  <span className="text-[13px] text-muted">Kagio Secondary</span>
                 </div>
                 <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-                  <span className="text-xl font-extrabold">1,380 students</span>
-                  <span className="text-[13px] text-muted">under them</span>
-                </div>
-                <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-                  <span className="text-xl font-extrabold">8 individuals</span>
-                  <span className="text-[13px] text-muted">on the ledger</span>
+                  <span className="text-xl font-extrabold">1 student</span>
+                  <span className="text-[13px] text-muted">@Shemsu_Node</span>
                 </div>
                 <div className="border-b border-white/10 pb-3">
                   <div className="flex items-baseline justify-between">
-                    <span className="text-xl font-extrabold">KES 250K</span>
-                    <span className="text-[13px] text-muted">70% used</span>
+                    <span className="text-xl font-extrabold">KES 50</span>
+                    <span className="text-[13px] text-muted">one seal · certificate</span>
                   </div>
                   <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
-                    <div className="bar-fill h-full rounded-full bg-river" style={{ width: "70%" }} />
+                    <div className="bar-fill h-full rounded-full bg-river" style={{ width: "100%" }} />
                   </div>
                 </div>
-                <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-                  <span className="text-xl font-extrabold">5 completed</span>
-                  <span className="text-[13px] text-muted">projects</span>
-                </div>
                 <div className="flex items-baseline justify-between gap-3">
-                  <span className="text-sm font-bold truncate">Active build pending</span>
+                  <span className="text-sm font-bold truncate">1 post on the floor</span>
                   <span className="shrink-0 text-[11px] font-mono text-emerald-400">CURRENT BUILD</span>
                 </div>
               </div>

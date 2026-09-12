@@ -93,7 +93,7 @@ export default function SchoolConsole() {
         </div>
 
         <div className="mt-6 flex flex-wrap gap-3 text-sm">
-          <Link href="/benben/new" className="rounded-full border border-white/20 px-6 py-2.5 font-semibold hover:border-gold transition">Post it as a build →</Link>
+          <Link href="/benben" className="rounded-full border border-white/20 px-6 py-2.5 font-semibold hover:border-gold transition">See the floor →</Link>
           <Link href="/teacher" className="rounded-full border border-white/20 px-6 py-2.5 font-semibold hover:border-gold transition">Teacher console →</Link>
         </div>
       </div>
