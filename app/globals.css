@@ -6,11 +6,29 @@ html {
   scroll-behavior: smooth;
 }
 
-body {
-  background: #08080a;
-  color: #f5f0e6;
-  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
+/* Paper theme (opt-in via .theme-paper on body) */
+:root{
+  --paper:#EDE6D6;
+  --ink:#211C15;
+  --ink-muted:#6B6252;
+  --green:#204734;
+  --green-deep:#16332A;
+  --ochre:#8B5E24;
+  --ochre-text:#F4EFE3;
+  --rule:#C7BBA0;
+  --radius:3px;
+  --maxw:920px;
+}
+.theme-paper body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-inter),system-ui,-apple-system,sans-serif;
+}
+/* Obsidian floor (default, no class) */
+body:not(.theme-paper){
+  background:#08080a;
+  color:#f5f0e6;
+  font-family:var(--font-inter),system-ui,-apple-system,sans-serif;
 }
 
 ::selection {

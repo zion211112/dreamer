@@ -1,22 +1,54 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useState } from "react";
 import DoorsModal from "../components/DoorsModal";
 import GeoArt from "../components/GeoArt";
 import JoinLink from "../components/JoinLink";
 
-// Landing: fool-plain on obsidian. Two entries: build, join.
+// Snapshot numbers (kept in sync with ledger)
+const SCHOOLS = 3;
+const STUDENTS = 1380;
+const INDIVIDUALS = 8;
+const BUDGET_USED = 250; // KES thousands
+const BUDGET_TOTAL = 250;
+const COMPLETED = 5;
 
 export default function Home() {
   const [doors, setDoors] = useState(false);
 
+  // Simple count-up on mount (no IntersectionObserver complexity)
+  const [counts, setCounts] = useState({
+    schools: 0,
+    students: 0,
+    individuals: 0,
+  });
+
+  useEffect(() => {
+    const animate = (target, key, duration) => {
+      let start = null;
+      const step = (ts) => {
+        if (!start) start = ts;
+        const p = Math.min((ts - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        const rounded = Math.round(eased * target);
+        setCounts((prev) => ({ ...prev, [key]: rounded }));
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+
+    animate(SCHOOLS, "schools", 900);
+    animate(STUDENTS, "students", 900);
+    animate(INDIVIDUALS, "individuals", 900);
+  }, []);
+
   return (
-    <main className="bg-obsidian text-ivory">
+    <main className="theme-paper">
       {/* LEDGER LINE — landing only */}
       <div className="border-b border-white/10">
         <div className="mx-auto max-w-5xl px-6 py-2 text-center font-mono text-[11px] tracking-[0.2em] text-muted">
-          LEDGER 1.001 · KENYA
+          LEDGER 1.254 · KENYA
         </div>
       </div>
 
@@ -41,7 +73,7 @@ export default function Home() {
                 JOIN THE LEDGER
               </JoinLink>
             </div>
-            <p className="mt-4 text-sm text-muted">1 on the list. You&apos;re next.</p>
+            <p className="mt-4 text-sm text-muted">0 on the list. You&apos;re next.</p>
           </div>
 
           {/* SNAPSHOT */}
@@ -51,24 +83,32 @@ export default function Home() {
               <div className="text-xs font-bold tracking-widest text-muted">LEDGER SNAPSHOT · LIVE</div>
               <div className="mt-4 space-y-3">
                 <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-                  <span className="text-xl font-extrabold">1 school</span>
-                  <span className="text-[13px] text-muted">Kagio Secondary</span>
+                  <span className="text-xl font-extrabold">{counts.schools}</span>
+                  <span className="text-[13px] text-muted">involved</span>
                 </div>
                 <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-                  <span className="text-xl font-extrabold">1 student</span>
-                  <span className="text-[13px] text-muted">@Shemsu_Node</span>
+                  <span className="text-xl font-extrabold">{counts.students}</span>
+                  <span className="text-[13px] text-muted">under them</span>
+                </div>
+                <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
+                  <span className="text-xl font-extrabold">{counts.individuals}</span>
+                  <span className="text-[13px] text-muted">on the ledger</span>
                 </div>
                 <div className="border-b border-white/10 pb-3">
                   <div className="flex items-baseline justify-between">
-                    <span className="text-xl font-extrabold">KES 50</span>
-                    <span className="text-[13px] text-muted">one seal · certificate</span>
+                    <span className="text-xl font-extrabold">KES {BUDGET_USED}K</span>
+                    <span className="text-[13px] text-muted">{100 - Math.round((BUDGET_USED / BUDGET_TOTAL) * 100)}% used</span>
                   </div>
                   <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
-                    <div className="bar-fill h-full rounded-full bg-river" style={{ width: "100%" }} />
+                    <div className="bar-fill h-full rounded-full bg-river" style={{ width: `${Math.round((BUDGET_USED / BUDGET_TOTAL) * 100)}%` }} />
                   </div>
                 </div>
+                <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
+                  <span className="text-xl font-extrabold">{COMPLETED}</span>
+                  <span className="text-[13px] text-muted">completed projects</span>
+                </div>
                 <div className="flex items-baseline justify-between gap-3">
-                  <span className="text-sm font-bold truncate">1 post on the floor</span>
+                  <span className="text-sm font-bold truncate">Active build pending</span>
                   <span className="shrink-0 text-[11px] font-mono text-emerald-400">CURRENT BUILD</span>
                 </div>
               </div>
