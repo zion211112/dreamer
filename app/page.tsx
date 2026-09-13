@@ -45,7 +45,7 @@ export default function Home() {
           </p>
           <div className="hero-actions">
             <button onClick={() => setDoors(true)} className="btn btn-primary">
-              Build capacity
+              Access build capacity
             </button>
             <JoinLink className="btn btn-secondary">Join the ledger</JoinLink>
           </div>

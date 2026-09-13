@@ -108,25 +108,26 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   return (
     <main className="bg-obsidian text-ivory">
       <div className="mx-auto max-w-md px-6 py-24 text-center">
-        <p className="font-mono text-xs tracking-[0.2em] text-emerald-300">APT-LABS · ZEPTEPI</p>
-        <h1 className="mt-4 font-display text-4xl font-bold tracking-tight text-ivory">Member access</h1>
-        <p className="mt-3 text-sm text-muted">Phone number or Gmail. One code, one profile, no passwords.</p>
-
+        <p className="font-mono text-xs tracking-[0.2em] text-muted">APT-LABS · MEMBERS&apos; GATE</p>
+        <h1 className="mt-4 font-display text-4xl font-bold tracking-tight">The list is behind glass.</h1>
+        <p className="mt-3 text-muted">Visitors keep the porch and the contacts. Members get the machine. One code, one name, no passwords. Your number is checked at the door and never shown inside.</p>
         {!sent ? (
-          <form onSubmit={send} className="mt-8 rounded-3xl border border-white/10 bg-panel p-7 text-left shadow-[0_0_0_1px_rgba(255,255,255,0.03)]">
-            <label className="text-sm font-bold text-ivory">Phone or Gmail</label>
-            <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+254 ___ ___ ___ or name@gmail.com" inputMode="email" className="mt-2 w-full rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-emerald-400" />
-            <button className="mt-4 w-full rounded-full bg-emerald-500 px-6 py-3 text-sm font-semibold text-black hover:bg-emerald-400 transition">Send code →</button>
+          <form onSubmit={send} className="mt-8 rounded-3xl border border-white/10 bg-panel p-7 text-left">
+            <label className="text-sm font-bold">Phone number</label>
+            <div className="mt-2 flex gap-2">
+              <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+254 ___ ___ ___" inputMode="tel" className="flex-1 rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-gold" />
+              <button className="rounded-2xl bg-ivory px-6 text-sm font-semibold text-black hover:bg-gold hover:text-black transition">Send →</button>
+            </div>
             {err && <p className="mt-3 text-sm text-red-400">{err}</p>}
           </form>
         ) : !confirmed ? (
           <div className="mt-8 rounded-3xl border border-white/10 bg-panel p-7 text-left">
             <form onSubmit={confirm}>
-              <p className="text-sm text-muted">We sent a verification code.</p>
-              <p className="mt-2 font-mono text-3xl font-extrabold tracking-[0.3em] text-ivory">{sent}</p>
+              <p className="text-sm text-muted">Demo: SMS staged, so the code shows here. Production texts it.</p>
+              <p className="mt-2 font-mono text-3xl font-extrabold tracking-[0.3em]">{sent}</p>
               <div className="mt-4 flex gap-2">
-                <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="4-digit code" inputMode="numeric" maxLength={4} className="flex-1 rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm font-mono text-center text-ivory outline-none focus:border-emerald-400" />
-                <button className="rounded-2xl bg-emerald-500 px-6 text-sm font-bold text-black hover:bg-emerald-400 transition">Enter →</button>
+                <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="4-digit code" inputMode="numeric" maxLength={4} className="flex-1 rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm font-mono text-center text-ivory outline-none focus:border-gold" />
+                <button className="rounded-2xl bg-gold px-6 text-sm font-bold text-black hover:bg-ivory transition">Enter →</button>
               </div>
               {err && <p className="mt-3 text-sm text-red-400">{err}</p>}
             </form>
@@ -134,13 +135,14 @@ function AuthGate({ children }: { children: React.ReactNode }) {
         ) : (
           <div className="mt-8 rounded-3xl border border-white/10 bg-panel p-7 text-left">
             <form onSubmit={claim}>
-              <label className="text-sm font-bold text-ivory">Your username</label>
+              <label className="text-sm font-bold">Your username <span className="font-normal text-muted">— set it, or take the yard&apos;s suggestion</span></label>
               <div className="mt-2 flex gap-2">
-                <input value={uname} onChange={(e) => setUname(e.target.value)} placeholder="e.g. Jirani_4821" maxLength={20} className="flex-1 rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm font-mono text-ivory outline-none focus:border-emerald-400" />
-                <button type="button" onClick={() => setUname(suggestUsername(takenUsernames()))} className="rounded-2xl border border-white/20 px-4 text-sm font-semibold hover:border-emerald-400 transition">Suggest</button>
+                <input value={uname} onChange={(e) => setUname(e.target.value)} placeholder="e.g. Jirani_4821" maxLength={20} className="flex-1 rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm font-mono text-ivory outline-none focus:border-gold" />
+                <button type="button" onClick={() => setUname(suggestUsername(takenUsernames()))} className="rounded-2xl border border-white/20 px-4 text-sm font-semibold hover:border-gold transition">Suggest</button>
               </div>
-              <button className="mt-3 w-full rounded-full bg-ivory py-3.5 text-sm font-semibold text-black hover:bg-emerald-400 transition">Claim name →</button>
+              <button className="mt-3 w-full rounded-full bg-ivory py-3.5 text-sm font-semibold text-black hover:bg-gold hover:text-black transition">Claim name →</button>
               {err && <p className="mt-3 text-sm text-red-400">{err}</p>}
+              <p className="mt-3 text-xs text-muted">Names are public. Numbers never are — nothing here can be scraped for contacts.</p>
             </form>
           </div>
         )}
