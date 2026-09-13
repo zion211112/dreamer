@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Playfair_Display, Fraunces, IBM_Plex_Sans } from "next/font/google";
-import { Gate } from "../components/AuthGate";
 import { Nav } from "../components/Nav";
 import Link from "next/link";
 import "./globals.css";
@@ -23,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${playfair.variable} ${inter.variable} ${jetbrains.variable} ${fraunces.variable} ${plex.variable} bg-obsidian text-ivory font-body antialiased`}>
         <Nav />
-        <Gate>{children}</Gate>
+        {children}
         <footer className="border-t border-white/10">
           <div className="mx-auto max-w-5xl px-6 py-10 flex flex-col sm:flex-row justify-between gap-3 text-sm text-muted">
             <span>APT-LABS · Kirinyaga, Kenya</span>
