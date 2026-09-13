@@ -5,9 +5,9 @@ import { useState } from "react";
 import { KEYS, saveStored } from "../lib/ledger";
 
 const DOORS: { label: string; href: string | null; note: string }[] = [
-  { label: "Teacher", href: "/build/teacher", note: "Assistant · KES 250/month" },
-  { label: "Public School", href: "/build/school?type=public", note: "Products + subscription" },
-  { label: "Private School", href: "/build/school?type=private", note: "Products + subscription" },
+  { label: "Teacher", href: "/build/teacher", note: "Build without certification" },
+  { label: "Public School", href: "/build/school?type=public", note: "Capacity, not credentials" },
+  { label: "Private School", href: "/build/school?type=private", note: "Capacity, not credentials" },
   { label: "Government", href: null, note: "Your door opens next." }
 ];
 
@@ -30,9 +30,9 @@ export default function DoorsModal({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 z-[90] overflow-y-auto bg-black/70 p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/70 p-4" onClick={onClose}>
       <div
-        className="mx-auto mt-10 max-w-2xl rounded-3xl bg-panel border border-white/10 p-7 md:p-9"
+        className="w-full max-w-2xl rounded-3xl bg-panel border border-white/10 p-7 md:p-9"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between">
