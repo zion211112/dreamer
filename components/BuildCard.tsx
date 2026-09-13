@@ -68,7 +68,7 @@ export default function BuildCard({
           <button
             onClick={() => onVote(b.id, 1)}
             disabled={!canVote}
-            title={canVote ? "Upvote" : "Certified unlocks voting"}
+            title={canVote ? "Upvote" : "Member access unlocks voting"}
             aria-label="Upvote"
             className={`px-1 text-lg leading-none transition ${!canVote ? "cursor-not-allowed opacity-30" : myVote === 1 ? "text-teal-300" : "text-muted hover:text-teal-300"}`}
           >
@@ -78,7 +78,7 @@ export default function BuildCard({
           <button
             onClick={() => onVote(b.id, -1)}
             disabled={!canVote}
-            title={canVote ? "Downvote: not a real build, or off-topic. Never for disagreement." : "Certified unlocks voting"}
+            title={canVote ? "Downvote: not a real build, or off-topic. Never for disagreement." : "Member access unlocks voting"}
             aria-label="Downvote"
             className={`px-1 text-lg leading-none transition ${!canVote ? "cursor-not-allowed opacity-30" : myVote === -1 ? "text-earth" : "text-muted hover:text-earth"}`}
           >
@@ -98,7 +98,7 @@ export default function BuildCard({
       </div>
       {voteErr && <p className="mt-2 font-mono text-xs text-red-400">{voteErr}</p>}
       {!canVote && (
-        <p className="mt-2 font-mono text-xs text-dim">Voting unlocks with certification — 50 bob, no test.</p>
+        <p className="mt-2 font-mono text-xs text-dim">Voting unlocks with active member access.</p>
       )}
     </article>
   );

@@ -60,7 +60,7 @@ export type Build = {
   visibility: Visibility;
   attachments: BuildFile[];
   createdTs: number;
-  tierAtPost: string; // visitor | certified | hall
+  tierAtPost: string; // visitor | member | hall
 };
 
 // Who may open a build: everyone for public; the author always;
@@ -119,14 +119,14 @@ export function recencyBoost(ageH: number): number {
   return 0.3;
 }
 
-// All tiers weigh 1.0. Certified users get longer life, never higher rank.
+// All tiers weigh 1.0. Active members get longer life, never higher rank.
 export function velocityScore(b: Build, votes6h: number, now: number): number {
   const ageH = Math.max((now - b.createdTs) / 3600000, 0.05);
   return (votes6h / ageH) * recencyBoost(ageH);
 }
 
 export function isLive(b: Build, tier: string, now: number): boolean {
-  const lifeH = tier === "visitor" ? 72 : 168; // 7 days for certified+
+  const lifeH = tier === "visitor" ? 72 : 168; // 7 days for member+
   return now - b.createdTs < lifeH * 3600000;
 }
 
@@ -168,14 +168,14 @@ export function myUsername(): string | null {
   }
 }
 
-export type FloorTier = "visitor" | "certified" | "hall";
+export type FloorTier = "visitor" | "member" | "hall";
 
 export function tierOf(username: string | null, findMember: (u: string) => { paid: boolean; verified: boolean; hallPaid: boolean; tier: string | null } | null): FloorTier {
   if (!username) return "visitor";
   const m = findMember(username);
   if (!m) return "visitor";
   if (m.hallPaid && m.verified && m.tier) return "hall";
-  if (m.paid && m.verified) return "certified";
+  if (m.paid && m.verified) return "member";
   return "visitor";
 }
 
@@ -256,8 +256,8 @@ export const SEED_BUILDS: Build[] = [
     "Dynamo 800, rectifier 350, regulator 250, casing and wire 400. Mount on the rear fork, output 5V 1A at walking pace. Full wiring order inside the comments on request.",
     "Power", "SOLUTION", none(), "Mwea",
     "Anyone can build this with local parts"),
-  seed("BB-05", "Mwalimu_0005", "I can animate 3-minute KCSE explainers — free in exchange for skill certification",
-    "Ten explainers queued: matrices, photosynthesis, Sarufi. I want them certified on the ledger instead of cash. Reviewers welcome.",
+  seed("BB-05", "Mwalimu_0005", "I can animate 3-minute KCSE explainers — free in exchange for skill work",
+    "Ten explainers queued: matrices, photosynthesis, Sarufi. I want them listed on the ledger instead of cash. Reviewers welcome.",
     "Education", "OFFER", none(), "Mwea",
     "10 explainers published on APT-LABS, my name on the ledger"),
   seed("BB-06", "Seremala_0006", "Stabilized soil block recipe after 6 months of tests — 7% cement, 2% lime",

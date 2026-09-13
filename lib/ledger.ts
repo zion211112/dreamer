@@ -7,9 +7,9 @@ export type Member = {
   occupation: string;
   location: string;
   skills: string[];
-  paid: boolean; // KES 50 certificate — unlocks voting
-  verified: boolean; // certified: hash sealed, can vote + propose
-  hallPaid: boolean; // KES 100 hall exam fee
+  paid: boolean; // active ledger entry / voting access
+  verified: boolean; // profile seal / active status
+  hallPaid: boolean; // hall access fee
   tier: string | null;
   testScore: number | null;
   testTs: number;
@@ -31,7 +31,6 @@ export const OCCUPATIONS: string[] = [
 
 export const LOCATIONS: string[] = ["Mwea", "Kagio", "Kerugoya", "Embu", "Sagana", "Mugumo"];
 
-export const CERT_FEE = "KES 50";
 export const HALL_FEE = "KES 100";
 export const TEACHER_FEE = "KES 250/month";
 export const SCHOOL_FEE = "from KES 3,000/month";

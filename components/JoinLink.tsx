@@ -17,8 +17,7 @@ import {
 import { RESERVED_HANDLES } from "../lib/halls";
 
 // JOIN THE LEDGER, one press: phone → name → Hall 0.
-// No test at the door. Certification (50) and halls (100) come later,
-// when the yard has shown you why they're worth it.
+// No test at the door. The yard knows the work by the person, not the paper.
 export default function JoinLink({
   className = "",
   children
@@ -160,7 +159,7 @@ export default function JoinLink({
             {confirmed && !doneId && (
               <form onSubmit={register} className="mt-5">
                 <label className="text-sm font-bold text-ivory">Full name</label>
-                <input value={name} onChange={(e) => setName(e.target.value)} placeholder="The name on your certificate" maxLength={40} className={`${field} mt-2 w-full`} />
+                <input value={name} onChange={(e) => setName(e.target.value)} placeholder="The name on your list" maxLength={40} className={`${field} mt-2 w-full`} />
                 <label className="mt-4 block text-sm font-bold text-ivory">Username <span className="font-normal text-muted">— yours, or the yard&apos;s</span></label>
                 <div className="mt-2 flex gap-2">
                   <input value={uname} onChange={(e) => setUname(e.target.value)} placeholder="e.g. Jirani_4821" maxLength={20} className={`${field} flex-1 font-mono`} />

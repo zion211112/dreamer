@@ -14,7 +14,7 @@ const jetbrains = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "700"], v
 export const metadata: Metadata = {
   title: "APT-LABS — We're making a list.",
   description:
-    "The APT-LABS ledger: everyone in Kirinyaga who can actually do things. Build capacity, verify capability. Lose your certificate? We kept the hash.",
+    "The APT-LABS ledger: everyone in Kirinyaga who can actually do things. Build capacity, share work, and keep a trusted roll without the noise.",
   keywords: ["APT-LABS", "Kirinyaga", "skills ledger", "teachers", "youth jobs"]
 };
 
