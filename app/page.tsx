@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import BenBenLink from "../components/BenBenLink";
 import DoorsModal from "../components/DoorsModal";
 import JoinLink from "../components/JoinLink";
 
@@ -49,10 +48,6 @@ export default function Home() {
               Build capacity
             </button>
             <JoinLink className="btn btn-secondary">Join the ledger</JoinLink>
-            <BenBenLink className="btn btn-secondary">BenBen</BenBenLink>
-            <Link href="/zep-tepi" className="btn btn-secondary border border-white/15 bg-transparent text-ivory hover:border-gold hover:text-gold">
-              ZepTepi
-            </Link>
           </div>
           <p className="hero-count">
             <span className="dot-live" aria-hidden="true" />
@@ -100,7 +95,31 @@ export default function Home() {
       </section>
 
       <section className="doors">
-        <div className="wrap" />
+        <div className="wrap">
+          <h2 className="display doors-title">Verify capacity. What can you do?</h2>
+          <ul className="doors-list">
+            <li className="door">
+              <span className="door-label">Individual</span>
+              <p className="door-copy">You have a CV? Nobody believes it.</p>
+              <Link href="/cert" className="door-link">Join now</Link>
+            </li>
+            <li className="door">
+              <span className="door-label">Builder</span>
+              <p className="door-copy">Already skilled? Get verified, then take on paid builds.</p>
+              <Link href="/cert" className="door-link">Get verified</Link>
+            </li>
+            <li className="door">
+              <span className="door-label">School</span>
+              <p className="door-copy">Board your school onto the ledger to excelerate dev.</p>
+              <Link href="/cert" className="door-link">Get verified</Link>
+            </li>
+            <li className="door">
+              <span className="door-label">Everyone</span>
+              <p className="door-copy">See the floor. Builds, votes, forks.</p>
+              <Link href="/cert" className="door-link">Get verified</Link>
+            </li>
+          </ul>
+        </div>
       </section>
 
       {doors && <DoorsModal onClose={() => setDoors(false)} />}
