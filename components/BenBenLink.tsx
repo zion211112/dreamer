@@ -50,8 +50,8 @@ export default function BenBenLink({
           <div className="mx-auto mt-10 max-w-md rounded-3xl bg-panel border border-white/10 p-7" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-start justify-between">
               <div>
-                <div className="text-xs font-bold tracking-widest text-gold">ADD BENBEN</div>
-                <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-ivory">Build capacity without the gate.</h2>
+                <div className="text-xs font-bold tracking-widest text-emerald-300">BEN BEN</div>
+                <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-ivory">Quick build note</h2>
               </div>
               <button onClick={() => setOpen(false)} className="rounded-full border border-white/20 px-3 py-1 text-sm text-ivory" aria-label="Close">✕</button>
             </div>
@@ -59,22 +59,22 @@ export default function BenBenLink({
             {!done ? (
               <form onSubmit={save} className="mt-5">
                 <label className="text-sm font-bold text-ivory">Title</label>
-                <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Need help with a build?" maxLength={80} className="mt-2 w-full rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-gold" />
+                <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Need help with a build?" maxLength={80} className="mt-2 w-full rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-emerald-400" />
 
                 <label className="mt-4 block text-sm font-bold text-ivory">What are you building?</label>
-                <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Describe the need, offer, or build gap." rows={4} maxLength={500} className="mt-2 w-full rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-gold" />
+                <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Describe the need, offer, or build gap." rows={4} maxLength={500} className="mt-2 w-full rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-emerald-400" />
 
                 <label className="mt-4 block text-sm font-bold text-ivory">Contact</label>
-                <input value={contact} onChange={(e) => setContact(e.target.value)} placeholder="Phone or email" maxLength={80} className="mt-2 w-full rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-gold" />
+                <input value={contact} onChange={(e) => setContact(e.target.value)} placeholder="Phone or email" maxLength={80} className="mt-2 w-full rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-emerald-400" />
 
-                <button className="mt-4 w-full rounded-full bg-gold py-3.5 text-sm font-bold text-black hover:bg-ivory transition">Post to BenBen →</button>
+                <button className="mt-4 w-full rounded-full bg-emerald-500 py-3.5 text-sm font-bold text-black hover:bg-emerald-400 transition">Post to BenBen →</button>
                 <p className="mt-3 text-xs text-muted">No signup. No certification. Just the build entry.</p>
               </form>
             ) : (
-              <div className="mt-5 rounded-2xl bg-gold/10 border border-gold/30 p-6 text-center">
-                <p className="font-mono font-bold text-gold">BenBen entry saved.</p>
+              <div className="mt-5 rounded-2xl bg-emerald-500/10 border border-emerald-400/30 p-6 text-center">
+                <p className="font-mono font-bold text-emerald-300">BenBen entry saved.</p>
                 <p className="mt-2 text-sm text-muted">Your build note is ready for the floor.</p>
-                <button onClick={() => setOpen(false)} className="mt-4 w-full rounded-full bg-gold py-3.5 text-sm font-bold text-black hover:bg-ivory transition">Close →</button>
+                <button onClick={() => setOpen(false)} className="mt-4 w-full rounded-full bg-emerald-500 py-3.5 text-sm font-bold text-black hover:bg-emerald-400 transition">Close →</button>
               </div>
             )}
           </div>

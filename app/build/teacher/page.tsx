@@ -1,25 +1,53 @@
-import Link from "next/link";
-import { TEACHER_FEE } from "../../../lib/ledger";
+"use client";
+
+import { useState } from "react";
 
 export default function Teacher() {
+  const [identity, setIdentity] = useState("");
+  const [code, setCode] = useState("");
+  const [sent, setSent] = useState(false);
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!identity.trim()) return;
+    setSent(true);
+  }
+
   return (
     <main className="bg-obsidian text-ivory">
       <div className="mx-auto max-w-xl px-6 py-24 md:py-32 text-center relative">
-        {/* Floral motif using SVG background */}
-        <svg className="absolute -inset--2 -w-24 -h-24 opacity-5 rotate-45 md:inset-0 md:rotate-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M12 2L2 7l10 5 10-5-10-5z" />
-          <path d="M2 17l10 5 10-5" />
-          <path d="M2 12l10 5" />
-        </svg>
-        
-        <p className="font-mono text-xs tracking-[0.2em] text-emerald-400">TEACHER DOOR · {TEACHER_FEE}</p>
-        <h1 className="mt-6 font-display text-4xl md:text-5xl font-semibold leading-tight">
-          250 bob a month.<br />The shelves open after login.
-        </h1>
-        <Link href="/teacher" className="mt-8 inline-block rounded-full bg-emerald-600 px-8 py-3.5 text-sm font-bold text-black hover:bg-teal-500 transition">
-          Enter the console →
-        </Link>
-        <p className="mt-4 font-mono text-xs text-dim">Animations · Planners · Guides</p>
+        <div className="rounded-[32px] border border-white/10 bg-panel p-8 shadow-[0_0_0_1px_rgba(255,255,255,0.02)]">
+          <p className="font-mono text-xs tracking-[0.22em] text-emerald-300">TEACHER GATE</p>
+          <h1 className="mt-4 font-display text-4xl md:text-5xl font-semibold leading-tight text-ivory">Teacher access</h1>
+          <p className="mt-3 text-sm text-muted">Sign in with phone or Gmail to enter the teacher console.</p>
+
+          <form onSubmit={submit} className="mt-8 text-left">
+            <label className="block text-sm font-bold text-ivory">Phone or Gmail</label>
+            <input
+              value={identity}
+              onChange={(e) => setIdentity(e.target.value)}
+              placeholder="+254 ___ ___ ___ or name@gmail.com"
+              className="mt-2 w-full rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-emerald-400"
+            />
+
+            {sent && (
+              <>
+                <label className="mt-5 block text-sm font-bold text-ivory">Verification code</label>
+                <input
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder="4-digit code"
+                  maxLength={4}
+                  className="mt-2 w-full rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm font-mono text-ivory outline-none focus:border-emerald-400"
+                />
+              </>
+            )}
+
+            <button className="mt-5 w-full rounded-full bg-emerald-500 px-6 py-3.5 text-sm font-bold text-black hover:bg-emerald-400 transition">
+              {sent ? "Enter console →" : "Send code →"}
+            </button>
+          </form>
+        </div>
       </div>
     </main>
   );

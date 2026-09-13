@@ -97,12 +97,7 @@ export default function Home() {
       </section>
 
       <section className="doors">
-        <div className="wrap">
-          <h2 className="display doors-title">Ready to build capacity?</h2>
-          <p className="hero-sub text-center">
-            Join the list first. Then verify your skills in your profile when you are already on the ledger.
-          </p>
-        </div>
+        <div className="wrap" />
       </section>
 
       {doors && <DoorsModal onClose={() => setDoors(false)} />}

@@ -98,14 +98,7 @@ export default function Crucible() {
             Pass (5+) enters one hall. Sand returns in 30 days, Clay in 14 — each sitting costs {HALL_FEE} again.
           </p>
 
-          {me && !(me.paid && me.verified) && (
-            <div className="mt-8 rounded-3xl border border-white/10 bg-panel p-7 text-center">
-              <p className="text-muted">The examination is for certified members. Seal your name first — 50 bob, no test.</p>
-              <Link href="/cert" className="mt-4 inline-block rounded-full bg-gold px-8 py-3 text-sm font-bold text-black hover:bg-ivory transition">Get certified →</Link>
-            </div>
-          )}
-
-          {me && me.paid && me.verified && !sitting && !result && !(blocked) && (
+          {me && !sitting && !result && !(blocked) && (
             <form onSubmit={pay} className="mt-8 rounded-3xl border border-white/10 bg-panel p-7">
               <p className="text-sm">Sitting fee {HALL_FEE}. Enter the M-Pesa code:</p>
               <div className="mt-3 flex gap-2">
