@@ -49,7 +49,10 @@ export default function Home() {
               Build capacity
             </button>
             <JoinLink className="btn btn-secondary">Join the ledger</JoinLink>
-            <BenBenLink className="btn btn-secondary">Add BenBen</BenBenLink>
+            <BenBenLink className="btn btn-secondary">BenBen</BenBenLink>
+            <Link href="/zep-tepi" className="btn btn-secondary border border-white/15 bg-transparent text-ivory hover:border-gold hover:text-gold">
+              ZepTepi
+            </Link>
           </div>
           <p className="hero-count">
             <span className="dot-live" aria-hidden="true" />
