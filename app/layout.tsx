@@ -28,8 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="mx-auto max-w-5xl px-6 py-10 flex flex-col sm:flex-row justify-between gap-3 text-sm text-muted">
             <span>APT-LABS · Kirinyaga, Kenya</span>
             <span className="flex gap-5">
-              <Link href="/ledger" className="hover:text-ivory">Ledger</Link>
-              <Link href="/benben" className="hover:text-ivory">Ben-Ben</Link>
+              <Link href="/" className="hover:text-ivory">Home</Link>
               <Link href="/contact" className="hover:text-ivory">Contact</Link>
             </span>
           </div>

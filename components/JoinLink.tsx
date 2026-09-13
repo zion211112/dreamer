@@ -111,7 +111,7 @@ export default function JoinLink({
 
   function goFloor() {
     setOpen(false);
-    router.push("/benben");
+    router.push("/");
   }
 
   const field = "rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-gold";

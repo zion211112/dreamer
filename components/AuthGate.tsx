@@ -14,7 +14,7 @@ import {
 import { RESERVED_HANDLES } from "../lib/halls";
 
 const PUBLIC_PATHS = ["/", "/contact"];
-const PUBLIC_PREFIXES = ["/verify/"];
+const PUBLIC_PREFIXES: string[] = [];
 
 export type Identity = { phone: string; username: string; ts: number };
 

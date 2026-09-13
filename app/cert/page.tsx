@@ -87,7 +87,7 @@ export default function Cert() {
           {!me && (
             <div className="mt-8 rounded-3xl border border-white/10 bg-panel p-7 text-center">
               <p className="text-muted">No member found on this browser for your username.</p>
-              <Link href="/ledger#join" className="mt-4 inline-block rounded-full bg-gold px-8 py-3 text-sm font-bold text-black hover:bg-ivory transition">Claim a slot first →</Link>
+              <Link href="/cert" className="mt-4 inline-block rounded-full bg-gold px-8 py-3 text-sm font-bold text-black hover:bg-ivory transition">Claim a slot first →</Link>
             </div>
           )}
 
@@ -107,7 +107,7 @@ export default function Cert() {
             <div className="mt-8">
               <Certificate m={me} certNo={certNo || me.certNo || "APT-CERT-2026-0000"} dateStr={dateStr || new Date().toISOString().slice(0, 10)} />
               <div className="mt-4 flex flex-wrap gap-3 text-sm">
-                <Link href="/benben" className="rounded-full border border-white/20 px-6 py-2.5 font-semibold hover:border-gold transition">Back to the floor →</Link>
+                <Link href="/" className="rounded-full border border-white/20 px-6 py-2.5 font-semibold hover:border-gold transition">Back home →</Link>
                 <Link href="/crucible" className="rounded-full border border-white/20 px-6 py-2.5 font-semibold hover:border-gold transition">Eyeing a hall? 100 bob exam →</Link>
               </div>
             </div>

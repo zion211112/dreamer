@@ -34,7 +34,7 @@ export default function Home() {
   return (
     <main className="theme-paper">
       <div className="wrap" style={{ paddingTop: 12, paddingBottom: 0 }}>
-        <span className="entry-no">No. 1.254 · Kirinyaga, Kenya</span>
+        <span className="entry-no">Kirinyaga, Kenya</span>
       </div>
 
       <section className="hero">
@@ -101,7 +101,7 @@ export default function Home() {
             <li className="door">
               <span className="door-label">Individual</span>
               <p className="door-copy">You have a CV? Nobody believes it.</p>
-              <Link href="/ledger#join" className="door-link">Join now</Link>
+              <Link href="/cert" className="door-link">Join now</Link>
             </li>
             <li className="door">
               <span className="door-label">Builder</span>
@@ -116,7 +116,7 @@ export default function Home() {
             <li className="door">
               <span className="door-label">Everyone</span>
               <p className="door-copy">See the floor. Builds, votes, forks.</p>
-              <Link href="/benben" className="door-link">enter benben</Link>
+              <Link href="/cert" className="door-link">Get verified</Link>
             </li>
           </ul>
         </div>

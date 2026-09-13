@@ -52,7 +52,7 @@ export default function BuildCard({
       </div>
 
       {detailLink ? (
-        <Link href={`/benben/post/${b.id}`}>
+        <Link href="/">
           <h3 className="mt-fb2 font-display text-[21px] font-semibold leading-snug text-cream hover:text-teal-300 transition">{b.title}</h3>
         </Link>
       ) : (
@@ -85,7 +85,7 @@ export default function BuildCard({
             ▼
           </button>
         </span>
-        <Link href={`/benben/post/${b.id}`} className="font-mono text-[13px] text-muted hover:text-ivory">
+        <Link href="/" className="font-mono text-[13px] text-muted hover:text-ivory">
           {b.comments.length} comment{b.comments.length === 1 ? "" : "s"} · {forks} fork{forks === 1 ? "" : "s"}
         </Link>
         <span className="font-mono text-[13px] text-dim">[Open]</span>

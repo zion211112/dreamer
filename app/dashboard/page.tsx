@@ -64,7 +64,7 @@ export default function Dashboard() {
                 <input value={id} onChange={(e) => setId(e.target.value.toUpperCase())} placeholder="e.g. AL-0042" maxLength={10} className={`${field} flex-1 font-mono uppercase`} />
                 <button className="rounded-2xl bg-ivory px-6 text-sm font-semibold text-black hover:bg-river hover:text-white transition">Open →</button>
               </div>
-              {miss && <p className="mt-3 text-sm text-muted">No record for that ID. <Link href="/ledger#join" className="underline">Get on the list →</Link></p>}
+              {miss && <p className="mt-3 text-sm text-muted">No record for that ID. <Link href="/cert" className="underline">Get on the list →</Link></p>}
               <p className="mt-3 text-xs text-muted">This login lives in this browser.</p>
             </form>
           )}
@@ -79,7 +79,7 @@ export default function Dashboard() {
           {me && !me.paid && (
             <div className="mt-8 rounded-3xl border border-white/10 bg-panel p-7 text-center">
               <p className="font-display text-2xl">@{me.username} exists — uncertified.</p>
-              <Link href="/zep-tepi/gate" className="mt-5 inline-block rounded-full bg-gold px-8 py-3 text-sm font-bold text-black hover:bg-ivory transition">
+              <Link href="/cert" className="mt-5 inline-block rounded-full bg-gold px-8 py-3 text-sm font-bold text-black hover:bg-ivory transition">
                 Get certified →
               </Link>
               <div>

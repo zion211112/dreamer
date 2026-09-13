@@ -101,7 +101,7 @@ export default function Crucible() {
           {me && !(me.paid && me.verified) && (
             <div className="mt-8 rounded-3xl border border-white/10 bg-panel p-7 text-center">
               <p className="text-muted">The examination is for certified members. Seal your name first — 50 bob, no test.</p>
-              <Link href="/zep-tepi/gate" className="mt-4 inline-block rounded-full bg-gold px-8 py-3 text-sm font-bold text-black hover:bg-ivory transition">Get certified →</Link>
+              <Link href="/cert" className="mt-4 inline-block rounded-full bg-gold px-8 py-3 text-sm font-bold text-black hover:bg-ivory transition">Get certified →</Link>
             </div>
           )}
 
@@ -154,7 +154,7 @@ export default function Crucible() {
               {result.pass ? (
                 <>
                   <p className="mt-3 text-muted">Pass. One hall opens — choose it well, it keeps you.</p>
-                  <Link href="/halls" className="mt-5 inline-block rounded-full bg-gold px-8 py-3.5 text-sm font-bold text-black hover:bg-ivory transition">Choose your hall →</Link>
+                  <Link href="/" className="mt-5 inline-block rounded-full bg-gold px-8 py-3.5 text-sm font-bold text-black hover:bg-ivory transition">Choose your hall →</Link>
                 </>
               ) : (
                 <p className="mt-3 text-muted">Fail. Back to the floor — {result.retryDays} days. {result.tier === "Sand" ? "Unformed is not an insult. It is a starting material." : "Moldable beats brittle. Come back sharper."}</p>
