@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { appendBenBenEntry } from "../lib/benben";
 
 export default function BenBenLink({
   className = "",
@@ -24,11 +25,13 @@ export default function BenBenLink({
     if (!cleanTitle || !cleanBody || !cleanContact) return;
 
     try {
-      const key = "aptlabs-benben-quick-v1";
-      const raw = window.localStorage.getItem(key);
-      const arr: { title: string; body: string; contact: string; ts: number }[] = raw ? JSON.parse(raw) : [];
-      arr.unshift({ title: cleanTitle.slice(0, 80), body: cleanBody.slice(0, 500), contact: cleanContact.slice(0, 80), ts: Date.now() });
-      window.localStorage.setItem(key, JSON.stringify(arr.slice(0, 25)));
+      appendBenBenEntry({
+        parentId: null,
+        authorHandle: cleanContact.slice(0, 32) || "@Guest",
+        title: cleanTitle.slice(0, 80),
+        body: cleanBody.slice(0, 500),
+        forkReason: null
+      });
     } catch {
       // Quiet fallback: the intent is still captured in the client state.
     }

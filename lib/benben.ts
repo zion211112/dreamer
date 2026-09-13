@@ -74,8 +74,181 @@ export function canView(b: Build, username: string, tier: FloorTier): boolean {
 
 export const BENBEN_KEY = "aptlabs-benben-builds-v1";
 export const BENBEN_NOMS_KEY = "aptlabs-benben-noms-v1";
+export const BENBEN_LEDGER_KEY = "aptlabs-benben-ledger-v1";
+
+export type BenBenEntry = {
+  id: string;
+  parentId: string | null;
+  rootId: string | null;
+  authorHandle: string;
+  title: string;
+  body: string;
+  forkReason: string | null;
+  score: number;
+  downCount: number;
+  commentCount: number;
+  forkCount: number;
+  createdAt: number;
+  lockedAt: number | null;
+};
+
+export type BenBenTreeNode = BenBenEntry & { children: BenBenTreeNode[] };
 
 export type Nomination = { postId: string; hall: string; reason: string; by: string; ts: number; yes: string[] };
+
+export function makeBenBenId(prefix = "BB"): string {
+  const rand = Math.random().toString(36).slice(2, 7).toUpperCase();
+  return `${prefix}-${Date.now().toString(36).toUpperCase()}-${rand}`;
+}
+
+export function defaultBenBenRoot(): BenBenEntry {
+  return {
+    id: "BB-ROOT",
+    parentId: null,
+    rootId: "BB-ROOT",
+    authorHandle: "@Root",
+    title: "The first mound",
+    body: "This ledger runs on four things. Post. Fork, with a reason. Vote. Project.",
+    forkReason: null,
+    score: 0,
+    downCount: 0,
+    commentCount: 0,
+    forkCount: 0,
+    createdAt: Date.now(),
+    lockedAt: null
+  };
+}
+
+export function loadBenBenEntries(): BenBenEntry[] {
+  if (typeof window === "undefined") return [defaultBenBenRoot()];
+  try {
+    const raw = window.localStorage.getItem(BENBEN_LEDGER_KEY);
+    if (!raw) {
+      const root = defaultBenBenRoot();
+      window.localStorage.setItem(BENBEN_LEDGER_KEY, JSON.stringify([root]));
+      return [root];
+    }
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      const root = defaultBenBenRoot();
+      window.localStorage.setItem(BENBEN_LEDGER_KEY, JSON.stringify([root]));
+      return [root];
+    }
+    return parsed as BenBenEntry[];
+  } catch {
+    return [defaultBenBenRoot()];
+  }
+}
+
+export function saveBenBenEntries(entries: BenBenEntry[]): void {
+  try {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(BENBEN_LEDGER_KEY, JSON.stringify(entries));
+  } catch {
+    // local prototype: keep it simple and quiet
+  }
+}
+
+export function buildBenBenTree(entries: BenBenEntry[]): BenBenTreeNode[] {
+  const source = entries.length > 0 ? entries : [defaultBenBenRoot()];
+  const children = new Map<string | null, BenBenEntry[]>();
+  for (const entry of source) {
+    const key = entry.parentId ?? null;
+    const list = children.get(key) ?? [];
+    list.push(entry);
+    children.set(key, list);
+  }
+
+  const walk = (id: string | null): BenBenTreeNode[] => {
+    const list = children.get(id) ?? [];
+    return list
+      .slice()
+      .sort((a, b) => a.createdAt - b.createdAt)
+      .map((node) => ({
+        ...node,
+        children: walk(node.id)
+      }));
+  };
+
+  return walk(null);
+}
+
+export function isBenBenLocked(entry: BenBenEntry): boolean {
+  return Boolean(entry.lockedAt);
+}
+
+export function appendBenBenEntry(
+  input: Omit<BenBenEntry, "id" | "createdAt" | "rootId" | "score" | "downCount" | "commentCount" | "forkCount" | "lockedAt"> & {
+    rootId?: string | null;
+    title?: string;
+    body?: string;
+    forkReason?: string | null;
+    authorHandle?: string;
+  }
+): BenBenEntry {
+  const entries = loadBenBenEntries();
+  const root = entries.find((e) => e.rootId === e.id) ?? entries[0] ?? defaultBenBenRoot();
+  const next: BenBenEntry = {
+    id: makeBenBenId(),
+    parentId: input.parentId ?? null,
+    rootId: input.rootId ?? root.id,
+    authorHandle: input.authorHandle || "@Guest",
+    title: input.title?.trim() || "Untitled entry",
+    body: input.body?.trim() || "",
+    forkReason: input.forkReason ?? null,
+    score: 0,
+    downCount: 0,
+    commentCount: 0,
+    forkCount: 0,
+    createdAt: Date.now(),
+    lockedAt: null
+  };
+  const nextList = [next, ...entries];
+  saveBenBenEntries(nextList);
+  return next;
+}
+
+export function voteBenBenEntry(entries: BenBenEntry[], id: string, value: 1 | -1): BenBenEntry[] {
+  const next = entries.map((entry) => {
+    if (entry.id !== id) return entry;
+    if (entry.lockedAt) return entry;
+    const score = entry.score + value;
+    const downCount = value < 0 ? entry.downCount + 1 : entry.downCount;
+    return { ...entry, score, downCount };
+  });
+  saveBenBenEntries(next);
+  return next;
+}
+
+export function forkBenBenEntry(parentId: string, authorHandle: string, body: string, reason: string): BenBenEntry | null {
+  if (!parentId || !body.trim() || !reason.trim()) return null;
+  const parent = loadBenBenEntries().find((entry) => entry.id === parentId);
+  if (!parent) return null;
+  const result = appendBenBenEntry({
+    parentId,
+    rootId: parent.rootId ?? parent.id,
+    authorHandle,
+    title: parent.title,
+    body,
+    forkReason: reason.trim()
+  });
+  const next = loadBenBenEntries();
+  const parentIndex = next.findIndex((entry) => entry.id === parentId);
+  if (parentIndex >= 0) {
+    next[parentIndex] = { ...next[parentIndex], forkCount: next[parentIndex].forkCount + 1 };
+    saveBenBenEntries(next);
+  }
+  return result;
+}
+
+export function lockBenBenEntry(entries: BenBenEntry[], id: string): BenBenEntry[] {
+  const next = entries.map((entry) => {
+    if (entry.id !== id) return entry;
+    return { ...entry, lockedAt: entry.lockedAt ?? Date.now() };
+  });
+  saveBenBenEntries(next);
+  return next;
+}
 
 // Astral pictographs (surrogate pairs) plus the common BMP symbols.
 // Built by constructor so the source stays pure ASCII � no encoding risk, ES5-safe.
