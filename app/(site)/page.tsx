@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import DoorsModal from "../components/DoorsModal";
-import JoinLink from "../components/JoinLink";
+import DoorsModal from "../../components/DoorsModal";
+import JoinLink from "../../components/JoinLink";
 import {
   KEYS,
   Member,
@@ -12,8 +12,8 @@ import {
   SUBSCRIBED_SCHOOLS,
   TREASURY,
   loadStored
-} from "../lib/ledger";
-import { SEED_BUILDS, mergeBuilds } from "../lib/benben";
+} from "../../lib/ledger";
+import { SEED_BUILDS, mergeBuilds } from "../../lib/benben";
 
 // Portico: paper landing only. BenBen floor stays obsidian.
 // Four doors, kept verbatim per spec: Individual / Builder / School / Everyone.

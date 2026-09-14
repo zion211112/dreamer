@@ -11,6 +11,8 @@ const config = {
         void: "#0a0a0a",
         panel: "#141414",
         edge: "#262626",
+        panelHi: "#1a1a1a",
+        edgeHi: "#404040",
         ink: "#111310",
         ivory: "#F5F0E6",
         cream: "#F5F0E6",

@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import GeoArt from "../../components/GeoArt";
+import GeoArt from "../../../components/GeoArt";
 import {
   KEYS,
   Member,
   SEED_MEMBERS,
   loadStored,
   shortHash
-} from "../../lib/ledger";
+} from "../../../lib/ledger";
 
 const row = "grid grid-cols-[11rem_1fr] items-baseline gap-4 border-b border-white/10 py-4";
 const k = "font-mono text-[11px] uppercase tracking-[0.2em] text-dim";

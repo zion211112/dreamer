@@ -1,4 +1,4 @@
-import GeoArt from "../../components/GeoArt";
+import GeoArt from "../../../components/GeoArt";
 
 export default function Contact() {
   return (

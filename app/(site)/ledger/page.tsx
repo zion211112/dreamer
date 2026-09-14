@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import GeoArt from "../../components/GeoArt";
-import ZionChamber from "../../components/ZionChamber";
-import { myUsername } from "../../lib/benben";
+import GeoArt from "../../../components/GeoArt";
+import ZionChamber from "../../../components/ZionChamber";
+import { myUsername } from "../../../lib/benben";
 import {
   KEYS,
   LOCATIONS,
@@ -19,7 +19,7 @@ import {
   saveStored,
   seal,
   shortHash
-} from "../../lib/ledger";
+} from "../../../lib/ledger";
 
 function useStoredList<T>(key: string, seeds: T[]): [T[], (v: T[]) => void] {
   const [list, setList] = useState<T[]>(seeds);

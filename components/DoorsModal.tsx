@@ -5,9 +5,9 @@ import { useState } from "react";
 import { KEYS, saveStored } from "../lib/ledger";
 
 const DOORS: { label: string; href: string | null; note: string }[] = [
-  { label: "Teacher", href: null, note: "Request access to build capacity" },
-  { label: "Public School", href: null, note: "Request access to build capacity" },
-  { label: "Private School", href: null, note: "Request access to build capacity" },
+  { label: "Teacher", href: "/console?role=teacher", note: "Open the teacher console" },
+  { label: "Public School", href: "/console?role=school", note: "Open the school console" },
+  { label: "Private School", href: "/console?role=school", note: "Open the school console" },
   { label: "Government", href: null, note: "Your door opens next." }
 ];
 

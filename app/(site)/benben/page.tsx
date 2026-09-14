@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import BuildCard from "../../components/BuildCard";
-import GeoArt from "../../components/GeoArt";
+import BuildCard from "../../../components/BuildCard";
+import GeoArt from "../../../components/GeoArt";
 import {
   addBuild,
   allMembers,
@@ -17,7 +17,7 @@ import {
   tierOf,
   TYPES,
   validateBuild
-} from "../../lib/benben";
+} from "../../../lib/benben";
 
 const field =
   "w-full border-b border-white/10 bg-transparent py-2.5 text-sm text-ivory outline-none transition focus:border-gold";

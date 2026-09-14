@@ -230,3 +230,16 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 tsconfig.tsbuildinfo
+
+# local dev artifacts (never commit)
+/nul
+node20.exe
+*.exe
+.install.log
+.install.err
+.build.log
+.build_*.log
+*.log
+n20.zip
+n20x/
+.node20/

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import GeoArt from "../../components/GeoArt";
+import GeoArt from "../../../components/GeoArt";
 
 // The index. A beautiful bar that searches nothing —
 // the archive answers in its own time.
