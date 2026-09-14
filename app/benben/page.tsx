@@ -1,232 +1,375 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import BuildCard from "../../components/BuildCard";
+import GeoArt from "../../components/GeoArt";
+import {
+  addBuild,
+  allMembers,
+  Build,
+  BuildNeeds,
+  castVote,
+  DOMAINS,
+  mergeBuilds,
+  memberByUsername,
+  myUsername,
+  rankFeed,
+  tierOf,
+  TYPES,
+  validateBuild
+} from "../../lib/benben";
 
-type Post = {
-  id: string;
-  title: string;
-  tag: string;
-  author: string;
-  score: number;
-  comments: number;
-  reason: string;
-  body: string;
-};
+const field =
+  "w-full border-b border-white/10 bg-transparent py-2.5 text-sm text-ivory outline-none transition focus:border-gold";
+const label = "block font-mono text-[11px] uppercase tracking-[0.25em] text-dim";
 
-const posts: Post[] = [
-  {
-    id: "bb-01",
-    title: "Latest working setup: VS Code + Cline + AGENTS 3.0 Flash connected to Colab.",
-    tag: "SETUP",
-    author: "@njeri",
-    score: 442,
-    comments: 27,
-    reason: "The fastest builders are not waiting for perfect tooling. They keep a working stack, ship the loop, and improve it in public.",
-    body: "This is the setup people want: VS Code, Cline, a strong agent workflow, and Colab for experiments that need quick compute. It is not about hype; it is about making the real work faster. A Kenyan or Nigerian builder can reuse this pattern, change the stack, and build something useful without waiting for permission."
-  },
-  {
-    id: "bb-02",
-    title: "A Nigerian dev posted a local idea that could become a real exportable product.",
-    tag: "IDEA",
-    author: "@tolu",
-    score: 398,
-    comments: 31,
-    reason: "Good ideas travel farther when they are posted, debated, and forked by people with different context. The room should make them sharper, not kill them.",
-    body: "This is the kind of contribution BenBen is for: not just status updates, but local product thinking. A dev can post a development suggestion, a market angle, or a small automation that helps others ship. Another builder can ask for feedback, add a fork, or turn it into a small internal project. That is how quiet capacity becomes public momentum."
-  },
-  {
-    id: "bb-03",
-    title: "No one here outsources jobs. People work only on internal voted projects.",
-    tag: "LABOUR",
-    author: "@muthoni",
-    score: 417,
-    comments: 24,
-    reason: "The floor protects against brain drain, fake gig work, and people extracting value without building local capacity. We want useful work, not extraction.",
-    body: "BenBen is not a job board for exporting labor. It is a labor commons for internal projects that the community has voted to support. If a project matters to the people here, it gets attention, skills, and coordination. If it is not useful to the local stack, it does not get traction. The point is to keep work and value circulating inside the community."
-  },
-  {
-    id: "bb-04",
-    title: "Repair Witeithie Kibute Bridge: a public works project that deserves a real technical crew.",
-    tag: "PROJECT",
-    author: "@owino",
-    score: 386,
-    comments: 22,
-    reason: "A real project is more than a pitch. It is a coordination problem, a skills problem, and a trust problem. When the community votes it in, the work becomes real.",
-    body: "This is the sort of project the floor should help route: concrete, visible, valuable, and connected to the people who live with the problem every day. Builders can contribute design, planning, logistics, maintenance strategy, or field support. That is a better path than waiting for outsiders to solve everything."
-  },
-  {
-    id: "bb-05",
-    title: "Build Africa and yourself fast: share the setup, the hook, and the community you are forming.",
-    tag: "COMMUNITY",
-    author: "@kawe",
-    score: 374,
-    comments: 18,
-    reason: "People do not need a perfect brand. They need a signal, a small group, and the right direction. A room with followers, forks, and votes can become the engine.",
-    body: "Anyone can post, comment, and fork. Anyone can start a small sub-community around a problem they care about. A builder can get followers, organize a niche, and attract the people who can actually help. This is social media with will to power — not vanity, but momentum."
-  }
-];
-
+// The floor: a commons of builders for local projects, skills, and trusted work.
+// The feed is the ranking — vote-driven, local, useful.
 export default function BenBenPage() {
-  const [votes, setVotes] = useState<Record<string, number>>({});
-  const [openForm, setOpenForm] = useState(false);
+  const [builds, setBuilds] = useState<Build[]>([]);
+  const [ready, setReady] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
+  const [me, setMe] = useState<string | null>(null);
 
-  const list = useMemo(() => {
-    return posts.map((post) => ({
-      ...post,
-      score: post.score + (votes[post.id] ?? 0)
-    }));
-  }, [votes]);
+  // the desk
+  const [open, setOpen] = useState(false);
+  const [forkOf, setForkOf] = useState<Build | null>(null);
+  const [title, setTitle] = useState("");
+  const [domain, setDomain] = useState(DOMAINS[0]);
+  const [type, setType] = useState(TYPES[0]);
+  const [location, setLocation] = useState("");
+  const [body, setBody] = useState("");
+  const [done, setDone] = useState("");
+  const [labor, setLabor] = useState("0");
+  const [funds, setFunds] = useState("0");
+  const [materials, setMaterials] = useState("");
+  const [intellect, setIntellect] = useState("");
+  const [nothing, setNothing] = useState(true);
+  const [notice, setNotice] = useState("");
+  const [err, setErr] = useState("");
+  const [voteErr, setVoteErr] = useState<string | null>(null);
+  const desk = useRef<HTMLDivElement>(null);
 
-  const vote = (id: string, delta: 1 | -1) => {
-    setVotes((current) => ({
-      ...current,
-      [id]: (current[id] ?? 0) + delta
-    }));
-  };
+  useEffect(() => {
+    setBuilds(mergeBuilds());
+    setMe(myUsername());
+    setNow(Date.now());
+    setReady(true);
+  }, []);
+
+  const voteKey = me || "Guest";
+  const tier = useMemo(
+    () => (me ? tierOf(me, (u) => memberByUsername(allMembers(), u)) : "visitor"),
+    [me]
+  );
+
+  function vote(id: string, v: 1 | -1) {
+    const t = Date.now();
+    const res = castVote(builds, id, voteKey, v, t);
+    if (res.err) {
+      setVoteErr(res.err);
+      return;
+    }
+    setBuilds(res.list);
+    setVoteErr(null);
+    setNow(t);
+  }
+
+  function fork(b: Build) {
+    setForkOf(b);
+    setDomain(b.domain);
+    setType(b.type);
+    setLocation(b.location);
+    setDone(b.done);
+    setLabor(String(b.needs.labor));
+    setFunds(String(b.needs.funds));
+    setMaterials(b.needs.materials);
+    setIntellect(b.needs.intellect);
+    setNothing(b.needs.nothing);
+    setTitle("");
+    setBody("");
+    setErr("");
+    setNotice("");
+    setOpen(true);
+    desk.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    const needs: BuildNeeds = {
+      labor: Number(labor) || 0,
+      materials,
+      funds: Number(funds) || 0,
+      intellect,
+      nothing
+    };
+    const problem = validateBuild({ title, body, done, needs });
+    if (problem) {
+      setErr(problem);
+      return;
+    }
+    const b = addBuild({
+      title,
+      body,
+      domain,
+      type,
+      needs,
+      location,
+      done,
+      by: me || undefined,
+      forkOf: forkOf?.id,
+      tierAtPost: tier
+    });
+    setBuilds(mergeBuilds());
+    setNow(Date.now());
+    setOpen(false);
+    setForkOf(null);
+    setTitle("");
+    setBody("");
+    setErr("");
+    setNotice(`${b.id} is on the floor.`);
+  }
+
+  const feed = useMemo(() => rankFeed(builds, now), [builds, now]);
+  const totalVotes = feed.reduce((n, b) => n + Math.max(b.votes, 0), 0);
+  const totalForks = feed.reduce((n, b) => n + b.comments.filter((c) => c.fork).length, 0);
+
+  if (!ready) {
+    return <main className="min-h-[60vh] bg-obsidian text-ivory" />;
+  }
 
   return (
-    <main className="min-h-screen bg-[#f4f1ea] text-[#1d1a17]" style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
-      <div className="mx-auto max-w-[980px] px-5 pb-16 pt-12 sm:px-6 lg:px-8">
-        <header className="pb-8">
-          <div className="flex flex-wrap items-center justify-between gap-4 pb-4">
-            <div className="text-[0.72rem] font-medium uppercase tracking-[0.26em] text-[#6b6252]">
-              Ben-Ben · built by the floor
-            </div>
-            <button
-              onClick={() => setOpenForm((v) => !v)}
-              className="rounded-[999px] border border-[#1d1a17]/20 bg-transparent px-4 py-2 text-[0.8rem] font-medium text-[#1d1a17] transition hover:border-[#1d1a17]"
-            >
-              {openForm ? "Close fork" : "Fork the floor"}
-            </button>
-          </div>
+    <main className="bg-obsidian text-ivory">
+      <div className="relative mx-auto max-w-[880px] overflow-hidden px-6 py-16 md:py-24">
+        <GeoArt
+          variant="ring"
+          className="pointer-events-none absolute -top-16 right-[-80px] h-[300px] w-[300px] text-ivory opacity-[0.05]"
+        />
 
-          <div className="max-w-[760px]">
-            <h1
-              className="m-0 text-[clamp(3.1rem,7vw,6rem)] leading-[0.96] tracking-[-0.05em] text-[#1d1a17]"
-              style={{ fontFamily: "'Fraunces', Georgia, serif" }}
-            >
-              Everyone can post, comment, and fork.
-            </h1>
-            <p className="mt-4 max-w-[58ch] text-[1.08rem] leading-7 text-[#5e5850]">
-              BenBen is a builder commons for ideas, setups, local projects, skills, and trusted work. Share what helps people build faster. Vote on what matters. Keep the work local, useful, and public.
-            </p>
-          </div>
+        {/* masthead */}
+        <div className="flex items-baseline justify-between border-b border-white/10 pb-4 font-mono text-[11px] uppercase tracking-[0.3em] text-dim">
+          <span>Ben-Ben · The Floor</span>
+          <span className="tabular-nums">
+            {feed.length} builds · {totalVotes} votes · {totalForks} forks
+          </span>
+        </div>
 
-          <div className="mt-8 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-[16px] border border-[#d7d0c4] bg-white/40 p-4">
-              <div className="text-[0.68rem] uppercase tracking-[0.22em] text-[#6b6252]">Contribute</div>
-              <div className="mt-2 text-2xl font-semibold text-[#1d1a17]">Any idea</div>
-            </div>
-            <div className="rounded-[16px] border border-[#d7d0c4] bg-white/40 p-4">
-              <div className="text-[0.68rem] uppercase tracking-[0.22em] text-[#6b6252]">Verified</div>
-              <div className="mt-2 text-2xl font-semibold text-[#1d1a17]">Skill first</div>
-            </div>
-            <div className="rounded-[16px] border border-[#d7d0c4] bg-white/40 p-4">
-              <div className="text-[0.68rem] uppercase tracking-[0.22em] text-[#6b6252]">Signal</div>
-              <div className="mt-2 text-2xl font-semibold text-[#204734]">Votes drive</div>
-            </div>
-          </div>
-        </header>
+        <h1 className="mt-12 font-display text-5xl md:text-6xl tracking-tight">Post. Fork. Vote.</h1>
+        <p className="mt-5 max-w-[52ch] text-[0.95rem] leading-7 text-muted">
+          A commons of builders for local projects, skills, and trusted work. What rises gets
+          built here — the floor is text: no emojis, no images, no noise.
+        </p>
 
-        <section className="mb-8 grid gap-4 md:grid-cols-3">
-          <div className="rounded-[18px] border border-[#d7d0c4] bg-[#f9f5ee] p-5">
-            <div className="text-[0.68rem] uppercase tracking-[0.22em] text-[#6b6252]">Builders</div>
-            <p className="mt-3 text-[1rem] leading-7 text-[#2a2722]">
-              Share working setups, useful scripts, tools, and practical product ideas that help builders move faster.
-            </p>
-          </div>
-          <div className="rounded-[18px] border border-[#d7d0c4] bg-[#f9f5ee] p-5">
-            <div className="text-[0.68rem] uppercase tracking-[0.22em] text-[#6b6252]">Work</div>
-            <p className="mt-3 text-[1rem] leading-7 text-[#2a2722]">
-              Verified people can seek work or join internal projects. No outsourcing, no brain drain, no empty extraction.
-            </p>
-          </div>
-          <div className="rounded-[18px] border border-[#d7d0c4] bg-[#f9f5ee] p-5">
-            <div className="text-[0.68rem] uppercase tracking-[0.22em] text-[#6b6252]">Local power</div>
-            <p className="mt-3 text-[1rem] leading-7 text-[#2a2722]">
-              Communities form around local problems, infrastructure, and projects that deserve real technical energy.
-            </p>
-          </div>
-        </section>
+        <div className="mt-8 flex flex-wrap items-center gap-4">
+          <button
+            onClick={() => {
+              setForkOf(null);
+              setErr("");
+              setNotice("");
+              setOpen((o) => !o);
+            }}
+            className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold"
+          >
+            {open ? "Close the desk" : "Fork the floor →"}
+          </button>
+          <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-dim">
+            {me ? `signed · @${me}` : "signed in as no one yet"}
+          </span>
+        </div>
 
-        {openForm && (
-          <section className="mb-8 rounded-[20px] border border-[#d7d0c4] bg-[#f8f6f2] p-5 shadow-[0_8px_24px_rgba(29,26,23,0.04)]">
-            <h2 className="text-[1.25rem] font-medium text-[#1d1a17]" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
-              Start a new contribution
-            </h2>
-            <div className="mt-4 grid gap-4">
-              <div>
-                <label className="mb-2 block text-[0.75rem] uppercase tracking-[0.18em] text-[#6b6252]">What are you proposing?</label>
-                <textarea
-                  rows={2}
-                  className="w-full rounded-[10px] border border-[#d7d0c4] bg-transparent px-3 py-2.5 text-[0.95rem] text-[#1d1a17] outline-none focus:border-[#204734]"
-                  placeholder="Share a setup, a project, or a local challenge."
-                />
+        {/* the desk */}
+        <div ref={desk} id="desk" className="mt-12 scroll-mt-24">
+          {open && (
+            <form onSubmit={submit} className="border border-white/10 bg-panel/60 p-6 md:p-8">
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-gold">
+                  {forkOf ? `Forking · ${forkOf.id}` : "New build"}
+                </p>
+                {forkOf && (
+                  <p className="font-mono text-[11px] text-dim">
+                    “{forkOf.title.slice(0, 44)}” · @{forkOf.by}
+                  </p>
+                )}
               </div>
-              <div>
-                <label className="mb-2 block text-[0.75rem] uppercase tracking-[0.18em] text-[#6b6252]">Why this matters</label>
-                <textarea
-                  rows={2}
-                  className="w-full rounded-[10px] border border-[#d7d0c4] bg-transparent px-3 py-2.5 text-[0.95rem] text-[#1d1a17] outline-none focus:border-[#204734]"
-                  placeholder="Explain the value, the people involved, and the reason it deserves votes."
-                />
-              </div>
-              <button className="mt-1 inline-flex w-fit items-center rounded-[999px] bg-[#1d1a17] px-5 py-2.5 text-[0.82rem] font-medium text-[#f4f1ea] transition hover:bg-[#2b2824]">
-                Submit contribution
-              </button>
-            </div>
-          </section>
-        )}
 
-        <section className="space-y-5">
-          {list.map((post) => (
-            <article key={post.id} className="rounded-[18px] border border-[#d7d0c4] bg-[#faf7f2] p-5 shadow-[0_8px_28px_rgba(29,26,23,0.04)] sm:p-6">
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e3dccb] pb-3">
-                <div className="flex items-center gap-3 text-[0.7rem] uppercase tracking-[0.18em] text-[#6b6252]">
-                  <span>{post.tag}</span>
-                  <span className="text-[#a35d15]">{post.author}</span>
+              <div className="mt-6 grid gap-5">
+                <div>
+                  <label className={label} htmlFor="bb-title">
+                    Title · 89 max
+                  </label>
+                  <input
+                    id="bb-title"
+                    className={field}
+                    value={title}
+                    maxLength={89}
+                    placeholder="What is being built, or what is missing"
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
                 </div>
-                <div className="text-[0.7rem] uppercase tracking-[0.18em] text-[#6b6252]">Entry {post.id.replace("bb-", "").padStart(2, "0")}</div>
-              </div>
 
-              <h2 className="mt-4 text-[1.55rem] font-medium leading-snug text-[#1d1a17] sm:text-[1.9rem]" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
-                {post.title}
-              </h2>
-
-              <div className="mt-3 max-w-[62ch] rounded-[12px] border-l-[3px] border-[#ad7740] bg-[#f3ecdf] px-3 py-2 text-[0.92rem] leading-6 text-[#4e473d]">
-                <span className="font-semibold text-[#1d1a17]">Reason:</span> {post.reason}
-              </div>
-
-              <p className="mt-4 max-w-[62ch] text-[1rem] leading-7 text-[#2a2722]">
-                {post.body}
-              </p>
-
-              <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-[#e3dccb] pt-4 text-[0.82rem] text-[#5e5850]">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1 rounded-full border border-[#d7d0c4] bg-white/60 px-2 py-1.5">
-                    <button onClick={() => vote(post.id, 1)} className="px-1 text-sm text-[#1d1a17] hover:text-[#204734]" aria-label={`Upvote ${post.id}`}>
-                      ▲
-                    </button>
-                    <span className="min-w-[2ch] text-center text-[0.92rem] font-semibold text-[#1d1a17]">{post.score}</span>
-                    <button onClick={() => vote(post.id, -1)} className="px-1 text-sm text-[#1d1a17] hover:text-[#a35d15]" aria-label={`Downvote ${post.id}`}>
-                      ▼
-                    </button>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className={label} htmlFor="bb-domain">
+                      Domain
+                    </label>
+                    <select
+                      id="bb-domain"
+                      className={`${field} [&>option]:bg-obsidian`}
+                      value={domain}
+                      onChange={(e) => setDomain(e.target.value)}
+                    >
+                      {DOMAINS.map((d) => (
+                        <option key={d}>{d}</option>
+                      ))}
+                    </select>
                   </div>
-                  <button className="rounded-full border border-[#d7d0c4] bg-transparent px-3 py-1.5 text-[#1d1a17] transition hover:border-[#1d1a17]">
-                    Fork
-                  </button>
+                  <div>
+                    <label className={label} htmlFor="bb-type">
+                      Type
+                    </label>
+                    <select
+                      id="bb-type"
+                      className={`${field} [&>option]:bg-obsidian`}
+                      value={type}
+                      onChange={(e) => setType(e.target.value)}
+                    >
+                      {TYPES.map((t) => (
+                        <option key={t}>{t}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-4">
-                  <span>{post.comments} comments</span>
-                  <span>vote-driven, local, useful</span>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className={label} htmlFor="bb-location">
+                      Location · optional
+                    </label>
+                    <input
+                      id="bb-location"
+                      className={field}
+                      value={location}
+                      maxLength={40}
+                      placeholder="Mwea"
+                      onChange={(e) => setLocation(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className={label} htmlFor="bb-done">
+                      Done looks like · 144 max
+                    </label>
+                    <input
+                      id="bb-done"
+                      className={field}
+                      value={done}
+                      maxLength={144}
+                      placeholder="One sentence"
+                      onChange={(e) => setDone(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className={label} htmlFor="bb-body">
+                    Body · 500 words
+                  </label>
+                  <textarea
+                    id="bb-body"
+                    className={`${field} h-24 resize-y`}
+                    value={body}
+                    placeholder="Enough for a stranger to act on"
+                    onChange={(e) => setBody(e.target.value)}
+                  />
+                </div>
+
+                <fieldset>
+                  <legend className={label}>What is missing</legend>
+                  <div className="mt-3 grid grid-cols-2 gap-4 md:grid-cols-4">
+                    <label className="flex items-center gap-2 font-mono text-[11px] text-muted">
+                      <input
+                        type="checkbox"
+                        checked={nothing}
+                        onChange={(e) => setNothing(e.target.checked)}
+                        className="accent-[#d4af37]"
+                      />
+                      Nothing
+                    </label>
+                    <div>
+                      <span className="font-mono text-[10px] uppercase text-dim">Hands</span>
+                      <input
+                        className={field}
+                        type="number"
+                        min={0}
+                        value={labor}
+                        onChange={(e) => setLabor(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <span className="font-mono text-[10px] uppercase text-dim">Funds · KES</span>
+                      <input
+                        className={field}
+                        type="number"
+                        min={0}
+                        value={funds}
+                        onChange={(e) => setFunds(e.target.value)}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <span className="font-mono text-[10px] uppercase text-dim">Materials</span>
+                        <input
+                          className={field}
+                          value={materials}
+                          onChange={(e) => setMaterials(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <span className="font-mono text-[10px] uppercase text-dim">Intellect</span>
+                        <input
+                          className={field}
+                          value={intellect}
+                          onChange={(e) => setIntellect(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+
+                <div className="flex flex-wrap items-center gap-4">
+                  <button className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold">
+                    {forkOf ? "Put the fork on the floor →" : "Put it on the floor →"}
+                  </button>
+                  {err && <p className="font-mono text-xs text-red-400">{err}</p>}
+                  {notice && <p className="font-mono text-xs text-emerald-300">{notice}</p>}
                 </div>
               </div>
-            </article>
+            </form>
+          )}
+        </div>
+
+        {/* the feed */}
+        <section className="mt-12">
+          <div className="flex items-baseline justify-between border-b border-white/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em]">
+            <span className="text-gold">On the floor</span>
+            <span className="text-dim">velocity, not vanity</span>
+          </div>
+          {feed.map((b) => (
+            <BuildCard
+              key={b.id}
+              b={b}
+              now={now}
+              myVote={b.votedBy[voteKey]?.value ?? 0}
+              voteErr={voteErr}
+              onVote={vote}
+              onFork={fork}
+            />
           ))}
         </section>
+
+        <p className="mt-16 border-t border-white/10 pt-6 text-center font-mono text-[11px] uppercase tracking-[0.35em] text-dim">
+          vote-driven · local · useful
+        </p>
       </div>
     </main>
   );
 }
-

@@ -4,11 +4,35 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import DoorsModal from "../components/DoorsModal";
 import JoinLink from "../components/JoinLink";
+import {
+  KEYS,
+  Member,
+  SCHOOL_STATS,
+  SEED_MEMBERS,
+  SUBSCRIBED_SCHOOLS,
+  TREASURY,
+  loadStored
+} from "../lib/ledger";
+import { SEED_BUILDS, mergeBuilds } from "../lib/benben";
 
 // Portico: paper landing only. BenBen floor stays obsidian.
 // Four doors, kept verbatim per spec: Individual / Builder / School / Everyone.
+// Snapshot figures come from the same data the ledger page renders —
+// the landing never carries its own copy of a count.
+const STUDENTS_UNDER_ROOF = SCHOOL_STATS.reduce((n, s) => n + s.students, 0);
+
 export default function Home() {
   const [doors, setDoors] = useState(false);
+  // Live figures: seed totals until the local roll/floor are read.
+  const [names, setNames] = useState(SEED_MEMBERS.length);
+  const [floor, setFloor] = useState(SEED_BUILDS.length);
+
+  useEffect(() => {
+    const stored = loadStored<Member>(KEYS.members);
+    if (stored.length > 0) setNames(stored.length);
+    setFloor(mergeBuilds().length);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -29,7 +53,7 @@ export default function Home() {
       }
       requestAnimationFrame(step);
     });
-  }, []);
+  }, [names, floor]);
 
   return (
     <main className="theme-paper">
@@ -68,23 +92,23 @@ export default function Home() {
           <dl className="ledger-rows">
             <div className="ledger-row">
               <dt>Schools involved</dt>
-              <dd><span className="count-num" data-target="3">0</span></dd>
+              <dd><span className="count-num" data-target={SUBSCRIBED_SCHOOLS.length}>0</span></dd>
             </div>
             <div className="ledger-row">
               <dt>Students under them</dt>
-              <dd><span className="count-num" data-target="1380">0</span></dd>
+              <dd><span className="count-num" data-target={STUDENTS_UNDER_ROOF}>0</span></dd>
             </div>
             <div className="ledger-row">
               <dt>Individuals on the ledger</dt>
-              <dd><span className="count-num" data-target="8">0</span></dd>
+              <dd><span className="count-num" data-target={names}>0</span></dd>
             </div>
             <div className="ledger-row">
               <dt>Build budget used</dt>
-              <dd>KES 250K<span className="ochre-tag">70%</span></dd>
+              <dd>KES {Math.round(TREASURY.total / 1000)}K<span className="ochre-tag">{TREASURY.usedPct}%</span></dd>
             </div>
             <div className="ledger-row">
-              <dt>Completed projects</dt>
-              <dd><span className="count-num" data-target="5">0</span></dd>
+              <dt>Builds on the floor</dt>
+              <dd><span className="count-num" data-target={floor}>0</span></dd>
             </div>
             <div className="ledger-row">
               <dt>Current build</dt>
@@ -101,22 +125,22 @@ export default function Home() {
             <li className="door">
               <span className="door-label">Individual</span>
               <p className="door-copy">You have a CV? Nobody believes it.</p>
-              <Link href="/cert" className="door-link">Join now</Link>
+              <Link href="/ledger" className="door-link">Join now</Link>
             </li>
             <li className="door">
               <span className="door-label">Builder</span>
               <p className="door-copy">Already skilled? Get verified, then take on paid builds.</p>
-              <Link href="/cert" className="door-link">Get verified</Link>
+              <Link href="/ledger" className="door-link">Get verified</Link>
             </li>
             <li className="door">
               <span className="door-label">School</span>
-              <p className="door-copy">Board your school onto the ledger to excelerate dev.</p>
-              <Link href="/cert" className="door-link">Get verified</Link>
+              <p className="door-copy">Board your school onto the ledger to accelerate dev.</p>
+              <Link href="/ledger" className="door-link">Get verified</Link>
             </li>
             <li className="door">
               <span className="door-label">Everyone</span>
               <p className="door-copy">See the floor. Builds, votes, forks.</p>
-              <Link href="/cert" className="door-link">Get verified</Link>
+              <Link href="/ledger" className="door-link">Get verified</Link>
             </li>
           </ul>
         </div>

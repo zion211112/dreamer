@@ -424,6 +424,55 @@ function seed(
 
 const none = (): BuildNeeds => ({ labor: 0, materials: "", funds: 0, intellect: "", nothing: true });
 
+// The floor: the stored list and the day-one seeds, one list.
+// Seeds already recorded locally are never re-minted.
+export function mergeBuilds(): Build[] {
+  const stored = loadBuilds();
+  const ids = new Set(stored.map((b) => b.id));
+  return [...stored, ...SEED_BUILDS.filter((s) => !ids.has(s.id))];
+}
+
+// A new build lands at the top of the floor, sealed for its author.
+// Forks carry a comment trail back to their parent — the fork is a build,
+// not a reply.
+export function addBuild(input: {
+  title: string;
+  body: string;
+  domain: string;
+  type: string;
+  needs: BuildNeeds;
+  location: string;
+  done: string;
+  by?: string;
+  forkOf?: string;
+  tierAtPost?: string;
+}): Build {
+  const now = Date.now();
+  const by = (input.by || "Guest").slice(0, 20);
+  const b: Build = {
+    id: makeBenBenId("BB"),
+    by,
+    title: input.title.trim().slice(0, 89),
+    body: input.body.trim().slice(0, 4000),
+    domain: input.domain || "Other",
+    type: input.type || "NEED",
+    needs: input.needs,
+    location: input.location.trim().slice(0, 40),
+    done: input.done.trim().slice(0, 144),
+    contact: "dm",
+    waRequests: [],
+    votes: 1,
+    votedBy: { [by]: { value: 1, ts: now } },
+    comments: input.forkOf ? [{ by, text: `Fork of ${input.forkOf}`, ts: now, fork: true }] : [],
+    visibility: "public",
+    attachments: [],
+    createdTs: now,
+    tierAtPost: input.tierAtPost ?? "visitor"
+  };
+  persistBuilds([b, ...mergeBuilds()]);
+  return b;
+}
+
 export const SEED_BUILDS: Build[] = [
   seed("BB-02", "Fundi_0002", "Bike-powered phone charger for 1,800 KES — parts list and wiring",
     "Dynamo 800, rectifier 350, regulator 250, casing and wire 400. Mount on the rear fork, output 5V 1A at walking pace. Full wiring order inside the comments on request.",

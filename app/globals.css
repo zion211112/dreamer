@@ -6,6 +6,16 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Font stacks, resolved at runtime: the webfonts come from a <link> tag,
+   so an offline build still compiles and degrades to the fallbacks below. */
+:root {
+  --font-playfair: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-fraunces: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-plex: "IBM Plex Sans", "Inter", system-ui, -apple-system, sans-serif;
+  --font-inter: "Inter", system-ui, -apple-system, sans-serif;
+  --font-jetbrains: "JetBrains Mono", "SFMono-Regular", ui-monospace, monospace;
+}
+
 body {
   background: #08080a;
   color: #f5f0e6;

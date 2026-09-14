@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Playfair_Display, Fraunces, IBM_Plex_Sans } from "next/font/google";
 import { Nav } from "../components/Nav";
 import Link from "next/link";
 import "./globals.css";
 
-const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600", "700"], variable: "--font-playfair" });
-const fraunces = Fraunces({ subsets: ["latin"], weight: ["600", "700"], variable: "--font-fraunces" });
-const plex = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-plex" });
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const jetbrains = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-jetbrains" });
+// Fonts load at runtime, not build time: the ledger is local-first, so a
+// blocked network degrades to system fonts instead of breaking the build.
+const fontsHref =
+  "https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Inter:wght@100..900&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:wght@600;700&display=swap";
 
 export const metadata: Metadata = {
   title: "APT-LABS — We're making a list.",
@@ -20,7 +18,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${playfair.variable} ${inter.variable} ${jetbrains.variable} ${fraunces.variable} ${plex.variable} bg-obsidian text-ivory font-body antialiased`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href={fontsHref} rel="stylesheet" />
+      </head>
+      <body className="bg-obsidian text-ivory font-body antialiased">
         <Nav />
         {children}
         <footer className="border-t border-white/10">
