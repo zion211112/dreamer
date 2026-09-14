@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Nav } from "../../components/Nav";
+import PayGate from "../../components/PayGate";
 
 // Site chrome: the sticky Nav up top, the hairline footer at the bottom.
 // The console (app/(console)) deliberately skips this group so it can own
@@ -8,7 +9,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
   return (
     <>
       <Nav />
-      {children}
+      <PayGate>{children}</PayGate>
       <footer className="border-t border-white/10">
         <div className="mx-auto max-w-5xl px-6 py-10 flex flex-col sm:flex-row justify-between gap-3 text-sm text-muted">
           <span>APT-LABS · Kirinyaga, Kenya</span>
