@@ -1,13 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const UNLOCK_KEY = "apt_pilot_access";
-// Free pages — the gate never covers these. The console ("access build
-// capacity") lives in its own route group, so it is not wrapped here at all.
-const EXEMPT = ["/contact", "/search"];
+// Free pages — the gate never covers these. The console and the ledger are
+// locked behind their own "RUNPILOT" name gate (separate route-group
+// layouts), so the paybill gate does not wrap them.
+const EXEMPT = ["/contact", "/search", "/ledger"];
 
 function isExempt(pathname: string): boolean {
   return EXEMPT.some((p) => pathname === p || pathname.startsWith(p + "/"));
@@ -81,13 +81,6 @@ export function Paywall({
         >
           ACCESS PILOT
         </button>
-
-        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
-          <span>Free:</span>
-          <Link href="/contact" className="text-ivory/80 hover:text-gold transition">Contacts</Link>
-          <Link href="/search" className="text-ivory/80 hover:text-gold transition">Search</Link>
-          <Link href="/console" className="text-ivory/80 hover:text-gold transition">Access build capacity</Link>
-        </div>
       </div>
     </div>
   );
