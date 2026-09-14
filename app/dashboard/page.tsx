@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GeoArt from "../../components/GeoArt";
 import {
   KEYS,
@@ -18,47 +18,49 @@ const navItems = [
 ];
 
 export default function Dashboard() {
-  const [id, setId] = useState("");
   const [me, setMe] = useState<Member | null>(null);
-  const [miss, setMiss] = useState(false);
+  const [ready, setReady] = useState(false);
 
-  function login(e: React.FormEvent) {
-    e.preventDefault();
-    const key = id.trim().toUpperCase();
+  useEffect(() => {
+    if (typeof window === "undefined") return;
     const stored = loadStored<Member>(KEYS.members);
     const customs = stored.filter((m) => !SEED_MEMBERS.some((s) => s.id === m.id));
-    const m = [...customs, ...SEED_MEMBERS].find((x) => x.id.toUpperCase() === key) || null;
-    setMe(m);
-    setMiss(!m);
-    if (m) {
-      try { window.localStorage.setItem(KEYS.myid, m.id); } catch { /* memory */ }
-    }
-  }
+    const myId = window.localStorage.getItem(KEYS.myid);
+    const found = myId
+      ? [...customs, ...SEED_MEMBERS].find((x) => x.id.toUpperCase() === myId.toUpperCase()) || null
+      : null;
+    setMe(found);
+    setReady(true);
+  }, []);
 
-  const field = "rounded-2xl border border-white/15 bg-obsidian px-4 py-3 text-sm text-ivory outline-none focus:border-river";
+  if (!ready) {
+    return (
+      <main className="bg-obsidian text-ivory">
+        <div className="mx-auto max-w-6xl px-4 py-10 md:px-6 lg:px-8">
+          <div className="rounded-[26px] border border-white/10 bg-panel p-8 text-sm text-muted">
+            Loading dashboard…
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="bg-obsidian text-ivory">
       <div className="relative overflow-hidden">
         <GeoArt variant="ring" className="pointer-events-none absolute -right-24 -top-24 h-[320px] w-[320px] text-ivory opacity-[0.06]" />
         <div className="relative mx-auto max-w-6xl px-4 py-10 md:px-6 lg:px-8">
-          {!me && (
+          {!me ? (
             <div className="mx-auto max-w-xl rounded-[26px] border border-white/10 bg-panel p-8 shadow-[0_0_0_1px_rgba(255,255,255,0.03)]">
               <p className="text-xs font-bold tracking-[0.28em] text-river">MY PROFILE</p>
-              <h1 className="mt-3 text-4xl font-extrabold tracking-tight">Open your ledger card.</h1>
-              <form onSubmit={login} className="mt-8">
-                <label className="text-sm font-bold">Member ID</label>
-                <div className="mt-2 flex gap-2">
-                  <input value={id} onChange={(e) => setId(e.target.value.toUpperCase())} placeholder="e.g. AL-0042" maxLength={10} className={`${field} flex-1 font-mono uppercase`} />
-                  <button className="rounded-2xl bg-ivory px-6 text-sm font-semibold text-black hover:bg-river hover:text-white transition">Open →</button>
-                </div>
-                {miss && <p className="mt-3 text-sm text-muted">No record for that ID. <Link href="/ledger" className="underline">Join the ledger →</Link></p>}
-                <p className="mt-3 text-xs text-muted">This browser keeps the profile locally.</p>
-              </form>
+              <h1 className="mt-3 text-4xl font-extrabold tracking-tight">Your dashboard is ready.</h1>
+              <p className="mt-4 text-sm leading-6 text-muted">Open the ledger, claim your place, and your profile will appear here without any redundant gate flow.</p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link href="/ledger" className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black hover:bg-river hover:text-white transition">Join the ledger →</Link>
+                <Link href="/benben" className="rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-ivory hover:border-river transition">Open BenBen →</Link>
+              </div>
             </div>
-          )}
-
-          {me && (
+          ) : (
             <div className="flex min-h-[70vh] overflow-hidden rounded-[28px] border border-white/10 bg-panel shadow-[0_0_0_1px_rgba(255,255,255,0.03)]">
               <aside className="hidden w-[260px] border-r border-white/10 bg-[#0d1117] md:block">
                 <div className="flex h-full flex-col p-5">
@@ -97,7 +99,7 @@ export default function Dashboard() {
                     <p className="font-mono text-[11px] font-bold tracking-[0.28em] text-river">PROFILE</p>
                     <h2 className="mt-2 text-3xl font-bold tracking-tight text-ivory">@{me.username}</h2>
                   </div>
-                  <button onClick={() => { setMe(null); setId(""); }} className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-muted hover:text-ivory transition">Close</button>
+                  <button onClick={() => { setMe(null); try { window.localStorage.removeItem(KEYS.myid); } catch { /* memory */ } }} className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-muted hover:text-ivory transition">Close</button>
                 </div>
 
                 <div className="mt-6 grid gap-4 lg:grid-cols-[1.4fr_0.8fr]">
