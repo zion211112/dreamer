@@ -143,7 +143,10 @@ export function classRank(assessments: Assessment[], studentId: string, exam: st
 } {
   const examScores = new Map<string, number>();
   for (const a of assessments)
-    if (a.exam === exam) examScores.set(a.studentId, examScores.get(a.studentId) ?? 0 + (a.max > 0 ? a.score / a.max : 0));
+    if (a.exam === exam) {
+      const share = a.max > 0 ? a.score / a.max : 0;
+      examScores.set(a.studentId, (examScores.get(a.studentId) ?? 0) + share);
+    }
   const ranked = [...examScores.entries()].sort((a, b) => b[1] - a[1]);
   const position = ranked.findIndex(([id]) => id === studentId) + 1;
   return { position: position > 0 ? position : 0, of: ranked.length };
