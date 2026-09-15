@@ -1,15 +1,15 @@
 // School data persistence for the console. Hand-rolled IndexedDB, zero deps.
-// One database, three stores; upserts by key. If IndexedDB is unavailable
+// One database, four stores; upserts by key. If IndexedDB is unavailable
 // (private mode, blocked) every call resolves with empty results and writes
 // are dropped — the console keeps working in memory for the session.
 //
 // Nothing here touches the network. This is where a school's roll lives on
 // the device, and where the JSON export in Student Records copies from.
 
-export type StoreName = "students" | "assessments" | "meta";
+export type StoreName = "students" | "assessments" | "meta" | "content";
 
 const DB_NAME = "aptlabs-school-v1";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 let dbp: Promise<IDBDatabase | null> | null = null;
 
@@ -31,6 +31,10 @@ function open(): Promise<IDBDatabase | null> {
           db.createObjectStore("assessments", { keyPath: "key" });
         if (!db.objectStoreNames.contains("meta"))
           db.createObjectStore("meta", { keyPath: "id" });
+        // Content Studio (15/16): the content bank and exam papers. Items and
+        // papers are documents in one store, tagged by kind.
+        if (!db.objectStoreNames.contains("content"))
+          db.createObjectStore("content", { keyPath: "id" });
       };
       req.onsuccess = () => resolve(req.result);
       req.onerror = () => resolve(null);

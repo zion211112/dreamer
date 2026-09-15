@@ -37,8 +37,9 @@ export const CONSOLE_MODULES = [
   "Manage",
 ] as const;
 
-// Five workspaces are real (status: "ready") — roster import, records,
-// term reports, auto-marking, grade forecast. The other eleven hold seats.
+// Six workspaces are real (status: "ready") — roster import, records,
+// term reports, auto-marking, grade forecast, content studio. The other
+// ten hold seats.
 export const CONSOLE_TOOLS: ConsoleTool[] = [
   { id: "1", title: "Student Records", desc: "Full roster, streams, departments, admissions.", module: "SMIS", fav: false, status: "ready" },
   { id: "2", title: "Term Reports", desc: "One-click PDF reports for every student.", module: "Reports", fav: true, status: "ready" },
@@ -54,7 +55,7 @@ export const CONSOLE_TOOLS: ConsoleTool[] = [
   { id: "12", title: "Communication", desc: "Bulk SMS and WhatsApp to parents.", module: "Comms", fav: false, status: "coming" },
   { id: "13", title: "Skill Ledger", desc: "Verified capabilities per student.", module: "Reports", fav: false, status: "coming" },
   { id: "14", title: "Cooperative Register", desc: "Members, contributions, shares.", module: "Fees", fav: false, status: "coming" },
-  { id: "15", title: "Content Studio", desc: "Animation and lesson content generator.", module: "Console", fav: false, status: "coming" },
+  { id: "15", title: "Content Studio", desc: "CBC-aligned test and content design, critiqued locally.", module: "Library", fav: false, status: "ready" },
   { id: "16", title: "Manage", desc: "Settings, billing, integrations.", module: "Manage", fav: false, status: "coming" },
 ];
 

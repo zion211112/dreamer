@@ -7,14 +7,16 @@ import StudentRecords from "../../../../components/console/StudentRecords";
 import TermReports from "../../../../components/console/TermReports";
 import AutoMarking from "../../../../components/console/AutoMarking";
 import GradeForecast from "../../../../components/console/GradeForecast";
+import ContentStudio from "../../../../components/console/ContentStudio";
 
-// The five real workspaces. Everything else holds a seat and says so.
+// The six real workspaces. Everything else holds a seat and says so.
 const WORKSPACES: Record<string, ComponentType> = {
   "1": StudentRecords,
   "2": TermReports,
   "7": AutoMarking,
   "8": GradeForecast,
-  "9": RosterImport
+  "9": RosterImport,
+  "15": ContentStudio
 };
 
 export default function ConsoleToolPage({ params }: { params: { id: string } }) {
