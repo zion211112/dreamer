@@ -26,11 +26,18 @@ export default function Home() {
   // Live figures: seed totals until the local roll/floor are read.
   const [names, setNames] = useState(SEED_MEMBERS.length);
   const [floor, setFloor] = useState(SEED_BUILDS.length);
+  // The ledger doors only surface to visitors who have unlocked the app.
+  const [unlocked, setUnlocked] = useState(false);
 
   useEffect(() => {
     const stored = loadStored<Member>(KEYS.members);
     if (stored.length > 0) setNames(stored.length);
     setFloor(mergeBuilds().length);
+    try {
+      setUnlocked(!!window.localStorage.getItem("apt_pilot_access"));
+    } catch {
+      /* memory */
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -118,6 +125,8 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Ledger entry points: only shown to visitors who have unlocked the app */}
+      {unlocked && (
       <section className="doors">
         <div className="wrap">
           <h2 className="display doors-title">Verify capacity. What can you do?</h2>
@@ -145,6 +154,7 @@ export default function Home() {
           </ul>
         </div>
       </section>
+      )}
 
       {doors && <DoorsModal onClose={() => setDoors(false)} />}
     </main>

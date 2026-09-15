@@ -4,10 +4,11 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const UNLOCK_KEY = "apt_pilot_access";
-// Free pages — the gate never covers these. The console and the ledger are
-// locked behind their own "RUNPILOT" name gate (separate route-group
-// layouts), so the paybill gate does not wrap them.
-const EXEMPT = ["/contact", "/search", "/ledger"];
+// Free public pages — the gate never covers these. Everything else (home,
+// dashboard, benben, and the ledger) is paywalled: an unpaid visitor sees the
+// KES-100 paybill and reaches no page content. The console lives in its own
+// (console) route-group and is never paywalled here.
+const EXEMPT = ["/contact", "/search"];
 
 function isExempt(pathname: string): boolean {
   return EXEMPT.some((p) => pathname === p || pathname.startsWith(p + "/"));

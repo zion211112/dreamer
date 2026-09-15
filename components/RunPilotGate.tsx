@@ -6,6 +6,11 @@ import { useEffect, useState } from "react";
 // no route or path reaches them without entering the access name "RUNPILOT".
 // A successful entry persists to localStorage so the session stays open on
 // this device (local-first, like the rest of the app).
+//
+// The gate overlay paints at z-90 — above the console/nav chrome but BELOW the
+// paybill overlay (z-95). That ordering matters: when an UNPAID visitor reaches
+// the ledger, the paybill sits on top and this name field (rendered inert in
+// the background) cannot be used to walk past the paywall.
 const KEY = "runpilot_access";
 const ACCESS_NAME = "RUNPILOT";
 
@@ -47,7 +52,7 @@ export default function RunPilotGate({ children }: { children: React.ReactNode }
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/85 p-4">
+    <div className="fixed inset-0 z-[90] flex items-center justify-center overflow-y-auto bg-black/85 p-4">
       <div className="mx-auto w-full max-w-sm rounded-3xl bg-obsidian border border-white/10 p-7">
         <div className="text-xs font-bold tracking-widest text-gold">RESTRICTED</div>
         <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-ivory">Enter access name</h2>

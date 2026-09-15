@@ -18,6 +18,8 @@ const k = "font-mono text-[11px] uppercase tracking-[0.2em] text-dim";
 export default function Dashboard() {
   const [me, setMe] = useState<Member | null>(null);
   const [ready, setReady] = useState(false);
+  // Ledger links only surface to visitors who have unlocked the app.
+  const [unlocked, setUnlocked] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -28,6 +30,11 @@ export default function Dashboard() {
       ? [...customs, ...SEED_MEMBERS].find((x) => x.id.toUpperCase() === myId.toUpperCase()) || null
       : null;
     setMe(found);
+    try {
+      setUnlocked(!!window.localStorage.getItem("apt_pilot_access"));
+    } catch {
+      /* memory */
+    }
     setReady(true);
   }, []);
 
@@ -71,12 +78,14 @@ export default function Dashboard() {
               forms, no redundant flow.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/ledger"
-                className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold"
-              >
-                Claim your slot →
-              </Link>
+              {unlocked && (
+                <Link
+                  href="/ledger"
+                  className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold"
+                >
+                  Claim your slot →
+                </Link>
+              )}
               <Link
                 href="/benben"
                 className="rounded-full border border-white/15 px-6 py-3 text-sm font-semibold transition hover:border-gold"
@@ -125,12 +134,14 @@ export default function Dashboard() {
             </div>
 
             <div className="mt-10 flex flex-wrap items-center gap-3">
-              <Link
-                href="/ledger"
-                className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold transition hover:border-gold"
-              >
-                The roll
-              </Link>
+              {unlocked && (
+                <Link
+                  href="/ledger"
+                  className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold transition hover:border-gold"
+                >
+                  The roll
+                </Link>
+              )}
               <Link
                 href="/search"
                 className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold transition hover:border-gold"

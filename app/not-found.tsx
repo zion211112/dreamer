@@ -1,7 +1,24 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import GeoArt from "../components/GeoArt";
 
+// A 404 can be hit by anyone, paid or not, so this is a client component that
+// reads the paywall flag and only surfaces the ledger entry point ("Open the
+// roll") to visitors who have actually unlocked the app. Unpaid users just get
+// a way back to the porch.
 export default function NotFound() {
+  const [unlocked, setUnlocked] = useState(false);
+
+  useEffect(() => {
+    try {
+      setUnlocked(!!window.localStorage.getItem("apt_pilot_access"));
+    } catch {
+      /* memory */
+    }
+  }, []);
+
   return (
     <main className="bg-obsidian text-ivory">
       <div className="relative flex min-h-[60vh] items-center overflow-hidden">
@@ -19,9 +36,11 @@ export default function NotFound() {
             <Link href="/" className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold">
               Back to the porch →
             </Link>
-            <Link href="/ledger" className="rounded-full border border-white/15 px-6 py-3 text-sm font-semibold transition hover:border-gold">
-              Open the roll
-            </Link>
+            {unlocked && (
+              <Link href="/ledger" className="rounded-full border border-white/15 px-6 py-3 text-sm font-semibold transition hover:border-gold">
+                Open the roll
+              </Link>
+            )}
           </div>
         </div>
       </div>
