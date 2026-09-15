@@ -11,6 +11,8 @@
 .DS_Store
 *.pem
 .env*.local
+nul
+tsconfig.tsbuildinfo
 
 # Python (GitHub template)
 # Byte-compiled / optimized / DLL files

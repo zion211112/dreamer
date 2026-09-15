@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { readiness } from "../../../lib/school";
+import { useSchoolData } from "../../../components/console/useSchoolData";
 import {
   CONSOLE_MODULES,
   CONSOLE_TOOLS,
@@ -302,6 +304,22 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
   const [mod, setMod] = useState<string>("all");
   const [query, setQuery] = useState("");
   const [favs, setFavs] = useState<Set<string>>(() => loadConsoleFavs());
+  const school = useSchoolData();
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  // "/" or ⌘K focuses the search — the Linear muscle memory.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      const t = e.target as HTMLElement | null;
+      const inField = t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement || t instanceof HTMLSelectElement;
+      if ((e.key === "/" && !inField) || (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey))) {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   const q = query.trim().toLowerCase();
   const visible = CONSOLE_TOOLS.filter(
@@ -402,6 +420,9 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
             <p className="mt-1.5 text-[13px] text-muted">
               {mod === "all" ? "Select a module from the list below" : `Tools in ${mod}`}
             </p>
+            <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.15em] text-dim">
+              {readiness(school.students, school.assessments).next}
+            </p>
           </div>
 
           <div className="mb-[21px] flex flex-wrap gap-2">
@@ -422,16 +443,20 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
                 }`}
               >
                 {m}
+                {CONSOLE_TOOLS.some((t) => t.module === m && t.status === "ready") && (
+                  <span className="ml-2 inline-block h-1.5 w-1.5 rounded-full bg-gold align-middle" />
+                )}
               </button>
             ))}
           </div>
 
           <div className="mb-[34px]">
             <input
+              ref={searchRef}
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Or type to search across title and description…"
+              placeholder="Or type to search — press / or ⌘K to focus…"
               className="h-[55px] w-full rounded-full border border-edge bg-panel px-[21px] text-[13px] text-ivory outline-none transition-colors placeholder:text-dim focus:border-gold"
             />
           </div>
@@ -492,7 +517,16 @@ function ToolCard({
         <h3 className="font-display text-[21px] font-normal leading-tight">{tool.title}</h3>
         <p className="mt-1.5 text-[13px] leading-relaxed text-muted">{tool.desc}</p>
       </div>
-      <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-dim">{tool.module}</span>
+      <div className="flex items-center justify-between">
+        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-dim">{tool.module}</span>
+        <span
+          className={`font-mono text-[10px] uppercase tracking-[0.2em] ${
+            tool.status === "ready" ? "text-gold" : "text-dim/60"
+          }`}
+        >
+          {tool.status === "ready" ? "● Ready" : "Seat held"}
+        </span>
+      </div>
     </Link>
   );
 }

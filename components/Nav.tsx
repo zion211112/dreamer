@@ -1,12 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-
-const LINKS: [string, string][] = [];
+import { useEffect, useState } from "react";
 
 export function Nav() {
   const [open, setOpen] = useState(false);
+  // The Console link appears only to a school that has entered its gate —
+  // the flag is set by RunPilotGate on this device.
+  const [inConsole, setInConsole] = useState(false);
+
+  useEffect(() => {
+    try {
+      setInConsole(!!window.localStorage.getItem("runpilot_access"));
+    } catch {
+      /* storage unavailable */
+    }
+  }, []);
+
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-obsidian/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
@@ -18,6 +28,9 @@ export function Nav() {
           <Link href="/search" className="hover:text-ivory transition" aria-label="Search">⌕ Search</Link>
           <Link href="/benben" className="hover:text-ivory transition">BenBen</Link>
           <Link href="/dashboard" className="hover:text-ivory transition">My Profile</Link>
+          {inConsole && (
+            <Link href="/console" className="font-semibold text-gold hover:text-ivory transition">Console</Link>
+          )}
         </nav>
         <button onClick={() => setOpen(!open)} className="md:hidden rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-ivory" aria-label="Menu">
           {open ? "✕" : "☰"}
@@ -28,7 +41,8 @@ export function Nav() {
           {[
             ["/search", "Search ⌕"] as [string, string],
             ["/benben", "BenBen"] as [string, string],
-            ["/dashboard", "My Profile"] as [string, string]
+            ["/dashboard", "My Profile"] as [string, string],
+            ...(inConsole ? [["/console", "Console"] as [string, string]] : [])
           ].map(([href, label]) => (
             <Link key={href} href={href} onClick={() => setOpen(false)} className="py-1 text-ivory/80">
               {label}

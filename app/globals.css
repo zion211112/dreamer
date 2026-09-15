@@ -142,3 +142,23 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .theme-paper .dot-live::after { animation: none; }
 }
+
+/* Print: the Term Reports card is the only thing that reaches paper.
+   The white .print-sheet is shown, everything else is hidden, and the
+   console's fixed-height chrome is released so a long card can flow. */
+@media print {
+  body { background: #fff !important; }
+  body * { visibility: hidden; }
+  .print-sheet, .print-sheet * { visibility: visible; }
+  .print-sheet {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+  }
+  .h-dvh { height: auto !important; }
+  .overflow-hidden, .overflow-y-auto, .overflow-x-auto { overflow: visible !important; }
+}
+
