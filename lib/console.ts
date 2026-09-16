@@ -55,7 +55,7 @@ export const CONSOLE_TOOLS: ConsoleTool[] = [
   { id: "12", title: "Communication", desc: "Bulk SMS and WhatsApp to parents.", module: "Comms", fav: false, status: "coming" },
   { id: "13", title: "Skill Ledger", desc: "Verified capabilities per student.", module: "Reports", fav: false, status: "coming" },
   { id: "14", title: "Cooperative Register", desc: "Members, contributions, shares.", module: "Fees", fav: false, status: "coming" },
-  { id: "15", title: "Content Studio", desc: "CBC-aligned test and content design, critiqued locally.", module: "Library", fav: false, status: "ready" },
+  { id: "15", title: "Content Studio", desc: "The atelier — CBC-aligned exam, lesson, media and classroom design, structurally audited on the device before print.", module: "Library", fav: false, status: "ready" },
   { id: "16", title: "Manage", desc: "Settings, billing, integrations.", module: "Manage", fav: false, status: "coming" },
 ];
 
