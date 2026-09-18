@@ -93,4 +93,6 @@ test('MiniCalendar flags collisions, offers personal vs class items, aligns time
   assert.match(cal, /personal/);
   assert.match(cal, /ClassPicker/);
   assert.match(cal, /tabular-nums/); // times align down the list
+  // Untimed items sort last by explicit flag, not locale collation of "~".
+  assert.match(cal, /Number\(a\.time === ""\)/);
 });

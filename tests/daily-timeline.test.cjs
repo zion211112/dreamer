@@ -84,6 +84,17 @@ test('My Day drives the day: NOW hero, arc strip, owed band, uniform chips, bulk
   assert.doesNotMatch(day, /flagFor/);
   assert.doesNotMatch(day, /Quick actions/);
   assert.doesNotMatch(day, /Today's classes/);
+  // "In session" is claimed only inside the 40-minute period window; the gap
+  // between periods is a named break, and the day closes when the last
+  // window — not the last start — has passed.
+  assert.match(day, /SCHEDULE_SPAN_MS/);
+  assert.match(day, /liveSlot/);
+  assert.match(day, /dayOver/);
+  assert.match(day, /"between"/);
+  assert.match(day, /Break/);
+  // A class label with no learners on the roll never offers a register CTA.
+  assert.match(day, /Register the first period/);
+  assert.match(day, /has \? "att" : "grades"/);
 });
 
 test('state is computed from the ledger, matched by learner id (class+stream safe)', () => {

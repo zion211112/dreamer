@@ -169,7 +169,7 @@ export function saveSchedules(s: Schedules): Promise<void> {
 
 // A class lesson occupies ~40 minutes. Two timed items on the same day
 // collide when their windows overlap.
-const SCHEDULE_SPAN_MS = 40 * 60 * 1000;
+export const SCHEDULE_SPAN_MS = 40 * 60 * 1000;
 export function collisionsOn(items: ScheduleItem[], date: string): Set<string> {
   const timed = items
     .filter((i) => i.date === date && /^\d{1,2}:\d{2}$/.test(i.time))

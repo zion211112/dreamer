@@ -40,7 +40,12 @@ export function MiniCalendar({ items, onAdd, onRemove }: Props) {
 
   const dayItems = items
     .filter((i) => i.date === sel)
-    .sort((a, b) => (a.time || "~").localeCompare(b.time || "~") || (a.kind === "class" ? -1 : 1));
+    .sort(
+      (a, b) =>
+        Number(a.time === "") - Number(b.time === "") ||
+        (a.time || "").localeCompare(b.time || "") ||
+        (a.kind === "class" ? -1 : 1)
+    );
   const colliding = useMemo(() => {
     const dates = new Set(items.map((i) => i.date));
     const coll = new Set<string>();

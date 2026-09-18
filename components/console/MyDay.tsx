@@ -4,8 +4,10 @@
 // ends. The eye never reads a list; it reads the clock.
 //
 //   DEPTH 1  NOW — one card, one question: what do I do now? The phase
-//             (before · in · end · empty) picks the primary action, and the
-//             day's arc — one segment per period — shows where the day stands.
+//             (empty · before · in · break · end · untimed) picks the primary
+//             action; "in" is claimed only inside a period's 40-minute
+//             window. The day's arc — one segment per period — shows where
+//             the day stands.
 //   DEPTH 2  SPINE — past periods fold into an "owes work" band; now and the
 //             next read full; the far recedes. Every class row carries the
 //             same three chips, same order: Att · Grades · Note.
@@ -34,6 +36,7 @@ import {
   saveDayPlan,
   saveEvent,
   saveSchedules,
+  SCHEDULE_SPAN_MS,
   ScheduleItem,
   timeToMs,
   todayLabel
@@ -368,10 +371,28 @@ export default function MyDay({
   /* -------- the now-phase: one card, one question — what do I do now ------- */
 
   const firstSlot = timed[0] ?? null;
-  const current = hasTimes && nowIndex >= 0 ? (timed[nowIndex] ?? null) : null;
-  const allPast = hasTimes && timed.every((l) => timeToMs(l.time, nowMs) <= nowMs);
+  const lastSlot = timed.length > 0 ? timed[timed.length - 1] : null;
+  // The slot that actually owns this moment: started, and still inside its
+  // 40-minute session (SCHEDULE_SPAN_MS). Outside that window the day is in
+  // a break — never "in progress".
+  const liveSlot = (() => {
+    if (!hasTimes || nowIndex === 0) return null;
+    const l = timed[nowIndex - 1];
+    return nowMs < timeToMs(l.time, nowMs) + SCHEDULE_SPAN_MS ? l : null;
+  })();
+  const dayOver = lastSlot !== null && nowMs >= timeToMs(lastSlot.time, nowMs) + SCHEDULE_SPAN_MS;
   const phase =
-    ordered.length === 0 ? "empty" : !hasTimes ? "untimed" : nowMs < timeToMs(firstSlot!.time, nowMs) ? "before" : allPast ? "end" : "in";
+    ordered.length === 0
+      ? "empty"
+      : !hasTimes
+        ? "untimed"
+        : nowMs < timeToMs(firstSlot!.time, nowMs)
+          ? "before"
+          : dayOver
+            ? "end"
+            : liveSlot
+              ? "in"
+              : "between";
 
   const nextInMin = upNext && upNext.time ? Math.max(1, Math.round((timeToMs(upNext.time, nowMs) - nowMs) / 60_000)) : null;
   const dayNotes = todayEvents.filter((e) => e.type === "note" && e.className === "");
@@ -417,32 +438,45 @@ export default function MyDay({
           setAdding(false);
         }
       };
-    if (phase === "before" && firstSlot)
+    if (phase === "before" && firstSlot) {
+      const has = roster(firstSlot.className).length > 0;
       return {
         tag: "First up",
         title: firstSlot.subject || firstSlot.className || "Lesson",
         meta: [firstSlot.time, firstSlot.className, firstSlot.room].filter(Boolean).join(" · "),
-        cta: "Register the first period",
+        cta: has ? "Register the first period" : "Enter grades",
         run: () => {
-          openPanel(firstSlot, "att");
+          openPanel(firstSlot, has ? "att" : "grades");
           jumpTo(firstSlot.id);
         }
       };
-    if (phase === "in" && current) {
-      const done = attDone(current.className);
+    }
+    if (phase === "in" && liveSlot) {
+      const l = liveSlot;
+      const has = roster(l.className).length > 0;
+      const done = has && attDone(l.className);
       return {
         tag: "Now",
-        title: current.subject || current.className || "Lesson",
-        meta: [current.className, roster(current.className).length > 0 ? `${roster(current.className).length} learners` : "", current.room]
-          .filter(Boolean)
-          .join(" · "),
-        cta: done ? "Enter grades" : "Take register",
+        title: `${l.time} ${l.subject || l.className || "Lesson"}`,
+        meta: [l.className, has ? `${roster(l.className).length} learners` : "", l.room].filter(Boolean).join(" · "),
+        cta: done ? "Enter grades" : has ? "Take register" : "Enter grades",
         run: () => {
-          openPanel(current, done ? "grades" : "att");
-          jumpTo(current.id);
+          openPanel(l, done || !has ? "grades" : "att");
+          jumpTo(l.id);
         }
       };
     }
+    if (phase === "between" && upNext)
+      return {
+        tag: "Break",
+        title: `${upNext.time} ${upNext.subject || upNext.className || "Lesson"}`,
+        meta: "The room is free — prep the next period. Anything owed is in the band below.",
+        cta: "Prep the next period",
+        run: () => {
+          openPanel(upNext, "att");
+          jumpTo(upNext.id);
+        }
+      };
     if (phase === "end") {
       const out = classRows.filter((l) => !attDone(l.className)).length;
       return {
@@ -507,7 +541,7 @@ export default function MyDay({
     const attSt: "done" | "pending" | "none" = !hasRoster ? "none" : attDone(lesson.className) ? "done" : "pending";
     const grSt: "done" | "pending" | "none" = !hasRoster ? "none" : gradesDone(lesson.className) ? "done" : "pending";
     const notesSt: "done" | "none" = notesCount(lesson.className) > 0 ? "done" : "none";
-    const isNowRow = !past && lesson.id === current?.id;
+    const isNowRow = lesson.id === liveSlot?.id;
     const isNextRow = !past && upNext?.id === lesson.id;
     const title = lesson.subject || lesson.className || "Lesson";
     const detail = [
@@ -799,7 +833,7 @@ export default function MyDay({
             {arc.map((a) => {
               const st = a.done
                 ? "done"
-                : a.lesson.id === current?.id
+                : a.lesson.id === liveSlot?.id
                 ? "cur"
                 : hasTimes && a.lesson.time && timeToMs(a.lesson.time, nowMs) <= nowMs
                 ? "owed"
