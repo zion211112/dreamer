@@ -127,7 +127,7 @@ export function MiniCalendar({ items, onAdd, onRemove }: Props) {
           <ul className="mt-2 space-y-1.5">
             {dayItems.map((i) => (
               <li key={i.id} className="flex items-center gap-2 rounded-lg border border-edge/60 px-2.5 py-1.5">
-                <span className="w-10 shrink-0 font-mono text-[10px] text-dim">{i.time || "—"}</span>
+                <span className="w-10 shrink-0 font-mono text-[10px] tabular-nums text-dim">{i.time || "—"}</span>
                 <span className="min-w-0 flex-1 truncate text-[12px] text-ivory">
                   {i.title}
                   {i.kind === "class" && i.className ? <span className="text-dim"> · {i.className}</span> : null}

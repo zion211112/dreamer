@@ -55,26 +55,33 @@ test('makeClassNote writes one class-level line, not tied to a learner', () => {
   assert.ok(e.id && e.ts);
 });
 
-test('My Day renders a uniform timeline: same three actions, a NOW marker, an honest footer', () => {
+test('My Day drives the day: NOW hero, arc strip, owed band, uniform chips, bulk register', () => {
   const day = read('components/console/MyDay.tsx');
-  // The three actions, always in the same order, on every class row.
-  assert.match(day, /actionBtn\(lesson, "att", attSt, "Attendance"\)/);
-  assert.match(day, /actionBtn\(lesson, "grades", grSt, "Grades"\)/);
-  assert.match(day, /actionBtn\(lesson, "notes", notesSt, "Notes"\)/);
-  // Time is the spine; the NOW hairline moves with the day.
-  assert.match(day, /hasTimes && i === nowIndex/);
-  assert.match(day, /Now · /);
-  // State lives in the row as one flag.
-  assert.match(day, /"✓"/);
-  assert.match(day, /"!/);
+  // One first-class question — the phase picks the primary action.
+  assert.match(day, /Take register/);
+  assert.match(day, /Close the day/);
+  // The day's shape reads in one second; segments are tappable.
+  assert.match(day, /arc/);
+  // Past folds into a queue, not a graveyard.
+  assert.match(day, /owed/);
+  // Same three chips, same order, on every class row.
+  assert.match(day, /chip\(lesson, "att", attSt/);
+  assert.match(day, /chip\(lesson, "grades", grSt/);
+  assert.match(day, /chip\(lesson, "notes", notesSt/);
+  // The NOW hairline still moves with the day.
+  assert.match(day, /Now \u00b7 /);
+  // Register: bulk is the default, exceptions are the adjust path.
+  assert.match(day, /All present/);
+  assert.match(day, /absentNames/);
   // The footer tells the truth: online/offline + today's record count + one add-link.
   assert.match(day, /\+ Add to today/);
   assert.match(day, /todayEvents\.length/);
   // The day is declared, never invented.
   assert.match(day, /loadDayPlan/);
   assert.match(day, /saveDayPlan/);
-  // No separate alerts panel, no wall of quick actions, no pinned-class cards.
+  // No separate alerts panel, no flag column, no pinned-class cards.
   assert.doesNotMatch(day, /unmarkedInClass/);
+  assert.doesNotMatch(day, /flagFor/);
   assert.doesNotMatch(day, /Quick actions/);
   assert.doesNotMatch(day, /Today's classes/);
 });

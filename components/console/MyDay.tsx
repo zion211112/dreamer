@@ -1,21 +1,20 @@
 "use client";
 
-// My Day — a timeline, not a dashboard. The day has a shape: it starts, moves,
-// ends. Lessons sit on a time spine; the eye reads down.
+// My Day — one spine, three depths. The day has a shape: it starts, moves,
+// ends. The eye never reads a list; it reads the clock.
 //
-//   HEADER        "My Day" + the date. One number: "N of M done".
-//   TIMELINE      one row per lesson — TIME · Class · Subject · learners · room.
-//                 Every class row carries the same three actions, same order:
-//                 [Attendance] [Grades] [Notes]. Non-class items (a staff
-//                 meeting) carry only [Notes]. A flag on the right tells the
-//                 state: ✓ done · — pending · ! overdue. No separate alerts panel.
-//   NOW MARKER    a hairline + "NOW · HH:MM" between the rows — it moves as
-//                 the day moves. Only shown when the teacher has fixed times.
-//   FOOTER        honest sync state + "+ Add to today".
+//   DEPTH 1  NOW — one card, one question: what do I do now? The phase
+//             (before · in · end · empty) picks the primary action, and the
+//             day's arc — one segment per period — shows where the day stands.
+//   DEPTH 2  SPINE — past periods fold into an "owes work" band; now and the
+//             next read full; the far recedes. Every class row carries the
+//             same three chips, same order: Att · Grades · Note.
+//   DEPTH 3  PLAN — the five-week calendar, timetable import and the day
+//             builder live on their own tab, off the day's main stage.
 //
-// The teacher declares the day (lib/events day plan); My Day never invents
-// one. State is computed from the event ledger only. The My Students view is
-// a clean finder — class pills + search, results compact and capped.
+// The register is bulk-first: "all present" is one tap, names are the adjust
+// path. State is computed from the event ledger only. The day is declared,
+// never invented. My Students stays a clean finder — class pills + search.
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { baseClassName, scoreKey, Student } from "../../lib/school";
@@ -24,7 +23,6 @@ import {
   classesOnRoll,
   DayEvent,
   eventsSinceToday,
-  isTimePast,
   Lesson,
   loadDayPlan,
   loadEvents,
@@ -82,7 +80,6 @@ export default function MyDay({
 
   const [adding, setAdding] = useState(false);
   const [af, setAf] = useState({ time: "", className: "", subject: "", room: "" });
-  const [calOpen, setCalOpen] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importText, setImportText] = useState("");
   const [repeatWeekly, setRepeatWeekly] = useState(false);
@@ -95,6 +92,16 @@ export default function MyDay({
   const [query, setQuery] = useState("");
   const [clsFilter, setClsFilter] = useState(rosterClass ?? "");
   const [notice, setNotice] = useState("");
+  // Today / Students / Plan — planning demotes to its own tab, off the day's main stage.
+  const [tab, setTab] = useState<"today" | "students" | "plan">(section === "students" ? "students" : "today");
+  // Past periods fold into an owed band; the day never scrolls past itself.
+  const [pastOpen, setPastOpen] = useState(false);
+  // Register: bulk is the default, the names view is the adjust path.
+  const [attMode, setAttMode] = useState<"bulk" | "names">("bulk");
+  // A day-level line to close the day (ledger: a note with no class).
+  const [dayNote, setDayNote] = useState("");
+  const dayNoteRef = useRef<HTMLInputElement>(null);
+  const rowRefs = useRef<Record<string, HTMLLIElement | null>>({});
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -123,6 +130,10 @@ export default function MyDay({
     if (rosterClass) setClsFilter(rosterClass);
   }, [rosterClass]);
 
+  useEffect(() => {
+    setTab(section === "students" ? "students" : "today");
+  }, [section]);
+
   const allClasses = useMemo(() => classesOnRoll(data.students), [data.students]);
 
   function roster(cls: string): Student[] {
@@ -144,6 +155,7 @@ export default function MyDay({
   function openPanel(lesson: Lesson, kind: "att" | "grades" | "notes") {
     setOpen({ id: lesson.id, kind });
     setNotice("");
+    setAttMode("bulk");
     if (kind === "att") {
       const init: Record<string, "present" | "absent"> = {};
       for (const s of roster(lesson.className)) init[s.id] = "present";
@@ -203,6 +215,18 @@ export default function MyDay({
     setEvents(await loadEvents());
     setNote("");
     setNotice(`${cls || "Class"} — note added.`);
+  }
+
+  // Close the day with one line that belongs to no class.
+  async function saveDayNote() {
+    if (!dayNote.trim()) {
+      setNotice("Add a line first.");
+      return;
+    }
+    await saveEvent(makeClassNote("", session.name, dayNote.trim()));
+    setEvents(await loadEvents());
+    setDayNote("");
+    setNotice("Day note saved — it sits on the ledger, not in a class history.");
   }
 
   async function addNote(s: Student, text: string) {
@@ -341,29 +365,203 @@ export default function MyDay({
       .filter((l) => /^\d{1,2}:\d{2}$/.test(l.time) && timeToMs(l.time, nowMs) > nowMs)
       .sort((a, b) => timeToMs(a.time, nowMs) - timeToMs(b.time, nowMs))[0] ?? null;
 
-  type Flag = { ch: string; cls: string };
-  function flagFor(lesson: Lesson): Flag {
-    if (roster(lesson.className).length === 0) return { ch: "", cls: "" };
-    if (attDone(lesson.className)) return { ch: "✓", cls: "text-emerald-400" };
-    if (isTimePast(lesson.time, nowMs)) return { ch: "!", cls: "text-gold" };
-    return { ch: lesson.time ? "" : "—", cls: "text-dim" };
+  /* -------- the now-phase: one card, one question — what do I do now ------- */
+
+  const firstSlot = timed[0] ?? null;
+  const current = hasTimes && nowIndex >= 0 ? (timed[nowIndex] ?? null) : null;
+  const allPast = hasTimes && timed.every((l) => timeToMs(l.time, nowMs) <= nowMs);
+  const phase =
+    ordered.length === 0 ? "empty" : !hasTimes ? "untimed" : nowMs < timeToMs(firstSlot!.time, nowMs) ? "before" : allPast ? "end" : "in";
+
+  const nextInMin = upNext && upNext.time ? Math.max(1, Math.round((timeToMs(upNext.time, nowMs) - nowMs) / 60_000)) : null;
+  const dayNotes = todayEvents.filter((e) => e.type === "note" && e.className === "");
+
+  const pastRows = hasTimes ? ordered.slice(0, nowIndex) : [];
+  const liveRows = hasTimes ? ordered.slice(nowIndex) : ordered;
+  // The band's queue: past periods still owing a register, or a register in
+  // but grades not entered. Never a graveyard — tap and it unfolds.
+  const owed = pastRows.flatMap((l) => {
+    if (roster(l.className).length === 0) return [];
+    const label = `${l.time || "Untimed"} · ${l.subject || l.className || "Lesson"}`;
+    const out: { key: string; lesson: Lesson; kind: "att" | "grades"; label: string }[] = [];
+    if (!attDone(l.className)) out.push({ key: l.id + "-att", lesson: l, kind: "att", label });
+    else if (!gradesDone(l.className)) out.push({ key: l.id + "-gr", lesson: l, kind: "grades", label });
+    return out;
+  });
+
+  // The day's shape in one glance: a segment per class period, untimed items
+  // grouped last. Tap and the spine scrolls — the past unfolds first.
+  const arc = (() => {
+    const items: { key: string; lesson: Lesson; done: boolean }[] = classRows.map((l) => ({ key: l.id, lesson: l, done: attDone(l.className) }));
+    const untimedRows = ordered.filter((l) => !l.time);
+    if (untimedRows.length > 0) items.push({ key: "__untimed__", lesson: untimedRows[0], done: untimedRows.every((l) => attDone(l.className)) });
+    return items;
+  })();
+
+  function jumpTo(id: string) {
+    setPastOpen(true);
+    setTimeout(() => rowRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "center" }), 60);
   }
 
-  // A uniform row action. Same three, same order, everywhere — muscle memory.
-  function actionBtn(lesson: Lesson, kind: "att" | "grades" | "notes", st: "done" | "pending" | "none", name: string) {
+  // The hero: the phase picks the primary action; the eye lands on one thing.
+  const hero = (() => {
+    if (phase === "empty")
+      return {
+        tag: "Today",
+        title: "Add your first lesson below",
+        meta: "Paste a timetable or add one — the day is declared, never invented.",
+        cta: "Paste a timetable",
+        run: () => {
+          setTab("plan");
+          setImporting(true);
+          setAdding(false);
+        }
+      };
+    if (phase === "before" && firstSlot)
+      return {
+        tag: "First up",
+        title: firstSlot.subject || firstSlot.className || "Lesson",
+        meta: [firstSlot.time, firstSlot.className, firstSlot.room].filter(Boolean).join(" · "),
+        cta: "Register the first period",
+        run: () => {
+          openPanel(firstSlot, "att");
+          jumpTo(firstSlot.id);
+        }
+      };
+    if (phase === "in" && current) {
+      const done = attDone(current.className);
+      return {
+        tag: "Now",
+        title: current.subject || current.className || "Lesson",
+        meta: [current.className, roster(current.className).length > 0 ? `${roster(current.className).length} learners` : "", current.room]
+          .filter(Boolean)
+          .join(" · "),
+        cta: done ? "Enter grades" : "Take register",
+        run: () => {
+          openPanel(current, done ? "grades" : "att");
+          jumpTo(current.id);
+        }
+      };
+    }
+    if (phase === "end") {
+      const out = classRows.filter((l) => !attDone(l.className)).length;
+      return {
+        tag: "Day",
+        title: `${doneCount} of ${classRows.length} recorded`,
+        meta:
+          out > 0
+            ? `${out} register${out === 1 ? "" : "s"} still out — the band below keeps them visible.`
+            : "Every register in. Close the day with one line.",
+        cta: "Close the day",
+        run: () => dayNoteRef.current?.focus()
+      };
+    }
+    return {
+      tag: "Today",
+      title: `${ordered.length} item${ordered.length === 1 ? "" : "s"}, untimed`,
+      meta: "Add times and the day starts moving — or work the list as it stands.",
+      cta: "+ Add to today",
+      run: () => {
+        setTab("plan");
+        setAdding(true);
+        setImporting(false);
+      }
+    };
+  })();
+
+  // The row state as a chip: three facts, same order, on every class row —
+  // done is quiet green, owed is gold, the far future is dim.
+  function chip(lesson: Lesson, kind: "att" | "grades" | "notes", st: "done" | "pending" | "none", past: boolean) {
     const on = open?.id === lesson.id && open.kind === kind;
-    const mark = st === "done" ? " ✓" : st === "pending" ? " —" : "";
-    const color = on ? "border border-gold text-gold" : st === "done" ? "text-emerald-400" : st === "pending" ? "text-muted" : "text-dim";
+    const n = roster(lesson.className).length;
+    let label = "Notes";
+    let tone = "text-dim";
+    if (kind === "att") {
+      label = st === "done" ? `Att ✓ ${n}` : past ? "Att · owed" : "Att";
+      tone = st === "done" ? "text-emerald-400" : past ? "text-gold" : "text-dim";
+    } else if (kind === "grades") {
+      if (st === "none") return null;
+      label = st === "done" ? "Grades ✓" : past ? "Grades · owed" : "Grades";
+      tone = st === "done" ? "text-emerald-400" : past ? "text-gold" : "text-dim";
+    } else {
+      const c = notesCount(lesson.className);
+      label = c > 0 ? `Note ${c}` : "Notes";
+    }
     return (
       <button
         onClick={() => (on ? closePanel() : openPanel(lesson, kind))}
-        className={`rounded-full px-3 py-1 font-mono text-[11px] uppercase tracking-[0.12em] transition-colors hover:text-gold ${color}`}
+        className={`rounded-full px-3 py-1 font-mono text-[11px] uppercase tracking-[0.12em] transition-colors ${
+          on ? "border border-gold bg-gold-soft text-gold" : `border border-transparent ${tone} hover:text-ivory`
+        }`}
       >
-        {name}
-        {mark}
+        {label}
       </button>
     );
   }
+
+  // A uniform row: time · class · subject · learners · room, the three chips,
+  // the panel opens inline under its own row.
+  function timelineRow(lesson: Lesson, past: boolean) {
+    const hasRoster = roster(lesson.className).length > 0;
+    const n = roster(lesson.className).length;
+    const attSt: "done" | "pending" | "none" = !hasRoster ? "none" : attDone(lesson.className) ? "done" : "pending";
+    const grSt: "done" | "pending" | "none" = !hasRoster ? "none" : gradesDone(lesson.className) ? "done" : "pending";
+    const notesSt: "done" | "none" = notesCount(lesson.className) > 0 ? "done" : "none";
+    const isNowRow = !past && lesson.id === current?.id;
+    const isNextRow = !past && upNext?.id === lesson.id;
+    const title = lesson.subject || lesson.className || "Lesson";
+    const detail = [
+      lesson.className && lesson.className !== title ? lesson.className : "",
+      hasRoster ? `${n} learner${n === 1 ? "" : "s"}` : "",
+      lesson.room
+    ]
+      .filter(Boolean)
+      .join("  ·  ");
+    return (
+      <li
+        key={lesson.id}
+        ref={(el) => {
+          rowRefs.current[lesson.id] = el;
+        }}
+        className={`m-0 list-none py-[21px] ${
+          isNowRow
+            ? "-mx-4 rounded-[21px] border border-edge bg-panelHi px-4"
+            : past
+            ? "border-b border-edge/40 opacity-50"
+            : isNextRow
+            ? "border-b border-edge/60"
+            : "border-b border-edge/60 opacity-60"
+        }`}
+      >
+        <div className="grid grid-cols-[55px_1fr] gap-3 md:grid-cols-[90px_1fr] md:gap-[21px]">
+          <div className="pt-1">
+            <span className={`font-mono tabular-nums text-[13px] ${isNextRow ? "text-gold" : "text-dim"}`}>{lesson.time || "—"}</span>
+            {isNextRow && <span className="mt-0.5 block font-mono text-[9px] uppercase tracking-[0.2em] text-gold">next</span>}
+          </div>
+          <div className="min-w-0">
+            <h3 className="font-display text-[21px] font-normal leading-tight text-ivory">{title}</h3>
+            <p className="mt-1 text-[13px] text-muted">{detail || "—"}</p>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              {hasRoster && chip(lesson, "att", attSt, past)}
+              {hasRoster && chip(lesson, "grades", grSt, past)}
+              {chip(lesson, "notes", notesSt, past)}
+              <button
+                onClick={() => removeLesson(lesson.id)}
+                title="Remove from today"
+                className="ml-auto font-mono text-[10px] uppercase tracking-[0.15em] text-dim transition-colors hover:text-red-400"
+              >
+                ✕
+              </button>
+            </div>
+            {lessonPanel(lesson)}
+          </div>
+        </div>
+      </li>
+    );
+  }
+
+  // Bulk first: the exceptions list, not the roll. Most days are "all present".
+  const absentNames = (rows: Student[]) => rows.filter((s) => marks[s.id] === "absent");
 
   // The panel that opens under a lesson row: register / grade entry / note.
   function lessonPanel(lesson: Lesson) {
@@ -381,9 +579,48 @@ export default function MyDay({
             {rows.length === 0 ? (
               <p className="py-4 text-sm text-muted">No learners on the roll for this class yet.</p>
             ) : (
-              <>
-                <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  {rows.map((s) => (
+              <div className="space-y-4">
+                {attMode === "bulk" ? (
+                  <>
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <p className="text-[13px] text-muted">
+                        <span className="font-medium text-ivory">{rows.length}</span> learners ·{" "}
+                        {absentNames(rows).length === 0 ? (
+                          <span className="text-emerald-400">All present</span>
+                        ) : (
+                          <span className="text-gold">{absentNames(rows).length} absent</span>
+                        )}
+                      </p>
+                      <div className="flex gap-2">
+                        <button onClick={() => setAttMode("names")} className={btnGhost + " px-3 py-1.5"}>
+                          Adjust names
+                        </button>
+                        <button onClick={() => void saveAttendance(cls)} className={btn + " px-4 py-1.5"}>
+                          {absentNames(rows).length === 0 ? "Confirm & save" : "Save register"}
+                        </button>
+                      </div>
+                    </div>
+                    {absentNames(rows).length > 0 && (
+                      <div>
+                        <p className={monoLabel}>Absentees</p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {absentNames(rows).map((s) => (
+                            <button
+                              key={s.id}
+                              onClick={() => setMarks((prev) => ({ ...prev, [s.id]: "present" }))}
+                              className="rounded-full border border-red-500/60 px-3 py-1 text-[13px] text-red-400 transition-colors hover:bg-red-500/10"
+                            >
+                              {s.name} · make present
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                      {rows.map((s) => (
                     <li key={s.id} className="flex items-center justify-between gap-2 rounded-xl border border-edge/60 px-3 py-2">
                       <span className="truncate text-[13px] text-ivory">{s.name}</span>
                       <span className="flex shrink-0 gap-1">
@@ -398,13 +635,18 @@ export default function MyDay({
                         ))}
                       </span>
                     </li>
-                  ))}
-                </ul>
-                <div className="mt-4 flex items-center gap-3">
-                  <button onClick={() => void saveAttendance(cls)} className={btn}>Save register</button>
-                  <span className={monoLabel}>Saved to the day ledger</span>
-                </div>
-              </>
+                      ))}
+                    </ul>
+                    <div className="mt-4 flex items-center gap-3">
+                      <button onClick={() => void saveAttendance(cls)} className={btn}>Save register</button>
+                      <button onClick={() => setAttMode("bulk")} className={btnGhost + " px-3 py-1.5"}>
+                        Back to bulk
+                      </button>
+                      <span className={monoLabel}>Saved to the day ledger</span>
+                    </div>
+                  </>
+                )}
+              </div>
             )}
           </div>
         )}
@@ -484,132 +726,185 @@ export default function MyDay({
 
   return (
     <div className="min-w-0 max-w-full space-y-10">
-      {section === "day" && (
-        <>
-          {/* HEADER — one number: the state of the day, plus a quick "up next" */}
-          <div>
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <p className={monoLabel}>My Day · {session.school}</p>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => {
-                    setImporting((v) => !v);
-                    setAdding(false);
-                    setCalOpen(false);
-                  }}
-                  className={btnGhost + " px-3 py-1.5"}
-                >
-                  Import
-                </button>
-                <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim">{todayLabel()}</p>
-              </div>
-            </div>
-            <h1 className="mt-3 font-display text-4xl font-light tracking-tight">
-              {classRows.length > 0 ? `${doneCount} of ${classRows.length} done` : "Add your first lesson below"}
-            </h1>
-            {upNext && classRows.length > 0 && (
-              <p className="mt-2 font-mono text-[12px] text-dim">
+      {/* HEADER — school, date, and the three views of the day */}
+      <div>
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <p className={monoLabel}>My Day · {session.school}</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim">{todayLabel()}</p>
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {(["today", "students", "plan"] as const).map((t) => (
+            <button key={t} onClick={() => setTab(t)} className={pill(tab === t)}>
+              {t === "today" ? "Today" : t === "students" ? `Students · ${data.students.length}` : "Plan"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* NOW — one card, one question: what do I do now. The phase picks the
+         primary; the arc below shows where the day stands. */}
+      {tab === "today" && (
+        <div className="rounded-[21px] border border-edge bg-panel p-[21px]">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <p className={monoLabel}>
+              {hero.tag} · {new Date(nowMs).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
+            </p>
+            {upNext && upNext.time && nextInMin !== null && (
+              <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim">
                 Up next · <span className="text-gold">{upNext.time}</span>
-                {upNext.subject || upNext.className ? ` · ${[upNext.subject, upNext.className].filter(Boolean).join(" · ")}` : ""}
+                {upNext.subject || upNext.className ? ` · ${[upNext.subject, upNext.className].filter(Boolean).join(" · ")}` : ""} — in {nextInMin} min
               </p>
             )}
           </div>
 
-          {/* TIMELINE — time is the spine; every class row has the same three actions */}
-          {ordered.length > 0 && (
-            <ol className="m-0 max-w-3xl list-none">
-              {ordered.map((lesson, i) => {
-                const hasRoster = roster(lesson.className).length > 0;
-                const n = roster(lesson.className).length;
-                const f = flagFor(lesson);
-                const attSt: "done" | "pending" | "none" = !hasRoster ? "none" : attDone(lesson.className) ? "done" : "pending";
-                const grSt: "done" | "pending" | "none" = !hasRoster ? "none" : gradesDone(lesson.className) ? "done" : "pending";
-                const notesSt: "done" | "none" = notesCount(lesson.className) > 0 ? "done" : "none";
-                const isNext = upNext?.id === lesson.id;
-                const title = lesson.subject || lesson.className || "Lesson";
-                const detail = [
-                  lesson.className && lesson.className !== title ? lesson.className : "",
-                  hasRoster ? `${n} learner${n === 1 ? "" : "s"}` : "",
-                  lesson.room
-                ]
-                  .filter(Boolean)
-                  .join("  ·  ");
-                return (
-                  <li key={lesson.id} className="m-0 list-none">
-                    {hasTimes && i === nowIndex && (
-                      <div className="relative flex items-center border-b border-edge/40 pb-[21px]">
-                        <span className="absolute inset-x-0 top-1/2 h-px bg-gold/40" aria-hidden="true" />
-                        <span className="relative z-10 bg-void px-3 font-mono text-[11px] uppercase tracking-[0.2em] text-gold">
-                          Now · {new Date(nowMs).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
-                        </span>
-                      </div>
-                    )}
-                    <div className="grid grid-cols-[55px_1fr_21px] gap-3 border-b border-edge/60 py-[21px] md:grid-cols-[90px_1fr_21px] md:gap-[21px]">
-                      <div className="pt-1">
-                        <span className={`font-mono text-[13px] ${isNext ? "text-gold" : "text-dim"}`}>{lesson.time || "—"}</span>
-                        {isNext && <span className="mt-0.5 block font-mono text-[9px] uppercase tracking-[0.2em] text-gold">next</span>}
-                      </div>
-                      <div className="min-w-0">
-                        <div>
-                          <h3 className="font-display text-[21px] font-normal leading-tight text-ivory">{title}</h3>
-                          <p className="mt-1 text-[13px] text-muted">{detail || "—"}</p>
-                          <div className="mt-3 flex flex-wrap items-center gap-2">
-                            {hasRoster && actionBtn(lesson, "att", attSt, "Attendance")}
-                            {hasRoster && actionBtn(lesson, "grades", grSt, "Grades")}
-                            {actionBtn(lesson, "notes", notesSt, "Notes")}
-                            <button
-                              onClick={() => removeLesson(lesson.id)}
-                              title="Remove from today"
-                              className="ml-auto font-mono text-[10px] uppercase tracking-[0.15em] text-dim transition-colors hover:text-red-400"
-                            >
-                              ✕
-                            </button>
-                          </div>
-                        </div>
-                        {lessonPanel(lesson)}
-                      </div>
-                      <span className={`pt-1 text-right font-mono text-[15px] ${f.cls}`}>{f.ch}</span>
-                    </div>
-                  </li>
-                );
-              })}
-            </ol>
-          )}
+          <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
+            <div className="min-w-0">
+              <h1 className="font-display text-4xl font-light tracking-tight">{hero.title}</h1>
+              <p className="mt-2 max-w-[52ch] text-[13px] text-muted">{hero.meta}</p>
+              {phase === "end" && dayNotes.length > 0 && (
+                <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.15em] text-dim">
+                  {dayNotes.length} day note{dayNotes.length === 1 ? "" : "s"} on the ledger
+                </p>
+              )}
+            </div>
+            <button onClick={hero.run} className={btn + " shrink-0"}>
+              {hero.cta}
+            </button>
+          </div>
 
-          {/* PLANNER — add a lesson, open the mini calendar, or import a timetable */}
-          <div className="mt-[34px] border-t border-edge pt-[21px]">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim">
-                {online ? "Online" : "Offline"} · {todayEvents.length} record{todayEvents.length === 1 ? "" : "s"} today
-              </span>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => {
-                    setAdding((v) => !v);
-                    setCalOpen(false);
-                    setImporting(false);
-                  }}
-                  className={btnGhost + " px-3 py-1.5"}
-                >
-                  {adding ? "Close" : "+ Add to today"}
-                </button>
-                <button
-                  onClick={() => {
-                    setCalOpen((v) => !v);
-                    setAdding(false);
-                    setImporting(false);
-                  }}
-                  className={btnGhost + " px-3 py-1.5"}
-                >
-                  {calOpen ? "Close" : "Calendar"}
+          {phase === "end" && (
+            <div className="mt-4 border-t border-edge pt-4">
+              <p className={monoLabel}>Close the day</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <input
+                  ref={dayNoteRef}
+                  value={dayNote}
+                  onChange={(e) => setDayNote(e.target.value)}
+                  placeholder="One line for the ledger — what was the day like?"
+                  className={field + " min-w-[240px] flex-1"}
+                />
+                <button onClick={() => void saveDayNote()} className={btnGhost + " px-3 py-2"}>
+                  Save day note
                 </button>
               </div>
             </div>
+          )}
+        </div>
+      )}
 
-            {notice && <p role="status" className="mt-3 font-mono text-[12px] text-gold">{notice}</p>}
+      {/* ARC — the day's shape: one segment per period. Tappable. */}
+      {tab === "today" && arc.length > 0 && (
+        <div>
+          <div className="flex gap-1.5">
+            {arc.map((a) => {
+              const st = a.done
+                ? "done"
+                : a.lesson.id === current?.id
+                ? "cur"
+                : hasTimes && a.lesson.time && timeToMs(a.lesson.time, nowMs) <= nowMs
+                ? "owed"
+                : "future";
+              return (
+                <button
+                  key={a.key}
+                  onClick={() => jumpTo(a.lesson.id)}
+                  aria-label={`${a.lesson.time || "Untimed"} — ${st === "done" ? "recorded" : st}`}
+                  title={a.lesson.time || "Untimed"}
+                  className={`h-[6px] min-w-4 flex-1 rounded-full transition-colors ${
+                    st === "done" ? "bg-ivory/60" : st === "cur" ? "animate-pulse bg-gold" : st === "owed" ? "bg-amber-500/50" : "bg-edge"
+                  }`}
+                />
+              );
+            })}
+          </div>
+          <div className="mt-2 flex items-center justify-between">
+            <span className={monoLabel}>
+              {doneCount} of {classRows.length} recorded
+            </span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-dim">{online ? "Online" : "Offline"}</span>
+          </div>
+        </div>
+      )}
+
+      {/* SPINE — past folds into an owed band; now + next read full; the far
+          recedes. Three chips, same order, on every class row. */}
+      {tab === "today" && ordered.length > 0 && (
+        <ol className="m-0 max-w-3xl list-none">
+          {hasTimes && pastRows.length > 0 && !pastOpen && (
+            <li className="border-b border-edge/60 py-[21px]">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <p className={monoLabel}>
+                  Before {timed[nowIndex]?.time ?? ""} · {pastRows.length} period{pastRows.length === 1 ? "" : "s"}
+                </p>
+                <button onClick={() => setPastOpen(true)} className={btnGhost + " px-3 py-1.5"}>
+                  Expand
+                </button>
+              </div>
+              {owed.length > 0 ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {owed.map((o) => (
+                    <button
+                      key={o.key}
+                      onClick={() => {
+                        setPastOpen(true);
+                        openPanel(o.lesson, o.kind);
+                        jumpTo(o.lesson.id);
+                      }}
+                      className="rounded-full border border-amber-500/50 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.12em] text-amber-400 transition-colors hover:bg-amber-500/10"
+                    >
+                      {o.label} · {o.kind === "att" ? "register" : "grades"}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-2 text-[13px] text-dim">All recorded.</p>
+              )}
+            </li>
+          )}
+          {hasTimes && pastOpen && pastRows.map((lesson) => timelineRow(lesson, true))}
+          {hasTimes && nowIndex > 0 && (
+            <li aria-hidden="true" className="border-b border-edge/40 pb-[21px]">
+              <div className="relative flex items-center">
+                <span className="absolute inset-x-0 top-1/2 h-px bg-gold/40" />
+                <span className="relative z-10 bg-void px-3 font-mono text-[11px] uppercase tracking-[0.2em] text-gold">
+                  Now · {new Date(nowMs).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
+                </span>
+              </div>
+            </li>
+          )}
+          {liveRows.map((lesson) => timelineRow(lesson, false))}
+        </ol>
+      )}
+
+      {/* FOOTER — the honest sync line, nothing more. */}
+      {tab === "today" && (
+        <div className="border-t border-edge pt-3">
+          <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim">
+            {online ? "Online" : "Offline"} · {todayEvents.length} record{todayEvents.length === 1 ? "" : "s"} today
+          </p>
+        </div>
+      )}
+
+      {/* PLAN — calendar, import and the day builder, off the day's main stage. */}
+      {tab === "plan" && (
+        <section className="space-y-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="font-display text-[26px] font-light tracking-tight">Plan</h2>
+              <p className="mt-1 text-[13px] text-muted">Shape the week — calendar, import, the day builder.</p>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={() => { setImporting((v) => !v); setAdding(false); }} className={btnGhost + " px-3 py-1.5"}>
+                {importing ? "Close" : "Import timetable"}
+              </button>
+              <button onClick={() => { setAdding((v) => !v); setImporting(false); }} className={btnGhost + " px-3 py-1.5"}>
+                {adding ? "Close" : "+ Add to today"}
+              </button>
+            </div>
+          </div>
 
             {importing && (
-              <div className="mt-4 rounded-[21px] border border-edge bg-panel p-[21px]">
+              <div className="rounded-[21px] border border-edge bg-panel p-[21px]">
                 <p className={monoLabel}>Import timetable</p>
                 <p className="mt-1 text-xs text-muted">Paste your week, one line per period. It's read into today — nothing is guessed.</p>
                 <textarea
@@ -641,7 +936,7 @@ export default function MyDay({
             )}
 
             {adding && (
-              <div className="mt-4 rounded-[21px] border border-edge bg-panel p-[21px]">
+              <div className="rounded-[21px] border border-edge bg-panel p-[21px]">
                 <p className={monoLabel}>Add to today</p>
                 <div className="mt-3 grid grid-cols-2 gap-3">
                   <label className="block">
@@ -669,19 +964,17 @@ export default function MyDay({
               </div>
             )}
 
-            {calOpen && (
-              <div className="mt-4 rounded-[21px] border border-edge bg-panel p-[21px]">
-                <MiniCalendar items={schedules} onAdd={addSchedule} onRemove={removeSchedule} />
-              </div>
-            )}
+          <div className="rounded-[21px] border border-edge bg-panel p-[21px]">
+            <p className={monoLabel}>Five weeks</p>
+            <div className="mt-3">
+              <MiniCalendar items={schedules} onAdd={addSchedule} onRemove={removeSchedule} />
+            </div>
           </div>
-
-          {/* Attendance, grades and notes all open inline under their row; alerts live in the row flags. */}
-        </>
+        </section>
       )}
 
       {/* MY STUDENTS — clean finder: class pills + search, results compact & capped. */}
-      {section === "students" && (
+      {tab === "students" && (
         <section>
           <div className="mb-[21px] flex flex-wrap items-center gap-2 border-b border-edge pb-3">
             <button onClick={() => setClsFilter("")} className={pill(clsFilter === "")}>All · {data.students.length}</button>

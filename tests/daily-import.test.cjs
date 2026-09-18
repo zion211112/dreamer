@@ -77,6 +77,8 @@ test('My Day gains import + mini calendar + classic class, drops the chatty line
   assert.match(day, /ClassPicker/); // classic cascading class entry
   assert.match(day, /MiniCalendar/); // the elite mini calendar
   assert.match(day, /importTimetable/);
+  // Planning demotes to its own tab; the day owns "now".
+  assert.match(day, /tab === "plan"/);
   assert.doesNotMatch(day, /Nothing invented — the day is yours/);
   assert.doesNotMatch(day, /No classes on your day/);
   assert.doesNotMatch(day, /Nothing on today yet/);
@@ -84,10 +86,11 @@ test('My Day gains import + mini calendar + classic class, drops the chatty line
   assert.match(day, /\+ Add to today/);
 });
 
-test('MiniCalendar flags collisions and offers personal vs class items', () => {
+test('MiniCalendar flags collisions, offers personal vs class items, aligns times', () => {
   const cal = read('components/console/MiniCalendar.tsx');
   assert.match(cal, /collisionsOn/);
   assert.match(cal, /⚠/);
   assert.match(cal, /personal/);
   assert.match(cal, /ClassPicker/);
+  assert.match(cal, /tabular-nums/); // times align down the list
 });
