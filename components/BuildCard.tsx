@@ -1,21 +1,10 @@
-import { Build, timeAgo } from "../lib/benben";
+import { Build, timeAgo, needsLine } from "../lib/benben";
 
 function typeTone(t: string): string {
   if (t === "NEED") return "text-gold";
   if (t === "SOLUTION") return "text-teal-300";
   if (t === "OFFER") return "text-emerald-300";
   return "text-muted";
-}
-
-function needsLine(b: Build): string {
-  const n = b.needs;
-  if (n.nothing) return "Needs: nothing — already built.";
-  const parts: string[] = [];
-  if (n.labor > 0) parts.push(`hands (${n.labor})`);
-  if (n.materials.trim()) parts.push(`materials · ${n.materials.trim()}`);
-  if (n.funds > 0) parts.push(`KES ${n.funds.toLocaleString()}`);
-  if (n.intellect.trim()) parts.push(`intellect · ${n.intellect.trim()}`);
-  return parts.length > 0 ? `Needs: ${parts.join(" · ")}` : "Needs: —";
 }
 
 // One build on the floor. No card frame, no avatar, no karma —

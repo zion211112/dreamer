@@ -1,0 +1,8 @@
+# Cloudflare Pages: exclude dev-only files from the deploy payload (.cfignore is gitignore-syntax).
+# The repo is small (~73 tracked files, no public/), so this is a light hygienic trim —
+# the main speed win was bumping Next to 14.2.35 so Cloudflare auto-configures instead of erroring.
+/tests
+a.md
+b.md
+c.md
+d.md

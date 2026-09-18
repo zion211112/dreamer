@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import BoardCard from "../../../components/BoardCard";
 import BuildCard from "../../../components/BuildCard";
 import GeoArt from "../../../components/GeoArt";
 import {
@@ -8,16 +9,31 @@ import {
   allMembers,
   Build,
   BuildNeeds,
+  BoardRole,
   castVote,
   DOMAINS,
   mergeBuilds,
   memberByUsername,
   myUsername,
+  persistBuilds,
   rankFeed,
   tierOf,
   TYPES,
   validateBuild
 } from "../../../lib/benben";
+import {
+  acceptClaim,
+  attest,
+  boardOrder,
+  deriveState,
+  logProgress,
+  park,
+  RISKS,
+  SKILLS,
+  submitClaim,
+  withdrawClaim
+} from "../../../lib/board";
+import type { Risk } from "../../../lib/board";
 
 const field =
   "w-full border-b border-white/10 bg-transparent py-2.5 text-sm text-ivory outline-none transition focus:border-gold";
@@ -45,6 +61,8 @@ export default function BenBenPage() {
   const [materials, setMaterials] = useState("");
   const [intellect, setIntellect] = useState("");
   const [nothing, setNothing] = useState(true);
+  const [risk, setRisk] = useState<Risk>("low");
+  const [skillsSel, setSkillsSel] = useState<string[]>([]);
   const [notice, setNotice] = useState("");
   const [err, setErr] = useState("");
   const [voteErr, setVoteErr] = useState<string | null>(null);
@@ -86,6 +104,8 @@ export default function BenBenPage() {
     setMaterials(b.needs.materials);
     setIntellect(b.needs.intellect);
     setNothing(b.needs.nothing);
+    setRisk(b.risk);
+    setSkillsSel(b.skills ?? []);
     setTitle("");
     setBody("");
     setErr("");
@@ -118,7 +138,9 @@ export default function BenBenPage() {
       done,
       by: me || undefined,
       forkOf: forkOf?.id,
-      tierAtPost: tier
+      tierAtPost: tier,
+      risk,
+      skills: skillsSel
     });
     setBuilds(mergeBuilds());
     setNow(Date.now());
@@ -126,13 +148,48 @@ export default function BenBenPage() {
     setForkOf(null);
     setTitle("");
     setBody("");
+    setSkillsSel([]);
+    setRisk("low");
     setErr("");
     setNotice(`${b.id} is on the floor.`);
   }
 
+  // ---- the board: pure ops from lib/board, one shared apply ----
+  function apply(id: string, op: (b: Build) => { b: Build; err: string | null }): string | null {
+    const i = builds.findIndex((x) => x.id === id);
+    if (i < 0) return "Gone. The floor moved on.";
+    const res = op(builds[i]);
+    if (res.err) return res.err;
+    const next = [...builds];
+    next[i] = res.b;
+    setBuilds(next);
+    persistBuilds(next);
+    setNow(Date.now());
+    return null;
+  }
+  const at = () => Date.now();
+  const onClaim = (id: string, role: BoardRole, reason: string) =>
+    apply(id, (b) => submitClaim(b, me ?? "", tier, role, reason, at()));
+  const onAccept = (id: string, target: string, role: BoardRole) =>
+    apply(id, (b) => acceptClaim(b, me ?? "", target, role, tier, at()));
+  const onWithdraw = (id: string, role: BoardRole) =>
+    apply(id, (b) => withdrawClaim(b, me ?? "", me ?? "", role, at()));
+  const onProgress = (id: string, text: string) => apply(id, (b) => logProgress(b, me ?? "", text, at()));
+  const onAttest = (id: string, evidence: string) => apply(id, (b) => attest(b, me ?? "", evidence, tier, at()));
+  const onPark = (id: string) => apply(id, (b) => park(b, me ?? "", tier, at()));
+
   const feed = useMemo(() => rankFeed(builds, now), [builds, now]);
   const totalVotes = feed.reduce((n, b) => n + Math.max(b.votes, 0), 0);
   const totalForks = feed.reduce((n, b) => n + b.comments.filter((c) => c.fork).length, 0);
+  const boardList = useMemo(() => boardOrder(builds, now), [builds, now]);
+  const openBoard = useMemo(
+    () =>
+      boardList.filter((b) => {
+        const s = deriveState(b, now);
+        return s !== "done" && s !== "parked" && s !== "lapsed";
+      }).length,
+    [boardList, now]
+  );
 
   if (!ready) {
     return <main className="min-h-[60vh] bg-obsidian text-ivory" />;
@@ -150,14 +207,14 @@ export default function BenBenPage() {
         <div className="flex items-baseline justify-between border-b border-white/10 pb-4 font-mono text-[11px] uppercase tracking-[0.3em] text-dim">
           <span>Ben-Ben · The Floor</span>
           <span className="tabular-nums">
-            {feed.length} builds · {totalVotes} votes · {totalForks} forks
+            {feed.length} builds · {totalVotes} votes · {totalForks} forks · {openBoard} open on the board
           </span>
         </div>
 
-        <h1 className="mt-12 font-display text-5xl md:text-6xl tracking-tight">Post. Fork. Vote.</h1>
+        <h1 className="mt-12 font-display text-5xl md:text-6xl tracking-tight">Post. Vote. Claim. Prove.</h1>
         <p className="mt-5 max-w-[52ch] text-[0.95rem] leading-7 text-muted">
-          A commons of builders for local projects, skills, and trusted work. What rises gets
-          built here — the floor is text: no emojis, no images, no noise.
+          A commons of builders for local projects, skills, and trusted work. The board decides
+          by count; the floor remembers by proof. No emojis, no images, no noise.
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-4">
@@ -176,6 +233,36 @@ export default function BenBenPage() {
             {me ? `signed · @${me}` : "signed in as no one yet"}
           </span>
         </div>
+
+        {/* the board: commitments made public — state derived, never written */}
+        <section className="bb-board mt-12">
+          <div>
+            <h2 className="font-display text-[2rem] font-medium leading-tight text-ivory">The Commitments</h2>
+            <span aria-hidden className="mt-3 block h-px w-[5.5rem] bg-gold/70" />
+            <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-3 font-mono text-[11px] uppercase tracking-[0.24em]">
+              <span className="text-gold">Propose · Ratify · Claim · Prove</span>
+              <span className="text-dim">state is derived — the floor decides</span>
+            </div>
+          </div>
+          {boardList.map((b) => (
+            <BoardCard
+              key={b.id}
+              b={b}
+              now={now}
+              me={me}
+              tier={tier}
+              all={builds}
+              onVote={vote}
+              onFork={fork}
+              onClaim={onClaim}
+              onAccept={onAccept}
+              onWithdraw={onWithdraw}
+              onProgress={onProgress}
+              onAttest={onAttest}
+              onPark={onPark}
+            />
+          ))}
+        </section>
 
         {/* the desk */}
         <div ref={desk} id="desk" className="mt-12 scroll-mt-24">
@@ -237,6 +324,55 @@ export default function BenBenPage() {
                         <option key={t}>{t}</option>
                       ))}
                     </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className={label} htmlFor="bb-risk">
+                    Risk · sets the bar, the window, and the closing quorum
+                  </label>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {RISKS.map((r) => (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => setRisk(r)}
+                        aria-pressed={risk === r}
+                        className={`border px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] transition ${
+                          risk === r
+                            ? "border-gold bg-gold/10 text-gold"
+                            : "border-white/12 text-dim hover:border-white/25 hover:text-ivory"
+                        }`}
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className={label}>Skills · the yard</label>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {SKILLS.map((k) => {
+                      const on = skillsSel.includes(k);
+                      return (
+                        <button
+                          key={k}
+                          type="button"
+                          aria-pressed={on}
+                          onClick={() =>
+                            setSkillsSel((p) => (p.includes(k) ? p.filter((x) => x !== k) : [...p, k]))
+                          }
+                          className={`border px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] transition ${
+                            on
+                              ? "border-teal-300/60 bg-teal-300/10 text-teal-300"
+                              : "border-white/12 text-dim hover:border-white/25 hover:text-ivory"
+                          }`}
+                        >
+                          {k}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -335,12 +471,25 @@ export default function BenBenPage() {
                   </div>
                 </fieldset>
 
-                <div className="flex flex-wrap items-center gap-4">
-                  <button className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold">
-                    {forkOf ? "Put the fork on the floor →" : "Put it on the floor →"}
+                <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpen(false);
+                      setErr("");
+                      setNotice("");
+                    }}
+                    className="font-mono text-[11px] uppercase tracking-[0.2em] text-dim transition hover:text-ivory"
+                  >
+                    close the desk
                   </button>
-                  {err && <p className="font-mono text-xs text-red-400">{err}</p>}
-                  {notice && <p className="font-mono text-xs text-emerald-300">{notice}</p>}
+                  <div className="flex items-center gap-4">
+                    {err && <p className="font-mono text-xs text-red-400">{err}</p>}
+                    {notice && <p className="font-mono text-xs text-emerald-300">{notice}</p>}
+                    <button className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold">
+                      {forkOf ? "Put the fork on the floor →" : "Put it on the floor →"}
+                    </button>
+                  </div>
                 </div>
               </div>
             </form>
@@ -367,7 +516,7 @@ export default function BenBenPage() {
         </section>
 
         <p className="mt-16 border-t border-white/10 pt-6 text-center font-mono text-[11px] uppercase tracking-[0.35em] text-dim">
-          vote-driven · local · useful
+          count, not noise · commit, then prove
         </p>
       </div>
     </main>

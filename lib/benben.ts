@@ -31,6 +31,19 @@ export type BuildNeeds = {
 
 export type BuildComment = { by: string; text: string; ts: number; fork: boolean };
 
+// The board's seats and signals. A claim is the sealed WhatsApp handoff,
+// generalized: who, which seat, why, and where the hand stands.
+export type BoardRole = "builder" | "reviewer";
+export type BoardClaim = {
+  by: string;
+  role: BoardRole;
+  reason: string;
+  status: "pending" | "active" | "withdrawn";
+  ts: number;
+};
+export type BoardProgress = { by: string; text: string; ts: number };
+export type BoardAttest = { by: string; evidence: string; hall: boolean; ts: number };
+
 export type Visibility = "public" | "hall8" | "private";
 
 export type BuildFile = { name: string; size: number; type: string; dataUrl: string };
@@ -61,6 +74,15 @@ export type Build = {
   attachments: BuildFile[];
   createdTs: number;
   tierAtPost: string; // visitor | member | hall
+
+  // ---- the board: signals, never state. State is derived (lib/board.ts). ----
+  risk: "low" | "medium" | "high"; // the axis that sets bar, window and quorum
+  skills: string[]; // yard slugs, controlled list
+  claims: BoardClaim[]; // seats raised: builder / reviewer, one line why
+  progress: BoardProgress[]; // one-line entries from seated builders
+  attestations: BoardAttest[]; // closing hands: not a building hand, with proof
+  parkedBy: string | null; // explicit rest — the only terminal parked marker
+  parkedAt: number | null;
 };
 
 // Who may open a build: everyone for public; the author always;
@@ -70,6 +92,19 @@ export function canView(b: Build, username: string, tier: FloorTier): boolean {
   if (b.by === username) return true;
   if (b.visibility === "hall8" && tier === "hall") return true;
   return false;
+}
+
+// One line that reads like a ledger entry: what a build needs — or that it needs nothing.
+// Lives here (not in a card) so BuildCard and BoardCard share it without importing each other.
+export function needsLine(b: Build): string {
+  const n = b.needs;
+  if (n.nothing) return "Needs: nothing — already built.";
+  const parts: string[] = [];
+  if (n.labor > 0) parts.push(`hands (${n.labor})`);
+  if (n.materials.trim()) parts.push(`materials · ${n.materials.trim()}`);
+  if (n.funds > 0) parts.push(`KES ${n.funds.toLocaleString()}`);
+  if (n.intellect.trim()) parts.push(`intellect · ${n.intellect.trim()}`);
+  return parts.length > 0 ? `Needs: ${parts.join(" · ")}` : "Needs: —";
 }
 
 export const BENBEN_KEY = "aptlabs-benben-builds-v1";
@@ -389,12 +424,20 @@ export function loadBuilds(): Build[] {
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
     // Old records predate seals and files — default them open and empty.
+    // Records older than the board get the board's empty seats.
     return (parsed as Build[]).map((b) => ({
       ...b,
       visibility: (b.visibility === "hall8" || b.visibility === "private" ? b.visibility : "public") as Visibility,
       attachments: Array.isArray(b.attachments) ? b.attachments : [],
       waRequests: Array.isArray(b.waRequests) ? b.waRequests : [],
-      votedBy: b.votedBy && typeof b.votedBy === "object" ? b.votedBy : {}
+      votedBy: b.votedBy && typeof b.votedBy === "object" ? b.votedBy : {},
+      risk: b.risk === "medium" || b.risk === "high" ? b.risk : "low",
+      skills: Array.isArray(b.skills) ? b.skills : [],
+      claims: Array.isArray(b.claims) ? b.claims : [],
+      progress: Array.isArray(b.progress) ? b.progress : [],
+      attestations: Array.isArray(b.attestations) ? b.attestations : [],
+      parkedBy: b.parkedBy ?? null,
+      parkedAt: b.parkedAt ?? null
     }));
   } catch {
     return [];
@@ -412,13 +455,17 @@ function seed(
   type: string,
   needs: BuildNeeds,
   location: string,
-  done: string
+  done: string,
+  board?: Partial<Build>
 ): Build {
   return {
     id, by, title, body, domain, type, needs, location, done,
     contact: "dm", waRequests: [], votes: 12, votedBy: {},
     comments: [], visibility: "public" as Visibility, attachments: [],
-    createdTs: Date.now() - 2 * 3600000, tierAtPost: "visitor"
+    createdTs: Date.now() - 2 * 3600000, tierAtPost: "visitor",
+    risk: "low", skills: [], claims: [], progress: [], attestations: [],
+    parkedBy: null, parkedAt: null,
+    ...board
   };
 }
 
@@ -446,6 +493,8 @@ export function addBuild(input: {
   by?: string;
   forkOf?: string;
   tierAtPost?: string;
+  risk?: "low" | "medium" | "high";
+  skills?: string[];
 }): Build {
   const now = Date.now();
   const by = (input.by || "Guest").slice(0, 20);
@@ -467,7 +516,14 @@ export function addBuild(input: {
     visibility: "public",
     attachments: [],
     createdTs: now,
-    tierAtPost: input.tierAtPost ?? "visitor"
+    tierAtPost: input.tierAtPost ?? "visitor",
+    risk: input.risk === "medium" || input.risk === "high" ? input.risk : "low",
+    skills: input.skills ?? [],
+    claims: [],
+    progress: [],
+    attestations: [],
+    parkedBy: null,
+    parkedAt: null
   };
   persistBuilds([b, ...mergeBuilds()]);
   return b;
@@ -485,5 +541,29 @@ export const SEED_BUILDS: Build[] = [
   seed("BB-06", "Seremala_0006", "Stabilized soil block recipe after 6 months of tests — 7% cement, 2% lime",
     "Tested across two rainy seasons. Passes county building standards, costs 40% less than fired brick. Full ratios and curing schedule in thread.",
     "Housing", "SOLUTION", none(), "Embu",
-    "Blocks that pass county standards, 40% cheaper than brick")
+    "Blocks that pass county standards, 40% cheaper than brick"),
+  // The three seeds set the board's standard: real work, written done-lines.
+  // The bridge is the litmus test — if it cannot close on this machine, the
+  // machine is wrong.
+  seed("BB-SEED-07", "AptLabs", "Rebuild the Witeithie Kibute footbridge over reeds and stone",
+    "The crossing is failed timber. Lashed reeds on two cinder piers, timber decking, load survey first. Fourteen pairs of hands. The KES ledger stays on the floor, line by line.",
+    "Mobility", "NEED",
+    { labor: 14, materials: "lashed reeds, timber decking, 240 cinder blocks", funds: 180000, intellect: "truss ratios, load survey", nothing: false },
+    "Mwea",
+    "A 500 kg truck crosses; two photos from either bank; the KES ledger posted on the floor",
+    { risk: "high", skills: ["civil", "logistics", "funds"], votes: 0 }),
+  seed("BB-SEED-08", "AptLabs", "Swahili-first legal document Q&A agent for Kenyan SMEs",
+    "Contracts, tenancy, and business registration — the documents a small firm actually signs. Swahili is the working language, English is the export. Retrieval with citations, not a chatbot waving at the law.",
+    "Other", "NEED",
+    { labor: 3, materials: "", funds: 45000, intellect: "Swahili legal corpus, document schema", nothing: false },
+    "Mwea",
+    "Fifty filed test questions answered with sources; ten answers in Swahili; one advocate's review on the floor",
+    { risk: "medium", skills: ["llm", "swahili", "law"], votes: 0 }),
+  seed("BB-SEED-09", "AptLabs", "Purple-team audit kit for Kenyan SMEs",
+    "Ten probes a small business can run on itself: phishing drills, credential checks, a day of open shares. Written up in plain language; the fixes as cards, in English and Swahili.",
+    "Other", "NEED",
+    { labor: 2, materials: "a consenting SME test box", funds: 12000, intellect: "phishing templates, credential probes", nothing: false },
+    "Kagio",
+    "Ten probes run on a consenting SME box; the write-up on the floor; fix cards in English and Swahili",
+    { risk: "medium", skills: ["security", "ops"], votes: 0 })
 ];

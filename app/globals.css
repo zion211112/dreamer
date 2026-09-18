@@ -69,6 +69,17 @@ body {
   box-shadow: 0 10px 40px -12px rgba(45, 212, 191, 0.45);
 }
 
+/* The commitments board (BenBen): the fork lineage is a <details> disclosure,
+   and the signature seal needs no default marker. Scoped to .bb-board so the
+   reset cannot leak to other <details> on the site. */
+.bb-board summary {
+  list-style: none;
+  cursor: pointer;
+}
+.bb-board summary::-webkit-details-marker {
+  display: none;
+}
+
 /* Paper Portico (landing only): Fraunces + Plex on #EDE6D6. BenBen stays obsidian. */
 .theme-paper {
   --paper: #EDE6D6;
