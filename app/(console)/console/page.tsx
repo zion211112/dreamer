@@ -203,6 +203,12 @@ const MODULE_ICONS: Record<string, JSX.Element> = {
       <rect x="3" y="14" width="7" height="7" />
     </>
   ),
+  MyDay: (
+    <>
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 12" />
+    </>
+  ),
   SMIS: (
     <>
       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />

@@ -10,6 +10,7 @@ import GradeForecast from "../../../../components/console/GradeForecast";
 import ContentStudio from "../../../../components/console/ContentStudio";
 import TeacherConsole from "../../../../components/console/TeacherConsole";
 import ParentConsole from "../../../../components/console/ParentConsole";
+import MyDayWorkspace from "../../../../components/console/MyDayWorkspace";
 
 // Working tools share the same inner-page shell.
 const WORKSPACES: Record<string, ComponentType> = {
@@ -20,7 +21,8 @@ const WORKSPACES: Record<string, ComponentType> = {
   "9": RosterImport,
   "10": TeacherConsole,
   "11": ParentConsole,
-  "15": ContentStudio
+  "15": ContentStudio,
+  "17": MyDayWorkspace
 };
 
 export default function ConsoleToolPage({ params }: { params: { id: string } }) {

@@ -26,6 +26,7 @@ export interface ConsoleTool {
 }
 
 export const CONSOLE_MODULES = [
+  "My Day",
   "Students",
   "Academics",
   "Finance",
@@ -35,6 +36,7 @@ export const CONSOLE_MODULES = [
 ] as const;
 
 export const CONSOLE_MENU: Record<string, { modules: string[]; icon: string; desc: string }> = {
+  "My Day": { modules: ["My Day"], icon: "MyDay", desc: "Today on one timeline — lessons, attendance, grades, notes, and a small planner" },
   Students: { modules: ["SMIS", "Roster"], icon: "SMIS", desc: "Student info, enrollment, class lists, staff/student rosters" },
   Academics: { modules: ["Timetable", "Library", "Console"], icon: "Timetable", desc: "Scheduling, classes, exams, library/resources" },
   Finance: { modules: ["Fees"], icon: "Fees", desc: "Invoices, payments, balances, fee collection" },
@@ -61,6 +63,7 @@ export const CONSOLE_TOOLS: ConsoleTool[] = [
   { id: "14", title: "Cooperative Register", desc: "Members, contributions, shares.", module: "Fees", fav: false, status: "coming" },
   { id: "15", title: "Content Studio", desc: "One source, useful teaching materials. Create, edit, and export a focused draft.", module: "Library", fav: false, status: "ready" },
   { id: "16", title: "Manage", desc: "Settings, billing, integrations.", module: "Manage", fav: false, status: "coming" },
+  { id: "17", title: "My Day", desc: "Today on one timeline — lessons, attendance, grades, notes, and a small planner.", module: "My Day", fav: false, status: "ready" },
 ];
 
 export function toolById(id: string): ConsoleTool | undefined {
