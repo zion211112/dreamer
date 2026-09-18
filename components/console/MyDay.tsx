@@ -466,17 +466,19 @@ export default function MyDay({
         }
       };
     }
-    if (phase === "between" && upNext)
+    if (phase === "between" && upNext) {
+      const has = roster(upNext.className).length > 0;
       return {
         tag: "Break",
         title: `${upNext.time} ${upNext.subject || upNext.className || "Lesson"}`,
         meta: "The room is free — prep the next period. Anything owed is in the band below.",
-        cta: "Prep the next period",
+        cta: has ? "Prep the next period" : "Enter grades",
         run: () => {
-          openPanel(upNext, "att");
+          openPanel(upNext, has ? "att" : "grades");
           jumpTo(upNext.id);
         }
       };
+    }
     if (phase === "end") {
       const out = classRows.filter((l) => !attDone(l.className)).length;
       return {
