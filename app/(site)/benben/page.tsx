@@ -225,7 +225,7 @@ export default function BenBenPage() {
 
   return (
     <main className="bg-obsidian text-ivory">
-      <div className="relative mx-auto max-w-[880px] overflow-hidden px-6 py-16 md:py-24">
+      <div className="relative mx-auto max-w-[960px] overflow-hidden px-4 py-12 sm:px-6 md:py-20">
         <GeoArt
           variant="ring"
           className="pointer-events-none absolute -top-16 right-[-80px] h-[300px] w-[300px] text-teal opacity-[0.06]"
@@ -253,7 +253,7 @@ export default function BenBenPage() {
           </div>
         </div>
 
-        <h1 className="mt-12 font-display text-5xl md:text-6xl tracking-tight">
+        <h1 className="mt-10 max-w-[12ch] font-display text-4xl leading-[1.04] tracking-tight sm:text-5xl md:text-6xl">
           Post. Vote. Claim. <span className="bb-gradient-text">Prove.</span>
         </h1>
         <p className="mt-5 max-w-[52ch] text-[0.95rem] leading-7 text-muted">
@@ -263,13 +263,14 @@ export default function BenBenPage() {
 
         <div className="mt-8 flex flex-wrap items-center gap-4">
           <button
+            type="button"
             onClick={() => {
               setForkOf(null);
               setErr("");
               setNotice("");
               setOpen((o) => !o);
             }}
-            className="bb-btn bb-glow rounded-full px-6 py-3 text-sm font-semibold transition"
+            className="bb-btn bb-glow min-h-11 rounded-full px-6 py-3 text-sm font-semibold transition"
           >
             {open ? "Close the desk" : "Fork the floor →"}
           </button>
@@ -287,17 +288,19 @@ export default function BenBenPage() {
               <span className="text-amber">Propose · Ratify · Claim · Prove</span>
               <span className="text-dim">state is derived — the floor decides</span>
             </div>
-            <div role="tablist" aria-label="Board state" className="mt-5 flex flex-wrap items-center gap-2">
+            <div role="tablist" aria-label="Board state" className="mt-5 flex border-b border-ivory/10" aria-orientation="horizontal">
               {BOARD_TABS.map((t) => (
                 <button
                   key={t.key}
                   role="tab"
+                  id={`board-tab-${t.key}`}
+                  aria-controls="board-panel"
                   aria-selected={tab === t.key}
                   onClick={() => setTab(t.key)}
-                  className={`rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] transition ${
+                  className={`min-h-11 border-b-2 px-2.5 font-mono text-[10px] uppercase tracking-[0.13em] transition sm:px-4 ${
                     tab === t.key
-                      ? "bg-amber/10 text-amber ring-1 ring-inset ring-amber/30"
-                      : "text-dim hover:text-ivory"
+                      ? "border-amber text-amber"
+                      : "border-transparent text-dim hover:border-ivory/30 hover:text-ivory"
                   }`}
                 >
                   {t.name} <span className="tabular-nums opacity-60">{boardTabs[t.key]}</span>
@@ -305,30 +308,35 @@ export default function BenBenPage() {
               ))}
             </div>
           </div>
-          {shownBoard.length === 0 ? (
-            <p className="mt-8 font-mono text-[12px] uppercase tracking-[0.2em] text-dim">
-              Nothing in this lane — the floor decides
-            </p>
-          ) : (
-            shownBoard.map((b) => (
-              <BoardCard
-                key={b.id}
-                b={b}
-                now={now}
-                me={me}
-                tier={tier}
-                all={builds}
-                onVote={vote}
-                onFork={fork}
-                onClaim={onClaim}
-                onAccept={onAccept}
-                onWithdraw={onWithdraw}
-                onProgress={onProgress}
-                onAttest={onAttest}
-                onPark={onPark}
-              />
-            ))
-          )}
+          <div id="board-panel" role="tabpanel" aria-labelledby={`board-tab-${tab}`} tabIndex={-1}>
+            {shownBoard.length === 0 ? (
+              <div className="mt-8 border border-dashed border-ivory/15 px-5 py-8">
+                <p className="font-display text-xl text-ivory">Nothing in this lane.</p>
+                <p className="mt-2 max-w-[48ch] font-mono text-[11px] uppercase leading-6 tracking-[0.16em] text-dim">
+                  The floor is waiting for a commitment that belongs here.
+                </p>
+              </div>
+            ) : (
+              shownBoard.map((b) => (
+                <BoardCard
+                  key={b.id}
+                  b={b}
+                  now={now}
+                  me={me}
+                  tier={tier}
+                  all={builds}
+                  onVote={vote}
+                  onFork={fork}
+                  onClaim={onClaim}
+                  onAccept={onAccept}
+                  onWithdraw={onWithdraw}
+                  onProgress={onProgress}
+                  onAttest={onAttest}
+                  onPark={onPark}
+                />
+              ))
+            )}
+          </div>
         </section>
 
         {/* the desk */}
@@ -346,7 +354,7 @@ export default function BenBenPage() {
                 )}
               </div>
 
-              <div className="mt-6 grid gap-5">
+              <div className="mt-6 grid gap-6">
                 <div>
                   <label className={label} htmlFor="bb-title">
                     Title · 89 max
@@ -361,7 +369,7 @@ export default function BenBenPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-5 sm:grid-cols-2">
                   <div>
                     <label className={label} htmlFor="bb-domain">
                       Domain
@@ -443,7 +451,7 @@ export default function BenBenPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-5 sm:grid-cols-2">
                   <div>
                     <label className={label} htmlFor="bb-location">
                       Location · optional
@@ -487,8 +495,8 @@ export default function BenBenPage() {
 
                 <fieldset>
                   <legend className={label}>What is missing</legend>
-                  <div className="mt-3 grid grid-cols-2 gap-4 md:grid-cols-4">
-                    <label className="flex items-center gap-2 font-mono text-[11px] text-muted">
+                  <div className="mt-3 grid gap-5 sm:grid-cols-2 md:grid-cols-4">
+                    <label className="flex min-h-11 items-center gap-2 font-mono text-[11px] text-muted">
                       <input
                         type="checkbox"
                         checked={nothing}
@@ -517,7 +525,7 @@ export default function BenBenPage() {
                         onChange={(e) => setFunds(e.target.value)}
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-3 sm:col-span-2 md:col-span-1">
                       <div>
                         <span className="font-mono text-[10px] uppercase text-dim">Materials</span>
                         <input
@@ -551,9 +559,9 @@ export default function BenBenPage() {
                     close the desk
                   </button>
                   <div className="flex items-center gap-4">
-                    {err && <p className="font-mono text-xs text-amber">{err}</p>}
-                    {notice && <p className="font-mono text-xs text-teal">{notice}</p>}
-                    <button className="bb-btn bb-glow rounded-full px-6 py-3 text-sm font-semibold transition">
+                    {err && <p role="alert" className="font-mono text-xs text-amber">{err}</p>}
+                    {notice && <p role="status" className="font-mono text-xs text-teal">{notice}</p>}
+                    <button className="bb-btn bb-glow min-h-11 rounded-full px-6 py-3 text-sm font-semibold transition">
                       {forkOf ? "Put the fork on the floor →" : "Put it on the floor →"}
                     </button>
                   </div>
@@ -569,6 +577,14 @@ export default function BenBenPage() {
             <span className="text-amber">On the floor</span>
             <span className="text-dim">velocity, not vanity</span>
           </div>
+          {feed.length === 0 && (
+            <div className="border-b border-ivory/10 px-1 py-10">
+              <p className="font-display text-2xl text-ivory">The floor is clear.</p>
+              <p className="mt-2 max-w-[48ch] text-sm leading-7 text-muted">
+                Start the first build and give the commons something concrete to move.
+              </p>
+            </div>
+          )}
           {feed.map((b) => (
             <BuildCard
               key={b.id}

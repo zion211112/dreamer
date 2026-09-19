@@ -169,14 +169,14 @@ export default function BoardCard({
           <button
             onClick={() => onVote(b.id, 1)}
             aria-label={`Upvote ${b.title}`}
-            className={`px-1 transition ${myVote === 1 ? "text-amber" : "text-dim hover:text-ivory"}`}
+            className={`min-h-11 min-w-11 px-1 transition ${myVote === 1 ? "text-amber" : "text-dim hover:text-ivory"}`}
           >
             ▲{up}
           </button>
           <button
             onClick={() => onVote(b.id, -1)}
             aria-label={`Downvote ${b.title}`}
-            className={`px-1 transition ${myVote === -1 ? "text-dim" : "text-dim hover:text-ivory"}`}
+            className={`min-h-11 min-w-11 px-1 transition ${myVote === -1 ? "text-dim" : "text-dim hover:text-ivory"}`}
           >
             ▼{down}
           </button>

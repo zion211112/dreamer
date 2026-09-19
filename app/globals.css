@@ -26,10 +26,10 @@ html {
   --muted-rgb: 168, 162, 158;
   --dim: #57534e;
   --dim-rgb: 87, 83, 78;
-  --teal: #91a58f;
-  --teal-rgb: 145, 165, 143;
-  --amber: #b8785d;
-  --amber-rgb: 184, 120, 93;
+  --teal: #2dd4bf;
+  --teal-rgb: 45, 212, 191;
+  --amber: #d4af37;
+  --amber-rgb: 212, 175, 55;
 }
 
 body {
@@ -39,14 +39,51 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
-summary:focus-visible {
-  outline: 2px solid var(--amber);
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--teal);
   outline-offset: 3px;
+}
+
+.skip-link {
+  position: fixed;
+  left: 16px;
+  top: 8px;
+  z-index: 100;
+  transform: translateY(-150%);
+  background: var(--teal);
+  color: var(--obsidian);
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  transition: transform 120ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.site-nav__toggle:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 ::selection {

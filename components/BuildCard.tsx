@@ -52,7 +52,7 @@ export default function BuildCard({
           <button
             onClick={() => onVote(b.id, 1)}
             aria-label={`Upvote ${b.title}`}
-            className={`px-1 text-base transition ${myVote === 1 ? "text-amber" : "text-muted hover:text-ivory"}`}
+            className={`min-h-11 min-w-11 px-1 text-base transition ${myVote === 1 ? "text-amber" : "text-muted hover:text-ivory"}`}
           >
             ▲
           </button>
@@ -60,7 +60,7 @@ export default function BuildCard({
           <button
             onClick={() => onVote(b.id, -1)}
             aria-label={`Downvote ${b.title}`}
-            className={`px-1 text-base transition ${myVote === -1 ? "text-dim" : "text-muted hover:text-ivory"}`}
+            className={`min-h-11 min-w-11 px-1 text-base transition ${myVote === -1 ? "text-dim" : "text-muted hover:text-ivory"}`}
           >
             ▼
           </button>
@@ -70,7 +70,7 @@ export default function BuildCard({
         </span>
         <button
           onClick={() => onFork(b)}
-          className="ml-auto font-mono text-[12px] uppercase tracking-[0.22em] text-amber transition hover:text-ivory"
+          className="ml-auto min-h-11 py-3 font-mono text-[12px] uppercase tracking-[0.22em] text-amber transition hover:text-ivory"
         >
           Fork →
         </button>

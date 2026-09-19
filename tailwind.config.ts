@@ -24,8 +24,8 @@ const config = {
         // The two accents. Teal is the living accent (focus, active, passage,
         // growth). Amber is the warm accent (attention, highlight, secondary
         // marks, the older-world warmth of the ledger).
-        teal: "#91a58f",
-        amber: "#b8785d",
+        teal: "#2dd4bf",
+        amber: "#d4af37",
         copper: "#b8785d",
         moss: "#91a58f"
       },
