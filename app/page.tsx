@@ -5,34 +5,38 @@ import GeoArt from "../components/GeoArt";
 export const metadata: Metadata = {
   title: "APT-LABS · Kirinyaga, Kenya",
   description:
-    "The open skills ledger for Kirinyaga: a place where capability is visible, work is credited, and schools can run on trust."
+    "APT-LABS records the work, the skill, and the trust behind it — for schools, youth, builders, and institutions."
 };
 
 const pillars = [
   {
     title: "The Ledger",
-    summary: "A living record of skill, work, and proof.",
+    subtitle: "Proof of skill and capability.",
+    summary: "A public record of what people can actually do.",
     href: "/ledger",
     tone: "amber"
   },
   {
     title: "The Floor",
-    summary: "Projects, builds, and local momentum made visible.",
+    subtitle: "Shared projects and real work.",
+    summary: "Builds, crews, and collaboration moving through public momentum.",
     href: "/benben",
     tone: "teal"
   },
   {
     title: "Teachers",
-    summary: "The classroom command layer for school leadership.",
+    subtitle: "School operations and classroom signals.",
+    summary: "A working layer for leadership, tracking, and institutional action.",
     href: "/console",
     tone: "ivory"
   }
 ];
 
 const stats = [
-  { label: "sealed", value: "1,419" },
+  { label: "sealed records", value: "1,419" },
   { label: "active builds", value: "84" },
-  { label: "school nodes", value: "12" }
+  { label: "school nodes", value: "12" },
+  { label: "verified skills", value: "27" }
 ];
 
 export default function HomePage() {
@@ -71,11 +75,11 @@ export default function HomePage() {
             </div>
 
             <h1 className="max-w-[680px] font-display text-[42px] leading-[0.96] tracking-[-0.04em] text-ivory md:text-[64px] lg:text-[78px]">
-              We make the work visible before the excuses do.
+              We make capability visible.
             </h1>
 
-            <p className="mt-6 max-w-[540px] text-base leading-7 text-muted md:text-lg">
-              APT-LABS is a local-first skills ledger for schools, youth, and builders: proof of skill, public momentum, and a trusted operating layer for real institutions.
+            <p className="mt-6 max-w-[560px] text-base leading-7 text-muted md:text-lg">
+              APT-LABS records the work, the skill, and the trust behind it — for schools, youth, builders, and institutions.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -89,14 +93,14 @@ export default function HomePage() {
                 href="/benben"
                 className="inline-flex items-center justify-center rounded-full border border-ivory/15 bg-ivory/5 px-5 py-3 text-sm font-semibold text-ivory transition-all duration-200 hover:-translate-y-0.5 hover:border-teal/50 hover:bg-teal/10"
               >
-                Enter the floor
+                Explore the floor
               </Link>
             </div>
 
             <div className="mt-8 flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-[0.14em] text-dim">
+              <span className="rounded-full border border-ivory/10 px-2.5 py-1.5">Built for real work</span>
+              <span className="rounded-full border border-ivory/10 px-2.5 py-1.5">Verified by proof</span>
               <span className="rounded-full border border-ivory/10 px-2.5 py-1.5">Local-first</span>
-              <span className="rounded-full border border-ivory/10 px-2.5 py-1.5">No gatekeeping</span>
-              <span className="rounded-full border border-ivory/10 px-2.5 py-1.5">Built for schools</span>
             </div>
           </div>
 
@@ -109,11 +113,11 @@ export default function HomePage() {
               </span>
             </div>
 
-            <div className="space-y-3">
+            <div className="grid gap-3 sm:grid-cols-2">
               {stats.map((stat) => (
-                <div key={stat.label} className="flex items-center justify-between rounded-2xl border border-ivory/8 bg-void/60 px-4 py-3">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-dim">{stat.label}</span>
-                  <span className="font-display text-[28px] leading-none text-ivory">{stat.value}</span>
+                <div key={stat.label} className="rounded-2xl border border-ivory/8 bg-void/60 px-4 py-3">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-dim">{stat.label}</div>
+                  <div className="mt-2 font-display text-[30px] leading-none text-ivory">{stat.value}</div>
                 </div>
               ))}
             </div>
@@ -145,7 +149,10 @@ export default function HomePage() {
               <h2 className="font-display text-[30px] leading-tight tracking-[-0.03em] text-ivory">
                 {pillar.title}
               </h2>
-              <p className="mt-3 text-sm leading-6 text-muted">{pillar.summary}</p>
+              <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-amber/80">
+                {pillar.subtitle}
+              </div>
+              <p className="mt-4 text-sm leading-6 text-muted">{pillar.summary}</p>
 
               <div className="mt-6 flex items-center justify-between border-t border-ivory/10 pt-4 text-[11px] uppercase tracking-[0.16em] text-ivory/70">
                 <span>Step inside</span>
@@ -155,17 +162,38 @@ export default function HomePage() {
           ))}
         </section>
 
-        <section className="flex flex-col gap-6 border-t border-ivory/10 py-8 md:flex-row md:items-center md:justify-between">
-          <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-dim">Institutional frame</div>
-            <p className="mt-3 max-w-[540px] text-base leading-7 text-muted">
-              A place where skills are not hidden behind CVs, promises, or gatekeepers. A place where capability earns visibility and trust compounds over time.
-            </p>
-          </div>
+        <section className="border-t border-ivory/10 py-10 md:py-12">
+          <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+            <div className="max-w-[620px]">
+              <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-dim">Institutional frame</div>
+              <p className="mt-4 text-base leading-7 text-muted md:text-lg">
+                We do not ask for pedigree. We ask for proof.
+              </p>
+              <p className="mt-3 text-base leading-7 text-muted">
+                Skill is public. Trust compounds.
+              </p>
+              <p className="mt-3 text-base leading-7 text-muted">
+                The system rewards work, not reputation theatre.
+              </p>
+            </div>
 
-          <div className="flex items-center gap-4 rounded-full border border-ivory/10 bg-ivory/5 px-4 py-2.5 text-[11px] uppercase tracking-[0.14em] text-ivory/70">
-            <span className="inline-flex h-2.5 w-2.5 rounded-full bg-teal" aria-hidden="true" />
-            <span>Built for the real work</span>
+            <div className="flex items-center gap-4 rounded-full border border-ivory/10 bg-ivory/5 px-4 py-2.5 text-[11px] uppercase tracking-[0.14em] text-ivory/70">
+              <span className="inline-flex h-2.5 w-2.5 rounded-full bg-teal" aria-hidden="true" />
+              <span>Built for the real work</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="pb-16 pt-4">
+          <div className="border-t border-ivory/10 pt-8">
+            <p className="font-display text-[28px] leading-tight tracking-[-0.03em] text-ivory md:text-[40px]">
+              Where work leaves proof, not just intention.
+            </p>
+            <div className="mt-5 flex flex-col gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-dim md:flex-row md:items-center md:gap-6">
+              <span>For schools</span>
+              <span>For builders</span>
+              <span>For institutions</span>
+            </div>
           </div>
         </section>
       </div>
