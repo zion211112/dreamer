@@ -51,12 +51,12 @@ import { btn, btnGhost, field, Gate, Loading, monoLabel, PrintButton } from "./b
 // A class filter pill for the My Students finder. Quiet when idle, gold when active.
 const pill = (active: boolean) =>
   `rounded-full border px-4 py-2 font-mono text-[11px] uppercase tracking-[0.15em] transition-all ${
-    active ? "border-gold text-gold" : "border-edge text-muted hover:border-edgeHi hover:text-ivory"
+    active ? "border-gold text-gold" : "border-white/10 text-muted hover:border-white/30 hover:text-ivory"
   }`;
 
 // The inline panel that opens under a lesson row: aligned to the row's content,
 // ruled off with a hairline, filled by the same register / grade / note forms.
-const panelIn = "mt-[21px] border-t border-edge pt-[21px]";
+const panelIn = "mt-[21px] border-t border-white/10 pt-[21px]";
 
 export default function MyDay({
   session,
@@ -556,12 +556,12 @@ export default function MyDay({
         }}
         className={`m-0 list-none py-[21px] ${
           isNowRow
-            ? "-mx-4 rounded-[21px] border border-edge bg-panelHi px-4"
+            ? "-mx-4 rounded-[21px] border border-white/10 bg-panelHi px-4"
             : past
-            ? "border-b border-edge/40 opacity-50"
+            ? "border-b border-white/10/40 opacity-50"
             : isNextRow
-            ? "border-b border-edge/60"
-            : "border-b border-edge/60 opacity-60"
+            ? "border-b border-white/10/60"
+            : "border-b border-white/10/60 opacity-60"
         }`}
       >
         <div className="grid grid-cols-[55px_1fr] gap-3 md:grid-cols-[90px_1fr] md:gap-[21px]">
@@ -602,7 +602,7 @@ export default function MyDay({
     return (
       <div className={panelIn}>
         {open.kind === "att" && (
-          <div className="rounded-[21px] border border-edge bg-panel p-[21px]">
+          <div className="rounded-[21px] border border-white/10 bg-panel p-[21px]">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <span className={monoLabel}>Register · {cls} · {todayLabel()}</span>
               {rows.length > 0 && <PrintButton label="Print" />}
@@ -652,14 +652,14 @@ export default function MyDay({
                   <>
                     <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                       {rows.map((s) => (
-                    <li key={s.id} className="flex items-center justify-between gap-2 rounded-xl border border-edge/60 px-3 py-2">
+                    <li key={s.id} className="flex items-center justify-between gap-2 rounded-xl border border-white/10/60 px-3 py-2">
                       <span className="truncate text-[13px] text-ivory">{s.name}</span>
                       <span className="flex shrink-0 gap-1">
                         {(["present", "absent"] as const).map((m) => (
                           <button
                             key={m}
                             onClick={() => setMarks((prev) => ({ ...prev, [s.id]: m }))}
-                            className={`rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-[0.15em] transition-colors ${(marks[s.id] ?? "present") === m ? (m === "present" ? "border-emerald-500/60 text-emerald-400" : "border-red-500/60 text-red-400") : "border-edge text-dim hover:text-ivory"}`}
+                            className={`rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-[0.15em] transition-colors ${(marks[s.id] ?? "present") === m ? (m === "present" ? "border-emerald-500/60 text-emerald-400" : "border-red-500/60 text-red-400") : "border-white/10 text-dim hover:text-ivory"}`}
                           >
                             {m === "present" ? "P" : "A"}
                           </button>
@@ -682,7 +682,7 @@ export default function MyDay({
           </div>
         )}
         {open.kind === "grades" && (
-          <div className="rounded-[21px] border border-edge bg-panel p-[21px]">
+          <div className="rounded-[21px] border border-white/10 bg-panel p-[21px]">
             <span className={monoLabel}>Enter grades · {cls}</span>
             <div className="my-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
               <input value={exam} onChange={(e) => setExam(e.target.value)} placeholder="Assessment — e.g. Opener Test" className={field} />
@@ -694,7 +694,7 @@ export default function MyDay({
             ) : (
               <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {rows.map((s) => (
-                  <li key={s.id} className="flex items-center justify-between gap-3 rounded-xl border border-edge/60 px-3 py-2">
+                  <li key={s.id} className="flex items-center justify-between gap-3 rounded-xl border border-white/10/60 px-3 py-2">
                     <span className="truncate text-[13px] text-ivory">{s.name}</span>
                     <input
                       value={scores[s.id] ?? ""}
@@ -702,7 +702,7 @@ export default function MyDay({
                       inputMode="numeric"
                       aria-label={`Score for ${s.name}`}
                       placeholder="—"
-                      className="w-20 rounded-lg border border-edge bg-void px-2 py-1.5 text-right font-mono text-[12px] text-ivory outline-none focus:border-gold"
+                      className="w-20 rounded-lg border border-white/10 bg-void px-2 py-1.5 text-right font-mono text-[12px] text-ivory outline-none focus:border-gold"
                     />
                   </li>
                 ))}
@@ -715,7 +715,7 @@ export default function MyDay({
           </div>
         )}
         {open.kind === "notes" && (
-          <div className="rounded-[21px] border border-edge bg-panel p-[21px]">
+          <div className="rounded-[21px] border border-white/10 bg-panel p-[21px]">
             <span className={monoLabel}>Note · {cls || "Today"}</span>
             <textarea
               value={note}
@@ -775,7 +775,7 @@ export default function MyDay({
       {/* NOW — one card, one question: what do I do now. The phase picks the
          primary; the arc below shows where the day stands. */}
       {tab === "today" && (
-        <div className="rounded-[21px] border border-edge bg-panel p-[21px]">
+        <div className="rounded-[21px] border border-white/10 bg-panel p-[21px]">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <p className={monoLabel}>
               {hero.tag} · {new Date(nowMs).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
@@ -804,7 +804,7 @@ export default function MyDay({
           </div>
 
           {phase === "end" && (
-            <div className="mt-4 border-t border-edge pt-4">
+            <div className="mt-4 border-t border-white/10 pt-4">
               <p className={monoLabel}>Close the day</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 <input
@@ -862,7 +862,7 @@ export default function MyDay({
       {tab === "today" && ordered.length > 0 && (
         <ol className="m-0 max-w-3xl list-none">
           {hasTimes && pastRows.length > 0 && !pastOpen && (
-            <li className="border-b border-edge/60 py-[21px]">
+            <li className="border-b border-white/10/60 py-[21px]">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <p className={monoLabel}>
                   Before {timed[nowIndex]?.time ?? ""} · {pastRows.length} period{pastRows.length === 1 ? "" : "s"}
@@ -894,7 +894,7 @@ export default function MyDay({
           )}
           {hasTimes && pastOpen && pastRows.map((lesson) => timelineRow(lesson, true))}
           {hasTimes && nowIndex > 0 && (
-            <li aria-hidden="true" className="border-b border-edge/40 pb-[21px]">
+            <li aria-hidden="true" className="border-b border-white/10/40 pb-[21px]">
               <div className="relative flex items-center">
                 <span className="absolute inset-x-0 top-1/2 h-px bg-gold/40" />
                 <span className="relative z-10 bg-void px-3 font-mono text-[11px] uppercase tracking-[0.2em] text-gold">
@@ -909,7 +909,7 @@ export default function MyDay({
 
       {/* FOOTER — the honest sync line, nothing more. */}
       {tab === "today" && (
-        <div className="border-t border-edge pt-3">
+        <div className="border-t border-white/10 pt-3">
           <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim">
             {online ? "Online" : "Offline"} · {todayEvents.length} record{todayEvents.length === 1 ? "" : "s"} today
           </p>
@@ -918,7 +918,7 @@ export default function MyDay({
 
       {tab === "plan" && (
         <section className="space-y-5">
-          <div className="rounded-[21px] border border-edge bg-panel p-[21px]">
+          <div className="rounded-[21px] border border-white/10 bg-panel p-[21px]">
             <p className={monoLabel}>Plan · approved week</p>
             {approvedWeek ? (
               <div className="mt-3">
@@ -935,7 +935,7 @@ export default function MyDay({
                 {todayLessons.length === 0 ? (
                   <p className="mt-4 text-sm text-muted">No teaching periods today — weekends read Monday&apos;s column.</p>
                 ) : (
-                  <ol className="mt-4 divide-y divide-edge/60 border-y border-edge/60">
+                  <ol className="mt-4 divide-y divide-edge/60 border-y border-white/10/60">
                     {todayLessons.map((l, i) => (
                       <li key={i} className="flex items-baseline justify-between gap-3 py-2.5">
                         <span className="font-mono text-[12px] tabular-nums text-dim">{l.time}</span>
@@ -965,7 +965,7 @@ export default function MyDay({
             )}
 
             {adding && (
-              <div className="mt-5 rounded-[21px] border border-edge bg-void p-[21px]">
+              <div className="mt-5 rounded-[21px] border border-white/10 bg-void p-[21px]">
                 <p className={monoLabel}>Add to today</p>
                 <div className="mt-3 grid grid-cols-2 gap-3">
                   <label className="block">
@@ -979,7 +979,7 @@ export default function MyDay({
                 </div>
                 <div className="mt-3">
                   <p className={monoLabel}>Class · stream</p>
-                  <div className="mt-2 rounded-xl border border-edge/60 bg-void p-3">
+                  <div className="mt-2 rounded-xl border border-white/10/60 bg-void p-3">
                     <ClassPicker value={af.className} onChange={(v) => setAf({ ...af, className: v })} />
                   </div>
                 </div>
@@ -994,7 +994,7 @@ export default function MyDay({
             )}
           </div>
 
-          <div className="rounded-[21px] border border-edge bg-panel p-[21px]">
+          <div className="rounded-[21px] border border-white/10 bg-panel p-[21px]">
             <p className={monoLabel}>Five weeks</p>
             <div className="mt-3">
               <MiniCalendar items={schedules} onAdd={addSchedule} onRemove={removeSchedule} />
@@ -1006,7 +1006,7 @@ export default function MyDay({
       {/* MY STUDENTS — clean finder: class pills + search, results compact & capped. */}
       {tab === "students" && (
         <section>
-          <div className="mb-[21px] flex flex-wrap items-center gap-2 border-b border-edge pb-3">
+          <div className="mb-[21px] flex flex-wrap items-center gap-2 border-b border-white/10 pb-3">
             <button onClick={() => setClsFilter("")} className={pill(clsFilter === "")}>All · {data.students.length}</button>
             {allClasses.map((c) => (
               <button key={c} onClick={() => setClsFilter(c)} className={pill(clsFilter === c)}>{c} · {roster(c).length}</button>
@@ -1028,7 +1028,7 @@ export default function MyDay({
                   <li key={s.id}>
                     <button
                       onClick={() => setSelected(s)}
-                      className="flex w-full items-center justify-between gap-3 rounded-xl border border-edge bg-panel px-4 py-3 text-left transition-colors hover:border-edgeHi hover:bg-panelHi"
+                      className="flex w-full items-center justify-between gap-3 rounded-xl border border-white/10 bg-panel px-4 py-3 text-left transition-colors hover:border-white/30 hover:bg-panelHi"
                     >
                       <span className="truncate text-[13px] text-ivory">{s.name}</span>
                       <span className="shrink-0 font-mono text-[11px] text-dim">{classLabel(s)}</span>
@@ -1083,7 +1083,7 @@ function MiniWeekGrid({ week, today }: { week: WeeklyTimetable; today: string })
           </thead>
           <tbody>
             {week.times.map((slot, i) => (
-              <tr key={i} className="border-t border-edge/40">
+              <tr key={i} className="border-t border-white/10/40">
                 <td className="p-1.5 align-top">
                   <p className="font-mono text-[10px] tabular-nums text-dim">
                     {slot.start}
@@ -1106,7 +1106,7 @@ function MiniWeekGrid({ week, today }: { week: WeeklyTimetable; today: string })
                           teaching
                             ? isToday
                               ? "border-gold/60 bg-gold/10 text-ivory"
-                              : "border-edge/60 bg-void/50 text-muted"
+                              : "border-white/10/60 bg-void/50 text-muted"
                             : "border-transparent text-dim/40"
                         }`}
                       >

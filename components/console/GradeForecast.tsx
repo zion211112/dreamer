@@ -81,7 +81,7 @@ export default function GradeForecast() {
             <thead>
               <tr>
                 {["Student", "Mean / 400", "Band", "To next band", "Weakest", "Trend"].map((h) => (
-                  <th key={h} className="border-b border-edge px-3 py-2.5 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-dim">
+                  <th key={h} className="border-b border-white/10 px-3 py-2.5 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-dim">
                     {h}
                   </th>
                 ))}
@@ -91,7 +91,7 @@ export default function GradeForecast() {
               {rows.map((s) => {
                 const f = forecast(data.assessments, s.id);
                 return (
-                  <tr key={s.id} className="border-b border-edge/50 transition-colors hover:bg-panelHi">
+                  <tr key={s.id} className="border-b border-white/10/50 transition-colors hover:bg-panelHi">
                     <td className="px-3 py-2.5">
                       <span className="text-[13px] text-ivory">{s.name}</span>
                       {s.admNo && <span className="ml-2 font-mono text-[11px] text-dim">{s.admNo}</span>}

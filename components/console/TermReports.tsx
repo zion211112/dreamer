@@ -108,11 +108,11 @@ export default function TermReports() {
           <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th className="sticky left-0 bg-panel border-b border-edge px-3 py-2 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-dim">
+                <th className="sticky left-0 bg-panel border-b border-white/10 px-3 py-2 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-dim">
                   Student
                 </th>
                 {KCSE_SUBJECTS.map((s) => (
-                  <th key={s} className="border-b border-edge px-2 py-2 text-left font-mono text-[10px] uppercase tracking-[0.1em] text-dim">
+                  <th key={s} className="border-b border-white/10 px-2 py-2 text-left font-mono text-[10px] uppercase tracking-[0.1em] text-dim">
                     {s.replace(" & Government", "")}
                   </th>
                 ))}

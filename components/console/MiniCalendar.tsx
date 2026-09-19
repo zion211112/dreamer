@@ -80,10 +80,10 @@ export function MiniCalendar({ items, onAdd, onRemove }: Props) {
           {view.toLocaleDateString("en-GB", { month: "long", year: "numeric" })}
         </p>
         <div className="flex gap-1">
-          <button onClick={() => setView(new Date(y, m - 1, 1))} className="rounded-lg border border-edge px-2 py-0.5 text-dim hover:text-ivory" aria-label="Previous month">
+          <button onClick={() => setView(new Date(y, m - 1, 1))} className="rounded-lg border border-white/10 px-2 py-0.5 text-dim hover:text-ivory" aria-label="Previous month">
             ‹
           </button>
-          <button onClick={() => setView(new Date(y, m + 1, 1))} className="rounded-lg border border-edge px-2 py-0.5 text-dim hover:text-ivory" aria-label="Next month">
+          <button onClick={() => setView(new Date(y, m + 1, 1))} className="rounded-lg border border-white/10 px-2 py-0.5 text-dim hover:text-ivory" aria-label="Next month">
             ›
           </button>
         </div>
@@ -104,7 +104,7 @@ export function MiniCalendar({ items, onAdd, onRemove }: Props) {
             <button
               key={key}
               onClick={() => setSel(key)}
-              className={`flex h-[34px] flex-col items-start justify-start rounded-lg border p-1 text-left transition-colors ${isSel ? "border-gold/60 bg-gold-soft" : "border-transparent hover:border-edge"}`}
+              className={`flex h-[34px] flex-col items-start justify-start rounded-lg border p-1 text-left transition-colors ${isSel ? "border-gold/60 bg-gold-soft" : "border-transparent hover:border-white/10"}`}
             >
               <span className={`text-[11px] leading-none ${inMonth ? "text-ivory" : "text-dim/40"} ${isToday ? "font-bold text-gold" : ""}`}>
                 {cell.getDate()}
@@ -116,7 +116,7 @@ export function MiniCalendar({ items, onAdd, onRemove }: Props) {
       </div>
 
       {/* The selected day, expanded — one day at a time. */}
-      <div className="mt-3 border-t border-edge pt-3">
+      <div className="mt-3 border-t border-white/10 pt-3">
         <div className="flex items-center justify-between">
           <p className={monoLabel}>
             {new Date(`${sel}T00:00:00`).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}
@@ -131,7 +131,7 @@ export function MiniCalendar({ items, onAdd, onRemove }: Props) {
         ) : (
           <ul className="mt-2 space-y-1.5">
             {dayItems.map((i) => (
-              <li key={i.id} className="flex items-center gap-2 rounded-lg border border-edge/60 px-2.5 py-1.5">
+              <li key={i.id} className="flex items-center gap-2 rounded-lg border border-white/10/60 px-2.5 py-1.5">
                 <span className="w-10 shrink-0 font-mono text-[10px] tabular-nums text-dim">{i.time || "—"}</span>
                 <span className="min-w-0 flex-1 truncate text-[12px] text-ivory">
                   {i.title}
@@ -148,7 +148,7 @@ export function MiniCalendar({ items, onAdd, onRemove }: Props) {
         )}
 
         {adding && (
-          <div className="mt-3 space-y-2.5 rounded-xl border border-edge bg-void p-3">
+          <div className="mt-3 space-y-2.5 rounded-xl border border-white/10 bg-void p-3">
             <div className="grid grid-cols-2 gap-2">
               <input value={fTime} onChange={(e) => setFTime(e.target.value)} type="time" className={field} />
               <input value={fTitle} onChange={(e) => setFTitle(e.target.value)} placeholder={fKind === "class" ? "Subject" : "What's happening"} className={field} />
@@ -158,7 +158,7 @@ export function MiniCalendar({ items, onAdd, onRemove }: Props) {
                 <button
                   key={k}
                   onClick={() => setFKind(k)}
-                  className={`rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] ${fKind === k ? "border-gold bg-gold-soft text-gold" : "border-edge text-dim"}`}
+                  className={`rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] ${fKind === k ? "border-gold bg-gold-soft text-gold" : "border-white/10 text-dim"}`}
                 >
                   {k}
                 </button>

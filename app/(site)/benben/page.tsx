@@ -66,6 +66,7 @@ export default function BenBenPage() {
   const [notice, setNotice] = useState("");
   const [err, setErr] = useState("");
   const [voteErr, setVoteErr] = useState<string | null>(null);
+  const [voteErrId, setVoteErrId] = useState<string | null>(null);
   const desk = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -86,10 +87,12 @@ export default function BenBenPage() {
     const res = castVote(builds, id, voteKey, v, t);
     if (res.err) {
       setVoteErr(res.err);
+      setVoteErrId(id);
       return;
     }
     setBuilds(res.list);
     setVoteErr(null);
+    setVoteErrId(null);
     setNow(t);
   }
 
@@ -200,18 +203,34 @@ export default function BenBenPage() {
       <div className="relative mx-auto max-w-[880px] overflow-hidden px-6 py-16 md:py-24">
         <GeoArt
           variant="ring"
-          className="pointer-events-none absolute -top-16 right-[-80px] h-[300px] w-[300px] text-ivory opacity-[0.05]"
+          className="pointer-events-none absolute -top-16 right-[-80px] h-[300px] w-[300px] text-teal-300 opacity-[0.06]"
         />
 
         {/* masthead */}
-        <div className="flex items-baseline justify-between border-b border-white/10 pb-4 font-mono text-[11px] uppercase tracking-[0.3em] text-dim">
-          <span>Ben-Ben · The Floor</span>
-          <span className="tabular-nums">
-            {feed.length} builds · {totalVotes} votes · {totalForks} forks · {openBoard} open on the board
-          </span>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
+          <div className="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.3em] text-dim">
+            <span
+              aria-hidden
+              className="grid h-6 w-6 shrink-0 rotate-45 place-items-center rounded-[5px] bg-gradient-to-br from-teal-400/80 to-violet-400/80"
+            />
+            <span>Ben-Ben · The Floor</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-teal-300/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-teal-300 ring-1 ring-inset ring-teal-300/25 tabular-nums">
+              {feed.length} builds
+            </span>
+            <span className="rounded-full bg-violet-300/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-violet-300 ring-1 ring-inset ring-violet-300/25 tabular-nums">
+              {totalVotes} votes · {totalForks} forks
+            </span>
+            <span className="rounded-full bg-emerald-300/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-emerald-300 ring-1 ring-inset ring-emerald-300/25 tabular-nums">
+              {openBoard} open on the board
+            </span>
+          </div>
         </div>
 
-        <h1 className="mt-12 font-display text-5xl md:text-6xl tracking-tight">Post. Vote. Claim. Prove.</h1>
+        <h1 className="mt-12 font-display text-5xl md:text-6xl tracking-tight">
+          Post. Vote. Claim. <span className="bb-gradient-text">Prove.</span>
+        </h1>
         <p className="mt-5 max-w-[52ch] text-[0.95rem] leading-7 text-muted">
           A commons of builders for local projects, skills, and trusted work. The board decides
           by count; the floor remembers by proof. No emojis, no images, no noise.
@@ -225,7 +244,7 @@ export default function BenBenPage() {
               setNotice("");
               setOpen((o) => !o);
             }}
-            className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold"
+            className="bb-btn bb-glow rounded-full px-6 py-3 text-sm font-semibold transition"
           >
             {open ? "Close the desk" : "Fork the floor →"}
           </button>
@@ -486,7 +505,7 @@ export default function BenBenPage() {
                   <div className="flex items-center gap-4">
                     {err && <p className="font-mono text-xs text-red-400">{err}</p>}
                     {notice && <p className="font-mono text-xs text-emerald-300">{notice}</p>}
-                    <button className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold">
+                    <button className="bb-btn bb-glow rounded-full px-6 py-3 text-sm font-semibold transition">
                       {forkOf ? "Put the fork on the floor →" : "Put it on the floor →"}
                     </button>
                   </div>
@@ -508,7 +527,7 @@ export default function BenBenPage() {
               b={b}
               now={now}
               myVote={b.votedBy[voteKey]?.value ?? 0}
-              voteErr={voteErr}
+              voteErr={voteErrId === b.id ? voteErr : null}
               onVote={vote}
               onFork={fork}
             />

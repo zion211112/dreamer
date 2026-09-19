@@ -30,7 +30,7 @@ interface Marking {
 
 const KEY = "console-marking";
 const editInput =
-  "rounded-lg border border-edge bg-void px-2.5 py-1.5 text-[13px] text-ivory outline-none focus:border-gold";
+  "rounded-lg border border-white/10 bg-void px-2.5 py-1.5 text-[13px] text-ivory outline-none focus:border-gold";
 
 export default function AutoMarking() {
   const data = useSchoolData();
@@ -113,7 +113,7 @@ export default function AutoMarking() {
               <thead>
                 <tr>
                   {["Q", "Topic", "Correct", "Marks", ""].map((h) => (
-                    <th key={h} className="border-b border-edge px-2 py-2 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-dim">{h}</th>
+                    <th key={h} className="border-b border-white/10 px-2 py-2 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-dim">{h}</th>
                   ))}
                 </tr>
               </thead>

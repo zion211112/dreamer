@@ -58,6 +58,11 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
       {/* The week, in order — a numbered stepper instead of a wall of chips. */}
       <nav aria-label="Console workspaces" className="flex flex-wrap items-center gap-x-4 gap-y-3 border-b border-white/8 bg-panel px-5 py-4 print:hidden">
         <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-dim">The week, in order</span>
+        {!STEPS.some(([s]) => s === tool.id) && (
+          <span className="rounded-full bg-amber-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-amber-300/90 ring-1 ring-inset ring-amber-400/25">
+            Off the week path
+          </span>
+        )}
         {STEPS.map(([id, label], i) => (
           <Fragment key={id}>
             <Link
@@ -122,8 +127,8 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
           <div className="mt-10 rounded-2xl border border-white/10 bg-panel p-6">
             <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold">Seat reserved</p>
             <p className="mt-3 text-sm leading-6 text-muted">
-              This workspace is not built yet, and we will not pretend otherwise. It is next in
-              line for this device, and what you build on it stays local until it ships.
+              This workspace is not built yet, and we will not pretend otherwise. The seat is held
+              for it, next in line on this device — everything in the console stays local.
             </p>
           </div>
 

@@ -72,7 +72,7 @@ export default function TimetableSolver() {
 
   return (
     <div className="min-w-0 max-w-full space-y-8">
-      <div className="border-b border-edge pb-6">
+      <div className="border-b border-white/10 pb-6">
         <p className={monoLabel}>Timetable Solver · build · print · approve</p>
         <h1 className="mt-3 font-display text-4xl font-light tracking-tight md:text-5xl">The week, on one wall grid.</h1>
         <p className="mt-3 max-w-[62ch] text-sm leading-6 text-muted">
@@ -96,7 +96,7 @@ export default function TimetableSolver() {
               setNotice("Loaded demo grid — rewrite, print, approve.");
             }}
             className={`rounded-[21px] border p-[21px] text-left transition-colors ${
-              i === demoSel ? "border-gold/60 bg-gold/5" : "border-edge bg-panel hover:border-edgeHi"
+              i === demoSel ? "border-gold/60 bg-gold/5" : "border-white/10 bg-panel hover:border-white/30"
             }`}
           >
             <p className={monoLabel}>Demo {i + 1} · {d.className}</p>
@@ -110,7 +110,7 @@ export default function TimetableSolver() {
             setDemoSel(-1);
             setNotice("Blank week — 7 teaching periods, breaks, lunch, Friday PPI.");
           }}
-          className="rounded-[21px] border border-dashed border-edge bg-void p-[21px] text-left transition-colors hover:border-gold/60"
+          className="rounded-[21px] border border-dashed border-white/10 bg-void p-[21px] text-left transition-colors hover:border-gold/60"
         >
           <p className={monoLabel}>Blank</p>
           <p className="mt-2 font-display text-xl font-normal">Start empty</p>
@@ -123,7 +123,7 @@ export default function TimetableSolver() {
           <input
             value={active.className}
             onChange={(e) => setActive((p) => ({ ...p, className: e.target.value.slice(0, 24) }))}
-            className="mt-2 w-full rounded-full border border-edge bg-void px-5 py-3 text-sm text-ivory outline-none focus:border-gold"
+            className="mt-2 w-full rounded-full border border-white/10 bg-void px-5 py-3 text-sm text-ivory outline-none focus:border-gold"
           />
         </label>
         <label className="min-w-[200px] flex-1">
@@ -131,7 +131,7 @@ export default function TimetableSolver() {
           <input
             value={active.name}
             onChange={(e) => setActive((p) => ({ ...p, name: e.target.value.slice(0, 60) }))}
-            className="mt-2 w-full rounded-full border border-edge bg-void px-5 py-3 text-sm text-ivory outline-none focus:border-gold"
+            className="mt-2 w-full rounded-full border border-white/10 bg-void px-5 py-3 text-sm text-ivory outline-none focus:border-gold"
           />
         </label>
         <p className="w-full font-mono text-[11px] uppercase tracking-[0.15em] text-dim">
@@ -139,10 +139,10 @@ export default function TimetableSolver() {
         </p>
       </div>
 
-      <div className="overflow-x-auto rounded-[21px] border border-edge bg-panel">
+      <div className="overflow-x-auto rounded-[21px] border border-white/10 bg-panel">
         <table className="w-full min-w-[720px] border-collapse">
           <thead>
-            <tr className="border-b border-edge">
+            <tr className="border-b border-white/10">
               <th className="w-[160px] px-4 py-3 text-left font-mono text-[10px] uppercase tracking-[0.2em] text-dim">Time</th>
               {WEEKDAYS.map((d) => (
                 <th key={d} className="px-3 py-3 text-left font-mono text-[10px] uppercase tracking-[0.2em] text-dim">{d}</th>
@@ -151,7 +151,7 @@ export default function TimetableSolver() {
           </thead>
           <tbody>
             {active.times.map((slot, i) => (
-              <tr key={i} className="border-b border-edge/50 last:border-0">
+              <tr key={i} className="border-b border-white/10/50 last:border-0">
                 <td className="px-4 py-2 align-top">
                   <div className="flex items-center gap-1.5">
                     <input value={slot.start} onChange={(e) => setTime(i, "start", e.target.value)} type="time" aria-label={"Slot " + (i + 1) + " start"}

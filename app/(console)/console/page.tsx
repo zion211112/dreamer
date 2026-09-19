@@ -102,7 +102,7 @@ const ROLE_META: Record<ConsoleRole, { label: string; desc: string }> = {
 };
 
 const loginInput =
-  "w-full rounded-full border border-edge bg-panel px-5 py-3 text-sm text-ivory placeholder:text-dim outline-none transition-colors focus:border-gold";
+  "w-full rounded-full border border-white/10 bg-panel px-5 py-3 text-sm text-ivory placeholder:text-dim outline-none transition-colors focus:border-gold";
 
 function ConsoleLogin({
   initialRole,

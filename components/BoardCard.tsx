@@ -143,7 +143,7 @@ export default function BoardCard({
     s === "active" && !myBuilding && !alreadyAttested && !atts.ok && (tier === "hall" || holdsReviewer);
 
   return (
-    <article className="bb-card border-t border-white/8 py-9">
+    <article className="border-t border-white/8 py-9">
       <h3 className="max-w-[30ch] font-display text-[1.65rem] font-medium leading-[1.12] text-ivory">
         {b.title}
       </h3>

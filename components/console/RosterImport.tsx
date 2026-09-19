@@ -93,7 +93,7 @@ export default function RosterImport() {
           rows={7}
           spellCheck={false}
           placeholder={"Adm No,Name,Sex,Class,Stream\nA1001,Amina Wanjiru,F,Form 1,Science"}
-          className="mt-5 w-full rounded-[21px] border border-edge bg-void p-4 font-mono text-[12px] leading-6 text-ivory outline-none transition-colors placeholder:text-dim focus:border-gold"
+          className="mt-5 w-full rounded-[21px] border border-white/10 bg-void p-4 font-mono text-[12px] leading-6 text-ivory outline-none transition-colors placeholder:text-dim focus:border-gold"
         />
 
         {parsed && parsed.notes.map((n) => (
@@ -105,12 +105,12 @@ export default function RosterImport() {
             <p className={`${monoLabel} mb-3`}>
               Preview · {fresh} new · {dupes} already on the roll
             </p>
-            <div className="max-h-[320px] overflow-y-auto rounded-[21px] border border-edge">
+            <div className="max-h-[320px] overflow-y-auto rounded-[21px] border border-white/10">
               <table className="w-full border-collapse text-left">
                 <thead className="sticky top-0 bg-panel">
                   <tr>
                     {["Adm No", "Name", "Sex", "Class", "Stream", "Parent", "Phone", ""].map((h) => (
-                      <th key={h} className={`border-b border-edge px-3 py-2 font-mono text-[10px] uppercase tracking-[0.15em] ${h === "" ? "w-16" : "text-dim"}`}>
+                      <th key={h} className={`border-b border-white/10 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.15em] ${h === "" ? "w-16" : "text-dim"}`}>
                         {h}
                       </th>
                     ))}
@@ -118,7 +118,7 @@ export default function RosterImport() {
                 </thead>
                 <tbody>
                   {parsed.rows.slice(0, 500).map((r, i) => (
-                    <tr key={i} className={`border-b border-edge/50 ${r.dupe ? "opacity-40" : ""}`}>
+                    <tr key={i} className={`border-b border-white/10/50 ${r.dupe ? "opacity-40" : ""}`}>
                       <td className="px-3 py-2 font-mono text-[12px] text-dim">{r.student.admNo || "—"}</td>
                       <td className="px-3 py-2 text-[13px] text-ivory">{r.student.name}</td>
                       <td className="px-3 py-2 font-mono text-[12px] text-muted">{r.student.sex || "—"}</td>
