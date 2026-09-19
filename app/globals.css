@@ -80,78 +80,158 @@ body {
   display: none;
 }
 
-/* Paper Portico (landing only): Fraunces + Plex on #EDE6D6. BenBen stays obsidian. */
-.theme-paper {
-  --paper: #EDE6D6;
-  --paper-ink: #211C15;
-  --paper-muted: #6B6252;
-  --paper-green: #204734;
-  --paper-green-deep: #16332A;
-  --paper-ochre: #8B5E24;
-  --paper-ochre-text: #F4EFE3;
-  --paper-rule: #C7BBA0;
-  background: var(--paper);
-  color: var(--paper-ink);
+/* Portal (landing only): Fraunces + Plex on an indigo→sky gradient.
+   Glass rings and a dot grid are the artwork; glass cards hold the data.
+   BenBen stays obsidian. */
+.theme-portal {
+  --p-ink: #F4F7FF;
+  --p-muted: rgba(224, 233, 255, 0.66);
+  --p-deep: #0E1233;
+  --p-card: rgba(255, 255, 255, 0.07);
+  --p-card-rule: rgba(255, 255, 255, 0.14);
+  background: linear-gradient(155deg, #0E1233 0%, #16225C 30%, #24548F 58%, #5FA8D6 80%, #C6E4F6 100%);
+  color: var(--p-ink);
   font-family: var(--font-plex), system-ui, -apple-system, sans-serif;
   font-size: 16px;
   line-height: 1.6;
 }
-.theme-paper .display {
+.theme-portal .display {
   font-family: var(--font-fraunces), Georgia, serif;
   font-optical-sizing: auto;
 }
-.theme-paper .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
-.theme-paper a { color: inherit; text-decoration: none; }
-.theme-paper :focus-visible { outline: 2px solid var(--paper-green); outline-offset: 3px; }
-.theme-paper .hero { padding: 88px 0 64px; }
-.theme-paper .hero-title { font-size: clamp(2.6rem, 6vw, 5rem); font-weight: 500; line-height: 1.04; margin: 0 0 20px; letter-spacing: -0.01em; }
-.theme-paper .hero-sub { font-size: 1.15rem; color: var(--paper-muted); max-width: 38ch; margin: 0 0 34px; }
-.theme-paper .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 28px; }
-.theme-paper .btn { display: inline-flex; align-items: center; padding: 13px 22px; font-size: 0.95rem; font-weight: 500; border-radius: 3px; transition: background 0.15s ease, color 0.15s ease; cursor: pointer; border: 0; font-family: inherit; }
-.theme-paper .btn-primary { background: var(--paper-green); color: var(--paper); }
-.theme-paper .btn-primary:hover { background: var(--paper-green-deep); }
-.theme-paper .btn-secondary { border: 1px solid var(--paper-ink); color: var(--paper-ink); background: transparent; }
-.theme-paper .btn-secondary:hover { background: var(--paper-ink); color: var(--paper); }
-.theme-paper .hero-count { display: flex; align-items: center; gap: 9px; font-size: 0.9rem; color: var(--paper-muted); margin: 0; }
-.theme-paper .dot-live { width: 7px; height: 7px; border-radius: 50%; background: var(--paper-green); flex: none; position: relative; }
-.theme-paper .dot-live::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid var(--paper-green); opacity: 0.5; animation: paper-pulse 2.2s ease-out infinite; }
-@keyframes paper-pulse { 0% { transform: scale(0.6); opacity: 0.6; } 100% { transform: scale(1.9); opacity: 0; } }
+.theme-portal .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+.theme-portal a { color: inherit; text-decoration: none; }
+.theme-portal :focus-visible { outline: 2px solid #9FD8F7; outline-offset: 3px; }
 
-/* Landing top-right corner links */
-.top-right { display: flex; gap: 12px; margin-top: 8px; }
-.top-link {
-  display: inline-flex; padding: 6px 12px; border-radius: 9999px;
-  font-size: 0.75rem; font-weight: 600; color: var(--ivory);
-  background: var(--emerald); transition: background 0.15s ease;
+/* Hero */
+.theme-portal .hero { position: relative; overflow: hidden; padding: 84px 0 72px; }
+.theme-portal .hero-grid { display: grid; align-items: center; gap: 48px; }
+@media (min-width: 900px) {
+  .theme-portal .hero-grid { grid-template-columns: 1.05fr 0.95fr; }
 }
-.top-link:hover { background: #1F8A5B; }
-.top-link:focus-visible { outline: 2px solid var(--emerald); outline-offset: 2px; }
-.theme-paper .count-num { font-variant-numeric: tabular-nums; color: var(--paper-ink); font-weight: 600; }
-.theme-paper .snapshot { padding: 52px 0; border-top: 1px solid var(--paper-rule); }
-.theme-paper .snapshot-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 26px; gap: 16px; flex-wrap: wrap; }
-.theme-paper .snapshot-title { font-size: 1.5rem; font-weight: 500; margin: 0; }
-.theme-paper .live-tag { display: inline-flex; align-items: center; gap: 7px; font-size: 0.82rem; color: var(--paper-muted); }
-.theme-paper .ledger-rows { margin: 0; }
-.theme-paper .ledger-row { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 0; border-top: 1px solid var(--paper-rule); gap: 24px; }
-.theme-paper .ledger-row:last-child { border-bottom: 1px solid var(--paper-rule); }
-.theme-paper .ledger-row dt { margin: 0; color: var(--paper-muted); font-size: 0.95rem; }
-.theme-paper .ledger-row dd { margin: 0; font-size: 1.05rem; font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
-.theme-paper .ochre-tag { display: inline-block; background: var(--paper-ochre); color: var(--paper-ochre-text); font-size: 0.75rem; font-weight: 600; padding: 2px 7px; border-radius: 2px; margin-left: 8px; }
-.theme-paper .doors { padding: 52px 0 72px; border-top: 1px solid var(--paper-rule); }
-.theme-paper .doors-title { font-size: 1.5rem; font-weight: 500; margin: 0 0 28px; max-width: 32ch; }
-.theme-paper .doors-list { list-style: none; margin: 0; padding: 0; }
-.theme-paper .door { display: grid; grid-template-columns: 110px 1fr auto; align-items: baseline; gap: 20px; padding: 20px 0; border-top: 1px solid var(--paper-rule); }
-.theme-paper .doors-list li:last-child { border-bottom: 1px solid var(--paper-rule); }
-.theme-paper .door-label { font-weight: 600; font-size: 0.95rem; }
-.theme-paper .door-copy { margin: 0; color: var(--paper-muted); font-size: 0.95rem; max-width: 46ch; }
-.theme-paper .door-link { font-weight: 500; font-size: 0.9rem; border-bottom: 1px solid var(--paper-ink); white-space: nowrap; }
-.theme-paper .door-link:hover { color: var(--paper-green); border-color: var(--paper-green); }
-.theme-paper .entry-no { font-size: 0.78rem; color: var(--paper-muted); font-variant-numeric: tabular-nums; }
+.theme-portal .eyebrow {
+  font-family: var(--font-jetbrains); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.34em; text-transform: uppercase; color: rgba(200, 222, 255, 0.72);
+  margin: 0 0 18px;
+}
+.theme-portal .hero-title {
+  font-size: clamp(2.9rem, 6.4vw, 5.4rem); font-weight: 500; line-height: 1.02;
+  letter-spacing: -0.015em; margin: 0 0 22px;
+}
+.theme-portal .hero-title .grad {
+  font-style: italic;
+  background: linear-gradient(90deg, #CFE9FF, #6FB8E8 55%, #9B8CFF);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.theme-portal .hero-sub { font-size: 1.15rem; color: var(--p-muted); max-width: 40ch; margin: 0 0 34px; }
+.theme-portal .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 26px; }
+.theme-portal .btn {
+  display: inline-flex; align-items: center; padding: 13px 24px;
+  font-family: var(--font-plex); font-size: 0.95rem; font-weight: 500;
+  border-radius: 999px; cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+.theme-portal .btn:hover { transform: translateY(-1px); }
+.theme-portal .btn-ghost { border: 1.5px solid rgba(255, 255, 255, 0.65); background: transparent; color: #fff; }
+.theme-portal .btn-ghost:hover { background: rgba(255, 255, 255, 0.12); border-color: #fff; }
+.theme-portal .btn-solid { border: 0; background: #FDFEFF; color: #10224E; font-weight: 600; }
+.theme-portal .btn-solid:hover { background: #CFE8FB; }
+.theme-portal .hero-count { display: flex; align-items: center; gap: 9px; font-size: 0.9rem; color: var(--p-muted); margin: 0; }
+.theme-portal .dot-live { width: 7px; height: 7px; border-radius: 50%; background: #8FE8FF; flex: none; position: relative; }
+.theme-portal .dot-live::after {
+  content: ''; position: absolute; inset: -4px; border-radius: 50%;
+  border: 1px solid #8FE8FF; opacity: 0.55;
+  animation: portal-pulse 2.2s ease-out infinite;
+}
+@keyframes portal-pulse {
+  0% { transform: scale(0.6); opacity: 0.6; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+.theme-portal .count-num { font-variant-numeric: tabular-nums; }
+
+/* Glass rings — the one artwork on the page. */
+.theme-portal .rings { position: relative; min-height: 400px; }
+.theme-portal .ring { position: absolute; border-radius: 50%; }
+.theme-portal .ring-lg {
+  width: 340px; height: 340px; right: 4%; top: 2%;
+  border: 2px solid rgba(255, 255, 255, 0.38);
+  background: radial-gradient(circle at 32% 30%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.02) 62%);
+  animation: spin-slow 120s linear infinite;
+}
+.theme-portal .ring-md {
+  width: 210px; height: 210px; right: 30%; top: 32%;
+  border: 2px solid rgba(126, 200, 240, 0.55);
+  background: rgba(255, 255, 255, 0.06);
+}
+.theme-portal .ring-sm {
+  width: 130px; height: 130px; right: 0%; top: 56%;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.16);
+}
+@media (max-width: 899px) {
+  .theme-portal .rings { min-height: 300px; }
+  .theme-portal .ring-lg { width: 260px; height: 260px; }
+  .theme-portal .ring-md { right: 40%; }
+}
+
+/* Dot grid, bottom-left of the hero. */
+.theme-portal .dot-grid {
+  position: absolute; left: 0; bottom: 0; width: 200px; height: 150px;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.5) 1.4px, transparent 1.4px);
+  background-size: 13px 13px;
+  -webkit-mask-image: radial-gradient(70% 100% at 0% 100%, #000 30%, transparent 92%);
+  mask-image: radial-gradient(70% 100% at 0% 100%, #000 30%, transparent 92%);
+  pointer-events: none;
+}
+
+/* Snapshot — glass cards with dark delta chips (the Capital chip language). */
+.theme-portal .snapshot { padding: 56px 0; }
+.theme-portal .snapshot-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 26px; }
+.theme-portal .snapshot-title { font-size: 1.6rem; font-weight: 500; margin: 0; }
+.theme-portal .live-tag { display: inline-flex; align-items: center; gap: 7px; font-size: 0.82rem; color: var(--p-muted); }
+.theme-portal .glass-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 0; }
+@media (max-width: 880px) { .theme-portal .glass-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .theme-portal .glass-grid { grid-template-columns: 1fr; } }
+.theme-portal .glass {
+  display: flex; flex-direction: column; justify-content: space-between; gap: 14px;
+  min-height: 118px; background: var(--p-card); border: 1px solid var(--p-card-rule);
+  border-radius: 16px; padding: 18px; backdrop-filter: blur(6px);
+}
+.theme-portal .glass dt {
+  margin: 0; font-family: var(--font-jetbrains); font-size: 10.5px; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase; color: rgba(210, 228, 255, 0.62);
+}
+.theme-portal .glass dd {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin: 0; font-family: var(--font-fraunces); font-size: 1.85rem; font-weight: 500;
+  letter-spacing: -0.01em; font-variant-numeric: tabular-nums;
+}
+.theme-portal .chip {
+  white-space: nowrap; border-radius: 999px; background: var(--p-deep);
+  border: 1px solid rgba(159, 216, 247, 0.25); color: #9FD8F7;
+  font-family: var(--font-plex); font-size: 11px; font-weight: 600; padding: 3px 10px;
+}
+.theme-portal .chip-live { background: rgba(143, 232, 255, 0.14); border-color: rgba(143, 232, 255, 0.3); color: #8FE8FF; }
+
+/* Doors — glass rows, shown to unlocked visitors. */
+.theme-portal .doors { padding: 56px 0 84px; }
+.theme-portal .doors-title { font-size: 1.6rem; font-weight: 500; margin: 0 0 28px; max-width: 32ch; }
+.theme-portal .doors-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.theme-portal .door {
+  display: grid; grid-template-columns: 130px 1fr auto; align-items: center; gap: 18px;
+  padding: 18px 20px; background: var(--p-card); border: 1px solid var(--p-card-rule);
+  border-radius: 14px; backdrop-filter: blur(6px);
+}
+.theme-portal .door-label { font-weight: 600; font-size: 0.95rem; }
+.theme-portal .door-copy { margin: 0; color: var(--p-muted); font-size: 0.95rem; }
+.theme-portal .door-link { font-weight: 600; font-size: 0.9rem; color: #CFE8FB; white-space: nowrap; border-bottom: 1px solid transparent; }
+.theme-portal .door-link:hover { border-color: #CFE8FB; color: #fff; }
 @media (max-width: 640px) {
-  .theme-paper .door { grid-template-columns: 1fr; gap: 6px; }
+  .theme-portal .door { grid-template-columns: 1fr; gap: 6px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .theme-paper .dot-live::after { animation: none; }
+  .theme-portal .dot-live::after { animation: none; }
+  .theme-portal .ring-lg { animation: none; }
 }
 
 /* CONTACT — minimal, classic. One centered column: a heading, a line that

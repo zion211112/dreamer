@@ -5,6 +5,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { readiness } from "../../../lib/school";
 import { useSchoolData } from "../../../components/console/useSchoolData";
+import { ModuleGlyph, ModuleTile, StatusChip } from "../../../components/console/bits";
 import {
   CONSOLE_MENU,
   CONSOLE_MODULES,
@@ -123,9 +124,9 @@ function ConsoleLogin({
 
   return (
     <main className="flex h-dvh flex-col bg-void font-body text-ivory">
-      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-edge px-[21px]">
-        <div className="flex items-center gap-3 font-mono text-[13px] uppercase tracking-[0.1em] text-muted">
-          <Diamond className="text-muted" />
+      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-white/8 px-[21px]">
+        <div className="flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
+          <Diamond size={15} className="text-gold" />
           <span>APT-LABS · Console</span>
         </div>
         <Link
@@ -137,175 +138,76 @@ function ConsoleLogin({
       </header>
 
       <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center overflow-y-auto px-6 py-12">
-        <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-gold">Build capacity · Console</p>
-        <h1 className="mt-4 font-display text-4xl font-light tracking-tight">Who are you?</h1>
-        <p className="mt-3 text-sm leading-6 text-muted">
-          Pick your door. The console opens on this device — nothing you type leaves it.
-        </p>
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-panel p-8 md:p-10">
+          {/* the two glows: indigo from the rail, teal from the depths */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(circle_at_center,rgba(72,86,214,0.45),transparent_70%)]"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-28 -left-24 h-72 w-72 rounded-full bg-[radial-gradient(circle_at_center,rgba(20,148,168,0.32),transparent_70%)]"
+          />
+          <div className="relative">
+            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sky-300">Build capacity · Console</p>
+            <h1 className="mt-4 font-display text-4xl font-light tracking-tight">Who are you?</h1>
+            <p className="mt-3 text-sm leading-6 text-muted">
+              Pick your door. The console opens on this device — nothing you type leaves it.
+            </p>
 
-        <div className="mt-8 grid grid-cols-2 gap-3">
-          {(Object.keys(ROLE_META) as ConsoleRole[]).map((r) => (
-            <button
-              key={r}
-              type="button"
-              onClick={() => setRole(r)}
-              className={`rounded-[21px] border p-5 text-left transition ${
-                role === r ? "border-gold bg-gold/5" : "border-edge bg-panel hover:border-edgeHi"
-              }`}
-            >
-              <div className="text-sm font-bold text-ivory">{ROLE_META[r].label}</div>
-              <div className="mt-1 text-[12px] leading-5 text-muted">{ROLE_META[r].desc}</div>
-            </button>
-          ))}
+            <div className="mt-8 grid grid-cols-2 gap-3">
+              {(Object.keys(ROLE_META) as ConsoleRole[]).map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => setRole(r)}
+                  className={`rounded-2xl border p-5 text-left transition ${
+                    role === r ? "border-gold/70 bg-gold/10" : "border-white/10 bg-white/[0.04] hover:border-white/25"
+                  }`}
+                >
+                  <div className="text-sm font-bold text-ivory">{ROLE_META[r].label}</div>
+                  <div className="mt-1 text-[12px] leading-5 text-muted">{ROLE_META[r].desc}</div>
+                </button>
+              ))}
+            </div>
+
+            <form onSubmit={submit} className="mt-6 flex flex-col gap-3">
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your name"
+                maxLength={60}
+                className={loginInput}
+              />
+              <input
+                value={school}
+                onChange={(e) => setSchool(e.target.value)}
+                placeholder={role === "school" ? "School name" : "Your school"}
+                maxLength={60}
+                className={loginInput}
+              />
+              <button
+                type="submit"
+                disabled={!valid}
+                className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Enter the {ROLE_META[role].label.toLowerCase()} console →
+              </button>
+              <p className="text-center font-mono text-[10px] uppercase tracking-[0.2em] text-dim">
+                Local session · Stored on this device only · Free · 0 credits
+              </p>
+            </form>
+          </div>
         </div>
-
-        <form onSubmit={submit} className="mt-6 flex flex-col gap-3">
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your name"
-            maxLength={60}
-            className={loginInput}
-          />
-          <input
-            value={school}
-            onChange={(e) => setSchool(e.target.value)}
-            placeholder={role === "school" ? "School name" : "Your school"}
-            maxLength={60}
-            className={loginInput}
-          />
-          <button
-            type="submit"
-            disabled={!valid}
-            className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            Enter the {ROLE_META[role].label.toLowerCase()} console →
-          </button>
-          <p className="text-center font-mono text-[10px] uppercase tracking-[0.2em] text-dim">
-            Local session · Stored on this device only · Free · 0 credits
-          </p>
-        </form>
       </div>
     </main>
   );
 }
 
 /* ---------------------------------------------------------------- */
-/* The workspace: header + sidebar rail + module grid.             */
+/* The workspace: gradient rail + module grid. Glyphs, tiles and    */
+/* status chips come from components/console/bits.tsx.              */
 /* ---------------------------------------------------------------- */
-
-const MODULE_ICONS: Record<string, JSX.Element> = {
-  all: (
-    <>
-      <rect x="3" y="3" width="7" height="7" />
-      <rect x="14" y="3" width="7" height="7" />
-      <rect x="14" y="14" width="7" height="7" />
-      <rect x="3" y="14" width="7" height="7" />
-    </>
-  ),
-  MyDay: (
-    <>
-      <circle cx="12" cy="12" r="10" />
-      <polyline points="12 6 12 12 16 12" />
-    </>
-  ),
-  SMIS: (
-    <>
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-    </>
-  ),
-  Roster: (
-    <>
-      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-      <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
-    </>
-  ),
-  Reports: (
-    <>
-      <line x1="18" y1="20" x2="18" y2="10" />
-      <line x1="12" y1="20" x2="12" y2="4" />
-      <line x1="6" y1="20" x2="6" y2="14" />
-    </>
-  ),
-  Inspection: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />,
-  Fees: (
-    <>
-      <rect x="2" y="4" width="20" height="16" rx="2" />
-      <line x1="12" y1="8" x2="12" y2="16" />
-      <line x1="8" y1="12" x2="16" y2="12" />
-    </>
-  ),
-  Library: (
-    <>
-      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-    </>
-  ),
-  Timetable: (
-    <>
-      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-      <line x1="16" y1="2" x2="16" y2="6" />
-      <line x1="8" y1="2" x2="8" y2="6" />
-      <line x1="3" y1="10" x2="21" y2="10" />
-    </>
-  ),
-  Comms: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
-  Manage: (
-    <>
-      <line x1="4" y1="21" x2="4" y2="14" />
-      <line x1="4" y1="10" x2="4" y2="3" />
-      <line x1="12" y1="21" x2="12" y2="12" />
-      <line x1="12" y1="8" x2="12" y2="3" />
-      <line x1="20" y1="21" x2="20" y2="16" />
-      <line x1="20" y1="12" x2="20" y2="3" />
-      <line x1="1" y1="14" x2="7" y2="14" />
-      <line x1="9" y1="8" x2="15" y2="8" />
-      <line x1="17" y1="16" x2="23" y2="16" />
-    </>
-  )
-};
-
-function NavIcon({ children, className }: { children: React.ReactNode; className?: string }) {
-  return (
-    <svg
-      width="15"
-      height="15"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      className={className}
-      aria-hidden="true"
-    >
-      {children}
-    </svg>
-  );
-}
-
-function HeaderIcon({
-  children,
-  title,
-  onClick
-}: {
-  children: React.ReactNode;
-  title: string;
-  onClick?: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      title={title}
-      aria-label={title}
-      onClick={onClick}
-      className="grid h-9 w-9 place-items-center text-dim transition-colors hover:text-gold"
-    >
-      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-        {children}
-      </svg>
-    </button>
-  );
-}
 
 function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onSignOut: () => void }) {
   const [mod, setMod] = useState<string>("all");
@@ -346,75 +248,74 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
   }
 
   const activeKey = mod === "all" ? "all" : mod;
+  // The module grid shows only at the top level with an empty search —
+  // typing anywhere searches tools across the current module.
+  const showModules = mod === "all" && q === "";
 
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-void font-body text-ivory">
       {/* TOP HEADER */}
-      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-edge px-[21px]">
-        <div className="flex items-center gap-3 font-mono text-[13px] uppercase tracking-[0.1em] text-muted">
-          <Diamond className="text-muted" />
+      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-white/8 px-[21px]">
+        <div className="flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
+          <Diamond size={15} className="text-gold" />
           <span>APT-LABS · Console</span>
         </div>
-        <div className="flex items-center gap-[21px]">
-          <HeaderIcon title={`Profile · ${session.name}`}>
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
-          </HeaderIcon>
-          <HeaderIcon title="Notifications">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-          </HeaderIcon>
-          <HeaderIcon title="Sign out" onClick={onSignOut}>
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-            <polyline points="16 17 21 12 16 7" />
-            <line x1="21" y1="12" x2="9" y2="12" />
-          </HeaderIcon>
+        <div className="flex items-center gap-3">
+          <span className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1.5 pl-3.5 pr-4 font-mono text-[11px] text-muted sm:flex">
+            <span className="h-1.5 w-1.5 rounded-full bg-sky-400" aria-hidden="true" />
+            {session.name} · {session.role}
+          </span>
+          <button
+            type="button"
+            onClick={onSignOut}
+            className="rounded-full border border-white/10 px-4 py-1.5 text-[12px] font-semibold text-muted transition-colors hover:border-white/25 hover:text-ivory"
+          >
+            Sign out
+          </button>
         </div>
       </header>
 
       <div className="flex min-h-0 flex-1">
-        {/* SIDEBAR */}
-        <aside className="flex w-[55px] shrink-0 flex-col justify-between border-r border-edge bg-panel lg:w-[240px]">
+        {/* SIDEBAR — the gradient rail: indigo into teal, white on top */}
+        <aside className="flex w-[55px] shrink-0 flex-col justify-between border-r border-white/10 bg-gradient-to-b from-[#151a4d] via-[#1c2a6e] to-[#0c4a63] lg:w-[240px]">
           <div>
-            <div className="flex h-[89px] items-center justify-center gap-3 border-b border-edge px-[13px] lg:justify-between">
-              <Diamond filled size={34} className="shrink-0 text-gold" />
+            <div className="flex h-[89px] items-center justify-center gap-3 border-b border-white/10 px-[13px] lg:justify-between lg:px-[21px]">
+              <Diamond filled size={30} className="shrink-0 text-ivory" />
               <div className="hidden flex-col lg:flex">
-                <span className="font-display text-base font-medium">APT-LABS</span>
-                <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-muted">Console</span>
+                <span className="font-display text-base font-medium text-ivory">APT-LABS</span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">Console</span>
               </div>
             </div>
 
-            <nav className="flex flex-col py-[13px]">
+            <nav className="flex flex-col gap-1 px-[10px] py-[13px] lg:px-[13px]">
               <button
                 onClick={() => setMod("all")}
-                className={`flex h-[34px] items-center justify-center gap-2.5 border-l-2 px-[13px] lg:justify-start text-[13px] transition-all ${
-                  activeKey === "all"
-                    ? "border-l-gold bg-void font-medium text-ivory"
-                    : "border-l-transparent text-muted hover:bg-panelHi hover:text-ivory"
+                className={`flex h-[34px] items-center justify-center gap-2.5 rounded-lg px-3 text-[13px] transition-colors lg:justify-start ${
+                  activeKey === "all" ? "bg-white/15 font-medium text-ivory" : "text-white/50 hover:bg-white/5 hover:text-white"
                 }`}
               >
-                <NavIcon className={activeKey === "all" ? "text-gold" : "text-dim"}>{MODULE_ICONS.all}</NavIcon>
+                <ModuleGlyph module="all" size={15} className={activeKey === "all" ? "text-gold" : undefined} />
                 <span className="hidden lg:inline">Console</span>
               </button>
               {CONSOLE_MODULES.map((m) => (
                 <button
                   key={m}
                   onClick={() => setMod(m)}
-                  className={`flex h-[34px] items-center gap-2.5 border-l-2 px-[13px] text-[13px] transition-all ${
-                    activeKey === m
-                      ? "border-l-gold bg-void font-medium text-ivory"
-                      : "border-l-transparent text-muted hover:bg-panelHi hover:text-ivory"
+                  title={m}
+                  className={`flex h-[34px] items-center justify-center gap-2.5 rounded-lg px-3 text-[13px] transition-colors lg:justify-start ${
+                    activeKey === m ? "bg-white/15 font-medium text-ivory" : "text-white/50 hover:bg-white/5 hover:text-white"
                   }`}
                 >
-                  <NavIcon className={activeKey === m ? "text-gold" : "text-dim"}>{MODULE_ICONS[CONSOLE_MENU[m].icon]}</NavIcon>
+                  <ModuleGlyph module={m} size={15} className={activeKey === m ? "text-gold" : undefined} />
                   <span className="hidden lg:inline">{m}</span>
                 </button>
               ))}
             </nav>
           </div>
 
-          <div className="flex h-[55px] items-center overflow-hidden border-t border-edge px-[13px] font-mono text-[11px] text-dim">
-            Free · 0 credits
+          <div className="space-y-1 border-t border-white/10 p-[13px] font-mono text-[10px] uppercase tracking-[0.16em] text-white/35 lg:px-[21px]">
+            <p>Local session</p>
+            <p>Free · 0 credits</p>
           </div>
         </aside>
 
@@ -422,56 +323,39 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
         <main className="flex-1 overflow-y-auto p-[34px]">
           <div className="mb-[21px]">
             <h1 className="font-display text-[34px] font-light leading-tight">
-              {mod === "all" ? "Console" : mod}
+              {mod === "all" ? "The console" : mod}
             </h1>
             <p className="mt-1.5 text-[13px] text-muted">
-              {mod === "all" ? "Select a module from the list below" : CONSOLE_MENU[mod].desc}
+              {mod === "all"
+                ? "Nine modules. The material first, the mark of it second, the week around them."
+                : CONSOLE_MENU[mod].desc}
             </p>
             <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.15em] text-dim">
               {readiness(school.students, school.assessments).next}
             </p>
           </div>
 
-          <div className="mb-[21px] flex flex-wrap gap-2">
-            <button
-              onClick={() => setMod("all")}
-              className={`h-[34px] rounded-full border px-[21px] font-mono text-[11px] uppercase tracking-[0.08em] transition-all ${
-                mod === "all" ? "border-gold text-gold" : "border-edge text-muted hover:border-edgeHi hover:text-ivory"
-              }`}
-            >
-              All
-            </button>
-            {CONSOLE_MODULES.map((m) => (
-              <button
-                key={m}
-                onClick={() => setMod(m)}
-                className={`h-[34px] rounded-full border px-[21px] font-mono text-[11px] uppercase tracking-[0.08em] transition-all ${
-                  mod === m ? "border-gold text-gold" : "border-edge text-muted hover:border-edgeHi hover:text-ivory"
-                }`}
-              >
-                {m}
-                {CONSOLE_TOOLS.some((t) => CONSOLE_MENU[m].modules.includes(t.module) && t.status === "ready") && (
-                  <span className="ml-2 inline-block h-1.5 w-1.5 rounded-full bg-gold align-middle" />
-                )}
-              </button>
-            ))}
-          </div>
-
-          <div className="mb-[34px]">
+          <div className="mb-[21px]">
             <input
               ref={searchRef}
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Or type to search — press / or ⌘K to focus…"
-              className="h-[55px] w-full rounded-full border border-edge bg-panel px-[21px] text-[13px] text-ivory outline-none transition-colors placeholder:text-dim focus:border-gold"
+              placeholder={`Search ${mod === "all" ? "tools" : mod} — press / or ⌘K to focus…`}
+              className="h-[46px] w-full rounded-full border border-white/10 bg-panel px-6 text-[13px] text-ivory outline-none transition-colors placeholder:text-dim focus:border-gold"
             />
           </div>
 
-          {visible.length === 0 ? (
-            <p className="py-16 text-center text-sm text-muted">Nothing in this module yet.</p>
+          {showModules ? (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {CONSOLE_MODULES.map((m) => (
+                <ModuleCard key={m} module={m} onOpen={() => setMod(m)} />
+              ))}
+            </div>
+          ) : visible.length === 0 ? (
+            <p className="py-16 text-center text-sm text-muted">Nothing here yet.</p>
           ) : (
-            <div className="grid grid-cols-1 gap-[21px] md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
               {visible.map((t) => (
                 <ToolCard key={t.id} tool={t} fav={favs.has(t.id)} onFav={(e) => toggleFav(t.id, e)} />
               ))}
@@ -483,6 +367,33 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
   );
 }
 
+function ModuleCard({ module, onOpen }: { module: string; onOpen: () => void }) {
+  const menu = CONSOLE_MENU[module];
+  const tools = CONSOLE_TOOLS.filter((t) => menu.modules.includes(t.module));
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className="group flex min-h-[150px] flex-col justify-between gap-4 overflow-hidden rounded-2xl border border-white/8 bg-panel p-5 text-left transition-all duration-150 hover:border-white/25 hover:bg-panelHi"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <ModuleTile module={module} tint={menu.tint} />
+        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors group-hover:border-white/25 group-hover:text-ivory">
+          {tools.length} {tools.length === 1 ? "tool" : "tools"} →
+        </span>
+      </div>
+      <div>
+        <h3 className="font-display text-[20px] font-normal leading-tight text-ivory">{module}</h3>
+        <p className="mt-1.5 text-[13px] leading-relaxed text-muted">{menu.desc}</p>
+        <div className="mt-4">
+          <StatusChip status={tools.some((t) => t.status === "ready") ? "ready" : "coming"} />
+        </div>
+      </div>
+    </button>
+  );
+}
+
+
 function ToolCard({
   tool,
   fav,
@@ -492,49 +403,45 @@ function ToolCard({
   fav: boolean;
   onFav: (e: React.MouseEvent) => void;
 }) {
+  const menu = CONSOLE_MENU[tool.module];
   return (
     <Link
       href={`/console/${tool.id}`}
-      className="group flex min-h-[144px] flex-col justify-between rounded-[21px] border border-edge bg-panel p-[21px] transition-all duration-150 hover:border-edgeHi hover:bg-panelHi"
+      className="group relative flex min-h-[140px] flex-col justify-between overflow-hidden rounded-2xl border border-white/8 bg-panel p-5 transition-all duration-150 hover:border-white/25 hover:bg-panelHi"
     >
       <div>
-        <div className="mb-4 flex items-start justify-between">
-          <Diamond filled className="text-gold" />
-          <div className="flex gap-2 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-            <button
-              type="button"
-              title={fav ? "Remove from favourites" : "Add to favourites"}
-              onClick={onFav}
-              className={fav ? "text-gold" : "text-dim transition-colors hover:text-ivory"}
+        <div className="mb-4 flex items-start justify-between gap-3">
+          <ModuleTile module={tool.module} tint={menu?.tint} size={40} />
+          <button
+            type="button"
+            title={fav ? "Remove from favourites" : "Add to favourites"}
+            onClick={onFav}
+            className={`transition-opacity md:opacity-0 md:group-hover:opacity-100 ${
+              fav ? "text-gold" : "text-dim hover:text-ivory"
+            }`}
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill={fav ? "currentColor" : "none"}
+              stroke="currentColor"
+              strokeWidth="1.5"
+              aria-hidden="true"
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill={fav ? "currentColor" : "none"}
-                stroke="currentColor"
-                strokeWidth="1.5"
-                aria-hidden="true"
-              >
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-              </svg>
-            </button>
-          </div>
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+          </button>
         </div>
-        <h3 className="font-display text-[21px] font-normal leading-tight">{tool.title}</h3>
+        <h3 className="font-display text-[19px] font-normal leading-tight text-ivory">{tool.title}</h3>
         <p className="mt-1.5 text-[13px] leading-relaxed text-muted">{tool.desc}</p>
       </div>
-      <div className="flex items-center justify-between">
-        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-dim">{tool.module}</span>
-        <span
-          className={`font-mono text-[10px] uppercase tracking-[0.2em] ${
-            tool.status === "ready" ? "text-gold" : "text-dim/60"
-          }`}
-        >
-          {tool.status === "ready" ? "● Ready" : "Seat held"}
+      <div className="flex items-center justify-between gap-3">
+        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-dim">
+          {tool.id.padStart(2, "0")} · {tool.module}
         </span>
+        <StatusChip status={tool.status} />
       </div>
     </Link>
   );
 }
-

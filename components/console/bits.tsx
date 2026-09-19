@@ -90,6 +90,142 @@ export function HeadRow({
   );
 }
 
+/* ---------------------------------------------------------------- */
+/* Module glyph system. One stroke icon per module, one pastel tile,  */
+/* one status chip. The console grid and the tool shell both render  */
+/* through these, so a module looks the same everywhere it appears.  */
+/* ---------------------------------------------------------------- */
+
+export const MODULE_ICONS: Record<string, JSX.Element> = {
+  all: (
+    <>
+      <rect x="3" y="3" width="7" height="7" />
+      <rect x="14" y="3" width="7" height="7" />
+      <rect x="14" y="14" width="7" height="7" />
+      <rect x="3" y="14" width="7" height="7" />
+    </>
+  ),
+  "Content Studio": (
+    <>
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="16" y1="13" x2="8" y2="13" />
+      <line x1="16" y1="17" x2="8" y2="17" />
+    </>
+  ),
+  "Auto-Marking": (
+    <>
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+      <polyline points="22 4 12 14.01 9 11.01" />
+    </>
+  ),
+  "My Day": (
+    <>
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 12" />
+    </>
+  ),
+  Timetable: (
+    <>
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </>
+  ),
+  Roster: (
+    <>
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </>
+  ),
+  Reports: (
+    <>
+      <line x1="18" y1="20" x2="18" y2="10" />
+      <line x1="12" y1="20" x2="12" y2="4" />
+      <line x1="6" y1="20" x2="6" y2="14" />
+    </>
+  ),
+  Fees: (
+    <>
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <line x1="2" y1="10" x2="22" y2="10" />
+    </>
+  ),
+  Inspection: (
+    <>
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <polyline points="9 11.5 11.5 14 15 9.5" />
+    </>
+  ),
+  Comms: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
+};
+
+export function ModuleGlyph({
+  module,
+  size = 15,
+  className = ""
+}: {
+  module: string;
+  size?: number;
+  className?: string;
+}) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      className={className}
+      aria-hidden="true"
+    >
+      {MODULE_ICONS[module] ?? MODULE_ICONS.all}
+    </svg>
+  );
+}
+
+// The pastel tile: a bordered, tinted rounded square holding the module
+// glyph. Tint comes from CONSOLE_MENU — one chip colour per module.
+export function ModuleTile({
+  module,
+  tint,
+  size = 44
+}: {
+  module: string;
+  tint?: string;
+  size?: number;
+}) {
+  return (
+    <span
+      className={`grid shrink-0 place-items-center rounded-xl border ${tint ?? "border-white/10 bg-white/5 text-muted"}`}
+      style={{ width: size, height: size }}
+    >
+      <ModuleGlyph module={module} size={Math.round(size * 0.44)} />
+    </span>
+  );
+}
+
+// The two states a seat can be in, as the coloured chips: green for ready,
+// amber for held. Pastel fill, hairline ring, mono caps.
+export function StatusChip({ status }: { status: "ready" | "coming" }) {
+  return status === "ready" ? (
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-emerald-300 ring-1 ring-inset ring-emerald-400/25">
+      <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" aria-hidden="true" />
+      Ready
+    </span>
+  ) : (
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-amber-300/90 ring-1 ring-inset ring-amber-400/25">
+      <span className="h-1.5 w-1.5 rounded-full bg-amber-300/80" aria-hidden="true" />
+      Seat held
+    </span>
+  );
+}
+
+
 export function Diamond({
   className = "",
   filled = false,
@@ -112,60 +248,5 @@ export function Diamond({
     >
       <polygon points="12 2 2 12 12 22 22 12 12 2" />
     </svg>
-  );
-}
-
-export function ToolCard({
-  tool,
-  fav,
-  onFav
-}: {
-  tool: { id: string; title: string; desc: string; module: string; status: "ready" | "coming" };
-  fav: boolean;
-  onFav: (e: React.MouseEvent) => void;
-}) {
-  return (
-    <Link
-      href={`/console/${tool.id}`}
-      className="group flex min-h-[144px] flex-col justify-between rounded-[21px] border border-edge bg-panel p-[21px] transition-all duration-150 hover:border-edgeHi hover:bg-panelHi"
-    >
-      <div>
-        <div className="mb-4 flex items-start justify-between">
-          <Diamond filled className="text-gold" />
-          <div className="flex gap-2 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-            <button
-              type="button"
-              title={fav ? "Remove from favourites" : "Add to favourites"}
-              onClick={onFav}
-              className={fav ? "text-gold" : "text-dim transition-colors hover:text-ivory"}
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill={fav ? "currentColor" : "none"}
-                stroke="currentColor"
-                strokeWidth="1.5"
-                aria-hidden="true"
-              >
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-              </svg>
-            </button>
-          </div>
-        </div>
-        <h3 className="font-display text-[21px] font-normal leading-tight">{tool.title}</h3>
-        <p className="mt-1.5 text-[13px] leading-relaxed text-muted">{tool.desc}</p>
-      </div>
-      <div className="flex items-center justify-between">
-        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-dim">{tool.module}</span>
-        <span
-          className={`font-mono text-[10px] uppercase tracking-[0.2em] ${
-            tool.status === "ready" ? "text-gold" : "text-dim/60"
-          }`}
-        >
-          {tool.status === "ready" ? "● Ready" : "Seat held"}
-        </span>
-      </div>
-    </Link>
   );
 }

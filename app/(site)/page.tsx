@@ -15,10 +15,10 @@ import {
 } from "../../lib/ledger";
 import { SEED_BUILDS, mergeBuilds } from "../../lib/benben";
 
-// Portico: paper landing only. BenBen floor stays obsidian.
-// Four doors, kept verbatim per spec: Individual / Builder / School / Everyone.
-// Snapshot figures come from the same data the ledger page renders —
-// the landing never carries its own copy of a count.
+// Portal: the indigo→sky gradient landing. One artwork (the glass rings),
+// one data wall (the glass snapshot cards), four doors for the unlocked.
+// Figures come from the same ledger data the app renders — the landing
+// never carries its own copy of a count.
 const STUDENTS_UNDER_ROOF = SCHOOL_STATS.reduce((n, s) => n + s.students, 0);
 
 export default function Home() {
@@ -43,7 +43,7 @@ export default function Home() {
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    document.querySelectorAll<HTMLElement>(".theme-paper .count-num").forEach((el) => {
+    document.querySelectorAll<HTMLElement>(".theme-portal .count-num").forEach((el) => {
       const target = parseInt(el.getAttribute("data-target") || "0", 10) || 0;
       if (reduce || target === 0) {
         el.textContent = target.toLocaleString();
@@ -63,27 +63,34 @@ export default function Home() {
   }, [names, floor]);
 
   return (
-    <main className="theme-paper">
-      <div className="wrap" style={{ paddingTop: 12, paddingBottom: 0 }}>
-        <span className="entry-no">Kirinyaga, Kenya</span>
-      </div>
-
+    <main className="theme-portal">
       <section className="hero">
-        <div className="wrap">
-          <h1 className="display hero-title">We&apos;re making a list.</h1>
-          <p className="hero-sub">
-            Of everyone in Kirinyaga who can actually do things. That&apos;s the whole company.
-          </p>
-          <div className="hero-actions">
-            <button onClick={() => setDoors(true)} className="btn btn-primary">
-              Access build capacity
-            </button>
-            <JoinLink className="btn btn-secondary">Join the ledger</JoinLink>
+        <div className="dot-grid" aria-hidden="true" />
+        <div className="wrap hero-grid">
+          <div>
+            <p className="eyebrow">Kirinyaga, Kenya · The ledger</p>
+            <h1 className="display hero-title">
+              We&apos;re making a <span className="grad">list.</span>
+            </h1>
+            <p className="hero-sub">
+              Of everyone in Kirinyaga who can actually do things. That&apos;s the whole company.
+            </p>
+            <div className="hero-actions">
+              <button onClick={() => setDoors(true)} className="btn btn-ghost">
+                Access build capacity
+              </button>
+              <JoinLink className="btn btn-solid">Join the ledger</JoinLink>
+            </div>
+            <p className="hero-count">
+              <span className="dot-live" aria-hidden="true" />
+              <span className="count-num" data-target="1">0</span>&nbsp;on the list. You&apos;re next.
+            </p>
           </div>
-          <p className="hero-count">
-            <span className="dot-live" aria-hidden="true" />
-            <span className="count-num" data-target="1">0</span>&nbsp;on the list. You&apos;re next.
-          </p>
+          <div className="rings" aria-hidden="true">
+            <span className="ring ring-lg" />
+            <span className="ring ring-md" />
+            <span className="ring ring-sm" />
+          </div>
         </div>
       </section>
 
@@ -96,30 +103,36 @@ export default function Home() {
               Live
             </span>
           </div>
-          <dl className="ledger-rows">
-            <div className="ledger-row">
+          <dl className="glass-grid">
+            <div className="glass">
               <dt>Schools involved</dt>
               <dd><span className="count-num" data-target={SUBSCRIBED_SCHOOLS.length}>0</span></dd>
             </div>
-            <div className="ledger-row">
+            <div className="glass">
               <dt>Students under them</dt>
               <dd><span className="count-num" data-target={STUDENTS_UNDER_ROOF}>0</span></dd>
             </div>
-            <div className="ledger-row">
+            <div className="glass">
               <dt>Individuals on the ledger</dt>
               <dd><span className="count-num" data-target={names}>0</span></dd>
             </div>
-            <div className="ledger-row">
+            <div className="glass">
               <dt>Build budget used</dt>
-              <dd>KES {Math.round(TREASURY.total / 1000)}K<span className="ochre-tag">{TREASURY.usedPct}%</span></dd>
+              <dd>
+                <span>KES {Math.round(TREASURY.total / 1000)}K</span>
+                <span className="chip">{TREASURY.usedPct}% used</span>
+              </dd>
             </div>
-            <div className="ledger-row">
+            <div className="glass">
               <dt>Builds on the floor</dt>
               <dd><span className="count-num" data-target={floor}>0</span></dd>
             </div>
-            <div className="ledger-row">
+            <div className="glass">
               <dt>Current build</dt>
-              <dd>Active, pending</dd>
+              <dd>
+                <span>Active</span>
+                <span className="chip chip-live">pending</span>
+              </dd>
             </div>
           </dl>
         </div>
