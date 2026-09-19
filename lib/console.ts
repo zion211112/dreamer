@@ -1,5 +1,5 @@
 // The Console. Where schools and teachers actually build on top of the
-// ledger: nine modules, sixteen tools, one local session.
+// ledger: seven modules, thirteen tools, one local session.
 //
 // Local-first, like the rest of the app: the "login" is a session on this
 // device (localStorage), and favourites persist here too. Nothing leaves
@@ -45,23 +45,20 @@ export const CONSOLE_MENU: Record<string, { modules: string[]; icon: string; des
   "Reports / Analytics": { modules: ["Reports"], icon: "Reports", desc: "Exports, analytics, summaries, performance" },
 };
 
-// Eight working tools, including focused teacher and parent pitch examples.
+// Teacher-first tools. My Day is the desk; the Timetable Solver builds
+// the week the desk reads from; Roster Import brings the roll.
 export const CONSOLE_TOOLS: ConsoleTool[] = [
-  { id: "1", title: "Student Records", desc: "Full roster, streams, departments, admissions.", module: "SMIS", fav: false, status: "ready" },
   { id: "2", title: "Term Reports", desc: "One-click PDF reports for every student.", module: "Reports", fav: true, status: "ready" },
   { id: "3", title: "Fee Tracking", desc: "M-Pesa reconciliation and default prediction.", module: "Fees", fav: false, status: "coming" },
   { id: "4", title: "Inspection Mode", desc: "One-click export for auditors.", module: "Inspection", fav: false, status: "coming" },
   { id: "5", title: "Library Ledger", desc: "Borrowing, returns, inventory linked to student IDs.", module: "Library", fav: false, status: "coming" },
-  { id: "6", title: "Timetable Solver", desc: "Master timetable in 60 seconds.", module: "Timetable", fav: false, status: "coming" },
+  { id: "6", title: "Timetable Solver", desc: "Build the week, print it for the wall, approve it — Today reads from it.", module: "Timetable", fav: false, status: "ready" },
   { id: "7", title: "Auto-Marking", desc: "Upload a test. Get a weakness map.", module: "Console", fav: true, status: "ready" },
   { id: "8", title: "Grade Forecast", desc: "KCSE projection per student.", module: "Reports", fav: false, status: "ready" },
   { id: "9", title: "Roster Import", desc: "Bulk CSV paste. Classes and streams.", module: "Roster", fav: false, status: "ready" },
-  { id: "10", title: "Teacher Console", desc: "Notes from a video become a lesson plan, semester outline, and test.", module: "Console", fav: false, status: "ready" },
-  { id: "11", title: "Parent Console", desc: "Design a short home test, try it with your child, and see what to practise next.", module: "Comms", fav: false, status: "ready" },
   { id: "12", title: "Communication", desc: "Bulk SMS and WhatsApp to parents.", module: "Comms", fav: false, status: "coming" },
   { id: "13", title: "Skill Ledger", desc: "Verified capabilities per student.", module: "Reports", fav: false, status: "coming" },
   { id: "14", title: "Cooperative Register", desc: "Members, contributions, shares.", module: "Fees", fav: false, status: "coming" },
-  { id: "15", title: "Content Studio", desc: "One source, useful teaching materials. Create, edit, and export a focused draft.", module: "Library", fav: false, status: "ready" },
   { id: "16", title: "Manage", desc: "Settings, billing, integrations.", module: "Manage", fav: false, status: "coming" },
   { id: "17", title: "My Day", desc: "Today on one timeline — lessons, attendance, grades, notes, and a small planner.", module: "My Day", fav: false, status: "ready" },
 ];

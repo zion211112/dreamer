@@ -3,27 +3,31 @@ import { notFound } from "next/navigation";
 import type { ComponentType } from "react";
 import { CONSOLE_TOOLS, toolById } from "../../../../lib/console";
 import RosterImport from "../../../../components/console/RosterImport";
-import StudentRecords from "../../../../components/console/StudentRecords";
 import TermReports from "../../../../components/console/TermReports";
 import AutoMarking from "../../../../components/console/AutoMarking";
 import GradeForecast from "../../../../components/console/GradeForecast";
-import ContentStudio from "../../../../components/console/ContentStudio";
-import TeacherConsole from "../../../../components/console/TeacherConsole";
-import ParentConsole from "../../../../components/console/ParentConsole";
+import TimetableSolver from "../../../../components/console/TimetableSolver";
 import MyDayWorkspace from "../../../../components/console/MyDayWorkspace";
 
 // Working tools share the same inner-page shell.
+// Teacher flow: Roster (9) → Timetable Solver (6, build + print + approve)
+// → My Day (17, Today reads the approved week) → Term Reports (2).
 const WORKSPACES: Record<string, ComponentType> = {
-  "1": StudentRecords,
   "2": TermReports,
+  "6": TimetableSolver,
   "7": AutoMarking,
   "8": GradeForecast,
   "9": RosterImport,
-  "10": TeacherConsole,
-  "11": ParentConsole,
-  "15": ContentStudio,
   "17": MyDayWorkspace
 };
+
+// The teacher's path, in order. No legacy studios.
+const FLOW: Array<[string, string]> = [
+  ["9", "Roster"],
+  ["6", "Timetable Solver"],
+  ["17", "My Day"],
+  ["2", "Term Reports"],
+];
 
 export default function ConsoleToolPage({ params }: { params: { id: string } }) {
   const tool = toolById(params.id);
@@ -47,7 +51,7 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
       </header>
 
       <nav aria-label="Console workspaces" className="flex flex-wrap gap-2 border-b border-edge bg-panel px-5 py-4 print:hidden">
-        {[["10", "Teacher"], ["11", "Parent"], ["15", "Content Studio"], ["1", "Student Records"]].map(([id, label]) => (
+        {FLOW.map(([id, label]) => (
           <Link key={id} href={`/console/${id}`} aria-current={tool.id === id ? "page" : undefined}
             className={`rounded-full border px-5 py-2 text-sm transition-colors ${tool.id === id ? "border-gold bg-gold/5 text-gold" : "border-edge text-muted hover:border-edgeHi hover:text-ivory"}`}>
             {label}

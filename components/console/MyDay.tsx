@@ -18,6 +18,7 @@
 // path. State is computed from the event ledger only. The day is declared,
 // never invented. My Students stays a clean finder — class pills + search.
 
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { baseClassName, scoreKey, Student } from "../../lib/school";
 import {
@@ -31,8 +32,6 @@ import {
   loadSchedules,
   makeClassNote,
   makeEvent,
-  makeScheduleItem,
-  parseTimetable,
   saveDayPlan,
   saveEvent,
   saveSchedules,
@@ -41,6 +40,7 @@ import {
   timeToMs,
   todayLabel
 } from "../../lib/events";
+import { isTeachingCell, lessonsForDay, loadApprovedTimetable, WEEKDAYS, WeeklyTimetable, weekdayKey } from "../../lib/timetable";
 import { ConsoleSession } from "../../lib/console";
 import { useSchoolData } from "./useSchoolData";
 import Student360 from "./Student360";
@@ -83,10 +83,13 @@ export default function MyDay({
 
   const [adding, setAdding] = useState(false);
   const [af, setAf] = useState({ time: "", className: "", subject: "", room: "" });
-  const [importing, setImporting] = useState(false);
-  const [importText, setImportText] = useState("");
-  const [repeatWeekly, setRepeatWeekly] = useState(false);
+  // Plan previews the approved week (Solver builds it). No paste-import here:
+  // the import box lives once, in the Timetable Solver, where the grid is.
   const [schedules, setSchedules] = useState<ScheduleItem[]>([]);
+  const [approvedWeek, setApprovedWeek] = useState<WeeklyTimetable | null>(null);
+  const todayKey = weekdayKey(new Date());
+  // Today's column of the approved week — what the Plan tab previews.
+  const todayLessons = useMemo(() => (approvedWeek ? lessonsForDay(approvedWeek, todayKey) : []), [approvedWeek, todayKey]);
 
   const [nowMs, setNowMs] = useState<number>(() => Date.now());
   const [online, setOnline] = useState<boolean>(true);
@@ -111,7 +114,26 @@ export default function MyDay({
     (async () => {
       const [evs, planRows, sch] = await Promise.all([loadEvents(), loadDayPlan(), loadSchedules()]);
       setEvents(evs);
-      setPlan(planRows);
+      const approved = loadApprovedTimetable();
+      setApprovedWeek(approved);
+      // The Solver's approved week fills an empty Today once — today's
+      // column becomes the plan. After that the spine is the source of truth.
+      if (planRows.length === 0 && approved) {
+        const day = weekdayKey(new Date());
+        const ls = lessonsForDay(approved, day);
+        if (ls.length > 0) {
+          const seeded = ls.map((l, i) => ({
+            id: "TT-" + Date.now().toString(36) + "-" + i,
+            time: l.time, className: l.className, subject: l.subject, room: "", teacher: "",
+          })) as Lesson[];
+          setPlan(seeded);
+          void saveDayPlan(seeded);
+        } else {
+          setPlan(planRows);
+        }
+      } else {
+        setPlan(planRows);
+      }
       setSchedules(sch.items);
       setLoaded(true);
     })();
@@ -265,9 +287,6 @@ export default function MyDay({
 
   /* ------- mini calendar: schedules live on dates, class or personal ------- */
 
-  const dateKey = (d: Date) =>
-    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-
   function addSchedule(item: ScheduleItem) {
     setSchedules((prev) => {
       const s = [...prev, item];
@@ -284,38 +303,19 @@ export default function MyDay({
     });
   }
 
-  /* Import a pasted timetable — parsed, never guessed. Optionally mirror the
-     same periods into the calendar for the next five weeks. */
-  function importTimetable() {
-    const parsed = parseTimetable(importText).filter(
-      (l) => !plan.some((p) => p.time === l.time && p.className === l.className && p.subject === l.subject)
-    );
-    if (parsed.length === 0) {
-      setNotice("Nothing new to import — paste a timetable first.");
-      return;
-    }
-    const next = [...plan, ...parsed];
-    setPlan(next);
-    void saveDayPlan(next);
-    if (repeatWeekly) {
-      const t = new Date();
-      const repeats: ScheduleItem[] = [];
-      for (let w = 1; w <= 5; w++) {
-        const d = new Date(t);
-        d.setDate(t.getDate() + 7 * w);
-        const key = dateKey(d);
-        for (const l of parsed)
-          repeats.push(makeScheduleItem(key, l.time, l.subject || l.className || "Lesson", "class", l.className, l.subject));
-      }
-      setSchedules((prev) => {
-        const s = [...prev, ...repeats];
-        void saveSchedules({ items: s });
-        return s;
-      });
-    }
-    setImportText("");
-    setImporting(false);
-    setNotice(`Imported ${parsed.length} lesson${parsed.length === 1 ? "" : "s"} to today${repeatWeekly ? " + the next 5 weeks" : ""}.`);
+  /* The approved week fills Today when empty: one sync from the Solver's
+     grid into today's plan, then the teacher works the spine as usual. */
+  function syncApprovedToToday() {
+    if (!approvedWeek || plan.length > 0) return false;
+    const ls = lessonsForDay(approvedWeek, todayKey);
+    if (ls.length === 0) return false;
+    const next = ls.map((l, i) => ({
+      id: "TT-" + Date.now().toString(36) + "-" + i,
+      time: l.time, className: l.className, subject: l.subject, room: "", teacher: "",
+    }));
+    setPlan(next as Lesson[]);
+    void saveDayPlan(next as Lesson[]);
+    return true;
   }
 
   /* The print path: a plain-text register to hand-tick at the door. */
@@ -429,14 +429,10 @@ export default function MyDay({
     if (phase === "empty")
       return {
         tag: "Today",
-        title: "Add your first lesson below",
-        meta: "Paste a timetable or add one — the day is declared, never invented.",
-        cta: "Paste a timetable",
-        run: () => {
-          setTab("plan");
-          setImporting(true);
-          setAdding(false);
-        }
+        title: "Build the week once",
+        meta: "The Solver holds the wall grid. Approve it there — Today fills itself.",
+        cta: "Open Timetable Solver",
+        run: () => { window.location.href = "/console/6"; }
       };
     if (phase === "before" && firstSlot) {
       const has = roster(firstSlot.className).length > 0;
@@ -500,7 +496,6 @@ export default function MyDay({
       run: () => {
         setTab("plan");
         setAdding(true);
-        setImporting(false);
       }
     };
   })();
@@ -921,58 +916,56 @@ export default function MyDay({
         </div>
       )}
 
-      {/* PLAN — calendar, import and the day builder, off the day's main stage. */}
       {tab === "plan" && (
         <section className="space-y-5">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h2 className="font-display text-[26px] font-light tracking-tight">Plan</h2>
-              <p className="mt-1 text-[13px] text-muted">Shape the week — calendar, import, the day builder.</p>
-            </div>
-            <div className="flex gap-2">
-              <button onClick={() => { setImporting((v) => !v); setAdding(false); }} className={btnGhost + " px-3 py-1.5"}>
-                {importing ? "Close" : "Import timetable"}
-              </button>
-              <button onClick={() => { setAdding((v) => !v); setImporting(false); }} className={btnGhost + " px-3 py-1.5"}>
-                {adding ? "Close" : "+ Add to today"}
-              </button>
-            </div>
-          </div>
-
-            {importing && (
-              <div className="rounded-[21px] border border-edge bg-panel p-[21px]">
-                <p className={monoLabel}>Import timetable</p>
-                <p className="mt-1 text-xs text-muted">Paste your week, one line per period. It's read into today — nothing is guessed.</p>
-                <textarea
-                  value={importText}
-                  onChange={(e) => setImportText(e.target.value)}
-                  rows={5}
-                  placeholder={"08:00 Maths Form 4\n10:00 English Grade 8 · Z\n13:00 Science Form 4"}
-                  className="mt-3 w-full rounded-xl border border-edge bg-void px-3 py-2 font-mono text-[12px] leading-6 text-ivory outline-none focus:border-gold"
-                />
-                {(() => {
-                  const fresh = parseTimetable(importText).filter(
-                    (l) => !plan.some((p) => p.time === l.time && p.className === l.className && p.subject === l.subject)
-                  );
-                  const classes = [...new Set(fresh.map((l) => l.className).filter(Boolean))];
-                  return fresh.length > 0 ? (
-                    <p className="mt-2 font-mono text-[11px] text-dim">
-                      Will add {fresh.length} lesson{fresh.length === 1 ? "" : "s"} · {classes.join(", ") || "no class"}
-                    </p>
-                  ) : null;
-                })()}
-                <label className="mt-3 flex items-center gap-2 text-[12px] text-muted">
-                  <input type="checkbox" checked={repeatWeekly} onChange={(e) => setRepeatWeekly(e.target.checked)} />
-                  Repeat weekly — mirror into the calendar for 5 more weeks
-                </label>
-                <button onClick={importTimetable} className={btn + " mt-4"}>
-                  Add to today
-                </button>
+          <div className="rounded-[21px] border border-edge bg-panel p-[21px]">
+            <p className={monoLabel}>Plan · approved week</p>
+            {approvedWeek ? (
+              <div className="mt-3">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <h2 className="font-display text-[26px] font-light tracking-tight">{approvedWeek.className} · Today&apos;s column</h2>
+                  <div className="flex flex-wrap gap-2">
+                    <button onClick={() => setAdding((v) => !v)} className={btnGhost + " px-3 py-1.5"}>
+                      {adding ? "Close" : "+ Add one period"}
+                    </button>
+                    <Link href="/console/6" className={btnGhost + " px-3 py-1.5"}>Open Timetable Solver</Link>
+                  </div>
+                </div>
+                <p className="mt-1 text-[13px] text-muted">{approvedWeek.name} · {todayLessons.length} periods today ({todayKey}). The Solver builds + prints; Today works them.</p>
+                {todayLessons.length === 0 ? (
+                  <p className="mt-4 text-sm text-muted">No teaching periods today — weekends read Monday&apos;s column.</p>
+                ) : (
+                  <ol className="mt-4 divide-y divide-edge/60 border-y border-edge/60">
+                    {todayLessons.map((l, i) => (
+                      <li key={i} className="flex items-baseline justify-between gap-3 py-2.5">
+                        <span className="font-mono text-[12px] tabular-nums text-dim">{l.time}</span>
+                        <span className="min-w-0 flex-1 truncate text-[13px] text-ivory">{l.subject}</span>
+                        <span className="shrink-0 font-mono text-[11px] text-dim">{approvedWeek.className}</span>
+                      </li>
+                    ))}
+                  </ol>
+                )}
+                <div className="mt-4 overflow-x-auto">
+                  <MiniWeekGrid week={approvedWeek} today={todayKey} />
+                </div>
+              </div>
+            ) : (
+              <div>
+                <h2 className="mt-2 font-display text-[26px] font-light tracking-tight">No approved week yet</h2>
+                <p className="mt-1 max-w-[52ch] text-[13px] leading-6 text-muted">
+                  The week is built in the Timetable Solver — pick a CBC demo grid, print it for the wall, approve once. Today then fills itself.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <Link href="/console/6" className={btn + " px-5 py-2.5"}>Open Timetable Solver</Link>
+                  <button onClick={() => { setAdding((v) => !v); }} className={btnGhost + " px-3 py-1.5"}>
+                    {adding ? "Close" : "+ Add one period"}
+                  </button>
+                </div>
               </div>
             )}
 
             {adding && (
-              <div className="rounded-[21px] border border-edge bg-panel p-[21px]">
+              <div className="mt-5 rounded-[21px] border border-edge bg-void p-[21px]">
                 <p className={monoLabel}>Add to today</p>
                 <div className="mt-3 grid grid-cols-2 gap-3">
                   <label className="block">
@@ -999,6 +992,7 @@ export default function MyDay({
                 </button>
               </div>
             )}
+          </div>
 
           <div className="rounded-[21px] border border-edge bg-panel p-[21px]">
             <p className={monoLabel}>Five weeks</p>
@@ -1061,6 +1055,74 @@ export default function MyDay({
           {registerSheet()}
         </pre>
       )}
+    </div>
+  );
+}
+
+/* The approved week, scaled down: a quiet ruler-grid for the Plan tab.
+   Same shape as the wall grid in the Solver — times down, days across,
+   today's column lit, breaks and lunch furniture-dimmed. */
+function MiniWeekGrid({ week, today }: { week: WeeklyTimetable; today: string }) {
+  return (
+    <div>
+      <p className={monoLabel}>Week · {week.name}</p>
+      <div className="mt-3 overflow-x-auto">
+        <table className="w-full min-w-[560px] border-collapse">
+          <thead>
+            <tr>
+              <th aria-hidden="true" className="w-[70px] p-1.5 text-left" />
+              {WEEKDAYS.map((d) => (
+                <th
+                  key={d}
+                  className={`p-1.5 text-left font-mono text-[9px] uppercase tracking-[0.18em] ${d === today ? "text-gold" : "text-dim"}`}
+                >
+                  {d}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {week.times.map((slot, i) => (
+              <tr key={i} className="border-t border-edge/40">
+                <td className="p-1.5 align-top">
+                  <p className="font-mono text-[10px] tabular-nums text-dim">
+                    {slot.start}
+                    <span className="text-dim/50">–{slot.end}</span>
+                  </p>
+                  {slot.kind !== "lesson" && slot.kind !== "roll" && (
+                    <p className="mt-0.5 font-mono text-[8px] uppercase tracking-[0.15em] text-dim/60">
+                      {slot.kind === "break" ? "break" : "lunch"}
+                    </p>
+                  )}
+                </td>
+                {WEEKDAYS.map((d) => {
+                  const v = (week.cells[d]?.[i] ?? "").trim();
+                  const teaching = isTeachingCell(v, slot.kind);
+                  const isToday = d === today;
+                  return (
+                    <td key={d} className="p-1">
+                      <div
+                        className={`h-6 truncate rounded-md border px-2 py-1 font-mono text-[10px] uppercase tracking-wide ${
+                          teaching
+                            ? isToday
+                              ? "border-gold/60 bg-gold/10 text-ivory"
+                              : "border-edge/60 bg-void/50 text-muted"
+                            : "border-transparent text-dim/40"
+                        }`}
+                      >
+                        {v || "·"}
+                      </div>
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.15em] text-dim">
+        {week.className} · gold column is {today} — its periods are on Today
+      </p>
     </div>
   );
 }
