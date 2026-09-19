@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BenBen · The Floor</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #070708;
+    --surface: #0f0f11;
+    --line: #232326;
+    --line-hi: #3a3a3f;
+    --ivory: #f3ede2;
+    --ivory-dim: #a39e97;
+    --ivory-mute: #5c5852;
+    --gold: #d4af37;
+    --forest: #2f8f6e;
+    --rule: rgba(212,175,55,0.14);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(212,175,55,0.04), transparent 60%),
+      var(--void);
+    color: var(--ivory);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 96px 34px 210px;
+  }
+
+  /* ── MAST ── */
+  .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ivory-mute);
+  }
+  .doctrine {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px;
+    font-weight: 300;
+    line-height: 1.04;
+    letter-spacing: -0.018em;
+    margin: 22px 0 14px;
+  }
+  .doctrine em { font-style: normal; color: var(--gold); }
+  .sub {
+    font-size: 14.5px;
+    color: var(--ivory-dim);
+    max-width: 470px;
+    margin-bottom: 60px;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 26px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 36px;
+    padding-bottom: 0;
+  }
+  .tab {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ivory-mute);
+    text-decoration: none;
+    padding: 14px 0 13px;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.2s, border-color 0.2s;
+    position: relative;
+  }
+  .tab:hover { color: var(--ivory-dim); }
+  .tab.active { color: var(--ivory); border-bottom-color: var(--gold); }
+  .tab .count { color: var(--ivory-mute); margin-left: 6px; font-size: 10.5px; }
+  .tab.active .count { color: var(--gold); }
+  .tab .hint {
+    position: absolute;
+    top: 13px;
+    left: calc(100% + 14px);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--ivory-mute);
+    white-space: nowrap;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 4px 8px;
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s;
+    z-index: 2;
+  }
+  .tab:hover .hint { opacity: 1; }
+
+  /* ── BOARD ── */
+  .board { list-style: none; display: flex; flex-direction: column; }
+  .card { padding: 36px 0; border-bottom: 1px solid var(--line); }
+  .card:last-child { border-bottom: none; }
+  .card.proved { border-bottom-color: var(--rule); }
+
+  .card-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 12px;
+  }
+  .domain {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--gold);
+  }
+  .state-word {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--ivory-mute);
+  }
+  .state-word.proved { color: var(--forest); }
+  .state-word.ratified { color: var(--gold); }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 21px; font-weight: 400; line-height: 1.28;
+    color: var(--ivory); margin-bottom: 12px;
+  }
+
+  .card-body {
+    font-size: 14.5px; line-height: 1.55; color: var(--ivory-dim);
+    margin-bottom: 20px; max-width: 60ch;
+  }
+
+  /* ── THRESHOLD ── */
+  .threshold { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+  .threshold-track {
+    flex: 1; height: 1px; background: var(--line); position: relative;
+  }
+  .threshold-fill {
+    position: absolute; top: 0; left: 0; height: 100%;
+    background: var(--ivory-dim);
+  }
+  .threshold-tick {
+    position: absolute; top: -6px;
+    width: 1px; height: 13px; background: var(--ivory-mute);
+    transform: translateX(-0.5px);
+  }
+  .threshold.passed .threshold-fill { background: var(--gold); }
+  .threshold.passed .threshold-tick { background: var(--gold); }
+  .threshold-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--ivory-mute);
+    min-width: 36px; text-align: right;
+  }
+  .threshold.passed .threshold-label { color: var(--gold); }
+  .threshold-full { height: 1px; background: var(--gold); margin-bottom: 20px; }
+
+  /* ── FACTS ── */
+  .facts { display: flex; flex-direction: column; gap: 7px; margin-bottom: 20px; }
+  .fact { display: grid; grid-template-columns: 58px 1fr; gap: 22px; align-items: baseline; }
+  .fact dt { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ivory-mute); }
+  .fact dd { font-size: 13px; color: var(--ivory-dim); }
+  .fact dd.done { font-style: italic; color: var(--ivory); }
+  .fact dd.progress { color: var(--ivory-dim); }
+  .fact dd.empty { color: var(--ivory-mute); font-style: italic; font-size: 12px; }
+
+  .proof { margin: 18px 0 20px; padding: 14px 16px; border-left: 2px solid var(--forest); background: rgba(47,143,110,0.04); }
+  .proof .proof-kicker { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--forest); margin-bottom: 6px; }
+  .proof .proof-body { font-size: 13.5px; line-height: 1.5; color: var(--ivory); font-style: italic; }
+  .proof .proof-by { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ivory-mute); margin-top: 8px; }
+
+  .card-foot { display: flex; justify-content: space-between; align-items: center; gap: 22px; }
+  .provenance { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ivory-mute); }
+  .actions { display: flex; align-items: center; gap: 22px; }
+  .action { font-size: 13px; color: var(--ivory-dim); text-decoration: none; transition: color 0.2s; }
+  .action:hover { color: var(--gold); }
+  .action.primary { color: var(--ivory); }
+
+  .page-foot { margin-top: 96px; padding-top: 22px; border-top: 1px solid var(--line); font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--ivory-mute); text-align: center; }
+
+  .post-fab { position: fixed; bottom: 24px; right: 24px; padding: 13px 22px; background: var(--void); border: 1px solid var(--gold); color: var(--gold); font-family: 'JetBrains Mono', monospace; font-size: 12.5px; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: background 0.2s, color 0.2s; z-index: 10; box-shadow: 0 6px 24px -10px rgba(0,0,0,0.8); }
+  .post-fab:hover { background: var(--gold); color: var(--void); }
+
+  @media (max-width: 640px) {
+    .page { padding: 56px 20px 130px; }
+    .doctrine { font-size: 33px; }
+    .card-title { font-size: 17.5px; }
+    .fact { grid-template-columns: 1fr; gap: 4px; }
+    .card-foot { flex-wrap: wrap; gap: 14px; }
+    .post-fab { bottom: 0; left: 0; right: 0; text-align: center; padding: 22px; border-left: none; border-right: none; border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+
+<main class="page">
+
+  <header>
+    <span class="kicker">BenBen · The Floor</span>
+    <h1 class="doctrine">Post. Vote. Claim. <em>Prove.</em></h1>
+    <p class="sub">The board decides by count. The floor remembers by proof. A build is a commitment, not a post.</p>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <a class="tab active" data-filter="all">All<span class="count">6</span></a>
+    <a class="tab" data-filter="open">Open<span class="count">3</span></a>
+    <a class="tab" data-filter="ratified">Ratified<span class="count">1</span></a>
+    <a class="tab" data-filter="building">Building<span class="count">0</span></a>
+    <a class="tab" data-filter="proved">Proved<span class="count">2</span></a>
+  </nav>
+
+  <ol class="board" id="board">
+
+    <li class="card" data-state="open">
+      <div class="card-head"><span class="domain">Mobility</span><span class="state-word">Open</span></div>
+      <h2 class="card-title">Rebuild the Witeithie Kibute footbridge over reeds and stone</h2>
+      <p class="card-body">The crossing is failed timber. Lashed reeds on two cinder piers, timber decking, load survey first. Fourteen pairs of hands. The KES ledger stays on the floor, line by line.</p>
+      <div class="threshold"><div class="threshold-track"><div class="threshold-fill" style="width: 30%"></div><div class="threshold-tick" style="left: 70%"></div></div><span class="threshold-label">3 / 5</span></div>
+      <dl class="facts">
+        <div class="fact"><dt>Needs</dt><dd>hands (14) · KES 180,000 · truss ratios</dd></div>
+        <div class="fact"><dt>So far</dt><dd class="progress">A 500 kg truck crossed the provisional span; one side photographed</dd></div>
+      </dl>
+      <div class="card-foot"><span class="provenance">@AptLabs · Kagio · 9 Apr</span><div class="actions"><a class="action primary" href="#">Claim a seat</a><a class="action" href="#">Fork →</a></div></div>
+    </li>
+
+    <li class="card" data-state="ratified">
+      <div class="card-head"><span class="domain">Education</span><span class="state-word ratified">Ratified</span></div>
+      <h2 class="card-title">I can animate 3-minute KCSE explainers — free in exchange for skill work</h2>
+      <p class="card-body">Ten explainers queued: matrices, photosynthesis, Sarufi. I want them listed on the ledger instead of cash. Reviewers welcome.</p>
+      <div class="threshold passed"><div class="threshold-track"><div class="threshold-fill" style="width: 50%"></div><div class="threshold-tick" style="left: 50%"></div></div><span class="threshold-label">3 / 3</span></div>
+      <dl class="facts">
+        <div class="fact"><dt>Needs</dt><dd>intellect — reviewers for the ten explainers</dd></div>
+        <div class="fact"><dt>So far</dt><dd class="progress">10 explainers published on APT-LABS; name on the ledger</dd></div>
+      </dl>
+      <div class="card-foot"><span class="provenance">@Mwalimu_0005 · Mwea · 9 Apr</span><div class="actions"><a class="action primary" href="#">Claim a seat</a><a class="action" href="#">Fork →</a></div></div>
+    </li>
+
+
+    <li class="card" data-state="open">
+      <div class="card-head"><span class="domain">Other</span><span class="state-word">Open</span></div>
+      <h2 class="card-title">Purple-team audit kit for Kenyan SMEs</h2>
+      <p class="card-body">Ten probes a small business can run on itself: phishing drills, credential checks, a day of open shares. Written up in plain language; the fixes as cards, in English and Swahili.</p>
+      <div class="threshold"><div class="threshold-track"><div class="threshold-fill" style="width: 10%"></div><div class="threshold-tick" style="left: 66%"></div></div><span class="threshold-label">1 / 3</span></div>
+      <dl class="facts">
+        <div class="fact"><dt>Needs</dt><dd>hands (2) · KES 12,000 · phishing templates</dd></div>
+        <div class="fact"><dt>So far</dt><dd class="progress">Probe inventory drafted; one SME consent conversation logged</dd></div>
+      </dl>
+      <div class="card-foot"><span class="provenance">@AptLabs · Kagio · 9 Apr</span><div class="actions"><a class="action primary" href="#">Claim a seat</a><a class="action" href="#">Fork →</a></div></div>
+    </li>
+
+    <li class="card" data-state="open">
+      <div class="card-head"><span class="domain">Other</span><span class="state-word">Open</span></div>
+      <h2 class="card-title">Swahili-first legal document Q&amp;A agent for Kenyan SMEs</h2>
+      <p class="card-body">Contracts, tenancy, and business registration — the documents a small firm actually signs. Swahili is the working language, English is the export. Retrieval with citations, not a chatbot waving at the law.</p>
+      <div class="threshold"><div class="threshold-track"><div class="threshold-fill" style="width: 0%"></div><div class="threshold-tick" style="left: 66%"></div></div><span class="threshold-label">0 / 3</span></div>
+      <dl class="facts">
+        <div class="fact"><dt>Needs</dt><dd>hands (3) · KES 45,000 · Swahili legal corpus</dd></div>
+        <div class="fact"><dt>So far</dt><dd class="empty">Filed. Waiting for a hand to claim a seat.</dd></div>
+      </dl>
+      <div class="card-foot"><span class="provenance">@AptLabs · Mwea · 9 Apr</span><div class="actions"><a class="action primary" href="#">Claim a seat</a><a class="action" href="#">Fork →</a></div></div>
+    </li>
+
+    <li class="card proved" data-state="proved">
+      <div class="card-head"><span class="domain">Power</span><span class="state-word proved">Proved</span></div>
+      <h2 class="card-title">Bike-powered phone charger for 1,800 KES — parts list and wiring</h2>
+      <p class="card-body">Dynamo 800, rectifier 350, regulator 250, casing and wire 400. Mount on the rear fork, output 5V 1A at walking pace. Full wiring order in the comments.</p>
+      <div class="threshold-full"></div>
+      <dl class="facts"><div class="fact"><dt>Proved</dt><dd class="done">Anyone with local parts can build this — no specialist needed</dd></div></dl>
+      <div class="proof">
+        <div class="proof-kicker">Attestation · the proof</div>
+        <div class="proof-body">"Built two units on the rear forks of different bikes. Both held 5V 1A at walking pace for a full charge cycle. One was handed to @Njoro_0017 unwired and built by them from the parts list alone."</div>
+        <div class="proof-by">@Fundi_0002 · attested by @Njoro_0017 · 9 Apr</div>
+      </div>
+      <div class="card-foot"><span class="provenance">@Fundi_0002 · Mwea · 9 Apr</span><div class="actions"><a class="action" href="#">Fork →</a></div></div>
+    </li>
+
+    <li class="card proved" data-state="proved">
+      <div class="card-head"><span class="domain">Housing</span><span class="state-word proved">Proved</span></div>
+      <h2 class="card-title">Stabilized soil block recipe after 6 months of tests — 7% cement, 2% lime</h2>
+      <p class="card-body">Tested across two rainy seasons. Passes county building standards, costs 40% less than fired brick. Full ratios and curing schedule in thread.</p>
+      <div class="threshold-full"></div>
+      <dl class="facts"><div class="fact"><dt>Proved</dt><dd class="done">Blocks that pass county standards, 40% cheaper than fired brick</dd></div></dl>
+      <div class="proof">
+        <div class="proof-kicker">Attestation · the proof</div>
+        <div class="proof-body">"Pressed 200 blocks at 7% cement / 2% lime, cured 21 days. County inspector signed the strength report. Built a 3m wall on site that has held through one rainy season."</div>
+        <div class="proof-by">@Seremala_0006 · attested by @Mwanzia_0011 · 9 Apr</div>
+      </div>
+      <div class="card-foot"><span class="provenance">@Seremala_0006 · Embu · 9 Apr</span><div class="actions"><a class="action" href="#">Fork →</a></div></div>
+    </li>
+
+  </ol>
+
+  <footer class="page-foot">count, not noise · commit, then prove</footer>
+
+</main>
+
+<a class="post-fab" href="/benben/new">+ Post a build</a>
+
+<script>
+(function(){
+  var tabs = document.querySelectorAll('#tabs .tab');
+  var cards = document.querySelectorAll('#board .card');
+  function apply(filter){
+    tabs.forEach(function(t){ t.classList.toggle('active', t.dataset.filter === filter); });
+    cards.forEach(function(c){
+      if(filter === 'all'){ c.style.display = ''; }
+      else if(filter === 'building'){ c.style.display = 'none'; }
+      else {
+        var match = c.dataset.state === filter || (filter === 'open' && (c.dataset.state === 'open' || c.dataset.state === 'ratified'));
+        c.style.display = match ? '' : 'none';
+      }
+    });
+  }
+  tabs.forEach(function(t){ t.addEventListener('click', function(e){ e.preventDefault(); apply(t.dataset.filter); }); });
+})();
+</script>
+
+</body>
+</html>

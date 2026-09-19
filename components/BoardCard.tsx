@@ -29,6 +29,10 @@ const inField =
 const ghost = "font-mono text-[11px] uppercase tracking-[0.2em] text-amber transition hover:text-ivory";
 const ghostDim = "font-mono text-[11px] uppercase tracking-[0.2em] text-dim transition hover:text-ivory";
 
+// Real date beside the relative time — the floor remembers by proof.
+const asOf = (ts: number) =>
+  new Date(ts).toLocaleDateString("en", { month: "short", day: "numeric", year: "numeric" });
+
 // One node in the fork family. Filled dot = the live branch; hollow = the rest.
 function LineNode({
   b,
@@ -158,6 +162,8 @@ export default function BoardCard({
           <span className="text-amber">@{b.by}</span>
           <span aria-hidden>·</span>
           <span className="normal-case tracking-[0.05em]">{timeAgo(b.createdTs, now)}</span>
+          <span aria-hidden>·</span>
+          <span className="normal-case tracking-[0.05em] text-dim/70">{asOf(b.createdTs)}</span>
         </span>
         <span className="flex items-center gap-3 tabular-nums">
           <button
@@ -416,7 +422,7 @@ export default function BoardCard({
                     }}
                     className={ghost}
                   >
-                    attest
+                    prove it
                   </button>
                 </div>
               ) : (
@@ -427,7 +433,7 @@ export default function BoardCard({
                   }}
                   className={ghost}
                 >
-                  attest
+                  prove
                 </button>
               ))}
 

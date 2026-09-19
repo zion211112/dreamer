@@ -1,22 +1,31 @@
 "use client";
 
-// My Day — one spine, three depths. The day has a shape: it starts, moves,
-// ends. The eye never reads a list; it reads the clock.
+// My Day — not a page; the day itself. One timeline of lessons, three
+// actions per lesson, one alert block, one sync line, nothing else.
 //
-//   DEPTH 1  NOW — one card, one question: what do I do now? The phase
-//             (empty · before · in · break · end · untimed) picks the primary
-//             action; "in" is claimed only inside a period's 40-minute
-//             window. The day's arc — one segment per period — shows where
-//             the day stands.
-//   DEPTH 2  SPINE — past periods fold into an "owes work" band; now and the
-//             next read full; the far recedes. Every class row carries the
-//             same three chips, same order: Att · Grades · Note.
-//   DEPTH 3  PLAN — the five-week calendar, timetable import and the day
-//             builder live on their own tab, off the day's main stage.
+//   THE SEVEN BLOCKS, IN ORDER
+//   1 HEADER   "My Day · {school}" + the quick-find trigger + the date.
+//   2 COUNT    "N of M done" — the only large text on the page. It is the
+//              state of the day: empty · pre-first · mid-day · post-last ·
+//              weekend · exam week · crisis.
+//   3 ALERT    "Needs attention" — derived from the ledger, never authored.
+//              Past slots owing a register or grades, capped at three
+//              items; the crisis is three or more unmarked past lessons.
+//   4 TIMELINE lessons in their sequence, a gold NOW marker between the
+//              past and the future. Each row: time · class · subject ·
+//              teacher · room · learners · three actions · flag (✓ · — · !).
+//   5 TOMORROW one line from the approved week; suppressed when it has
+//              nothing to say.
+//   6 SYNC     the honest network line: online/offline, today's records.
+//   7 FIND     the quick find, pushed from the header — one search by
+//              name, adm no, or guardian phone.
 //
-// The register is bulk-first: "all present" is one tap, names are the adjust
-// path. State is computed from the event ledger only. The day is declared,
-// never invented. My Students stays a clean finder — class pills + search.
+// Attendance and Notes expand in place; Grades push to a focused roster
+// view with a back button. Never a modal — modals lose the timeline, and
+// the timeline is the point. The register is the fastest thing the console
+// does: "all present" is one tap. State is computed from the event ledger
+// only. The day is declared, never invented. The week grid and the day
+// builder sit on the Plan tab, off the day's main stage.
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -88,6 +97,9 @@ export default function MyDay({
   const [schedules, setSchedules] = useState<ScheduleItem[]>([]);
   const [approvedWeek, setApprovedWeek] = useState<WeeklyTimetable | null>(null);
   const todayKey = weekdayKey(new Date());
+  // A weekend day reads "No lessons." — the Plan tab still previews Monday's
+  // column, but the day itself is empty.
+  const isWeekendDay = new Date().getDay() === 0 || new Date().getDay() === 6;
   // Today's column of the approved week — what the Plan tab previews.
   const todayLessons = useMemo(() => (approvedWeek ? lessonsForDay(approvedWeek, todayKey) : []), [approvedWeek, todayKey]);
 
@@ -98,15 +110,13 @@ export default function MyDay({
   const [query, setQuery] = useState("");
   const [clsFilter, setClsFilter] = useState(rosterClass ?? "");
   const [notice, setNotice] = useState("");
-  // Today / Students / Plan — planning demotes to its own tab, off the day's main stage.
-  const [tab, setTab] = useState<"today" | "students" | "plan">(section === "students" ? "students" : "today");
-  // Past periods fold into an owed band; the day never scrolls past itself.
-  const [pastOpen, setPastOpen] = useState(false);
+  // Today / Plan — planning sits on its own tab, off the day's main stage.
+  const [tab, setTab] = useState<"today" | "plan">("today");
+  // The quick find: a focused view pushed from the header trigger. Arriving
+  // from My Students, or a class roster tap, lands in it with its filter on.
+  const [findOpen, setFindOpen] = useState(section === "students");
   // Register: bulk is the default, the names view is the adjust path.
   const [attMode, setAttMode] = useState<"bulk" | "names">("bulk");
-  // A day-level line to close the day (ledger: a note with no class).
-  const [dayNote, setDayNote] = useState("");
-  const dayNoteRef = useRef<HTMLInputElement>(null);
   const rowRefs = useRef<Record<string, HTMLLIElement | null>>({});
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -118,7 +128,9 @@ export default function MyDay({
       setApprovedWeek(approved);
       // The Solver's approved week fills an empty Today once — today's
       // column becomes the plan. After that the spine is the source of truth.
-      if (planRows.length === 0 && approved) {
+      // A weekend day is never seeded: it simply reads "No lessons."
+      const weekend = new Date().getDay() === 0 || new Date().getDay() === 6;
+      if (!weekend && planRows.length === 0 && approved) {
         const day = weekdayKey(new Date());
         const ls = lessonsForDay(approved, day);
         if (ls.length > 0) {
@@ -150,14 +162,14 @@ export default function MyDay({
     };
   }, []);
 
-  // Arriving with a ?cls= param (a class roster tap) pre-filters the finder.
+  // Arriving with a ?cls= param (a class roster tap), or from My Students,
+  // opens the quick find with its filter already on.
   useEffect(() => {
-    if (rosterClass) setClsFilter(rosterClass);
-  }, [rosterClass]);
-
-  useEffect(() => {
-    setTab(section === "students" ? "students" : "today");
-  }, [section]);
+    if (rosterClass || section === "students") {
+      setFindOpen(true);
+      if (rosterClass) setClsFilter(rosterClass);
+    }
+  }, [rosterClass, section]);
 
   const allClasses = useMemo(() => classesOnRoll(data.students), [data.students]);
 
@@ -242,18 +254,6 @@ export default function MyDay({
     setNotice(`${cls || "Class"} — note added.`);
   }
 
-  // Close the day with one line that belongs to no class.
-  async function saveDayNote() {
-    if (!dayNote.trim()) {
-      setNotice("Add a line first.");
-      return;
-    }
-    await saveEvent(makeClassNote("", session.name, dayNote.trim()));
-    setEvents(await loadEvents());
-    setDayNote("");
-    setNotice("Day note saved — it sits on the ledger, not in a class history.");
-  }
-
   async function addNote(s: Student, text: string) {
     const ev = makeEvent("note", s, session.name, text);
     await saveEvent(ev);
@@ -303,21 +303,6 @@ export default function MyDay({
     });
   }
 
-  /* The approved week fills Today when empty: one sync from the Solver's
-     grid into today's plan, then the teacher works the spine as usual. */
-  function syncApprovedToToday() {
-    if (!approvedWeek || plan.length > 0) return false;
-    const ls = lessonsForDay(approvedWeek, todayKey);
-    if (ls.length === 0) return false;
-    const next = ls.map((l, i) => ({
-      id: "TT-" + Date.now().toString(36) + "-" + i,
-      time: l.time, className: l.className, subject: l.subject, room: "", teacher: "",
-    }));
-    setPlan(next as Lesson[]);
-    void saveDayPlan(next as Lesson[]);
-    return true;
-  }
-
   /* The print path: a plain-text register to hand-tick at the door. */
   function registerSheet(): string {
     if (!openClass) return "";
@@ -361,14 +346,7 @@ export default function MyDay({
   const classRows = ordered.filter((l) => roster(l.className).length > 0);
   const doneCount = classRows.filter((l) => attDone(l.className)).length;
 
-  // "Up next" — the earliest still-upcoming timed slot, so the eye lands on the
-  // next thing to teach before the day has to be read top to bottom.
-  const upNext =
-    ordered
-      .filter((l) => /^\d{1,2}:\d{2}$/.test(l.time) && timeToMs(l.time, nowMs) > nowMs)
-      .sort((a, b) => timeToMs(a.time, nowMs) - timeToMs(b.time, nowMs))[0] ?? null;
-
-  /* -------- the now-phase: one card, one question — what do I do now ------- */
+  /* -------- the day's phases: before · in · between · end · untimed ------- */
 
   const firstSlot = timed[0] ?? null;
   const lastSlot = timed.length > 0 ? timed[timed.length - 1] : null;
@@ -394,9 +372,6 @@ export default function MyDay({
               ? "in"
               : "between";
 
-  const nextInMin = upNext && upNext.time ? Math.max(1, Math.round((timeToMs(upNext.time, nowMs) - nowMs) / 60_000)) : null;
-  const dayNotes = todayEvents.filter((e) => e.type === "note" && e.className === "");
-
   const pastRows = hasTimes ? ordered.slice(0, nowIndex) : [];
   const liveRows = hasTimes ? ordered.slice(nowIndex) : ordered;
   // The band's queue: past periods still owing a register, or a register in
@@ -410,110 +385,46 @@ export default function MyDay({
     return out;
   });
 
-  // The day's shape in one glance: a segment per class period, untimed items
-  // grouped last. Tap and the spine scrolls — the past unfolds first.
-  const arc = (() => {
-    const items: { key: string; lesson: Lesson; done: boolean }[] = classRows.map((l) => ({ key: l.id, lesson: l, done: attDone(l.className) }));
-    const untimedRows = ordered.filter((l) => !l.time);
-    if (untimedRows.length > 0) items.push({ key: "__untimed__", lesson: untimedRows[0], done: untimedRows.every((l) => attDone(l.className)) });
-    return items;
-  })();
-
   function jumpTo(id: string) {
-    setPastOpen(true);
     setTimeout(() => rowRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "center" }), 60);
   }
 
-  // The hero: the phase picks the primary action; the eye lands on one thing.
-  const hero = (() => {
-    if (phase === "empty")
-      return {
-        tag: "Today",
-        title: "Build the week once",
-        meta: "The Solver holds the wall grid. Approve it there — Today fills itself.",
-        cta: "Open Timetable Solver",
-        run: () => { window.location.href = "/console/6"; }
-      };
-    if (phase === "before" && firstSlot) {
-      const has = roster(firstSlot.className).length > 0;
-      return {
-        tag: "First up",
-        title: firstSlot.subject || firstSlot.className || "Lesson",
-        meta: [firstSlot.time, firstSlot.className, firstSlot.room].filter(Boolean).join(" · "),
-        cta: has ? "Register the first period" : "Enter grades",
-        run: () => {
-          openPanel(firstSlot, has ? "att" : "grades");
-          jumpTo(firstSlot.id);
-        }
-      };
-    }
-    if (phase === "in" && liveSlot) {
-      const l = liveSlot;
-      const has = roster(l.className).length > 0;
-      const done = has && attDone(l.className);
-      return {
-        tag: "Now",
-        title: `${l.time} ${l.subject || l.className || "Lesson"}`,
-        meta: [l.className, has ? `${roster(l.className).length} learners` : "", l.room].filter(Boolean).join(" · "),
-        cta: done ? "Enter grades" : has ? "Take register" : "Enter grades",
-        run: () => {
-          openPanel(l, done || !has ? "grades" : "att");
-          jumpTo(l.id);
-        }
-      };
-    }
-    if (phase === "between" && upNext) {
-      const has = roster(upNext.className).length > 0;
-      return {
-        tag: "Break",
-        title: `${upNext.time} ${upNext.subject || upNext.className || "Lesson"}`,
-        meta: "The room is free — prep the next period. Anything owed is in the band below.",
-        cta: has ? "Prep the next period" : "Enter grades",
-        run: () => {
-          openPanel(upNext, has ? "att" : "grades");
-          jumpTo(upNext.id);
-        }
-      };
-    }
-    if (phase === "end") {
-      const out = classRows.filter((l) => !attDone(l.className)).length;
-      return {
-        tag: "Day",
-        title: `${doneCount} of ${classRows.length} recorded`,
-        meta:
-          out > 0
-            ? `${out} register${out === 1 ? "" : "s"} still out — the band below keeps them visible.`
-            : "Every register in. Close the day with one line.",
-        cta: "Close the day",
-        run: () => dayNoteRef.current?.focus()
-      };
-    }
-    return {
-      tag: "Today",
-      title: `${ordered.length} item${ordered.length === 1 ? "" : "s"}, untimed`,
-      meta: "Add times and the day starts moving — or work the list as it stands.",
-      cta: "+ Add to today",
-      run: () => {
-        setTab("plan");
-        setAdding(true);
-      }
-    };
-  })();
+  // Exam week — the day announces itself; the timeline keeps its shape,
+  // and a lesson row declaring an exam carries the same three actions.
+  const examCount = ordered.filter((l) => /exam|paper/i.test(l.subject ?? "")).length;
+  // The crisis: three or more past lessons with no register in. The alert
+  // block is the flag — derived from the ledger, never authored.
+  const unmarkedCount = pastRows.filter((l) => roster(l.className).length > 0 && !attDone(l.className)).length;
+  const crisis = unmarkedCount >= 3;
+  // The weekend state reads "Saturday. No lessons."
+  const dayName = new Date(nowMs).toLocaleDateString("en-GB", { weekday: "long" });
+  // The day after — the Tomorrow block's one line. A weekend tomorrow, or no
+  // approved week, is nothing to say: the block stays suppressed.
+  const tomorrowLessons = useMemo(() => {
+    if (!approvedWeek) return [] as { time: string; subject: string }[];
+    const t = new Date(nowMs);
+    t.setDate(t.getDate() + 1);
+    const g = t.getDay();
+    if (g === 0 || g === 6) return [] as { time: string; subject: string }[];
+    return lessonsForDay(approvedWeek, WEEKDAYS[g - 1]);
+  }, [approvedWeek, nowMs]);
 
-  // The row state as a chip: three facts, same order, on every class row —
-  // done is quiet green, owed is gold, the far future is dim.
-  function chip(lesson: Lesson, kind: "att" | "grades" | "notes", st: "done" | "pending" | "none", past: boolean) {
+  // The three actions, same order on every class row: Attendance · Grades ·
+  // Notes. Text, not chips — done is quiet green, a past slot that owes is
+  // gold, the far future is dim, hover is gold. Attendance and Notes open in
+  // place; Grades pushes to its focused roster view.
+  function action(lesson: Lesson, kind: "att" | "grades" | "notes", past: boolean) {
     const on = open?.id === lesson.id && open.kind === kind;
-    const n = roster(lesson.className).length;
     let label = "Notes";
     let tone = "text-dim";
     if (kind === "att") {
-      label = st === "done" ? `Att ✓ ${n}` : past ? "Att · owed" : "Att";
-      tone = st === "done" ? "text-teal" : past ? "text-amber" : "text-dim";
+      const done = attDone(lesson.className);
+      label = done ? "Attendance ✓" : past ? "Attendance —" : "Attendance";
+      tone = done ? "text-teal" : past ? "text-amber" : "text-muted";
     } else if (kind === "grades") {
-      if (st === "none") return null;
-      label = st === "done" ? "Grades ✓" : past ? "Grades · owed" : "Grades";
-      tone = st === "done" ? "text-teal" : past ? "text-amber" : "text-dim";
+      const done = gradesDone(lesson.className);
+      label = done ? "Grades ✓" : past ? "Grades —" : "Grades";
+      tone = done ? "text-teal" : past ? "text-amber" : "text-muted";
     } else {
       const c = notesCount(lesson.className);
       label = c > 0 ? `Note ${c}` : "Notes";
@@ -521,33 +432,34 @@ export default function MyDay({
     return (
       <button
         onClick={() => (on ? closePanel() : openPanel(lesson, kind))}
-        className={`rounded-full px-3 py-1 font-mono text-[11px] uppercase tracking-[0.12em] transition-colors ${
-          on ? "border border-amber bg-amber/15 text-amber" : `border border-transparent ${tone} hover:text-ivory`
-        }`}
+        className={`text-[13px] transition-colors hover:text-amber ${on ? "text-amber" : tone}`}
       >
         {label}
       </button>
     );
   }
 
-  // A uniform row: time · class · subject · learners · room, the three chips,
-  // the panel opens inline under its own row.
+  // A uniform row: time · class · subject · teacher · room · learners, the
+  // three actions, the flag. The panel opens inline under its own row — the
+  // day is a timeline, not a card stack.
   function timelineRow(lesson: Lesson, past: boolean) {
     const hasRoster = roster(lesson.className).length > 0;
     const n = roster(lesson.className).length;
     const attSt: "done" | "pending" | "none" = !hasRoster ? "none" : attDone(lesson.className) ? "done" : "pending";
-    const grSt: "done" | "pending" | "none" = !hasRoster ? "none" : gradesDone(lesson.className) ? "done" : "pending";
-    const notesSt: "done" | "none" = notesCount(lesson.className) > 0 ? "done" : "none";
     const isNowRow = lesson.id === liveSlot?.id;
-    const isNextRow = !past && upNext?.id === lesson.id;
-    const title = lesson.subject || lesson.className || "Lesson";
+    // "Form 1 · Science" — class and subject; free-form rows fall back to
+    // whatever the teacher declared.
+    const title = [lesson.className, lesson.subject].filter(Boolean).join(" · ") || "Lesson";
     const detail = [
-      lesson.className && lesson.className !== title ? lesson.className : "",
-      hasRoster ? `${n} learner${n === 1 ? "" : "s"}` : "",
-      lesson.room
+      lesson.teacher,
+      lesson.room,
+      hasRoster ? `${n} learner${n === 1 ? "" : "s"}` : ""
     ]
       .filter(Boolean)
-      .join("  ·  ");
+      .join(" · ");
+    // The flag: ✓ done, — pending, ! a past slot that needs attention.
+    const flag = !hasRoster ? "" : attSt === "done" ? "✓" : past ? "!" : "—";
+    const flagTone = flag === "✓" ? "text-teal" : flag === "!" ? "text-amber" : "text-dim";
     return (
       <li
         key={lesson.id}
@@ -555,37 +467,22 @@ export default function MyDay({
           rowRefs.current[lesson.id] = el;
         }}
         className={`m-0 list-none py-[21px] ${
-          isNowRow
-            ? "-mx-4 rounded-[21px] border border-ivory/10 bg-panelHi px-4"
-            : past
-            ? "border-b border-ivory/10/40 opacity-50"
-            : isNextRow
-            ? "border-b border-ivory/10/60"
-            : "border-b border-ivory/10/60 opacity-60"
+          isNowRow ? "-mx-4 rounded-[21px] border border-ivory/10 bg-panelHi px-4" : "border-b border-ivory/10/60"
         }`}
       >
-        <div className="grid grid-cols-[55px_1fr] gap-3 md:grid-cols-[90px_1fr] md:gap-[21px]">
-          <div className="pt-1">
-            <span className={`font-mono tabular-nums text-[13px] ${isNextRow ? "text-amber" : "text-dim"}`}>{lesson.time || "—"}</span>
-            {isNextRow && <span className="mt-0.5 block font-mono text-[9px] uppercase tracking-[0.2em] text-amber">next</span>}
-          </div>
+        <div className="grid grid-cols-[55px_1fr_21px] items-start gap-3 md:grid-cols-[89px_1fr_21px] md:gap-[21px]">
+          <span className={`pt-1 font-mono tabular-nums text-[13px] ${past ? "text-dim" : "text-muted"}`}>{lesson.time || "—"}</span>
           <div className="min-w-0">
             <h3 className="font-display text-[21px] font-normal leading-tight text-ivory">{title}</h3>
-            <p className="mt-1 text-[13px] text-muted">{detail || "—"}</p>
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              {hasRoster && chip(lesson, "att", attSt, past)}
-              {hasRoster && chip(lesson, "grades", grSt, past)}
-              {chip(lesson, "notes", notesSt, past)}
-              <button
-                onClick={() => removeLesson(lesson.id)}
-                title="Remove from today"
-                className="ml-auto font-mono text-[10px] uppercase tracking-[0.15em] text-dim transition-colors hover:text-amber"
-              >
-                ✕
-              </button>
+            <p className="mt-1 text-[13px] text-muted">{detail}</p>
+            <div className="mt-3 flex flex-wrap items-center gap-x-[21px] gap-y-1">
+              {hasRoster && action(lesson, "att", past)}
+              {hasRoster && action(lesson, "grades", past)}
+              {action(lesson, "notes", past)}
             </div>
             {lessonPanel(lesson)}
           </div>
+          <span className={`pt-1 text-right font-mono text-[13px] ${flagTone}`}>{flag}</span>
         </div>
       </li>
     );
@@ -650,22 +547,23 @@ export default function MyDay({
                   </>
                 ) : (
                   <>
-                    <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <ul className="m-0 list-none divide-y divide-edge/60 border-y border-ivory/10/40">
                       {rows.map((s) => (
-                    <li key={s.id} className="flex items-center justify-between gap-2 rounded-xl border border-ivory/10/60 px-3 py-2">
-                      <span className="truncate text-[13px] text-ivory">{s.name}</span>
-                      <span className="flex shrink-0 gap-1">
-                        {(["present", "absent"] as const).map((m) => (
-                          <button
-                            key={m}
-                            onClick={() => setMarks((prev) => ({ ...prev, [s.id]: m }))}
-                            className={`rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-[0.15em] transition-colors ${(marks[s.id] ?? "present") === m ? (m === "present" ? "border-teal/60 text-teal" : "border-amber/60 text-amber") : "border-ivory/10 text-dim hover:text-ivory"}`}
-                          >
-                            {m === "present" ? "P" : "A"}
-                          </button>
-                        ))}
-                      </span>
-                    </li>
+                        <li key={s.id} className="flex items-center justify-between gap-2 py-2">
+                          <span className="truncate text-[13px] text-ivory">{s.name}</span>
+                          <span className="flex shrink-0 gap-2">
+                            {(["present", "absent"] as const).map((m) => (
+                              <button
+                                key={m}
+                                onClick={() => setMarks((prev) => ({ ...prev, [s.id]: m }))}
+                                aria-label={`${s.name} — ${m === "present" ? "present" : "absent"}`}
+                                className={`border px-2 py-1 font-mono text-[11px] transition-colors ${(marks[s.id] ?? "present") === m ? (m === "present" ? "border-teal/60 text-teal" : "border-amber/60 text-amber") : "border-ivory/10 text-dim hover:text-ivory"}`}
+                              >
+                                {m === "present" ? "P" : "A"}
+                              </button>
+                            ))}
+                          </span>
+                        </li>
                       ))}
                     </ul>
                     <div className="mt-4 flex items-center gap-3">
@@ -679,39 +577,6 @@ export default function MyDay({
                 )}
               </div>
             )}
-          </div>
-        )}
-        {open.kind === "grades" && (
-          <div className="rounded-[21px] border border-ivory/10 bg-panel p-[21px]">
-            <span className={monoLabel}>Enter grades · {cls}</span>
-            <div className="my-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <input value={exam} onChange={(e) => setExam(e.target.value)} placeholder="Assessment — e.g. Opener Test" className={field} />
-              <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" className={field} />
-              <input value={maxMark} onChange={(e) => setMaxMark(e.target.value)} type="number" min={1} placeholder="Out of" className={field} />
-            </div>
-            {rows.length === 0 ? (
-              <p className="py-4 text-sm text-muted">No learners on the roll for this class yet.</p>
-            ) : (
-              <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {rows.map((s) => (
-                  <li key={s.id} className="flex items-center justify-between gap-3 rounded-xl border border-ivory/10/60 px-3 py-2">
-                    <span className="truncate text-[13px] text-ivory">{s.name}</span>
-                    <input
-                      value={scores[s.id] ?? ""}
-                      onChange={(e) => setScores((prev) => ({ ...prev, [s.id]: e.target.value }))}
-                      inputMode="numeric"
-                      aria-label={`Score for ${s.name}`}
-                      placeholder="—"
-                      className="w-20 rounded-lg border border-ivory/10 bg-void px-2 py-1.5 text-right font-mono text-[12px] text-ivory outline-none focus:border-amber"
-                    />
-                  </li>
-                ))}
-              </ul>
-            )}
-            <div className="mt-4 flex items-center gap-3">
-              <button onClick={() => void saveGrades(cls)} className={btn}>Save scores</button>
-              <span className={monoLabel}>Term Reports picks these up</span>
-            </div>
           </div>
         )}
         {open.kind === "notes" && (
@@ -755,145 +620,224 @@ export default function MyDay({
       />
     );
 
+  // Grades — a focused roster view pushed from the row's action, not a
+  // modal: the timeline sits behind it, and back returns to the day.
+  if (open?.kind === "grades" && openLesson) {
+    const cls = openLesson.className;
+    const rows = roster(cls);
+    return (
+      <div className="min-w-0 max-w-full">
+        <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-ivory/10 pb-3">
+          <button
+            onClick={closePanel}
+            className="font-mono text-[12px] uppercase tracking-[0.15em] text-dim transition-colors hover:text-amber"
+          >
+            ← My Day
+          </button>
+          <p className={monoLabel}>Enter grades · {cls} · {todayLabel()}</p>
+        </div>
+        <div className="mt-5">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <input value={exam} onChange={(e) => setExam(e.target.value)} placeholder="Assessment — e.g. Opener Test" className={field} />
+            <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" className={field} />
+            <input value={maxMark} onChange={(e) => setMaxMark(e.target.value)} type="number" min="1" placeholder="Out of" className={field} />
+          </div>
+          {rows.length === 0 ? (
+            <p className="py-8 text-sm text-muted">No learners on the roll for this class yet.</p>
+          ) : (
+            <ul className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {rows.map((s) => (
+                <li key={s.id} className="flex items-center justify-between gap-3 rounded-xl border border-ivory/10/60 px-3 py-2">
+                  <span className="truncate text-[13px] text-ivory">{s.name}</span>
+                  <input
+                    value={scores[s.id] ?? ""}
+                    onChange={(e) => setScores((prev) => ({ ...prev, [s.id]: e.target.value }))}
+                    inputMode="numeric"
+                    aria-label={`Score for ${s.name}`}
+                    placeholder="—"
+                    className="w-20 rounded-lg border border-ivory/10 bg-void px-2 py-1.5 text-right font-mono text-[12px] text-ivory outline-none focus:border-amber"
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className="mt-5 flex items-center gap-3">
+            <button onClick={() => void saveGrades(cls)} className={btn}>Save scores</button>
+            <span className={monoLabel}>Term Reports picks these up</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-w-0 max-w-full space-y-10">
-      {/* HEADER — school, date, and the three views of the day */}
+      {/* 1 · HEADER — school on the left, date on the right; the quick-find
+          trigger pushes the focused search. An exam week carries its own
+          line instead of the plain date. */}
       <div>
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-ivory/10 pb-3">
           <p className={monoLabel}>My Day · {session.school}</p>
-          <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim">{todayLabel()}</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => setFindOpen(true)}
+              title="Find a learner — name, adm no, guardian phone"
+              className="rounded-full border border-ivory/10 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.15em] text-dim transition-colors hover:border-amber hover:text-amber"
+            >
+              ⌘F · Find
+            </button>
+            <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim">
+              {examCount > 0 ? `Exam week · ${examCount} paper${examCount === 1 ? "" : "s"} today · ` : ""}
+              {todayLabel()}
+            </p>
+          </div>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
-          {(["today", "students", "plan"] as const).map((t) => (
-            <button key={t} onClick={() => setTab(t)} className={pill(tab === t)}>
-              {t === "today" ? "Today" : t === "students" ? `Students · ${data.students.length}` : "Plan"}
+          {(["today", "plan"] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => { setTab(t); setFindOpen(false); }}
+              className={pill(tab === t)}
+            >
+              {t === "today" ? "Today" : "Plan"}
             </button>
           ))}
         </div>
       </div>
 
-      {/* NOW — one card, one question: what do I do now. The phase picks the
-         primary; the arc below shows where the day stands. */}
-      {tab === "today" && (
-        <div className="rounded-[21px] border border-ivory/10 bg-panel p-[21px]">
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <p className={monoLabel}>
-              {hero.tag} · {new Date(nowMs).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
+      {/* 7 · FIND — the quick find as a focused view: one search by name,
+          adm no, or guardian phone; class pills; results capped. Pushed,
+          not modaled — the day sits behind it. */}
+      {findOpen && (
+        <section>
+          <div className="mb-[21px] flex flex-wrap items-center justify-between gap-2 border-b border-ivory/10 pb-3">
+            <button
+              onClick={() => setFindOpen(false)}
+              className="font-mono text-[12px] uppercase tracking-[0.15em] text-dim transition-colors hover:text-amber"
+            >
+              ← My Day
+            </button>
+            <p className={monoLabel}>Find a learner · {results.length}</p>
+          </div>
+          <input
+            ref={searchRef}
+            autoFocus
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Find a learner — name, adm no, guardian phone"
+            className={field}
+          />
+          <div className="mt-4 flex flex-wrap items-center gap-2 border-b border-ivory/10 pb-3">
+            <button onClick={() => setClsFilter("")} className={pill(clsFilter === "")}>All · {data.students.length}</button>
+            {allClasses.map((c) => (
+              <button key={c} onClick={() => setClsFilter(c)} className={pill(clsFilter === c)}>{c} · {roster(c).length}</button>
+            ))}
+          </div>
+          {results.length === 0 ? (
+            <p className="py-8 text-sm text-muted">{query || clsFilter ? "Nobody matches. Try fewer letters." : "Pick a class, or search to find a learner."}</p>
+          ) : (
+            <>
+              <ul className="mt-4 flex flex-col gap-2">
+                {results.slice(0, 8).map((s) => (
+                  <li key={s.id}>
+                    <button
+                      onClick={() => setSelected(s)}
+                      className="flex w-full items-center justify-between gap-3 rounded-xl border border-ivory/10 bg-panel px-4 py-3 text-left transition-colors hover:border-ivory/30 hover:bg-panelHi"
+                    >
+                      <span className="truncate text-[13px] text-ivory">{s.name}</span>
+                      <span className="shrink-0 font-mono text-[11px] text-dim">{classLabel(s)}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              {results.length > 8 && (
+                <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">{results.length - 8} more — type to narrow</p>
+              )}
+            </>
+          )}
+        </section>
+      )}
+
+      {/* 2 · COUNT — the only large text on the page: the state of the day.
+          3 · ALERT — "needs attention", derived and capped: three items,
+          "N more below" when the queue runs longer; the crisis — three or
+          more unmarked past lessons — flags itself in the same block. */}
+      {!findOpen && tab === "today" && (
+        <div>
+          <h1 className="font-display text-4xl font-light tracking-tight">
+            {ordered.length === 0
+              ? isWeekendDay
+                ? "No lessons."
+                : "No lessons today."
+              : classRows.length > 0
+                ? `${doneCount} of ${classRows.length} done`
+                : `${ordered.length} untimed item${ordered.length === 1 ? "" : "s"}`}
+          </h1>
+          {isWeekendDay && (
+            <p className="mt-2 text-[13px] text-muted">
+              {dayName} · {todayEvents.length} record{todayEvents.length === 1 ? "" : "s"} on today&apos;s ledger.
             </p>
-            {upNext && upNext.time && nextInMin !== null && (
-              <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim">
-                Up next · <span className="text-amber">{upNext.time}</span>
-                {upNext.subject || upNext.className ? ` · ${[upNext.subject, upNext.className].filter(Boolean).join(" · ")}` : ""} — in {nextInMin} min
+          )}
+          {!isWeekendDay && ordered.length === 0 && (
+            <>
+              <p className="mt-2 max-w-[52ch] text-[13px] text-muted">
+                See the plan — approve the week in the Solver and today fills itself; or add one period in the Plan tab.
               </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Link href="/console/6" className={btn + " px-5 py-2.5"}>Open Timetable Solver</Link>
+                <button onClick={() => { setTab("plan"); setAdding(true); }} className={btnGhost + " px-4 py-2"}>
+                  + Add one period
+                </button>
+              </div>
+            </>
+          )}
+          {!isWeekendDay && ordered.length > 0 && phase === "before" && firstSlot && (
+            <p className="mt-2 text-[13px] text-muted">First lesson at {firstSlot.time}.</p>
+          )}
+          {!isWeekendDay && ordered.length > 0 && phase === "end" && (
+            <p className="mt-2 text-[13px] text-muted">Day closed · {todayEvents.length} record{todayEvents.length === 1 ? "" : "s"} today.</p>
+          )}
+        </div>
+      )}
+
+      {!findOpen && tab === "today" && owed.length > 0 && (
+        <div className="border-l-2 border-amber pl-[21px]">
+          <p className={`font-mono text-[11px] uppercase tracking-[0.15em] ${crisis ? "text-amber" : "text-dim"}`}>Needs attention</p>
+          {crisis && (
+            <p className="mt-2 text-[13px] text-muted">{unmarkedCount} lessons not marked.</p>
+          )}
+          <div className="mt-2 space-y-1">
+            {owed.slice(0, 3).map((o) => (
+              <button
+                key={o.key}
+                onClick={() => {
+                  openPanel(o.lesson, o.kind);
+                  jumpTo(o.lesson.id);
+                }}
+                className="block text-[13px] text-amber transition-colors hover:underline"
+              >
+                {o.label} — {o.kind === "att" ? "register" : "grades"} →
+              </button>
+            ))}
+            {owed.length > 3 && (
+              <button
+                onClick={() => jumpTo(pastRows[0].id)}
+                className="block font-mono text-[11px] uppercase tracking-[0.15em] text-dim transition-colors hover:text-amber"
+              >
+                {owed.length - 3} more below
+              </button>
             )}
           </div>
-
-          <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
-            <div className="min-w-0">
-              <h1 className="font-display text-4xl font-light tracking-tight">{hero.title}</h1>
-              <p className="mt-2 max-w-[52ch] text-[13px] text-muted">{hero.meta}</p>
-              {phase === "end" && dayNotes.length > 0 && (
-                <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.15em] text-dim">
-                  {dayNotes.length} day note{dayNotes.length === 1 ? "" : "s"} on the ledger
-                </p>
-              )}
-            </div>
-            <button onClick={hero.run} className={btn + " shrink-0"}>
-              {hero.cta}
-            </button>
-          </div>
-
-          {phase === "end" && (
-            <div className="mt-4 border-t border-ivory/10 pt-4">
-              <p className={monoLabel}>Close the day</p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                <input
-                  ref={dayNoteRef}
-                  value={dayNote}
-                  onChange={(e) => setDayNote(e.target.value)}
-                  placeholder="One line for the ledger — what was the day like?"
-                  className={field + " min-w-[240px] flex-1"}
-                />
-                <button onClick={() => void saveDayNote()} className={btnGhost + " px-3 py-2"}>
-                  Save day note
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       )}
 
-      {/* ARC — the day's shape: one segment per period. Tappable. */}
-      {tab === "today" && arc.length > 0 && (
-        <div>
-          <div className="flex gap-1.5">
-            {arc.map((a) => {
-              const st = a.done
-                ? "done"
-                : a.lesson.id === liveSlot?.id
-                ? "cur"
-                : hasTimes && a.lesson.time && timeToMs(a.lesson.time, nowMs) <= nowMs
-                ? "owed"
-                : "future";
-              return (
-                <button
-                  key={a.key}
-                  onClick={() => jumpTo(a.lesson.id)}
-                  aria-label={`${a.lesson.time || "Untimed"} — ${st === "done" ? "recorded" : st}`}
-                  title={a.lesson.time || "Untimed"}
-                  className={`h-[6px] min-w-4 flex-1 rounded-full transition-colors ${
-                    st === "done" ? "bg-ivory/60" : st === "cur" ? "animate-pulse bg-amber" : st === "owed" ? "bg-amber/50" : "bg-edge"
-                  }`}
-                />
-              );
-            })}
-          </div>
-          <div className="mt-2 flex items-center justify-between">
-            <span className={monoLabel}>
-              {doneCount} of {classRows.length} recorded
-            </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-dim">{online ? "Online" : "Offline"}</span>
-          </div>
-        </div>
-      )}
-
-      {/* SPINE — past folds into an owed band; now + next read full; the far
-          recedes. Three chips, same order, on every class row. */}
-      {tab === "today" && ordered.length > 0 && (
+      {/* 4 · TIMELINE — lessons in their sequence; the gold NOW marker
+          sits between the past and the future. Past rows dim; the day
+          never scrolls past itself. */}
+      {!findOpen && tab === "today" && ordered.length > 0 && (
         <ol className="m-0 max-w-3xl list-none">
-          {hasTimes && pastRows.length > 0 && !pastOpen && (
-            <li className="border-b border-ivory/10/60 py-[21px]">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className={monoLabel}>
-                  Before {timed[nowIndex]?.time ?? ""} · {pastRows.length} period{pastRows.length === 1 ? "" : "s"}
-                </p>
-                <button onClick={() => setPastOpen(true)} className={btnGhost + " px-3 py-1.5"}>
-                  Expand
-                </button>
-              </div>
-              {owed.length > 0 ? (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {owed.map((o) => (
-                    <button
-                      key={o.key}
-                      onClick={() => {
-                        setPastOpen(true);
-                        openPanel(o.lesson, o.kind);
-                        jumpTo(o.lesson.id);
-                      }}
-                      className="rounded-full border border-amber/50 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.12em] text-amber transition-colors hover:bg-amber/10"
-                    >
-                      {o.label} · {o.kind === "att" ? "register" : "grades"}
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <p className="mt-2 text-[13px] text-dim">All recorded.</p>
-              )}
-            </li>
-          )}
-          {hasTimes && pastOpen && pastRows.map((lesson) => timelineRow(lesson, true))}
-          {hasTimes && nowIndex > 0 && (
+          {pastRows.map((lesson) => timelineRow(lesson, true))}
+          {hasTimes && nowIndex > 0 && !dayOver && (
             <li aria-hidden="true" className="border-b border-ivory/10/40 pb-[21px]">
               <div className="relative flex items-center">
                 <span className="absolute inset-x-0 top-1/2 h-px bg-amber/40" />
@@ -907,16 +851,28 @@ export default function MyDay({
         </ol>
       )}
 
-      {/* FOOTER — the honest sync line, nothing more. */}
-      {tab === "today" && (
-        <div className="border-t border-ivory/10 pt-3">
-          <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim">
-            {online ? "Online" : "Offline"} · {todayEvents.length} record{todayEvents.length === 1 ? "" : "s"} today
+      {/* 5 · TOMORROW — one line; the teacher sees tomorrow without leaving
+          today. Suppressed when the week has nothing to say. */}
+      {!findOpen && tab === "today" && tomorrowLessons.length > 0 && (
+        <div className="border-y border-ivory/10 py-[21px]">
+          <p className={monoLabel}>Tomorrow</p>
+          <p className="mt-2 text-[13px] text-muted">
+            {tomorrowLessons.length} lesson{tomorrowLessons.length === 1 ? "" : "s"}. First: {tomorrowLessons[0].time} {tomorrowLessons[0].subject}.
           </p>
         </div>
       )}
 
-      {tab === "plan" && (
+      {/* 6 · SYNC — the honest network line; nothing more. */}
+      {!findOpen && tab === "today" && (
+        <div className="border-t border-ivory/10 pt-3">
+          <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim">
+            {online ? "Online" : "Offline"} · {todayEvents.length} record{todayEvents.length === 1 ? "" : "s"} today
+            {!online && " · awaiting connection"}
+          </p>
+        </div>
+      )}
+
+      {tab === "plan" && !findOpen && (
         <section className="space-y-5">
           <div className="rounded-[21px] border border-ivory/10 bg-panel p-[21px]">
             <p className={monoLabel}>Plan · approved week</p>
@@ -992,6 +948,30 @@ export default function MyDay({
                 </button>
               </div>
             )}
+
+            {plan.length > 0 && (
+              <div className="mt-5 border-t border-ivory/10 pt-4">
+                <p className={monoLabel}>Today&apos;s plan · {plan.length}</p>
+                <ol className="mt-3 m-0 list-none divide-y divide-edge/60 border-y border-ivory/10/40">
+                  {plan.map((l) => (
+                    <li key={l.id} className="flex items-center justify-between gap-3 py-2.5">
+                      <span className="min-w-0 truncate text-[13px] text-ivory">
+                        <span className="font-mono text-[12px] tabular-nums text-dim">{l.time || "untimed"}</span>
+                        {" · "}
+                        {[l.className, l.subject].filter(Boolean).join(" · ")}
+                      </span>
+                      <button
+                        onClick={() => removeLesson(l.id)}
+                        title="Remove from today"
+                        className="shrink-0 font-mono text-[11px] text-dim transition-colors hover:text-amber"
+                      >
+                        ✕
+                      </button>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
           </div>
 
           <div className="rounded-[21px] border border-ivory/10 bg-panel p-[21px]">
@@ -1000,47 +980,6 @@ export default function MyDay({
               <MiniCalendar items={schedules} onAdd={addSchedule} onRemove={removeSchedule} />
             </div>
           </div>
-        </section>
-      )}
-
-      {/* MY STUDENTS — clean finder: class pills + search, results compact & capped. */}
-      {tab === "students" && (
-        <section>
-          <div className="mb-[21px] flex flex-wrap items-center gap-2 border-b border-ivory/10 pb-3">
-            <button onClick={() => setClsFilter("")} className={pill(clsFilter === "")}>All · {data.students.length}</button>
-            {allClasses.map((c) => (
-              <button key={c} onClick={() => setClsFilter(c)} className={pill(clsFilter === c)}>{c} · {roster(c).length}</button>
-            ))}
-          </div>
-          <input
-            ref={searchRef}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Find a learner — name, adm no, or guardian phone…"
-            className={field}
-          />
-          {results.length === 0 ? (
-            <p className="py-8 text-sm text-muted">{query || clsFilter ? "Nobody matches. Try fewer letters." : "Pick a class, or search to find a learner."}</p>
-          ) : (
-            <>
-              <ul className="mt-4 flex flex-col gap-2">
-                {results.slice(0, 8).map((s) => (
-                  <li key={s.id}>
-                    <button
-                      onClick={() => setSelected(s)}
-                      className="flex w-full items-center justify-between gap-3 rounded-xl border border-ivory/10 bg-panel px-4 py-3 text-left transition-colors hover:border-ivory/30 hover:bg-panelHi"
-                    >
-                      <span className="truncate text-[13px] text-ivory">{s.name}</span>
-                      <span className="shrink-0 font-mono text-[11px] text-dim">{classLabel(s)}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              {results.length > 8 && (
-                <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">{results.length - 8} more — type to narrow</p>
-              )}
-            </>
-          )}
         </section>
       )}
 

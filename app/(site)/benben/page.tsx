@@ -33,11 +33,26 @@ import {
   submitClaim,
   withdrawClaim
 } from "../../../lib/board";
-import type { Risk } from "../../../lib/board";
+import type { LifeState, Risk } from "../../../lib/board";
 
 const field =
   "w-full border-b border-ivory/10 bg-transparent py-2.5 text-sm text-ivory outline-none transition focus:border-amber";
 const label = "block font-mono text-[11px] uppercase tracking-[0.25em] text-dim";
+
+// The board's lanes: the tabs speak the machine's own state vocabulary —
+// open (proposed/ratified), in hand (claimed/active), closed (the rest).
+type BoardTab = "all" | "open" | "hand" | "closed";
+const BOARD_TABS: { key: BoardTab; name: string }[] = [
+  { key: "all", name: "all" },
+  { key: "open", name: "open" },
+  { key: "hand", name: "in hand" },
+  { key: "closed", name: "closed" }
+];
+function tabBucket(s: LifeState): BoardTab {
+  if (s === "proposed" || s === "ratified") return "open";
+  if (s === "claimed" || s === "active") return "hand";
+  return "closed";
+}
 
 // The floor: a commons of builders for local projects, skills, and trusted work.
 // The feed is the ranking — vote-driven, local, useful.
@@ -67,6 +82,7 @@ export default function BenBenPage() {
   const [err, setErr] = useState("");
   const [voteErr, setVoteErr] = useState<string | null>(null);
   const [voteErrId, setVoteErrId] = useState<string | null>(null);
+  const [tab, setTab] = useState<BoardTab>("all");
   const desk = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -193,6 +209,15 @@ export default function BenBenPage() {
       }).length,
     [boardList, now]
   );
+  const boardTabs = useMemo(() => {
+    const counts: Record<BoardTab, number> = { all: boardList.length, open: 0, hand: 0, closed: 0 };
+    for (const b of boardList) counts[tabBucket(deriveState(b, now))]++;
+    return counts;
+  }, [boardList, now]);
+  const shownBoard = useMemo(
+    () => (tab === "all" ? boardList : boardList.filter((b) => tabBucket(deriveState(b, now)) === tab)),
+    [boardList, tab, now]
+  );
 
   if (!ready) {
     return <main className="min-h-[60vh] bg-obsidian text-ivory" />;
@@ -262,25 +287,48 @@ export default function BenBenPage() {
               <span className="text-amber">Propose · Ratify · Claim · Prove</span>
               <span className="text-dim">state is derived — the floor decides</span>
             </div>
+            <div role="tablist" aria-label="Board state" className="mt-5 flex flex-wrap items-center gap-2">
+              {BOARD_TABS.map((t) => (
+                <button
+                  key={t.key}
+                  role="tab"
+                  aria-selected={tab === t.key}
+                  onClick={() => setTab(t.key)}
+                  className={`rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] transition ${
+                    tab === t.key
+                      ? "bg-amber/10 text-amber ring-1 ring-inset ring-amber/30"
+                      : "text-dim hover:text-ivory"
+                  }`}
+                >
+                  {t.name} <span className="tabular-nums opacity-60">{boardTabs[t.key]}</span>
+                </button>
+              ))}
+            </div>
           </div>
-          {boardList.map((b) => (
-            <BoardCard
-              key={b.id}
-              b={b}
-              now={now}
-              me={me}
-              tier={tier}
-              all={builds}
-              onVote={vote}
-              onFork={fork}
-              onClaim={onClaim}
-              onAccept={onAccept}
-              onWithdraw={onWithdraw}
-              onProgress={onProgress}
-              onAttest={onAttest}
-              onPark={onPark}
-            />
-          ))}
+          {shownBoard.length === 0 ? (
+            <p className="mt-8 font-mono text-[12px] uppercase tracking-[0.2em] text-dim">
+              Nothing in this lane — the floor decides
+            </p>
+          ) : (
+            shownBoard.map((b) => (
+              <BoardCard
+                key={b.id}
+                b={b}
+                now={now}
+                me={me}
+                tier={tier}
+                all={builds}
+                onVote={vote}
+                onFork={fork}
+                onClaim={onClaim}
+                onAccept={onAccept}
+                onWithdraw={onWithdraw}
+                onProgress={onProgress}
+                onAttest={onAttest}
+                onPark={onPark}
+              />
+            ))
+          )}
         </section>
 
         {/* the desk */}
