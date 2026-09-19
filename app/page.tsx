@@ -1,58 +1,47 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import GeoArt from "../components/GeoArt";
 
 export const metadata: Metadata = {
   title: "APT-LABS · Kirinyaga, Kenya",
-  description:
-    "A public record of work, skill, and trust in Kirinyaga, Kenya."
+  description: "A public record of work, skill, and trust in Kirinyaga, Kenya."
 };
 
 export default function HomePage() {
   return (
-    <main className="theme-portal relative overflow-hidden bg-[#101614]">
-      <GeoArt
-        variant="cells"
-        className="pointer-events-none absolute inset-0 z-0 h-full w-full opacity-[0.14] text-moss"
-        aria-hidden="true"
-      />
-
-      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-2rem)] max-w-5xl flex-col items-center justify-center px-6 pb-12 pt-12 text-center">
-        <div className="mb-6 inline-flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.28em] text-dim">
-          <span className="h-px w-8 bg-ivory/15" />
-          Kirinyaga, Kenya
-          <span className="h-px w-8 bg-ivory/15" />
+    <main className="site-page">
+      <section className="site-frame grid min-h-[calc(100svh-64px)] content-center gap-16 py-16 md:grid-cols-[1.15fr_0.85fr] md:gap-20 md:py-24">
+        <div>
+          <p className="site-kicker">Kirinyaga, Kenya · public record</p>
+          <h1 className="mt-6 max-w-[10ch] font-display text-5xl leading-[1.02] tracking-tight text-ivory sm:text-6xl">
+            The ledger of useful work.
+          </h1>
+          <p className="mt-6 max-w-[44ch] text-base leading-7 text-muted">
+            A living record of people, skills, and commitments. Open to the people who make the place work.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href="/ledger" className="site-action">Open the ledger</Link>
+            <Link href="/benben" className="site-action-secondary">Enter the floor</Link>
+          </div>
         </div>
 
-        <h1 className="font-display text-4xl tracking-[-0.05em] text-ivory md:text-6xl">
-          The ledger
-        </h1>
-
-        <p className="mt-4 max-w-[42ch] text-[15px] leading-relaxed text-[#b4bcb4]">
-          A public record of work, skill, and trust, rooted in Kirinyaga and open to the people who make it.
-        </p>
-
-        <div className="mt-7 flex flex-wrap justify-center gap-3">
-          <Link
-            href="/ledger"
-            className="min-h-11 rounded-full border border-copper/60 bg-copper px-6 py-3 text-sm font-semibold text-[#101614] transition-colors hover:bg-copper/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-[#101614] active:bg-copper/80"
-          >
-            Open the ledger
-          </Link>
-          <Link
-            href="/benben"
-            className="min-h-11 rounded-full border border-ivory/15 px-6 py-3 text-sm font-semibold text-ivory transition-colors hover:border-copper/70 hover:text-copper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-[#101614] active:border-copper active:text-copper"
-          >
-            Open the floor
-          </Link>
-          <Link
-            href="/console"
-            className="min-h-11 rounded-full border border-ivory/15 px-6 py-3 text-sm font-semibold text-ivory transition-colors hover:border-copper/70 hover:text-copper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-[#101614] active:border-copper active:text-copper"
-          >
-            Teachers
-          </Link>
+        <div className="self-end border-t border-ivory/15 pt-5 md:self-center">
+          <p className="site-kicker">Three working surfaces</p>
+          <ol className="mt-5 divide-y divide-ivory/10 border-y border-ivory/10">
+            <li className="grid grid-cols-[32px_1fr] gap-4 py-4">
+              <span className="font-mono text-xs text-dim">01</span>
+              <div><h2 className="font-display text-xl text-ivory">The roll</h2><p className="mt-1 text-sm leading-6 text-muted">Names, proof, and the shared record.</p></div>
+            </li>
+            <li className="grid grid-cols-[32px_1fr] gap-4 py-4">
+              <span className="font-mono text-xs text-dim">02</span>
+              <div><h2 className="font-display text-xl text-ivory">The floor</h2><p className="mt-1 text-sm leading-6 text-muted">Projects move from proposal to proof.</p></div>
+            </li>
+            <li className="grid grid-cols-[32px_1fr] gap-4 py-4">
+              <span className="font-mono text-xs text-dim">03</span>
+              <div><h2 className="font-display text-xl text-ivory">The console</h2><p className="mt-1 text-sm leading-6 text-muted">Schools turn daily work into signals.</p></div>
+            </li>
+          </ol>
         </div>
-      </div>
+      </section>
     </main>
   );
 }

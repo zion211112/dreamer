@@ -30,6 +30,10 @@ html {
   --teal-rgb: 45, 212, 191;
   --amber: #d4af37;
   --amber-rgb: 212, 175, 55;
+  --site-action: #2dd4bf;
+  --site-action-strong: #5eead4;
+  --site-surface: #0e0e10;
+  --site-rule: rgba(245, 240, 230, 0.12);
 }
 
 body {
@@ -73,6 +77,94 @@ textarea {
 .site-nav__toggle:hover {
   border-color: var(--teal);
   color: var(--teal);
+}
+.site-frame {
+  width: min(100% - 32px, 960px);
+  margin-inline: auto;
+}
+.site-page {
+  min-height: calc(100svh - 64px);
+  background: var(--obsidian);
+}
+.site-kicker {
+  color: var(--site-action);
+  font-family: var(--font-jetbrains);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+.site-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--site-rule);
+  padding-bottom: 12px;
+}
+.site-section-head > :first-child {
+  color: var(--site-action);
+  font-family: var(--font-jetbrains);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+.site-section-head > :last-child {
+  color: var(--dim);
+  font-family: var(--font-jetbrains);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+.site-action {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--site-action);
+  background: var(--site-action);
+  color: var(--obsidian);
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+.site-action:hover {
+  border-color: var(--site-action-strong);
+  background: var(--site-action-strong);
+}
+.site-action-secondary {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--site-rule);
+  color: var(--ivory);
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: border-color 150ms ease, color 150ms ease;
+}
+.site-action-secondary:hover {
+  border-color: var(--site-action);
+  color: var(--site-action-strong);
+}
+.site-surface {
+  border: 1px solid var(--site-rule);
+  background: var(--site-surface);
+}
+.site-field {
+  min-height: 44px;
+  width: 100%;
+  border: 1px solid var(--site-rule);
+  background: var(--void);
+  color: var(--ivory);
+  padding: 10px 12px;
+  outline: none;
+}
+.site-field::placeholder { color: var(--dim); }
+.site-field:focus-visible { border-color: var(--site-action); }
+@media (min-width: 640px) {
+  .site-frame { width: min(100% - 48px, 960px); }
 }
 
 @media (prefers-reduced-motion: reduce) {

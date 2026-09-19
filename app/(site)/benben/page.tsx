@@ -224,15 +224,15 @@ export default function BenBenPage() {
   }
 
   return (
-    <main className="bg-obsidian text-ivory">
-      <div className="relative mx-auto max-w-[960px] overflow-hidden px-4 py-12 sm:px-6 md:py-20">
+    <main className="site-page bg-obsidian text-ivory">
+      <div className="site-frame relative max-w-[960px] overflow-hidden py-12 md:py-20">
         <GeoArt
           variant="ring"
           className="pointer-events-none absolute -top-16 right-[-80px] h-[300px] w-[300px] text-teal opacity-[0.06]"
         />
 
         {/* masthead */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ivory/10 pb-4">
+        <div className="site-section-head flex-wrap">
           <div className="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.3em] text-dim">
             <span
               aria-hidden
@@ -342,7 +342,7 @@ export default function BenBenPage() {
         {/* the desk */}
         <div ref={desk} id="desk" className="mt-12 scroll-mt-24">
           {open && (
-            <form onSubmit={submit} className="border border-ivory/10 bg-panel/60 p-6 md:p-8">
+            <form onSubmit={submit} className="site-surface p-5 sm:p-6 md:p-8">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-amber">
                   {forkOf ? `Forking · ${forkOf.id}` : "New build"}

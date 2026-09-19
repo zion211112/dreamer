@@ -168,20 +168,20 @@ export default function Ledger() {
   }
 
   return (
-    <main className="bg-obsidian text-ivory">
-      <div className="relative mx-auto max-w-[760px] overflow-hidden px-6 py-16 md:py-24">
+    <main className="site-page bg-obsidian text-ivory">
+      <div className="site-frame relative max-w-[880px] overflow-hidden py-12 sm:py-16 md:py-24">
         <GeoArt
           variant="ring"
           className="pointer-events-none absolute -top-20 right-[-90px] h-[300px] w-[300px] text-ivory opacity-[0.05]"
         />
 
         {/* masthead */}
-        <div className="flex items-baseline justify-between border-b border-ivory/10 pb-4 font-mono text-[11px] uppercase tracking-[0.3em] text-dim">
+        <div className="site-section-head">
           <span>Apt-Labs · The Roll · v{ledgerVersion(all.length)}</span>
           <span className="tabular-nums">{all.length} names · sealed</span>
         </div>
 
-        <h1 className="mt-12 font-display text-5xl md:text-6xl tracking-tight">The roll.</h1>
+        <h1 className="mt-10 max-w-[10ch] font-display text-5xl leading-[1.04] tracking-tight sm:text-6xl">The roll.</h1>
         <p className="mt-5 max-w-[52ch] text-[0.95rem] leading-7 text-muted">
           Every producer on the floor. Students, individuals, crews, chamas, schools,
           institutions. Names private. Proof public.
@@ -236,8 +236,8 @@ export default function Ledger() {
         </section>
 
         {/* entry desk */}
-        <section className="mt-12 border border-ivory/10 bg-panel/60 p-6 md:p-8">
-          <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-amber">Entry desk</p>
+        <section className="site-surface mt-12 p-5 sm:p-6 md:p-8">
+          <p className="site-kicker">Entry desk</p>
           {mine ? (
             <div className="mt-5">
               <div className="font-display text-2xl md:text-3xl">@{mine.username}</div>
@@ -268,7 +268,7 @@ export default function Ledger() {
                 maxLength={40}
                 className={field}
               />
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <select
                   value={regOcc}
                   onChange={(e) => setRegOcc(e.target.value)}
@@ -295,7 +295,7 @@ export default function Ledger() {
                 maxLength={40}
                 className={field}
               />
-              <button className="mt-2 w-fit rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-obsidian transition hover:bg-amber">
+              <button className="site-action mt-2 w-fit">
                 Claim slot →
               </button>
             </form>
@@ -392,18 +392,18 @@ export default function Ledger() {
             <span className="text-amber">Verify a credential</span>
             <span className="text-dim">one at a time</span>
           </div>
-          <form onSubmit={verifyToken} className="mt-5 flex border border-ivory/15 transition focus-within:border-amber">
+          <form onSubmit={verifyToken} className="site-surface mt-5 flex flex-col transition focus-within:border-teal sm:flex-row">
             <input
               value={token}
               onChange={(e) => { setToken(e.target.value); setVerdict(""); }}
               placeholder="paste the token from the credential"
               spellCheck={false}
               autoComplete="off"
-              className="min-w-0 flex-1 bg-transparent px-5 py-4 font-mono text-[13px] tracking-[0.02em] text-ivory outline-none placeholder:text-dim/70"
+              className="site-field min-w-0 flex-1 border-0 font-mono text-[13px] tracking-[0.02em]"
             />
             <button
               type="submit"
-              className="shrink-0 border-l border-ivory/15 px-7 font-mono text-[11px] uppercase tracking-[0.2em] text-amber transition hover:bg-amber hover:text-obsidian"
+              className="site-action min-h-11 shrink-0 border-0 sm:border-l sm:border-ivory/15"
             >
               Verify
             </button>

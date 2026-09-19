@@ -1,48 +1,36 @@
 "use client";
 
 import { useState } from "react";
-import GeoArt from "../../../components/GeoArt";
 
-// The index. A beautiful bar that searches nothing —
-// the archive answers in its own time.
+type SearchState = "idle" | "empty" | "submitted";
+
 export default function Search() {
-  const [q, setQ] = useState("");
-  const [asked, setAsked] = useState(false);
+  const [query, setQuery] = useState("");
+  const [state, setState] = useState<SearchState>("idle");
 
-  function ask(e: React.FormEvent) {
-    e.preventDefault();
-    if (!q.trim()) return;
-    setAsked(true);
+  function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setState(query.trim() ? "submitted" : "empty");
   }
 
   return (
-    <main className="bg-obsidian text-ivory">
-      <div className="relative overflow-hidden">
-        <GeoArt variant="ring" className="spin-slow pointer-events-none absolute left-1/2 top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 text-ivory opacity-[0.05]" />
-        <div className="relative mx-auto flex min-h-[70vh] max-w-2xl flex-col items-center justify-center px-6 py-20 text-center">
-          <p className="font-mono text-xs tracking-[0.35em] text-muted">THE INDEX</p>
-          <form onSubmit={ask} className="mt-8 w-full">
-            <div className="flex items-center gap-3 rounded-full border border-ivory/20 bg-panel/80 py-2 pl-7 pr-2 backdrop-blur transition focus-within:border-amber">
-              <span className="text-xl text-muted" aria-hidden>⌕</span>
-              <input
-                value={q}
-                onChange={(e) => { setQ(e.target.value); setAsked(false); }}
-                placeholder="Ask the list anything…"
-                maxLength={80}
-                className="w-full bg-transparent py-3 font-display text-xl italic text-ivory outline-none placeholder:text-dim"
-                aria-label="Search the index"
-              />
-              <button className="shrink-0 rounded-full bg-ivory px-7 py-3 text-sm font-semibold text-obsidian hover:bg-amber transition">
-                Ask →
-              </button>
-            </div>
+    <main className="site-page py-12 sm:py-20">
+      <div className="site-frame max-w-[760px]">
+        <div className="site-section-head"><span>The index</span><span>search · public records</span></div>
+        <div className="py-12 sm:py-20">
+          <h1 className="max-w-[12ch] font-display text-5xl leading-[1.04] tracking-tight text-ivory sm:text-6xl">Find the work.</h1>
+          <p className="mt-5 max-w-[44ch] text-base leading-7 text-muted">Search names, skills, projects, and places in the public record.</p>
+          <form onSubmit={submit} className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <label htmlFor="index-query" className="sr-only">Search the public record</label>
+            <input id="index-query" value={query} onChange={(event) => { setQuery(event.target.value); setState("idle"); }} className="site-field min-h-12 flex-1" placeholder="Try a skill, name, or place" maxLength={80} />
+            <button type="submit" className="site-action min-h-12">Search</button>
           </form>
-          <div className="mt-6 h-6">
-            {asked && (
-              <p className="font-mono text-sm text-muted">“{q.trim().slice(0, 60)}” — noted. The index is still being written.</p>
-            )}
+          <div className="mt-6 min-h-16" aria-live="polite">
+            {state === "empty" && <p role="alert" className="border-l-2 border-amber px-4 py-2 font-mono text-xs leading-6 text-amber">Enter a search term first.</p>}
+            {state === "submitted" && <p className="border-l-2 border-teal px-4 py-2 font-mono text-xs leading-6 text-teal">No live index is connected yet. Your query was recorded locally: “{query.trim().slice(0, 60)}”.</p>}
           </div>
         </div>
+        <div className="border-t border-ivory/10 pt-5 text-sm leading-6 text-dim">The index returns public proof only. Private identity data is never exposed.</div>
       </div>
     </main>
   );
