@@ -11,7 +11,7 @@ import {
   shortHash
 } from "../../../lib/ledger";
 
-const row = "grid grid-cols-[11rem_1fr] items-baseline gap-4 border-b border-white/10 py-4";
+const row = "grid grid-cols-[11rem_1fr] items-baseline gap-4 border-b border-ivory/10 py-4";
 const k = "font-mono text-[11px] uppercase tracking-[0.2em] text-dim";
 
 // Your standing on the floor. Black page, white text, no verification tiers,
@@ -45,7 +45,7 @@ export default function Dashboard() {
         />
 
         {/* masthead */}
-        <div className="flex items-baseline justify-between border-b border-white/10 pb-4 font-mono text-[11px] uppercase tracking-[0.3em] text-dim">
+        <div className="flex items-baseline justify-between border-b border-ivory/10 pb-4 font-mono text-[11px] uppercase tracking-[0.3em] text-dim">
           <span>My Profile</span>
           {me && <span className="text-dim">{me.occupation}</span>}
         </div>
@@ -62,13 +62,13 @@ export default function Dashboard() {
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/ledger"
-                className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold"
+                className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-obsidian transition hover:bg-amber"
               >
                 Claim your slot →
               </Link>
               <Link
                 href="/benben"
-                className="rounded-full border border-white/15 px-6 py-3 text-sm font-semibold transition hover:border-gold"
+                className="rounded-full border border-ivory/15 px-6 py-3 text-sm font-semibold transition hover:border-amber"
               >
                 Open BenBen
               </Link>
@@ -82,7 +82,7 @@ export default function Dashboard() {
             <p className="mt-3 font-display text-xl italic text-ivory/75">{me.name}</p>
 
             <div className="mt-10">
-              <p className="border-b border-white/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em] text-gold">
+              <p className="border-b border-ivory/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em] text-amber">
                 Identity · {me.id}
               </p>
               <div className={row}>
@@ -103,7 +103,7 @@ export default function Dashboard() {
                   {me.skills.map((s) => (
                     <span
                       key={s}
-                      className="border border-white/10 bg-panel px-2.5 py-1 font-mono text-[11px] text-cream"
+                      className="border border-ivory/10 bg-panel px-2.5 py-1 font-mono text-[11px] text-ivory"
                     >
                       {s}
                     </span>
@@ -115,19 +115,19 @@ export default function Dashboard() {
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <Link
                 href="/ledger"
-                className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold transition hover:border-gold"
+                className="rounded-full border border-ivory/15 px-5 py-2.5 text-sm font-semibold transition hover:border-amber"
               >
                 The roll
               </Link>
               <Link
                 href="/search"
-                className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold transition hover:border-gold"
+                className="rounded-full border border-ivory/15 px-5 py-2.5 text-sm font-semibold transition hover:border-amber"
               >
                 Search
               </Link>
               <Link
                 href="/benben"
-                className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold transition hover:border-gold"
+                className="rounded-full border border-ivory/15 px-5 py-2.5 text-sm font-semibold transition hover:border-amber"
               >
                 BenBen
               </Link>

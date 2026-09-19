@@ -19,10 +19,10 @@ export default function NotFound() {
             The roll has no entry for that address. It will, when someone claims it.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
-            <Link href="/" className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold">
+            <Link href="/" className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-obsidian transition hover:bg-amber">
               Back to the porch →
             </Link>
-            <Link href="/ledger" className="rounded-full border border-white/15 px-6 py-3 text-sm font-semibold transition hover:border-gold">
+            <Link href="/ledger" className="rounded-full border border-ivory/15 px-6 py-3 text-sm font-semibold transition hover:border-amber">
               Open the roll
             </Link>
           </div>

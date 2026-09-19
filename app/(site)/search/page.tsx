@@ -22,7 +22,7 @@ export default function Search() {
         <div className="relative mx-auto flex min-h-[70vh] max-w-2xl flex-col items-center justify-center px-6 py-20 text-center">
           <p className="font-mono text-xs tracking-[0.35em] text-muted">THE INDEX</p>
           <form onSubmit={ask} className="mt-8 w-full">
-            <div className="flex items-center gap-3 rounded-full border border-white/20 bg-panel/80 py-2 pl-7 pr-2 backdrop-blur transition focus-within:border-gold">
+            <div className="flex items-center gap-3 rounded-full border border-ivory/20 bg-panel/80 py-2 pl-7 pr-2 backdrop-blur transition focus-within:border-amber">
               <span className="text-xl text-muted" aria-hidden>⌕</span>
               <input
                 value={q}
@@ -32,7 +32,7 @@ export default function Search() {
                 className="w-full bg-transparent py-3 font-display text-xl italic text-ivory outline-none placeholder:text-dim"
                 aria-label="Search the index"
               />
-              <button className="shrink-0 rounded-full bg-ivory px-7 py-3 text-sm font-semibold text-black hover:bg-gold transition">
+              <button className="shrink-0 rounded-full bg-ivory px-7 py-3 text-sm font-semibold text-obsidian hover:bg-amber transition">
                 Ask →
               </button>
             </div>

@@ -13,9 +13,9 @@ import { useSchoolData } from "./useSchoolData";
 import { Gate, HeadRow, Loading, monoLabel, panel, PrintButton } from "./bits";
 
 const SEV_CHIP: Record<Sev, string> = {
-  pass: "border-emerald-400/25 bg-emerald-400/15 text-emerald-300",
-  watch: "border-amber-400/25 bg-amber-400/15 text-amber-300",
-  fail: "border-red-400/25 bg-red-400/15 text-red-400"
+  pass: "border-teal/25 bg-teal/10 text-teal",
+  watch: "border-amber/25 bg-amber/10 text-amber",
+  fail: "border-amber/40 bg-amber/15 text-amber"
 };
 const SEV_WORD: Record<Sev, string> = { pass: "Clear", watch: "Watch", fail: "Open" };
 
@@ -91,18 +91,18 @@ export default function Inspection() {
 
       {/* The findings: the auditor's walk-through, in the order an inspector opens things. */}
       <div className={panel + " p-0 mb-[21px]"}>
-        <div className="border-b border-white/10 px-4 py-3 md:px-5">
+        <div className="border-b border-ivory/10 px-4 py-3 md:px-5">
           <span className={monoLabel}>Findings</span>
         </div>
         <ul>
           {checks.map((c: Finding) => (
-            <li key={c.id} className="flex flex-wrap items-start gap-3 border-b border-white/10/50 px-4 py-3 last:border-0 md:px-5">
+            <li key={c.id} className="flex flex-wrap items-start gap-3 border-b border-ivory/10/50 px-4 py-3 last:border-0 md:px-5">
               <SevChip sev={c.sev} />
               <div className="min-w-[200px] flex-1">
                 <p className="text-[13px] text-ivory">{c.title}</p>
                 <p className="mt-0.5 text-[12px] leading-5 text-muted">{c.detail}</p>
                 {c.fix && (
-                  <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.12em] text-gold">Fix · {c.fix}</p>
+                  <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.12em] text-amber">Fix · {c.fix}</p>
                 )}
               </div>
             </li>
@@ -124,7 +124,7 @@ export default function Inspection() {
         </div>
       </div>
       {/* The dossier itself: white A4, the only thing that reaches paper. */}
-      <div className="print-sheet mt-6 rounded-[21px] bg-white p-6 text-black">
+      <div className="print-sheet bg-white p-6 text-obsidian">
         <p className="font-mono text-[10px] uppercase tracking-[0.3em]">APT-LABS · {data.school || "School"}</p>
         <h3 className="mt-2 font-display text-2xl">INSPECTION DOSSIER</h3>
         <p className="mt-1 text-[13px]">
@@ -132,12 +132,12 @@ export default function Inspection() {
           {score}/100
         </p>
 
-        <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.15em] text-neutral-500">The roll</p>
+        <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.15em] text-obsidian/70">The roll</p>
         <table className="mt-1 w-full border-collapse text-[13px]">
           <thead>
             <tr>
               {["Class", "Students", "Boys", "Girls"].map((h) => (
-                <th key={h} className="border-b border-neutral-300 px-2 py-1.5 text-left font-mono text-[10px] uppercase tracking-[0.15em]">
+                <th key={h} className="border-b border-ivory/30 px-2 py-1.5 text-left font-mono text-[10px] uppercase tracking-[0.15em]">
                   {h}
                 </th>
               ))}
@@ -146,32 +146,32 @@ export default function Inspection() {
           <tbody>
             {roll.map((r) => (
               <tr key={r.cls}>
-                <td className="border-b border-neutral-200 px-2 py-1.5">{r.cls}</td>
-                <td className="border-b border-neutral-200 px-2 py-1.5 font-mono text-[12px]">{r.total}</td>
-                <td className="border-b border-neutral-200 px-2 py-1.5 font-mono text-[12px]">{r.boys}</td>
-                <td className="border-b border-neutral-200 px-2 py-1.5 font-mono text-[12px]">{r.girls}</td>
+                <td className="border-b border-ivory/50 px-2 py-1.5">{r.cls}</td>
+                <td className="border-b border-ivory/50 px-2 py-1.5 font-mono text-[12px]">{r.total}</td>
+                <td className="border-b border-ivory/50 px-2 py-1.5 font-mono text-[12px]">{r.boys}</td>
+                <td className="border-b border-ivory/50 px-2 py-1.5 font-mono text-[12px]">{r.girls}</td>
               </tr>
             ))}
           </tbody>
         </table>
 
-        <p className="mt-5 font-mono text-[10px] uppercase tracking-[0.15em] text-neutral-500">
+        <p className="mt-5 font-mono text-[10px] uppercase tracking-[0.15em] text-obsidian/70">
           Findings · {counts.pass} clear · {counts.watch} watch · {counts.fail} open
         </p>
         <ul className="mt-2 space-y-2">
           {checks.map((c) => (
             <li key={c.id} className="text-[13px] leading-5">
-              <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-neutral-500">[{SEV_WORD[c.sev]}]</span>{" "}
+              <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-obsidian/70">[{SEV_WORD[c.sev]}]</span>{" "}
               <strong>{c.title}</strong> — {c.detail}
-              {c.fix && <span className="text-neutral-600"> Fix: {c.fix}</span>}
+              {c.fix && <span className="text-obsidian/50"> Fix: {c.fix}</span>}
             </li>
           ))}
         </ul>
 
         <div className="mt-10 flex gap-10">
-          <p className="w-44 border-t border-neutral-400 pt-1 text-[11px]">Head teacher</p>
-          <p className="w-44 border-t border-neutral-400 pt-1 text-[11px]">Inspector</p>
-          <p className="w-28 border-t border-neutral-400 pt-1 text-[11px]">Date</p>
+          <p className="w-44 border-t border-ivory/30 pt-1 text-[11px] text-obsidian/60">Head teacher</p>
+          <p className="w-44 border-t border-ivory/30 pt-1 text-[11px] text-obsidian/60">Inspector</p>
+          <p className="w-28 border-t border-ivory/30 pt-1 text-[11px] text-obsidian/60">Date</p>
         </div>
       </div>
     </>

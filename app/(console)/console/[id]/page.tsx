@@ -51,9 +51,9 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
 
   return (
     <main className="flex min-h-dvh flex-col bg-void font-body text-ivory print:bg-white print:text-black">
-      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-white/8 px-[21px] print:hidden">
+      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ivory/8 px-[21px] print:hidden">
         <div className="flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="#d4af37" aria-hidden="true">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <polygon points="12 2 22 12 12 22 2 12" />
           </svg>
           <span>APT-LABS · Console</span>
@@ -64,10 +64,10 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
       </header>
 
       {/* The week, in order — a numbered stepper instead of a wall of chips. */}
-      <nav aria-label="Console workspaces" className="flex flex-wrap items-center gap-x-4 gap-y-3 border-b border-white/8 bg-panel px-5 py-4 print:hidden">
+      <nav aria-label="Console workspaces" className="flex flex-wrap items-center gap-x-4 gap-y-3 border-b border-ivory/8 bg-panel px-5 py-4 print:hidden">
         <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-dim">The week, in order</span>
         {!STEPS.some(([s]) => s === tool.id) && (
-          <span className="rounded-full bg-amber-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-amber-300/90 ring-1 ring-inset ring-amber-400/25">
+          <span className="rounded-full bg-amber/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-amber/90 ring-1 ring-inset ring-amber/25">
             Off the week path
           </span>
         )}
@@ -81,8 +81,8 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
               <span
                 className={`grid h-7 w-7 place-items-center rounded-full border font-mono text-[11px] transition-colors ${
                   tool.id === id
-                    ? "border-gold/60 bg-gold/10 text-gold"
-                    : "border-white/10 bg-white/5 text-muted group-hover:border-white/30 group-hover:text-ivory"
+                    ? "border-amber/60 bg-amber/10 text-amber"
+                    : "border-ivory/10 bg-ivory/5 text-muted group-hover:border-ivory/30 group-hover:text-ivory"
                 }`}
               >
                 {String(i + 1).padStart(2, "0")}
@@ -91,7 +91,7 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
                 {label}
               </span>
             </Link>
-            {i < STEPS.length - 1 && <span aria-hidden="true" className="h-px w-6 bg-white/15" />}
+            {i < STEPS.length - 1 && <span aria-hidden="true" className="h-px w-6 bg-ivory/15" />}
           </Fragment>
         ))}
       </nav>
@@ -99,7 +99,7 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
           <div className="mb-8 flex flex-wrap items-start gap-4 print:hidden">
             <ModuleTile module={tool.module} tint={menu?.tint} size={52} />
             <div>
-              <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-gold">
+              <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-amber">
                 Console / {tool.module} / {tool.id.padStart(2, "0")}
               </p>
               <h1 className="font-display text-4xl font-light tracking-tight md:text-5xl">{tool.title}</h1>
@@ -112,7 +112,7 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
           <div className="mt-14 print:hidden">
             <Link
               href="/console"
-              className="inline-block rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-ivory transition hover:border-white/35"
+              className="inline-block rounded-full border border-ivory/15 px-6 py-3 text-sm font-semibold text-ivory transition hover:border-ivory/35"
             >
               ← Back to the console
             </Link>

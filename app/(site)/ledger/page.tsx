@@ -69,7 +69,7 @@ export default function Ledger() {
   }, [members]);
 
   const mine = me ? all.find((m) => m.username.toLowerCase() === me.toLowerCase()) || null : null;
-  const field = "w-full border-b border-white/15 bg-transparent px-1 py-2.5 text-sm text-ivory outline-none transition focus:border-gold";
+  const field = "w-full border-b border-ivory/15 bg-transparent px-1 py-2.5 text-sm text-ivory outline-none transition focus:border-amber";
 
   function startDraft(e: React.FormEvent) {
     e.preventDefault();
@@ -104,7 +104,7 @@ export default function Ledger() {
         />
 
         {/* masthead */}
-        <div className="flex items-baseline justify-between border-b border-white/10 pb-4 font-mono text-[11px] uppercase tracking-[0.3em] text-dim">
+        <div className="flex items-baseline justify-between border-b border-ivory/10 pb-4 font-mono text-[11px] uppercase tracking-[0.3em] text-dim">
           <span>Apt-Labs · The Roll · v{ledgerVersion(all.length)}</span>
           <span className="tabular-nums">{all.length} names · sealed</span>
         </div>
@@ -116,8 +116,8 @@ export default function Ledger() {
         </p>
 
         {/* entry desk */}
-        <section className="mt-12 border border-white/10 bg-panel/60 p-6 md:p-8">
-          <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-gold">Entry desk</p>
+        <section className="mt-12 border border-ivory/10 bg-panel/60 p-6 md:p-8">
+          <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-amber">Entry desk</p>
           {mine ? (
             <div className="mt-5">
               <div className="font-display text-2xl md:text-3xl">@{mine.username}</div>
@@ -127,13 +127,13 @@ export default function Ledger() {
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link
                   href="/dashboard"
-                  className="rounded-full bg-ivory px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-gold"
+                  className="rounded-full bg-ivory px-5 py-2.5 text-sm font-semibold text-obsidian transition hover:bg-amber"
                 >
                   My profile →
                 </Link>
                 <Link
                   href="/benben"
-                  className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold transition hover:border-gold"
+                  className="rounded-full border border-ivory/15 px-5 py-2.5 text-sm font-semibold transition hover:border-amber"
                 >
                   Open BenBen
                 </Link>
@@ -175,23 +175,23 @@ export default function Ledger() {
                 maxLength={40}
                 className={field}
               />
-              <button className="mt-2 w-fit rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold">
+              <button className="mt-2 w-fit rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-obsidian transition hover:bg-amber">
                 Claim slot →
               </button>
             </form>
           )}
-          {notice && <p className="mt-4 font-mono text-xs text-emerald-300">{notice}</p>}
+          {notice && <p className="mt-4 font-mono text-xs text-teal">{notice}</p>}
         </section>
 
         {/* the roll */}
         <section className="mt-14">
-          <div className="flex items-baseline justify-between border-b border-white/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em]">
-            <span className="text-gold">The roll · first name to last</span>
+          <div className="flex items-baseline justify-between border-b border-ivory/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em]">
+            <span className="text-amber">The roll · first name to last</span>
             <span className="text-dim">{all.length} entries</span>
           </div>
           <ol>
             {all.map((m, i) => (
-              <li key={m.id} className="grid grid-cols-[2.5rem_1fr_auto] items-baseline gap-4 border-b border-white/10 py-5">
+              <li key={m.id} className="grid grid-cols-[2.5rem_1fr_auto] items-baseline gap-4 border-b border-ivory/10 py-5">
                 <span className="font-mono text-[11px] text-dim tabular-nums">
                   {String(i + 1).padStart(2, "0")}
                 </span>
@@ -210,11 +210,11 @@ export default function Ledger() {
 
         {/* under one roof */}
         <section className="mt-14">
-          <p className="border-b border-white/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em] text-gold">
+          <p className="border-b border-ivory/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em] text-amber">
             Under one roof · pilot
           </p>
           <dl>
-            <div className="grid grid-cols-[1fr_auto] items-baseline gap-4 border-b border-white/10 py-4">
+            <div className="grid grid-cols-[1fr_auto] items-baseline gap-4 border-b border-ivory/10 py-4">
               <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
                 Pilot schools · {rough(SCHOOL_STATS.reduce((n, s) => n + s.students, 0))} students
               </dt>
@@ -222,7 +222,7 @@ export default function Ledger() {
                 {SUBSCRIBED_SCHOOLS.join(" · ")}
               </dd>
             </div>
-            <div className="grid grid-cols-[1fr_auto] items-baseline gap-4 border-b border-white/10 py-4">
+            <div className="grid grid-cols-[1fr_auto] items-baseline gap-4 border-b border-ivory/10 py-4">
               <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-dim">Build budget</dt>
               <dd className="text-right font-mono text-sm text-ivory tabular-nums">
                 KES {TREASURY.total.toLocaleString()} · {TREASURY.usedPct}% spent

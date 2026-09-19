@@ -86,7 +86,7 @@ export default function TermReports() {
       <HeadRow
         label="Term reports · score entry"
         right={
-          <button className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim hover:text-red-400" onClick={() => void clearExam()}>
+          <button className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim hover:text-amber" onClick={() => void clearExam()}>
             Clear this exam
           </button>
         }
@@ -108,11 +108,11 @@ export default function TermReports() {
           <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th className="sticky left-0 bg-panel border-b border-white/10 px-3 py-2 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-dim">
+                <th className="sticky left-0 bg-panel border-b border-ivory/10 px-3 py-2 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-dim">
                   Student
                 </th>
                 {KCSE_SUBJECTS.map((s) => (
-                  <th key={s} className="border-b border-white/10 px-2 py-2 text-left font-mono text-[10px] uppercase tracking-[0.1em] text-dim">
+                  <th key={s} className="border-b border-ivory/10 px-2 py-2 text-left font-mono text-[10px] uppercase tracking-[0.1em] text-dim">
                     {s.replace(" & Government", "")}
                   </th>
                 ))}
@@ -163,7 +163,7 @@ export default function TermReports() {
             </div>
 
             <div className="mt-6 grid gap-6 md:grid-cols-[1fr_220px]">
-              <div className="print-sheet rounded-[21px] bg-white p-6 text-black">
+              <div className="print-sheet bg-white p-6 text-obsidian">
                 <p className="font-mono text-[10px] uppercase tracking-[0.3em]">APT-LABS · {data.school || "School"}</p>
                 <h3 className="mt-2 font-display text-2xl">REPORT CARD — {exam}</h3>
                 <p className="mt-1 text-[13px]">{sel.name} · {sel.className}{sel.stream ? ` · ${sel.stream}` : ""} · Adm {sel.admNo || "—"}</p>
@@ -171,16 +171,16 @@ export default function TermReports() {
                   <thead>
                     <tr>
                       {["Subject", "Score", "Band"].map((h) => (
-                        <th key={h} className="border-b border-neutral-300 px-2 py-1.5 text-left font-mono text-[10px] uppercase tracking-[0.15em]">{h}</th>
+                        <th key={h} className="border-b border-ivory/30 px-2 py-1.5 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-obsidian/70">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {card.subjects.map((s) => (
                       <tr key={s.subject}>
-                        <td className="border-b border-neutral-200 px-2 py-1.5">{s.subject}</td>
-                        <td className="border-b border-neutral-200 px-2 py-1.5">{s.has ? s.score : "—"}</td>
-                        <td className="border-b border-neutral-200 px-2 py-1.5">{s.has ? bandFor(s.score as number).band : "—"}</td>
+                        <td className="border-b border-ivory/50 px-2 py-1.5">{s.subject}</td>
+                        <td className="border-b border-ivory/50 px-2 py-1.5">{s.has ? s.score : "—"}</td>
+                        <td className="border-b border-ivory/50 px-2 py-1.5">{s.has ? bandFor(s.score as number).band : "—"}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -192,8 +192,8 @@ export default function TermReports() {
                 </p>
                 {band && <p className="mt-1 text-[13px] italic">{band.remark}</p>}
                 <div className="mt-8 flex gap-10">
-                  <p className="border-t border-neutral-400 pt-1 text-[11px] w-40">Class teacher</p>
-                  <p className="border-t border-neutral-400 pt-1 text-[11px] w-40">Head teacher</p>
+                  <p className="border-t border-ivory/30 pt-1 text-[11px] w-40 text-obsidian/60">Class teacher</p>
+                  <p className="border-t border-ivory/30 pt-1 text-[11px] w-40 text-obsidian/60">Head teacher</p>
                 </div>
               </div>
 

@@ -13,14 +13,14 @@ export default function MyDayWorkspace() {
 
   if (!session) {
     return (
-      <div className="rounded-[21px] border border-white/10 bg-panel p-[21px]">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-amber-300/90 ring-1 ring-inset ring-amber-400/25">
-          <span className="h-1.5 w-1.5 rounded-full bg-amber-300/80" aria-hidden="true" />
+      <div className="rounded-[21px] border border-ivory/10 bg-panel p-[21px]">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-amber/90 ring-1 ring-inset ring-amber/25">
+          <span className="h-1.5 w-1.5 rounded-full bg-amber/80" aria-hidden="true" />
           Waiting
         </span>
         <p className="mt-4 text-sm leading-6 text-muted">
           My Day reads the console session on this device.{" "}
-          <Link href="/console" className="text-gold hover:underline">
+          <Link href="/console" className="text-amber hover:underline">
             Sign in to the console
           </Link>{" "}
           and come back.

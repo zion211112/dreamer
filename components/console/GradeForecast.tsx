@@ -25,10 +25,10 @@ function Spark({ points }: { points: number[] }) {
   const up = points[points.length - 1] >= points[0];
   return (
     <svg width={w} height={h} className="shrink-0">
-      <polyline points={pts} fill="none" stroke={up ? "#34d399" : "#f5b30b"} strokeWidth="2" />
+      <polyline points={pts} fill="none" stroke={up ? "#2dd4bf" : "#d4af37"} strokeWidth="2" />
       {pts.split(" ").map((p, i) => {
         const [x, y] = p.split(",");
-        return <circle key={i} cx={x} cy={y} r="1.8" fill={i === points.length - 1 ? "#34d399" : "#8f9793"} />;
+        return <circle key={i} cx={x} cy={y} r="1.8" fill={i === points.length - 1 ? "#2dd4bf" : "#57534e"} />;
       })}
     </svg>
   );
@@ -81,7 +81,7 @@ export default function GradeForecast() {
             <thead>
               <tr>
                 {["Student", "Mean / 400", "Band", "To next band", "Weakest", "Trend"].map((h) => (
-                  <th key={h} className="border-b border-white/10 px-3 py-2.5 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-dim">
+                  <th key={h} className="border-b border-ivory/10 px-3 py-2.5 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-dim">
                     {h}
                   </th>
                 ))}
@@ -91,7 +91,7 @@ export default function GradeForecast() {
               {rows.map((s) => {
                 const f = forecast(data.assessments, s.id);
                 return (
-                  <tr key={s.id} className="border-b border-white/10/50 transition-colors hover:bg-panelHi">
+                  <tr key={s.id} className="border-b border-ivory/10/50 transition-colors hover:bg-panelHi">
                     <td className="px-3 py-2.5">
                       <span className="text-[13px] text-ivory">{s.name}</span>
                       {s.admNo && <span className="ml-2 font-mono text-[11px] text-dim">{s.admNo}</span>}
@@ -101,7 +101,7 @@ export default function GradeForecast() {
                     </td>
                     <td className="px-3 py-2.5">
                       {f ? (
-                        <span className="font-mono text-[13px] font-bold text-gold">{f.band}</span>
+                        <span className="font-mono text-[13px] font-bold text-amber">{f.band}</span>
                       ) : (
                         <span className="font-mono text-[12px] text-dim">no scores</span>
                       )}

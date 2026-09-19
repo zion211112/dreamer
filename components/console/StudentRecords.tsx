@@ -10,7 +10,7 @@ import { useSchoolData } from "./useSchoolData";
 import { btn, btnGhost, field, Gate, HeadRow, Loading, Notice, monoLabel, panel } from "./bits";
 
 const editInput =
-  "w-full rounded-lg border border-edge bg-void px-3 py-2 text-[13px] text-ivory outline-none focus:border-gold";
+  "w-full rounded-lg border border-edge bg-void px-3 py-2 text-[13px] text-ivory outline-none focus:border-amber";
 
 export default function StudentRecords() {
   const data = useSchoolData();
@@ -208,7 +208,7 @@ export default function StudentRecords() {
                       <input value={form.parentPhone} onChange={(e) => setForm({ ...form, parentPhone: e.target.value })} className={editInput} placeholder="Phone" />
                     </td>
                     <td className="px-3 py-2 whitespace-nowrap">
-                      <button className="font-mono text-[11px] uppercase tracking-[0.1em] text-gold hover:text-ivory" onClick={() => void saveForm()}>
+                      <button className="font-mono text-[11px] uppercase tracking-[0.1em] text-amber hover:text-ivory" onClick={() => void saveForm()}>
                         Save
                       </button>
                       <button className="ml-3 font-mono text-[11px] uppercase tracking-[0.1em] text-dim hover:text-ivory" onClick={() => { setEditing(null); setForm(null); }}>
@@ -226,10 +226,10 @@ export default function StudentRecords() {
                     <td className="px-3 py-2.5 text-[13px] text-muted">{s.parentName || "—"}</td>
                     <td className="px-3 py-2.5 font-mono text-[12px] text-muted">{s.parentPhone || "—"}</td>
                     <td className="px-3 py-2.5 whitespace-nowrap">
-                      <button className="font-mono text-[11px] uppercase tracking-[0.1em] text-dim hover:text-gold" onClick={() => startEdit(s)}>
+                      <button className="font-mono text-[11px] uppercase tracking-[0.1em] text-dim hover:text-amber" onClick={() => startEdit(s)}>
                         Edit
                       </button>
-                      <button className="ml-4 font-mono text-[11px] uppercase tracking-[0.1em] text-dim hover:text-red-400" onClick={() => void remove(s)}>
+                      <button className="ml-4 font-mono text-[11px] uppercase tracking-[0.1em] text-dim hover:text-amber" onClick={() => void remove(s)}>
                         Strike
                       </button>
                     </td>

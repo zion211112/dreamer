@@ -7,23 +7,25 @@ const config = {
   theme: {
     extend: {
       colors: {
+        // ── The four-colour system. Everything on the site resolves to one of
+        // these. Neutrals are ivory at opacity — never a separate hue.
         obsidian: "#08080A",
-        void: "#0a0a0a",
-        panel: "#141414",
-        edge: "#262626",
-        panelHi: "#1a1a1a",
-        edgeHi: "#404040",
-        ink: "#111310",
+        void: "#050506",
+        panel: "#0E0E10",
+        edge: "#1A1A1C",
+        panelHi: "#141416",
+        edgeHi: "#2A2A2E",
+
         ivory: "#F5F0E6",
-        cream: "#F5F0E6",
+        // ivory at reading-distance dimming — neutrals, never a new hue.
         muted: "#A8A29E",
         dim: "#57534E",
-        paper: "#FFFFFF",
-        river: "#0E7C5B",
-        forest: "#1a3c2a",
-        earth: "#8b3a2f",
-        royal: "#6B4226",
-        gold: "#d4af37"
+
+        // The two accents. Teal is the living accent (focus, active, passage,
+        // growth). Amber is the warm accent (attention, highlight, secondary
+        // marks, the older-world warmth of the ledger).
+        teal: "#2dd4bf",
+        amber: "#d4af37"
       },
       fontFamily: {
         display: ["var(--font-playfair)", "Georgia", "serif"],

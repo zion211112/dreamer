@@ -30,7 +30,7 @@ interface Marking {
 
 const KEY = "console-marking";
 const editInput =
-  "rounded-lg border border-white/10 bg-void px-2.5 py-1.5 text-[13px] text-ivory outline-none focus:border-gold";
+  "rounded-lg border border-ivory/10 bg-void px-2.5 py-1.5 text-[13px] text-ivory outline-none focus:border-amber";
 
 export default function AutoMarking() {
   const data = useSchoolData();
@@ -113,7 +113,7 @@ export default function AutoMarking() {
               <thead>
                 <tr>
                   {["Q", "Topic", "Correct", "Marks", ""].map((h) => (
-                    <th key={h} className="border-b border-white/10 px-2 py-2 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-dim">{h}</th>
+                    <th key={h} className="border-b border-ivory/10 px-2 py-2 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-dim">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -138,7 +138,7 @@ export default function AutoMarking() {
                       <input type="number" min={1} value={q.marks} onChange={(e) => setQuestions(questions.map((x) => (x.id === q.id ? { ...x, marks: Math.max(1, parseInt(e.target.value) || 1) } : x)))} className={editInput + " w-14"} />
                     </td>
                     <td className="px-2 py-1.5">
-                      <button className="font-mono text-[10px] uppercase text-dim hover:text-red-400" onClick={() => setQuestions(questions.filter((x) => x.id !== q.id))}>Cut</button>
+                      <button className="font-mono text-[10px] uppercase text-dim hover:text-amber" onClick={() => setQuestions(questions.filter((x) => x.id !== q.id))}>Cut</button>
                     </td>
                   </tr>
                 ))}
@@ -146,7 +146,7 @@ export default function AutoMarking() {
             </table>
           </div>
           <button
-            className="mt-4 font-mono text-[11px] uppercase tracking-[0.15em] text-dim hover:text-gold"
+            className="mt-4 font-mono text-[11px] uppercase tracking-[0.15em] text-dim hover:text-amber"
             onClick={() => setQuestions([...questions, { id: `Q${Date.now().toString(36)}`, topic: "", answer: "", marks: 1 }])}
           >
             + Add question
@@ -203,13 +203,13 @@ export default function AutoMarking() {
                 {topicRows.map((t, i) => (
                   <div key={t.topic}>
                     <div className="mb-1 flex items-center justify-between text-[12px]">
-                      <span className={i === 0 ? "font-semibold text-gold" : "text-muted"}>
+                      <span className={i === 0 ? "font-semibold text-amber" : "text-muted"}>
                         {i === 0 ? `Teach this first: ${t.topic}` : t.topic}
                       </span>
                       <span className="font-mono text-dim">{t.pct}% · {t.n} tests</span>
                     </div>
                     <div className="h-1.5 overflow-hidden rounded-full bg-edge">
-                      <div className="h-full rounded-full" style={{ width: `${t.pct}%`, background: t.pct < 40 ? "#ef4444" : t.pct < 70 ? "#f5b30b" : "#34d399" }} />
+                      <div className="h-full rounded-full" style={{ width: `${t.pct}%`, background: t.pct < 40 ? "#d4af37" : t.pct < 70 ? "#d4af37" : "#2dd4bf" }} />
                     </div>
                   </div>
                 ))}

@@ -1,9 +1,9 @@
 import { Build, timeAgo, needsLine } from "../lib/benben";
 
 function typeTone(t: string): string {
-  if (t === "NEED") return "text-gold";
-  if (t === "SOLUTION") return "text-teal-300";
-  if (t === "OFFER") return "text-emerald-300";
+  if (t === "NEED") return "text-amber";
+  if (t === "SOLUTION") return "text-teal";
+  if (t === "OFFER") return "text-teal";
   return "text-muted";
 }
 
@@ -26,16 +26,16 @@ export default function BuildCard({
 }) {
   const forks = b.comments.filter((c) => c.fork).length;
   return (
-    <article className="border-t border-white/10 py-8">
+    <article className="border-t border-ivory/10 py-8">
       <div className="flex flex-wrap items-baseline justify-between gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-dim">
         <span className="flex flex-wrap items-center gap-2">
-          <span className="border border-white/10 bg-panel px-2 py-0.5 text-cream">[{b.domain}]</span>
+          <span className="border border-ivory/10 bg-panel px-2 py-0.5 text-ivory">[{b.domain}]</span>
           <span className={typeTone(b.type)}>{b.type}</span>
           <span aria-hidden>·</span>
           <span>{timeAgo(b.createdTs, now)}</span>
           {b.location.trim() && <span aria-hidden>· {b.location.trim()}</span>}
         </span>
-        <span className="text-gold">@{b.by}</span>
+        <span className="text-amber">@{b.by}</span>
       </div>
 
       <h3 className="mt-5 max-w-[52ch] font-display text-[1.7rem] leading-snug text-ivory">{b.title}</h3>
@@ -47,12 +47,12 @@ export default function BuildCard({
         <p className="italic text-muted/80">Done: {b.done}</p>
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-white/5 pt-4">
+      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-ivory/5 pt-4">
         <span className="flex items-center gap-1 font-mono text-sm">
           <button
             onClick={() => onVote(b.id, 1)}
             aria-label={`Upvote ${b.title}`}
-            className={`px-1 text-base transition ${myVote === 1 ? "text-gold" : "text-muted hover:text-ivory"}`}
+            className={`px-1 text-base transition ${myVote === 1 ? "text-amber" : "text-muted hover:text-ivory"}`}
           >
             ▲
           </button>
@@ -60,7 +60,7 @@ export default function BuildCard({
           <button
             onClick={() => onVote(b.id, -1)}
             aria-label={`Downvote ${b.title}`}
-            className={`px-1 text-base transition ${myVote === -1 ? "text-earth" : "text-muted hover:text-ivory"}`}
+            className={`px-1 text-base transition ${myVote === -1 ? "text-dim" : "text-muted hover:text-ivory"}`}
           >
             ▼
           </button>
@@ -70,12 +70,12 @@ export default function BuildCard({
         </span>
         <button
           onClick={() => onFork(b)}
-          className="ml-auto font-mono text-[12px] uppercase tracking-[0.22em] text-gold transition hover:text-ivory"
+          className="ml-auto font-mono text-[12px] uppercase tracking-[0.22em] text-amber transition hover:text-ivory"
         >
           Fork →
         </button>
       </div>
-      {voteErr && <p className="mt-3 font-mono text-xs text-red-400">{voteErr}</p>}
+      {voteErr && <p className="mt-3 font-mono text-xs text-amber">{voteErr}</p>}
     </article>
   );
 }

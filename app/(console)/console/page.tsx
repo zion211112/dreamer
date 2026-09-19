@@ -102,7 +102,7 @@ const ROLE_META: Record<ConsoleRole, { label: string; desc: string }> = {
 };
 
 const loginInput =
-  "w-full rounded-full border border-white/10 bg-panel px-5 py-3 text-sm text-ivory placeholder:text-dim outline-none transition-colors focus:border-gold";
+  "w-full rounded-full border border-ivory/10 bg-panel px-5 py-3 text-sm text-ivory placeholder:text-dim outline-none transition-colors focus:border-amber";
 
 function ConsoleLogin({
   initialRole,
@@ -124,9 +124,9 @@ function ConsoleLogin({
 
   return (
     <main className="flex h-dvh flex-col bg-void font-body text-ivory">
-      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-white/8 px-[21px]">
+      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ivory/8 px-[21px]">
         <div className="flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
-          <Diamond size={15} className="text-gold" />
+          <Diamond size={15} className="text-amber" />
           <span>APT-LABS · Console</span>
         </div>
         <Link
@@ -138,18 +138,18 @@ function ConsoleLogin({
       </header>
 
       <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center overflow-y-auto px-6 py-12">
-        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-panel p-8 md:p-10">
-          {/* the two glows: indigo from the rail, teal from the depths */}
+        <div className="relative overflow-hidden rounded-3xl border border-ivory/10 bg-panel p-8 md:p-10">
+          {/* the two glows: amber warmth off the right, teal depth off the left */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(circle_at_center,rgba(72,86,214,0.45),transparent_70%)]"
+            className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(circle_at_center,rgba(var(--amber-rgb),0.30),transparent_70%)]"
           />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -bottom-28 -left-24 h-72 w-72 rounded-full bg-[radial-gradient(circle_at_center,rgba(20,148,168,0.32),transparent_70%)]"
+            className="pointer-events-none absolute -bottom-28 -left-24 h-72 w-72 rounded-full bg-[radial-gradient(circle_at_center,rgba(var(--teal-rgb),0.25),transparent_70%)]"
           />
           <div className="relative">
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sky-300">Build capacity · Console</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-teal">Build capacity · Console</p>
             <h1 className="mt-4 font-display text-4xl font-light tracking-tight">Who are you?</h1>
             <p className="mt-3 text-sm leading-6 text-muted">
               Pick your door. The console opens on this device — nothing you type leaves it.
@@ -162,7 +162,7 @@ function ConsoleLogin({
                   type="button"
                   onClick={() => setRole(r)}
                   className={`rounded-2xl border p-5 text-left transition ${
-                    role === r ? "border-gold/70 bg-gold/10" : "border-white/10 bg-white/[0.04] hover:border-white/25"
+                    role === r ? "border-amber/70 bg-amber/10" : "border-ivory/10 bg-ivory/[0.04] hover:border-ivory/25"
                   }`}
                 >
                   <div className="text-sm font-bold text-ivory">{ROLE_META[r].label}</div>
@@ -189,7 +189,7 @@ function ConsoleLogin({
               <button
                 type="submit"
                 disabled={!valid}
-                className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-obsidian transition hover:bg-amber disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Enter the {ROLE_META[role].label.toLowerCase()} console →
               </button>
@@ -255,20 +255,20 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-void font-body text-ivory">
       {/* TOP HEADER */}
-      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-white/8 px-[21px]">
+      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ivory/8 px-[21px]">
         <div className="flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
-          <Diamond size={15} className="text-gold" />
+          <Diamond size={15} className="text-amber" />
           <span>APT-LABS · Console</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1.5 pl-3.5 pr-4 font-mono text-[11px] text-muted sm:flex">
-            <span className="h-1.5 w-1.5 rounded-full bg-sky-400" aria-hidden="true" />
+          <span className="hidden items-center gap-2 rounded-full border border-ivory/10 bg-ivory/5 py-1.5 pl-3.5 pr-4 font-mono text-[11px] text-muted sm:flex">
+            <span className="h-1.5 w-1.5 rounded-full bg-teal" aria-hidden="true" />
             {session.name} · {session.role}
           </span>
           <button
             type="button"
             onClick={onSignOut}
-            className="rounded-full border border-white/10 px-4 py-1.5 text-[12px] font-semibold text-muted transition-colors hover:border-white/25 hover:text-ivory"
+            className="rounded-full border border-ivory/10 px-4 py-1.5 text-[12px] font-semibold text-muted transition-colors hover:border-ivory/25 hover:text-ivory"
           >
             Sign out
           </button>
@@ -277,13 +277,13 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
 
       <div className="flex min-h-0 flex-1">
         {/* SIDEBAR — the gradient rail: indigo into teal, white on top */}
-        <aside className="flex w-[55px] shrink-0 flex-col justify-between border-r border-white/10 bg-gradient-to-b from-[#151a4d] via-[#1c2a6e] to-[#0c4a63] lg:w-[240px]">
+        <aside className="flex w-[55px] shrink-0 flex-col justify-between border-r border-ivory/10 bg-gradient-to-b from-void via-panel to-edge lg:w-[240px]">
           <div>
-            <div className="flex h-[89px] items-center justify-center gap-3 border-b border-white/10 px-[13px] lg:justify-between lg:px-[21px]">
+            <div className="flex h-[89px] items-center justify-center gap-3 border-b border-ivory/10 px-[13px] lg:justify-between lg:px-[21px]">
               <Diamond filled size={30} className="shrink-0 text-ivory" />
               <div className="hidden flex-col lg:flex">
                 <span className="font-display text-base font-medium text-ivory">APT-LABS</span>
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">Console</span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ivory/45">Console</span>
               </div>
             </div>
 
@@ -291,10 +291,10 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
               <button
                 onClick={() => setMod("all")}
                 className={`flex h-[34px] items-center justify-center gap-2.5 rounded-lg px-3 text-[13px] transition-colors lg:justify-start ${
-                  activeKey === "all" ? "bg-white/15 font-medium text-ivory" : "text-white/50 hover:bg-white/5 hover:text-white"
+                  activeKey === "all" ? "bg-ivory/15 font-medium text-ivory" : "text-ivory/50 hover:bg-ivory/5 hover:text-ivory"
                 }`}
               >
-                <ModuleGlyph module="all" size={15} className={activeKey === "all" ? "text-gold" : undefined} />
+                <ModuleGlyph module="all" size={15} className={activeKey === "all" ? "text-amber" : undefined} />
                 <span className="hidden lg:inline">Console</span>
               </button>
               {CONSOLE_MODULES.map((m) => (
@@ -303,17 +303,17 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
                   onClick={() => setMod(m)}
                   title={m}
                   className={`flex h-[34px] items-center justify-center gap-2.5 rounded-lg px-3 text-[13px] transition-colors lg:justify-start ${
-                    activeKey === m ? "bg-white/15 font-medium text-ivory" : "text-white/50 hover:bg-white/5 hover:text-white"
+                    activeKey === m ? "bg-ivory/15 font-medium text-ivory" : "text-ivory/50 hover:bg-ivory/5 hover:text-ivory"
                   }`}
                 >
-                  <ModuleGlyph module={m} size={15} className={activeKey === m ? "text-gold" : undefined} />
+                  <ModuleGlyph module={m} size={15} className={activeKey === m ? "text-amber" : undefined} />
                   <span className="hidden lg:inline">{m}</span>
                 </button>
               ))}
             </nav>
           </div>
 
-          <div className="space-y-1 border-t border-white/10 p-[13px] font-mono text-[10px] uppercase tracking-[0.16em] text-white/35 lg:px-[21px]">
+          <div className="space-y-1 border-t border-ivory/10 p-[13px] font-mono text-[10px] uppercase tracking-[0.16em] text-ivory/35 lg:px-[21px]">
             <p>Local session</p>
             <p>Free · 0 credits</p>
           </div>
@@ -342,7 +342,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={`Search ${mod === "all" ? "tools" : mod} — press / or ⌘K to focus…`}
-              className="h-[46px] w-full rounded-full border border-white/10 bg-panel px-6 text-[13px] text-ivory outline-none transition-colors placeholder:text-dim focus:border-gold"
+              className="h-[46px] w-full rounded-full border border-ivory/10 bg-panel px-6 text-[13px] text-ivory outline-none transition-colors placeholder:text-dim focus:border-amber"
             />
           </div>
 
@@ -374,11 +374,11 @@ function ModuleCard({ module, onOpen }: { module: string; onOpen: () => void }) 
     <button
       type="button"
       onClick={onOpen}
-      className="group flex min-h-[150px] flex-col justify-between gap-4 overflow-hidden rounded-2xl border border-white/8 bg-panel p-5 text-left transition-all duration-150 hover:border-white/25 hover:bg-panelHi"
+      className="group flex min-h-[150px] flex-col justify-between gap-4 overflow-hidden rounded-2xl border border-ivory/8 bg-panel p-5 text-left transition-all duration-150 hover:border-ivory/25 hover:bg-panelHi"
     >
       <div className="flex items-start justify-between gap-3">
         <ModuleTile module={module} tint={menu.tint} />
-        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors group-hover:border-white/25 group-hover:text-ivory">
+        <span className="rounded-full border border-ivory/10 bg-ivory/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors group-hover:border-ivory/25 group-hover:text-ivory">
           {tools.length} {tools.length === 1 ? "tool" : "tools"} →
         </span>
       </div>
@@ -404,7 +404,7 @@ function ToolCard({
   return (
     <Link
       href={`/console/${tool.id}`}
-      className="group relative flex min-h-[140px] flex-col justify-between overflow-hidden rounded-2xl border border-white/8 bg-panel p-5 transition-all duration-150 hover:border-white/25 hover:bg-panelHi"
+      className="group relative flex min-h-[140px] flex-col justify-between overflow-hidden rounded-2xl border border-ivory/8 bg-panel p-5 transition-all duration-150 hover:border-ivory/25 hover:bg-panelHi"
     >
       <div>
         <div className="mb-4 flex items-start justify-between gap-3">
@@ -414,7 +414,7 @@ function ToolCard({
             title={fav ? "Remove from favourites" : "Add to favourites"}
             onClick={onFav}
             className={`transition-opacity md:opacity-0 md:group-hover:opacity-100 ${
-              fav ? "text-gold" : "text-dim hover:text-ivory"
+              fav ? "text-amber" : "text-dim hover:text-ivory"
             }`}
           >
             <svg

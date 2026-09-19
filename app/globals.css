@@ -14,18 +14,34 @@ html {
   --font-plex: "IBM Plex Sans", "Inter", system-ui, -apple-system, sans-serif;
   --font-inter: "Inter", system-ui, -apple-system, sans-serif;
   --font-jetbrains: "JetBrains Mono", "SFMono-Regular", ui-monospace, monospace;
+  --obsidian: #08080a;
+  --void: #050506;
+  --panel: #0e0e10;
+  --edge: #1a1a1c;
+  --panel-hi: #141416;
+  --edge-hi: #2a2a2e;
+  --ivory: #f5f0e6;
+  --ivory-rgb: 245, 240, 230;
+  --muted: #a8a29e;
+  --muted-rgb: 168, 162, 158;
+  --dim: #57534e;
+  --dim-rgb: 87, 83, 78;
+  --teal: #2dd4bf;
+  --teal-rgb: 45, 212, 191;
+  --amber: #d4af37;
+  --amber-rgb: 212, 175, 55;
 }
 
 body {
-  background: #08080a;
-  color: #f5f0e6;
+  background: var(--obsidian);
+  color: var(--ivory);
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: #0e7c5b;
-  color: #fff;
+  background: var(--teal);
+  color: var(--obsidian);
 }
 
 /* Living geometry: slow orbit, soft pulse, filling bar. Restrained. */
@@ -51,22 +67,26 @@ body {
   animation: bar-fill 1.2s ease-out;
 }
 
-/* BenBen floor theme: teal → purple gradient, royal-brown earth. */
+/* BenBen floor theme: obsidian ground, teal-to-amber accent. No purple,
+   no violet, no royal-brown earth. The four-colour system only. */
 .bb-gradient-text {
-  background: linear-gradient(90deg, #2dd4bf, #a78bfa);
+  background: linear-gradient(90deg, var(--teal), var(--amber));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 .bb-btn {
-  background: linear-gradient(90deg, #14b8a6, #8b5cf6);
-  color: #04100e;
+  background: var(--obsidian);
+  color: var(--ivory);
+  border: 1px solid var(--teal);
 }
 .bb-btn:hover {
-  background: linear-gradient(90deg, #2dd4bf, #a78bfa);
+  background: var(--teal);
+  color: var(--obsidian);
+  box-shadow: 0 0 28px -8px rgba(var(--teal-rgb), 0.55);
 }
 .bb-glow {
-  box-shadow: 0 10px 40px -12px rgba(45, 212, 191, 0.45);
+  box-shadow: 0 0 32px -10px rgba(var(--teal-rgb), 0.45);
 }
 
 /* The commitments board (BenBen): the fork lineage is a <details> disclosure,
@@ -80,18 +100,13 @@ body {
   display: none;
 }
 
-/* Portal (landing only): Fraunces + Plex on an indigo→sky gradient.
-   Glass rings and a dot grid are the artwork; glass cards hold the data.
-   BenBen stays obsidian. */
+/* Portal (landing): obsidian ground, ivory ink, teal + amber accents.
+   No indigo, no sky gradient, no glass portal. GeoArt is the artwork.
+   Typography is the design. */
 .theme-portal {
-  --p-ink: #F4F7FF;
-  --p-muted: rgba(224, 233, 255, 0.66);
-  --p-deep: #0E1233;
-  --p-card: rgba(255, 255, 255, 0.07);
-  --p-card-rule: rgba(255, 255, 255, 0.14);
-  background: linear-gradient(155deg, #0E1233 0%, #16225C 30%, #24548F 58%, #5FA8D6 80%, #C6E4F6 100%);
-  color: var(--p-ink);
-  font-family: var(--font-plex), system-ui, -apple-system, sans-serif;
+  background: var(--obsidian);
+  color: var(--ivory);
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   font-size: 16px;
   line-height: 1.6;
 }
@@ -101,9 +116,9 @@ body {
 }
 .theme-portal .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
 .theme-portal a { color: inherit; text-decoration: none; }
-.theme-portal :focus-visible { outline: 2px solid #9FD8F7; outline-offset: 3px; }
+.theme-portal :focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
 
-/* Hero */
+/* Hero — clean obsidian typography, one gradient word, teal + ivory actions */
 .theme-portal .hero { position: relative; overflow: hidden; padding: 84px 0 72px; }
 .theme-portal .hero-grid { display: grid; align-items: center; gap: 48px; }
 @media (min-width: 900px) {
@@ -111,7 +126,7 @@ body {
 }
 .theme-portal .eyebrow {
   font-family: var(--font-jetbrains); font-size: 11px; font-weight: 600;
-  letter-spacing: 0.34em; text-transform: uppercase; color: rgba(200, 222, 255, 0.72);
+  letter-spacing: 0.34em; text-transform: uppercase; color: var(--muted);
   margin: 0 0 18px;
 }
 .theme-portal .hero-title {
@@ -120,124 +135,84 @@ body {
 }
 .theme-portal .hero-title .grad {
   font-style: italic;
-  background: linear-gradient(90deg, #CFE9FF, #6FB8E8 55%, #9B8CFF);
+  background: linear-gradient(90deg, var(--ivory) 0%, var(--ivory) 42%, var(--teal) 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-.theme-portal .hero-sub { font-size: 1.15rem; color: var(--p-muted); max-width: 40ch; margin: 0 0 34px; }
+.theme-portal .hero-sub { font-size: 1.15rem; color: var(--muted); max-width: 40ch; margin: 0 0 34px; }
 .theme-portal .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 26px; }
 .theme-portal .btn {
   display: inline-flex; align-items: center; padding: 13px 24px;
-  font-family: var(--font-plex); font-size: 0.95rem; font-weight: 500;
+  font-family: var(--font-inter); font-size: 0.95rem; font-weight: 500;
   border-radius: 999px; cursor: pointer;
   transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 }
 .theme-portal .btn:hover { transform: translateY(-1px); }
-.theme-portal .btn-ghost { border: 1.5px solid rgba(255, 255, 255, 0.65); background: transparent; color: #fff; }
-.theme-portal .btn-ghost:hover { background: rgba(255, 255, 255, 0.12); border-color: #fff; }
-.theme-portal .btn-solid { border: 0; background: #FDFEFF; color: #10224E; font-weight: 600; }
-.theme-portal .btn-solid:hover { background: #CFE8FB; }
-.theme-portal .hero-count { display: flex; align-items: center; gap: 9px; font-size: 0.9rem; color: var(--p-muted); margin: 0; }
-.theme-portal .dot-live { width: 7px; height: 7px; border-radius: 50%; background: #8FE8FF; flex: none; position: relative; }
-.theme-portal .dot-live::after {
-  content: ''; position: absolute; inset: -4px; border-radius: 50%;
-  border: 1px solid #8FE8FF; opacity: 0.55;
-  animation: portal-pulse 2.2s ease-out infinite;
+.theme-portal .btn-ghost {
+  border: 1.5px solid rgba(var(--ivory-rgb), 0.35);
+  background: transparent; color: var(--ivory);
 }
-@keyframes portal-pulse {
-  0% { transform: scale(0.6); opacity: 0.6; }
-  100% { transform: scale(1.9); opacity: 0; }
+.theme-portal .btn-ghost:hover {
+  background: rgba(var(--teal-rgb), 0.08);
+  border-color: var(--teal);
 }
-.theme-portal .count-num { font-variant-numeric: tabular-nums; }
-
-/* Glass rings — the one artwork on the page. */
-.theme-portal .rings { position: relative; min-height: 400px; }
-.theme-portal .ring { position: absolute; border-radius: 50%; }
-.theme-portal .ring-lg {
-  width: 340px; height: 340px; right: 4%; top: 2%;
-  border: 2px solid rgba(255, 255, 255, 0.38);
-  background: radial-gradient(circle at 32% 30%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.02) 62%);
-  animation: spin-slow 120s linear infinite;
+.theme-portal .btn-solid {
+  border: 0; background: var(--ivory); color: var(--obsidian); font-weight: 600;
 }
-.theme-portal .ring-md {
-  width: 210px; height: 210px; right: 30%; top: 32%;
-  border: 2px solid rgba(126, 200, 240, 0.55);
-  background: rgba(255, 255, 255, 0.06);
-}
-.theme-portal .ring-sm {
-  width: 130px; height: 130px; right: 0%; top: 56%;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  background: rgba(255, 255, 255, 0.16);
-}
-@media (max-width: 899px) {
-  .theme-portal .rings { min-height: 300px; }
-  .theme-portal .ring-lg { width: 260px; height: 260px; }
-  .theme-portal .ring-md { right: 40%; }
+.theme-portal .btn-solid:hover {
+  background: var(--teal); color: var(--obsidian);
 }
 
-/* Dot grid, bottom-left of the hero. */
-.theme-portal .dot-grid {
-  position: absolute; left: 0; bottom: 0; width: 200px; height: 150px;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.5) 1.4px, transparent 1.4px);
-  background-size: 13px 13px;
-  -webkit-mask-image: radial-gradient(70% 100% at 0% 100%, #000 30%, transparent 92%);
-  mask-image: radial-gradient(70% 100% at 0% 100%, #000 30%, transparent 92%);
-  pointer-events: none;
-}
-
-/* Snapshot — glass cards with dark delta chips (the Capital chip language). */
+/* Snapshot — obsidian glass cards with teal accent chips. Recolored from
+   the old indigo/sky glass to the four-colour system. */
 .theme-portal .snapshot { padding: 56px 0; }
 .theme-portal .snapshot-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 26px; }
 .theme-portal .snapshot-title { font-size: 1.6rem; font-weight: 500; margin: 0; }
-.theme-portal .live-tag { display: inline-flex; align-items: center; gap: 7px; font-size: 0.82rem; color: var(--p-muted); }
+.theme-portal .live-tag { display: inline-flex; align-items: center; gap: 7px; font-size: 0.82rem; color: var(--muted); }
 .theme-portal .glass-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 0; }
 @media (max-width: 880px) { .theme-portal .glass-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .theme-portal .glass-grid { grid-template-columns: 1fr; } }
 .theme-portal .glass {
   display: flex; flex-direction: column; justify-content: space-between; gap: 14px;
-  min-height: 118px; background: var(--p-card); border: 1px solid var(--p-card-rule);
-  border-radius: 16px; padding: 18px; backdrop-filter: blur(6px);
+  min-height: 118px; background: rgba(var(--ivory-rgb), 0.03);
+  border: 1px solid rgba(var(--ivory-rgb), 0.07); border-radius: 16px; padding: 18px;
 }
 .theme-portal .glass dt {
   margin: 0; font-family: var(--font-jetbrains); font-size: 10.5px; font-weight: 500;
-  letter-spacing: 0.18em; text-transform: uppercase; color: rgba(210, 228, 255, 0.62);
+  letter-spacing: 0.18em; text-transform: uppercase; color: rgba(var(--muted-rgb), 0.6);
 }
 .theme-portal .glass dd {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
   margin: 0; font-family: var(--font-fraunces); font-size: 1.85rem; font-weight: 500;
-  letter-spacing: -0.01em; font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em; font-variant-numeric: tabular-nums; color: var(--ivory);
 }
 .theme-portal .chip {
-  white-space: nowrap; border-radius: 999px; background: var(--p-deep);
-  border: 1px solid rgba(159, 216, 247, 0.25); color: #9FD8F7;
-  font-family: var(--font-plex); font-size: 11px; font-weight: 600; padding: 3px 10px;
+  white-space: nowrap; border-radius: 999px; background: var(--obsidian);
+  border: 1px solid rgba(var(--teal-rgb), 0.35); color: var(--teal);
+  font-family: var(--font-inter); font-size: 11px; font-weight: 600; padding: 3px 10px;
 }
-.theme-portal .chip-live { background: rgba(143, 232, 255, 0.14); border-color: rgba(143, 232, 255, 0.3); color: #8FE8FF; }
+.theme-portal .chip-live {
+  background: rgba(var(--teal-rgb), 0.1); border-color: rgba(var(--teal-rgb), 0.45); color: var(--teal);
+}
 
-/* Doors — glass rows, shown to unlocked visitors. */
+/* Doors — clean obsidian rows, teal link accent. */
 .theme-portal .doors { padding: 56px 0 84px; }
 .theme-portal .doors-title { font-size: 1.6rem; font-weight: 500; margin: 0 0 28px; max-width: 32ch; }
 .theme-portal .doors-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
 .theme-portal .door {
   display: grid; grid-template-columns: 130px 1fr auto; align-items: center; gap: 18px;
-  padding: 18px 20px; background: var(--p-card); border: 1px solid var(--p-card-rule);
-  border-radius: 14px; backdrop-filter: blur(6px);
+  padding: 18px 20px; background: rgba(var(--ivory-rgb), 0.03);
+  border: 1px solid rgba(var(--ivory-rgb), 0.07); border-radius: 14px;
 }
-.theme-portal .door-label { font-weight: 600; font-size: 0.95rem; }
-.theme-portal .door-copy { margin: 0; color: var(--p-muted); font-size: 0.95rem; }
-.theme-portal .door-link { font-weight: 600; font-size: 0.9rem; color: #CFE8FB; white-space: nowrap; border-bottom: 1px solid transparent; }
-.theme-portal .door-link:hover { border-color: #CFE8FB; color: #fff; }
-@media (max-width: 640px) {
-  .theme-portal .door { grid-template-columns: 1fr; gap: 6px; }
+.theme-portal .door-label { font-weight: 600; font-size: 0.95rem; color: var(--ivory); }
+.theme-portal .door-copy { margin: 0; color: var(--muted); font-size: 0.95rem; }
+.theme-portal .door-link {
+  font-weight: 600; font-size: 0.9rem; color: var(--teal); white-space: nowrap;
+  border-bottom: 1px solid transparent;
 }
-@media (prefers-reduced-motion: reduce) {
-  .theme-portal .dot-live::after { animation: none; }
-  .theme-portal .ring-lg { animation: none; }
-}
+.theme-portal .door-link:hover { border-color: var(--teal); color: var(--ivory); }
 
-/* CONTACT — minimal, classic. One centered column: a heading, a line that
-   says, two lines of information under hairlines, a place. No artwork, no
-   motion. The information is the design. */
-
+/* CONTACT — minimal, classic. Ivory on obsidian, amber for warm hairlines.
+   The gold is gone; amber is the one warm accent. */
 .contact-classic {
   width: 100%;
   max-width: 320px;
@@ -250,14 +225,14 @@ body {
   font-size: 34px;
   font-weight: 400;
   letter-spacing: -0.01em;
-  color: #f5f0e6;
+  color: var(--ivory);
 }
 
 .contact-lead {
   margin: 14px 0 0;
   font-family: var(--font-inter), system-ui, sans-serif;
   font-size: 14px;
-  color: #a8a29e;
+  color: var(--muted);
 }
 
 .contact-lines {
@@ -269,11 +244,11 @@ body {
   flex-direction: column;
   gap: 5px;
   padding: 15px 0;
-  border-top: 1px solid rgba(212, 175, 55, 0.14);
+  border-top: 1px solid rgba(var(--amber-rgb), 0.14);
 }
 
 .contact-line:last-child {
-  border-bottom: 1px solid rgba(212, 175, 55, 0.14);
+  border-bottom: 1px solid rgba(var(--amber-rgb), 0.14);
 }
 
 .contact-label {
@@ -281,28 +256,28 @@ body {
   font-size: 10px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #57534e;
+  color: var(--dim);
 }
 
 .contact-value {
   margin: 0;
   font-family: var(--font-jetbrains), ui-monospace, monospace;
   font-size: 15px;
-  color: #f5f0e6;
+  color: var(--ivory);
 }
 
 .contact-value a {
   color: inherit;
   text-decoration: none;
-  border-bottom: 1px solid rgba(212, 175, 55, 0.35);
+  border-bottom: 1px solid rgba(var(--amber-rgb), 0.35);
   padding-bottom: 1px;
   transition: color 0.25s ease, border-color 0.25s ease;
 }
 
 .contact-value a:hover,
 .contact-value a:focus-visible {
-  color: #d4af37;
-  border-color: #d4af37;
+  color: var(--amber);
+  border-color: var(--amber);
   outline: none;
 }
 
@@ -312,7 +287,7 @@ body {
   font-size: 11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #57534e;
+  color: var(--dim);
 }
 
 /* Print: the Term Reports card is the only thing that reaches paper.
@@ -333,4 +308,3 @@ body {
   .h-dvh { height: auto !important; }
   .overflow-hidden, .overflow-y-auto, .overflow-x-auto { overflow: visible !important; }
 }
-

@@ -4,8 +4,9 @@ import { useEffect, useRef } from "react";
 import { Member } from "../lib/ledger";
 import { SOURCE_TEXT } from "../lib/source";
 
-// The chamber behind `root`. Source + raw ledger. No void —
-// what enters here is read, not kept. Esc or 60s of silence leaves.
+// The chamber behind `root`. Source + raw ledger.
+// Teal terminal on obsidian — reads the source, does not keep it.
+// Esc or 60 s of silence leaves.
 export default function ZionChamber({
   members,
   onClose
@@ -42,25 +43,25 @@ export default function ZionChamber({
     <div className="mx-auto max-w-3xl px-6 py-16">
       <div className="flex items-baseline justify-between">
         <h1 className="text-xl md:text-2xl font-bold tracking-widest">OSAWI: ROOT ACCESS</h1>
-        {onClose && <span className="text-xs text-green-100/40">[esc to leave]</span>}
+        {onClose && <span className="text-xs text-teal/40">[esc to leave]</span>}
       </div>
-      <div className="mt-2 h-px bg-green-100/20" />
+      <div className="mt-2 h-px bg-teal/10" />
 
       <section className="mt-10">
-        <div className="text-xs tracking-widest text-green-100/50">01 / THE SOURCE</div>
-        <pre className="mt-3 max-h-[50vh] overflow-y-auto whitespace-pre-wrap border border-green-100/15 bg-green-100/[0.03] p-5 text-xs leading-relaxed">
+        <div className="text-xs tracking-widest text-teal/50">01 / THE SOURCE</div>
+        <pre className="mt-3 max-h-[50vh] overflow-y-auto whitespace-pre-wrap border border-teal/15 bg-teal/[0.03] p-5 text-xs leading-relaxed">
           {SOURCE_TEXT}
         </pre>
       </section>
 
       <section className="mt-10">
-        <div className="text-xs tracking-widest text-green-100/50">
+        <div className="text-xs tracking-widest text-teal/50">
           02 / THE RAW LEDGER — {members.length} SEALED RECORDS · STREAMING LIVE
         </div>
-        <div className="mt-3 space-y-1 border border-green-100/15 bg-green-100/[0.03] p-5 text-xs">
+        <div className="mt-3 space-y-1 border border-teal/15 bg-teal/[0.03] p-5 text-xs">
           {members.map((m) => (
             <div key={m.id} className="break-all">
-              <span className="text-green-100/60">{m.id}</span> {m.hash}
+              <span className="text-teal/60">{m.id}</span> {m.hash}
             </div>
           ))}
         </div>
@@ -68,9 +69,9 @@ export default function ZionChamber({
     </div>
   );
 
-  if (!onClose) return <main className="bg-black font-mono text-green-100 min-h-screen">{inner}</main>;
+  if (!onClose) return <main className="bg-obsidian font-mono text-teal min-h-screen">{inner}</main>;
   return (
-    <div className="fixed inset-0 z-[100] overflow-y-auto bg-black font-mono text-green-100">
+    <div className="fixed inset-0 z-[100] overflow-y-auto bg-obsidian font-mono text-teal">
       {inner}
     </div>
   );

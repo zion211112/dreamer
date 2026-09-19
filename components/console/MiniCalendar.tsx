@@ -68,7 +68,7 @@ export function MiniCalendar({ items, onAdd, onRemove }: Props) {
     return (
       <span className="mt-0.5 flex items-center gap-[3px]">
         {has("class") && <span className="h-[5px] w-[5px] rounded-full bg-ivory/70" />}
-        {has("personal") && <span className="h-[5px] w-[5px] rounded-full bg-gold" />}
+        {has("personal") && <span className="h-[5px] w-[5px] rounded-full bg-amber" />}
       </span>
     );
   };
@@ -80,10 +80,10 @@ export function MiniCalendar({ items, onAdd, onRemove }: Props) {
           {view.toLocaleDateString("en-GB", { month: "long", year: "numeric" })}
         </p>
         <div className="flex gap-1">
-          <button onClick={() => setView(new Date(y, m - 1, 1))} className="rounded-lg border border-white/10 px-2 py-0.5 text-dim hover:text-ivory" aria-label="Previous month">
+          <button onClick={() => setView(new Date(y, m - 1, 1))} className="rounded-lg border border-ivory/10 px-2 py-0.5 text-dim hover:text-ivory" aria-label="Previous month">
             ‹
           </button>
-          <button onClick={() => setView(new Date(y, m + 1, 1))} className="rounded-lg border border-white/10 px-2 py-0.5 text-dim hover:text-ivory" aria-label="Next month">
+          <button onClick={() => setView(new Date(y, m + 1, 1))} className="rounded-lg border border-ivory/10 px-2 py-0.5 text-dim hover:text-ivory" aria-label="Next month">
             ›
           </button>
         </div>
@@ -104,19 +104,19 @@ export function MiniCalendar({ items, onAdd, onRemove }: Props) {
             <button
               key={key}
               onClick={() => setSel(key)}
-              className={`flex h-[34px] flex-col items-start justify-start rounded-lg border p-1 text-left transition-colors ${isSel ? "border-gold/60 bg-gold-soft" : "border-transparent hover:border-white/10"}`}
+              className={`flex h-[34px] flex-col items-start justify-start rounded-lg border p-1 text-left transition-colors ${isSel ? "border-amber/60 bg-bg-amber/15" : "border-transparent hover:border-ivory/10"}`}
             >
-              <span className={`text-[11px] leading-none ${inMonth ? "text-ivory" : "text-dim/40"} ${isToday ? "font-bold text-gold" : ""}`}>
+              <span className={`text-[11px] leading-none ${inMonth ? "text-ivory" : "text-dim/40"} ${isToday ? "font-bold text-amber" : ""}`}>
                 {cell.getDate()}
               </span>
-              {colliding.has(key) ? <span className="mt-0.5 text-[9px] leading-none text-gold">⚠</span> : dayDot(key)}
+              {colliding.has(key) ? <span className="mt-0.5 text-[9px] leading-none text-amber">⚠</span> : dayDot(key)}
             </button>
           );
         })}
       </div>
 
       {/* The selected day, expanded — one day at a time. */}
-      <div className="mt-3 border-t border-white/10 pt-3">
+      <div className="mt-3 border-t border-ivory/10 pt-3">
         <div className="flex items-center justify-between">
           <p className={monoLabel}>
             {new Date(`${sel}T00:00:00`).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}
@@ -131,15 +131,15 @@ export function MiniCalendar({ items, onAdd, onRemove }: Props) {
         ) : (
           <ul className="mt-2 space-y-1.5">
             {dayItems.map((i) => (
-              <li key={i.id} className="flex items-center gap-2 rounded-lg border border-white/10/60 px-2.5 py-1.5">
+              <li key={i.id} className="flex items-center gap-2 rounded-lg border border-ivory/10/60 px-2.5 py-1.5">
                 <span className="w-10 shrink-0 font-mono text-[10px] tabular-nums text-dim">{i.time || "—"}</span>
                 <span className="min-w-0 flex-1 truncate text-[12px] text-ivory">
                   {i.title}
                   {i.kind === "class" && i.className ? <span className="text-dim"> · {i.className}</span> : null}
                 </span>
-                {dayCollisions.has(i.id) && <span title="Overlaps another timed item" className="text-[10px] text-gold">⚠</span>}
+                {dayCollisions.has(i.id) && <span title="Overlaps another timed item" className="text-[10px] text-amber">⚠</span>}
                 {i.kind === "personal" && <span className="font-mono text-[8px] uppercase tracking-[0.15em] text-dim">personal</span>}
-                <button onClick={() => onRemove(i.id)} aria-label="Remove" className="text-[11px] text-dim hover:text-red-400">
+                <button onClick={() => onRemove(i.id)} aria-label="Remove" className="text-[11px] text-dim hover:text-amber">
                   ✕
                 </button>
               </li>
@@ -148,7 +148,7 @@ export function MiniCalendar({ items, onAdd, onRemove }: Props) {
         )}
 
         {adding && (
-          <div className="mt-3 space-y-2.5 rounded-xl border border-white/10 bg-void p-3">
+          <div className="mt-3 space-y-2.5 rounded-xl border border-ivory/10 bg-void p-3">
             <div className="grid grid-cols-2 gap-2">
               <input value={fTime} onChange={(e) => setFTime(e.target.value)} type="time" className={field} />
               <input value={fTitle} onChange={(e) => setFTitle(e.target.value)} placeholder={fKind === "class" ? "Subject" : "What's happening"} className={field} />
@@ -158,7 +158,7 @@ export function MiniCalendar({ items, onAdd, onRemove }: Props) {
                 <button
                   key={k}
                   onClick={() => setFKind(k)}
-                  className={`rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] ${fKind === k ? "border-gold bg-gold-soft text-gold" : "border-white/10 text-dim"}`}
+                  className={`rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] ${fKind === k ? "border-amber bg-bg-amber/15 text-amber" : "border-ivory/10 text-dim"}`}
                 >
                   {k}
                 </button>

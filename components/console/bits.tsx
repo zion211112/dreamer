@@ -7,17 +7,17 @@
 import Link from "next/link";
 
 export const monoLabel = "font-mono text-[11px] uppercase tracking-[0.25em] text-dim";
-export const panel = "min-w-0 rounded-[21px] border border-white/10 bg-panel p-[21px]";
-export const moduleField = "mt-2 block w-full min-w-0 rounded-xl border border-white/10 bg-void px-3 py-2.5 text-sm leading-6 text-ivory outline-none focus:border-gold";
-export const quietAction = "rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-panelHi hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold disabled:opacity-40";
+export const panel = "min-w-0 rounded-[21px] border border-ivory/10 bg-panel p-[21px]";
+export const moduleField = "mt-2 block w-full min-w-0 rounded-xl border border-ivory/10 bg-void px-3 py-2.5 text-sm leading-6 text-ivory outline-none focus:border-amber";
+export const quietAction = "rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-panelHi hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber disabled:opacity-40";
 export const btn =
-  "rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold disabled:cursor-not-allowed disabled:opacity-40";
+  "rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-obsidian transition hover:bg-amber disabled:cursor-not-allowed disabled:opacity-40";
 export const btnGhost =
-  "rounded-full border border-white/10 px-6 py-3 text-sm font-semibold text-ivory transition hover:border-white/30";
+  "rounded-full border border-ivory/10 px-6 py-3 text-sm font-semibold text-ivory transition hover:border-ivory/30";
 export const field =
-  "w-full rounded-full border border-white/10 bg-panel px-5 py-3 text-sm text-ivory outline-none transition-colors placeholder:text-dim focus:border-gold";
+  "w-full rounded-full border border-ivory/10 bg-panel px-5 py-3 text-sm text-ivory outline-none transition-colors placeholder:text-dim focus:border-amber";
 export const cellInput =
-  "w-16 rounded-lg border border-white/10 bg-panel px-2 py-1.5 text-right font-mono text-[12px] text-ivory outline-none transition-colors focus:border-gold";
+  "w-16 rounded-lg border border-ivory/10 bg-panel px-2 py-1.5 text-right font-mono text-[12px] text-ivory outline-none transition-colors focus:border-amber";
 
 export function Loading() {
   return <p className={`${monoLabel} py-16 text-center`}>Reading the roll…</p>;
@@ -37,8 +37,8 @@ export function Gate({
   return (
     <div className={`${panel} flex min-h-[220px] flex-col justify-between`}>
       <div>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-amber-300/90 ring-1 ring-inset ring-amber-400/25">
-          <span className="h-1.5 w-1.5 rounded-full bg-amber-300/80" aria-hidden="true" />
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-amber ring-1 ring-inset ring-amber/30">
+          <span className="h-1.5 w-1.5 rounded-full bg-amber/80" aria-hidden="true" />
           Waiting
         </span>
         <h2 className="mt-4 font-display text-2xl font-light">{title}</h2>
@@ -61,7 +61,7 @@ export function PrintButton({ label = "Print", onClick }: { label?: string; onCl
       type="button"
       onClick={onClick ?? (() => window.print())}
       title="Print this sheet — or save it as PDF"
-      className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-white/10 px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-muted transition-colors hover:border-gold hover:text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold print:hidden"
+      className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-ivory/10 px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-muted transition-colors hover:border-amber hover:text-amber focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber print:hidden"
     >
       ⎙ {label}
     </button>
@@ -71,7 +71,7 @@ export function PrintButton({ label = "Print", onClick }: { label?: string; onCl
 export function Notice({ children, tone = "ok" }: { children: React.ReactNode; tone?: "ok" | "warn" }) {
   return (
     <p
-      className={`mt-4 font-mono text-[12px] leading-5 ${tone === "ok" ? "text-emerald-400" : "text-gold"}`}
+      className={`mt-4 font-mono text-[12px] leading-5 ${tone === "ok" ? "text-teal" : "text-amber"}`}
     >
       {children}
     </p>
@@ -86,7 +86,7 @@ export function HeadRow({
   right?: React.ReactNode;
 }) {
   return (
-    <div className="mb-[21px] flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
+    <div className="mb-[21px] flex flex-wrap items-center justify-between gap-3 border-b border-ivory/10 pb-3">
       <span className={monoLabel}>{label}</span>
       <div className="flex flex-wrap items-center gap-3">{right}</div>
     </div>
@@ -204,7 +204,7 @@ export function ModuleTile({
 }) {
   return (
     <span
-      className={`grid shrink-0 place-items-center rounded-xl border ${tint ?? "border-white/10 bg-white/5 text-muted"}`}
+      className={`grid shrink-0 place-items-center rounded-xl border ${tint ?? "border-ivory/10 bg-ivory/5 text-muted"}`}
       style={{ width: size, height: size }}
     >
       <ModuleGlyph module={module} size={Math.round(size * 0.44)} />

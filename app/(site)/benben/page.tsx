@@ -36,7 +36,7 @@ import {
 import type { Risk } from "../../../lib/board";
 
 const field =
-  "w-full border-b border-white/10 bg-transparent py-2.5 text-sm text-ivory outline-none transition focus:border-gold";
+  "w-full border-b border-ivory/10 bg-transparent py-2.5 text-sm text-ivory outline-none transition focus:border-amber";
 const label = "block font-mono text-[11px] uppercase tracking-[0.25em] text-dim";
 
 // The floor: a commons of builders for local projects, skills, and trusted work.
@@ -203,26 +203,26 @@ export default function BenBenPage() {
       <div className="relative mx-auto max-w-[880px] overflow-hidden px-6 py-16 md:py-24">
         <GeoArt
           variant="ring"
-          className="pointer-events-none absolute -top-16 right-[-80px] h-[300px] w-[300px] text-teal-300 opacity-[0.06]"
+          className="pointer-events-none absolute -top-16 right-[-80px] h-[300px] w-[300px] text-teal opacity-[0.06]"
         />
 
         {/* masthead */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ivory/10 pb-4">
           <div className="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.3em] text-dim">
             <span
               aria-hidden
-              className="grid h-6 w-6 shrink-0 rotate-45 place-items-center rounded-[5px] bg-gradient-to-br from-teal-400/80 to-violet-400/80"
+              className="grid h-6 w-6 shrink-0 rotate-45 place-items-center rounded-[5px] bg-gradient-to-br from-teal/70 to-amber/70"
             />
             <span>Ben-Ben · The Floor</span>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-teal-300/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-teal-300 ring-1 ring-inset ring-teal-300/25 tabular-nums">
+            <span className="rounded-full bg-teal/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-teal ring-1 ring-inset ring-teal/25 tabular-nums">
               {feed.length} builds
             </span>
-            <span className="rounded-full bg-violet-300/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-violet-300 ring-1 ring-inset ring-violet-300/25 tabular-nums">
+            <span className="rounded-full bg-amber/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-amber ring-1 ring-inset ring-amber/25 tabular-nums">
               {totalVotes} votes · {totalForks} forks
             </span>
-            <span className="rounded-full bg-emerald-300/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-emerald-300 ring-1 ring-inset ring-emerald-300/25 tabular-nums">
+            <span className="rounded-full bg-teal/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-teal ring-1 ring-inset ring-teal/25 tabular-nums">
               {openBoard} open on the board
             </span>
           </div>
@@ -257,9 +257,9 @@ export default function BenBenPage() {
         <section className="bb-board mt-12">
           <div>
             <h2 className="font-display text-[2rem] font-medium leading-tight text-ivory">The Commitments</h2>
-            <span aria-hidden className="mt-3 block h-px w-[5.5rem] bg-gold/70" />
+            <span aria-hidden className="mt-3 block h-px w-[5.5rem] bg-amber/70" />
             <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-3 font-mono text-[11px] uppercase tracking-[0.24em]">
-              <span className="text-gold">Propose · Ratify · Claim · Prove</span>
+              <span className="text-amber">Propose · Ratify · Claim · Prove</span>
               <span className="text-dim">state is derived — the floor decides</span>
             </div>
           </div>
@@ -286,9 +286,9 @@ export default function BenBenPage() {
         {/* the desk */}
         <div ref={desk} id="desk" className="mt-12 scroll-mt-24">
           {open && (
-            <form onSubmit={submit} className="border border-white/10 bg-panel/60 p-6 md:p-8">
+            <form onSubmit={submit} className="border border-ivory/10 bg-panel/60 p-6 md:p-8">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-gold">
+                <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-amber">
                   {forkOf ? `Forking · ${forkOf.id}` : "New build"}
                 </p>
                 {forkOf && (
@@ -359,8 +359,8 @@ export default function BenBenPage() {
                         aria-pressed={risk === r}
                         className={`border px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] transition ${
                           risk === r
-                            ? "border-gold bg-gold/10 text-gold"
-                            : "border-white/12 text-dim hover:border-white/25 hover:text-ivory"
+                            ? "border-amber bg-amber/10 text-amber"
+                            : "border-ivory/12 text-dim hover:border-ivory/25 hover:text-ivory"
                         }`}
                       >
                         {r}
@@ -384,8 +384,8 @@ export default function BenBenPage() {
                           }
                           className={`border px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] transition ${
                             on
-                              ? "border-teal-300/60 bg-teal-300/10 text-teal-300"
-                              : "border-white/12 text-dim hover:border-white/25 hover:text-ivory"
+                              ? "border-teal/60 bg-teal/10 text-teal"
+                              : "border-ivory/12 text-dim hover:border-ivory/25 hover:text-ivory"
                           }`}
                         >
                           {k}
@@ -445,7 +445,7 @@ export default function BenBenPage() {
                         type="checkbox"
                         checked={nothing}
                         onChange={(e) => setNothing(e.target.checked)}
-                        className="accent-[#d4af37]"
+                        className="accent-amber"
                       />
                       Nothing
                     </label>
@@ -503,8 +503,8 @@ export default function BenBenPage() {
                     close the desk
                   </button>
                   <div className="flex items-center gap-4">
-                    {err && <p className="font-mono text-xs text-red-400">{err}</p>}
-                    {notice && <p className="font-mono text-xs text-emerald-300">{notice}</p>}
+                    {err && <p className="font-mono text-xs text-amber">{err}</p>}
+                    {notice && <p className="font-mono text-xs text-teal">{notice}</p>}
                     <button className="bb-btn bb-glow rounded-full px-6 py-3 text-sm font-semibold transition">
                       {forkOf ? "Put the fork on the floor →" : "Put it on the floor →"}
                     </button>
@@ -517,8 +517,8 @@ export default function BenBenPage() {
 
         {/* the feed */}
         <section className="mt-12">
-          <div className="flex items-baseline justify-between border-b border-white/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em]">
-            <span className="text-gold">On the floor</span>
+          <div className="flex items-baseline justify-between border-b border-ivory/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em]">
+            <span className="text-amber">On the floor</span>
             <span className="text-dim">velocity, not vanity</span>
           </div>
           {feed.map((b) => (
@@ -534,7 +534,7 @@ export default function BenBenPage() {
           ))}
         </section>
 
-        <p className="mt-16 border-t border-white/10 pt-6 text-center font-mono text-[11px] uppercase tracking-[0.35em] text-dim">
+        <p className="mt-16 border-t border-ivory/10 pt-6 text-center font-mono text-[11px] uppercase tracking-[0.35em] text-dim">
           count, not noise · commit, then prove
         </p>
       </div>

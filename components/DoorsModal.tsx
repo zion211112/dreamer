@@ -20,24 +20,24 @@ export default function DoorsModal({ onClose }: { onClose: () => void }) {
   const pickedDoor = picked;
 
   return (
-    <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/70 p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-[90] flex items-center justify-center bg-obsidian/70 p-4" onClick={onClose}>
       <div
-        className="w-full max-w-2xl rounded-3xl bg-panel border border-white/10 p-7 md:p-9"
+        className="w-full max-w-2xl rounded-3xl bg-panel border border-ivory/10 p-7 md:p-9"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between">
           <div>
-            <div className="text-xs font-bold tracking-widest text-river">BUILD CAPACITY</div>
+            <div className="text-xs font-bold tracking-widest text-teal">BUILD CAPACITY</div>
             <h2 className="mt-2 text-2xl md:text-3xl font-extrabold tracking-tight text-ivory">Who are you?</h2>
           </div>
-          <button onClick={onClose} className="rounded-full border border-white/20 px-3 py-1 text-sm text-ivory" aria-label="Close">✕</button>
+          <button onClick={onClose} className="rounded-full border border-ivory/20 px-3 py-1 text-sm text-ivory" aria-label="Close">✕</button>
         </div>
         <div className="mt-6 grid grid-cols-2 gap-3">
           <button
             type="button"
             onClick={() => { setPicked("Individual"); setDone(false); }}
             className={`rounded-2xl border p-5 text-left transition ${
-              picked === "Individual" ? "border-river bg-river/10" : "border-white/10 bg-obsidian hover:border-ivory"
+              picked === "Individual" ? "border-teal bg-teal/10" : "border-ivory/10 bg-obsidian hover:border-ivory"
             }`}
           >
             <div className="font-bold text-ivory">Individual →</div>
@@ -47,7 +47,7 @@ export default function DoorsModal({ onClose }: { onClose: () => void }) {
             type="button"
             onClick={() => { setPicked("Builder"); setDone(false); }}
             className={`rounded-2xl border p-5 text-left transition ${
-              picked === "Builder" ? "border-river bg-river/10" : "border-white/10 bg-obsidian hover:border-ivory"
+              picked === "Builder" ? "border-teal bg-teal/10" : "border-ivory/10 bg-obsidian hover:border-ivory"
             }`}
           >
             <div className="font-bold text-ivory">Builder →</div>
@@ -57,7 +57,7 @@ export default function DoorsModal({ onClose }: { onClose: () => void }) {
             type="button"
             onClick={() => { setPicked("School"); setDone(false); }}
             className={`rounded-2xl border p-5 text-left transition ${
-              picked === "School" ? "border-river bg-river/10" : "border-white/10 bg-obsidian hover:border-ivory"
+              picked === "School" ? "border-teal bg-teal/10" : "border-ivory/10 bg-obsidian hover:border-ivory"
             }`}
           >
             <div className="font-bold text-ivory">School →</div>
@@ -67,7 +67,7 @@ export default function DoorsModal({ onClose }: { onClose: () => void }) {
             type="button"
             onClick={() => { setPicked("Everyone"); setDone(false); }}
             className={`rounded-2xl border p-5 text-left transition ${
-              picked === "Everyone" ? "border-river bg-river/10" : "border-white/10 bg-obsidian hover:border-ivory"
+              picked === "Everyone" ? "border-teal bg-teal/10" : "border-ivory/10 bg-obsidian hover:border-ivory"
             }`}
           >
             <div className="font-bold text-ivory">Everyone →</div>
@@ -75,12 +75,12 @@ export default function DoorsModal({ onClose }: { onClose: () => void }) {
           </button>
         </div>
         {pickedDoor && !done && (
-          <p className="mt-4 rounded-2xl bg-obsidian border border-white/10 p-5 text-sm text-ivory/85">
+          <p className="mt-4 rounded-2xl bg-obsidian border border-ivory/10 p-5 text-sm text-ivory/85">
             <strong>{pickedDoor}</strong> — this opens on you. No paywall, no verification, no queue.
           </p>
         )}
         {done && (
-          <p className="mt-4 rounded-2xl bg-river/15 border border-river/30 p-5 text-sm font-semibold text-emerald-300">
+          <p className="mt-4 rounded-2xl bg-teal/15 border border-teal/30 p-5 text-sm font-semibold text-teal">
             Door noted. The door is open already — just walk through.
           </p>
         )}

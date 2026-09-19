@@ -115,7 +115,7 @@ export default function Student360({
             aria-selected={tab === id}
             onClick={() => setTab(id)}
             className={`rounded-full border px-5 py-2 text-sm transition-colors ${
-              tab === id ? "border-gold bg-gold/5 text-gold" : "border-edge text-muted hover:border-edgeHi hover:text-ivory"
+              tab === id ? "border-amber bg-amber/5 text-amber" : "border-edge text-muted hover:border-edgeHi hover:text-ivory"
             }`}
           >
             {label}
@@ -213,12 +213,12 @@ export default function Student360({
         </section>
       )}
 
-      {notice && <p role="status" className="font-mono text-[12px] text-gold">{notice}</p>}
+      {notice && <p role="status" className="font-mono text-[12px] text-amber">{notice}</p>}
 
       {/* The print path: a clean black-on-white summary sheet. */}
       <pre
         aria-hidden="true"
-        className="print-sheet hidden whitespace-pre-wrap bg-white p-8 font-body text-sm leading-8 text-black print:block"
+        className="print-sheet bg-white p-8 font-body text-sm leading-8 text-obsidian print:block"
       >
         {printSheet()}
       </pre>

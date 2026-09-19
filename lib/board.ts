@@ -161,11 +161,11 @@ export function deriveState(b: Build, now: number): LifeState {
 // Monogram, name, tone and board order — the display layer of the machine.
 export const STATE: Record<LifeState, { glyph: string; name: string; tone: string; rank: number }> = {
   proposed: { glyph: "○", name: "open", tone: "text-dim", rank: 0 },
-  ratified: { glyph: "◐", name: "ratified", tone: "text-gold", rank: 1 },
-  claimed: { glyph: "▣", name: "in hand", tone: "text-teal-300", rank: 2 },
+  ratified: { glyph: "◐", name: "ratified", tone: "text-amber", rank: 1 },
+  claimed: { glyph: "▣", name: "in hand", tone: "text-teal", rank: 2 },
   active: { glyph: "◉", name: "in motion", tone: "text-ivory", rank: 3 },
-  done: { glyph: "∎", name: "closed", tone: "text-emerald-300", rank: 4 },
-  parked: { glyph: "‖", name: "parked", tone: "text-earth", rank: 5 },
+  done: { glyph: "∎", name: "closed", tone: "text-teal", rank: 4 },
+  parked: { glyph: "‖", name: "parked", tone: "text-dim", rank: 5 },
   lapsed: { glyph: "⊘", name: "lapsed", tone: "text-dim", rank: 6 }
 };
 

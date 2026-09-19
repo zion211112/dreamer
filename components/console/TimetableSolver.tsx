@@ -72,7 +72,7 @@ export default function TimetableSolver() {
 
   return (
     <div className="min-w-0 max-w-full space-y-8">
-      <div className="border-b border-white/10 pb-6">
+      <div className="border-b border-ivory/10 pb-6">
         <p className={monoLabel}>Timetable Solver · build · print · approve</p>
         <h1 className="mt-3 font-display text-4xl font-light tracking-tight md:text-5xl">The week, on one wall grid.</h1>
         <p className="mt-3 max-w-[62ch] text-sm leading-6 text-muted">
@@ -82,7 +82,7 @@ export default function TimetableSolver() {
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <Link href="/console/17" className={btnGhost + " px-4 py-2"}>→ Open My Day</Link>
           <PrintButton label="Print wall grid" />
-          {approvedName !== "" && <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-emerald-400">Approved · {approvedName}</span>}
+          {approvedName !== "" && <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-teal">Approved · {approvedName}</span>}
         </div>
       </div>
 
@@ -96,7 +96,7 @@ export default function TimetableSolver() {
               setNotice("Loaded demo grid — rewrite, print, approve.");
             }}
             className={`rounded-[21px] border p-[21px] text-left transition-colors ${
-              i === demoSel ? "border-gold/60 bg-gold/5" : "border-white/10 bg-panel hover:border-white/30"
+              i === demoSel ? "border-amber/60 bg-amber/5" : "border-ivory/10 bg-panel hover:border-ivory/30"
             }`}
           >
             <p className={monoLabel}>Demo {i + 1} · {d.className}</p>
@@ -110,7 +110,7 @@ export default function TimetableSolver() {
             setDemoSel(-1);
             setNotice("Blank week — 7 teaching periods, breaks, lunch, Friday PPI.");
           }}
-          className="rounded-[21px] border border-dashed border-white/10 bg-void p-[21px] text-left transition-colors hover:border-gold/60"
+          className="rounded-[21px] border border-dashed border-ivory/10 bg-void p-[21px] text-left transition-colors hover:border-amber/60"
         >
           <p className={monoLabel}>Blank</p>
           <p className="mt-2 font-display text-xl font-normal">Start empty</p>
@@ -123,7 +123,7 @@ export default function TimetableSolver() {
           <input
             value={active.className}
             onChange={(e) => setActive((p) => ({ ...p, className: e.target.value.slice(0, 24) }))}
-            className="mt-2 w-full rounded-full border border-white/10 bg-void px-5 py-3 text-sm text-ivory outline-none focus:border-gold"
+            className="mt-2 w-full rounded-full border border-ivory/10 bg-void px-5 py-3 text-sm text-ivory outline-none focus:border-amber"
           />
         </label>
         <label className="min-w-[200px] flex-1">
@@ -131,7 +131,7 @@ export default function TimetableSolver() {
           <input
             value={active.name}
             onChange={(e) => setActive((p) => ({ ...p, name: e.target.value.slice(0, 60) }))}
-            className="mt-2 w-full rounded-full border border-white/10 bg-void px-5 py-3 text-sm text-ivory outline-none focus:border-gold"
+            className="mt-2 w-full rounded-full border border-ivory/10 bg-void px-5 py-3 text-sm text-ivory outline-none focus:border-amber"
           />
         </label>
         <p className="w-full font-mono text-[11px] uppercase tracking-[0.15em] text-dim">
@@ -139,10 +139,10 @@ export default function TimetableSolver() {
         </p>
       </div>
 
-      <div className="overflow-x-auto rounded-[21px] border border-white/10 bg-panel">
+      <div className="overflow-x-auto rounded-[21px] border border-ivory/10 bg-panel">
         <table className="w-full min-w-[720px] border-collapse">
           <thead>
-            <tr className="border-b border-white/10">
+            <tr className="border-b border-ivory/10">
               <th className="w-[160px] px-4 py-3 text-left font-mono text-[10px] uppercase tracking-[0.2em] text-dim">Time</th>
               {WEEKDAYS.map((d) => (
                 <th key={d} className="px-3 py-3 text-left font-mono text-[10px] uppercase tracking-[0.2em] text-dim">{d}</th>
@@ -151,14 +151,14 @@ export default function TimetableSolver() {
           </thead>
           <tbody>
             {active.times.map((slot, i) => (
-              <tr key={i} className="border-b border-white/10/50 last:border-0">
+              <tr key={i} className="border-b border-ivory/10/50 last:border-0">
                 <td className="px-4 py-2 align-top">
                   <div className="flex items-center gap-1.5">
                     <input value={slot.start} onChange={(e) => setTime(i, "start", e.target.value)} type="time" aria-label={"Slot " + (i + 1) + " start"}
-                      className="w-[80px] rounded-lg border border-transparent bg-transparent px-1 py-1 font-mono text-[12px] tabular-nums text-ivory outline-none focus:border-gold" />
+                      className="w-[80px] rounded-lg border border-transparent bg-transparent px-1 py-1 font-mono text-[12px] tabular-nums text-ivory outline-none focus:border-amber" />
                     <span className="font-mono text-[10px] text-dim">–</span>
                     <input value={slot.end} onChange={(e) => setTime(i, "end", e.target.value)} type="time" aria-label={"Slot " + (i + 1) + " end"}
-                      className="w-[80px] rounded-lg border border-transparent bg-transparent px-1 py-1 font-mono text-[12px] tabular-nums text-muted outline-none focus:border-gold" />
+                      className="w-[80px] rounded-lg border border-transparent bg-transparent px-1 py-1 font-mono text-[12px] tabular-nums text-muted outline-none focus:border-amber" />
                   </div>
                   <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.2em] text-dim/70">
                     {slot.kind === "break" ? "health break" : slot.kind === "lunch" ? "lunch" : slot.kind === "roll" ? "roll call" : prettyRange(slot)}
@@ -170,7 +170,7 @@ export default function TimetableSolver() {
                       value={active.cells[d]?.[i] ?? ""}
                       onChange={(e) => setCell(d, i, e.target.value)}
                       placeholder="—"
-                      className="w-full rounded-lg border border-transparent bg-void px-2.5 py-2 font-mono text-[12px] uppercase outline-none focus:border-gold"
+                      className="w-full rounded-lg border border-transparent bg-void px-2.5 py-2 font-mono text-[12px] uppercase outline-none focus:border-amber"
                     />
                   </td>
                 ))}
@@ -183,24 +183,24 @@ export default function TimetableSolver() {
       <div className="flex flex-wrap gap-3">
         <button onClick={() => void approve()} className={btn}>Approve — fill Today</button>
       </div>
-      {notice !== "" && <p role="status" className="font-mono text-[12px] text-gold">{notice}</p>}
+      {notice !== "" && <p role="status" className="font-mono text-[12px] text-amber">{notice}</p>}
 
       {/* The print path: a clean wall grid on white paper. The screen UI
           above is chrome; the paper gets rules and subject names only. */}
       <div
         aria-hidden="true"
-        className="print-sheet hidden bg-white p-8 text-black print:block print:w-full"
+        className="print-sheet bg-white p-8 text-obsidian print:block print:w-full"
       >
         <p className="font-mono text-[10px] uppercase tracking-[0.3em]">Timetable · {active.className}</p>
         <h3 className="mt-2 font-display text-2xl">{active.name}</h3>
         <table className="mt-4 w-full border-collapse text-[12px]">
           <thead>
             <tr>
-              <th className="w-[120px] border-b border-neutral-400 px-2 py-1.5 text-left font-mono text-[10px] uppercase tracking-[0.15em]">
+              <th className="w-[120px] border-b border-ivory/30 px-2 py-1.5 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-obsidian/70">
                 Time
               </th>
               {WEEKDAYS.map((d) => (
-                <th key={d} className="border-b border-neutral-400 px-2 py-1.5 text-left font-mono text-[10px] uppercase tracking-[0.15em]">
+                <th key={d} className="border-b border-ivory/30 px-2 py-1.5 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-obsidian/70">
                   {d}
                 </th>
               ))}
@@ -209,7 +209,7 @@ export default function TimetableSolver() {
           <tbody>
             {active.times.map((slot, i) => (
               <tr key={i}>
-                <td className="border-b border-neutral-200 px-2 py-1.5 font-mono text-[11px] tabular-nums">
+                <td className="border-b border-ivory/50 px-2 py-1.5 font-mono text-[11px] tabular-nums text-obsidian/80">
                   {prettyRange(slot)}
                   {slot.kind === "break" ? " · break" : slot.kind === "lunch" ? " · lunch" : ""}
                 </td>
@@ -221,7 +221,7 @@ export default function TimetableSolver() {
                   return (
                     <td
                       key={d}
-                      className={`border-b border-neutral-200 px-2 py-1.5 font-mono text-[11px] uppercase tracking-wide ${isFurniture ? "text-neutral-500" : ""}`}
+                      className={`border-b border-ivory/50 px-2 py-1.5 font-mono text-[11px] uppercase tracking-wide ${isFurniture ? "text-obsidian/50" : ""}`}
                     >
                       {label}
                     </td>
@@ -231,7 +231,7 @@ export default function TimetableSolver() {
             ))}
           </tbody>
         </table>
-        <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.15em] text-neutral-500">
+        <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.15em] text-obsidian/70">
           {teachingCount} teaching periods / week · approved in the Timetable Solver
         </p>
       </div>

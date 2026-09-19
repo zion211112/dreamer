@@ -45,15 +45,15 @@ export const CONSOLE_MODULES = [
 // the same chip language the site uses for live data, so a module card and
 // a status pill read as one system across the app.
 export const CONSOLE_MENU: Record<string, { modules: string[]; icon: string; desc: string; tint: string }> = {
-  "Content Studio": { modules: ["Content Studio"], icon: "Content Studio", desc: "Lesson plans, semester outlines, video-note tests — built from your own notes.", tint: "border-violet-400/20 bg-violet-400/10 text-violet-300" },
-  "Auto-Marking": { modules: ["Auto-Marking"], icon: "Auto-Marking", desc: "Upload a test paper. Get back a weakness map.", tint: "border-emerald-400/20 bg-emerald-400/10 text-emerald-300" },
-  "My Day": { modules: ["My Day"], icon: "My Day", desc: "Today on one timeline — lessons, attendance, grades, notes, and a small planner.", tint: "border-amber-400/20 bg-amber-400/10 text-amber-300" },
-  "Timetable": { modules: ["Timetable"], icon: "Timetable", desc: "Build the week, print it for the wall, approve it — Today reads from it.", tint: "border-sky-400/20 bg-sky-400/10 text-sky-300" },
-  "Roster": { modules: ["Roster"], icon: "Roster", desc: "Bulk CSV paste. Classes and streams.", tint: "border-rose-400/20 bg-rose-400/10 text-rose-300" },
-  "Reports": { modules: ["Reports"], icon: "Reports", desc: "One-click term reports and KCSE forecasts, per student.", tint: "border-indigo-400/20 bg-indigo-400/10 text-indigo-300" },
-  "Fees": { modules: ["Fees"], icon: "Fees", desc: "Invoices, M-Pesa reconciliation, balances.", tint: "border-yellow-400/20 bg-yellow-400/10 text-yellow-300" },
-  "Inspection": { modules: ["Inspection"], icon: "Inspection", desc: "Audit checklists, one-click exports.", tint: "border-teal-400/20 bg-teal-400/10 text-teal-300" },
-  "Comms": { modules: ["Comms"], icon: "Comms", desc: "Bulk SMS and WhatsApp to parents.", tint: "border-fuchsia-400/20 bg-fuchsia-400/10 text-fuchsia-300" },
+  "Content Studio": { modules: ["Content Studio"], icon: "Content Studio", desc: "Lesson plans, semester outlines, video-note tests — built from your own notes.", tint: "border-amber/20 bg-amber/10 text-amber" },
+  "Auto-Marking": { modules: ["Auto-Marking"], icon: "Auto-Marking", desc: "Upload a test paper. Get back a weakness map.", tint: "border-amber/20 bg-amber/10 text-amber" },
+  "My Day": { modules: ["My Day"], icon: "My Day", desc: "Today on one timeline — lessons, attendance, grades, notes, and a small planner.", tint: "border-amber/20 bg-amber/10 text-amber" },
+  "Timetable": { modules: ["Timetable"], icon: "Timetable", desc: "Build the week, print it for the wall, approve it — Today reads from it.", tint: "border-teal/20 bg-teal/10 text-teal" },
+  "Roster": { modules: ["Roster"], icon: "Roster", desc: "Bulk CSV paste. Classes and streams.", tint: "border-amber/20 bg-amber/10 text-amber" },
+  "Reports": { modules: ["Reports"], icon: "Reports", desc: "One-click term reports and KCSE forecasts, per student.", tint: "border-amber/20 bg-amber/10 text-amber" },
+  "Fees": { modules: ["Fees"], icon: "Fees", desc: "Invoices, M-Pesa reconciliation, balances.", tint: "border-amber/20 bg-amber/10 text-amber" },
+  "Inspection": { modules: ["Inspection"], icon: "Inspection", desc: "Audit checklists, one-click exports.", tint: "border-amber/20 bg-amber/10 text-amber" },
+  "Comms": { modules: ["Comms"], icon: "Comms", desc: "Bulk SMS and WhatsApp to parents.", tint: "border-amber/20 bg-amber/10 text-amber" },
 };
 
 // The ten tools behind the nine modules — all ten open, each with a real

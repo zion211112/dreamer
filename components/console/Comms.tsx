@@ -111,7 +111,7 @@ export default function Comms() {
       {unreached > 0 && (
         <Notice tone="warn">
           {unreached} student{unreached === 1 ? "" : "s"} in scope have no parent phone —{" "}
-          <Link className="text-gold" href="/console/9">
+          <Link className="text-amber" href="/console/9">
             add the numbers in Roster Import
           </Link>
           .
@@ -134,7 +134,7 @@ export default function Comms() {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           rows={4}
-          className="mt-4 w-full rounded-[21px] border border-white/10 bg-void p-4 text-[14px] leading-7 text-ivory outline-none transition-colors placeholder:text-dim focus:border-gold"
+          className="mt-4 w-full rounded-[21px] border border-ivory/10 bg-void p-4 text-[14px] leading-7 text-ivory outline-none transition-colors placeholder:text-dim focus:border-amber"
           placeholder="Write the message once…"
         />
         <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.15em] text-dim">
@@ -144,7 +144,7 @@ export default function Comms() {
 
       {/* The recipients: one row per phone, every child behind it. */}
       <div className={panel + " p-0"}>
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-4 py-3 md:px-5">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ivory/10 px-4 py-3 md:px-5">
           <span className={monoLabel}>Recipients · one line per phone</span>
           <select value={cls} onChange={(e) => setCls(e.target.value)} className={field + " w-auto"}>
             <option value="">All classes</option>
@@ -165,7 +165,7 @@ export default function Comms() {
               const text = filled(r);
               const kids = r.children.map((id) => nameOf(id)).join(" & ");
               return (
-                <li key={r.phone} className="flex flex-wrap items-center gap-3 border-b border-white/10/50 px-4 py-3 last:border-0 md:px-5">
+                <li key={r.phone} className="flex flex-wrap items-center gap-3 border-b border-ivory/10/50 px-4 py-3 last:border-0 md:px-5">
                   <div className="min-w-[160px]">
                     <p className="text-[13px] text-ivory">{r.parent || "Parent"}</p>
                     <p className="font-mono text-[11px] text-dim">
@@ -193,7 +193,7 @@ export default function Comms() {
             })}
           </ul>
         )}
-        <div className="border-t border-white/10 px-4 py-3 md:px-5">
+        <div className="border-t border-ivory/10 px-4 py-3 md:px-5">
           <p className="text-[11px] leading-5 text-dim">
             Sending is per parent, on purpose — each link opens the app with the message written, and the send is
             the parent&apos;s one tap. No SMS gateway, no server, nothing leaves the device except the message
