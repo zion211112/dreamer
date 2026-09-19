@@ -9,26 +9,24 @@ export function Nav() {
   const [open, setOpen] = useState(false);
 
   const links: Array<[string, string]> = [
-    ["/benben", "BenBen"],
-    ["/search", "Search"],
-    ["/dashboard", "My Profile"],
+    ["/", "Home"],
     ["/ledger", "Ledger"],
+    ["/benben", "Floor"],
+    ["/console", "Teachers"],
     ["/contact", "Contact"]
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-ivory/10 bg-obsidian/90 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3.5">
-        <Link href="/" className="flex items-center gap-2.5 text-ivory" aria-label="APT-LABS home">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-amber to-amber/70 shadow-[0_4px_14px_-4px_rgba(212,175,55,0.55)]">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <polygon points="12 2 22 12 12 22 2 12" />
-            </svg>
+    <header className="sticky top-0 z-50 border-b border-ivory/10 bg-obsidian/85 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5 md:px-8">
+        <Link href="/" className="flex items-center gap-3 text-ivory" aria-label="APT-LABS home">
+          <span className="grid h-8 w-8 place-items-center rounded-lg border border-amber/40 bg-amber/10 text-[11px] font-bold text-amber">
+            A
           </span>
-          <span className="text-[15px] font-bold tracking-tight">APT-LABS</span>
+          <span className="text-[14px] font-semibold tracking-[0.18em] text-ivory/90">APT-LABS</span>
         </Link>
 
-        <nav className="hidden items-center gap-7 text-[13px] font-medium text-ivory/55 md:flex">
+        <nav className="hidden items-center gap-7 text-[12px] font-medium text-ivory/55 md:flex">
           {links.map(([href, label]) => (
             <Link key={href} href={href} className="transition-colors hover:text-ivory">
               {label}
@@ -38,7 +36,7 @@ export function Nav() {
 
         <button
           onClick={() => setOpen(!open)}
-          className="rounded-full border border-ivory/20 px-4 py-2 text-sm font-semibold text-ivory md:hidden"
+          className="rounded-full border border-ivory/20 px-3.5 py-2 text-sm font-semibold text-ivory md:hidden"
           aria-label="Menu"
         >
           {open ? "✕" : "☰"}
@@ -46,9 +44,9 @@ export function Nav() {
       </div>
 
       {open && (
-        <nav className="flex flex-col gap-1 border-t border-ivory/10 bg-obsidian px-6 py-4 text-sm md:hidden">
+        <nav className="flex flex-col gap-0.5 border-t border-ivory/10 bg-obsidian px-5 py-4 text-sm md:hidden">
           {links.map(([href, label]) => (
-            <Link key={href} href={href} onClick={() => setOpen(false)} className="py-1.5 text-ivory/80 transition-colors hover:text-ivory">
+            <Link key={href} href={href} onClick={() => setOpen(false)} className="py-2.5 text-ivory/80 transition-colors hover:text-ivory">
               {label}
             </Link>
           ))}
