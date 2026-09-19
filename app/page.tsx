@@ -5,15 +5,15 @@ import GeoArt from "../components/GeoArt";
 export const metadata: Metadata = {
   title: "APT-LABS · Kirinyaga, Kenya",
   description:
-    "A list of everyone in Kirinyaga who can actually do things. Open, free, and built on this device."
+    "A public record of work, skill, and trust in Kirinyaga, Kenya."
 };
 
 export default function HomePage() {
   return (
-    <main className="theme-portal bg-obsidian relative overflow-hidden">
+    <main className="theme-portal relative overflow-hidden bg-[#101614]">
       <GeoArt
-        variant="ring"
-        className="pointer-events-none absolute inset-0 z-0 h-full w-full opacity-[0.06] text-ivory"
+        variant="sacred"
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full opacity-[0.14] text-moss"
         aria-hidden="true"
       />
 
@@ -28,26 +28,26 @@ export default function HomePage() {
           The ledger
         </h1>
 
-        <p className="mt-4 max-w-[42ch] text-[15px] leading-relaxed text-muted">
-          A list of everyone in Kirinyaga who can actually do things. Open, free, and built on this device.
+        <p className="mt-4 max-w-[42ch] text-[15px] leading-relaxed text-[#b4bcb4]">
+          A public record of work, skill, and trust, rooted in Kirinyaga and open to the people who make it.
         </p>
 
         <div className="mt-7 flex flex-wrap justify-center gap-3">
           <Link
             href="/ledger"
-            className="rounded-full border border-amber/50 bg-amber px-6 py-3 text-sm font-semibold text-obsidian transition-colors hover:bg-amber/90"
+            className="rounded-full border border-copper/60 bg-copper px-6 py-3 text-sm font-semibold text-[#101614] transition-colors hover:bg-copper/90"
           >
             Open the ledger
           </Link>
           <Link
             href="/benben"
-            className="rounded-full border border-ivory/15 px-6 py-3 text-sm font-semibold text-ivory transition-colors hover:border-amber/60 hover:text-amber"
+            className="rounded-full border border-ivory/15 px-6 py-3 text-sm font-semibold text-ivory transition-colors hover:border-copper/70 hover:text-copper"
           >
             Open the floor
           </Link>
           <Link
             href="/console"
-            className="rounded-full border border-ivory/15 px-6 py-3 text-sm font-semibold text-ivory transition-colors hover:border-amber/60 hover:text-amber"
+            className="rounded-full border border-ivory/15 px-6 py-3 text-sm font-semibold text-ivory transition-colors hover:border-copper/70 hover:text-copper"
           >
             Teachers
           </Link>

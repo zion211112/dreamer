@@ -25,7 +25,9 @@ const config = {
         // growth). Amber is the warm accent (attention, highlight, secondary
         // marks, the older-world warmth of the ledger).
         teal: "#2dd4bf",
-        amber: "#d4af37"
+        amber: "#d4af37",
+        copper: "#b8785d",
+        moss: "#91a58f"
       },
       fontFamily: {
         display: ["var(--font-playfair)", "Georgia", "serif"],

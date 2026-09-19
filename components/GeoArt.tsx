@@ -1,5 +1,4 @@
-// Faded geometric furniture on obsidian. Twelve cells: ring, grid, band, corner.
-// Opacity stays low: watermark, never noise.
+// Quiet geometric studies used as architectural watermarks.
 
 function Cells12({ r = 140, cx = 200, cy = 200, cr = 13 }: { r?: number; cx?: number; cy?: number; cr?: number }) {
   return (
@@ -25,7 +24,7 @@ export default function GeoArt({
   variant = "ring",
   className = ""
 }: {
-  variant?: "ring" | "grid" | "band" | "corner";
+  variant?: "ring" | "grid" | "band" | "corner" | "sacred";
   className?: string;
 }) {
   if (variant === "grid") {
@@ -74,6 +73,35 @@ export default function GeoArt({
               cx={160 + 110 * Math.cos(a)}
               cy={0 + 110 * Math.sin(a)}
               r={7}
+              stroke="currentColor"
+              strokeWidth="1"
+            />
+          );
+        })}
+      </svg>
+    );
+  }
+  if (variant === "sacred") {
+    return (
+      <svg className={className} viewBox="0 0 800 800" fill="none" aria-hidden preserveAspectRatio="xMidYMid slice">
+        <circle cx="400" cy="400" r="286" stroke="currentColor" strokeWidth="1" />
+        <circle cx="400" cy="400" r="177" stroke="currentColor" strokeWidth="1" />
+        <circle cx="400" cy="400" r="64" stroke="currentColor" strokeWidth="1" />
+        <circle cx="400" cy="400" r="4" fill="currentColor" />
+        <path d="M400 114V686M114 400H686" stroke="currentColor" strokeWidth="1" />
+        <path d="M198 198L602 602M602 198L198 602" stroke="currentColor" strokeWidth="1" />
+        <path d="M400 223L553 311V489L400 577L247 489V311L400 223Z" stroke="currentColor" strokeWidth="1" />
+        <path d="M400 286L499 343V457L400 514L301 457V343L400 286Z" stroke="currentColor" strokeWidth="1" />
+        <path d="M286 400C286 302 400 240 514 400C400 560 286 498 286 400Z" stroke="currentColor" strokeWidth="1" />
+        <path d="M514 400C514 302 400 240 286 400C400 560 514 498 514 400Z" stroke="currentColor" strokeWidth="1" />
+        {Array.from({ length: 12 }).map((_, i) => {
+          const a = (Math.PI / 6) * i;
+          return (
+            <circle
+              key={i}
+              cx={400 + 286 * Math.cos(a)}
+              cy={400 + 286 * Math.sin(a)}
+              r="8"
               stroke="currentColor"
               strokeWidth="1"
             />
