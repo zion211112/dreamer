@@ -8,22 +8,12 @@ import { useEffect, useState } from "react";
 // hero runs on — so the header is the first hint of the door it opens.
 export function Nav() {
   const [open, setOpen] = useState(false);
-  // The Console link appears only to a school that has entered its gate —
-  // the flag is set by RunPilotGate on this device.
-  const [inConsole, setInConsole] = useState(false);
-
-  useEffect(() => {
-    try {
-      setInConsole(!!window.localStorage.getItem("runpilot_access"));
-    } catch {
-      /* storage unavailable */
-    }
-  }, []);
 
   const links: Array<[string, string]> = [
     ["/benben", "BenBen"],
     ["/search", "Search"],
     ["/dashboard", "My Profile"],
+    ["/ledger", "Ledger"],
     ["/contact", "Contact"]
   ];
 
@@ -45,14 +35,6 @@ export function Nav() {
               {label}
             </Link>
           ))}
-          {inConsole && (
-            <Link
-              href="/console"
-              className="rounded-full bg-gradient-to-r from-indigo-500 to-sky-400 px-4 py-2 text-[13px] font-semibold text-white transition-[filter] hover:brightness-110"
-            >
-              Open Console
-            </Link>
-          )}
         </nav>
 
         <button
@@ -71,15 +53,6 @@ export function Nav() {
               {label}
             </Link>
           ))}
-          {inConsole && (
-            <Link
-              href="/console"
-              onClick={() => setOpen(false)}
-              className="mt-2 rounded-full bg-gradient-to-r from-indigo-500 to-sky-400 px-4 py-2 text-center text-[13px] font-semibold text-white"
-            >
-              Open Console
-            </Link>
-          )}
         </nav>
       )}
     </header>

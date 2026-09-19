@@ -14,12 +14,11 @@ import {
 const row = "grid grid-cols-[11rem_1fr] items-baseline gap-4 border-b border-white/10 py-4";
 const k = "font-mono text-[11px] uppercase tracking-[0.2em] text-dim";
 
-// Your standing on the floor. No sidebar, no fake nav — one profile, sealed.
+// Your standing on the floor. Black page, white text, no verification tiers,
+// no paywall, no unlock gate.
 export default function Dashboard() {
   const [me, setMe] = useState<Member | null>(null);
   const [ready, setReady] = useState(false);
-  // Ledger links only surface to visitors who have unlocked the app.
-  const [unlocked, setUnlocked] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -30,25 +29,12 @@ export default function Dashboard() {
       ? [...customs, ...SEED_MEMBERS].find((x) => x.id.toUpperCase() === myId.toUpperCase()) || null
       : null;
     setMe(found);
-    try {
-      setUnlocked(!!window.localStorage.getItem("apt_pilot_access"));
-    } catch {
-      /* memory */
-    }
     setReady(true);
   }, []);
 
   if (!ready) {
     return <main className="min-h-[60vh] bg-obsidian text-ivory" />;
   }
-
-  const status = me
-    ? me.verified
-      ? `SEALED${me.tier ? ` · ${me.tier.toUpperCase()}` : ""}`
-      : me.paid
-        ? "PAID · UNSEALED"
-        : "PLAYGROUND"
-    : "";
 
   return (
     <main className="bg-obsidian text-ivory">
@@ -61,11 +47,7 @@ export default function Dashboard() {
         {/* masthead */}
         <div className="flex items-baseline justify-between border-b border-white/10 pb-4 font-mono text-[11px] uppercase tracking-[0.3em] text-dim">
           <span>My Profile</span>
-          {me && (
-            <span className={me.verified ? "text-emerald-300" : me.paid ? "text-gold" : "text-dim"}>
-              {status}
-            </span>
-          )}
+          {me && <span className="text-dim">{me.occupation}</span>}
         </div>
 
         {!me ? (
@@ -78,14 +60,12 @@ export default function Dashboard() {
               forms, no redundant flow.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              {unlocked && (
-                <Link
-                  href="/ledger"
-                  className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold"
-                >
-                  Claim your slot →
-                </Link>
-              )}
+              <Link
+                href="/ledger"
+                className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold"
+              >
+                Claim your slot →
+              </Link>
               <Link
                 href="/benben"
                 className="rounded-full border border-white/15 px-6 py-3 text-sm font-semibold transition hover:border-gold"
@@ -95,7 +75,6 @@ export default function Dashboard() {
             </div>
           </>
         ) : (
-
           <>
             <h1 className="mt-12 font-display text-5xl md:text-6xl tracking-tight">
               @{me.username}
@@ -134,14 +113,12 @@ export default function Dashboard() {
             </div>
 
             <div className="mt-10 flex flex-wrap items-center gap-3">
-              {unlocked && (
-                <Link
-                  href="/ledger"
-                  className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold transition hover:border-gold"
-                >
-                  The roll
-                </Link>
-              )}
+              <Link
+                href="/ledger"
+                className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold transition hover:border-gold"
+              >
+                The roll
+              </Link>
               <Link
                 href="/search"
                 className="rounded-full border border-white/15 px-5 py-2.5 text-sm font-semibold transition hover:border-gold"

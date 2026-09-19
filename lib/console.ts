@@ -24,9 +24,6 @@ export interface ConsoleTool {
   desc: string;
   module: string;
   fav: boolean;
-  // ready = a real workspace is behind this card. coming = the seat is
-  // reserved and the page says so plainly. The grid never overpromises.
-  status: "ready" | "coming";
 }
 
 // The nine modules, in display order. Content Studio leads, Auto-Marking
@@ -59,21 +56,21 @@ export const CONSOLE_MENU: Record<string, { modules: string[]; icon: string; des
   "Comms": { modules: ["Comms"], icon: "Comms", desc: "Bulk SMS and WhatsApp to parents.", tint: "border-fuchsia-400/20 bg-fuchsia-400/10 text-fuchsia-300" },
 };
 
-// The ten tools behind the nine modules. Six are ready workspaces; three
-// hold their seats and say so plainly; Content Studio is new and ready.
-// The four cut seats (Library Ledger, Skill Ledger, Cooperative Register,
-// Manage) are gone, not parked — a card we cannot keep is not a card.
+// The ten tools behind the nine modules — all ten open, each with a real
+// workspace behind it. The four cut seats (Library Ledger, Skill Ledger,
+// Cooperative Register, Manage) are gone, not parked — a card we cannot
+// keep is not a card.
 export const CONSOLE_TOOLS: ConsoleTool[] = [
-  { id: "18", title: "Content Studio", desc: "Lesson plans, semester outlines and video-note tests from your own notes.", module: "Content Studio", fav: true, status: "ready" },
-  { id: "7", title: "Auto-Marking", desc: "Upload a test paper. Get back a weakness map.", module: "Auto-Marking", fav: true, status: "ready" },
-  { id: "17", title: "My Day", desc: "Today on one timeline — lessons, attendance, grades, notes, and a small planner.", module: "My Day", fav: false, status: "ready" },
-  { id: "6", title: "Timetable Solver", desc: "Build the week, print it for the wall, approve it — Today reads from it.", module: "Timetable", fav: false, status: "ready" },
-  { id: "9", title: "Roster Import", desc: "Bulk CSV paste. Classes and streams.", module: "Roster", fav: false, status: "ready" },
-  { id: "2", title: "Term Reports", desc: "One-click reports for every student.", module: "Reports", fav: false, status: "ready" },
-  { id: "8", title: "Grade Forecast", desc: "KCSE projection per student.", module: "Reports", fav: false, status: "ready" },
-  { id: "3", title: "Fee Tracking", desc: "M-Pesa reconciliation and default prediction.", module: "Fees", fav: false, status: "coming" },
-  { id: "4", title: "Inspection Mode", desc: "One-click export for auditors.", module: "Inspection", fav: false, status: "coming" },
-  { id: "12", title: "Communication", desc: "Bulk SMS and WhatsApp to parents.", module: "Comms", fav: false, status: "coming" },
+  { id: "18", title: "Content Studio", desc: "Lesson plans, semester outlines and video-note tests from your own notes.", module: "Content Studio", fav: true },
+  { id: "7", title: "Auto-Marking", desc: "Upload a test paper. Get back a weakness map.", module: "Auto-Marking", fav: true },
+  { id: "17", title: "My Day", desc: "Today on one timeline — lessons, attendance, grades, notes, and a small planner.", module: "My Day", fav: false },
+  { id: "6", title: "Timetable Solver", desc: "Build the week, print it for the wall, approve it — Today reads from it.", module: "Timetable", fav: false },
+  { id: "9", title: "Roster Import", desc: "Bulk CSV paste. Classes and streams.", module: "Roster", fav: false },
+  { id: "2", title: "Term Reports", desc: "One-click reports for every student.", module: "Reports", fav: false },
+  { id: "8", title: "Grade Forecast", desc: "KCSE projection per student.", module: "Reports", fav: false },
+  { id: "3", title: "Fee Tracking", desc: "M-Pesa reconciliation and default prediction.", module: "Fees", fav: false },
+  { id: "4", title: "Inspection Mode", desc: "One-click export for auditors.", module: "Inspection", fav: false },
+  { id: "12", title: "Communication", desc: "Bulk SMS and WhatsApp to parents.", module: "Comms", fav: false },
 ];
 
 export function toolById(id: string): ConsoleTool | undefined {

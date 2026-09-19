@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Fragment, type ComponentType } from "react";
-import { CONSOLE_MENU, CONSOLE_TOOLS, toolById } from "../../../../lib/console";
+import { CONSOLE_MENU, toolById } from "../../../../lib/console";
 import { ModuleTile } from "../../../../components/console/bits";
 import RosterImport from "../../../../components/console/RosterImport";
 import TermReports from "../../../../components/console/TermReports";
@@ -10,26 +10,34 @@ import GradeForecast from "../../../../components/console/GradeForecast";
 import TimetableSolver from "../../../../components/console/TimetableSolver";
 import MyDayWorkspace from "../../../../components/console/MyDayWorkspace";
 import ContentStudio from "../../../../components/console/ContentStudio";
+import FeeTracking from "../../../../components/console/FeeTracking";
+import Inspection from "../../../../components/console/Inspection";
+import Comms from "../../../../components/console/Comms";
 
-// Working tools share the same inner-page shell.
-// Content Studio builds the material; Auto-Marking marks it; the teacher's
-// week runs Roster (9) → Timetable Solver (6, build + print + approve)
-// → My Day (17, Today reads the approved week) → Term Reports (2).
+// Every tool opens a workspace — ten seats, ten workspaces. The teacher's
+// week runs in order: Roster (9) → Timetable Solver (6, build + print +
+// approve) → My Day (17, Today reads the approved week) → Auto-Marking (7,
+// the weakness map) → Term Reports (2, the record of it).
 const WORKSPACES: Record<string, ComponentType> = {
   "2": TermReports,
+  "3": FeeTracking,
+  "4": Inspection,
   "6": TimetableSolver,
   "7": AutoMarking,
   "8": GradeForecast,
   "9": RosterImport,
+  "12": Comms,
   "17": MyDayWorkspace,
   "18": ContentStudio
 };
 
-// The teacher's path, in order. Numbered 01–04 in the shell.
+// The teacher's path, in order. Numbered 01–05 in the shell; anything off
+// it says so with an amber chip instead of a silent dead step.
 const STEPS: Array<[string, string]> = [
   ["9", "Roster"],
   ["6", "Timetable"],
   ["17", "My Day"],
+  ["7", "Mark"],
   ["2", "Reports"]
 ];
 
@@ -37,8 +45,8 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
   const tool = toolById(params.id);
   if (!tool) notFound();
 
-  const ready = CONSOLE_TOOLS.filter((t) => t.status === "ready" && t.id !== tool.id);
-  const Workspace = tool.status === "ready" ? WORKSPACES[tool.id] : undefined;
+  const Workspace = WORKSPACES[tool.id];
+  if (!Workspace) notFound();
   const menu = CONSOLE_MENU[tool.module];
 
   return (
@@ -87,8 +95,7 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
           </Fragment>
         ))}
       </nav>
-      {Workspace ? (
-        <div className="mx-auto w-full max-w-[1440px] flex-1 px-5 py-8 md:px-[34px] md:py-12 print:p-0">
+      <div className="mx-auto w-full max-w-[1440px] flex-1 px-5 py-8 md:px-[34px] md:py-12 print:p-0">
           <div className="mb-8 flex flex-wrap items-start gap-4 print:hidden">
             <ModuleTile module={tool.module} tint={menu?.tint} size={52} />
             <div>
@@ -110,65 +117,7 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
               ← Back to the console
             </Link>
           </div>
-        </div>
-      ) : (
-        <div className="mx-auto w-full max-w-2xl flex-1 px-6 py-14">
-          <div className="flex flex-wrap items-start gap-4">
-            <ModuleTile module={tool.module} tint={menu?.tint} size={52} />
-            <div>
-              <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-dim">
-                Console / {tool.module}
-              </p>
-              <h1 className="mt-4 font-display text-4xl font-light tracking-tight">{tool.title}</h1>
-              <p className="mt-3 text-sm leading-6 text-muted">{tool.desc}</p>
-            </div>
-          </div>
-
-          <div className="mt-10 rounded-2xl border border-white/10 bg-panel p-6">
-            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold">Seat reserved</p>
-            <p className="mt-3 text-sm leading-6 text-muted">
-              This workspace is not built yet, and we will not pretend otherwise. The seat is held
-              for it, next in line on this device — everything in the console stays local.
-            </p>
-          </div>
-
-          {ready.length > 0 && (
-            <div className="mt-10">
-              <p className="border-b border-white/10 pb-3 font-mono text-[11px] uppercase tracking-[0.3em] text-dim">
-                Open now on this device
-              </p>
-              <ul>
-                {ready.map((s) => (
-                  <li key={s.id}>
-                    <Link
-                      href={`/console/${s.id}`}
-                      className="flex items-baseline justify-between gap-4 border-b border-white/10 py-3 text-sm text-ivory transition-colors hover:text-gold"
-                    >
-                      <span>{s.title}</span>
-                      <span className="text-[12px] text-dim">→</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          <div className="mt-12 flex flex-wrap gap-3">
-            <Link
-              href="/console"
-              className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-black transition hover:bg-gold"
-            >
-              Back to the console
-            </Link>
-            <Link
-              href="/contact"
-              className="rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-ivory transition hover:border-white/35"
-            >
-              Put it on the waitlist
-            </Link>
-          </div>
-        </div>
-      )}
+      </div>
     </main>
   );
 }

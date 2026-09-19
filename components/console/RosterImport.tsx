@@ -148,8 +148,8 @@ export default function RosterImport() {
           <button className={btn} disabled={!parsed || parsed.rows.length === 0} onClick={() => void commit()}>
             Commit to the roll
           </button>
-          <Link href="/console/1" className={btnGhost}>
-            Open Student Records
+          <Link href="/console/6" className={btnGhost}>
+            Build the week
           </Link>
         </div>
         {notice && <Notice>{notice}</Notice>}

@@ -212,23 +212,6 @@ export function ModuleTile({
   );
 }
 
-// The two states a seat can be in, as the coloured chips: green for ready,
-// amber for held. Pastel fill, hairline ring, mono caps.
-export function StatusChip({ status }: { status: "ready" | "coming" }) {
-  return status === "ready" ? (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-emerald-300 ring-1 ring-inset ring-emerald-400/25">
-      <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" aria-hidden="true" />
-      Ready
-    </span>
-  ) : (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-amber-300/90 ring-1 ring-inset ring-amber-400/25">
-      <span className="h-1.5 w-1.5 rounded-full bg-amber-300/80" aria-hidden="true" />
-      Seat held
-    </span>
-  );
-}
-
-
 export function Diamond({
   className = "",
   filled = false,

@@ -1,33 +1,23 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
-import { KEYS, saveStored } from "../lib/ledger";
 
-const DOORS: { label: string; href: string | null; note: string }[] = [
-  { label: "Teacher", href: "/console?role=teacher", note: "Open the teacher console" },
-  { label: "Public School", href: "/console?role=school", note: "Open the school console" },
-  { label: "Private School", href: "/console?role=school", note: "Open the school console" },
-  { label: "Government", href: null, note: "Your door opens next." }
-];
-
-// BUILD CAPACITY pops the choice. Four doors. Who are you?
+// BUILD CAPACITY: one modal, four doors. Every visitor sees them -
+// the app is open, so there is no paywall gate hiding the four doors.
+// The old JoinLink paywall trigger (M-Pesa paybill overlay) is gone.
 export default function DoorsModal({ onClose }: { onClose: () => void }) {
   const [picked, setPicked] = useState<string | null>(null);
-  const [contact, setContact] = useState("");
   const [done, setDone] = useState(false);
 
-  function queue(e: React.FormEvent) {
-    e.preventDefault();
-    if (!contact.trim() || !picked) return;
-    try {
-      const raw = window.localStorage.getItem(KEYS.queue);
-      const arr: { door: string; contact: string; ts: number }[] = raw ? JSON.parse(raw) : [];
-      arr.push({ door: picked, contact: contact.trim().slice(0, 60), ts: Date.now() });
-      saveStored(KEYS.queue, arr.slice(-200));
-    } catch { /* queue it in memory then */ }
-    setDone(true);
+  function open(e: React.MouseEvent) {
+    setPicked((d) =>
+      d === e.currentTarget.textContent?.trim()
+        ? null
+        : (e.currentTarget.textContent?.trim() ?? null)
+    );
   }
+
+  const pickedDoor = picked;
 
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/70 p-4" onClick={onClose}>
@@ -43,36 +33,55 @@ export default function DoorsModal({ onClose }: { onClose: () => void }) {
           <button onClick={onClose} className="rounded-full border border-white/20 px-3 py-1 text-sm text-ivory" aria-label="Close">✕</button>
         </div>
         <div className="mt-6 grid grid-cols-2 gap-3">
-          {DOORS.map((d) =>
-            d.href ? (
-              <Link key={d.label} href={d.href} className="rounded-2xl border border-white/10 bg-obsidian p-5 hover:border-river transition">
-                <div className="font-bold text-ivory">{d.label} →</div>
-                <div className="mt-1 text-[13px] text-muted">{d.note}</div>
-              </Link>
-            ) : (
-              <button
-                key={d.label}
-                onClick={() => { setPicked(d.label); setDone(false); }}
-                className={`rounded-2xl border p-5 text-left transition ${picked === d.label ? "border-river bg-river/10" : "border-white/10 bg-obsidian hover:border-ivory"}`}
-              >
-                <div className="font-bold text-ivory">{d.label}</div>
-                <div className="mt-1 text-[13px] text-muted">{d.note}</div>
-              </button>
-            )
-          )}
+          <button
+            type="button"
+            onClick={() => { setPicked("Individual"); setDone(false); }}
+            className={`rounded-2xl border p-5 text-left transition ${
+              picked === "Individual" ? "border-river bg-river/10" : "border-white/10 bg-obsidian hover:border-ivory"
+            }`}
+          >
+            <div className="font-bold text-ivory">Individual →</div>
+            <div className="mt-1 text-[13px] text-muted">You have a CV? Nobody believes it. Open the ledger.</div>
+          </button>
+          <button
+            type="button"
+            onClick={() => { setPicked("Builder"); setDone(false); }}
+            className={`rounded-2xl border p-5 text-left transition ${
+              picked === "Builder" ? "border-river bg-river/10" : "border-white/10 bg-obsidian hover:border-ivory"
+            }`}
+          >
+            <div className="font-bold text-ivory">Builder →</div>
+            <div className="mt-1 text-[13px] text-muted">Skilled? Put a build on the floor — the ledger tracks it.</div>
+          </button>
+          <button
+            type="button"
+            onClick={() => { setPicked("School"); setDone(false); }}
+            className={`rounded-2xl border p-5 text-left transition ${
+              picked === "School" ? "border-river bg-river/10" : "border-white/10 bg-obsidian hover:border-ivory"
+            }`}
+          >
+            <div className="font-bold text-ivory">School →</div>
+            <div className="mt-1 text-[13px] text-muted">Board your school onto the ledger to accelerate dev.</div>
+          </button>
+          <button
+            type="button"
+            onClick={() => { setPicked("Everyone"); setDone(false); }}
+            className={`rounded-2xl border p-5 text-left transition ${
+              picked === "Everyone" ? "border-river bg-river/10" : "border-white/10 bg-obsidian hover:border-ivory"
+            }`}
+          >
+            <div className="font-bold text-ivory">Everyone →</div>
+            <div className="mt-1 text-[13px] text-muted">See the floor. Builds, votes, forks. No gate.</div>
+          </button>
         </div>
-        {picked && !done && (
-          <form onSubmit={queue} className="mt-4 rounded-2xl bg-obsidian border border-white/10 p-5">
-            <p className="text-sm text-ivory/85"><strong>{picked}</strong> — leave a contact. We open your door next. No spam, one call.</p>
-            <div className="mt-3 flex gap-2">
-              <input value={contact} onChange={(e) => setContact(e.target.value)} placeholder="Phone or email" maxLength={60} className="flex-1 rounded-2xl border border-white/15 bg-panel px-4 py-3 text-sm text-ivory outline-none focus:border-river" />
-              <button className="rounded-2xl bg-ivory px-6 text-sm font-semibold text-black hover:bg-river hover:text-white transition">Queue me</button>
-            </div>
-          </form>
+        {pickedDoor && !done && (
+          <p className="mt-4 rounded-2xl bg-obsidian border border-white/10 p-5 text-sm text-ivory/85">
+            <strong>{pickedDoor}</strong> — this opens on you. No paywall, no verification, no queue.
+          </p>
         )}
         {done && (
           <p className="mt-4 rounded-2xl bg-river/15 border border-river/30 p-5 text-sm font-semibold text-emerald-300">
-            Queued. When your door opens, you&apos;ll be the first to know.
+            Door noted. The door is open already — just walk through.
           </p>
         )}
       </div>

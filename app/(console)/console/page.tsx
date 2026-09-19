@@ -5,7 +5,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { readiness } from "../../../lib/school";
 import { useSchoolData } from "../../../components/console/useSchoolData";
-import { ModuleGlyph, ModuleTile, StatusChip } from "../../../components/console/bits";
+import { ModuleGlyph, ModuleTile } from "../../../components/console/bits";
 import {
   CONSOLE_MENU,
   CONSOLE_MODULES,
@@ -205,8 +205,8 @@ function ConsoleLogin({
 }
 
 /* ---------------------------------------------------------------- */
-/* The workspace: gradient rail + module grid. Glyphs, tiles and    */
-/* status chips come from components/console/bits.tsx.              */
+/* The workspace: gradient rail + module grid. Glyphs, tiles and       */
+/* the module tint chips come from components/console/bits.tsx.       */
 /* ---------------------------------------------------------------- */
 
 function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onSignOut: () => void }) {
@@ -385,9 +385,6 @@ function ModuleCard({ module, onOpen }: { module: string; onOpen: () => void }) 
       <div>
         <h3 className="font-display text-[20px] font-normal leading-tight text-ivory">{module}</h3>
         <p className="mt-1.5 text-[13px] leading-relaxed text-muted">{menu.desc}</p>
-        <div className="mt-4">
-          <StatusChip status={tools.some((t) => t.status === "ready") ? "ready" : "coming"} />
-        </div>
       </div>
     </button>
   );
@@ -440,7 +437,6 @@ function ToolCard({
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-dim">
           {tool.id.padStart(2, "0")} · {tool.module}
         </span>
-        <StatusChip status={tool.status} />
       </div>
     </Link>
   );

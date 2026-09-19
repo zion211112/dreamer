@@ -6,10 +6,10 @@
 // Nothing here touches the network. This is where a school's roll lives on
 // the device, and where the JSON export in Student Records copies from.
 
-export type StoreName = "students" | "assessments" | "meta" | "content" | "events";
+export type StoreName = "students" | "assessments" | "meta" | "content" | "events" | "fees";
 
 const DB_NAME = "aptlabs-school-v1";
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 
 let dbp: Promise<IDBDatabase | null> | null = null;
 
@@ -39,6 +39,10 @@ function open(): Promise<IDBDatabase | null> {
         // and message events. v3 — existing devices upgrade in place.
         if (!db.objectStoreNames.contains("events"))
           db.createObjectStore("events", { keyPath: "id" });
+        // Fee Tracking (3): one document per term invoice and one per M-Pesa
+        // payment. v4 — the upgrade creates the store on existing devices.
+        if (!db.objectStoreNames.contains("fees"))
+          db.createObjectStore("fees", { keyPath: "id" });
       };
       req.onsuccess = () => resolve(req.result);
       req.onerror = () => resolve(null);
