@@ -26,10 +26,10 @@ html {
   --muted-rgb: 168, 162, 158;
   --dim: #57534e;
   --dim-rgb: 87, 83, 78;
-  --teal: #2dd4bf;
-  --teal-rgb: 45, 212, 191;
-  --amber: #d4af37;
-  --amber-rgb: 212, 175, 55;
+  --teal: #91a58f;
+  --teal-rgb: 145, 165, 143;
+  --amber: #b8785d;
+  --amber-rgb: 184, 120, 93;
 }
 
 body {
@@ -37,6 +37,16 @@ body {
   color: var(--ivory);
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
 }
 
 ::selection {

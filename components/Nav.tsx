@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-// Site chrome: one glassy obsidian rail above every page. The wordmark is the
-// diamond in an amber tile — so the header is the first hint of the door it opens.
+// Site chrome: one quiet rail above every public page.
 export function Nav() {
   const [open, setOpen] = useState(false);
 
@@ -36,17 +35,19 @@ export function Nav() {
 
         <button
           onClick={() => setOpen(!open)}
-          className="rounded-full border border-ivory/20 px-3.5 py-2 text-sm font-semibold text-ivory md:hidden"
+          className="min-h-11 min-w-11 rounded-full border border-ivory/20 px-3.5 py-2 text-sm font-semibold text-ivory transition hover:border-amber hover:text-amber md:hidden"
           aria-label="Menu"
+          aria-expanded={open}
+          aria-controls="mobile-navigation"
         >
           {open ? "✕" : "☰"}
         </button>
       </div>
 
       {open && (
-        <nav className="flex flex-col gap-0.5 border-t border-ivory/10 bg-obsidian px-5 py-4 text-sm md:hidden">
+        <nav id="mobile-navigation" className="flex flex-col gap-0.5 border-t border-ivory/10 bg-obsidian px-5 py-4 text-sm md:hidden">
           {links.map(([href, label]) => (
-            <Link key={href} href={href} onClick={() => setOpen(false)} className="py-2.5 text-ivory/80 transition-colors hover:text-ivory">
+            <Link key={href} href={href} onClick={() => setOpen(false)} className="min-h-11 py-2.5 text-ivory/80 transition-colors hover:text-ivory">
               {label}
             </Link>
           ))}

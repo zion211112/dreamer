@@ -24,7 +24,7 @@ export default function GeoArt({
   variant = "ring",
   className = ""
 }: {
-  variant?: "ring" | "grid" | "band" | "corner" | "sacred";
+  variant?: "ring" | "grid" | "band" | "corner" | "cells";
   className?: string;
 }) {
   if (variant === "grid") {
@@ -81,27 +81,35 @@ export default function GeoArt({
       </svg>
     );
   }
-  if (variant === "sacred") {
+  if (variant === "cells") {
     return (
       <svg className={className} viewBox="0 0 800 800" fill="none" aria-hidden preserveAspectRatio="xMidYMid slice">
-        <circle cx="400" cy="400" r="286" stroke="currentColor" strokeWidth="1" />
-        <circle cx="400" cy="400" r="177" stroke="currentColor" strokeWidth="1" />
-        <circle cx="400" cy="400" r="64" stroke="currentColor" strokeWidth="1" />
-        <circle cx="400" cy="400" r="4" fill="currentColor" />
-        <path d="M400 114V686M114 400H686" stroke="currentColor" strokeWidth="1" />
-        <path d="M198 198L602 602M602 198L198 602" stroke="currentColor" strokeWidth="1" />
-        <path d="M400 223L553 311V489L400 577L247 489V311L400 223Z" stroke="currentColor" strokeWidth="1" />
-        <path d="M400 286L499 343V457L400 514L301 457V343L400 286Z" stroke="currentColor" strokeWidth="1" />
-        <path d="M286 400C286 302 400 240 514 400C400 560 286 498 286 400Z" stroke="currentColor" strokeWidth="1" />
-        <path d="M514 400C514 302 400 240 286 400C400 560 514 498 514 400Z" stroke="currentColor" strokeWidth="1" />
+        <circle cx="400" cy="400" r="292" stroke="currentColor" strokeWidth="1" />
+        <circle cx="400" cy="400" r="208" stroke="currentColor" strokeWidth="1" />
+        <circle cx="400" cy="400" r="112" stroke="currentColor" strokeWidth="1" />
+        <circle cx="400" cy="400" r="5" fill="currentColor" />
+        {Array.from({ length: 12 }).map((_, i) => {
+          const a = (Math.PI / 6) * i;
+          const outerX = 400 + 292 * Math.cos(a);
+          const outerY = 400 + 292 * Math.sin(a);
+          const innerX = 400 + 112 * Math.cos(a);
+          const innerY = 400 + 112 * Math.sin(a);
+          return (
+            <g key={i}>
+              <path d={`M400 400L${outerX} ${outerY}`} stroke="currentColor" strokeWidth="1" />
+              <circle cx={400 + 208 * Math.cos(a)} cy={400 + 208 * Math.sin(a)} r="26" stroke="currentColor" strokeWidth="1" />
+              <circle cx={innerX} cy={innerY} r="7" fill="currentColor" />
+            </g>
+          );
+        })}
         {Array.from({ length: 12 }).map((_, i) => {
           const a = (Math.PI / 6) * i;
           return (
             <circle
               key={i}
-              cx={400 + 286 * Math.cos(a)}
-              cy={400 + 286 * Math.sin(a)}
-              r="8"
+              cx={400 + 292 * Math.cos(a)}
+              cy={400 + 292 * Math.sin(a)}
+              r="9"
               stroke="currentColor"
               strokeWidth="1"
             />

@@ -12,7 +12,7 @@ export default function HomePage() {
   return (
     <main className="theme-portal relative overflow-hidden bg-[#101614]">
       <GeoArt
-        variant="sacred"
+        variant="cells"
         className="pointer-events-none absolute inset-0 z-0 h-full w-full opacity-[0.14] text-moss"
         aria-hidden="true"
       />
@@ -35,19 +35,19 @@ export default function HomePage() {
         <div className="mt-7 flex flex-wrap justify-center gap-3">
           <Link
             href="/ledger"
-            className="rounded-full border border-copper/60 bg-copper px-6 py-3 text-sm font-semibold text-[#101614] transition-colors hover:bg-copper/90"
+            className="min-h-11 rounded-full border border-copper/60 bg-copper px-6 py-3 text-sm font-semibold text-[#101614] transition-colors hover:bg-copper/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-[#101614] active:bg-copper/80"
           >
             Open the ledger
           </Link>
           <Link
             href="/benben"
-            className="rounded-full border border-ivory/15 px-6 py-3 text-sm font-semibold text-ivory transition-colors hover:border-copper/70 hover:text-copper"
+            className="min-h-11 rounded-full border border-ivory/15 px-6 py-3 text-sm font-semibold text-ivory transition-colors hover:border-copper/70 hover:text-copper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-[#101614] active:border-copper active:text-copper"
           >
             Open the floor
           </Link>
           <Link
             href="/console"
-            className="rounded-full border border-ivory/15 px-6 py-3 text-sm font-semibold text-ivory transition-colors hover:border-copper/70 hover:text-copper"
+            className="min-h-11 rounded-full border border-ivory/15 px-6 py-3 text-sm font-semibold text-ivory transition-colors hover:border-copper/70 hover:text-copper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 focus-visible:ring-offset-[#101614] active:border-copper active:text-copper"
           >
             Teachers
           </Link>
