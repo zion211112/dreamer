@@ -1,4 +1,9 @@
-/* APT-LABS landing page: one frame, three surfaces, one operating rule. */
+/* ============================================================
+   APT-LABS landing — the roll is the hero.
+   One frame. No cards. No decoration.
+   Type: 48 display · 15 body · 11 instrument. Weights: 400 / 600.
+   Spacing: base-8. Color: tokens only, zero hex.
+   ============================================================ */
 
 .landing {
   background: var(--void);
@@ -10,77 +15,103 @@
   margin-inline: auto;
 }
 
+/* ─── Hero ─── */
+
 .landing-hero {
   border-bottom: 1px solid var(--rule);
 }
 
 .landing-hero-grid {
   display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(240px, 3fr);
+  gap: 48px;
+  align-items: start;
+  padding-block: 96px;
+  min-height: calc(100vh - 56px);
   min-height: calc(100svh - 56px);
-  align-items: center;
-  grid-template-columns: minmax(0, 7fr) minmax(180px, 3fr);
-  gap: 64px;
-  padding-block: 80px;
 }
 
 .landing-hero-copy {
-  max-width: 680px;
+  max-width: 560px;
 }
 
-.landing-kicker,
-.landing-section-head h2,
-.landing-section-head span {
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  line-height: 1.5;
-  text-transform: uppercase;
-}
-
-.landing-kicker,
-.landing-section-head h2 {
-  color: var(--signal);
-}
-
-.landing-hero h1 {
-  max-width: 11ch;
+.landing h1 {
   margin: 24px 0 0;
-  color: var(--ink);
+  max-width: 18ch;
   font-family: var(--font-serif);
-  font-size: clamp(44px, 6vw, 72px);
-  font-weight: 500;
-  letter-spacing: -0.025em;
-  line-height: 1.02;
+  font-size: clamp(34px, 4.5vw, 48px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--ink);
+  text-wrap: balance;
 }
 
 .landing-lead {
+  margin: 16px 0 0;
   max-width: 46ch;
-  margin: 24px 0 0;
-  color: var(--dust);
-  font-size: 17px;
+  font-size: 15px;
   line-height: 1.6;
+  color: var(--dust);
 }
+
+.lp-label {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
+/* ─── Actions ─── */
 
 .landing-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
   margin-top: 32px;
 }
 
 .landing-button {
   display: inline-flex;
-  min-height: 44px;
   align-items: center;
   justify-content: center;
-  padding: 0 18px;
+  min-height: 44px;
+  padding: 0 16px;
   border: 1px solid var(--rule);
-  font-size: 14px;
+  border-radius: 0;
+  font-family: var(--font-sans);
+  font-size: 15px;
   font-weight: 600;
+  color: var(--ink);
   text-decoration: none;
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 120ms ease, border-color 120ms ease,
+    color 120ms ease, transform 120ms ease;
+}
+
+.landing-button:hover {
+  border-color: var(--signal);
+  color: var(--signal);
+}
+
+.landing-button:active {
+  transform: translateY(1px);
+}
+
+.landing-button:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+
+/* Disabled — token only; the landing ships no disabled element. */
+.landing-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  pointer-events: none;
 }
 
 .landing-button-primary {
@@ -92,43 +123,86 @@
 .landing-button-primary:hover {
   border-color: var(--signal-dim);
   background: var(--signal-dim);
+  color: var(--void);
 }
 
-.landing-button-secondary {
-  color: var(--ink);
+/* ─── The roll (hero right rail) ─── */
+
+.landing-roll {
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  padding: 16px;
 }
 
-.landing-button-secondary:hover {
-  border-color: var(--signal);
-  color: var(--signal);
+.roll-lines {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-.landing-button:focus-visible,
-.landing-surface-link:focus-visible {
-  outline: 2px solid var(--signal);
-  outline-offset: 3px;
-}
-
-.landing-index-note {
+.roll-line {
   display: grid;
-  grid-template-columns: 32px 1fr;
-  gap: 12px;
-  align-self: end;
-  max-width: 220px;
-  margin: 0 0 8px;
-  color: var(--ash);
+  grid-template-columns: 5ch minmax(0, 1fr) 9ch 7ch;
+  gap: 8px;
+  padding: 8px;
+  margin: 0 -8px;
+  border-bottom: 1px solid var(--rule);
   font-family: var(--font-mono);
   font-size: 11px;
+  font-weight: 400;
   letter-spacing: 0.04em;
   line-height: 1.6;
 }
 
-.landing-note-rule {
-  width: 32px;
-  height: 1px;
-  margin-top: 8px;
-  background: var(--rule);
+.roll-line:last-child {
+  border-bottom: none;
 }
+
+.roll-line:hover {
+  background: var(--edge);
+}
+
+.roll-id,
+.roll-craft {
+  color: var(--dust);
+}
+
+.roll-name {
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.roll-status {
+  text-align: right;
+  color: var(--dust);
+}
+
+.roll-line.is-open .roll-status {
+  color: var(--amber);
+}
+
+/* Loading — pending rows shimmer until the roll goes live in the
+   client. The static build emits no .is-pending: zero cost today. */
+.roll-line.is-pending {
+  background: linear-gradient(90deg, var(--panel) 25%, var(--edge) 50%, var(--panel) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  color: transparent;
+}
+
+.roll-total {
+  margin: 8px 0 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--dust);
+}
+
+/* ─── Surfaces (ledger rows, not cards) ─── */
 
 .landing-surfaces {
   padding-block: 64px;
@@ -137,185 +211,164 @@
 .landing-section-head {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  gap: 24px;
-  padding-bottom: 12px;
+  gap: 16px;
+  padding-bottom: 16px;
   border-bottom: 1px solid var(--rule);
 }
 
-.landing-section-head span {
-  color: var(--ash);
-  letter-spacing: 0.08em;
-}
-
-.landing-surface-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1px;
-  margin: 24px 0 0;
+.surface-rows {
+  margin: 0;
   padding: 0;
-  border: 1px solid var(--rule);
-  background: var(--rule);
   list-style: none;
 }
 
-.landing-surface {
+.surface-row {
   display: grid;
-  grid-template-columns: 32px 1fr;
+  grid-template-columns: 5ch minmax(0, 1fr) auto;
   gap: 16px;
-  min-height: 248px;
-  padding: 24px;
-  background: var(--void);
+  align-items: center;
+  padding: 24px 8px;
+  border-bottom: 1px solid var(--rule);
   transition: background-color 120ms ease;
 }
 
-.landing-surface:hover {
+.surface-row:hover {
   background: var(--edge);
 }
 
-.landing-surface-number {
-  color: var(--ash);
+.surface-number {
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: 0.12em;
-}
-
-.landing-surface-body {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.landing-surface h3 {
-  margin: 0;
-  color: var(--ink);
-  font-family: var(--font-serif);
-  font-size: 24px;
-  font-weight: 500;
-  line-height: 1.15;
-}
-
-.landing-surface p {
-  max-width: 28ch;
-  margin: 12px 0 24px;
-  color: var(--dust);
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.landing-surface-link {
-  display: inline-flex;
-  min-height: 44px;
-  align-items: center;
-  margin-top: auto;
-  color: var(--signal);
-  font-size: 14px;
   font-weight: 600;
-  text-decoration: none;
+  letter-spacing: 0.12em;
+  color: var(--dust);
 }
 
-.landing-surface-link::after {
+.surface-text h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.surface-text p {
+  margin: 8px 0 0;
+  max-width: 48ch;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--dust);
+}
+
+.surface-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--signal);
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+
+.surface-link::after {
   content: " →";
 }
 
-.landing-surface-link:hover {
+.surface-link:hover {
   color: var(--signal-dim);
   text-decoration: underline;
   text-underline-offset: 4px;
 }
 
-.landing-record {
+.surface-link:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+
+/* ─── The operating rule — one ruled line, no band of noise ─── */
+
+.landing-rule-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 24px;
+  padding-block: 24px;
   border-top: 1px solid var(--rule);
   border-bottom: 1px solid var(--rule);
   background: var(--panel);
 }
 
-.landing-record-inner {
-  display: grid;
-  grid-template-columns: 1fr 1.3fr 1fr;
-  align-items: baseline;
-  gap: 32px;
-  padding-block: 28px;
-}
-
-.landing-record-statement {
-  margin: 0;
-  color: var(--ink);
+.rule-text {
   font-family: var(--font-serif);
-  font-size: 24px;
-  line-height: 1.2;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
 }
 
-.landing-record-copy {
-  max-width: 32ch;
-  margin: 0;
+.rule-sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
   color: var(--dust);
-  font-size: 13px;
-  line-height: 1.6;
 }
+
+/* ─── Breakpoints ─── */
 
 @media (max-width: 800px) {
   .landing-hero-grid {
     grid-template-columns: 1fr;
-    gap: 40px;
-    min-height: auto;
-    padding-block: 72px 56px;
+    padding-block: 64px 48px;
   }
 
-  .landing-index-note {
-    align-self: start;
-    margin: 0;
+  .landing-roll {
+    max-width: 360px;
   }
 
-  .landing-surface-grid {
-    grid-template-columns: 1fr;
+  .surface-row {
+    grid-template-columns: 5ch minmax(0, 1fr);
   }
 
-  .landing-surface {
-    min-height: 0;
-  }
-
-  .landing-record-inner {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .landing-record-inner .landing-kicker {
-    grid-column: 1 / -1;
+  .surface-link {
+    grid-column: 2;
+    margin-top: 8px;
   }
 }
 
-@media (max-width: 520px) {
+@media (max-width: 640px) {
   .landing-hero-grid {
-    padding-block: 56px 48px;
+    min-height: calc(100vh - 52px);
+    min-height: calc(100svh - 52px);
+    padding-block: 48px 40px;
   }
 
   .landing-actions {
+    flex-direction: column;
     align-items: stretch;
-    flex-direction: column;
   }
 
-  .landing-button {
-    width: 100%;
+  .surface-row {
+    padding: 16px 8px;
+  }
+}
+
+/* Light mode — the one contrast pair that inverts is the primary
+   button: near-black text on #0D9488 fails AA, so it steps down to
+   signal-strong. Everything else rides the tokens. */
+@media (prefers-color-scheme: light) {
+  .landing-button-primary {
+    background: var(--signal-strong);
+    border-color: var(--signal-strong);
   }
 
-  .landing-section-head {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .landing-surfaces {
-    padding-block: 48px;
-  }
-
-  .landing-surface {
-    padding: 20px 16px;
-  }
-
-  .landing-record-inner {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    padding-block: 24px;
+  .landing-button-primary:hover {
+    background: var(--signal);
+    border-color: var(--signal);
   }
 }

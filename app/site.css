@@ -333,3 +333,12 @@
     display: none;
   }
 }
+
+/* Light mode — the sticky bar was hardcoded dark in both schemes,
+   making nav text unreadable when the system flipped. */
+@media (prefers-color-scheme: light) {
+  .site-nav {
+    background: rgba(247, 245, 240, 0.92);
+  }
+}
+
