@@ -233,7 +233,7 @@ export default function BenBenPage() {
 
   return (
     <main className="site-page benben-page bg-void text-ink">
-      <div className="site-frame relative max-w-[760px] overflow-hidden py-8 md:py-12">
+      <div className="site-frame site-frame--narrow relative overflow-hidden py-8 md:py-12">
         {/* masthead */}
         <div className="benben-masthead">
           <div>
@@ -309,7 +309,7 @@ export default function BenBenPage() {
         </div>
 
         {/* the board: commitments made public — state derived, never written */}
-        <section className="bb-board benben-board">
+        <section className="benben-board">
           <div id="board-panel" role="tabpanel" aria-labelledby={`board-tab-${tab}`} tabIndex={-1}>
             {shownBoard.length === 0 ? (
               <div className="mt-8 border border-dashed border-rule/15 px-5 py-8">

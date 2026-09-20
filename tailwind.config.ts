@@ -15,11 +15,11 @@ const config = {
         rule:   "#1F1F22",
 
         // ── Text — primary and secondary.
-        //    --ink on --void: 16.8:1 (AAA). --dust on --void: 4.6:1 (AA/AAA).
+        //    --ink on --void: 17.6:1 · --dust: 5.52:1 · --ash: 5.10:1 — all AAA/AA.
+        //    Measured via the contrast harness in DESIGN-AUDIT.md §10.
         ink:    "#F2EFE9",
         dust:   "#8A8580",
-        ash:    "#5C5854",
-
+        ash:    "#857F7A",
         // ── Accent — ONE interactive color.
         //    Reserved strictly for high-intent triggers: primary buttons, links,
         //    focus rings, active nav. Not decorative. Not passive text.
@@ -37,7 +37,7 @@ const config = {
         obsidian: "#060708",      // → void
         ivory:    "#F2EFE9",      // → ink
         muted:    "#8A8580",      // → dust
-        dim:      "#5C5854",      // → ash
+        dim:      "#857F7A",      // → ash
         teal:     "#14B8A6",      // → signal
         panelHi:  "#141416",      // → edge
         edgeHi:   "#1F1F22",      // → rule

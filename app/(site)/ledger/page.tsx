@@ -117,7 +117,10 @@ export default function LedgerPage() {
         location: form.location,
         skills: form.skill.split(",").map((s) => s.trim()).filter(Boolean),
         paid: false,
-        verified: true,
+        // Sealed, not verified: a hash proves the record exists and has not
+        // been altered. Nobody has attested this person's skill yet, so the
+        // verified count must not move. Attestation flips this, not a submit.
+        verified: false,
         hallPaid: false,
         tier: null,
         testScore: null,
@@ -138,8 +141,16 @@ export default function LedgerPage() {
 
   function verifyToken(e: React.FormEvent) {
     e.preventDefault();
-    if (!token.trim()) return;
-    setVerdict(token.trim().startsWith("AL-") ? "found" : "no");
+    const needle = token.trim().toUpperCase();
+    if (!needle) return;
+    // Check the record we actually hold: an id, or the short seal. Identity is
+    // never returned — this confirms a sealed record exists, nothing more.
+    const hit = entries.some(
+      (m) =>
+        m.id.toUpperCase() === needle ||
+        shortHash(m.hash).toUpperCase() === needle
+    );
+    setVerdict(hit ? "found" : "no");
   }
 
   const masterSeal = masterHash(entries.map((e) => e.hash));
@@ -153,7 +164,8 @@ export default function LedgerPage() {
             <p className="ledger-brand">APT-LABS <em>/</em> KIRINYAGA NODE <span>LOCAL RECORD</span></p>
             <h1 className="page-title">The Sovereign Ledger</h1>
             <p className="page-desc">
-              Names, skills, and proof in one public record. Verified by work, not by paperwork.
+              Names, skills, and seals in one public record. Proof is added by
+              others — never claimed by the person on the roll.
             </p>
           </div>
           <div className="ledger-telemetry" aria-label="Ledger status">
@@ -403,7 +415,10 @@ export default function LedgerPage() {
               <div className="message message-status" role="status">Writing to the roll…</div>
             )}
             {status === "success" && (
-              <div className="message message-status" role="status">You are on the roll. The seal is above.</div>
+              <div className="message message-status" role="status">
+                You are on the roll and the record is sealed. Verification is a
+                separate step — it arrives when someone attests your work.
+              </div>
             )}
 
             <form className="register-form" onSubmit={handleSubmit} noValidate aria-label="New roll entry">

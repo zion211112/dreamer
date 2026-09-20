@@ -17,9 +17,12 @@
   --rule:   #1F1F22;
 
   /* Text — primary and secondary */
+  /* Contrast on --void / --panel / --edge:
+     --ink 17.6 / 16.9 / 15.8  ·  --dust 5.52 / 5.32 / 5.04  ·  --ash 5.10 / 4.92 / 4.66
+     All three clear WCAG AA (4.5:1) for body text on every surface. */
   --ink:    #F2EFE9;
   --dust:   #8A8580;
-  --ash:    #5C5854;
+  --ash:    #857F7A;
 
   /* Accent — one interactive color */
   --signal:      #14B8A6;
@@ -45,6 +48,15 @@ html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* Dark-only by design. Without this the UA paints native selects, date
+     pickers and number spinners light-on-dark inside black panels. */
+  color-scheme: dark;
+}
+
+input,
+select,
+textarea {
+  color-scheme: dark;
 }
 
 body {
@@ -170,7 +182,9 @@ body {
   font-family: var(--font-sans);
 }
 
-.console-ui .rounded-full,
+/* `rounded-full` is deliberately absent: pills and circles are intentional
+   shapes (chips, favourite stars, the diamond glyph) and must keep their
+   radius. Only the card/panel steps collapse to the square register. */
 .console-ui .rounded-3xl,
 .console-ui .rounded-2xl,
 .console-ui .rounded-xl,
@@ -254,7 +268,22 @@ body {
   max-width: 65ch;
 }
 
-/* ─── Page section rhythm ─── */
+/* ─── Page title — one treatment, every route ─── */
+
+.page-title {
+  margin: 16px 0 0;
+  max-width: 20ch;
+  font-family: var(--font-serif);
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+/* ─── Section rhythm ─── */
 
 .page-section {
   padding-block: 48px;

@@ -60,8 +60,9 @@
   gap: 48px;
   align-items: start;
   padding-block: 96px;
-  min-height: calc(100vh - 56px);
-  min-height: calc(100svh - 56px);
+  /* 56 nav + 32 system strip — the hero must not overflow the first screen. */
+  min-height: calc(100vh - 88px);
+  min-height: calc(100svh - 88px);
 }
 
 .landing-hero-copy {
@@ -361,8 +362,8 @@
 
 @media (max-width: 640px) {
   .landing-hero-grid {
-    min-height: calc(100vh - 52px);
-    min-height: calc(100svh - 52px);
+    min-height: calc(100vh - 84px);
+    min-height: calc(100svh - 84px);
     padding-block: 48px 40px;
   }
 

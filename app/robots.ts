@@ -4,13 +4,18 @@ import type { MetadataRoute } from "next";
 // landing and contact only. Everything human stays human-readable,
 // nothing machine-harvestable.
 export default function robots(): MetadataRoute.Robots {
+  const base =
+    process.env.NEXT_PUBLIC_BASE_URL ?? "https://apt-labs.vercel.app";
   return {
     rules: [
       {
         userAgent: "*",
-        allow: ["/", "/contact"],
-        disallow: ["/dashboard/", "/benben/", "/ledger/", "/search/"]
-      }
-    ]
+        allow: ["/", "/contact", "/ledger"],
+        // No trailing slashes: the exclusion standard matches on prefix, so
+        // "/ledger/" would leave "/ledger" fully crawlable.
+        disallow: ["/dashboard", "/benben", "/search", "/console"],
+      },
+    ],
+    sitemap: `${base}/sitemap.xml`,
   };
 }

@@ -67,7 +67,7 @@
 
 .page-title {
   font-family: var(--font-serif);
-  font-size: 39px;
+  font-size: clamp(30px, 5vw, 40px);
   font-weight: 400;
   font-style: italic;
   letter-spacing: -0.02em;
@@ -78,7 +78,7 @@
 
 @media (min-width: 768px) {
   .page-title {
-    font-size: 32px;
+    font-size: clamp(36px, 4vw, 48px);
   }
 }
 

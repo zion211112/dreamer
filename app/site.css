@@ -324,7 +324,7 @@
   font-size: 12px;
   color: var(--ash);
   margin: 0;
-  max-width: 28ch;
+  max-width: 30ch;
   line-height: 1.45;
 }
 
@@ -367,9 +367,208 @@
 }
 
 @media (min-width: 640px) {
-  .site-footer-copy {
+  .site-footer-inner {
+    /* the tagline stays visible — this row has room for it */
+    align-items: flex-start;
+  }
+}
+
+
+/* ============================================================
+   Site primitives — page shell, container, section head, field, action.
+   These were referenced across /benben, /search, /dashboard, /contact and
+   the 404 without ever being defined. Everything below is the definition.
+   ============================================================ */
+
+/* ─── Page shell ─── */
+
+.site-page {
+  padding-block: 32px 64px;
+}
+
+@media (max-width: 640px) {
+  .site-page {
+    padding-block: 24px 48px;
+  }
+}
+
+/* ─── Container. Owns the inline padding so no page can lose it. ─── */
+
+.site-frame {
+  width: min(calc(100% - 48px), 1184px);
+  margin-inline: auto;
+}
+
+@media (max-width: 640px) {
+  .site-frame {
+    width: min(calc(100% - 32px), 1184px);
+  }
+}
+
+.site-frame--narrow {
+  max-width: 760px;
+}
+
+/* ─── Section head: the ruled label row ─── */
+
+.site-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+
+.site-section-head > :first-child {
+  color: var(--ink);
+}
+
+@media (max-width: 520px) {
+  .site-section-head {
+    flex-wrap: wrap;
+    gap: 4px 16px;
+  }
+}
+
+/* ─── Kicker ─── */
+
+.site-kicker {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
+/* ─── Field ─── */
+
+.site-field {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  transition: border-color 120ms ease, background-color 120ms ease;
+}
+
+.site-field::placeholder {
+  color: var(--dust);
+}
+
+.site-field:hover {
+  border-color: var(--ash);
+}
+
+.site-field:focus {
+  outline: none;
+  border-color: var(--signal);
+  background: var(--void);
+}
+
+/* ─── Action ─── */
+
+.site-action,
+.site-action-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 0;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 120ms ease, border-color 120ms ease,
+    color 120ms ease, transform 120ms ease;
+}
+
+.site-action {
+  background: var(--signal);
+  border-color: var(--signal);
+  color: var(--void);
+}
+
+.site-action:hover {
+  background: var(--signal-dim);
+  border-color: var(--signal-dim);
+}
+
+.site-action-secondary {
+  background: transparent;
+  border-color: var(--rule);
+  color: var(--ink);
+}
+
+.site-action-secondary:hover {
+  border-color: var(--signal);
+  color: var(--signal);
+}
+
+.site-action:active,
+.site-action-secondary:active {
+  transform: translateY(1px);
+}
+
+@media (max-width: 520px) {
+  .site-action,
+  .site-action-secondary {
+    width: 100%;
+  }
+}
+
+/* ─── Ledger: roll column + meta rows ─── */
+
+.roll-section {
+  min-width: 0;
+}
+
+.roll-meta-item {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+
+/* ─── Nav toggle label ─── */
+
+.site-nav .nav-toggle-text {
+  font: inherit;
+}
+
+@media (max-width: 380px) {
+  .site-nav .nav-toggle-text {
     display: none;
   }
 }
 
+/* ─── Print sheets (console) ─── */
+
+@media print {
+  .print-sheet {
+    display: block;
+    break-inside: avoid;
+    color: #000;
+  }
+}
 

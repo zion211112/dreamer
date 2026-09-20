@@ -1,7 +1,15 @@
-"use client";
-
+import type { Metadata } from "next";
 import Link from "next/link";
 import GeoArt from "../components/GeoArt";
+// This 404 renders in the root layout, outside the (site) group, so the site
+// primitives (.site-frame, .site-page, .site-action) are not loaded for it.
+import "./site.css";
+
+export const metadata: Metadata = {
+  title: "No such page",
+  description: "The roll has no entry for that address.",
+  robots: { index: false, follow: true },
+};
 
 // A 404 is just a missing page. No gate decides who gets in here.
 export default function NotFound() {

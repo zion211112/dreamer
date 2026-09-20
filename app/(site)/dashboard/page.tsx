@@ -43,7 +43,7 @@ export default function Dashboard() {
 
   return (
     <main className="site-page bg-void text-ink">
-      <div className="site-frame relative max-w-[720px] overflow-hidden py-12 md:py-24">
+      <div className="site-frame site-frame--narrow relative overflow-hidden py-12 md:py-24">
         {/* masthead */}
         <div className="site-section-head">
           <span>My Profile</span>
