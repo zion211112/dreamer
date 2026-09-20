@@ -70,12 +70,12 @@ export default function RosterImport() {
 
       <div className={panel}>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="max-w-[48ch] text-sm leading-6 text-muted">
+          <p className="max-w-[48ch] text-sm leading-6 text-dust">
             Paste the roll as CSV or TSV — a header row is read if it&apos;s there, and without one
             the columns come in as Adm No, Name, Sex, Class, Stream, DOB, Parent, Phone.
           </p>
           <button
-            className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim transition hover:text-amber"
+            className="font-mono text-label uppercase tracking-[0.15em] text-ash transition hover:text-signal"
             onClick={() => {
               setText(SAMPLE_ROSTER);
               refreshParse(SAMPLE_ROSTER);
@@ -93,7 +93,7 @@ export default function RosterImport() {
           rows={7}
           spellCheck={false}
           placeholder={"Adm No,Name,Sex,Class,Stream\nA1001,Amina Wanjiru,F,Form 1,Science"}
-          className="mt-5 w-full rounded-[21px] border border-ivory/10 bg-void p-4 font-mono text-[12px] leading-6 text-ivory outline-none transition-colors placeholder:text-dim focus:border-amber"
+          className="mt-5 w-full rounded-[21px] border border-ink/10 bg-void p-4 font-mono text-meta leading-6 text-ink outline-none transition-colors placeholder:text-ash focus:border-signal"
         />
 
         {parsed && parsed.notes.map((n) => (
@@ -105,12 +105,12 @@ export default function RosterImport() {
             <p className={`${monoLabel} mb-3`}>
               Preview · {fresh} new · {dupes} already on the roll
             </p>
-            <div className="max-h-[320px] overflow-y-auto rounded-[21px] border border-ivory/10">
+            <div className="max-h-[320px] overflow-y-auto rounded-[21px] border border-ink/10">
               <table className="w-full border-collapse text-left">
                 <thead className="sticky top-0 bg-panel">
                   <tr>
                     {["Adm No", "Name", "Sex", "Class", "Stream", "Parent", "Phone", ""].map((h) => (
-                      <th key={h} className={`border-b border-ivory/10 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.15em] ${h === "" ? "w-16" : "text-dim"}`}>
+                      <th key={h} className={`border-b border-ink/10 px-3 py-2 font-mono text-micro uppercase tracking-[0.15em] ${h === "" ? "w-16" : "text-ash"}`}>
                         {h}
                       </th>
                     ))}
@@ -118,17 +118,17 @@ export default function RosterImport() {
                 </thead>
                 <tbody>
                   {parsed.rows.slice(0, 500).map((r, i) => (
-                    <tr key={i} className={`border-b border-ivory/10/50 ${r.dupe ? "opacity-40" : ""}`}>
-                      <td className="px-3 py-2 font-mono text-[12px] text-dim">{r.student.admNo || "—"}</td>
-                      <td className="px-3 py-2 text-[13px] text-ivory">{r.student.name}</td>
-                      <td className="px-3 py-2 font-mono text-[12px] text-muted">{r.student.sex || "—"}</td>
-                      <td className="px-3 py-2 text-[13px] text-ivory">{r.student.className || "—"}</td>
-                      <td className="px-3 py-2 text-[13px] text-muted">{r.student.stream || "—"}</td>
-                      <td className="px-3 py-2 text-[13px] text-muted">{r.student.parentName || "—"}</td>
-                      <td className="px-3 py-2 font-mono text-[12px] text-muted">{r.student.parentPhone || "—"}</td>
+                    <tr key={i} className={`border-b border-ink/10/50 ${r.dupe ? "opacity-40" : ""}`}>
+                      <td className="px-3 py-2 font-mono text-meta text-ash">{r.student.admNo || "—"}</td>
+                      <td className="px-3 py-2 text-ui text-ink">{r.student.name}</td>
+                      <td className="px-3 py-2 font-mono text-meta text-dust">{r.student.sex || "—"}</td>
+                      <td className="px-3 py-2 text-ui text-ink">{r.student.className || "—"}</td>
+                      <td className="px-3 py-2 text-ui text-dust">{r.student.stream || "—"}</td>
+                      <td className="px-3 py-2 text-ui text-dust">{r.student.parentName || "—"}</td>
+                      <td className="px-3 py-2 font-mono text-meta text-dust">{r.student.parentPhone || "—"}</td>
                       <td className="px-3 py-2">
                         {r.dupe && (
-                          <span className="font-mono text-[9px] uppercase tracking-[0.15em] text-amber">On roll</span>
+                          <span className="font-mono text-micro uppercase tracking-[0.15em] text-signal">On roll</span>
                         )}
                       </td>
                     </tr>
@@ -136,7 +136,7 @@ export default function RosterImport() {
                 </tbody>
               </table>
               {parsed.rows.length > 500 && (
-                <p className="px-3 py-2 font-mono text-[11px] text-dim">
+                <p className="px-3 py-2 font-mono text-label text-ash">
                   …and {parsed.rows.length - 500} more rows below the fold.
                 </p>
               )}

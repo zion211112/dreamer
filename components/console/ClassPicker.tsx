@@ -33,7 +33,7 @@ export function ClassPicker({ value, onChange }: Props) {
   };
 
   const chip = (on: boolean) =>
-    `rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] transition-colors ${on ? "border-amber bg-amber/15 text-amber" : "border-ivory/10 text-dim hover:text-ivory"}`;
+    `rounded-full border px-2.5 py-1 font-mono text-micro uppercase tracking-[0.12em] transition-colors ${on ? "border-signal bg-signal/15 text-signal" : "border-ink/10 text-ash hover:text-ink"}`;
 
   return (
     <div className="space-y-2">

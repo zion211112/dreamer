@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import GeoArt from "../../components/GeoArt";
 import "../home.css";
 
 export const metadata: Metadata = {
   title: { absolute: "APT-LABS — The ledger of useful work." },
   description:
     "A public record of work, skill, and trust in Kirinyaga, Kenya. Built for places where the network is a suggestion, not a guarantee.",
-  openGraph: {
-    title: "APT-LABS — The ledger of useful work.",
-    description:
-      "A public record of work, skill, and trust. Counts are visible. Identity stays yours.",
-    url: "/",
-    siteName: "APT-LABS",
-    type: "website",
-  },
+  // openGraph comes from the root layout + app/opengraph-image.tsx; a
+  // page-level object here would override the generated og:image.
 };
 
 const surfaces = [
@@ -51,6 +46,7 @@ export default function HomePage() {
         </div>
       </div>
       <section className="landing-hero" aria-labelledby="landing-title">
+        <GeoArt variant="cells" className="landing-hero-art" />
         <div className="landing-frame landing-hero-grid">
           <div className="landing-hero-copy">
             <p className="lp-label">Kirinyaga, Kenya · Public record</p>

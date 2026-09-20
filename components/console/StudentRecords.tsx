@@ -10,7 +10,7 @@ import { useSchoolData } from "./useSchoolData";
 import { btn, btnGhost, field, Gate, HeadRow, Loading, Notice, monoLabel, panel } from "./bits";
 
 const editInput =
-  "w-full rounded-lg border border-edge bg-void px-3 py-2 text-[13px] text-ivory outline-none focus:border-amber";
+  "w-full rounded-lg border border-edge bg-void px-3 py-2 text-ui text-ink outline-none focus:border-signal";
 
 export default function StudentRecords() {
   const data = useSchoolData();
@@ -165,7 +165,7 @@ export default function StudentRecords() {
             <thead>
               <tr>
                 {["Adm No", "Name", "Class · Stream", "Sex", "Parent", "Phone", "Actions"].map((h) => (
-                  <th key={h} className="border-b border-edge px-3 py-2.5 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-dim">
+                  <th key={h} className="border-b border-edge px-3 py-2.5 text-left font-mono text-micro uppercase tracking-[0.15em] text-ash">
                     {h}
                   </th>
                 ))}
@@ -174,7 +174,7 @@ export default function StudentRecords() {
             <tbody>
               {visible.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-3 py-10 text-center text-sm text-muted">
+                  <td colSpan={7} className="px-3 py-10 text-center text-sm text-dust">
                     Nobody in this view. Widen the filters or add a student.
                   </td>
                 </tr>
@@ -208,28 +208,28 @@ export default function StudentRecords() {
                       <input value={form.parentPhone} onChange={(e) => setForm({ ...form, parentPhone: e.target.value })} className={editInput} placeholder="Phone" />
                     </td>
                     <td className="px-3 py-2 whitespace-nowrap">
-                      <button className="font-mono text-[11px] uppercase tracking-[0.1em] text-amber hover:text-ivory" onClick={() => void saveForm()}>
+                      <button className="font-mono text-label uppercase tracking-[0.1em] text-signal hover:text-ink" onClick={() => void saveForm()}>
                         Save
                       </button>
-                      <button className="ml-3 font-mono text-[11px] uppercase tracking-[0.1em] text-dim hover:text-ivory" onClick={() => { setEditing(null); setForm(null); }}>
+                      <button className="ml-3 font-mono text-label uppercase tracking-[0.1em] text-ash hover:text-ink" onClick={() => { setEditing(null); setForm(null); }}>
                         Cancel
                       </button>
                     </td>
                   </tr>
                 ) : (
 
-                  <tr key={s.id} className="border-b border-edge/50 transition-colors hover:bg-panelHi">
-                    <td className="px-3 py-2.5 font-mono text-[12px] text-dim">{s.admNo || "—"}</td>
-                    <td className="px-3 py-2.5 text-[13px] text-ivory">{s.name}</td>
-                    <td className="px-3 py-2.5 text-[13px] text-muted">{[s.className, s.stream].filter(Boolean).join(" · ") || "—"}</td>
-                    <td className="px-3 py-2.5 font-mono text-[12px] text-muted">{s.sex || "—"}</td>
-                    <td className="px-3 py-2.5 text-[13px] text-muted">{s.parentName || "—"}</td>
-                    <td className="px-3 py-2.5 font-mono text-[12px] text-muted">{s.parentPhone || "—"}</td>
+                  <tr key={s.id} className="border-b border-edge/50 transition-colors hover:bg-edge">
+                    <td className="px-3 py-2.5 font-mono text-meta text-ash">{s.admNo || "—"}</td>
+                    <td className="px-3 py-2.5 text-ui text-ink">{s.name}</td>
+                    <td className="px-3 py-2.5 text-ui text-dust">{[s.className, s.stream].filter(Boolean).join(" · ") || "—"}</td>
+                    <td className="px-3 py-2.5 font-mono text-meta text-dust">{s.sex || "—"}</td>
+                    <td className="px-3 py-2.5 text-ui text-dust">{s.parentName || "—"}</td>
+                    <td className="px-3 py-2.5 font-mono text-meta text-dust">{s.parentPhone || "—"}</td>
                     <td className="px-3 py-2.5 whitespace-nowrap">
-                      <button className="font-mono text-[11px] uppercase tracking-[0.1em] text-dim hover:text-amber" onClick={() => startEdit(s)}>
+                      <button className="font-mono text-label uppercase tracking-[0.1em] text-ash hover:text-signal" onClick={() => startEdit(s)}>
                         Edit
                       </button>
-                      <button className="ml-4 font-mono text-[11px] uppercase tracking-[0.1em] text-dim hover:text-amber" onClick={() => void remove(s)}>
+                      <button className="ml-4 font-mono text-label uppercase tracking-[0.1em] text-ash hover:text-signal" onClick={() => void remove(s)}>
                         Strike
                       </button>
                     </td>

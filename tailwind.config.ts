@@ -66,7 +66,22 @@ const config = {
           "Helvetica Neue", "Arial", "Noto Sans", "system-ui", "sans-serif"
         ],
       },
-      // ── 8px grid. No Fibonacci. No 13px. Predictable.
+      // ── Type scale. The only sizes that exist.
+      //    Line heights ride along with each token so call sites cannot drift.
+      //    micro/label/meta/ui carry the instrument register (mono, tracked);
+      //    body carries prose. Nothing arbitrary, nothing between steps.
+      fontSize: {
+        micro: ["10px", { lineHeight: "1.5", letterSpacing: "0.08em" }],
+        label: ["11px", { lineHeight: "1.5", letterSpacing: "0.18em" }],
+        meta:  ["12px", { lineHeight: "1.5" }],
+        ui:    ["13px", { lineHeight: "1.55" }],
+        body:  ["15px", { lineHeight: "1.6" }],
+        lead:  ["17px", { lineHeight: "1.6" }],
+        h3:    ["20px", { lineHeight: "1.25" }],
+        h2:    ["26px", { lineHeight: "1.2", letterSpacing: "-0.01em" }],
+        h1:    ["34px", { lineHeight: "1.1", letterSpacing: "-0.02em" }],
+      },
+      // ── 8px grid. No Fibonacci. Predictable.
       spacing: {
         "4.5":  "18px",   // occasional micro-need
       },

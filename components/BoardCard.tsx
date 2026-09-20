@@ -18,16 +18,16 @@ const SEAL: Record<LifeState, { w: number; c: string; tick?: boolean }> = {
   proposed: { w: 16, c: "bg-amber/40" },
   ratified: { w: 42, c: "bg-amber" },
   claimed: { w: 42, c: "bg-amber", tick: true },
-  active: { w: 72, c: "bg-teal" },
-  done: { w: 100, c: "bg-teal/85" },
-  parked: { w: 42, c: "bg-dim/50" },
-  lapsed: { w: 30, c: "bg-dim/30" }
+  active: { w: 72, c: "bg-signal" },
+  done: { w: 100, c: "bg-signal/85" },
+  parked: { w: 42, c: "bg-ash/50" },
+  lapsed: { w: 30, c: "bg-ash/30" }
 };
 
 const inField =
-  "border-b border-rule/10 bg-transparent px-0 py-1.5 font-mono text-[12px] text-ink outline-none transition focus:border-amber";
-const ghost = "font-mono text-[11px] uppercase tracking-[0.2em] text-amber transition hover:text-ink";
-const ghostDim = "font-mono text-[11px] uppercase tracking-[0.2em] text-ash transition hover:text-ink";
+  "border-b border-rule/10 bg-transparent px-0 py-1.5 font-mono text-meta text-ink outline-none transition focus:border-amber";
+const ghost = "font-mono text-label uppercase tracking-[0.2em] text-amber transition hover:text-ink";
+const ghostDim = "font-mono text-label uppercase tracking-[0.2em] text-ash transition hover:text-ink";
 
 // Real date beside the relative time — the floor remembers by proof.
 const asOf = (ts: number) =>
@@ -53,20 +53,20 @@ function LineNode({
   const { up } = upDown(b);
   return (
     <li className="relative py-2 pl-5">
-      <span aria-hidden className="absolute left-0 top-0 h-full w-px bg-ivory/8" />
-      <span aria-hidden className={`absolute left-0 top-2 font-mono text-[11px] ${tone}`}>
+      <span aria-hidden className="absolute left-0 top-0 h-full w-px bg-ink/8" />
+      <span aria-hidden className={`absolute left-0 top-2 font-mono text-label ${tone}`}>
         {mark}
       </span>
       <div className="min-w-0">
         <div className="flex flex-wrap items-baseline gap-x-2">
-          <span className={`font-mono text-[10px] uppercase tracking-[0.2em] ${subject ? "text-amber" : "text-ash"}`}>
+          <span className={`font-mono text-micro uppercase tracking-[0.2em] ${subject ? "text-amber" : "text-ash"}`}>
             {tag}
           </span>
           <span className={`font-serif ${subject ? "text-[1.05rem] text-ink" : "text-[0.95rem] text-dust"}`}>
             {b.title}
           </span>
         </div>
-        <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-ash">
+        <p className="mt-0.5 font-mono text-micro uppercase tracking-[0.14em] text-ash">
           by @{b.by} · {st.name} · ▲{up}
         </p>
       </div>
@@ -153,7 +153,7 @@ export default function BoardCard({
       </h3>
       <span aria-hidden className="mt-3 block h-px w-[5.5rem] bg-amber/70" />
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-[0.14em] text-ash">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 font-mono text-label uppercase tracking-[0.14em] text-ash">
         <span className="flex flex-wrap items-center gap-x-2">
           <span className="text-amber/80">{b.risk}</span>
           <span aria-hidden>·</span>
@@ -184,7 +184,7 @@ export default function BoardCard({
       </div>
 
       {(b.skills ?? []).length > 0 && (
-        <div className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[11px] uppercase tracking-[0.18em] text-signal/90">
+        <div className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-label uppercase tracking-[0.18em] text-signal/90">
           {(b.skills ?? []).map((k, i) => (
             <span key={k} className="flex items-center gap-2.5">
               {i > 0 && <span aria-hidden className="text-ash/50">·</span>}
@@ -202,26 +202,26 @@ export default function BoardCard({
           <div className="relative h-1.5 flex-1 bg-edge/50">
             <div className={`relative h-full ${seal.c}`} style={{ width: `${seal.w}%` }}>
               {seal.tick && (
-                <span aria-hidden className="absolute right-0 top-1/2 h-3 w-1 -translate-y-1/2 bg-teal" />
+                <span aria-hidden className="absolute right-0 top-1/2 h-3 w-1 -translate-y-1/2 bg-signal" />
               )}
             </div>
           </div>
         </div>
-        <span className={`shrink-0 font-mono text-[11px] uppercase tracking-[0.22em] ${meta.tone}`}>
+        <span className={`shrink-0 font-mono text-label uppercase tracking-[0.22em] ${meta.tone}`}>
           {meta.name}
         </span>
       </div>
 
-      <p className="mt-3 font-mono text-[12px] text-dust">{boardStatus(b, now)}</p>
+      <p className="mt-3 font-mono text-meta text-dust">{boardStatus(b, now)}</p>
 
       <p className="mt-4 max-w-[64ch] text-[0.95rem] leading-7 text-dust">{b.body}</p>
-      <div className="mt-3 space-y-1 font-mono text-[12px] text-ash">
+      <div className="mt-3 space-y-1 font-mono text-meta text-ash">
         <p>{needsLine(b)}</p>
         <p className="italic text-dust/80">Done: {b.done}</p>
       </div>
 
       {activity && (
-        <p className="mt-4 font-mono text-[12px] text-dust/80">
+        <p className="mt-4 font-mono text-meta text-dust/80">
           <span aria-hidden className="text-signal">▸ </span>
           {activity}
         </p>
@@ -229,10 +229,10 @@ export default function BoardCard({
 
       {open > 0 && (
         <div className="mt-5 border-l-2 border-rule/10 pl-4">
-          <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-ash">Seats</p>
+          <p className="font-mono text-micro uppercase tracking-[0.28em] text-ash">Seats</p>
           <ul className="mt-2 space-y-1.5">
             {seated.map((c, i) => (
-              <li key={i} className="flex flex-wrap items-center gap-x-2 font-mono text-[12px] text-dust">
+              <li key={i} className="flex flex-wrap items-center gap-x-2 font-mono text-meta text-dust">
                 <span className={c.role === "reviewer" ? "text-signal" : "text-amber"}>{c.role}</span>
                 <span aria-hidden className="text-ash">·</span>
                 <span className="text-ink">@{c.by}</span>
@@ -254,10 +254,10 @@ export default function BoardCard({
 
       {prog > 0 && (
         <div className="mt-5 border-l-2 border-rule/10 pl-4">
-          <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-ash">Progress</p>
+          <p className="font-mono text-micro uppercase tracking-[0.28em] text-ash">Progress</p>
           <ul className="mt-2 space-y-1.5">
             {(b.progress ?? []).slice(-3).map((p, i) => (
-              <li key={i} className="font-mono text-[12px] text-dust">
+              <li key={i} className="font-mono text-meta text-dust">
                 <span className="text-ink">@{p.by}</span>
                 <span aria-hidden className="text-ash"> · </span>
                 {p.text}
@@ -269,14 +269,14 @@ export default function BoardCard({
       )}
 
       {att > 0 && (
-        <div className="mt-5 border-l-2 border-teal/30 pl-4">
-          <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-ash">Attestations</p>
+        <div className="mt-5 border-l-2 border-signal/30 pl-4">
+          <p className="font-mono text-micro uppercase tracking-[0.28em] text-ash">Attestations</p>
           <ul className="mt-2 space-y-1.5">
             {(b.attestations ?? []).map((a, i) => (
-              <li key={i} className="font-mono text-[12px] text-dust">
+              <li key={i} className="font-mono text-meta text-dust">
                 <span className="text-signal">∎</span>
                 <span className="ml-1.5 text-ink">@{a.by}</span>
-                {a.hall && <span className="ml-1.5 font-mono text-[10px] uppercase text-amber/70">hall</span>}
+                {a.hall && <span className="ml-1.5 font-mono text-micro uppercase text-amber/70">hall</span>}
                 <span className="ml-2">— {a.evidence}</span>
               </li>
             ))}
@@ -286,7 +286,7 @@ export default function BoardCard({
 
       {hasFork && (
         <details className="mt-6 border-t border-rule/8 pt-4">
-          <summary className="select-none font-mono text-[11px] uppercase tracking-[0.24em] text-ash transition hover:text-ink">
+          <summary className="select-none font-mono text-label uppercase tracking-[0.24em] text-ash transition hover:text-ink">
             lineage · {ancestors.length} before · {children.length} after
           </summary>
           <ul className="mt-4 list-none">
@@ -448,7 +448,7 @@ export default function BoardCard({
             </button>
           </>
         ) : (
-          <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-ash">
+          <span className="font-mono text-label uppercase tracking-[0.24em] text-ash">
             sign the roll to claim a seat
           </span>
         )}

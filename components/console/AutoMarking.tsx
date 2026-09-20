@@ -30,7 +30,7 @@ interface Marking {
 
 const KEY = "console-marking";
 const editInput =
-  "rounded-lg border border-ivory/10 bg-void px-2.5 py-1.5 text-[13px] text-ivory outline-none focus:border-amber";
+  "rounded-lg border border-ink/10 bg-void px-2.5 py-1.5 text-ui text-ink outline-none focus:border-signal";
 
 export default function AutoMarking() {
   const data = useSchoolData();
@@ -113,21 +113,21 @@ export default function AutoMarking() {
               <thead>
                 <tr>
                   {["Q", "Topic", "Correct", "Marks", ""].map((h) => (
-                    <th key={h} className="border-b border-ivory/10 px-2 py-2 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-dim">{h}</th>
+                    <th key={h} className="border-b border-ink/10 px-2 py-2 text-left font-mono text-micro uppercase tracking-[0.15em] text-ash">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {questions.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-2 py-6 text-center text-sm text-muted">
+                    <td colSpan={5} className="px-2 py-6 text-center text-sm text-dust">
                       No questions yet. Add the scheme — topic, correct answer, marks.
                     </td>
                   </tr>
                 )}
                 {questions.map((q, i) => (
                   <tr key={q.id}>
-                    <td className="px-2 py-1.5 font-mono text-[12px] text-dim">{i + 1}</td>
+                    <td className="px-2 py-1.5 font-mono text-meta text-ash">{i + 1}</td>
                     <td className="px-2 py-1.5">
                       <input value={q.topic} onChange={(e) => setQuestions(questions.map((x) => (x.id === q.id ? { ...x, topic: e.target.value } : x)))} placeholder="Topic" className={editInput + " w-full"} />
                     </td>
@@ -138,7 +138,7 @@ export default function AutoMarking() {
                       <input type="number" min={1} value={q.marks} onChange={(e) => setQuestions(questions.map((x) => (x.id === q.id ? { ...x, marks: Math.max(1, parseInt(e.target.value) || 1) } : x)))} className={editInput + " w-14"} />
                     </td>
                     <td className="px-2 py-1.5">
-                      <button className="font-mono text-[10px] uppercase text-dim hover:text-amber" onClick={() => setQuestions(questions.filter((x) => x.id !== q.id))}>Cut</button>
+                      <button className="font-mono text-micro uppercase text-ash hover:text-signal" onClick={() => setQuestions(questions.filter((x) => x.id !== q.id))}>Cut</button>
                     </td>
                   </tr>
                 ))}
@@ -146,7 +146,7 @@ export default function AutoMarking() {
             </table>
           </div>
           <button
-            className="mt-4 font-mono text-[11px] uppercase tracking-[0.15em] text-dim hover:text-amber"
+            className="mt-4 font-mono text-label uppercase tracking-[0.15em] text-ash hover:text-signal"
             onClick={() => setQuestions([...questions, { id: `Q${Date.now().toString(36)}`, topic: "", answer: "", marks: 1 }])}
           >
             + Add question
@@ -169,8 +169,8 @@ export default function AutoMarking() {
                 <div className="mt-4 space-y-2">
                   {questions.map((q, i) => (
                     <div key={q.id} className="flex items-center justify-between gap-3">
-                      <span className="truncate text-[13px] text-muted">
-                        <span className="font-mono text-[11px] text-dim">Q{i + 1} · {q.marks} mark(s)</span>{" "}
+                      <span className="truncate text-ui text-dust">
+                        <span className="font-mono text-label text-ash">Q{i + 1} · {q.marks} mark(s)</span>{" "}
                         {q.topic || "No topic"}
                       </span>
                       <input value={answers[q.id] ?? ""} onChange={(e) => setAnswers({ ...answers, [q.id]: e.target.value })} placeholder="Answer" className={editInput + " w-24"} />
@@ -187,14 +187,14 @@ export default function AutoMarking() {
                 )}
               </>
             )}
-            {!selStudent && <p className="mt-4 text-sm text-muted">Pick a student, enter the test answers, mark.</p>}
+            {!selStudent && <p className="mt-4 text-sm text-dust">Pick a student, enter the test answers, mark.</p>}
           </div>
 
           {/* WEAKNESS MAP */}
           <div className={panel}>
             <p className={monoLabel}>Class weakness map · {results.length} students marked</p>
             {topicRows.length === 0 ? (
-              <p className="mt-4 text-sm text-muted">
+              <p className="mt-4 text-sm text-dust">
                 Mark at least one student and the topic-level map appears — where the class is losing
                 the marks, ranked weakest first.
               </p>
@@ -202,11 +202,11 @@ export default function AutoMarking() {
               <div className="mt-4 space-y-3">
                 {topicRows.map((t, i) => (
                   <div key={t.topic}>
-                    <div className="mb-1 flex items-center justify-between text-[12px]">
-                      <span className={i === 0 ? "font-semibold text-amber" : "text-muted"}>
+                    <div className="mb-1 flex items-center justify-between text-meta">
+                      <span className={i === 0 ? "font-semibold text-signal" : "text-dust"}>
                         {i === 0 ? `Teach this first: ${t.topic}` : t.topic}
                       </span>
-                      <span className="font-mono text-dim">{t.pct}% · {t.n} tests</span>
+                      <span className="font-mono text-ash">{t.pct}% · {t.n} tests</span>
                     </div>
                     <div className="h-1.5 overflow-hidden rounded-full bg-edge">
                       <div className="h-full rounded-full" style={{ width: `${t.pct}%`, background: t.pct < 40 ? "#d4af37" : t.pct < 70 ? "#d4af37" : "#2dd4bf" }} />

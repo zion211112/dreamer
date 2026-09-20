@@ -13,7 +13,7 @@ import { field, Gate, HeadRow, Loading, monoLabel, panel } from "./bits";
 
 function Spark({ points }: { points: number[] }) {
   if (points.length < 2)
-    return <span className="font-mono text-[11px] text-dim">{points.length > 0 ? points[0] : "—"}</span>;
+    return <span className="font-mono text-label text-ash">{points.length > 0 ? points[0] : "—"}</span>;
   const w = 96;
   const h = 28;
   const min = Math.min(...points);
@@ -81,7 +81,7 @@ export default function GradeForecast() {
             <thead>
               <tr>
                 {["Student", "Mean / 400", "Band", "To next band", "Weakest", "Trend"].map((h) => (
-                  <th key={h} className="border-b border-ivory/10 px-3 py-2.5 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-dim">
+                  <th key={h} className="border-b border-ink/10 px-3 py-2.5 text-left font-mono text-micro uppercase tracking-[0.15em] text-ash">
                     {h}
                   </th>
                 ))}
@@ -91,31 +91,31 @@ export default function GradeForecast() {
               {rows.map((s) => {
                 const f = forecast(data.assessments, s.id);
                 return (
-                  <tr key={s.id} className="border-b border-ivory/10/50 transition-colors hover:bg-panelHi">
+                  <tr key={s.id} className="border-b border-ink/10/50 transition-colors hover:bg-edge">
                     <td className="px-3 py-2.5">
-                      <span className="text-[13px] text-ivory">{s.name}</span>
-                      {s.admNo && <span className="ml-2 font-mono text-[11px] text-dim">{s.admNo}</span>}
+                      <span className="text-ui text-ink">{s.name}</span>
+                      {s.admNo && <span className="ml-2 font-mono text-label text-ash">{s.admNo}</span>}
                     </td>
-                    <td className="px-3 py-2.5 font-mono text-[13px] text-ivory">
+                    <td className="px-3 py-2.5 font-mono text-ui text-ink">
                       {f ? f.mean : "—"}
                     </td>
                     <td className="px-3 py-2.5">
                       {f ? (
-                        <span className="font-mono text-[13px] font-bold text-amber">{f.band}</span>
+                        <span className="font-mono text-ui font-bold text-signal">{f.band}</span>
                       ) : (
-                        <span className="font-mono text-[12px] text-dim">no scores</span>
+                        <span className="font-mono text-meta text-ash">no scores</span>
                       )}
                     </td>
-                    <td className="px-3 py-2.5 font-mono text-[12px] text-muted">
+                    <td className="px-3 py-2.5 font-mono text-meta text-dust">
                       {f ? (f.gap > 0 ? `${Math.ceil(f.gap)} pts to ${nextBand(f.band)}` : "top band") : "—"}
                     </td>
-                    <td className="px-3 py-2.5 text-[13px] text-muted">
+                    <td className="px-3 py-2.5 text-ui text-dust">
                       {f && f.weakest.length > 0
                         ? f.weakest.map((w) => `${w.subject} (${w.pct}%)`).join(" · ")
                         : "—"}
                     </td>
                     <td className="px-3 py-2.5">
-                      {f ? <Spark points={f.perExam.map((p) => p.mean)} /> : <span className="font-mono text-[11px] text-dim">—</span>}
+                      {f ? <Spark points={f.perExam.map((p) => p.mean)} /> : <span className="font-mono text-label text-ash">—</span>}
                     </td>
                   </tr>
                 );

@@ -37,41 +37,41 @@ export default function DoorsModal({ onClose }: { onClose: () => void }) {
             type="button"
             onClick={() => { setPicked("Individual"); setDone(false); }}
             className={`rounded-2xl border p-5 text-left transition ${
-              picked === "Individual" ? "border-teal bg-teal/10" : "border-rule/10 bg-void hover:border-rule"
+              picked === "Individual" ? "border-signal bg-signal/10" : "border-rule/10 bg-void hover:border-rule"
             }`}
           >
             <div className="font-bold text-ink">Individual →</div>
-            <div className="mt-1 text-[13px] text-dust">You have a CV? Nobody believes it. Open the ledger.</div>
+            <div className="mt-1 text-ui text-dust">You have a CV? Nobody believes it. Open the ledger.</div>
           </button>
           <button
             type="button"
             onClick={() => { setPicked("Builder"); setDone(false); }}
             className={`rounded-2xl border p-5 text-left transition ${
-              picked === "Builder" ? "border-teal bg-teal/10" : "border-rule/10 bg-void hover:border-rule"
+              picked === "Builder" ? "border-signal bg-signal/10" : "border-rule/10 bg-void hover:border-rule"
             }`}
           >
             <div className="font-bold text-ink">Builder →</div>
-            <div className="mt-1 text-[13px] text-dust">Skilled? Put a build on the floor — the ledger tracks it.</div>
+            <div className="mt-1 text-ui text-dust">Skilled? Put a build on the floor — the ledger tracks it.</div>
           </button>
           <button
             type="button"
             onClick={() => { setPicked("School"); setDone(false); }}
             className={`rounded-2xl border p-5 text-left transition ${
-              picked === "School" ? "border-teal bg-teal/10" : "border-rule/10 bg-void hover:border-rule"
+              picked === "School" ? "border-signal bg-signal/10" : "border-rule/10 bg-void hover:border-rule"
             }`}
           >
             <div className="font-bold text-ink">School →</div>
-            <div className="mt-1 text-[13px] text-dust">Board your school onto the ledger to accelerate dev.</div>
+            <div className="mt-1 text-ui text-dust">Board your school onto the ledger to accelerate dev.</div>
           </button>
           <button
             type="button"
             onClick={() => { setPicked("Everyone"); setDone(false); }}
             className={`rounded-2xl border p-5 text-left transition ${
-              picked === "Everyone" ? "border-teal bg-teal/10" : "border-rule/10 bg-void hover:border-rule"
+              picked === "Everyone" ? "border-signal bg-signal/10" : "border-rule/10 bg-void hover:border-rule"
             }`}
           >
             <div className="font-bold text-ink">Everyone →</div>
-            <div className="mt-1 text-[13px] text-dust">See the floor. Builds, votes, forks. No gate.</div>
+            <div className="mt-1 text-ui text-dust">See the floor. Builds, votes, forks. No gate.</div>
           </button>
         </div>
         {pickedDoor && !done && (
@@ -80,7 +80,7 @@ export default function DoorsModal({ onClose }: { onClose: () => void }) {
           </p>
         )}
         {done && (
-          <p className="mt-4 rounded-2xl bg-teal/15 border border-teal/30 p-5 text-sm font-semibold text-signal">
+          <p className="mt-4 rounded-2xl bg-signal/15 border border-signal/30 p-5 text-sm font-semibold text-signal">
             Door noted. The door is open already — just walk through.
           </p>
         )}

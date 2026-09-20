@@ -72,17 +72,17 @@ export default function TimetableSolver() {
 
   return (
     <div className="min-w-0 max-w-full space-y-8">
-      <div className="border-b border-ivory/10 pb-6">
+      <div className="border-b border-ink/10 pb-6">
         <p className={monoLabel}>Timetable Solver · build · print · approve</p>
-        <h1 className="mt-3 font-display text-4xl font-light tracking-tight md:text-5xl">The week, on one wall grid.</h1>
-        <p className="mt-3 max-w-[62ch] text-sm leading-6 text-muted">
+        <h1 className="mt-3 font-serif text-4xl font-light tracking-tight md:text-5xl">The week, on one wall grid.</h1>
+        <p className="mt-3 max-w-[62ch] text-sm leading-6 text-dust">
           Start from a real CBC wall grid, rewrite any cell, print for the wall, then approve once —{" "}
-          <span className="text-ivory">Today reads the approved week</span>.
+          <span className="text-ink">Today reads the approved week</span>.
         </p>
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <Link href="/console/17" className={btnGhost + " px-4 py-2"}>→ Open My Day</Link>
           <PrintButton label="Print wall grid" />
-          {approvedName !== "" && <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-teal">Approved · {approvedName}</span>}
+          {approvedName !== "" && <span className="font-mono text-label uppercase tracking-[0.15em] text-signal">Approved · {approvedName}</span>}
         </div>
       </div>
 
@@ -96,12 +96,12 @@ export default function TimetableSolver() {
               setNotice("Loaded demo grid — rewrite, print, approve.");
             }}
             className={`rounded-[21px] border p-[21px] text-left transition-colors ${
-              i === demoSel ? "border-amber/60 bg-amber/5" : "border-ivory/10 bg-panel hover:border-ivory/30"
+              i === demoSel ? "border-signal/60 bg-signal/5" : "border-ink/10 bg-panel hover:border-ink/30"
             }`}
           >
             <p className={monoLabel}>Demo {i + 1} · {d.className}</p>
-            <p className="mt-2 font-display text-xl font-normal leading-snug">{d.name}</p>
-            <p className="mt-2 text-[13px] leading-5 text-muted">{subjectsInTimetable(d).slice(0, 5).join(" · ")}</p>
+            <p className="mt-2 font-serif text-xl font-normal leading-snug">{d.name}</p>
+            <p className="mt-2 text-ui leading-5 text-dust">{subjectsInTimetable(d).slice(0, 5).join(" · ")}</p>
           </button>
         ))}
         <button
@@ -110,10 +110,10 @@ export default function TimetableSolver() {
             setDemoSel(-1);
             setNotice("Blank week — 7 teaching periods, breaks, lunch, Friday PPI.");
           }}
-          className="rounded-[21px] border border-dashed border-ivory/10 bg-void p-[21px] text-left transition-colors hover:border-amber/60"
+          className="rounded-[21px] border border-dashed border-ink/10 bg-void p-[21px] text-left transition-colors hover:border-signal/60"
         >
           <p className={monoLabel}>Blank</p>
-          <p className="mt-2 font-display text-xl font-normal">Start empty</p>
+          <p className="mt-2 font-serif text-xl font-normal">Start empty</p>
         </button>
       </div>
 
@@ -123,7 +123,7 @@ export default function TimetableSolver() {
           <input
             value={active.className}
             onChange={(e) => setActive((p) => ({ ...p, className: e.target.value.slice(0, 24) }))}
-            className="mt-2 w-full rounded-full border border-ivory/10 bg-void px-5 py-3 text-sm text-ivory outline-none focus:border-amber"
+            className="mt-2 w-full rounded-full border border-ink/10 bg-void px-5 py-3 text-sm text-ink outline-none focus:border-signal"
           />
         </label>
         <label className="min-w-[200px] flex-1">
@@ -131,36 +131,36 @@ export default function TimetableSolver() {
           <input
             value={active.name}
             onChange={(e) => setActive((p) => ({ ...p, name: e.target.value.slice(0, 60) }))}
-            className="mt-2 w-full rounded-full border border-ivory/10 bg-void px-5 py-3 text-sm text-ivory outline-none focus:border-amber"
+            className="mt-2 w-full rounded-full border border-ink/10 bg-void px-5 py-3 text-sm text-ink outline-none focus:border-signal"
           />
         </label>
-        <p className="w-full font-mono text-[11px] uppercase tracking-[0.15em] text-dim">
+        <p className="w-full font-mono text-label uppercase tracking-[0.15em] text-ash">
           {teachingCount} teaching periods / week · {subjects.length} subjects · today is {todayKey}
         </p>
       </div>
 
-      <div className="overflow-x-auto rounded-[21px] border border-ivory/10 bg-panel">
+      <div className="overflow-x-auto rounded-[21px] border border-ink/10 bg-panel">
         <table className="w-full min-w-[720px] border-collapse">
           <thead>
-            <tr className="border-b border-ivory/10">
-              <th className="w-[160px] px-4 py-3 text-left font-mono text-[10px] uppercase tracking-[0.2em] text-dim">Time</th>
+            <tr className="border-b border-ink/10">
+              <th className="w-[160px] px-4 py-3 text-left font-mono text-micro uppercase tracking-[0.2em] text-ash">Time</th>
               {WEEKDAYS.map((d) => (
-                <th key={d} className="px-3 py-3 text-left font-mono text-[10px] uppercase tracking-[0.2em] text-dim">{d}</th>
+                <th key={d} className="px-3 py-3 text-left font-mono text-micro uppercase tracking-[0.2em] text-ash">{d}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {active.times.map((slot, i) => (
-              <tr key={i} className="border-b border-ivory/10/50 last:border-0">
+              <tr key={i} className="border-b border-ink/10/50 last:border-0">
                 <td className="px-4 py-2 align-top">
                   <div className="flex items-center gap-1.5">
                     <input value={slot.start} onChange={(e) => setTime(i, "start", e.target.value)} type="time" aria-label={"Slot " + (i + 1) + " start"}
-                      className="w-[80px] rounded-lg border border-transparent bg-transparent px-1 py-1 font-mono text-[12px] tabular-nums text-ivory outline-none focus:border-amber" />
-                    <span className="font-mono text-[10px] text-dim">–</span>
+                      className="w-[80px] rounded-lg border border-transparent bg-transparent px-1 py-1 font-mono text-meta tabular-nums text-ink outline-none focus:border-signal" />
+                    <span className="font-mono text-micro text-ash">–</span>
                     <input value={slot.end} onChange={(e) => setTime(i, "end", e.target.value)} type="time" aria-label={"Slot " + (i + 1) + " end"}
-                      className="w-[80px] rounded-lg border border-transparent bg-transparent px-1 py-1 font-mono text-[12px] tabular-nums text-muted outline-none focus:border-amber" />
+                      className="w-[80px] rounded-lg border border-transparent bg-transparent px-1 py-1 font-mono text-meta tabular-nums text-dust outline-none focus:border-signal" />
                   </div>
-                  <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.2em] text-dim/70">
+                  <p className="mt-0.5 font-mono text-micro uppercase tracking-[0.2em] text-ash/70">
                     {slot.kind === "break" ? "health break" : slot.kind === "lunch" ? "lunch" : slot.kind === "roll" ? "roll call" : prettyRange(slot)}
                   </p>
                 </td>
@@ -170,7 +170,7 @@ export default function TimetableSolver() {
                       value={active.cells[d]?.[i] ?? ""}
                       onChange={(e) => setCell(d, i, e.target.value)}
                       placeholder="—"
-                      className="w-full rounded-lg border border-transparent bg-void px-2.5 py-2 font-mono text-[12px] uppercase outline-none focus:border-amber"
+                      className="w-full rounded-lg border border-transparent bg-void px-2.5 py-2 font-mono text-meta uppercase outline-none focus:border-signal"
                     />
                   </td>
                 ))}
@@ -183,24 +183,24 @@ export default function TimetableSolver() {
       <div className="flex flex-wrap gap-3">
         <button onClick={() => void approve()} className={btn}>Approve — fill Today</button>
       </div>
-      {notice !== "" && <p role="status" className="font-mono text-[12px] text-amber">{notice}</p>}
+      {notice !== "" && <p role="status" className="font-mono text-meta text-signal">{notice}</p>}
 
       {/* The print path: a clean wall grid on white paper. The screen UI
           above is chrome; the paper gets rules and subject names only. */}
       <div
         aria-hidden="true"
-        className="print-sheet bg-white p-8 text-obsidian print:block print:w-full"
+        className="print-sheet bg-white p-8 text-void print:block print:w-full"
       >
-        <p className="font-mono text-[10px] uppercase tracking-[0.3em]">Timetable · {active.className}</p>
-        <h3 className="mt-2 font-display text-2xl">{active.name}</h3>
-        <table className="mt-4 w-full border-collapse text-[12px]">
+        <p className="font-mono text-micro uppercase tracking-[0.3em]">Timetable · {active.className}</p>
+        <h3 className="mt-2 font-serif text-2xl">{active.name}</h3>
+        <table className="mt-4 w-full border-collapse text-meta">
           <thead>
             <tr>
-              <th className="w-[120px] border-b border-ivory/30 px-2 py-1.5 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-obsidian/70">
+              <th className="w-[120px] border-b border-ink/30 px-2 py-1.5 text-left font-mono text-micro uppercase tracking-[0.15em] text-void/70">
                 Time
               </th>
               {WEEKDAYS.map((d) => (
-                <th key={d} className="border-b border-ivory/30 px-2 py-1.5 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-obsidian/70">
+                <th key={d} className="border-b border-ink/30 px-2 py-1.5 text-left font-mono text-micro uppercase tracking-[0.15em] text-void/70">
                   {d}
                 </th>
               ))}
@@ -209,7 +209,7 @@ export default function TimetableSolver() {
           <tbody>
             {active.times.map((slot, i) => (
               <tr key={i}>
-                <td className="border-b border-ivory/50 px-2 py-1.5 font-mono text-[11px] tabular-nums text-obsidian/80">
+                <td className="border-b border-ink/50 px-2 py-1.5 font-mono text-label tabular-nums text-void/80">
                   {prettyRange(slot)}
                   {slot.kind === "break" ? " · break" : slot.kind === "lunch" ? " · lunch" : ""}
                 </td>
@@ -221,7 +221,7 @@ export default function TimetableSolver() {
                   return (
                     <td
                       key={d}
-                      className={`border-b border-ivory/50 px-2 py-1.5 font-mono text-[11px] uppercase tracking-wide ${isFurniture ? "text-obsidian/50" : ""}`}
+                      className={`border-b border-ink/50 px-2 py-1.5 font-mono text-label uppercase tracking-wide ${isFurniture ? "text-void/50" : ""}`}
                     >
                       {label}
                     </td>
@@ -231,7 +231,7 @@ export default function TimetableSolver() {
             ))}
           </tbody>
         </table>
-        <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.15em] text-obsidian/70">
+        <p className="mt-4 font-mono text-micro uppercase tracking-[0.15em] text-void/70">
           {teachingCount} teaching periods / week · approved in the Timetable Solver
         </p>
       </div>

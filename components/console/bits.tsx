@@ -6,18 +6,18 @@
 
 import Link from "next/link";
 
-export const monoLabel = "font-mono text-[11px] uppercase tracking-[0.25em] text-dim";
-export const panel = "min-w-0 border border-ivory/10 bg-panel p-[21px]";
-export const moduleField = "mt-2 block min-h-11 w-full min-w-0 border border-ivory/10 bg-void px-3 py-2.5 text-sm leading-6 text-ivory outline-none focus:border-teal";
-export const quietAction = "min-h-11 px-3 py-2 text-sm text-muted transition-colors hover:bg-panelHi hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal disabled:opacity-40";
+export const monoLabel = "font-mono text-label uppercase tracking-[0.25em] text-ash";
+export const panel = "min-w-0 border border-ink/10 bg-panel p-[21px]";
+export const moduleField = "mt-2 block min-h-11 w-full min-w-0 border border-ink/10 bg-void px-3 py-2.5 text-sm leading-6 text-ink outline-none focus:border-signal";
+export const quietAction = "min-h-11 px-3 py-2 text-sm text-dust transition-colors hover:bg-edge hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-signal disabled:opacity-40";
 export const btn =
-  "min-h-11 border border-teal bg-teal px-6 py-3 text-sm font-semibold text-obsidian transition hover:bg-signalDim disabled:cursor-not-allowed disabled:opacity-40";
+  "min-h-11 border border-signal bg-signal px-6 py-3 text-sm font-semibold text-void transition hover:bg-signalDim disabled:cursor-not-allowed disabled:opacity-40";
 export const btnGhost =
-  "min-h-11 border border-ivory/10 px-6 py-3 text-sm font-semibold text-ivory transition hover:border-teal hover:text-teal";
+  "min-h-11 border border-ink/10 px-6 py-3 text-sm font-semibold text-ink transition hover:border-signal hover:text-signal";
 export const field =
-  "min-h-11 w-full border border-ivory/10 bg-panel px-5 py-3 text-sm text-ivory outline-none transition-colors placeholder:text-dim focus:border-teal";
+  "min-h-11 w-full border border-ink/10 bg-panel px-5 py-3 text-sm text-ink outline-none transition-colors placeholder:text-ash focus:border-signal";
 export const cellInput =
-  "min-h-11 w-16 border border-ivory/10 bg-panel px-2 py-1.5 text-right font-mono text-[12px] text-ivory outline-none transition-colors focus:border-teal";
+  "min-h-11 w-16 border border-ink/10 bg-panel px-2 py-1.5 text-right font-mono text-meta text-ink outline-none transition-colors focus:border-signal";
 
 export function Loading() {
   return <p className={`${monoLabel} py-16 text-center`}>Reading the roll…</p>;
@@ -37,12 +37,12 @@ export function Gate({
   return (
     <div className={`${panel} flex min-h-[220px] flex-col justify-between`}>
       <div>
-        <span className="inline-flex items-center gap-1.5 border border-teal/30 bg-teal/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-teal">
-          <span className="h-1.5 w-1.5 rounded-full bg-amber/80" aria-hidden="true" />
+        <span className="inline-flex items-center gap-1.5 border border-signal/30 bg-signal/10 px-3 py-1 font-mono text-micro uppercase tracking-[0.14em] text-signal">
+          <span className="h-1.5 w-1.5 rounded-full bg-signal/80" aria-hidden="true" />
           Waiting
         </span>
-        <h2 className="mt-4 font-display text-2xl font-light">{title}</h2>
-        <p className="mt-2 max-w-[52ch] text-sm leading-6 text-muted">{body}</p>
+        <h2 className="mt-4 font-serif text-2xl font-light">{title}</h2>
+        <p className="mt-2 max-w-[52ch] text-sm leading-6 text-dust">{body}</p>
       </div>
       <div>
         <Link href={href} className={btn}>
@@ -61,7 +61,7 @@ export function PrintButton({ label = "Print", onClick }: { label?: string; onCl
       type="button"
       onClick={onClick ?? (() => window.print())}
       title="Print this sheet — or save it as PDF"
-      className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-ivory/10 px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider text-muted transition-colors hover:border-amber hover:text-amber focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber print:hidden"
+      className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-ink/10 px-3 py-1.5 font-mono text-label uppercase tracking-wider text-dust transition-colors hover:border-signal hover:text-signal focus-visible:outline focus-visible:outline-2 focus-visible:outline-signal print:hidden"
     >
       ⎙ {label}
     </button>
@@ -69,9 +69,12 @@ export function PrintButton({ label = "Print", onClick }: { label?: string; onCl
 }
 
 export function Notice({ children, tone = "ok" }: { children: React.ReactNode; tone?: "ok" | "warn" }) {
+  // Two distinct tones. Warnings used to render identically to success because
+  // a stylesheet remapped every amber class onto --signal.
   return (
     <p
-      className={`mt-4 font-mono text-[12px] leading-5 ${tone === "ok" ? "text-teal" : "text-amber"}`}
+      role={tone === "warn" ? "alert" : "status"}
+      className={`mt-4 font-mono text-meta leading-5 ${tone === "ok" ? "text-signal" : "text-danger"}`}
     >
       {children}
     </p>
@@ -86,7 +89,7 @@ export function HeadRow({
   right?: React.ReactNode;
 }) {
   return (
-    <div className="mb-[21px] flex flex-wrap items-center justify-between gap-3 border-b border-ivory/10 pb-3">
+    <div className="mb-[21px] flex flex-wrap items-center justify-between gap-3 border-b border-ink/10 pb-3">
       <span className={monoLabel}>{label}</span>
       <div className="flex flex-wrap items-center gap-3">{right}</div>
     </div>
@@ -204,7 +207,7 @@ export function ModuleTile({
 }) {
   return (
     <span
-      className={`grid shrink-0 place-items-center rounded-xl border ${tint ?? "border-ivory/10 bg-ivory/5 text-muted"}`}
+      className={`grid shrink-0 place-items-center rounded-xl border ${tint ?? "border-ink/10 bg-ink/5 text-dust"}`}
       style={{ width: size, height: size }}
     >
       <ModuleGlyph module={module} size={Math.round(size * 0.44)} />

@@ -27,7 +27,7 @@ export default function BuildCard({
   const forks = b.comments.filter((c) => c.fork).length;
   return (
     <article className="border-t border-rule/10 py-8">
-      <div className="flex flex-wrap items-baseline justify-between gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-ash">
+      <div className="flex flex-wrap items-baseline justify-between gap-2 font-mono text-label uppercase tracking-[0.18em] text-ash">
         <span className="flex flex-wrap items-center gap-2">
           <span className="border border-rule/10 bg-panel px-2 py-0.5 text-ink">[{b.domain}]</span>
           <span className={typeTone(b.type)}>{b.type}</span>
@@ -42,7 +42,7 @@ export default function BuildCard({
 
       <p className="mt-3 max-w-[62ch] text-[0.95rem] leading-7 text-dust">{b.body}</p>
 
-      <div className="mt-4 space-y-1 font-mono text-[12px] text-ash">
+      <div className="mt-4 space-y-1 font-mono text-meta text-ash">
         <p>{needsLine(b)}</p>
         <p className="italic text-dust/80">Done: {b.done}</p>
       </div>
@@ -65,12 +65,12 @@ export default function BuildCard({
             ▼
           </button>
         </span>
-        <span className="font-mono text-[12px] text-ash tabular-nums">
+        <span className="font-mono text-meta text-ash tabular-nums">
           {b.comments.length} comment{b.comments.length === 1 ? "" : "s"} · {forks} fork{forks === 1 ? "" : "s"}
         </span>
         <button
           onClick={() => onFork(b)}
-          className="ml-auto min-h-11 py-3 font-mono text-[12px] uppercase tracking-[0.22em] text-amber transition hover:text-ink"
+          className="ml-auto min-h-11 py-3 font-mono text-meta uppercase tracking-[0.22em] text-amber transition hover:text-ink"
         >
           Fork →
         </button>

@@ -59,13 +59,13 @@ import { btn, btnGhost, field, Gate, Loading, monoLabel, PrintButton } from "./b
 
 // A class filter pill for the My Students finder. Quiet when idle, gold when active.
 const pill = (active: boolean) =>
-  `rounded-full border px-4 py-2 font-mono text-[11px] uppercase tracking-[0.15em] transition-all ${
-    active ? "border-amber text-amber" : "border-ivory/10 text-muted hover:border-ivory/30 hover:text-ivory"
+  `rounded-full border px-4 py-2 font-mono text-label uppercase tracking-[0.15em] transition-all ${
+    active ? "border-signal text-signal" : "border-ink/10 text-dust hover:border-ink/30 hover:text-ink"
   }`;
 
 // The inline panel that opens under a lesson row: aligned to the row's content,
 // ruled off with a hairline, filled by the same register / grade / note forms.
-const panelIn = "mt-[21px] border-t border-ivory/10 pt-[21px]";
+const panelIn = "mt-[21px] border-t border-ink/10 pt-[21px]";
 
 export default function MyDay({
   session,
@@ -416,15 +416,15 @@ export default function MyDay({
   function action(lesson: Lesson, kind: "att" | "grades" | "notes", past: boolean) {
     const on = open?.id === lesson.id && open.kind === kind;
     let label = "Notes";
-    let tone = "text-dim";
+    let tone = "text-ash";
     if (kind === "att") {
       const done = attDone(lesson.className);
       label = done ? "Attendance ✓" : past ? "Attendance —" : "Attendance";
-      tone = done ? "text-teal" : past ? "text-amber" : "text-muted";
+      tone = done ? "text-signal" : past ? "text-signal" : "text-dust";
     } else if (kind === "grades") {
       const done = gradesDone(lesson.className);
       label = done ? "Grades ✓" : past ? "Grades —" : "Grades";
-      tone = done ? "text-teal" : past ? "text-amber" : "text-muted";
+      tone = done ? "text-signal" : past ? "text-signal" : "text-dust";
     } else {
       const c = notesCount(lesson.className);
       label = c > 0 ? `Note ${c}` : "Notes";
@@ -432,7 +432,7 @@ export default function MyDay({
     return (
       <button
         onClick={() => (on ? closePanel() : openPanel(lesson, kind))}
-        className={`text-[13px] transition-colors hover:text-amber ${on ? "text-amber" : tone}`}
+        className={`text-ui transition-colors hover:text-signal ${on ? "text-signal" : tone}`}
       >
         {label}
       </button>
@@ -459,7 +459,7 @@ export default function MyDay({
       .join(" · ");
     // The flag: ✓ done, — pending, ! a past slot that needs attention.
     const flag = !hasRoster ? "" : attSt === "done" ? "✓" : past ? "!" : "—";
-    const flagTone = flag === "✓" ? "text-teal" : flag === "!" ? "text-amber" : "text-dim";
+    const flagTone = flag === "✓" ? "text-signal" : flag === "!" ? "text-signal" : "text-ash";
     return (
       <li
         key={lesson.id}
@@ -467,14 +467,14 @@ export default function MyDay({
           rowRefs.current[lesson.id] = el;
         }}
         className={`m-0 list-none py-[21px] ${
-          isNowRow ? "-mx-4 rounded-[21px] border border-ivory/10 bg-panelHi px-4" : "border-b border-ivory/10/60"
+          isNowRow ? "-mx-4 rounded-[21px] border border-ink/10 bg-edge px-4" : "border-b border-ink/10/60"
         }`}
       >
         <div className="grid grid-cols-[55px_1fr_21px] items-start gap-3 md:grid-cols-[89px_1fr_21px] md:gap-[21px]">
-          <span className={`pt-1 font-mono tabular-nums text-[13px] ${past ? "text-dim" : "text-muted"}`}>{lesson.time || "—"}</span>
+          <span className={`pt-1 font-mono tabular-nums text-ui ${past ? "text-ash" : "text-dust"}`}>{lesson.time || "—"}</span>
           <div className="min-w-0">
-            <h3 className="font-display text-[21px] font-normal leading-tight text-ivory">{title}</h3>
-            <p className="mt-1 text-[13px] text-muted">{detail}</p>
+            <h3 className="font-serif text-h2 font-normal leading-tight text-ink">{title}</h3>
+            <p className="mt-1 text-ui text-dust">{detail}</p>
             <div className="mt-3 flex flex-wrap items-center gap-x-[21px] gap-y-1">
               {hasRoster && action(lesson, "att", past)}
               {hasRoster && action(lesson, "grades", past)}
@@ -482,7 +482,7 @@ export default function MyDay({
             </div>
             {lessonPanel(lesson)}
           </div>
-          <span className={`pt-1 text-right font-mono text-[13px] ${flagTone}`}>{flag}</span>
+          <span className={`pt-1 text-right font-mono text-ui ${flagTone}`}>{flag}</span>
         </div>
       </li>
     );
@@ -499,24 +499,24 @@ export default function MyDay({
     return (
       <div className={panelIn}>
         {open.kind === "att" && (
-          <div className="rounded-[21px] border border-ivory/10 bg-panel p-[21px]">
+          <div className="rounded-[21px] border border-ink/10 bg-panel p-[21px]">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <span className={monoLabel}>Register · {cls} · {todayLabel()}</span>
               {rows.length > 0 && <PrintButton label="Print" />}
             </div>
             {rows.length === 0 ? (
-              <p className="py-4 text-sm text-muted">No learners on the roll for this class yet.</p>
+              <p className="py-4 text-sm text-dust">No learners on the roll for this class yet.</p>
             ) : (
               <div className="space-y-4">
                 {attMode === "bulk" ? (
                   <>
                     <div className="flex flex-wrap items-center justify-between gap-3">
-                      <p className="text-[13px] text-muted">
-                        <span className="font-medium text-ivory">{rows.length}</span> learners ·{" "}
+                      <p className="text-ui text-dust">
+                        <span className="font-medium text-ink">{rows.length}</span> learners ·{" "}
                         {absentNames(rows).length === 0 ? (
-                          <span className="text-teal">All present</span>
+                          <span className="text-signal">All present</span>
                         ) : (
-                          <span className="text-amber">{absentNames(rows).length} absent</span>
+                          <span className="text-signal">{absentNames(rows).length} absent</span>
                         )}
                       </p>
                       <div className="flex gap-2">
@@ -536,7 +536,7 @@ export default function MyDay({
                             <button
                               key={s.id}
                               onClick={() => setMarks((prev) => ({ ...prev, [s.id]: "present" }))}
-                              className="rounded-full border border-amber/60 px-3 py-1 text-[13px] text-amber transition-colors hover:bg-amber/10"
+                              className="rounded-full border border-signal/60 px-3 py-1 text-ui text-signal transition-colors hover:bg-signal/10"
                             >
                               {s.name} · make present
                             </button>
@@ -547,17 +547,17 @@ export default function MyDay({
                   </>
                 ) : (
                   <>
-                    <ul className="m-0 list-none divide-y divide-edge/60 border-y border-ivory/10/40">
+                    <ul className="m-0 list-none divide-y divide-edge/60 border-y border-ink/10/40">
                       {rows.map((s) => (
                         <li key={s.id} className="flex items-center justify-between gap-2 py-2">
-                          <span className="truncate text-[13px] text-ivory">{s.name}</span>
+                          <span className="truncate text-ui text-ink">{s.name}</span>
                           <span className="flex shrink-0 gap-2">
                             {(["present", "absent"] as const).map((m) => (
                               <button
                                 key={m}
                                 onClick={() => setMarks((prev) => ({ ...prev, [s.id]: m }))}
                                 aria-label={`${s.name} — ${m === "present" ? "present" : "absent"}`}
-                                className={`border px-2 py-1 font-mono text-[11px] transition-colors ${(marks[s.id] ?? "present") === m ? (m === "present" ? "border-teal/60 text-teal" : "border-amber/60 text-amber") : "border-ivory/10 text-dim hover:text-ivory"}`}
+                                className={`border px-2 py-1 font-mono text-label transition-colors ${(marks[s.id] ?? "present") === m ? (m === "present" ? "border-signal/60 text-signal" : "border-signal/60 text-signal") : "border-ink/10 text-ash hover:text-ink"}`}
                               >
                                 {m === "present" ? "P" : "A"}
                               </button>
@@ -580,7 +580,7 @@ export default function MyDay({
           </div>
         )}
         {open.kind === "notes" && (
-          <div className="rounded-[21px] border border-ivory/10 bg-panel p-[21px]">
+          <div className="rounded-[21px] border border-ink/10 bg-panel p-[21px]">
             <span className={monoLabel}>Note · {cls || "Today"}</span>
             <textarea
               value={note}
@@ -627,10 +627,10 @@ export default function MyDay({
     const rows = roster(cls);
     return (
       <div className="min-w-0 max-w-full">
-        <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-ivory/10 pb-3">
+        <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-ink/10 pb-3">
           <button
             onClick={closePanel}
-            className="font-mono text-[12px] uppercase tracking-[0.15em] text-dim transition-colors hover:text-amber"
+            className="font-mono text-meta uppercase tracking-[0.15em] text-ash transition-colors hover:text-signal"
           >
             ← My Day
           </button>
@@ -643,19 +643,19 @@ export default function MyDay({
             <input value={maxMark} onChange={(e) => setMaxMark(e.target.value)} type="number" min="1" placeholder="Out of" className={field} />
           </div>
           {rows.length === 0 ? (
-            <p className="py-8 text-sm text-muted">No learners on the roll for this class yet.</p>
+            <p className="py-8 text-sm text-dust">No learners on the roll for this class yet.</p>
           ) : (
             <ul className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
               {rows.map((s) => (
-                <li key={s.id} className="flex items-center justify-between gap-3 rounded-xl border border-ivory/10/60 px-3 py-2">
-                  <span className="truncate text-[13px] text-ivory">{s.name}</span>
+                <li key={s.id} className="flex items-center justify-between gap-3 rounded-xl border border-ink/10/60 px-3 py-2">
+                  <span className="truncate text-ui text-ink">{s.name}</span>
                   <input
                     value={scores[s.id] ?? ""}
                     onChange={(e) => setScores((prev) => ({ ...prev, [s.id]: e.target.value }))}
                     inputMode="numeric"
                     aria-label={`Score for ${s.name}`}
                     placeholder="—"
-                    className="w-20 rounded-lg border border-ivory/10 bg-void px-2 py-1.5 text-right font-mono text-[12px] text-ivory outline-none focus:border-amber"
+                    className="w-20 rounded-lg border border-ink/10 bg-void px-2 py-1.5 text-right font-mono text-meta text-ink outline-none focus:border-signal"
                   />
                 </li>
               ))}
@@ -676,17 +676,17 @@ export default function MyDay({
           trigger pushes the focused search. An exam week carries its own
           line instead of the plain date. */}
       <div>
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-ivory/10 pb-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-ink/10 pb-3">
           <p className={monoLabel}>My Day · {session.school}</p>
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => setFindOpen(true)}
               title="Find a learner — name, adm no, guardian phone"
-              className="rounded-full border border-ivory/10 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.15em] text-dim transition-colors hover:border-amber hover:text-amber"
+              className="rounded-full border border-ink/10 px-3 py-1.5 font-mono text-label uppercase tracking-[0.15em] text-ash transition-colors hover:border-signal hover:text-signal"
             >
               ⌘F · Find
             </button>
-            <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim">
+            <p className="font-mono text-label uppercase tracking-[0.15em] text-ash">
               {examCount > 0 ? `Exam week · ${examCount} paper${examCount === 1 ? "" : "s"} today · ` : ""}
               {todayLabel()}
             </p>
@@ -710,10 +710,10 @@ export default function MyDay({
           not modaled — the day sits behind it. */}
       {findOpen && (
         <section>
-          <div className="mb-[21px] flex flex-wrap items-center justify-between gap-2 border-b border-ivory/10 pb-3">
+          <div className="mb-[21px] flex flex-wrap items-center justify-between gap-2 border-b border-ink/10 pb-3">
             <button
               onClick={() => setFindOpen(false)}
-              className="font-mono text-[12px] uppercase tracking-[0.15em] text-dim transition-colors hover:text-amber"
+              className="font-mono text-meta uppercase tracking-[0.15em] text-ash transition-colors hover:text-signal"
             >
               ← My Day
             </button>
@@ -727,14 +727,14 @@ export default function MyDay({
             placeholder="Find a learner — name, adm no, guardian phone"
             className={field}
           />
-          <div className="mt-4 flex flex-wrap items-center gap-2 border-b border-ivory/10 pb-3">
+          <div className="mt-4 flex flex-wrap items-center gap-2 border-b border-ink/10 pb-3">
             <button onClick={() => setClsFilter("")} className={pill(clsFilter === "")}>All · {data.students.length}</button>
             {allClasses.map((c) => (
               <button key={c} onClick={() => setClsFilter(c)} className={pill(clsFilter === c)}>{c} · {roster(c).length}</button>
             ))}
           </div>
           {results.length === 0 ? (
-            <p className="py-8 text-sm text-muted">{query || clsFilter ? "Nobody matches. Try fewer letters." : "Pick a class, or search to find a learner."}</p>
+            <p className="py-8 text-sm text-dust">{query || clsFilter ? "Nobody matches. Try fewer letters." : "Pick a class, or search to find a learner."}</p>
           ) : (
             <>
               <ul className="mt-4 flex flex-col gap-2">
@@ -742,16 +742,16 @@ export default function MyDay({
                   <li key={s.id}>
                     <button
                       onClick={() => setSelected(s)}
-                      className="flex w-full items-center justify-between gap-3 rounded-xl border border-ivory/10 bg-panel px-4 py-3 text-left transition-colors hover:border-ivory/30 hover:bg-panelHi"
+                      className="flex w-full items-center justify-between gap-3 rounded-xl border border-ink/10 bg-panel px-4 py-3 text-left transition-colors hover:border-ink/30 hover:bg-edge"
                     >
-                      <span className="truncate text-[13px] text-ivory">{s.name}</span>
-                      <span className="shrink-0 font-mono text-[11px] text-dim">{classLabel(s)}</span>
+                      <span className="truncate text-ui text-ink">{s.name}</span>
+                      <span className="shrink-0 font-mono text-label text-ash">{classLabel(s)}</span>
                     </button>
                   </li>
                 ))}
               </ul>
               {results.length > 8 && (
-                <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-dim">{results.length - 8} more — type to narrow</p>
+                <p className="mt-3 font-mono text-label uppercase tracking-[0.2em] text-ash">{results.length - 8} more — type to narrow</p>
               )}
             </>
           )}
@@ -764,7 +764,7 @@ export default function MyDay({
           more unmarked past lessons — flags itself in the same block. */}
       {!findOpen && tab === "today" && (
         <div>
-          <h1 className="font-display text-4xl font-light tracking-tight">
+          <h1 className="font-serif text-4xl font-light tracking-tight">
             {ordered.length === 0
               ? isWeekendDay
                 ? "No lessons."
@@ -774,13 +774,13 @@ export default function MyDay({
                 : `${ordered.length} untimed item${ordered.length === 1 ? "" : "s"}`}
           </h1>
           {isWeekendDay && (
-            <p className="mt-2 text-[13px] text-muted">
+            <p className="mt-2 text-ui text-dust">
               {dayName} · {todayEvents.length} record{todayEvents.length === 1 ? "" : "s"} on today&apos;s ledger.
             </p>
           )}
           {!isWeekendDay && ordered.length === 0 && (
             <>
-              <p className="mt-2 max-w-[52ch] text-[13px] text-muted">
+              <p className="mt-2 max-w-[52ch] text-ui text-dust">
                 See the plan — approve the week in the Solver and today fills itself; or add one period in the Plan tab.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
@@ -792,19 +792,19 @@ export default function MyDay({
             </>
           )}
           {!isWeekendDay && ordered.length > 0 && phase === "before" && firstSlot && (
-            <p className="mt-2 text-[13px] text-muted">First lesson at {firstSlot.time}.</p>
+            <p className="mt-2 text-ui text-dust">First lesson at {firstSlot.time}.</p>
           )}
           {!isWeekendDay && ordered.length > 0 && phase === "end" && (
-            <p className="mt-2 text-[13px] text-muted">Day closed · {todayEvents.length} record{todayEvents.length === 1 ? "" : "s"} today.</p>
+            <p className="mt-2 text-ui text-dust">Day closed · {todayEvents.length} record{todayEvents.length === 1 ? "" : "s"} today.</p>
           )}
         </div>
       )}
 
       {!findOpen && tab === "today" && owed.length > 0 && (
-        <div className="border-l-2 border-amber pl-[21px]">
-          <p className={`font-mono text-[11px] uppercase tracking-[0.15em] ${crisis ? "text-amber" : "text-dim"}`}>Needs attention</p>
+        <div className="border-l-2 border-signal pl-[21px]">
+          <p className={`font-mono text-label uppercase tracking-[0.15em] ${crisis ? "text-signal" : "text-ash"}`}>Needs attention</p>
           {crisis && (
-            <p className="mt-2 text-[13px] text-muted">{unmarkedCount} lessons not marked.</p>
+            <p className="mt-2 text-ui text-dust">{unmarkedCount} lessons not marked.</p>
           )}
           <div className="mt-2 space-y-1">
             {owed.slice(0, 3).map((o) => (
@@ -814,7 +814,7 @@ export default function MyDay({
                   openPanel(o.lesson, o.kind);
                   jumpTo(o.lesson.id);
                 }}
-                className="block text-[13px] text-amber transition-colors hover:underline"
+                className="block text-ui text-signal transition-colors hover:underline"
               >
                 {o.label} — {o.kind === "att" ? "register" : "grades"} →
               </button>
@@ -822,7 +822,7 @@ export default function MyDay({
             {owed.length > 3 && (
               <button
                 onClick={() => jumpTo(pastRows[0].id)}
-                className="block font-mono text-[11px] uppercase tracking-[0.15em] text-dim transition-colors hover:text-amber"
+                className="block font-mono text-label uppercase tracking-[0.15em] text-ash transition-colors hover:text-signal"
               >
                 {owed.length - 3} more below
               </button>
@@ -838,10 +838,10 @@ export default function MyDay({
         <ol className="m-0 max-w-3xl list-none">
           {pastRows.map((lesson) => timelineRow(lesson, true))}
           {hasTimes && nowIndex > 0 && !dayOver && (
-            <li aria-hidden="true" className="border-b border-ivory/10/40 pb-[21px]">
+            <li aria-hidden="true" className="border-b border-ink/10/40 pb-[21px]">
               <div className="relative flex items-center">
-                <span className="absolute inset-x-0 top-1/2 h-px bg-amber/40" />
-                <span className="relative z-10 bg-void px-3 font-mono text-[11px] uppercase tracking-[0.2em] text-amber">
+                <span className="absolute inset-x-0 top-1/2 h-px bg-signal/40" />
+                <span className="relative z-10 bg-void px-3 font-mono text-label uppercase tracking-[0.2em] text-signal">
                   Now · {new Date(nowMs).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
                 </span>
               </div>
@@ -854,9 +854,9 @@ export default function MyDay({
       {/* 5 · TOMORROW — one line; the teacher sees tomorrow without leaving
           today. Suppressed when the week has nothing to say. */}
       {!findOpen && tab === "today" && tomorrowLessons.length > 0 && (
-        <div className="border-y border-ivory/10 py-[21px]">
+        <div className="border-y border-ink/10 py-[21px]">
           <p className={monoLabel}>Tomorrow</p>
-          <p className="mt-2 text-[13px] text-muted">
+          <p className="mt-2 text-ui text-dust">
             {tomorrowLessons.length} lesson{tomorrowLessons.length === 1 ? "" : "s"}. First: {tomorrowLessons[0].time} {tomorrowLessons[0].subject}.
           </p>
         </div>
@@ -864,8 +864,8 @@ export default function MyDay({
 
       {/* 6 · SYNC — the honest network line; nothing more. */}
       {!findOpen && tab === "today" && (
-        <div className="border-t border-ivory/10 pt-3">
-          <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim">
+        <div className="border-t border-ink/10 pt-3">
+          <p className="font-mono text-label uppercase tracking-[0.15em] text-ash">
             {online ? "Online" : "Offline"} · {todayEvents.length} record{todayEvents.length === 1 ? "" : "s"} today
             {!online && " · awaiting connection"}
           </p>
@@ -874,12 +874,12 @@ export default function MyDay({
 
       {tab === "plan" && !findOpen && (
         <section className="space-y-5">
-          <div className="rounded-[21px] border border-ivory/10 bg-panel p-[21px]">
+          <div className="rounded-[21px] border border-ink/10 bg-panel p-[21px]">
             <p className={monoLabel}>Plan · approved week</p>
             {approvedWeek ? (
               <div className="mt-3">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h2 className="font-display text-[26px] font-light tracking-tight">{approvedWeek.className} · Today&apos;s column</h2>
+                  <h2 className="font-serif text-h2 font-light tracking-tight">{approvedWeek.className} · Today&apos;s column</h2>
                   <div className="flex flex-wrap gap-2">
                     <button onClick={() => setAdding((v) => !v)} className={btnGhost + " px-3 py-1.5"}>
                       {adding ? "Close" : "+ Add one period"}
@@ -887,16 +887,16 @@ export default function MyDay({
                     <Link href="/console/6" className={btnGhost + " px-3 py-1.5"}>Open Timetable Solver</Link>
                   </div>
                 </div>
-                <p className="mt-1 text-[13px] text-muted">{approvedWeek.name} · {todayLessons.length} periods today ({todayKey}). The Solver builds + prints; Today works them.</p>
+                <p className="mt-1 text-ui text-dust">{approvedWeek.name} · {todayLessons.length} periods today ({todayKey}). The Solver builds + prints; Today works them.</p>
                 {todayLessons.length === 0 ? (
-                  <p className="mt-4 text-sm text-muted">No teaching periods today — weekends read Monday&apos;s column.</p>
+                  <p className="mt-4 text-sm text-dust">No teaching periods today — weekends read Monday&apos;s column.</p>
                 ) : (
-                  <ol className="mt-4 divide-y divide-edge/60 border-y border-ivory/10/60">
+                  <ol className="mt-4 divide-y divide-edge/60 border-y border-ink/10/60">
                     {todayLessons.map((l, i) => (
                       <li key={i} className="flex items-baseline justify-between gap-3 py-2.5">
-                        <span className="font-mono text-[12px] tabular-nums text-dim">{l.time}</span>
-                        <span className="min-w-0 flex-1 truncate text-[13px] text-ivory">{l.subject}</span>
-                        <span className="shrink-0 font-mono text-[11px] text-dim">{approvedWeek.className}</span>
+                        <span className="font-mono text-meta tabular-nums text-ash">{l.time}</span>
+                        <span className="min-w-0 flex-1 truncate text-ui text-ink">{l.subject}</span>
+                        <span className="shrink-0 font-mono text-label text-ash">{approvedWeek.className}</span>
                       </li>
                     ))}
                   </ol>
@@ -907,8 +907,8 @@ export default function MyDay({
               </div>
             ) : (
               <div>
-                <h2 className="mt-2 font-display text-[26px] font-light tracking-tight">No approved week yet</h2>
-                <p className="mt-1 max-w-[52ch] text-[13px] leading-6 text-muted">
+                <h2 className="mt-2 font-serif text-h2 font-light tracking-tight">No approved week yet</h2>
+                <p className="mt-1 max-w-[52ch] text-ui leading-6 text-dust">
                   The week is built in the Timetable Solver — pick a CBC demo grid, print it for the wall, approve once. Today then fills itself.
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -921,7 +921,7 @@ export default function MyDay({
             )}
 
             {adding && (
-              <div className="mt-5 rounded-[21px] border border-ivory/10 bg-void p-[21px]">
+              <div className="mt-5 rounded-[21px] border border-ink/10 bg-void p-[21px]">
                 <p className={monoLabel}>Add to today</p>
                 <div className="mt-3 grid grid-cols-2 gap-3">
                   <label className="block">
@@ -935,7 +935,7 @@ export default function MyDay({
                 </div>
                 <div className="mt-3">
                   <p className={monoLabel}>Class · stream</p>
-                  <div className="mt-2 rounded-xl border border-ivory/10/60 bg-void p-3">
+                  <div className="mt-2 rounded-xl border border-ink/10/60 bg-void p-3">
                     <ClassPicker value={af.className} onChange={(v) => setAf({ ...af, className: v })} />
                   </div>
                 </div>
@@ -950,20 +950,20 @@ export default function MyDay({
             )}
 
             {plan.length > 0 && (
-              <div className="mt-5 border-t border-ivory/10 pt-4">
+              <div className="mt-5 border-t border-ink/10 pt-4">
                 <p className={monoLabel}>Today&apos;s plan · {plan.length}</p>
-                <ol className="mt-3 m-0 list-none divide-y divide-edge/60 border-y border-ivory/10/40">
+                <ol className="mt-3 m-0 list-none divide-y divide-edge/60 border-y border-ink/10/40">
                   {plan.map((l) => (
                     <li key={l.id} className="flex items-center justify-between gap-3 py-2.5">
-                      <span className="min-w-0 truncate text-[13px] text-ivory">
-                        <span className="font-mono text-[12px] tabular-nums text-dim">{l.time || "untimed"}</span>
+                      <span className="min-w-0 truncate text-ui text-ink">
+                        <span className="font-mono text-meta tabular-nums text-ash">{l.time || "untimed"}</span>
                         {" · "}
                         {[l.className, l.subject].filter(Boolean).join(" · ")}
                       </span>
                       <button
                         onClick={() => removeLesson(l.id)}
                         title="Remove from today"
-                        className="shrink-0 font-mono text-[11px] text-dim transition-colors hover:text-amber"
+                        className="shrink-0 font-mono text-label text-ash transition-colors hover:text-signal"
                       >
                         ✕
                       </button>
@@ -974,7 +974,7 @@ export default function MyDay({
             )}
           </div>
 
-          <div className="rounded-[21px] border border-ivory/10 bg-panel p-[21px]">
+          <div className="rounded-[21px] border border-ink/10 bg-panel p-[21px]">
             <p className={monoLabel}>Five weeks</p>
             <div className="mt-3">
               <MiniCalendar items={schedules} onAdd={addSchedule} onRemove={removeSchedule} />
@@ -983,13 +983,13 @@ export default function MyDay({
         </section>
       )}
 
-      {notice && <p role="status" className="font-mono text-[12px] text-amber">{notice}</p>}
+      {notice && <p role="status" className="font-mono text-meta text-signal">{notice}</p>}
 
       {/* The print path: the paper register, ready to tick by hand. */}
       {open?.kind === "att" && openClass && (
         <pre
           aria-hidden="true"
-          className="print-sheet bg-white p-8 font-body text-sm leading-8 text-obsidian print:block"
+          className="print-sheet bg-white p-8 font-sans text-sm leading-8 text-void print:block"
         >
           {registerSheet()}
         </pre>
@@ -1013,7 +1013,7 @@ function MiniWeekGrid({ week, today }: { week: WeeklyTimetable; today: string })
               {WEEKDAYS.map((d) => (
                 <th
                   key={d}
-                  className={`p-1.5 text-left font-mono text-[9px] uppercase tracking-[0.18em] ${d === today ? "text-amber" : "text-dim"}`}
+                  className={`p-1.5 text-left font-mono text-micro uppercase tracking-[0.18em] ${d === today ? "text-signal" : "text-ash"}`}
                 >
                   {d}
                 </th>
@@ -1022,14 +1022,14 @@ function MiniWeekGrid({ week, today }: { week: WeeklyTimetable; today: string })
           </thead>
           <tbody>
             {week.times.map((slot, i) => (
-              <tr key={i} className="border-t border-ivory/10/40">
+              <tr key={i} className="border-t border-ink/10/40">
                 <td className="p-1.5 align-top">
-                  <p className="font-mono text-[10px] tabular-nums text-dim">
+                  <p className="font-mono text-micro tabular-nums text-ash">
                     {slot.start}
-                    <span className="text-dim/50">–{slot.end}</span>
+                    <span className="text-ash/50">–{slot.end}</span>
                   </p>
                   {slot.kind !== "lesson" && slot.kind !== "roll" && (
-                    <p className="mt-0.5 font-mono text-[8px] uppercase tracking-[0.15em] text-dim/60">
+                    <p className="mt-0.5 font-mono text-micro uppercase tracking-[0.15em] text-ash/60">
                       {slot.kind === "break" ? "break" : "lunch"}
                     </p>
                   )}
@@ -1041,12 +1041,12 @@ function MiniWeekGrid({ week, today }: { week: WeeklyTimetable; today: string })
                   return (
                     <td key={d} className="p-1">
                       <div
-                        className={`h-6 truncate rounded-md border px-2 py-1 font-mono text-[10px] uppercase tracking-wide ${
+                        className={`h-6 truncate rounded-md border px-2 py-1 font-mono text-micro uppercase tracking-wide ${
                           teaching
                             ? isToday
-                              ? "border-amber/60 bg-amber/10 text-ivory"
-                              : "border-ivory/10/60 bg-void/50 text-muted"
-                            : "border-transparent text-dim/40"
+                              ? "border-signal/60 bg-signal/10 text-ink"
+                              : "border-ink/10/60 bg-void/50 text-dust"
+                            : "border-transparent text-ash/40"
                         }`}
                       >
                         {v || "·"}
@@ -1059,8 +1059,8 @@ function MiniWeekGrid({ week, today }: { week: WeeklyTimetable; today: string })
           </tbody>
         </table>
       </div>
-      <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.15em] text-dim">
-        {week.className} · amber column is {today} — its periods are on Today
+      <p className="mt-2 font-mono text-micro uppercase tracking-[0.15em] text-ash">
+        {week.className} · signal column is {today} — its periods are on Today
       </p>
     </div>
   );

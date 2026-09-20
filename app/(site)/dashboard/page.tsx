@@ -10,8 +10,8 @@ import {
   shortHash
 } from "../../../lib/ledger";
 
-const row = "grid gap-2 border-b border-ivory/10 py-4 sm:grid-cols-[11rem_1fr] sm:items-baseline sm:gap-4";
-const k = "font-mono text-[11px] uppercase tracking-[0.2em] text-dim";
+const row = "grid gap-2 border-b border-ink/10 py-4 sm:grid-cols-[11rem_1fr] sm:items-baseline sm:gap-4";
+const k = "font-mono text-label uppercase tracking-[0.2em] text-ash";
 
 // Your standing on the floor. Black page, white text, no verification tiers,
 // no paywall, no unlock gate.
@@ -34,7 +34,7 @@ export default function Dashboard() {
   if (!ready) {
     return (
       <main className="min-h-[60vh] bg-void px-6 py-16 text-ink" aria-busy="true">
-        <div className="mx-auto max-w-[720px] border-t border-rule pt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-ash">
+        <div className="mx-auto max-w-[720px] border-t border-rule pt-4 font-mono text-label uppercase tracking-[0.2em] text-ash">
           Reading your record…
         </div>
       </main>
@@ -47,7 +47,7 @@ export default function Dashboard() {
         {/* masthead */}
         <div className="site-section-head">
           <span>My Profile</span>
-          {me && <span className="text-dim">{me.occupation}</span>}
+          {me && <span className="text-ash">{me.occupation}</span>}
         </div>
 
         {!me ? (
@@ -55,7 +55,7 @@ export default function Dashboard() {
             <h1 className="mt-10 max-w-[12ch] font-serif text-5xl leading-[1.04] tracking-tight sm:text-6xl">
               The floor is ready.
             </h1>
-            <p className="mt-5 max-w-[48ch] text-[0.95rem] leading-7 text-muted">
+            <p className="mt-5 max-w-[48ch] text-[0.95rem] leading-7 text-dust">
               Claim your slot in the roll and this page becomes your standing — no gate, no
               forms, no redundant flow.
             </p>
@@ -79,23 +79,23 @@ export default function Dashboard() {
             <h1 className="mt-10 max-w-[12ch] font-serif text-5xl leading-[1.04] tracking-tight sm:text-6xl">
               @{me.username}
             </h1>
-            <p className="mt-3 font-display text-xl italic text-ivory/75">{me.name}</p>
+            <p className="mt-3 font-serif text-xl italic text-ink/75">{me.name}</p>
 
             <div className="mt-10">
-              <p className="border-b border-ivory/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em] text-signal">
+              <p className="border-b border-ink/15 pb-3 font-mono text-label uppercase tracking-[0.3em] text-signal">
                 Identity · {me.id}
               </p>
               <div className={row}>
                 <span className={k}>Seal</span>
-                <span className="font-mono text-sm text-ivory">{shortHash(me.hash)}</span>
+                <span className="font-mono text-sm text-ink">{shortHash(me.hash)}</span>
               </div>
               <div className={row}>
                 <span className={k}>Location</span>
-                <span className="text-sm text-ivory">{me.location}</span>
+                <span className="text-sm text-ink">{me.location}</span>
               </div>
               <div className={row}>
                 <span className={k}>Role</span>
-                <span className="text-sm text-ivory">{me.occupation}</span>
+                <span className="text-sm text-ink">{me.occupation}</span>
               </div>
               <div className="grid gap-2 py-4 sm:grid-cols-[11rem_1fr] sm:items-baseline sm:gap-4">
                 <span className={k}>Skills</span>
@@ -103,7 +103,7 @@ export default function Dashboard() {
                   {me.skills.map((s) => (
                     <span
                       key={s}
-                      className="border border-ivory/10 bg-panel px-2.5 py-1 font-mono text-[11px] text-ivory"
+                      className="border border-ink/10 bg-panel px-2.5 py-1 font-mono text-label text-ink"
                     >
                       {s}
                     </span>
@@ -140,7 +140,7 @@ export default function Dashboard() {
                     /* memory */
                   }
                 }}
-                className="ml-auto min-h-11 py-3 font-mono text-[11px] uppercase tracking-[0.25em] text-ash transition hover:text-ink"
+                className="ml-auto min-h-11 py-3 font-mono text-label uppercase tracking-[0.25em] text-ash transition hover:text-ink"
               >
                 Close the floor
               </button>

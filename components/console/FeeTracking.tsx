@@ -25,11 +25,11 @@ import { useSchoolData } from "./useSchoolData";
 import { btn, btnGhost, field, Gate, HeadRow, Loading, monoLabel, Notice, panel, PrintButton } from "./bits";
 
 const RISK_CHIP: Record<string, string> = {
-  clear: "border-teal/25 bg-teal/15 text-teal",
-  low: "border-teal/15 bg-teal/5 text-teal",
-  medium: "border-amber/25 bg-amber/10 text-amber",
-  high: "border-amber/40 bg-amber/15 text-amber",
-  unbilled: "border-ivory/10 bg-ivory/5 text-dim"
+  clear: "border-signal/25 bg-signal/15 text-signal",
+  low: "border-signal/15 bg-signal/5 text-signal",
+  medium: "border-signal/25 bg-signal/10 text-signal",
+  high: "border-signal/40 bg-signal/15 text-signal",
+  unbilled: "border-ink/10 bg-ink/5 text-ash"
 };
 const RISK_LABEL: Record<string, string> = {
   clear: "Clear",
@@ -169,11 +169,11 @@ export default function FeeTracking() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span className={monoLabel}>The invoice</span>
           {active ? (
-            <span className="rounded-full border border-teal/25 bg-teal/15 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.15em] text-teal">
+            <span className="rounded-full border border-signal/25 bg-signal/15 px-3 py-1 font-mono text-micro uppercase tracking-[0.15em] text-signal">
               Invoiced · {kes(active.amount)} each
             </span>
           ) : (
-            <span className="rounded-full border border-ivory/10 bg-ivory/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.15em] text-dim">
+            <span className="rounded-full border border-ink/10 bg-ink/5 px-3 py-1 font-mono text-micro uppercase tracking-[0.15em] text-ash">
               Not invoiced yet
             </span>
           )}
@@ -192,7 +192,7 @@ export default function FeeTracking() {
             Invoice every student
           </button>
         </div>
-        <div className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-[21px] border border-ivory/10 bg-ivory/10 sm:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-[21px] border border-ink/10 bg-ink/10 sm:grid-cols-4">
           {[
             { k: "Collected", v: kes(paidTotal) },
             { k: "Outstanding", v: active ? kes(Math.max(0, outstanding)) : "—" },
@@ -200,8 +200,8 @@ export default function FeeTracking() {
             { k: "Balance in", v: pctIn === null ? "—" : `${pctIn}%` }
           ].map((s) => (
             <div key={s.k} className="bg-panel px-4 py-3">
-              <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-dim">{s.k}</p>
-              <p className="mt-1 font-mono text-lg text-ivory">{s.v}</p>
+              <p className="font-mono text-micro uppercase tracking-[0.2em] text-ash">{s.k}</p>
+              <p className="mt-1 font-mono text-lg text-ink">{s.v}</p>
             </div>
           ))}
         </div>
@@ -220,14 +220,14 @@ export default function FeeTracking() {
           </select>
         </div>
         {rows.length === 0 ? (
-          <p className="mt-4 text-[13px] text-dim">No students in this class yet.</p>
+          <p className="mt-4 text-ui text-ash">No students in this class yet.</p>
         ) : (
           <div className="mt-4 overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
                 <tr>
                   {["Student", "Billed", "Paid", "Balance", "Last payment", "Risk"].map((h) => (
-                    <th key={h} className="border-b border-ivory/10 px-3 py-2 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-dim">
+                    <th key={h} className="border-b border-ink/10 px-3 py-2 text-left font-mono text-micro uppercase tracking-[0.15em] text-ash">
                       {h}
                     </th>
                   ))}
@@ -237,21 +237,21 @@ export default function FeeTracking() {
                 {rows.map((s, i) => {
                   const st = standings[i];
                   return (
-                    <tr key={s.id} className="border-b border-ivory/10/50">
-                      <td className="whitespace-nowrap px-3 py-2 text-[13px] text-ivory">
+                    <tr key={s.id} className="border-b border-ink/10/50">
+                      <td className="whitespace-nowrap px-3 py-2 text-ui text-ink">
                         {s.name}
-                        {s.admNo && <span className="ml-2 font-mono text-[10px] text-dim">{s.admNo}</span>}
+                        {s.admNo && <span className="ml-2 font-mono text-micro text-ash">{s.admNo}</span>}
                       </td>
-                      <td className="px-3 py-2 font-mono text-[12px] text-muted">{active ? kes(st.billed) : "—"}</td>
-                      <td className="px-3 py-2 font-mono text-[12px] text-muted">{kes(st.paid)}</td>
-                      <td className={`px-3 py-2 font-mono text-[12px] ${st.balance > 0 ? "text-amber" : "text-dim"}`}>
+                      <td className="px-3 py-2 font-mono text-meta text-dust">{active ? kes(st.billed) : "—"}</td>
+                      <td className="px-3 py-2 font-mono text-meta text-dust">{kes(st.paid)}</td>
+                      <td className={`px-3 py-2 font-mono text-meta ${st.balance > 0 ? "text-signal" : "text-ash"}`}>
                         {st.balance > 0 ? kes(st.balance) : "Settled"}
                       </td>
-                      <td className="px-3 py-2 font-mono text-[12px] text-dim">{st.last || "—"}</td>
+                      <td className="px-3 py-2 font-mono text-meta text-ash">{st.last || "—"}</td>
                       <td className="px-3 py-2">
                         <span
                           title={st.riskNote}
-                          className={`inline-block rounded-full border px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] ${RISK_CHIP[st.risk]}`}
+                          className={`inline-block rounded-full border px-2.5 py-0.5 font-mono text-micro uppercase tracking-[0.12em] ${RISK_CHIP[st.risk]}`}
                         >
                           {RISK_LABEL[st.risk]}
                         </span>
@@ -287,7 +287,7 @@ export default function FeeTracking() {
               <button className={btn} disabled={!payAmt || parseFloat(payAmt) <= 0} onClick={() => void recordOne()}>
                 Record payment
               </button>
-              <p className="text-[11px] leading-5 text-dim">
+              <p className="text-label leading-5 text-ash">
                 Payments are recorded, never erased — a M-Pesa ledger is a ledger. To reverse one, record the
                 reversal as its own line.
               </p>
@@ -295,7 +295,7 @@ export default function FeeTracking() {
           </div>
           <div className="p-4 md:p-5">
             <span className={monoLabel}>Paste the M-Pesa statement</span>
-            <p className="mt-3 text-[12px] leading-5 text-dim">
+            <p className="mt-3 text-meta leading-5 text-ash">
               One line per payment: date, reference, name or adm no, amount. What cannot be matched to the roll
               is listed — never dropped silently.
             </p>
@@ -308,7 +308,7 @@ export default function FeeTracking() {
               rows={5}
               spellCheck={false}
               placeholder={"2026-09-01, MZK3A9B2C, A1001, 5000\n2026-09-02, MZK3D4E5F, Amina Wanjiru, 5000"}
-              className="mt-3 w-full rounded-[21px] border border-ivory/10 bg-void p-4 font-mono text-[12px] leading-6 text-ivory outline-none transition-colors placeholder:text-dim focus:border-amber"
+              className="mt-3 w-full rounded-[21px] border border-ink/10 bg-void p-4 font-mono text-meta leading-6 text-ink outline-none transition-colors placeholder:text-ash focus:border-signal"
             />
             {mpParsed && mpParsed.notes.map((n) => (
               <Notice key={n} tone="warn">
@@ -317,7 +317,7 @@ export default function FeeTracking() {
             ))}
             {mpParsed && mpParsed.lines.length > 0 && (
               <div className="mt-3 flex flex-wrap items-center gap-3">
-                <span className="font-mono text-[11px] text-dim">
+                <span className="font-mono text-label text-ash">
                   {mpParsed.lines.filter((l) => l.match).length} match ·{" "}
                   {mpParsed.lines.filter((l) => !l.match).length} out
                 </span>
@@ -332,17 +332,17 @@ export default function FeeTracking() {
 
       {/* The fee sheet: white A4, the only thing that reaches paper. */}
       {rows.length > 0 && (
-        <div className="print-sheet bg-white p-6 text-obsidian">
-          <p className="font-mono text-[10px] uppercase tracking-[0.3em]">APT-LABS · {data.school || "School"}</p>
-          <h3 className="mt-2 font-display text-2xl">FEE SHEET — {termKey} · {classOf}</h3>
-          <p className="mt-1 text-[13px]">
+        <div className="print-sheet bg-white p-6 text-void">
+          <p className="font-mono text-micro uppercase tracking-[0.3em]">APT-LABS · {data.school || "School"}</p>
+          <h3 className="mt-2 font-serif text-2xl">FEE SHEET — {termKey} · {classOf}</h3>
+          <p className="mt-1 text-ui">
             Generated {new Date().toISOString().slice(0, 10)} · {active ? `${kes(active.amount)} per student` : "not yet invoiced"}
           </p>
-          <table className="mt-4 w-full border-collapse text-[13px]">
+          <table className="mt-4 w-full border-collapse text-ui">
             <thead>
               <tr>
                 {["Student", "Adm", "Billed", "Paid", "Balance", "Last payment", "Risk"].map((h) => (
-                  <th key={h} className="border-b border-ivory/30 px-2 py-1.5 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-obsidian/70">
+                  <th key={h} className="border-b border-ink/30 px-2 py-1.5 text-left font-mono text-micro uppercase tracking-[0.15em] text-void/70">
                     {h}
                   </th>
                 ))}
@@ -353,32 +353,32 @@ export default function FeeTracking() {
                 const st = standings[i];
                 return (
                   <tr key={s.id}>
-                    <td className="border-b border-ivory/50 px-2 py-1.5 text-obsidian/80">{s.name}</td>
-                    <td className="border-b border-ivory/50 px-2 py-1.5 font-mono text-[12px] text-obsidian/80">{s.admNo || "—"}</td>
-                    <td className="border-b border-ivory/50 px-2 py-1.5 font-mono text-[12px] text-obsidian/80">{active ? kes(st.billed) : "—"}</td>
-                    <td className="border-b border-ivory/50 px-2 py-1.5 font-mono text-[12px] text-obsidian/80">{kes(st.paid)}</td>
-                    <td className="border-b border-ivory/50 px-2 py-1.5 font-mono text-[12px] text-obsidian/80">{st.balance > 0 ? kes(st.balance) : "Settled"}</td>
-                    <td className="border-b border-ivory/50 px-2 py-1.5 font-mono text-[12px] text-obsidian/80">{st.last || "—"}</td>
-                    <td className="border-b border-ivory/50 px-2 py-1.5 text-obsidian/80">{RISK_LABEL[st.risk]}</td>
+                    <td className="border-b border-ink/50 px-2 py-1.5 text-void/80">{s.name}</td>
+                    <td className="border-b border-ink/50 px-2 py-1.5 font-mono text-meta text-void/80">{s.admNo || "—"}</td>
+                    <td className="border-b border-ink/50 px-2 py-1.5 font-mono text-meta text-void/80">{active ? kes(st.billed) : "—"}</td>
+                    <td className="border-b border-ink/50 px-2 py-1.5 font-mono text-meta text-void/80">{kes(st.paid)}</td>
+                    <td className="border-b border-ink/50 px-2 py-1.5 font-mono text-meta text-void/80">{st.balance > 0 ? kes(st.balance) : "Settled"}</td>
+                    <td className="border-b border-ink/50 px-2 py-1.5 font-mono text-meta text-void/80">{st.last || "—"}</td>
+                    <td className="border-b border-ink/50 px-2 py-1.5 text-void/80">{RISK_LABEL[st.risk]}</td>
                   </tr>
                 );
               })}
             </tbody>
             <tfoot>
               <tr>
-                <td colSpan={2} className="px-2 py-1.5 font-mono text-[10px] uppercase tracking-[0.15em]">
+                <td colSpan={2} className="px-2 py-1.5 font-mono text-micro uppercase tracking-[0.15em]">
                   Class totals
                 </td>
-                <td className="px-2 py-1.5 font-mono text-[12px]">{active ? kes(active.amount * rows.length) : "—"}</td>
-                <td className="px-2 py-1.5 font-mono text-[12px]">{kes(paidTotal)}</td>
-                <td className="px-2 py-1.5 font-mono text-[12px]">{active ? kes(Math.max(0, outstanding)) : "—"}</td>
+                <td className="px-2 py-1.5 font-mono text-meta">{active ? kes(active.amount * rows.length) : "—"}</td>
+                <td className="px-2 py-1.5 font-mono text-meta">{kes(paidTotal)}</td>
+                <td className="px-2 py-1.5 font-mono text-meta">{active ? kes(Math.max(0, outstanding)) : "—"}</td>
                 <td colSpan={3} />
               </tr>
             </tfoot>
           </table>
           <div className="mt-8 flex gap-10">
-            <p className="w-40 border-t border-ivory/30 pt-1 text-[11px] text-obsidian/60">Bursar</p>
-            <p className="w-40 border-t border-ivory/30 pt-1 text-[11px] text-obsidian/60">Head teacher</p>
+            <p className="w-40 border-t border-ink/30 pt-1 text-label text-void/60">Bursar</p>
+            <p className="w-40 border-t border-ink/30 pt-1 text-label text-void/60">Head teacher</p>
           </div>
         </div>
       )}

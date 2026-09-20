@@ -102,7 +102,7 @@ const ROLE_META: Record<ConsoleRole, { label: string; desc: string }> = {
 };
 
 const loginInput =
-  "min-h-11 w-full border border-ivory/10 bg-panel px-5 py-3 text-sm text-ivory placeholder:text-dim outline-none transition-all duration-150 focus-visible:border-teal focus-visible:ring-2 focus-visible:ring-teal/40";
+  "min-h-11 w-full border border-ink/10 bg-panel px-5 py-3 text-sm text-ink placeholder:text-ash outline-none transition-all duration-150 focus-visible:border-signal focus-visible:ring-2 focus-visible:ring-signal/40";
 
 function ConsoleLogin({
   initialRole,
@@ -123,26 +123,26 @@ function ConsoleLogin({
   }
 
   return (
-    <main className="console-ui flex h-dvh flex-col bg-void font-body text-ivory">
-      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ivory/8 px-[21px]">
-        <div className="flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
-          <Diamond size={15} className="text-amber" />
+    <main className="console-ui flex h-dvh flex-col bg-void font-sans text-ink">
+      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/8 px-[21px]">
+        <div className="flex items-center gap-3 font-mono text-meta uppercase tracking-[0.14em] text-dust">
+          <Diamond size={15} className="text-signal" />
           <span>APT-LABS · Console</span>
         </div>
         <Link
           href="/"
-          className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim transition-colors hover:text-ivory"
+          className="font-mono text-label uppercase tracking-[0.15em] text-ash transition-colors hover:text-ink"
         >
           ← The ledger
         </Link>
       </header>
 
       <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center overflow-y-auto px-6 py-12">
-        <div className="relative overflow-hidden border border-ivory/10 bg-panel p-6 sm:p-8 md:p-10">
+        <div className="relative overflow-hidden border border-ink/10 bg-panel p-6 sm:p-8 md:p-10">
           <div className="relative">
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-teal">Build capacity · Console</p>
-            <h1 className="mt-4 font-display text-4xl font-light tracking-tight">Who are you?</h1>
-            <p className="mt-3 text-sm leading-6 text-muted">
+            <p className="font-mono text-label uppercase tracking-[0.35em] text-signal">Build capacity · Console</p>
+            <h1 className="mt-4 font-serif text-4xl font-light tracking-tight">Who are you?</h1>
+            <p className="mt-3 text-sm leading-6 text-dust">
               Pick your door. The console opens on this device — nothing you type leaves it.
             </p>
 
@@ -154,11 +154,11 @@ function ConsoleLogin({
                   onClick={() => setRole(r)}
                   aria-pressed={role === r}
                     className={`border p-5 text-left transition ${
-                    role === r ? "border-amber/70 bg-amber/10" : "border-ivory/10 bg-ivory/[0.04] hover:border-ivory/25"
+                    role === r ? "border-signal/70 bg-signal/10" : "border-ink/10 bg-ink/[0.04] hover:border-ink/25"
                   }`}
                 >
-                  <div className="text-sm font-bold text-ivory">{ROLE_META[r].label}</div>
-                  <div className="mt-1 text-[12px] leading-5 text-muted">{ROLE_META[r].desc}</div>
+                  <div className="text-sm font-bold text-ink">{ROLE_META[r].label}</div>
+                  <div className="mt-1 text-meta leading-5 text-dust">{ROLE_META[r].desc}</div>
                 </button>
               ))}
             </div>
@@ -187,11 +187,11 @@ function ConsoleLogin({
               <button
                 type="submit"
                 disabled={!valid}
-                className="min-h-11 border border-teal bg-teal px-6 py-3 text-sm font-semibold text-obsidian transition duration-150 hover:bg-signalDim focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-void disabled:cursor-not-allowed disabled:opacity-40"
+                className="min-h-11 border border-signal bg-signal px-6 py-3 text-sm font-semibold text-void transition duration-150 hover:bg-signalDim focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Enter the {ROLE_META[role].label.toLowerCase()} console →
               </button>
-              <p className="text-center font-mono text-[10px] uppercase tracking-[0.2em] text-dim">
+              <p className="text-center font-mono text-micro uppercase tracking-[0.2em] text-ash">
                 Local session · Stored on this device only · Free · 0 credits
               </p>
             </form>
@@ -251,21 +251,21 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
   const showModules = mod === "all" && q === "";
 
   return (
-    <div className="console-ui flex h-dvh flex-col overflow-hidden bg-void font-body text-ivory">
-      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ivory/8 px-[21px]">
-        <div className="flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
-          <Diamond size={15} className="text-amber" />
+    <div className="console-ui flex h-dvh flex-col overflow-hidden bg-void font-sans text-ink">
+      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/8 px-[21px]">
+        <div className="flex items-center gap-3 font-mono text-meta uppercase tracking-[0.14em] text-dust">
+          <Diamond size={15} className="text-signal" />
           <span>APT-LABS · Console</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="hidden items-center gap-2 rounded-full border border-ivory/10 bg-ivory/5 py-1.5 pl-3.5 pr-4 font-mono text-[11px] text-muted sm:flex">
-            <span className="h-1.5 w-1.5 rounded-full bg-teal" aria-hidden="true" />
+          <span className="hidden items-center gap-2 rounded-full border border-ink/10 bg-ink/5 py-1.5 pl-3.5 pr-4 font-mono text-label text-dust sm:flex">
+            <span className="h-1.5 w-1.5 rounded-full bg-signal" aria-hidden="true" />
             {session.name} · {session.role}
           </span>
           <button
             type="button"
             onClick={onSignOut}
-            className="min-h-11 rounded-full border border-ivory/10 px-4 py-1.5 text-[12px] font-semibold text-muted transition-colors hover:border-ivory/25 hover:text-ivory focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+            className="min-h-11 rounded-full border border-ink/10 px-4 py-1.5 text-meta font-semibold text-dust transition-colors hover:border-ink/25 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
             aria-label="Sign out of the console"
           >
             Sign out
@@ -274,13 +274,13 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
       </header>
 
       <div className="flex min-h-0 flex-1">
-        <aside className="flex w-[62px] shrink-0 flex-col justify-between border-r border-ivory/10 bg-gradient-to-b from-void via-panel to-edge lg:w-[220px]">
+        <aside className="flex w-[62px] shrink-0 flex-col justify-between border-r border-ink/10 bg-gradient-to-b from-void via-panel to-edge lg:w-[220px]">
           <div>
-            <div className="flex h-[89px] items-center justify-center gap-3 border-b border-ivory/10 px-[13px] lg:justify-between lg:px-[21px]">
-              <Diamond filled size={30} className="shrink-0 text-ivory" />
+            <div className="flex h-[89px] items-center justify-center gap-3 border-b border-ink/10 px-[13px] lg:justify-between lg:px-[21px]">
+              <Diamond filled size={30} className="shrink-0 text-ink" />
               <div className="hidden flex-col lg:flex">
-                <span className="font-display text-base font-medium text-ivory">APT-LABS</span>
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ivory/45">Console</span>
+                <span className="font-serif text-base font-medium text-ink">APT-LABS</span>
+                <span className="font-mono text-micro uppercase tracking-[0.2em] text-ink/45">Console</span>
               </div>
             </div>
 
@@ -289,11 +289,11 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
                 type="button"
                 onClick={() => setMod("all")}
                 aria-pressed={activeKey === "all"}
-                className={`flex h-[38px] items-center justify-center gap-2.5 rounded-lg px-3 text-[13px] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-void lg:justify-start ${
-                  activeKey === "all" ? "bg-ivory/15 font-medium text-ivory shadow-[inset_0_0_0_1px_rgba(245,240,230,0.08)]" : "text-ivory/50 hover:bg-ivory/5 hover:text-ivory"
+                className={`flex h-[38px] items-center justify-center gap-2.5 rounded-lg px-3 text-ui transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void lg:justify-start ${
+                  activeKey === "all" ? "bg-ink/15 font-medium text-ink shadow-[inset_0_0_0_1px_rgba(245,240,230,0.08)]" : "text-ink/50 hover:bg-ink/5 hover:text-ink"
                 }`}
               >
-                <ModuleGlyph module="all" size={15} className={activeKey === "all" ? "text-amber" : undefined} />
+                <ModuleGlyph module="all" size={15} className={activeKey === "all" ? "text-signal" : undefined} />
                 <span className="hidden lg:inline">Console</span>
               </button>
               {CONSOLE_MODULES.map((m) => (
@@ -303,40 +303,40 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
                   onClick={() => setMod(m)}
                   aria-pressed={activeKey === m}
                   title={m}
-                  className={`flex h-[38px] items-center justify-center gap-2.5 rounded-lg px-3 text-[13px] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-void lg:justify-start ${
-                    activeKey === m ? "bg-ivory/15 font-medium text-ivory shadow-[inset_0_0_0_1px_rgba(245,240,230,0.08)]" : "text-ivory/50 hover:bg-ivory/5 hover:text-ivory"
+                  className={`flex h-[38px] items-center justify-center gap-2.5 rounded-lg px-3 text-ui transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void lg:justify-start ${
+                    activeKey === m ? "bg-ink/15 font-medium text-ink shadow-[inset_0_0_0_1px_rgba(245,240,230,0.08)]" : "text-ink/50 hover:bg-ink/5 hover:text-ink"
                   }`}
                 >
-                  <ModuleGlyph module={m} size={15} className={activeKey === m ? "text-amber" : undefined} />
+                  <ModuleGlyph module={m} size={15} className={activeKey === m ? "text-signal" : undefined} />
                   <span className="hidden lg:inline">{m}</span>
                 </button>
               ))}
             </nav>
           </div>
 
-          <div className="space-y-1 border-t border-ivory/10 p-[13px] font-mono text-[10px] uppercase tracking-[0.16em] text-ivory/35 lg:px-[21px]">
+          <div className="space-y-1 border-t border-ink/10 p-[13px] font-mono text-micro uppercase tracking-[0.16em] text-ink/35 lg:px-[21px]">
             <p>Local session</p>
             <p>Free · 0 credits</p>
           </div>
         </aside>
 
         <main className="flex-1 overflow-y-auto p-5 sm:p-7 lg:p-[34px]">
-          <div className="mb-[21px] flex flex-col gap-3 border-b border-ivory/10 pb-5">
+          <div className="mb-[21px] flex flex-col gap-3 border-b border-ink/10 pb-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h1 className="font-display text-[30px] font-light leading-tight sm:text-[34px]">
+              <h1 className="font-serif text-h1 font-light leading-tight sm:text-h1">
                 {mod === "all" ? "The console" : mod}
               </h1>
-              <span className="inline-flex items-center gap-2 rounded-full border border-teal/20 bg-teal/10 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-teal">
-                <span className="h-2 w-2 rounded-full bg-teal" aria-hidden="true" />
+              <span className="inline-flex items-center gap-2 rounded-full border border-signal/20 bg-signal/10 px-3 py-1.5 font-mono text-micro uppercase tracking-[0.12em] text-signal">
+                <span className="h-2 w-2 rounded-full bg-signal" aria-hidden="true" />
                 {visible.length} tools
               </span>
             </div>
-            <p className="text-[13px] text-muted">
+            <p className="text-ui text-dust">
               {mod === "all"
                 ? "Nine modules. The material first, the mark of it second, the week around them."
                 : CONSOLE_MENU[mod].desc}
             </p>
-            <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim">
+            <p className="font-mono text-label uppercase tracking-[0.15em] text-ash">
               {readiness(school.students, school.assessments).next}
             </p>
           </div>
@@ -352,7 +352,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={`Search ${mod === "all" ? "tools" : mod} — press / or ⌘K to focus…`}
-              className="h-[46px] w-full rounded-full border border-ivory/10 bg-panel px-6 text-[13px] text-ivory outline-none transition-all duration-150 placeholder:text-dim focus-visible:border-teal focus-visible:ring-2 focus-visible:ring-teal/40"
+              className="h-[46px] w-full rounded-full border border-ink/10 bg-panel px-6 text-ui text-ink outline-none transition-all duration-150 placeholder:text-ash focus-visible:border-signal focus-visible:ring-2 focus-visible:ring-signal/40"
               aria-label="Search tools within the console"
             />
           </div>
@@ -364,9 +364,9 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
               ))}
             </div>
           ) : visible.length === 0 ? (
-            <div className="rounded-[24px] border border-dashed border-ivory/15 bg-panel/60 px-5 py-12 text-center" aria-live="polite">
-              <p className="font-display text-[24px] text-ivory">No tool matches that search.</p>
-              <p className="mt-2 text-sm text-muted">Try another term, or switch back to the full console view.</p>
+            <div className="rounded-[24px] border border-dashed border-ink/15 bg-panel/60 px-5 py-12 text-center" aria-live="polite">
+              <p className="font-serif text-h2 text-ink">No tool matches that search.</p>
+              <p className="mt-2 text-sm text-dust">Try another term, or switch back to the full console view.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -388,17 +388,17 @@ function ModuleCard({ module, onOpen }: { module: string; onOpen: () => void }) 
     <button
       type="button"
       onClick={onOpen}
-      className="group flex min-h-[150px] flex-col justify-between gap-4 overflow-hidden rounded-2xl border border-ivory/8 bg-panel p-5 text-left transition-all duration-150 hover:border-ivory/25 hover:bg-panelHi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+      className="group flex min-h-[150px] flex-col justify-between gap-4 overflow-hidden rounded-2xl border border-ink/8 bg-panel p-5 text-left transition-all duration-150 hover:border-ink/25 hover:bg-edge focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
     >
       <div className="flex items-start justify-between gap-3">
         <ModuleTile module={module} tint={menu.tint} />
-        <span className="rounded-full border border-ivory/10 bg-ivory/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors group-hover:border-ivory/25 group-hover:text-ivory">
+        <span className="rounded-full border border-ink/10 bg-ink/5 px-3 py-1 font-mono text-micro uppercase tracking-[0.14em] text-dust transition-colors group-hover:border-ink/25 group-hover:text-ink">
           {tools.length} {tools.length === 1 ? "tool" : "tools"} →
         </span>
       </div>
       <div>
-        <h3 className="font-display text-[20px] font-normal leading-tight text-ivory">{module}</h3>
-        <p className="mt-1.5 text-[13px] leading-relaxed text-muted">{menu.desc}</p>
+        <h3 className="font-serif text-h3 font-normal leading-tight text-ink">{module}</h3>
+        <p className="mt-1.5 text-ui leading-relaxed text-dust">{menu.desc}</p>
       </div>
     </button>
   );
@@ -419,7 +419,7 @@ function ToolCard({
     <Link
       href={`/console/${tool.id}`}
       aria-label={`Open ${tool.title}`}
-      className="group relative flex min-h-[140px] flex-col justify-between overflow-hidden rounded-2xl border border-ivory/8 bg-panel p-5 transition-all duration-150 hover:border-ivory/25 hover:bg-panelHi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+      className="group relative flex min-h-[140px] flex-col justify-between overflow-hidden rounded-2xl border border-ink/8 bg-panel p-5 transition-all duration-150 hover:border-ink/25 hover:bg-edge focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
     >
       <div>
         <div className="mb-4 flex items-start justify-between gap-3">
@@ -430,9 +430,9 @@ function ToolCard({
             aria-pressed={fav}
             aria-label={fav ? `Remove ${tool.title} from favourites` : `Add ${tool.title} to favourites`}
             onClick={onFav}
-            className={`min-h-9 min-w-9 rounded-full border border-ivory/8 p-1.5 transition-all md:opacity-0 md:group-hover:opacity-100 ${
-              fav ? "border-amber/20 bg-amber/10 text-amber" : "border-ivory/8 bg-panel text-dim hover:border-ivory/20 hover:text-ivory"
-            } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal`}
+            className={`min-h-9 min-w-9 rounded-full border border-ink/8 p-1.5 transition-all md:opacity-0 md:group-hover:opacity-100 ${
+              fav ? "border-signal/20 bg-signal/10 text-signal" : "border-ink/8 bg-panel text-ash hover:border-ink/20 hover:text-ink"
+            } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal`}
           >
             <svg
               width="18"
@@ -447,11 +447,11 @@ function ToolCard({
             </svg>
           </button>
         </div>
-        <h3 className="font-display text-[19px] font-normal leading-tight text-ivory">{tool.title}</h3>
-        <p className="mt-1.5 text-[13px] leading-relaxed text-muted">{tool.desc}</p>
+        <h3 className="font-serif text-h3 font-normal leading-tight text-ink">{tool.title}</h3>
+        <p className="mt-1.5 text-ui leading-relaxed text-dust">{tool.desc}</p>
       </div>
       <div className="flex items-center justify-between gap-3">
-        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-dim">
+        <span className="font-mono text-micro uppercase tracking-[0.18em] text-ash">
           {tool.id.padStart(2, "0")} · {tool.module}
         </span>
       </div>

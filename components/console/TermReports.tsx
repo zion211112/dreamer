@@ -86,7 +86,7 @@ export default function TermReports() {
       <HeadRow
         label="Term reports · score entry"
         right={
-          <button className="font-mono text-[11px] uppercase tracking-[0.15em] text-dim hover:text-amber" onClick={() => void clearExam()}>
+          <button className="font-mono text-label uppercase tracking-[0.15em] text-ash hover:text-signal" onClick={() => void clearExam()}>
             Clear this exam
           </button>
         }
@@ -108,11 +108,11 @@ export default function TermReports() {
           <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th className="sticky left-0 bg-panel border-b border-ivory/10 px-3 py-2 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-dim">
+                <th className="sticky left-0 bg-panel border-b border-ink/10 px-3 py-2 text-left font-mono text-micro uppercase tracking-[0.15em] text-ash">
                   Student
                 </th>
                 {KCSE_SUBJECTS.map((s) => (
-                  <th key={s} className="border-b border-ivory/10 px-2 py-2 text-left font-mono text-[10px] uppercase tracking-[0.1em] text-dim">
+                  <th key={s} className="border-b border-ink/10 px-2 py-2 text-left font-mono text-micro uppercase tracking-[0.1em] text-ash">
                     {s.replace(" & Government", "")}
                   </th>
                 ))}
@@ -121,7 +121,7 @@ export default function TermReports() {
             <tbody>
               {rows.map((s) => (
                 <tr key={s.id}>
-                  <td className="sticky left-0 bg-panel px-3 py-1.5 text-[13px] text-ivory whitespace-nowrap">{s.name}</td>
+                  <td className="sticky left-0 bg-panel px-3 py-1.5 text-ui text-ink whitespace-nowrap">{s.name}</td>
                   {KCSE_SUBJECTS.map((sub) => (
                     <td key={sub} className="px-2 py-1">
                       <input
@@ -163,43 +163,43 @@ export default function TermReports() {
             </div>
 
             <div className="mt-6 grid gap-6 md:grid-cols-[1fr_220px]">
-              <div className="print-sheet bg-white p-6 text-obsidian">
-                <p className="font-mono text-[10px] uppercase tracking-[0.3em]">APT-LABS · {data.school || "School"}</p>
-                <h3 className="mt-2 font-display text-2xl">REPORT CARD — {exam}</h3>
-                <p className="mt-1 text-[13px]">{sel.name} · {sel.className}{sel.stream ? ` · ${sel.stream}` : ""} · Adm {sel.admNo || "—"}</p>
-                <table className="mt-4 w-full border-collapse text-[13px]">
+              <div className="print-sheet bg-white p-6 text-void">
+                <p className="font-mono text-micro uppercase tracking-[0.3em]">APT-LABS · {data.school || "School"}</p>
+                <h3 className="mt-2 font-serif text-2xl">REPORT CARD — {exam}</h3>
+                <p className="mt-1 text-ui">{sel.name} · {sel.className}{sel.stream ? ` · ${sel.stream}` : ""} · Adm {sel.admNo || "—"}</p>
+                <table className="mt-4 w-full border-collapse text-ui">
                   <thead>
                     <tr>
                       {["Subject", "Score", "Band"].map((h) => (
-                        <th key={h} className="border-b border-ivory/30 px-2 py-1.5 text-left font-mono text-[10px] uppercase tracking-[0.15em] text-obsidian/70">{h}</th>
+                        <th key={h} className="border-b border-ink/30 px-2 py-1.5 text-left font-mono text-micro uppercase tracking-[0.15em] text-void/70">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {card.subjects.map((s) => (
                       <tr key={s.subject}>
-                        <td className="border-b border-ivory/50 px-2 py-1.5">{s.subject}</td>
-                        <td className="border-b border-ivory/50 px-2 py-1.5">{s.has ? s.score : "—"}</td>
-                        <td className="border-b border-ivory/50 px-2 py-1.5">{s.has ? bandFor(s.score as number).band : "—"}</td>
+                        <td className="border-b border-ink/50 px-2 py-1.5">{s.subject}</td>
+                        <td className="border-b border-ink/50 px-2 py-1.5">{s.has ? s.score : "—"}</td>
+                        <td className="border-b border-ink/50 px-2 py-1.5">{s.has ? bandFor(s.score as number).band : "—"}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-                <p className="mt-4 text-[14px]">
+                <p className="mt-4 text-body">
                   Mean: <strong>{card.mean ?? "—"}</strong> / 400
                   {band ? <> · Band <strong>{band.band}</strong></> : null}
                   {rank ? <> · Position {rank.pos} of {rank.of} in {classOf}</> : null}
                 </p>
-                {band && <p className="mt-1 text-[13px] italic">{band.remark}</p>}
+                {band && <p className="mt-1 text-ui italic">{band.remark}</p>}
                 <div className="mt-8 flex gap-10">
-                  <p className="border-t border-ivory/30 pt-1 text-[11px] w-40 text-obsidian/60">Class teacher</p>
-                  <p className="border-t border-ivory/30 pt-1 text-[11px] w-40 text-obsidian/60">Head teacher</p>
+                  <p className="border-t border-ink/30 pt-1 text-label w-40 text-void/60">Class teacher</p>
+                  <p className="border-t border-ink/30 pt-1 text-label w-40 text-void/60">Head teacher</p>
                 </div>
               </div>
 
               <div>
                 <p className={monoLabel}>Before printing</p>
-                <ul className="mt-3 space-y-2 text-[13px] leading-6 text-muted">
+                <ul className="mt-3 space-y-2 text-ui leading-6 text-dust">
                   <li>Scores are out of 100 per subject.</li>
                   <li>Mean and band follow KCSE weights — one table, every tool.</li>
                   <li>Position is within {classOf || "the class"}.</li>

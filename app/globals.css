@@ -192,48 +192,9 @@ body {
   border-radius: 2px;
 }
 
-.console-ui .bg-ivory {
-  background: var(--signal);
-}
-
-.console-ui .hover\:bg-amber:hover {
-  background: var(--signal-dim);
-}
-
-.console-ui .text-teal,
-.console-ui .text-amber {
-  color: var(--signal);
-}
-
-.console-ui .border-amber,
-.console-ui .border-amber\/70 {
-  border-color: var(--signal);
-}
-
-.console-ui [class*="rounded-"] {
-  border-radius: 2px;
-}
-
-.console-ui [class*="text-amber"],
-.console-ui [class*="text-teal"] {
-  color: var(--signal);
-}
-
-.console-ui [class*="border-amber"],
-.console-ui [class*="border-teal"] {
-  border-color: var(--signal);
-}
-
-.console-ui [class*="bg-amber"],
-.console-ui [class*="bg-teal"] {
-  background-color: color-mix(in srgb, var(--signal) 10%, transparent);
-}
-
-.console-ui [class*="focus:border-amber"]:focus,
-.console-ui [class*="focus:border-teal"]:focus,
-.console-ui [class*="focus-visible:border-teal"]:focus-visible {
-  border-color: var(--signal);
-}
+/* The amber/teal attribute-selector remaps that used to live here are gone.
+   Console components now name --signal and --danger directly, so a stylesheet
+   no longer rewrites their colour at render time. */
 
 /* ─── Ruled separator ─── */
 

@@ -19,8 +19,21 @@
 }
 
 .contact-classic {
+  position: relative;
   width: 100%;
   max-width: 760px;
+}
+
+/* GeoArt motif — the identity mark, shared with the 404 and the hero. */
+.contact-art {
+  position: absolute;
+  top: -140px;
+  right: -140px;
+  width: 340px;
+  height: 340px;
+  color: var(--ink);
+  opacity: 0.05;
+  pointer-events: none;
 }
 
 .contact-classic > .label {

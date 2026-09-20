@@ -16,7 +16,7 @@ export default function Error({
       <div className="site-frame site-frame--narrow">
         <p className="site-kicker">Record interrupted</p>
         <h1 className="page-title">The write did not land.</h1>
-        <p className="mt-4 max-w-[46ch] text-[15px] leading-6 text-dust">
+        <p className="mt-4 max-w-[46ch] text-body leading-6 text-dust">
           Nothing was lost — this device holds its own copy of the record.
           Storage may be full or switched off. Try the write again.
         </p>

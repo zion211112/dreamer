@@ -111,7 +111,7 @@ export default function Comms() {
       {unreached > 0 && (
         <Notice tone="warn">
           {unreached} student{unreached === 1 ? "" : "s"} in scope have no parent phone —{" "}
-          <Link className="text-amber" href="/console/9">
+          <Link className="text-signal" href="/console/9">
             add the numbers in Roster Import
           </Link>
           .
@@ -134,17 +134,17 @@ export default function Comms() {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           rows={4}
-          className="mt-4 w-full rounded-[21px] border border-ivory/10 bg-void p-4 text-[14px] leading-7 text-ivory outline-none transition-colors placeholder:text-dim focus:border-amber"
+          className="mt-4 w-full rounded-[21px] border border-ink/10 bg-void p-4 text-body leading-7 text-ink outline-none transition-colors placeholder:text-ash focus:border-signal"
           placeholder="Write the message once…"
         />
-        <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.15em] text-dim">
+        <p className="mt-3 font-mono text-micro uppercase tracking-[0.15em] text-ash">
           {`{parent}`} fills the parent · {`{students}`} the children · {`{class}`} their class
         </p>
       </div>
 
       {/* The recipients: one row per phone, every child behind it. */}
       <div className={panel + " p-0"}>
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ivory/10 px-4 py-3 md:px-5">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink/10 px-4 py-3 md:px-5">
           <span className={monoLabel}>Recipients · one line per phone</span>
           <select value={cls} onChange={(e) => setCls(e.target.value)} className={field + " w-auto"}>
             <option value="">All classes</option>
@@ -156,7 +156,7 @@ export default function Comms() {
           </select>
         </div>
         {recipients.length === 0 ? (
-          <p className="px-4 py-5 text-[13px] text-dim md:px-5">
+          <p className="px-4 py-5 text-ui text-ash md:px-5">
             No phone numbers in scope yet — add them in Roster Import, then this page fills itself.
           </p>
         ) : (
@@ -165,14 +165,14 @@ export default function Comms() {
               const text = filled(r);
               const kids = r.children.map((id) => nameOf(id)).join(" & ");
               return (
-                <li key={r.phone} className="flex flex-wrap items-center gap-3 border-b border-ivory/10/50 px-4 py-3 last:border-0 md:px-5">
+                <li key={r.phone} className="flex flex-wrap items-center gap-3 border-b border-ink/10/50 px-4 py-3 last:border-0 md:px-5">
                   <div className="min-w-[160px]">
-                    <p className="text-[13px] text-ivory">{r.parent || "Parent"}</p>
-                    <p className="font-mono text-[11px] text-dim">
+                    <p className="text-ui text-ink">{r.parent || "Parent"}</p>
+                    <p className="font-mono text-label text-ash">
                       {r.phone} · {kids}
                     </p>
                   </div>
-                  <p className="flex-1 basis-[200px] truncate text-[12px] text-muted" title={text}>
+                  <p className="flex-1 basis-[200px] truncate text-meta text-dust" title={text}>
                     {text}
                   </p>
                   <div className="ml-auto flex gap-2">
@@ -193,8 +193,8 @@ export default function Comms() {
             })}
           </ul>
         )}
-        <div className="border-t border-ivory/10 px-4 py-3 md:px-5">
-          <p className="text-[11px] leading-5 text-dim">
+        <div className="border-t border-ink/10 px-4 py-3 md:px-5">
+          <p className="text-label leading-5 text-ash">
             Sending is per parent, on purpose — each link opens the app with the message written, and the send is
             the parent&apos;s one tap. No SMS gateway, no server, nothing leaves the device except the message
             itself.

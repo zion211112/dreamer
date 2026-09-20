@@ -51,7 +51,23 @@
 /* ─── Hero ─── */
 
 .landing-hero {
+  position: relative;
+  overflow: hidden;
   border-bottom: 1px solid var(--rule);
+}
+
+/* GeoArt motif — the identity mark, shared with the 404. Sits behind the
+   hero copy at watermark strength. */
+.landing-hero-art {
+  position: absolute;
+  top: 50%;
+  right: -220px;
+  width: 680px;
+  height: 680px;
+  transform: translateY(-50%);
+  color: var(--ink);
+  opacity: 0.05;
+  pointer-events: none;
 }
 
 .landing-hero-grid {

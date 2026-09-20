@@ -37,7 +37,7 @@ import type { LifeState, Risk } from "../../../lib/board";
 
 const field =
   "w-full border-b border-rule/10 bg-transparent py-2.5 text-sm text-ink outline-none transition focus:border-amber";
-const label = "block font-mono text-[11px] uppercase tracking-[0.25em] text-ash";
+const label = "block font-mono text-label uppercase tracking-[0.25em] text-ash";
 
 // The board's lanes: the tabs speak the machine's own state vocabulary —
 // open (proposed/ratified), in hand (claimed/active), closed (the rest).
@@ -314,7 +314,7 @@ export default function BenBenPage() {
             {shownBoard.length === 0 ? (
               <div className="mt-8 border border-dashed border-rule/15 px-5 py-8">
                 <p className="font-serif text-xl text-ink">Nothing in this lane.</p>
-                <p className="mt-2 max-w-[48ch] font-mono text-[11px] uppercase leading-6 tracking-[0.16em] text-ash">
+                <p className="mt-2 max-w-[48ch] font-mono text-label uppercase leading-6 tracking-[0.16em] text-ash">
                   The floor is waiting for a commitment that belongs here.
                 </p>
               </div>
@@ -346,11 +346,11 @@ export default function BenBenPage() {
           {open && (
             <form onSubmit={submit} className="site-surface p-5 sm:p-6 md:p-8">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-amber">
+                <p className="font-mono text-label uppercase tracking-[0.3em] text-amber">
                   {forkOf ? `Forking · ${forkOf.id}` : "New build"}
                 </p>
                 {forkOf && (
-                  <p className="font-mono text-[11px] text-ash">
+                  <p className="font-mono text-label text-ash">
                     “{forkOf.title.slice(0, 44)}” · @{forkOf.by}
                   </p>
                 )}
@@ -415,7 +415,7 @@ export default function BenBenPage() {
                         type="button"
                         onClick={() => setRisk(r)}
                         aria-pressed={risk === r}
-                        className={`min-h-11 border px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal ${
+                        className={`min-h-11 border px-4 py-2 font-mono text-label uppercase tracking-[0.16em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal ${
                           risk === r
                             ? "border-amber bg-amber/10 text-amber"
                             : "border-rule/12 text-ash hover:border-rule/25 hover:text-ink"
@@ -440,9 +440,9 @@ export default function BenBenPage() {
                           onClick={() =>
                             setSkillsSel((p) => (p.includes(k) ? p.filter((x) => x !== k) : [...p, k]))
                           }
-                          className={`min-h-11 border px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal ${
+                          className={`min-h-11 border px-3 py-1.5 font-mono text-label uppercase tracking-[0.12em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal ${
                             on
-                              ? "border-teal/60 bg-teal/10 text-signal"
+                              ? "border-signal/60 bg-signal/10 text-signal"
                               : "border-rule/12 text-ash hover:border-rule/25 hover:text-ink"
                           }`}
                         >
@@ -498,7 +498,7 @@ export default function BenBenPage() {
                 <fieldset>
                   <legend className={label}>What is missing</legend>
                   <div className="mt-3 grid gap-5 sm:grid-cols-2 md:grid-cols-4">
-                    <label className="flex min-h-11 items-center gap-2 font-mono text-[11px] text-dust">
+                    <label className="flex min-h-11 items-center gap-2 font-mono text-label text-dust">
                       <input
                         type="checkbox"
                         checked={nothing}
@@ -508,7 +508,7 @@ export default function BenBenPage() {
                       Nothing
                     </label>
                     <div>
-                      <span className="font-mono text-[10px] uppercase text-ash">Hands</span>
+                      <span className="font-mono text-micro uppercase text-ash">Hands</span>
                       <input
                         className={field}
                         type="number"
@@ -518,7 +518,7 @@ export default function BenBenPage() {
                       />
                     </div>
                     <div>
-                      <span className="font-mono text-[10px] uppercase text-ash">Funds · KES</span>
+                      <span className="font-mono text-micro uppercase text-ash">Funds · KES</span>
                       <input
                         className={field}
                         type="number"
@@ -529,7 +529,7 @@ export default function BenBenPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-3 sm:col-span-2 md:col-span-1">
                       <div>
-                        <span className="font-mono text-[10px] uppercase text-ash">Materials</span>
+                        <span className="font-mono text-micro uppercase text-ash">Materials</span>
                         <input
                           className={field}
                           value={materials}
@@ -537,7 +537,7 @@ export default function BenBenPage() {
                         />
                       </div>
                       <div>
-                        <span className="font-mono text-[10px] uppercase text-ash">Intellect</span>
+                        <span className="font-mono text-micro uppercase text-ash">Intellect</span>
                         <input
                           className={field}
                           value={intellect}
@@ -556,7 +556,7 @@ export default function BenBenPage() {
                       setErr("");
                       setNotice("");
                     }}
-                    className="font-mono text-[11px] uppercase tracking-[0.2em] text-ash transition hover:text-ink"
+                    className="font-mono text-label uppercase tracking-[0.2em] text-ash transition hover:text-ink"
                   >
                     close the desk
                   </button>
@@ -575,7 +575,7 @@ export default function BenBenPage() {
 
         {/* the feed */}
         <section className="mt-12">
-          <div className="flex items-baseline justify-between border-b border-rule/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em]">
+          <div className="flex items-baseline justify-between border-b border-rule/15 pb-3 font-mono text-label uppercase tracking-[0.3em]">
             <span className="text-amber">On the floor</span>
             <span className="text-ash">velocity, not vanity</span>
           </div>
@@ -600,7 +600,7 @@ export default function BenBenPage() {
           ))}
         </section>
 
-        <p className="mt-16 border-t border-rule/10 pt-6 text-center font-mono text-[11px] uppercase tracking-[0.35em] text-ash">
+        <p className="mt-16 border-t border-rule/10 pt-6 text-center font-mono text-label uppercase tracking-[0.35em] text-ash">
           count, not noise · commit, then prove
         </p>
       </div>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import GeoArt from "../../../components/GeoArt";
 import "./contact.css";
 
 export const metadata: Metadata = {
@@ -13,6 +14,7 @@ export default function Contact() {
   return (
     <main className="site-page contact-page">
       <section className="contact-classic site-frame">
+        <GeoArt variant="corner" className="contact-art" />
         <div className="site-section-head"><span>Contact / APT-LABS</span><span>one reply · no queue</span></div>
         <div className="record-intro contact-intro">
           <p className="site-kicker">For schools, partners, and doers</p>
