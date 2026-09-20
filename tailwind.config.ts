@@ -7,47 +7,78 @@ const config = {
   theme: {
     extend: {
       colors: {
-        // ── The four-colour system. Everything on the site resolves to one of
-        // these. Neutrals are ivory at opacity — never a separate hue.
-        obsidian: "#08080A",
-        void: "#050506",
-        panel: "#0E0E10",
-        edge: "#1A1A1C",
-        panelHi: "#141416",
-        edgeHi: "#2A2A2E",
+        // ── Surfaces — deepest to raised.
+        //    Never use these for text. Text uses --ink / --dust.
+        void:   "#060708",
+        panel:  "#0C0D0F",
+        edge:   "#141416",
+        rule:   "#1F1F22",
 
-        ivory: "#F5F0E6",
-        // ivory at reading-distance dimming — neutrals, never a new hue.
-        muted: "#A8A29E",
-        dim: "#57534E",
+        // ── Text — primary and secondary.
+        //    --ink on --void: 16.8:1 (AAA). --dust on --void: 4.6:1 (AA/AAA).
+        ink:    "#F2EFE9",
+        dust:   "#8A8580",
+        ash:    "#5C5854",
 
-        // The two accents. Teal is the living accent (focus, active, passage,
-        // growth). Amber is the warm accent (attention, highlight, secondary
-        // marks, the older-world warmth of the ledger).
-        teal: "#2dd4bf",
-        amber: "#d4af37",
-        copper: "#b8785d",
-        moss: "#91a58f"
+        // ── Accent — ONE interactive color.
+        //    Reserved strictly for high-intent triggers: primary buttons, links,
+        //    focus rings, active nav. Not decorative. Not passive text.
+        signal:      "#14B8A6",
+        signalDim:   "#0D9488",
+        signalStrong:"#0F766E",
+
+        // ── Informational — never interactive.
+        amber:  "#D97706",
+        danger: "#EF4444",
+
+        // ── Legacy aliases (console components predate this system).
+        //    Each maps to its new-token value so existing class names keep
+        //    rendering. Migrate components to the canonical names above.
+        obsidian: "#060708",      // → void
+        ivory:    "#F2EFE9",      // → ink
+        muted:    "#8A8580",      // → dust
+        dim:      "#5C5854",      // → ash
+        teal:     "#14B8A6",      // → signal
+        panelHi:  "#141416",      // → edge
+        edgeHi:   "#1F1F22",      // → rule
       },
       fontFamily: {
-        display: ["var(--font-playfair)", "Georgia", "serif"],
-        body: ["var(--font-inter)", "system-ui", "-apple-system", "sans-serif"],
-        mono: ["var(--font-jetbrains)", "ui-monospace", "monospace"]
+        // System font stack — no network requests. Works offline.
+        sans: [
+          "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto",
+          "Helvetica Neue", "Arial", "Noto Sans", "system-ui", "sans-serif"
+        ],
+        serif: [
+          "Iowan Old Style", "Apple Garamond", "Baskerville",
+          "Palatino Linotype", "Times New Roman", "Georgia", "serif"
+        ],
+        mono: [
+          "ui-monospace", "SF Mono", "Cascadia Code", "Roboto Mono",
+          "Menlo", "Consolas", "Liberation Mono", "monospace"
+        ],
+        // Legacy alias — console components predate this system.
+        display: [
+          "Iowan Old Style", "Apple Garamond", "Baskerville",
+          "Palatino Linotype", "Times New Roman", "Georgia", "serif"
+        ],
+        body: [
+          "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto",
+          "Helvetica Neue", "Arial", "Noto Sans", "system-ui", "sans-serif"
+        ],
       },
+      // ── 8px grid. No Fibonacci. No 13px. Predictable.
       spacing: {
-        phi: "1.618rem",
-        philg: "2.618rem",
-        phixl: "4.236rem",
-        fb1: "8px",
-        fb2: "13px",
-        fb3: "21px",
-        fb4: "34px",
-        fb5: "55px",
-        fb6: "89px"
-      }
-    }
+        "4.5":  "18px",   // occasional micro-need
+      },
+      borderRadius: {
+        "sm":  "4px",
+        "md":  "6px",
+        "lg":  "8px",
+      },
+    },
   },
-  plugins: []
+  plugins: [],
 };
 
 export default config;
+

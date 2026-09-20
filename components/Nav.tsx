@@ -4,89 +4,131 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 
+type NavItem = { href: string; label: string };
+
+const NAV_ITEMS: NavItem[] = [
+  { href: "/", label: "Home" },
+  { href: "/ledger", label: "Ledger" },
+  { href: "/benben", label: "Floor" },
+  { href: "/contact", label: "Contact" },
+];
+
 export function Nav() {
-  const [open, setOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const menuId = useId();
 
-  const links: Array<[string, string]> = [
-    ["/", "Home"],
-    ["/ledger", "Ledger"],
-    ["/benben", "Floor"],
-    ["/console", "Teachers"],
-    ["/contact", "Contact"]
-  ];
-
   useEffect(() => {
-    setOpen(false);
+    setMobileOpen(false);
   }, [pathname]);
 
   useEffect(() => {
-    if (!open) return;
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+    if (!mobileOpen) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
     };
-    document.addEventListener("keydown", closeOnEscape);
-    return () => document.removeEventListener("keydown", closeOnEscape);
-  }, [open]);
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [mobileOpen]);
+
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <header className="site-nav sticky top-0 z-50 border-b border-ivory/10 bg-obsidian/95">
-      <div className="mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-6 px-5 md:px-8">
-        <Link href="/" className="site-nav__brand group flex min-h-11 items-center gap-3 text-ivory" aria-label="APT-LABS home">
-          <span className="grid h-8 w-8 place-items-center border border-teal/60 text-[11px] font-bold text-teal transition-colors group-hover:bg-teal group-hover:text-obsidian">
-            A
-          </span>
-          <span className="text-[13px] font-semibold tracking-[0.2em] text-ivory">APT-LABS</span>
+    <header className="site-nav" role="banner">
+      <div className="nav-inner">
+        <Link
+          href="/"
+          className="nav-brand"
+          aria-label="APT-LABS — The ledger of useful work"
+        >
+          <span className="nav-brand-mark" aria-hidden="true">A</span>
+          <span className="nav-brand-text">APT-LABS</span>
         </Link>
 
-        <nav aria-label="Primary navigation" className="hidden items-center gap-1 md:flex">
-          {links.map(([href, label]) => {
-            const active = href === "/" ? pathname === href : pathname.startsWith(href);
+        <nav
+          aria-label="Primary navigation"
+          className="nav-links"
+        >
+          {NAV_ITEMS.map((item) => {
+            const active = isActive(item.href);
             return (
-            <Link
-              key={href}
-              href={href}
-              aria-current={active ? "page" : undefined}
-              className={`min-h-11 px-3 py-3 text-[12px] font-medium transition-colors ${active ? "text-teal" : "text-ivory/60 hover:text-ivory"}`}
-            >
-              {label}
-            </Link>
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={[
+                  "nav-link",
+                  active ? "nav-link--active" : "",
+                ].filter(Boolean).join(" ")}
+              >
+                {item.label}
+              </Link>
             );
           })}
         </nav>
 
         <button
           type="button"
-          onClick={() => setOpen((value) => !value)}
-          className="site-nav__toggle min-h-11 min-w-11 border border-ivory/20 text-[12px] font-semibold uppercase tracking-[0.12em] text-ivory md:hidden"
-          aria-expanded={open}
+          className="nav-toggle"
+          onClick={() => setMobileOpen((v) => !v)}
+          aria-expanded={mobileOpen}
           aria-controls={menuId}
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
         >
-          {open ? "Close" : "Menu"}
+          <span className="nav-toggle-icon" aria-hidden="true">
+            {mobileOpen ? (
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </span>
+          <span className="nav-toggle-text">
+            {mobileOpen ? "Close" : "Menu"}
+          </span>
         </button>
       </div>
 
       <nav
         id={menuId}
         aria-label="Mobile navigation"
-        hidden={!open}
-        className="border-t border-ivory/10 bg-obsidian px-5 py-3 md:hidden"
+        className={["nav-mobile", mobileOpen ? "nav-mobile--open" : ""].filter(Boolean).join(" ")}
+        hidden={!mobileOpen}
       >
-        {links.map(([href, label]) => {
-          const active = href === "/" ? pathname === href : pathname.startsWith(href);
-          return (
-            <Link
-              key={href}
-              href={href}
-              onClick={() => setOpen(false)}
-              aria-current={active ? "page" : undefined}
-              className={`flex min-h-12 items-center border-b border-ivory/10 text-sm transition-colors last:border-b-0 ${active ? "text-teal" : "text-ivory/75 hover:text-ivory"}`}
-            >
-              {label}
-            </Link>
-          );
-        })}
+        <div className="nav-mobile-inner">
+          {NAV_ITEMS.map((item) => {
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={[
+                  "nav-mobile-link",
+                  active ? "nav-mobile-link--active" : "",
+                ].filter(Boolean).join(" ")}
+                onClick={() => setMobileOpen(false)}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </div>
       </nav>
     </header>
   );

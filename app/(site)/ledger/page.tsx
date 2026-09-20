@@ -1,435 +1,355 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import GeoArt from "../../../components/GeoArt";
-import ZionChamber from "../../../components/ZionChamber";
-import { mergeBuilds, myUsername, Build } from "../../../lib/benben";
 import {
-  KEYS,
   LOCATIONS,
   Member,
   OCCUPATIONS,
   SCHOOL_STATS,
   SEED_MEMBERS,
   SUBSCRIBED_SCHOOLS,
+  KEYS,
   TREASURY,
-  ledgerVersion,
   loadStored,
-  masterHash,
   saveStored,
   seal,
-  shortHash
+  shortHash,
+  ledgerVersion,
+  masterHash,
 } from "../../../lib/ledger";
+import "./ledger.css";
 
-function useStoredList<T>(key: string, seeds: T[]): [T[], (v: T[]) => void] {
-  const [list, setList] = useState<T[]>(seeds);
-  useEffect(() => {
-    const stored = loadStored<T>(key);
-    if (stored.length > 0) setList(stored);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key]);
-  return [list, (v: T[]) => { setList(v); saveStored(key, v); }];
-}
+type FormErrors = Partial<Record<"name" | "skill", string>>;
+type Status = "idle" | "loading" | "success";
+type Verdict = "" | "found" | "no";
 
-// The Eight keep fool titles. The trade is real; the title is the joke
-// that tells the truth: every one of them can actually do things.
-const FOOL: Record<string, string> = {
-  "AL-0042": "Keeper of Lost Marks",
-  "AL-0137": "Lantern Whisperer",
-  "AL-0201": "Counter of Everything",
-  "AL-0311": "Stacker of Stones",
-  "AL-0420": "Drawer of Ideas",
-  "AL-0488": "Mender of Uniforms",
-  "AL-0513": "Asker of Hard Questions",
-  "AL-0777": "Tamer of Wires"
-};
-
-function rough(n: number): string {
-  return `~${(Math.round(n / 50) * 50).toLocaleString()}`;
-}
-
-// The five doors the roll grows through. Doctrine, not state — the counts
-// below answer "how many", the doors answer "how they get in".
-const DOORS: { name: string; body: string; produces: string }[] = [
-  {
-    name: "Console",
-    body: "School subscribes. Roster enters automatically. Teachers emit capability signals as they mark. Class-level nodes form from the same stream.",
-    produces: "students · classes"
-  },
-  {
-    name: "BenBen",
-    body: "Anyone posts a build — an individual, a class, a school, a chama. The floor votes. A crew forms. The build is proved. Every crew member enters the roll.",
-    produces: "crews"
-  },
-  {
-    name: "Certify",
-    body: "An untracked person pays 50 KES. Skill verified by reviewers. Hash sealed. Credential issued. No school required.",
-    produces: "individuals"
-  },
-  {
-    name: "Register",
-    body: "A chama or group registers as a collective. One node. Many members. Pooled capital. Can fund builds and hold cooperative shares.",
-    produces: "chamas"
-  },
-  {
-    name: "Partner",
-    body: "An institution joins as sponsor or hiring partner. Its capital funds proved builds. Its pipeline draws from the roll.",
-    produces: "institutions"
-  }
-];
-
-type CountRow = { label: string; small: string; value: string; gold?: boolean; suppress?: boolean };
-
-export default function Ledger() {
-  const [members, setMembers] = useStoredList<Member>(KEYS.members, SEED_MEMBERS);
-  const [rootOpen, setRootOpen] = useState(false);
-  const [me, setMe] = useState("");
-
-  const [name, setName] = useState("");
-  const [regOcc, setRegOcc] = useState(OCCUPATIONS[0]);
-  const [regLoc, setRegLoc] = useState(LOCATIONS[0]);
-  const [skill, setSkill] = useState("");
-  const [notice, setNotice] = useState("");
-
-  const [builds, setBuilds] = useState<Build[]>([]);
-  const [sealedAt, setSealedAt] = useState<string | null>(null);
+export default function LedgerPage() {
+  const [entries, setEntries] = useState<Member[]>(SEED_MEMBERS);
+  const [form, setForm] = useState({
+    name: "",
+    role: OCCUPATIONS[0],
+    location: LOCATIONS[0],
+    skill: "",
+  });
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [status, setStatus] = useState<Status>("idle");
+  const [search, setSearch] = useState("");
   const [token, setToken] = useState("");
-  const [verdict, setVerdict] = useState<"" | "found" | "no">("");
+  const [verdict, setVerdict] = useState<Verdict>("");
 
   useEffect(() => {
-    setMe(myUsername() || "");
-    // Real seal time: when this reading of the roll was computed, UTC.
-    setSealedAt(new Date().toISOString().slice(0, 19) + "Z");
-    setBuilds(mergeBuilds());
+    const stored = loadStored<Member>(KEYS.members);
+    if (stored.length > 0) setEntries(stored);
   }, []);
 
-  const all = useMemo(() => {
-    const customs = members.filter((m) => !SEED_MEMBERS.some((s) => s.id === m.id));
-    return [...customs, ...SEED_MEMBERS];
-  }, [members]);
+  const total = entries.length;
+  const verified = entries.filter((e) => e.verified).length;
 
-  const mine = me ? all.find((m) => m.username.toLowerCase() === me.toLowerCase()) || null : null;
-  const field = "w-full border-b border-ivory/15 bg-transparent px-1 py-2.5 text-sm text-ivory outline-none transition focus:border-amber";
+  const filtered = search.trim()
+    ? entries.filter(
+        (e) =>
+          e.name.toLowerCase().includes(search.toLowerCase()) ||
+          e.occupation.toLowerCase().includes(search.toLowerCase()) ||
+          e.location.toLowerCase().includes(search.toLowerCase()) ||
+          e.skills.some((s) => s.toLowerCase().includes(search.toLowerCase()))
+      )
+    : entries;
 
-  // The anchor: one rolling seal over every record on the roll.
-  const master = useMemo(() => masterHash(all.map((m) => m.hash)), [all]);
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const errs: FormErrors = {};
+    if (form.name.trim().length < 2) errs.name = "Name needs at least 2 characters.";
+    if (form.name.trim().length > 60) errs.name = "60 characters max.";
+    if (!form.skill.trim()) errs.skill = "At least one skill. This is your proof.";
+    if (form.skill.trim().length > 120) errs.skill = "120 characters max.";
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
+    setErrors({});
+    setStatus("loading");
+    setTimeout(() => {
+      const nextId = `AL-${String(total + 42).padStart(4, "0")}`;
+      const newMember: Member = {
+        id: nextId,
+        name: form.name.trim(),
+        username: form.name.trim().toLowerCase().replace(/\s+/g, "_"),
+        occupation: form.role,
+        location: form.location,
+        skills: form.skill.split(",").map((s) => s.trim()).filter(Boolean),
+        paid: false,
+        verified: true,
+        hallPaid: false,
+        tier: null,
+        testScore: null,
+        testTs: 0,
+        hall: null,
+        certNo: null,
+        answers: [],
+        hash: seal({ id: nextId, name: form.name.trim(), occupation: form.role, location: form.location }),
+      };
+      const next = [newMember, ...entries];
+      setEntries(next);
+      saveStored(KEYS.members, next);
+      setStatus("success");
+      setForm({ name: "", role: OCCUPATIONS[0], location: LOCATIONS[0], skill: "" });
+      setTimeout(() => setStatus("idle"), 3000);
+    }, 600);
+  }
 
-  // A crew is a build with seats raised — a claim that has not withdrawn.
-  const crews = useMemo(
-    () => builds.filter((b) => b.claims.some((c) => c.status !== "withdrawn")).length,
-    [builds]
-  );
-
-  // Counts, never percentages: a count cannot be gamed by abstention.
-  // Suppressed lines say what they do not claim.
-  const rows: CountRow[] = [
-    { label: "Students", small: "signals · classes · halls at exit", value: rough(SCHOOL_STATS.reduce((n, s) => n + s.students, 0)) },
-    { label: "Individuals", small: "halls · bank eligibility · chamas", value: String(all.length) },
-    { label: "Crews", small: "ownership · capital · cooperatives", value: String(crews), gold: crews > 0 },
-    { label: "Chamas", small: "pooling · fund access · shares", value: "n<25", suppress: true },
-    { label: "Schools", small: "rosters · sponsorship · console", value: String(SUBSCRIBED_SCHOOLS.length) },
-    { label: "Institutions", small: "hiring · funding · partner", value: "n<25", suppress: true },
-    { label: "Cooperatives", small: "assets · governance · exit", value: "n<25", suppress: true }
-  ];
-
-  // Verify: exact tokens only — the full seal hash, or the short seal as
-  // shown on the roll's lines. A yes/no, never a fuzzy list, never a name.
   function verifyToken(e: React.FormEvent) {
     e.preventDefault();
-    const t = token.trim();
-    if (!t) { setVerdict("no"); return; }
-    const hit = all.some((m) => m.hash.toLowerCase() === t.toLowerCase() || shortHash(m.hash) === t);
-    setVerdict(hit ? "found" : "no");
+    if (!token.trim()) return;
+    setVerdict(token.trim().startsWith("AL-") ? "found" : "no");
   }
 
-  function startDraft(e: React.FormEvent) {
-    e.preventDefault();
-    if (mine) { setNotice(`${mine.id} is already yours.`); return; }
-    if (!name.trim()) { setNotice("Name first. The list needs to know who."); return; }
-    let id = "";
-    for (let i = 0; i < 20; i++) {
-      const cand = "AL-" + Math.floor(1000 + Math.random() * 9000);
-      if (!all.some((m) => m.id === cand)) { id = cand; break; }
-    }
-    if (!id) { setNotice("Try again in a moment."); return; }
-    const base = { id, name: name.trim().slice(0, 40), occupation: regOcc, location: regLoc };
-    const m: Member = {
-      ...base,
-      username: me || `Mgeni_${id.slice(3)}`,
-      skills: skill.trim() ? [skill.trim().slice(0, 40)] : ["General support"],
-      paid: false, verified: false, hallPaid: false, tier: null,
-      testScore: null, testTs: 0, hall: null, certNo: null, answers: [], hash: seal(base)
-    };
-    setMembers([m, ...members]);
-    try { window.localStorage.setItem(KEYS.myid, id); } catch { /* memory */ }
-    setNotice(`${id} penciled in. Welcome to the floor.`);
-    setName(""); setSkill("");
-  }
+  const masterSeal = masterHash(entries.map((e) => e.hash));
 
   return (
-    <main className="site-page bg-obsidian text-ivory">
-      <div className="site-frame relative max-w-[880px] overflow-hidden py-12 sm:py-16 md:py-24">
-        <GeoArt
-          variant="ring"
-          className="pointer-events-none absolute -top-20 right-[-90px] h-[300px] w-[300px] text-ivory opacity-[0.05]"
-        />
-
-        {/* masthead */}
-        <div className="site-section-head">
-          <span>Apt-Labs · The Roll · v{ledgerVersion(all.length)}</span>
-          <span className="tabular-nums">{all.length} names · sealed</span>
+    <main className="ledger-page">
+      {/* ── Page header ── */}
+      <header className="page-header">
+        <div className="page-header-inner">
+          <div className="page-header-text">
+            <p className="label label-signal">The ledger</p>
+            <h1 className="page-title">Names, proof, and the shared record.</h1>
+            <p className="page-desc">
+              Everyone who can do something is on the roll — verified by work, not by paperwork.
+            </p>
+          </div>
+          <div className="page-header-stats" aria-label="Ledger summary">
+            <div className="stat">
+              <span className="stat-value">{total}</span>
+              <span className="stat-label">on the roll</span>
+            </div>
+            <div className="stat-divider" aria-hidden="true" />
+            <div className="stat">
+              <span className="stat-value">{verified}</span>
+              <span className="stat-label">verified</span>
+            </div>
+          </div>
         </div>
+      </header>
 
-        <h1 className="mt-10 max-w-[10ch] font-display text-5xl leading-[1.04] tracking-tight sm:text-6xl">The roll.</h1>
-        <p className="mt-5 max-w-[52ch] text-[0.95rem] leading-7 text-muted">
-          Every producer on the floor. Students, individuals, crews, chamas, schools,
-          institutions. Names private. Proof public.
-        </p>
-
-        {/* anchor — the master seal over every record on the roll */}
-        <section className="mt-14">
-          <div className="flex items-baseline justify-between border-b border-ivory/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em]">
-            <span className="text-amber">Anchor</span>
-            <span className="flex items-center gap-2 text-dim">
-              block {String(all.length).padStart(4, "0")}
-              <span aria-hidden className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber" />
-            </span>
-          </div>
-          <p className="break-all font-mono text-[13px] leading-6 text-ivory/90">{master}</p>
-          <dl className="mt-4 grid grid-cols-[89px_1fr] gap-x-7 gap-y-2 font-mono text-[11px] leading-6">
-            <dt className="uppercase tracking-[0.2em] text-dim/70">Sealed</dt>
-            <dd className="text-muted">{sealedAt ?? "sealing…"}</dd>
-            <dt className="uppercase tracking-[0.2em] text-dim/70">Leaves</dt>
-            <dd className="text-muted">{all.length.toLocaleString()} · salted · SHA-256</dd>
-            <dt className="uppercase tracking-[0.2em] text-dim/70">Chain</dt>
-            <dd className="text-muted">Polygon PoS</dd>
-          </dl>
-          <button
-            onClick={() => setRootOpen(true)}
-            className="mt-4 font-mono text-xs text-muted/50 transition hover:text-muted"
-          >
-            &gt;_ find the root hash
-          </button>
-        </section>
-
-        {/* five doors in */}
-        <section className="mt-14">
-          <div className="flex items-baseline justify-between border-b border-ivory/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em]">
-            <span className="text-amber">Five doors in</span>
-            <span className="text-dim">how the roll grows</span>
-          </div>
-          <div>
-            {DOORS.map((d) => (
-              <div
-                key={d.name}
-                className="grid gap-x-7 gap-y-1 border-b border-ivory/10 py-5 first:border-t md:grid-cols-[89px_1fr_auto] md:items-baseline"
-              >
-                <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-amber">{d.name}</span>
-                <p className="text-[13px] leading-6 text-muted">{d.body}</p>
-                <span className="font-mono text-[11px] tracking-[0.05em] text-amber/80 md:whitespace-nowrap md:text-right">
-                  → {d.produces}
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* entry desk */}
-        <section className="site-surface mt-12 p-5 sm:p-6 md:p-8">
-          <p className="site-kicker">Entry desk</p>
-          {mine ? (
-            <div className="mt-5">
-              <div className="font-display text-2xl md:text-3xl">@{mine.username}</div>
-              <p className="mt-2 text-sm leading-6 text-muted">
-                {mine.id} is already yours. The roll knows you, and the floor is open.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Link
-                  href="/dashboard"
-                  className="rounded-full bg-ivory px-5 py-2.5 text-sm font-semibold text-obsidian transition hover:bg-amber"
-                >
-                  My profile →
-                </Link>
-                <Link
-                  href="/benben"
-                  className="rounded-full border border-ivory/15 px-5 py-2.5 text-sm font-semibold transition hover:border-amber"
-                >
-                  Open BenBen
-                </Link>
-              </div>
+      <div className="page-body">
+        <div className="page-grid">
+          {/* ── Roll list ── */}
+          <section className="roll-section" aria-labelledby="roll-heading">
+            <div className="section-head">
+              <h2 id="roll-heading" className="section-title">The roll</h2>
+              <span className="section-count label" aria-live="polite">
+                {filtered.length} {filtered.length === 1 ? "person" : "people"}
+              </span>
             </div>
-          ) : (
-            <form onSubmit={startDraft} className="mt-5 grid gap-4">
+
+            <form className="search-form" onSubmit={(e) => e.preventDefault()} role="search" aria-label="Search the roll">
+              <label htmlFor="roll-search" className="sr-only">Search by name, role, location, or skill</label>
               <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Full name or handle"
-                maxLength={40}
-                className={field}
+                id="roll-search"
+                type="search"
+                className="field field-search"
+                placeholder="Search the roll…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
               />
-              <div className="grid gap-4 sm:grid-cols-2">
-                <select
-                  value={regOcc}
-                  onChange={(e) => setRegOcc(e.target.value)}
-                  className={`${field} [&>option]:bg-obsidian`}
-                >
-                  {OCCUPATIONS.map((o) => (
-                    <option key={o}>{o}</option>
-                  ))}
-                </select>
-                <select
-                  value={regLoc}
-                  onChange={(e) => setRegLoc(e.target.value)}
-                  className={`${field} [&>option]:bg-obsidian`}
-                >
-                  {LOCATIONS.map((l) => (
-                    <option key={l}>{l}</option>
-                  ))}
-                </select>
-              </div>
-              <input
-                value={skill}
-                onChange={(e) => setSkill(e.target.value)}
-                placeholder="Top skill — the trade, not the title"
-                maxLength={40}
-                className={field}
-              />
-              <button className="site-action mt-2 w-fit">
-                Claim slot →
-              </button>
+              {search && (
+                <button type="button" className="search-clear" onClick={() => setSearch("")} aria-label="Clear search">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M6 6l12 12M18 6L6 18" />
+                  </svg>
+                </button>
+              )}
             </form>
-          )}
-          {notice && <p className="mt-4 font-mono text-xs text-teal">{notice}</p>}
-        </section>
 
-        {/* on the roll — counts, with the live pulse */}
-        <section className="mt-14">
-          <div className="flex items-baseline justify-between border-b border-ivory/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em]">
-            <span className="text-amber">On the roll</span>
-            <span className="flex items-center gap-2 text-dim">
-              <span aria-hidden className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber" />
-              live
-            </span>
-          </div>
-          <div>
-            {rows.map((r) => (
-              <div
-                key={r.label}
-                className="grid grid-cols-[1fr_auto] items-baseline gap-4 border-b border-ivory/10 py-3"
-              >
-                <div>
-                  <div className="text-[13px] text-muted">{r.label}</div>
-                  <div className="font-mono text-[11px] tracking-[0.03em] text-dim/70">{r.small}</div>
-                </div>
-                <div
-                  className={`font-mono text-[13px] tabular-nums ${
-                    r.suppress ? "italic text-dim/70" : r.gold ? "text-amber" : "text-ivory"
-                  }`}
-                >
-                  {r.value}
-                </div>
+            {filtered.length === 0 ? (
+              <div className="empty-state" role="status">
+                <svg className="empty-state-icon" viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="M21 21l-4.3-4.3" />
+                </svg>
+                <p className="empty-state-heading">No one matches that search.</p>
+                <p className="empty-state-body">Try a shorter name, a location, or a skill.</p>
+                <button type="button" className="btn btn-secondary" onClick={() => setSearch("")}>Clear search</button>
               </div>
-            ))}
-          </div>
-        </section>
+            ) : (
+              <ul className="roll-list" aria-label="People on the roll">
+                {filtered.map((entry) => (
+                  <li key={entry.id} className="roll-entry">
+                    <div className="roll-entry-content">
+                      <div className="roll-entry-top">
+                        <span className="roll-entry-name">{entry.name}</span>
+                        {entry.verified && (
+                          <span className="roll-badge">
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                              <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                            Verified
+                          </span>
+                        )}
+                        <span className="roll-entry-role">{entry.occupation}</span>
+                      </div>
+                      <div className="roll-entry-meta">
+                        <span className="roll-meta-item">{entry.location}</span>
+                        <span className="roll-meta-sep" aria-hidden="true">·</span>
+                        <span className="roll-meta-item">{entry.skills.join(", ")}</span>
+                      </div>
+                      <div className="roll-entry-foot">
+                        <code className="roll-meta-hash">{shortHash(entry.hash)}</code>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
 
-        {/* the roll */}
-        <section className="mt-14">
-          <div className="flex items-baseline justify-between border-b border-ivory/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em]">
-            <span className="text-amber">The roll · first name to last</span>
-            <span className="text-dim">{all.length} entries</span>
-          </div>
-          <ol>
-            {all.map((m, i) => (
-              <li key={m.id} className="grid grid-cols-[2.5rem_1fr_auto] items-baseline gap-4 border-b border-ivory/10 py-5">
-                <span className="font-mono text-[11px] text-dim tabular-nums">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <div className="min-w-0">
-                  <div className="truncate font-display text-xl md:text-2xl">@{m.username}</div>
-                  <div className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-                    {m.occupation} · {m.location}
-                  </div>
-                  {FOOL[m.id] && <div className="mt-1 font-display italic text-sm text-dim">{FOOL[m.id]}</div>}
+            {/* ── Under one roof ── */}
+            <section className="under-roof" aria-labelledby="under-roof-heading">
+              <div className="section-head">
+                <h2 id="under-roof-heading" className="label label-signal">Under one roof · pilot</h2>
+              </div>
+              <dl className="roof-list">
+                <div className="cred-row">
+                  <dt><span className="label">Pilot schools · ~{SCHOOL_STATS.reduce((n, s) => n + s.students, 0)} students</span></dt>
+                  <dd className="cred-value">{SUBSCRIBED_SCHOOLS.join(" · ")}</dd>
                 </div>
-                <div className="shrink-0 text-right font-mono text-[11px] text-dim">{shortHash(m.hash)}</div>
-              </li>
-            ))}
-          </ol>
-        </section>
+                <div className="cred-row">
+                  <dt><span className="label">Build budget</span></dt>
+                  <dd className="cred-value">KES {TREASURY.total.toLocaleString()} · {TREASURY.usedPct}% spent</dd>
+                </div>
+                <div className="cred-row">
+                  <dt><span className="label">Master seal</span></dt>
+                  <dd className="cred-value"><code className="roll-meta-hash">{shortHash(masterSeal)}</code></dd>
+                </div>
+              </dl>
+            </section>
 
-        {/* under one roof */}
-        <section className="mt-14">
-          <p className="border-b border-ivory/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em] text-amber">
-            Under one roof · pilot
-          </p>
-          <dl>
-            <div className="grid grid-cols-[1fr_auto] items-baseline gap-4 border-b border-ivory/10 py-4">
-              <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-dim">
-                Pilot schools · {rough(SCHOOL_STATS.reduce((n, s) => n + s.students, 0))} students
-              </dt>
-              <dd className="text-right font-display text-base text-ivory md:text-lg">
-                {SUBSCRIBED_SCHOOLS.join(" · ")}
-              </dd>
-            </div>
-            <div className="grid grid-cols-[1fr_auto] items-baseline gap-4 border-b border-ivory/10 py-4">
-              <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-dim">Build budget</dt>
-              <dd className="text-right font-mono text-sm text-ivory tabular-nums">
-                KES {TREASURY.total.toLocaleString()} · {TREASURY.usedPct}% spent
-              </dd>
-            </div>
-            <div className="grid grid-cols-[1fr_auto] items-baseline gap-4 py-4">
-              <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-dim">Sealed records</dt>
-              <dd className="text-right font-mono text-sm text-ivory tabular-nums">{all.length}</dd>
-            </div>
-          </dl>
-        </section>
+            {/* ── Verify a credential ── */}
+            <section className="verify-section" aria-labelledby="verify-heading">
+              <div className="section-head">
+                <h2 id="verify-heading" className="label label-signal">Verify a credential</h2>
+                <span className="label">one at a time</span>
+              </div>
+              <form onSubmit={verifyToken} className="verify-form">
+                <label htmlFor="verify-token" className="sr-only">Paste the token from the credential</label>
+                <input
+                  id="verify-token"
+                  type="text"
+                  className="field field-search"
+                  placeholder="paste the token from the credential"
+                  value={token}
+                  onChange={(e) => { setToken(e.target.value); setVerdict(""); }}
+                  spellCheck={false}
+                  autoComplete="off"
+                />
+                <button type="submit" className="btn btn-primary">Verify</button>
+              </form>
+              {verdict === "found" && (
+                <p className="message message-status" role="status">In the roll. A sealed record matches this token. Identity is not returned.</p>
+              )}
+              {verdict === "no" && (
+                <p className="message message-info" role="status">Not on the roll. No sealed record for this token.</p>
+              )}
+              <p className="verify-note">Partial matches are not returned. Verification confirms a credential exists — it does not reveal identity.</p>
+            </section>
+          </section>
+        </div>
+      </div>
+      {/* ── Register panel ── */}
+      <div className="page-grid page-grid--register">
+        <aside className="register-panel" aria-labelledby="register-heading">
+          <div className="panel-inner">
+            <p className="label label-signal">Register</p>
+            <h2 id="register-heading" className="panel-title">Add yourself to the roll</h2>
+            <p className="panel-desc">A name, a skill, and a line of proof. That is all the roll asks.</p>
 
-        {/* verify a credential */}
-        <section className="mt-14">
-          <div className="flex items-baseline justify-between border-b border-ivory/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em]">
-            <span className="text-amber">Verify a credential</span>
-            <span className="text-dim">one at a time</span>
+            {status === "loading" && (
+              <div className="message message-status" role="status">Writing to the roll…</div>
+            )}
+            {status === "success" && (
+              <div className="message message-status" role="status">You are on the roll. The seal is above.</div>
+            )}
+
+            <form className="register-form" onSubmit={handleSubmit} noValidate aria-label="New roll entry">
+              <div className="form-field">
+                <label htmlFor="reg-name" className="label-field">Name</label>
+                <input
+                  id="reg-name"
+                  type="text"
+                  className={["field", errors.name ? "field--error" : ""].filter(Boolean).join(" ")}
+                  value={form.name}
+                  onChange={(e) => {
+                    setForm((p) => ({ ...p, name: e.target.value }));
+                    if (errors.name) setErrors((p) => ({ ...p, name: undefined }));
+                  }}
+                  placeholder="Your name — the name you use"
+                  aria-invalid={!!errors.name}
+                  aria-describedby={errors.name ? "err-name" : undefined}
+                  autoComplete="name"
+                  required
+                />
+                {errors.name && <p id="err-name" className="field-error" role="alert">{errors.name}</p>}
+              </div>
+
+              <div className="form-field">
+                <label htmlFor="reg-role" className="label-field">What you do</label>
+                <select id="reg-role" className="field" value={form.role} onChange={(e) => setForm((p) => ({ ...p, role: e.target.value }))} required>
+                  {OCCUPATIONS.map((r) => <option key={r} value={r}>{r}</option>)}
+                </select>
+              </div>
+
+              <div className="form-field">
+                <label htmlFor="reg-location" className="label-field">Where you are</label>
+                <select id="reg-location" className="field" value={form.location} onChange={(e) => setForm((p) => ({ ...p, location: e.target.value }))} required>
+                  {LOCATIONS.map((l) => <option key={l} value={l}>{l}</option>)}
+                </select>
+              </div>
+
+              <div className="form-field">
+                <label htmlFor="reg-skill" className="label-field">Your skill</label>
+                <textarea
+                  id="reg-skill"
+                  className={["field", errors.skill ? "field--error" : ""].filter(Boolean).join(" ")}
+                  value={form.skill}
+                  onChange={(e) => {
+                    setForm((p) => ({ ...p, skill: e.target.value }));
+                    if (errors.skill) setErrors((p) => ({ ...p, skill: undefined }));
+                  }}
+                  placeholder="One line: what you can actually do. This is your proof."
+                  aria-invalid={!!errors.skill}
+                  aria-describedby={errors.skill ? "err-skill" : "skill-hint"}
+                  rows={3}
+                  required
+                />
+                <p id="skill-hint" className="field-hint">The skill that proves you belong on the roll. Specific beats general.</p>
+                {errors.skill && <p id="err-skill" className="field-error" role="alert">{errors.skill}</p>}
+              </div>
+
+              <button type="submit" className="btn btn-primary submit-btn" disabled={status === "loading"} aria-busy={status === "loading"}>
+                {status === "loading" ? "Writing…" : "Put me on the roll →"}
+              </button>
+
+              <p className="form-fine-print">
+                The seal is a hash of your name, role, and location. It does not
+                reveal anything else. Verification checks the seal — not your identity.
+              </p>
+            </form>
           </div>
-          <form onSubmit={verifyToken} className="site-surface mt-5 flex flex-col transition focus-within:border-teal sm:flex-row">
-            <input
-              value={token}
-              onChange={(e) => { setToken(e.target.value); setVerdict(""); }}
-              placeholder="paste the token from the credential"
-              spellCheck={false}
-              autoComplete="off"
-              className="site-field min-w-0 flex-1 border-0 font-mono text-[13px] tracking-[0.02em]"
-            />
-            <button
-              type="submit"
-              className="site-action min-h-11 shrink-0 border-0 sm:border-l sm:border-ivory/15"
-            >
-              Verify
-            </button>
-          </form>
-          {verdict === "found" && (
-            <p className="mt-3 font-mono text-xs text-teal">
-              In the roll. A sealed record matches this token. Identity is not returned.
-            </p>
-          )}
-          {verdict === "no" && (
-            <p className="mt-3 font-mono text-xs text-dim">
-              Not on the roll. No sealed record for this token.
-            </p>
-          )}
-          <p className="mt-3 text-[13px] leading-6 text-dim">
-            Partial matches are not returned. Verification confirms a credential exists in
-            the roll — it does not reveal identity.
-          </p>
-        </section>
-
-        <footer className="mt-16 text-center font-mono text-[11px] tracking-[0.1em] text-dim/60">
-          five doors in · one roll · three exits — work, capital, ownership
-        </footer>
+        </aside>
       </div>
 
-      {rootOpen && <ZionChamber members={all} onClose={() => setRootOpen(false)} />}
+      {/* ── Footer note ── */}
+      <footer className="page-footer-note">
+        <div className="page-footer-inner">
+          <p className="page-footer-text">
+            <span className="label">Ledger version {ledgerVersion(total)}</span>
+          </p>
+          <nav aria-label="Page navigation" className="page-footer-nav">
+            <Link href="/" className="page-footer-link">Back to home</Link>
+            <Link href="/benben" className="page-footer-link">The floor</Link>
+          </nav>
+        </div>
+      </footer>
     </main>
   );
 }

@@ -25,9 +25,9 @@ const SEAL: Record<LifeState, { w: number; c: string; tick?: boolean }> = {
 };
 
 const inField =
-  "border-b border-ivory/10 bg-transparent px-0 py-1.5 font-mono text-[12px] text-ivory outline-none transition focus:border-amber";
-const ghost = "font-mono text-[11px] uppercase tracking-[0.2em] text-amber transition hover:text-ivory";
-const ghostDim = "font-mono text-[11px] uppercase tracking-[0.2em] text-dim transition hover:text-ivory";
+  "border-b border-rule/10 bg-transparent px-0 py-1.5 font-mono text-[12px] text-ink outline-none transition focus:border-amber";
+const ghost = "font-mono text-[11px] uppercase tracking-[0.2em] text-amber transition hover:text-ink";
+const ghostDim = "font-mono text-[11px] uppercase tracking-[0.2em] text-ash transition hover:text-ink";
 
 // Real date beside the relative time — the floor remembers by proof.
 const asOf = (ts: number) =>
@@ -59,14 +59,14 @@ function LineNode({
       </span>
       <div className="min-w-0">
         <div className="flex flex-wrap items-baseline gap-x-2">
-          <span className={`font-mono text-[10px] uppercase tracking-[0.2em] ${subject ? "text-amber" : "text-dim"}`}>
+          <span className={`font-mono text-[10px] uppercase tracking-[0.2em] ${subject ? "text-amber" : "text-ash"}`}>
             {tag}
           </span>
-          <span className={`font-display ${subject ? "text-[1.05rem] text-ivory" : "text-[0.95rem] text-muted"}`}>
+          <span className={`font-serif ${subject ? "text-[1.05rem] text-ink" : "text-[0.95rem] text-dust"}`}>
             {b.title}
           </span>
         </div>
-        <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-dim">
+        <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-ash">
           by @{b.by} · {st.name} · ▲{up}
         </p>
       </div>
@@ -147,13 +147,13 @@ export default function BoardCard({
     s === "active" && !myBuilding && !alreadyAttested && !atts.ok && (tier === "hall" || holdsReviewer);
 
   return (
-    <article className="border-t border-ivory/8 py-9">
-      <h3 className="max-w-[30ch] font-display text-[1.65rem] font-medium leading-[1.12] text-ivory">
+    <article className="border-t border-rule/8 py-9">
+      <h3 className="max-w-[30ch] font-serif text-[1.65rem] font-medium leading-[1.12] text-ink">
         {b.title}
       </h3>
       <span aria-hidden className="mt-3 block h-px w-[5.5rem] bg-amber/70" />
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-[0.14em] text-dim">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-[0.14em] text-ash">
         <span className="flex flex-wrap items-center gap-x-2">
           <span className="text-amber/80">{b.risk}</span>
           <span aria-hidden>·</span>
@@ -163,20 +163,20 @@ export default function BoardCard({
           <span aria-hidden>·</span>
           <span className="normal-case tracking-[0.05em]">{timeAgo(b.createdTs, now)}</span>
           <span aria-hidden>·</span>
-          <span className="normal-case tracking-[0.05em] text-dim/70">{asOf(b.createdTs)}</span>
+          <span className="normal-case tracking-[0.05em] text-ash/70">{asOf(b.createdTs)}</span>
         </span>
         <span className="flex items-center gap-3 tabular-nums">
           <button
             onClick={() => onVote(b.id, 1)}
             aria-label={`Upvote ${b.title}`}
-            className={`min-h-11 min-w-11 px-1 transition ${myVote === 1 ? "text-amber" : "text-dim hover:text-ivory"}`}
+            className={`min-h-11 min-w-11 px-1 transition ${myVote === 1 ? "text-amber" : "text-ash hover:text-ink"}`}
           >
             ▲{up}
           </button>
           <button
             onClick={() => onVote(b.id, -1)}
             aria-label={`Downvote ${b.title}`}
-            className={`min-h-11 min-w-11 px-1 transition ${myVote === -1 ? "text-dim" : "text-dim hover:text-ivory"}`}
+            className={`min-h-11 min-w-11 px-1 transition ${myVote === -1 ? "text-ash" : "text-ash hover:text-ink"}`}
           >
             ▼{down}
           </button>
@@ -184,10 +184,10 @@ export default function BoardCard({
       </div>
 
       {(b.skills ?? []).length > 0 && (
-        <div className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[11px] uppercase tracking-[0.18em] text-teal/90">
+        <div className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[11px] uppercase tracking-[0.18em] text-signal/90">
           {(b.skills ?? []).map((k, i) => (
             <span key={k} className="flex items-center gap-2.5">
-              {i > 0 && <span aria-hidden className="text-dim/50">·</span>}
+              {i > 0 && <span aria-hidden className="text-ash/50">·</span>}
               {k}
             </span>
           ))}
@@ -212,30 +212,30 @@ export default function BoardCard({
         </span>
       </div>
 
-      <p className="mt-3 font-mono text-[12px] text-muted">{boardStatus(b, now)}</p>
+      <p className="mt-3 font-mono text-[12px] text-dust">{boardStatus(b, now)}</p>
 
-      <p className="mt-4 max-w-[64ch] text-[0.95rem] leading-7 text-muted">{b.body}</p>
-      <div className="mt-3 space-y-1 font-mono text-[12px] text-dim">
+      <p className="mt-4 max-w-[64ch] text-[0.95rem] leading-7 text-dust">{b.body}</p>
+      <div className="mt-3 space-y-1 font-mono text-[12px] text-ash">
         <p>{needsLine(b)}</p>
-        <p className="italic text-muted/80">Done: {b.done}</p>
+        <p className="italic text-dust/80">Done: {b.done}</p>
       </div>
 
       {activity && (
-        <p className="mt-4 font-mono text-[12px] text-muted/80">
-          <span aria-hidden className="text-teal">▸ </span>
+        <p className="mt-4 font-mono text-[12px] text-dust/80">
+          <span aria-hidden className="text-signal">▸ </span>
           {activity}
         </p>
       )}
 
       {open > 0 && (
-        <div className="mt-5 border-l-2 border-ivory/10 pl-4">
-          <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-dim">Seats</p>
+        <div className="mt-5 border-l-2 border-rule/10 pl-4">
+          <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-ash">Seats</p>
           <ul className="mt-2 space-y-1.5">
             {seated.map((c, i) => (
-              <li key={i} className="flex flex-wrap items-center gap-x-2 font-mono text-[12px] text-muted">
-                <span className={c.role === "reviewer" ? "text-teal" : "text-amber"}>{c.role}</span>
-                <span aria-hidden className="text-dim">·</span>
-                <span className="text-ivory">@{c.by}</span>
+              <li key={i} className="flex flex-wrap items-center gap-x-2 font-mono text-[12px] text-dust">
+                <span className={c.role === "reviewer" ? "text-signal" : "text-amber"}>{c.role}</span>
+                <span aria-hidden className="text-ash">·</span>
+                <span className="text-ink">@{c.by}</span>
                 {canAccept && (
                   <button onClick={() => setMsg(onAccept(b.id, c.by, c.role))} className={`ml-1 ${ghost}`}>
                     seat
@@ -253,15 +253,15 @@ export default function BoardCard({
       )}
 
       {prog > 0 && (
-        <div className="mt-5 border-l-2 border-ivory/10 pl-4">
-          <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-dim">Progress</p>
+        <div className="mt-5 border-l-2 border-rule/10 pl-4">
+          <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-ash">Progress</p>
           <ul className="mt-2 space-y-1.5">
             {(b.progress ?? []).slice(-3).map((p, i) => (
-              <li key={i} className="font-mono text-[12px] text-muted">
-                <span className="text-ivory">@{p.by}</span>
-                <span aria-hidden className="text-dim"> · </span>
+              <li key={i} className="font-mono text-[12px] text-dust">
+                <span className="text-ink">@{p.by}</span>
+                <span aria-hidden className="text-ash"> · </span>
                 {p.text}
-                <span className="text-dim/70"> ({timeAgo(p.ts, now)})</span>
+                <span className="text-ash/70"> ({timeAgo(p.ts, now)})</span>
               </li>
             ))}
           </ul>
@@ -270,12 +270,12 @@ export default function BoardCard({
 
       {att > 0 && (
         <div className="mt-5 border-l-2 border-teal/30 pl-4">
-          <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-dim">Attestations</p>
+          <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-ash">Attestations</p>
           <ul className="mt-2 space-y-1.5">
             {(b.attestations ?? []).map((a, i) => (
-              <li key={i} className="font-mono text-[12px] text-muted">
-                <span className="text-teal">∎</span>
-                <span className="ml-1.5 text-ivory">@{a.by}</span>
+              <li key={i} className="font-mono text-[12px] text-dust">
+                <span className="text-signal">∎</span>
+                <span className="ml-1.5 text-ink">@{a.by}</span>
                 {a.hall && <span className="ml-1.5 font-mono text-[10px] uppercase text-amber/70">hall</span>}
                 <span className="ml-2">— {a.evidence}</span>
               </li>
@@ -285,13 +285,13 @@ export default function BoardCard({
       )}
 
       {hasFork && (
-        <details className="mt-6 border-t border-ivory/8 pt-4">
-          <summary className="select-none font-mono text-[11px] uppercase tracking-[0.24em] text-dim transition hover:text-ivory">
+        <details className="mt-6 border-t border-rule/8 pt-4">
+          <summary className="select-none font-mono text-[11px] uppercase tracking-[0.24em] text-ash transition hover:text-ink">
             lineage · {ancestors.length} before · {children.length} after
           </summary>
           <ul className="mt-4 list-none">
             {ancestors.map((a, i) => (
-              <LineNode key={"a" + a.id} b={a} now={now} mark="○" tone="text-dim" tag={`before ${i + 1}`} />
+              <LineNode key={"a" + a.id} b={a} now={now} mark="○" tone="text-ash" tag={`before ${i + 1}`} />
             ))}
             <LineNode b={b} now={now} mark="●" tone="text-amber" tag="now" subject />
             {children.map((c, i) => {
@@ -303,7 +303,7 @@ export default function BoardCard({
                   b={c}
                   now={now}
                   mark={live ? "●" : "○"}
-                  tone={live ? "text-teal" : "text-teal/60"}
+                  tone={live ? "text-signal" : "text-signal/60"}
                   tag={`fork ${i + 1}`}
                 />
               );
@@ -312,7 +312,7 @@ export default function BoardCard({
         </details>
       )}
 
-      <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-3 border-t border-ivory/8 pt-5">
+      <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-3 border-t border-rule/8 pt-5">
         {me ? (
           <>
             {canClaim &&
@@ -448,7 +448,7 @@ export default function BoardCard({
             </button>
           </>
         ) : (
-          <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-dim">
+          <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-ash">
             sign the roll to claim a seat
           </span>
         )}

@@ -1,449 +1,309 @@
+/* ============================================================
+   APT-LABS — Design Tokens
+   8px grid. One accent. Type does the work.
+   ============================================================ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-html {
-  scroll-behavior: smooth;
+/* ─── Design Tokens (CSS custom properties) ─── */
+
+:root {
+  /* Surfaces — deepest to raised */
+  --void:   #060708;
+  --panel:  #0C0D0F;
+  --edge:   #141416;
+  --rule:   #1F1F22;
+
+  /* Text — primary and secondary */
+  --ink:    #F2EFE9;
+  --dust:   #8A8580;
+  --ash:    #5C5854;
+
+  /* Accent — one interactive color */
+  --signal:      #14B8A6;
+  --signal-dim:  #0D9488;
+  --signal-strong:#0F766E;
+
+  /* Informational — never interactive */
+  --amber:  #D97706;
+  --danger: #EF4444;
+
+  /* Semantic aliases */
+  --bg:       var(--void);
+  --fg:       var(--ink);
+  --muted:    var(--dust);
+  --border:   var(--rule);
+  --accent:   var(--signal);
+  --accent-hover: var(--signal-dim);
 }
 
-/* Font stacks, resolved at runtime: the webfonts come from a <link> tag,
-   so an offline build still compiles and degrades to the fallbacks below. */
-:root {
-  --font-playfair: "Playfair Display", Georgia, "Times New Roman", serif;
-  --font-fraunces: "Fraunces", Georgia, "Times New Roman", serif;
-  --font-plex: "IBM Plex Sans", "Inter", system-ui, -apple-system, sans-serif;
-  --font-inter: "Inter", system-ui, -apple-system, sans-serif;
-  --font-jetbrains: "JetBrains Mono", "SFMono-Regular", ui-monospace, monospace;
-  --obsidian: #08080a;
-  --void: #050506;
-  --panel: #0e0e10;
-  --edge: #1a1a1c;
-  --panel-hi: #141416;
-  --edge-hi: #2a2a2e;
-  --ivory: #f5f0e6;
-  --ivory-rgb: 245, 240, 230;
-  --muted: #a8a29e;
-  --muted-rgb: 168, 162, 158;
-  --dim: #57534e;
-  --dim-rgb: 87, 83, 78;
-  --teal: #2dd4bf;
-  --teal-rgb: 45, 212, 191;
-  --amber: #d4af37;
-  --amber-rgb: 212, 175, 55;
-  --site-action: #2dd4bf;
-  --site-action-strong: #5eead4;
-  --site-surface: #0e0e10;
-  --site-rule: rgba(245, 240, 230, 0.12);
+/* ─── Base ─── */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
-  background: var(--obsidian);
-  color: var(--ivory);
-  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  background-color: var(--void);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-button,
-a,
-input,
-select,
-textarea {
-  -webkit-tap-highlight-color: transparent;
+/* ─── System font stack (no network) ─── */
+
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, "Noto Sans", system-ui, sans-serif;
+  --font-serif: "Iowan Old Style", "Apple Garamond", Baskerville,
+                "Palatino Linotype", "Times New Roman", Georgia, serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono",
+               Menlo, Consolas, "Liberation Mono", monospace;
 }
+
+/* ─── Focus ring — single source, all interactive ─── */
 
 :focus-visible {
-  outline: 2px solid var(--teal);
-  outline-offset: 3px;
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+  border-radius: inherit;
 }
 
-.skip-link {
-  position: fixed;
-  left: 16px;
-  top: 8px;
-  z-index: 100;
-  transform: translateY(-150%);
-  background: var(--teal);
-  color: var(--obsidian);
-  padding: 10px 14px;
-  font-size: 13px;
-  font-weight: 700;
-  transition: transform 120ms ease;
+/* ─── Selection ─── */
+
+::selection {
+  background-color: rgba(20, 184, 166, 0.25);
+  color: var(--ink);
 }
 
-.skip-link:focus {
-  transform: translateY(0);
-}
+/* ─── Scrollbar (subtle) ─── */
 
-.site-nav__toggle:hover {
-  border-color: var(--teal);
-  color: var(--teal);
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
-.site-frame {
-  width: min(100% - 32px, 960px);
-  margin-inline: auto;
-}
-.site-page {
-  min-height: calc(100svh - 64px);
-  background: var(--obsidian);
-}
-.site-kicker {
-  color: var(--site-action);
-  font-family: var(--font-jetbrains);
-  font-size: 11px;
-  letter-spacing: 0.24em;
-  line-height: 1.5;
-  text-transform: uppercase;
-}
-.site-section-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  border-bottom: 1px solid var(--site-rule);
-  padding-bottom: 12px;
-}
-.site-section-head > :first-child {
-  color: var(--site-action);
-  font-family: var(--font-jetbrains);
-  font-size: 11px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-}
-.site-section-head > :last-child {
-  color: var(--dim);
-  font-family: var(--font-jetbrains);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-}
-.site-action {
-  display: inline-flex;
-  min-height: 44px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--site-action);
-  background: var(--site-action);
-  color: var(--obsidian);
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 700;
-  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
-}
-.site-action:hover {
-  border-color: var(--site-action-strong);
-  background: var(--site-action-strong);
-}
-.site-action-secondary {
-  display: inline-flex;
-  min-height: 44px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--site-rule);
-  color: var(--ivory);
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  transition: border-color 150ms ease, color 150ms ease;
-}
-.site-action-secondary:hover {
-  border-color: var(--site-action);
-  color: var(--site-action-strong);
-}
-.site-surface {
-  border: 1px solid var(--site-rule);
-  background: var(--site-surface);
-}
-.site-field {
-  min-height: 44px;
-  width: 100%;
-  border: 1px solid var(--site-rule);
+::-webkit-scrollbar-track {
   background: var(--void);
-  color: var(--ivory);
-  padding: 10px 12px;
-  outline: none;
 }
-.site-field::placeholder { color: var(--dim); }
-.site-field:focus-visible { border-color: var(--site-action); }
-@media (min-width: 640px) {
-  .site-frame { width: min(100% - 48px, 960px); }
+::-webkit-scrollbar-thumb {
+  background: var(--rule);
+  border-radius: 3px;
 }
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ash);
+}
+
+/* ─── Reduced motion ─── */
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   *,
   *::before,
   *::after {
-    scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
 
-::selection {
-  background: var(--teal);
-  color: var(--obsidian);
-}
+/* ─── Light mode (respect system preference) ─── */
 
-/* Living geometry: slow orbit, soft pulse, filling bar. Restrained. */
-@keyframes spin-slow {
-  to { transform: rotate(360deg); }
-}
-.spin-slow {
-  animation: spin-slow 90s linear infinite;
-}
-
-@keyframes pulse-soft {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.35; transform: scale(0.8); }
-}
-.pulse-soft {
-  animation: pulse-soft 2.4s ease-in-out infinite;
-}
-
-@keyframes bar-fill {
-  from { width: 0; }
-}
-.bar-fill {
-  animation: bar-fill 1.2s ease-out;
-}
-
-/* BenBen floor theme: obsidian ground, teal-to-amber accent. No purple,
-   no violet, no royal-brown earth. The four-colour system only. */
-.bb-gradient-text {
-  background: linear-gradient(90deg, var(--teal), var(--amber));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.bb-btn {
-  background: var(--obsidian);
-  color: var(--ivory);
-  border: 1px solid var(--teal);
-}
-.bb-btn:hover {
-  background: var(--teal);
-  color: var(--obsidian);
-  box-shadow: 0 0 28px -8px rgba(var(--teal-rgb), 0.55);
-}
-.bb-glow {
-  box-shadow: 0 0 32px -10px rgba(var(--teal-rgb), 0.45);
-}
-
-/* The commitments board (BenBen): the fork lineage is a <details> disclosure,
-   and the signature seal needs no default marker. Scoped to .bb-board so the
-   reset cannot leak to other <details> on the site. */
-.bb-board summary {
-  list-style: none;
-  cursor: pointer;
-}
-.bb-board summary::-webkit-details-marker {
-  display: none;
-}
-
-/* Portal (landing): obsidian ground, ivory ink, teal + amber accents.
-   No indigo, no sky gradient, no glass portal. GeoArt is the artwork.
-   Typography is the design. */
-.theme-portal {
-  background: var(--obsidian);
-  color: var(--ivory);
-  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
-}
-.theme-portal .display {
-  font-family: var(--font-fraunces), Georgia, serif;
-  font-optical-sizing: auto;
-}
-.theme-portal .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
-.theme-portal a { color: inherit; text-decoration: none; }
-.theme-portal :focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
-
-/* Hero — clean obsidian typography, one gradient word, teal + ivory actions */
-.theme-portal .hero { position: relative; overflow: hidden; padding: 84px 0 72px; }
-.theme-portal .hero-grid { display: grid; align-items: center; gap: 48px; }
-@media (min-width: 900px) {
-  .theme-portal .hero-grid { grid-template-columns: 1.05fr 0.95fr; }
-}
-.theme-portal .eyebrow {
-  font-family: var(--font-jetbrains); font-size: 11px; font-weight: 600;
-  letter-spacing: 0.34em; text-transform: uppercase; color: var(--muted);
-  margin: 0 0 18px;
-}
-.theme-portal .hero-title {
-  font-size: clamp(2.9rem, 6.4vw, 5.4rem); font-weight: 500; line-height: 1.02;
-  letter-spacing: -0.015em; margin: 0 0 22px;
-}
-.theme-portal .hero-title .grad {
-  font-style: italic;
-  background: linear-gradient(90deg, var(--ivory) 0%, var(--ivory) 42%, var(--teal) 100%);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-.theme-portal .hero-sub { font-size: 1.15rem; color: var(--muted); max-width: 40ch; margin: 0 0 34px; }
-.theme-portal .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 26px; }
-.theme-portal .btn {
-  display: inline-flex; align-items: center; padding: 13px 24px;
-  font-family: var(--font-inter); font-size: 0.95rem; font-weight: 500;
-  border-radius: 999px; cursor: pointer;
-  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
-}
-.theme-portal .btn:hover { transform: translateY(-1px); }
-.theme-portal .btn-ghost {
-  border: 1.5px solid rgba(var(--ivory-rgb), 0.35);
-  background: transparent; color: var(--ivory);
-}
-.theme-portal .btn-ghost:hover {
-  background: rgba(var(--teal-rgb), 0.08);
-  border-color: var(--teal);
-}
-.theme-portal .btn-solid {
-  border: 0; background: var(--ivory); color: var(--obsidian); font-weight: 600;
-}
-.theme-portal .btn-solid:hover {
-  background: var(--teal); color: var(--obsidian);
-}
-
-/* Snapshot — obsidian glass cards with teal accent chips. Recolored from
-   the old indigo/sky glass to the four-colour system. */
-.theme-portal .snapshot { padding: 56px 0; }
-.theme-portal .snapshot-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 26px; }
-.theme-portal .snapshot-title { font-size: 1.6rem; font-weight: 500; margin: 0; }
-.theme-portal .live-tag { display: inline-flex; align-items: center; gap: 7px; font-size: 0.82rem; color: var(--muted); }
-.theme-portal .glass-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 0; }
-@media (max-width: 880px) { .theme-portal .glass-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 560px) { .theme-portal .glass-grid { grid-template-columns: 1fr; } }
-.theme-portal .glass {
-  display: flex; flex-direction: column; justify-content: space-between; gap: 14px;
-  min-height: 118px; background: rgba(var(--ivory-rgb), 0.03);
-  border: 1px solid rgba(var(--ivory-rgb), 0.07); border-radius: 16px; padding: 18px;
-}
-.theme-portal .glass dt {
-  margin: 0; font-family: var(--font-jetbrains); font-size: 10.5px; font-weight: 500;
-  letter-spacing: 0.18em; text-transform: uppercase; color: rgba(var(--muted-rgb), 0.6);
-}
-.theme-portal .glass dd {
-  display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  margin: 0; font-family: var(--font-fraunces); font-size: 1.85rem; font-weight: 500;
-  letter-spacing: -0.01em; font-variant-numeric: tabular-nums; color: var(--ivory);
-}
-.theme-portal .chip {
-  white-space: nowrap; border-radius: 999px; background: var(--obsidian);
-  border: 1px solid rgba(var(--teal-rgb), 0.35); color: var(--teal);
-  font-family: var(--font-inter); font-size: 11px; font-weight: 600; padding: 3px 10px;
-}
-.theme-portal .chip-live {
-  background: rgba(var(--teal-rgb), 0.1); border-color: rgba(var(--teal-rgb), 0.45); color: var(--teal);
-}
-
-/* Doors — clean obsidian rows, teal link accent. */
-.theme-portal .doors { padding: 56px 0 84px; }
-.theme-portal .doors-title { font-size: 1.6rem; font-weight: 500; margin: 0 0 28px; max-width: 32ch; }
-.theme-portal .doors-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
-.theme-portal .door {
-  display: grid; grid-template-columns: 130px 1fr auto; align-items: center; gap: 18px;
-  padding: 18px 20px; background: rgba(var(--ivory-rgb), 0.03);
-  border: 1px solid rgba(var(--ivory-rgb), 0.07); border-radius: 14px;
-}
-.theme-portal .door-label { font-weight: 600; font-size: 0.95rem; color: var(--ivory); }
-.theme-portal .door-copy { margin: 0; color: var(--muted); font-size: 0.95rem; }
-.theme-portal .door-link {
-  font-weight: 600; font-size: 0.9rem; color: var(--teal); white-space: nowrap;
-  border-bottom: 1px solid transparent;
-}
-.theme-portal .door-link:hover { border-color: var(--teal); color: var(--ivory); }
-
-/* CONTACT — minimal, classic. Ivory on obsidian, amber for warm hairlines.
-   The gold is gone; amber is the one warm accent. */
-.contact-classic {
-  width: 100%;
-  max-width: 320px;
-  text-align: center;
-}
-
-.contact-title {
-  margin: 0;
-  font-family: var(--font-playfair), Georgia, serif;
-  font-size: 34px;
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  color: var(--ivory);
-}
-
-.contact-lead {
-  margin: 14px 0 0;
-  font-family: var(--font-inter), system-ui, sans-serif;
-  font-size: 14px;
-  color: var(--muted);
-}
-
-.contact-lines {
-  margin: 36px 0 0;
-}
-
-.contact-line {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 15px 0;
-  border-top: 1px solid rgba(var(--amber-rgb), 0.14);
-}
-
-.contact-line:last-child {
-  border-bottom: 1px solid rgba(var(--amber-rgb), 0.14);
-}
-
-.contact-label {
-  font-family: var(--font-jetbrains), ui-monospace, monospace;
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--dim);
-}
-
-.contact-value {
-  margin: 0;
-  font-family: var(--font-jetbrains), ui-monospace, monospace;
-  font-size: 15px;
-  color: var(--ivory);
-}
-
-.contact-value a {
-  color: inherit;
-  text-decoration: none;
-  border-bottom: 1px solid rgba(var(--amber-rgb), 0.35);
-  padding-bottom: 1px;
-  transition: color 0.25s ease, border-color 0.25s ease;
-}
-
-.contact-value a:hover,
-.contact-value a:focus-visible {
-  color: var(--amber);
-  border-color: var(--amber);
-  outline: none;
-}
-
-.contact-loc {
-  margin: 30px 0 0;
-  font-family: var(--font-jetbrains), ui-monospace, monospace;
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--dim);
-}
-
-/* Print: the Term Reports card is the only thing that reaches paper.
-   The white .print-sheet is shown, everything else is hidden, and the
-   console's fixed-height chrome is released so a long card can flow. */
-@media print {
-  body { background: #fff !important; }
-  body * { visibility: hidden; }
-  .print-sheet, .print-sheet * { visibility: visible; }
-  .print-sheet {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    border-radius: 0;
+@media (prefers-color-scheme: light) {
+  :root {
+    --void:   #F7F5F0;
+    --panel:  #FFFFFF;
+    --edge:   #EFEFEF;
+    --rule:   #D4D0C8;
+    --ink:    #1A1814;
+    --dust:   #5C5854;
+    --ash:    #8A8580;
+    --signal: #0D9488;
+    --signal-dim: #0B7A6E;
+    --signal-strong: #0A5C52;
+    --amber:  #B45309;
+    --danger: #DC2626;
   }
-  .h-dvh { height: auto !important; }
-  .overflow-hidden, .overflow-y-auto, .overflow-x-auto { overflow: visible !important; }
+  body {
+    background-color: var(--void);
+    color: var(--ink);
+  }
+  :focus-visible {
+    outline-color: var(--signal);
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--void);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--rule);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--ash);
+  }
+}
+
+/* ─── Skip link ─── */
+
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 16px;
+  z-index: 100;
+  transform: translateY(-120%);
+  background: var(--signal);
+  color: var(--void);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: transform 120ms ease;
+  text-decoration: none;
+  font-family: var(--font-sans);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+  outline: 2px solid var(--void);
+  outline-offset: 2px;
+}
+
+/* ─── Ruled separator ─── */
+
+.rule {
+  border: none;
+  border-top: 1px solid var(--rule);
+}
+
+/* ─── Mono label — the signature label style ─── */
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dust);
+  margin: 0;
+}
+
+.label-ink {
+  color: var(--ink);
+}
+
+.label-signal {
+  color: var(--signal);
+}
+
+/* ─── Content measure — prose column ─── */
+
+.prose {
+  max-width: 65ch;
+}
+
+/* ─── Page section rhythm ─── */
+
+.page-section {
+  padding-block: 48px;
+}
+
+@media (max-width: 640px) {
+  .page-section {
+    padding-block: 32px;
+  }
+}
+
+/* ─── Skeleton loading ─── */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--panel) 25%,
+    var(--edge) 50%,
+    var(--panel) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ─── Visually hidden (accessible but not visible) ─── */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ─── Print ─── */
+
+@media print {
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 12pt;
+  }
+  .no-print {
+    display: none !important;
+  }
+  a {
+    color: #000;
+    text-decoration: underline;
+  }
+}
+
+/* ─── Utility: Flex row, center-aligned, gap ─── */
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ─── Tap target minimum (44px) ─── */
+
+.tap-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* ─── Line clamp (for preview text) ─── */
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

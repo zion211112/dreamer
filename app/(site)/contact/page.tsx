@@ -1,16 +1,21 @@
-// Contact, the classic way: one centered column, two lines of information,
-// one place. No artwork, no motion — the information, set quietly. Email is
-// the first line, WhatsApp the second, both prefilled.
+import type { Metadata } from "next";
+import "./contact.css";
+
+export const metadata: Metadata = {
+  title: "Contact",
+  description: "Write to APT-LABS. One reply, no queue.",
+};
+
 export default function Contact() {
   const email = "mailto:aptlabske@gmail.com?subject=Schools%20%2B%20partners";
   const whatsapp = "https://wa.me/254704260906?text=Greetings.";
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-obsidian px-6 py-16 text-ivory md:py-24">
+    <main className="contact-page">
       <section className="contact-classic">
-        <h1 className="contact-title">Contact</h1>
-
-        <p className="contact-lead">Write to us. One reply, no queue.</p>
+        <p className="label label-signal">Contact</p>
+        <h1 className="contact-title">Write to us.</h1>
+        <p className="contact-lead">One reply, no queue.</p>
 
         <dl className="contact-lines">
           <div className="contact-line">
@@ -25,7 +30,7 @@ export default function Contact() {
               <a
                 href={whatsapp}
                 target="_blank"
-                rel="noopener"
+                rel="noopener noreferrer"
                 aria-label="WhatsApp +254 704 260 906"
               >
                 +254 704 260 906

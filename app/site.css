@@ -1,0 +1,330 @@
+/* ============================================================
+   APT-LABS — Site Layout CSS
+   Site chrome: nav, footer, page rhythm.
+   ============================================================ */
+
+/* ─── Site nav ─── */
+
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(6, 7, 8, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--rule);
+}
+
+.nav-inner {
+  max-width: 1184px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+@media (max-width: 640px) {
+  .nav-inner {
+    padding: 0 16px;
+    height: 52px;
+  }
+}
+
+/* Brand */
+
+.site-nav .nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--ink);
+  min-height: 44px;
+  flex-shrink: 0;
+}
+
+.site-nav .nav-brand-mark {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid var(--signal);
+  color: var(--signal);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 5px;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.site-nav .nav-brand:hover .nav-brand-mark {
+  background: var(--signal);
+  color: var(--void);
+}
+
+.site-nav .nav-brand-text {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Desktop nav links */
+
+.site-nav .nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+@media (max-width: 640px) {
+  .site-nav .nav-links {
+    display: none;
+  }
+}
+
+.site-nav .nav-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--dust);
+  text-decoration: none;
+  border-radius: 5px;
+  transition: color 120ms ease, background-color 120ms ease;
+  position: relative;
+}
+
+.site-nav .nav-link:hover {
+  color: var(--ink);
+  background: var(--edge);
+}
+
+.site-nav .nav-link--active {
+  color: var(--signal);
+}
+
+.site-nav .nav-link--active::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 2px;
+  background: var(--signal);
+  border-radius: 1px;
+}
+
+/* Mobile toggle button */
+
+.site-nav .nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 12px;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: border-color 120ms ease, color 120ms ease, background-color 120ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.site-nav .nav-toggle:hover {
+  border-color: var(--signal-dim);
+  color: var(--signal);
+  background: var(--edge);
+}
+
+.site-nav .nav-toggle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 640px) {
+  .site-nav .nav-toggle {
+    display: flex;
+  }
+}
+
+/* Mobile menu */
+
+.site-nav .nav-mobile {
+  border-top: 1px solid var(--rule);
+  background: var(--void);
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 200ms ease;
+}
+
+.site-nav .nav-mobile--open {
+  max-height: 320px;
+}
+
+.site-nav .nav-mobile-inner {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 16px 12px;
+}
+
+@media (min-width: 641px) {
+  .site-nav .nav-mobile {
+    display: none;
+  }
+}
+
+.site-nav .nav-mobile-link {
+  display: block;
+  min-height: 44px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dust);
+  text-decoration: none;
+  border-radius: 5px;
+  border-bottom: 1px solid var(--rule);
+  transition: color 120ms ease, background-color 120ms ease;
+}
+
+.site-nav .nav-mobile-link:last-child {
+  border-bottom: none;
+}
+
+.site-nav .nav-mobile-link:hover {
+  color: var(--ink);
+  background: var(--edge);
+}
+
+.site-nav .nav-mobile-link--active {
+  color: var(--signal);
+  background: rgba(20, 184, 166, 0.06);
+}
+
+/* ─── Site content ─── */
+
+.site-content {
+  min-height: calc(100svh - 56px);
+}
+
+@media (max-width: 640px) {
+  .site-content {
+    min-height: calc(100svh - 52px);
+  }
+}
+
+/* ─── Site footer ─── */
+
+.site-footer {
+  border-top: 1px solid var(--rule);
+  background: var(--void);
+  padding: 32px 24px;
+}
+
+@media (max-width: 640px) {
+  .site-footer {
+    padding: 24px 16px;
+  }
+}
+
+.site-footer-inner {
+  max-width: 1184px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .site-footer-inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+}
+
+.site-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.site-footer-mark {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--signal);
+  color: var(--signal);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+}
+
+.site-footer-name {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.site-footer-loc {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dust);
+  margin-left: 4px;
+}
+
+.site-footer-links {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.site-footer-link {
+  font-size: 13px;
+  color: var(--dust);
+  text-decoration: none;
+  transition: color 120ms ease;
+  text-underline-offset: 2px;
+}
+
+.site-footer-link:hover {
+  color: var(--ink);
+}
+
+.site-footer-copy {
+  font-size: 12px;
+  color: var(--ash);
+  margin: 0;
+  max-width: 28ch;
+  line-height: 1.45;
+}
+
+@media (min-width: 640px) {
+  .site-footer-copy {
+    display: none;
+  }
+}

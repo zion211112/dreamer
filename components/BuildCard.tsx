@@ -2,9 +2,9 @@ import { Build, timeAgo, needsLine } from "../lib/benben";
 
 function typeTone(t: string): string {
   if (t === "NEED") return "text-amber";
-  if (t === "SOLUTION") return "text-teal";
-  if (t === "OFFER") return "text-teal";
-  return "text-muted";
+  if (t === "SOLUTION") return "text-signal";
+  if (t === "OFFER") return "text-signal";
+  return "text-dust";
 }
 
 // One build on the floor. No card frame, no avatar, no karma —
@@ -26,10 +26,10 @@ export default function BuildCard({
 }) {
   const forks = b.comments.filter((c) => c.fork).length;
   return (
-    <article className="border-t border-ivory/10 py-8">
-      <div className="flex flex-wrap items-baseline justify-between gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-dim">
+    <article className="border-t border-rule/10 py-8">
+      <div className="flex flex-wrap items-baseline justify-between gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-ash">
         <span className="flex flex-wrap items-center gap-2">
-          <span className="border border-ivory/10 bg-panel px-2 py-0.5 text-ivory">[{b.domain}]</span>
+          <span className="border border-rule/10 bg-panel px-2 py-0.5 text-ink">[{b.domain}]</span>
           <span className={typeTone(b.type)}>{b.type}</span>
           <span aria-hidden>·</span>
           <span>{timeAgo(b.createdTs, now)}</span>
@@ -38,39 +38,39 @@ export default function BuildCard({
         <span className="text-amber">@{b.by}</span>
       </div>
 
-      <h3 className="mt-5 max-w-[52ch] font-display text-[1.7rem] leading-snug text-ivory">{b.title}</h3>
+      <h3 className="mt-5 max-w-[52ch] font-serif text-[1.7rem] leading-snug text-ink">{b.title}</h3>
 
-      <p className="mt-3 max-w-[62ch] text-[0.95rem] leading-7 text-muted">{b.body}</p>
+      <p className="mt-3 max-w-[62ch] text-[0.95rem] leading-7 text-dust">{b.body}</p>
 
-      <div className="mt-4 space-y-1 font-mono text-[12px] text-dim">
+      <div className="mt-4 space-y-1 font-mono text-[12px] text-ash">
         <p>{needsLine(b)}</p>
-        <p className="italic text-muted/80">Done: {b.done}</p>
+        <p className="italic text-dust/80">Done: {b.done}</p>
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-ivory/5 pt-4">
+      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-rule/5 pt-4">
         <span className="flex items-center gap-1 font-mono text-sm">
           <button
             onClick={() => onVote(b.id, 1)}
             aria-label={`Upvote ${b.title}`}
-            className={`min-h-11 min-w-11 px-1 text-base transition ${myVote === 1 ? "text-amber" : "text-muted hover:text-ivory"}`}
+            className={`min-h-11 min-w-11 px-1 text-base transition ${myVote === 1 ? "text-amber" : "text-dust hover:text-ink"}`}
           >
             ▲
           </button>
-          <span className="min-w-[3ch] text-center font-semibold text-ivory tabular-nums">{b.votes}</span>
+          <span className="min-w-[3ch] text-center font-semibold text-ink tabular-nums">{b.votes}</span>
           <button
             onClick={() => onVote(b.id, -1)}
             aria-label={`Downvote ${b.title}`}
-            className={`min-h-11 min-w-11 px-1 text-base transition ${myVote === -1 ? "text-dim" : "text-muted hover:text-ivory"}`}
+            className={`min-h-11 min-w-11 px-1 text-base transition ${myVote === -1 ? "text-ash" : "text-dust hover:text-ink"}`}
           >
             ▼
           </button>
         </span>
-        <span className="font-mono text-[12px] text-dim tabular-nums">
+        <span className="font-mono text-[12px] text-ash tabular-nums">
           {b.comments.length} comment{b.comments.length === 1 ? "" : "s"} · {forks} fork{forks === 1 ? "" : "s"}
         </span>
         <button
           onClick={() => onFork(b)}
-          className="ml-auto min-h-11 py-3 font-mono text-[12px] uppercase tracking-[0.22em] text-amber transition hover:text-ivory"
+          className="ml-auto min-h-11 py-3 font-mono text-[12px] uppercase tracking-[0.22em] text-amber transition hover:text-ink"
         >
           Fork →
         </button>

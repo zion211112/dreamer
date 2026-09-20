@@ -1,0 +1,491 @@
+/* ============================================================
+   APT-LABS — Homepage CSS
+   Hero, surfaces, credibility strip, principles, CTA.
+   ============================================================ */
+
+/* ─── Hero ─── */
+
+.hero {
+  position: relative;
+  min-height: calc(100svh - 56px);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 24px;
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .hero-inner {
+    padding: 32px 16px;
+    text-align: center;
+  }
+}
+
+.hero-kicker {
+  color: var(--signal);
+  margin-bottom: 20px;
+}
+
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: 38px;
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 20px;
+  max-width: 14ch;
+}
+
+@media (min-width: 768px) {
+  .hero-title {
+    font-size: 48px;
+    max-width: 16ch;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-title {
+    font-size: 56px;
+  }
+}
+
+.hero-lead {
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--dust);
+  max-width: 52ch;
+  margin: 0 0 28px;
+}
+
+@media (max-width: 640px) {
+  .hero-lead {
+    max-width: 100%;
+  }
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .hero-actions {
+    justify-content: center;
+  }
+}
+
+/* ─── Surfaces ─── */
+
+.surfaces-inner {
+  max-width: 1184px;
+  margin: 0 auto;
+}
+
+.surfaces-inner > .label {
+  margin-bottom: 24px;
+}
+
+.surfaces-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+}
+
+@media (min-width: 768px) {
+  .surfaces-list {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+}
+
+.surface-card {
+  display: flex;
+  gap: 16px;
+  padding: 24px;
+  background: var(--void);
+  transition: background-color 150ms ease;
+}
+
+@media (min-width: 768px) {
+  .surface-card {
+    background: var(--void);
+    position: relative;
+  }
+  .surface-card + .surface-card {
+    border-left: 1px solid var(--rule);
+  }
+}
+
+.surface-card:hover {
+  background: var(--edge);
+}
+
+.surface-number {
+  font-size: 11px;
+  color: var(--ash);
+  flex-shrink: 0;
+  padding-top: 4px;
+}
+
+@media (max-width: 767px) {
+  .surface-card {
+    flex-direction: column;
+    padding: 20px 16px;
+    border-top: 1px solid var(--rule);
+  }
+  .surface-card:first-child {
+    border-top: none;
+  }
+}
+
+.surface-body {
+  min-width: 0;
+}
+
+.surface-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 6px;
+  letter-spacing: -0.01em;
+}
+
+.surface-desc {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--dust);
+  margin: 0 0 16px;
+  max-width: 36ch;
+}
+
+@media (max-width: 640px) {
+  .surface-desc {
+    max-width: 100%;
+  }
+}
+
+.surface-link {
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--signal);
+  text-decoration: none;
+  text-underline-offset: 2px;
+  border-bottom: 1px solid transparent;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+
+.surface-link::after {
+  content: "→";
+  margin-left: 4px;
+  font-size: 12px;
+  transition: transform 120ms ease;
+}
+
+.surface-link:hover {
+  color: var(--signal-dim);
+  border-bottom-color: var(--signal);
+}
+
+.surface-link:hover::after {
+  transform: translateX(2px);
+}
+
+/* ─── Credibility strip ─── */
+
+.cred-strip {
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  background: var(--panel);
+}
+
+.cred-inner {
+  max-width: 1184px;
+  margin: 0 auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+}
+
+@media (max-width: 640px) {
+  .cred-inner {
+    padding: 16px;
+    gap: 6px 16px;
+  }
+}
+
+.cred-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  margin: 0;
+}
+
+.cred-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.cred-row dt {
+  margin: 0;
+}
+
+.cred-value {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.cred-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-left: auto;
+  font-size: 11px;
+}
+
+.cred-footer .label {
+  font-size: 10px;
+}
+
+.cred-version {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--signal);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.cred-rule {
+  display: inline-block;
+  width: 1px;
+  height: 12px;
+  background: var(--rule);
+  margin: 0 4px;
+}
+
+.cred-time {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ash);
+}
+
+/* ─── Principles ─── */
+
+.principles-inner {
+  max-width: 1184px;
+  margin: 0 auto;
+}
+
+.principles-inner > .label {
+  margin-bottom: 24px;
+}
+
+.principles-grid {
+  display: grid;
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .principles-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .principles-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.principle {
+  background: var(--void);
+  padding: 24px;
+  transition: background-color 150ms ease;
+}
+
+.principle:hover {
+  background: var(--edge);
+}
+
+.principle-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--signal);
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+
+.principle-body {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--dust);
+  margin: 0;
+  max-width: 38ch;
+}
+
+@media (max-width: 640px) {
+  .principle {
+    padding: 20px 16px;
+  }
+  .principle-body {
+    max-width: 100%;
+  }
+}
+
+/* ─── CTA ─── */
+
+.cta-inner {
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.cta-title {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 12px;
+}
+
+@media (min-width: 768px) {
+  .cta-title {
+    font-size: 40px;
+  }
+}
+
+.cta-body {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--dust);
+  margin: 0 0 24px;
+  max-width: 40ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* ─── Button primitives ─── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease,
+              border-color 120ms ease, box-shadow 120ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-primary {
+  background: var(--signal);
+  color: var(--void);
+  border-color: var(--signal);
+}
+
+.btn-primary:hover {
+  background: var(--signal-dim);
+  border-color: var(--signal-dim);
+}
+
+.btn-primary:active {
+  background: var(--signal-strong);
+  border-color: var(--signal-strong);
+  transform: scale(0.98);
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.btn-primary:disabled,
+.btn-primary[aria-disabled="true"] {
+  background: var(--edge);
+  border-color: var(--rule);
+  color: var(--ash);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--rule);
+}
+
+.btn-secondary:hover {
+  background: var(--edge);
+  border-color: var(--signal-dim);
+  color: var(--signal);
+}
+
+.btn-secondary:active {
+  background: var(--void);
+  border-color: var(--signal-dim);
+  color: var(--signal-dim);
+}
+
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.btn-secondary:disabled,
+.btn-secondary[aria-disabled="true"] {
+  border-color: var(--rule);
+  color: var(--ash);
+  cursor: not-allowed;
+  background: transparent;
+}
+
+/* ─── Global hide on small screens for elements not needed ─── */
+
+@media (max-width: 640px) {
+  .no-mobile {
+    display: none;
+  }
+}

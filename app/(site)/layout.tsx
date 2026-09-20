@@ -1,28 +1,37 @@
 import Link from "next/link";
 import { Nav } from "../../components/Nav";
+import "../site.css";
 
-// Site chrome: the sticky Nav up top, the hairline footer at the bottom.
-// The console (app/(console)) deliberately skips this group so it can own
-// the full viewport like a real app.
-// All gates removed: the app is open — no paywall wraps these pages.
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+export default function SiteLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <>
-      <a href="#main-content" className="skip-link">Skip to content</a>
       <Nav />
-      <div id="main-content">{children}</div>
-      <footer className="border-t border-ivory/10 bg-void">
-        <div className="mx-auto flex max-w-5xl flex-col justify-between gap-3 px-6 py-10 text-sm text-ivory/45 sm:flex-row sm:items-center">
-          <span className="font-mono text-[11px] uppercase tracking-[0.18em]">
-            APT-LABS · Kirinyaga, Kenya
-          </span>
-          <span className="flex flex-wrap gap-x-6 gap-y-3">
-            <Link href="/" className="min-h-11 py-3 transition-colors hover:text-ivory">Home</Link>
-            <Link href="/ledger" className="min-h-11 py-3 transition-colors hover:text-ivory">Ledger</Link>
-            <Link href="/contact" className="min-h-11 py-3 transition-colors hover:text-ivory">Contact</Link>
-          </span>
+      <div className="site-content">
+        {children}
+      </div>
+      <footer className="site-footer" role="contentinfo">
+        <div className="site-footer-inner">
+          <div className="site-footer-brand">
+            <span className="site-footer-mark" aria-hidden="true">A</span>
+            <span className="site-footer-name">APT-LABS</span>
+            <span className="site-footer-loc">Kirinyaga, Kenya</span>
+          </div>
+          <nav aria-label="Footer" className="site-footer-links">
+            <Link href="/" className="site-footer-link">Home</Link>
+            <Link href="/ledger" className="site-footer-link">Ledger</Link>
+            <Link href="/contact" className="site-footer-link">Contact</Link>
+          </nav>
+          <p className="site-footer-copy">
+            A public record of work, skill, and trust.
+            Built open. Held local.
+          </p>
         </div>
       </footer>
     </>
   );
 }
+

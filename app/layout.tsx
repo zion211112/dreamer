@@ -1,29 +1,41 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
-// Fonts load at runtime, not build time: the ledger is local-first, so a
-// blocked network degrades to system fonts instead of breaking the build.
-const fontsHref =
-  "https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Inter:wght@100..900&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:wght@300;400;600;700&display=swap";
-
 export const metadata: Metadata = {
-  title: "APT-LABS — We're making a list.",
+  title: {
+    default: "APT-LABS — The ledger of useful work.",
+    template: "%s — APT-LABS",
+  },
   description:
-    "The APT-LABS ledger: everyone in Kirinyaga who can actually do things. Build capacity, share work, and keep a trusted roll without the noise.",
-  keywords: ["APT-LABS", "Kirinyaga", "skills ledger", "teachers", "youth jobs"]
+    "A public record of work, skill, and trust. Built for places where the network is a suggestion, not a guarantee.",
+  keywords: ["ledger", "skills", "community", "local-first", "offline"],
+  icons: {
+    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%23060708'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='16' font-weight='700' fill='%2314B8A6'>A</text></svg>",
+  },
 };
 
-// Bare shell. The site chrome (Nav + footer) lives in the (site) group
-// layout so app-style routes like /console can own the full viewport.
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#F7F5F0" },
+    { media: "(prefers-color-scheme: dark)", color: "#060708" },
+  ],
+  width: "device-width",
+  initialScale: 1,
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href={fontsHref} rel="stylesheet" />
-      </head>
-      <body className="bg-obsidian text-ivory font-body antialiased">{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <a href="#main-content" className="skip-link">
+          Skip to content
+        </a>
+        <main id="main-content">{children}</main>
+      </body>
     </html>
   );
 }
