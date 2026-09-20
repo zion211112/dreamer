@@ -23,6 +23,8 @@ export default function SiteLayout({
           <nav aria-label="Footer" className="site-footer-links">
             <Link href="/" className="site-footer-link">Home</Link>
             <Link href="/ledger" className="site-footer-link">Ledger</Link>
+            <Link href="/benben" className="site-footer-link">Floor</Link>
+            <Link href="/console" className="site-footer-link">Console</Link>
             <Link href="/contact" className="site-footer-link">Contact</Link>
           </nav>
           <p className="site-footer-copy">

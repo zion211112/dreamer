@@ -236,7 +236,7 @@ export default function BenBenPage() {
           <div className="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.3em] text-ash">
             <span
               aria-hidden
-              className="grid h-6 w-6 shrink-0 rotate-45 place-items-center rounded-[5px] bg-gradient-to-br from-teal/70 to-amber/70"
+              className="grid h-6 w-6 shrink-0 rotate-45 place-items-center border border-signal/70 bg-void"
             />
             <span>Ben-Ben · The Floor</span>
           </div>
@@ -413,7 +413,7 @@ export default function BenBenPage() {
                         type="button"
                         onClick={() => setRisk(r)}
                         aria-pressed={risk === r}
-                        className={`border px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] transition ${
+                        className={`min-h-11 border px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal ${
                           risk === r
                             ? "border-amber bg-amber/10 text-amber"
                             : "border-rule/12 text-ash hover:border-rule/25 hover:text-ink"
@@ -438,7 +438,7 @@ export default function BenBenPage() {
                           onClick={() =>
                             setSkillsSel((p) => (p.includes(k) ? p.filter((x) => x !== k) : [...p, k]))
                           }
-                          className={`border px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] transition ${
+                          className={`min-h-11 border px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal ${
                             on
                               ? "border-teal/60 bg-teal/10 text-signal"
                               : "border-rule/12 text-ash hover:border-rule/25 hover:text-ink"

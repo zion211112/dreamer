@@ -6,8 +6,8 @@ import GeoArt from "../components/GeoArt";
 // A 404 is just a missing page. No gate decides who gets in here.
 export default function NotFound() {
   return (
-    <main className="bg-void text-ink">
-      <div className="relative flex min-h-[60vh] items-center overflow-hidden">
+    <main className="site-page bg-void text-ink">
+      <div className="site-frame relative flex min-h-[60vh] items-center overflow-hidden">
         <GeoArt
           variant="ring"
           className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 text-ink opacity-[0.05]"
@@ -19,10 +19,10 @@ export default function NotFound() {
             The roll has no entry for that address. It will, when someone claims it.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
-            <Link href="/" className="rounded bg-signal px-6 py-3 text-sm font-semibold text-void transition hover:bg-signal-dim">
+            <Link href="/" className="site-action">
               Back to the porch →
             </Link>
-            <Link href="/ledger" className="rounded border border-rule px-6 py-3 text-sm font-semibold transition hover:border-signal-dim hover:text-signal">
+            <Link href="/ledger" className="site-action-secondary">
               Open the roll
             </Link>
           </div>

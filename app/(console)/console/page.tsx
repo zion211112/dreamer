@@ -138,16 +138,7 @@ function ConsoleLogin({
       </header>
 
       <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center overflow-y-auto px-6 py-12">
-        <div className="relative overflow-hidden rounded-3xl border border-ivory/10 bg-panel p-8 md:p-10">
-          {/* the two glows: amber warmth off the right, teal depth off the left */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(circle_at_center,rgba(var(--amber-rgb),0.30),transparent_70%)]"
-          />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -bottom-28 -left-24 h-72 w-72 rounded-full bg-[radial-gradient(circle_at_center,rgba(var(--teal-rgb),0.25),transparent_70%)]"
-          />
+        <div className="relative overflow-hidden border border-ivory/10 bg-panel p-6 sm:p-8 md:p-10">
           <div className="relative">
             <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-teal">Build capacity · Console</p>
             <h1 className="mt-4 font-display text-4xl font-light tracking-tight">Who are you?</h1>
@@ -161,6 +152,7 @@ function ConsoleLogin({
                   key={r}
                   type="button"
                   onClick={() => setRole(r)}
+                  aria-pressed={role === r}
                   className={`rounded-2xl border p-5 text-left transition ${
                     role === r ? "border-amber/70 bg-amber/10" : "border-ivory/10 bg-ivory/[0.04] hover:border-ivory/25"
                   }`}
@@ -172,14 +164,20 @@ function ConsoleLogin({
             </div>
 
             <form onSubmit={submit} className="mt-6 flex flex-col gap-3">
+              <label htmlFor="console-name" className="sr-only">Your name</label>
               <input
+                id="console-name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your name"
                 maxLength={60}
                 className={loginInput}
               />
+              <label htmlFor="console-school" className="sr-only">
+                {role === "school" ? "School name" : "Your school"}
+              </label>
               <input
+                id="console-school"
                 value={school}
                 onChange={(e) => setSchool(e.target.value)}
                 placeholder={role === "school" ? "School name" : "Your school"}

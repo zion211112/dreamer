@@ -11,7 +11,7 @@ import {
   shortHash
 } from "../../../lib/ledger";
 
-const row = "grid grid-cols-[11rem_1fr] items-baseline gap-4 border-b border-ivory/10 py-4";
+const row = "grid gap-2 border-b border-ivory/10 py-4 sm:grid-cols-[11rem_1fr] sm:items-baseline sm:gap-4";
 const k = "font-mono text-[11px] uppercase tracking-[0.2em] text-dim";
 
 // Your standing on the floor. Black page, white text, no verification tiers,
@@ -103,7 +103,7 @@ export default function Dashboard() {
                 <span className={k}>Role</span>
                 <span className="text-sm text-ivory">{me.occupation}</span>
               </div>
-              <div className="grid grid-cols-[11rem_1fr] items-baseline gap-4 py-4">
+              <div className="grid gap-2 py-4 sm:grid-cols-[11rem_1fr] sm:items-baseline sm:gap-4">
                 <span className={k}>Skills</span>
                 <span className="flex flex-wrap gap-2">
                   {me.skills.map((s) => (
