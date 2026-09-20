@@ -211,6 +211,40 @@ export function shortHash(hash: string): string {
   return hash.slice(0, 10) + "…" + hash.slice(-4);
 }
 
+// ── Export the roll. A public record ships in two formats:
+//    CSV for people, JSON for machines.
+const CSV_HEADERS = ["id", "name", "username", "occupation", "location", "skills", "verified", "paid", "tier", "hall", "certNo", "seal"];
+
+function csvField(v: string): string {
+  return /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
+}
+
+export function ledgerToCsv(members: Member[]): string {
+  const rows = members.map((m) =>
+    [
+      m.id,
+      m.name,
+      m.username,
+      m.occupation,
+      m.location,
+      m.skills.join("; "),
+      String(m.verified),
+      String(m.paid),
+      m.tier ?? "",
+      m.hall ?? "",
+      m.certNo ?? "",
+      m.hash,
+    ]
+      .map(csvField)
+      .join(",")
+  );
+  return [CSV_HEADERS.join(","), ...rows].join("\n");
+}
+
+export function ledgerToJson(members: Member[]): string {
+  return JSON.stringify(members, null, 2);
+}
+
 // Roll count as ledger version: 1 + members/1000, three decimals.
 export function ledgerVersion(count: number): string {
   return (1 + count / 1000).toFixed(3);

@@ -204,9 +204,7 @@
 }
 
 .roll-entry {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
+  display: block;
   padding: 14px 0;
   border-top: 1px solid var(--rule);
   transition: background-color 100ms ease;
@@ -686,6 +684,182 @@ select.field {
   color: var(--ash);
   cursor: not-allowed;
   background: transparent;
+}
+
+.btn-sm {
+  min-height: 32px;
+  padding: 0 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ─── Section tools (count + export) ─── */
+
+.section-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ─── Location filter chips ─── */
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 0 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dust);
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 120ms ease, border-color 120ms ease, background-color 120ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.chip:hover {
+  color: var(--ink);
+  border-color: var(--ash);
+  background: var(--edge);
+}
+
+.chip[aria-pressed="true"] {
+  color: var(--signal);
+  border-color: var(--signal);
+  background: var(--edge);
+}
+
+.chip-n {
+  font-size: 10px;
+  color: var(--ash);
+  font-variant-numeric: tabular-nums;
+}
+
+.chip[aria-pressed="true"] .chip-n {
+  color: var(--signal);
+}
+
+/* ─── Expandable roll entry (the inspector, inline) ─── */
+
+.roll-entry-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.roll-entry-main .roll-entry-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.roll-entry-caret {
+  width: 14px;
+  height: 14px;
+  color: var(--ash);
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: transform 150ms ease;
+}
+
+.roll-entry.is-open .roll-entry-caret {
+  transform: rotate(90deg);
+}
+
+.roll-entry-detail {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+}
+
+.roll-entry-detail-grid {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 10px 16px;
+  margin: 0;
+  align-items: baseline;
+}
+
+.roll-entry-detail-grid dt {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.roll-entry-detail-grid dd {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.roll-detail-hash {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--dust);
+  background: var(--edge);
+  padding: 2px 6px;
+  border-radius: 3px;
+  word-break: break-all;
+}
+
+.roll-entry-foot {
+  margin-top: 6px;
+}
+
+@media (max-width: 480px) {
+  .roll-entry-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .roll-entry-detail-grid dd {
+    margin-top: 2px;
+  }
+}
+
+/* ─── Empty-state suggestions ─── */
+
+.empty-state-suggest {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 0 20px;
+  font-size: 13px;
+  color: var(--dust);
 }
 
 

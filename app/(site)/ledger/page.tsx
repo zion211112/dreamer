@@ -17,6 +17,8 @@ import {
   shortHash,
   ledgerVersion,
   masterHash,
+  ledgerToCsv,
+  ledgerToJson,
 } from "../../../lib/ledger";
 import "./ledger.css";
 
@@ -35,6 +37,8 @@ export default function LedgerPage() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [status, setStatus] = useState<Status>("idle");
   const [search, setSearch] = useState("");
+  const [location, setLocation] = useState<string>("all");
+  const [openId, setOpenId] = useState<string | null>(null);
   const [token, setToken] = useState("");
   const [verdict, setVerdict] = useState<Verdict>("");
 
@@ -43,18 +47,52 @@ export default function LedgerPage() {
     if (stored.length > 0) setEntries(stored);
   }, []);
 
+  // "/" jumps to the roll search from anywhere on the page.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key !== "/") return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT")) return;
+      e.preventDefault();
+      document.getElementById("roll-search")?.focus();
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+
   const total = entries.length;
   const verified = entries.filter((e) => e.verified).length;
 
-  const filtered = search.trim()
-    ? entries.filter(
-        (e) =>
-          e.name.toLowerCase().includes(search.toLowerCase()) ||
-          e.occupation.toLowerCase().includes(search.toLowerCase()) ||
-          e.location.toLowerCase().includes(search.toLowerCase()) ||
-          e.skills.some((s) => s.toLowerCase().includes(search.toLowerCase()))
-      )
-    : entries;
+  const filtered = entries.filter((e) => {
+    if (location !== "all" && e.location !== location) return false;
+    const q = search.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      e.name.toLowerCase().includes(q) ||
+      e.occupation.toLowerCase().includes(q) ||
+      e.location.toLowerCase().includes(q) ||
+      e.skills.some((s) => s.toLowerCase().includes(q))
+    );
+  });
+
+  const locationCounts = LOCATIONS.map((l) => ({
+    name: l,
+    n: entries.filter((e) => e.location === l).length,
+  }));
+
+  const searchExamples = Array.from(new Set(entries.map((e) => e.occupation))).slice(0, 3);
+
+  function download(filename: string, mime: string, content: string) {
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -138,9 +176,44 @@ export default function LedgerPage() {
           <section className="roll-section" aria-labelledby="roll-heading">
             <div className="section-head">
               <h2 id="roll-heading" className="section-title">The roll</h2>
-              <span className="section-count label" aria-live="polite">
-                {filtered.length} {filtered.length === 1 ? "person" : "people"}
-              </span>
+              <div className="section-tools">
+                <span className="section-count label" aria-live="polite">
+                  {filtered.length} {filtered.length === 1 ? "person" : "people"}
+                </span>
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => download("aptlabs_roll.csv", "text/csv", ledgerToCsv(entries))}
+                  title="Export the full roll as CSV"
+                >
+                  CSV
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => download("aptlabs_roll.json", "application/json", ledgerToJson(entries))}
+                  title="Export the full roll as JSON"
+                >
+                  JSON
+                </button>
+              </div>
+            </div>
+
+            <div className="filter-chips" role="group" aria-label="Filter the roll by location">
+              <button type="button" className="chip" aria-pressed={location === "all"} onClick={() => setLocation("all")}>
+                All<span className="chip-n">{entries.length}</span>
+              </button>
+              {locationCounts.map(({ name, n }) => (
+                <button
+                  key={name}
+                  type="button"
+                  className="chip"
+                  aria-pressed={location === name}
+                  onClick={() => setLocation(location === name ? "all" : name)}
+                >
+                  {name}<span className="chip-n">{n}</span>
+                </button>
+              ))}
             </div>
 
             <form className="search-form" onSubmit={(e) => e.preventDefault()} role="search" aria-label="Search the roll">
@@ -170,36 +243,105 @@ export default function LedgerPage() {
                 </svg>
                 <p className="empty-state-heading">No one matches that search.</p>
                 <p className="empty-state-body">Try a shorter name, a location, or a skill.</p>
-                <button type="button" className="btn btn-secondary" onClick={() => setSearch("")}>Clear search</button>
+                {searchExamples.length > 0 && (
+                  <p className="empty-state-suggest">
+                    <span className="label">Try</span>
+                    {searchExamples.map((ex) => (
+                      <button
+                        key={ex}
+                        type="button"
+                        className="chip"
+                        onClick={() => {
+                          setLocation("all");
+                          setSearch(ex);
+                        }}
+                      >
+                        {ex}
+                      </button>
+                    ))}
+                  </p>
+                )}
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    setSearch("");
+                    setLocation("all");
+                  }}
+                >
+                  Clear filters
+                </button>
               </div>
             ) : (
               <ul className="roll-list" aria-label="People on the roll">
-                {filtered.map((entry) => (
-                  <li key={entry.id} className="roll-entry">
-                    <div className="roll-entry-content">
-                      <div className="roll-entry-top">
-                        <span className="roll-entry-name">{entry.name}</span>
-                        {entry.verified && (
-                          <span className="roll-badge">
-                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                              <path d="M20 6L9 17l-5-5" />
-                            </svg>
-                            Verified
+                {filtered.map((entry) => {
+                  const open = openId === entry.id;
+                  return (
+                    <li key={entry.id} className={open ? "roll-entry is-open" : "roll-entry"}>
+                      <button
+                        type="button"
+                        className="roll-entry-main"
+                        aria-expanded={open}
+                        aria-controls={`roll-detail-${entry.id}`}
+                        onClick={() => setOpenId(open ? null : entry.id)}
+                      >
+                        <span className="roll-entry-content">
+                          <span className="roll-entry-top">
+                            <span className="roll-entry-name">{entry.name}</span>
+                            {entry.verified && (
+                              <span className="roll-badge">
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                  <path d="M20 6L9 17l-5-5" />
+                                </svg>
+                                Verified
+                              </span>
+                            )}
+                            <span className="roll-entry-role">{entry.occupation}</span>
                           </span>
-                        )}
-                        <span className="roll-entry-role">{entry.occupation}</span>
-                      </div>
-                      <div className="roll-entry-meta">
-                        <span className="roll-meta-item">{entry.location}</span>
-                        <span className="roll-meta-sep" aria-hidden="true">·</span>
-                        <span className="roll-meta-item">{entry.skills.join(", ")}</span>
+                          <span className="roll-entry-meta">
+                            <span className="roll-meta-item">{entry.location}</span>
+                            <span className="roll-meta-sep" aria-hidden="true">·</span>
+                            <span className="roll-meta-item">{entry.skills.join(", ")}</span>
+                          </span>
+                        </span>
+                        <svg
+                          className="roll-entry-caret"
+                          viewBox="0 0 24 24"
+                          width="14"
+                          height="14"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="m9 6 6 6-6 6" />
+                        </svg>
+                      </button>
+                      <div id={`roll-detail-${entry.id}`} className="roll-entry-detail" hidden={!open}>
+                        <dl className="roll-entry-detail-grid">
+                          <dt className="label">Seal</dt>
+                          <dd><code className="roll-detail-hash">{entry.hash}</code></dd>
+                          <dt className="label">Standing</dt>
+                          <dd>
+                            {entry.verified ? `Verified${entry.tier ? ` · ${entry.tier} tier` : ""}` : "Unverified"}
+                            {entry.paid ? " · paid" : ""}
+                          </dd>
+                          <dt className="label">Hall</dt>
+                          <dd>{entry.hall ?? "—"}</dd>
+                          <dt className="label">Certificate</dt>
+                          <dd>{entry.certNo ?? "—"}</dd>
+                          <dt className="label">Proof</dt>
+                          <dd>{entry.skills.join(", ")}</dd>
+                        </dl>
                       </div>
                       <div className="roll-entry-foot">
                         <code className="roll-meta-hash">{shortHash(entry.hash)}</code>
                       </div>
-                    </div>
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ul>
             )}
 
