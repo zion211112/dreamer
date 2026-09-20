@@ -33,26 +33,32 @@ export default function Dashboard() {
   }, []);
 
   if (!ready) {
-    return <main className="min-h-[60vh] bg-obsidian text-ivory" />;
+    return (
+      <main className="min-h-[60vh] bg-void px-6 py-16 text-ink" aria-busy="true">
+        <div className="mx-auto max-w-[720px] border-t border-rule pt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-ash">
+          Reading your record…
+        </div>
+      </main>
+    );
   }
 
   return (
-    <main className="bg-obsidian text-ivory">
-      <div className="relative mx-auto max-w-[720px] overflow-hidden px-6 py-16 md:py-24">
+    <main className="site-page bg-void text-ink">
+      <div className="site-frame relative max-w-[720px] overflow-hidden py-12 md:py-24">
         <GeoArt
           variant="ring"
           className="pointer-events-none absolute -top-16 right-[-90px] h-[300px] w-[300px] text-ivory opacity-[0.05]"
         />
 
         {/* masthead */}
-        <div className="flex items-baseline justify-between border-b border-ivory/10 pb-4 font-mono text-[11px] uppercase tracking-[0.3em] text-dim">
+        <div className="site-section-head">
           <span>My Profile</span>
           {me && <span className="text-dim">{me.occupation}</span>}
         </div>
 
         {!me ? (
           <>
-            <h1 className="mt-12 font-display text-5xl md:text-6xl tracking-tight">
+            <h1 className="mt-10 max-w-[12ch] font-serif text-5xl leading-[1.04] tracking-tight sm:text-6xl">
               The floor is ready.
             </h1>
             <p className="mt-5 max-w-[48ch] text-[0.95rem] leading-7 text-muted">
@@ -62,13 +68,13 @@ export default function Dashboard() {
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/ledger"
-                className="rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-obsidian transition hover:bg-amber"
+                className="site-action"
               >
                 Claim your slot →
               </Link>
               <Link
                 href="/benben"
-                className="rounded-full border border-ivory/15 px-6 py-3 text-sm font-semibold transition hover:border-amber"
+                className="site-action-secondary"
               >
                 Open BenBen
               </Link>
@@ -76,7 +82,7 @@ export default function Dashboard() {
           </>
         ) : (
           <>
-            <h1 className="mt-12 font-display text-5xl md:text-6xl tracking-tight">
+            <h1 className="mt-10 max-w-[12ch] font-serif text-5xl leading-[1.04] tracking-tight sm:text-6xl">
               @{me.username}
             </h1>
             <p className="mt-3 font-display text-xl italic text-ivory/75">{me.name}</p>
@@ -115,19 +121,19 @@ export default function Dashboard() {
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <Link
                 href="/ledger"
-                className="rounded-full border border-ivory/15 px-5 py-2.5 text-sm font-semibold transition hover:border-amber"
+                className="site-action-secondary"
               >
                 The roll
               </Link>
               <Link
                 href="/search"
-                className="rounded-full border border-ivory/15 px-5 py-2.5 text-sm font-semibold transition hover:border-amber"
+                className="site-action-secondary"
               >
                 Search
               </Link>
               <Link
                 href="/benben"
-                className="rounded-full border border-ivory/15 px-5 py-2.5 text-sm font-semibold transition hover:border-amber"
+                className="site-action-secondary"
               >
                 BenBen
               </Link>
@@ -140,7 +146,7 @@ export default function Dashboard() {
                     /* memory */
                   }
                 }}
-                className="ml-auto font-mono text-[11px] uppercase tracking-[0.25em] text-dim transition hover:text-ivory"
+                className="ml-auto min-h-11 py-3 font-mono text-[11px] uppercase tracking-[0.25em] text-ash transition hover:text-ink"
               >
                 Close the floor
               </button>

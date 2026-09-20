@@ -254,7 +254,7 @@ export default function BenBenPage() {
         </div>
 
         <h1 className="mt-10 max-w-[12ch] font-serif text-4xl leading-[1.04] tracking-tight sm:text-5xl md:text-6xl">
-          Post. Vote. Claim. <span className="bb-gradient-text">Prove.</span>
+          Post. Vote. Claim. <span className="text-signal">Prove.</span>
         </h1>
         <p className="mt-5 max-w-[52ch] text-[0.95rem] leading-7 text-dust">
           A commons of builders for local projects, skills, and trusted work. The board decides
@@ -270,7 +270,7 @@ export default function BenBenPage() {
               setNotice("");
               setOpen((o) => !o);
             }}
-            className="bb-btn bb-glow min-h-11 rounded-full px-6 py-3 text-sm font-semibold transition"
+            className="bb-btn rounded-full px-6 py-3 text-sm font-semibold transition"
           >
             {open ? "Close the desk" : "Fork the floor →"}
           </button>
@@ -561,7 +561,7 @@ export default function BenBenPage() {
                   <div className="flex items-center gap-4">
                     {err && <p role="alert" className="font-mono text-xs text-amber">{err}</p>}
                     {notice && <p role="status" className="font-mono text-xs text-signal">{notice}</p>}
-                    <button className="bb-btn bb-glow min-h-11 rounded-full px-6 py-3 text-sm font-semibold transition">
+                    <button className="bb-btn rounded-full px-6 py-3 text-sm font-semibold transition">
                       {forkOf ? "Put the fork on the floor →" : "Put it on the floor →"}
                     </button>
                   </div>

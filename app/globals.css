@@ -176,6 +176,28 @@ body {
   outline-offset: 2px;
 }
 
+.bb-btn {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--signal);
+  background: var(--signal);
+  color: var(--void);
+  font-weight: 700;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.bb-btn:hover {
+  border-color: var(--signal-dim);
+  background: var(--signal-dim);
+}
+
+.bb-btn:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+
 /* ─── Ruled separator ─── */
 
 .rule {

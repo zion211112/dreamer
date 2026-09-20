@@ -13,9 +13,9 @@ export default function Contact() {
   return (
     <main className="contact-page">
       <section className="contact-classic">
-        <p className="label label-signal">Contact</p>
+        <p className="label label-signal">Contact · APT-LABS</p>
         <h1 className="contact-title">Write to us.</h1>
-        <p className="contact-lead">One reply, no queue.</p>
+        <p className="contact-lead">Schools, partners, and people with useful work are welcome here. One reply, no queue.</p>
 
         <dl className="contact-lines">
           <div className="contact-line">
