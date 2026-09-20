@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import GeoArt from "../../../components/GeoArt";
 import {
   KEYS,
   Member,
@@ -45,11 +44,6 @@ export default function Dashboard() {
   return (
     <main className="site-page bg-void text-ink">
       <div className="site-frame relative max-w-[720px] overflow-hidden py-12 md:py-24">
-        <GeoArt
-          variant="ring"
-          className="pointer-events-none absolute -top-16 right-[-90px] h-[300px] w-[300px] text-ivory opacity-[0.05]"
-        />
-
         {/* masthead */}
         <div className="site-section-head">
           <span>My Profile</span>
@@ -88,7 +82,7 @@ export default function Dashboard() {
             <p className="mt-3 font-display text-xl italic text-ivory/75">{me.name}</p>
 
             <div className="mt-10">
-              <p className="border-b border-ivory/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em] text-amber">
+              <p className="border-b border-ivory/15 pb-3 font-mono text-[11px] uppercase tracking-[0.3em] text-signal">
                 Identity · {me.id}
               </p>
               <div className={row}>

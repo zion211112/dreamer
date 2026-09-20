@@ -1,15 +1,15 @@
 /* BenBen: a restrained operator console with recursive proof surfaces. */
 .benben-page { --floor-surface: #0a0a0e; --floor-card: #0f0f14; --floor-hi: #16161d; --floor-border: #1c1c24; --floor-gold: #c8a238; }
-.benben-masthead { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 32px; align-items: end; padding-bottom: 24px; border-bottom: 1px solid var(--floor-border); }
+.benben-masthead { display: grid; gap: 20px; padding-bottom: 24px; border-bottom: 1px solid var(--floor-border); }
 .benben-brand { margin: 0 0 8px; color: var(--ash); font: 500 11px/1.5 var(--font-mono); letter-spacing: .15em; text-transform: uppercase; }
 .benben-brand strong { color: var(--floor-gold); }
 .benben-brand span { margin-left: 8px; border: 1px solid var(--floor-border); color: var(--ink); padding: 2px 6px; font-size: 10px; }
 .benben-title { margin: 0; color: var(--ink); font: italic 400 clamp(32px, 4vw, 48px)/1.1 var(--font-serif); letter-spacing: -.02em; }
 .benben-philosophy { max-width: 680px; margin: 8px 0 0; color: var(--dust); font-size: 13px; line-height: 1.5; }
-.benben-telemetry { display: flex; align-items: flex-end; flex-direction: column; gap: 4px; color: var(--ash); font: 11px/1.5 var(--font-mono); letter-spacing: .05em; text-align: right; text-transform: uppercase; }
+.benben-telemetry { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; color: var(--ash); font: 10px/1.5 var(--font-mono); letter-spacing: .05em; text-transform: uppercase; }
 .benben-beacon { display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(20,184,166,.3); background: rgba(20,184,166,.08); color: var(--signal); padding: 5px 8px; font-size: 10px; letter-spacing: .08em; }
 .benben-beacon i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.benben-control-console { margin-top: 24px; padding: 12px; border: 1px solid var(--floor-border); background: var(--floor-surface); }
+.benben-control-console { margin-top: 24px; padding: 12px 0; border-top: 1px solid var(--floor-border); border-bottom: 1px solid var(--floor-border); background: transparent; }
 .benben-console-top, .benben-console-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .benben-console-bottom { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--floor-border); }
 .benben-search { display: flex; align-items: center; flex: 1 1 320px; min-height: 42px; border: 1px solid var(--floor-border); background: var(--void); }
@@ -30,27 +30,26 @@
 .benben-kicker { margin: 0 0 4px; color: var(--signal); font: 10px var(--font-mono); letter-spacing: .2em; text-transform: uppercase; }
 .benben-board-heading h2 { margin: 0; color: var(--ink); font: 400 28px/1.15 var(--font-serif); }
 .benben-board-heading > span { color: var(--ash); font: 10px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
-.benben-board { margin-top: 0; border-left: 1px solid var(--floor-border); border-right: 1px solid var(--floor-border); padding-inline: 20px; background: rgba(10,10,14,.55); }
-.benben-board article { position: relative; padding: 32px 0; }
+.benben-board { margin-top: 0; padding-top: 8px; }
+.benben-board article { position: relative; margin: 16px 0; padding: 24px; border: 1px solid var(--floor-border); background: var(--floor-card); }
 .benben-board article + article { border-top-color: var(--floor-border); }
-.benben-board article::before { content: ""; position: absolute; top: 0; bottom: 0; left: -21px; width: 2px; background: transparent; transition: background 120ms ease; }
+.benben-board article::before { content: ""; position: absolute; top: 0; bottom: 0; left: -1px; width: 2px; background: transparent; transition: background 120ms ease; }
 .benben-board article:hover::before { background: var(--floor-gold); }
-.benben-board article details { margin-left: 12px; padding-left: 16px; border-left: 1px solid var(--floor-border); }
+.benben-board article details { margin: 24px 0 0; padding: 16px 0 0 16px; border-top: 1px solid var(--floor-border); border-left: 1px solid var(--floor-border); }
 .benben-board article details ul { border-left: 1px dashed var(--floor-border); padding-left: 12px; }
-.benben-board article > div[class*="border-l"] { margin-left: 12px; background: rgba(15,15,20,.5); padding-block: 10px; }
+.benben-board article > div[class*="border-l"] { margin: 20px 0 0; background: rgba(15,15,20,.5); padding: 12px 0 12px 12px; }
 .benben-legacy-actions { display: none; }
 .benben-page .site-surface { border-color: var(--floor-border); background: var(--floor-surface); }
 .benben-page .bb-btn { border-radius: 2px; background: var(--floor-gold); border-color: var(--floor-gold); }
 .benben-page .bb-btn:hover { background: #dbae3e; border-color: #dbae3e; }
 @media (max-width: 760px) {
-  .benben-masthead { grid-template-columns: 1fr; gap: 20px; }
+  .benben-masthead { gap: 20px; }
   .benben-telemetry { align-items: flex-start; text-align: left; }
   .benben-control-note { width: 100%; }
-  .benben-board { padding-inline: 12px; }
-  .benben-board article::before { left: -13px; }
+  .benben-board article { padding: 20px 16px; }
 }
 @media (max-width: 520px) {
-  .benben-page .site-frame { width: min(calc(100% - 32px), 1120px); }
+  .benben-page .site-frame { width: min(calc(100% - 32px), 760px); }
   .benben-tabs { width: 100%; overflow-x: auto; }
   .benben-tabs button { flex: 1 0 auto; }
   .benben-actions { width: 100%; align-items: stretch; flex-direction: column; }

@@ -328,6 +328,44 @@
   line-height: 1.45;
 }
 
+.record-intro {
+  padding-block: 48px 32px;
+}
+
+.record-intro h1 {
+  max-width: 12ch;
+  margin: 16px 0 0;
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: clamp(40px, 6vw, 56px);
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -.02em;
+  line-height: 1.04;
+}
+
+.record-intro > p:last-child {
+  max-width: 46ch;
+  margin: 16px 0 0;
+  color: var(--dust);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.record-panel {
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  padding: 16px;
+}
+
+.record-note {
+  margin: 16px 0 0;
+  border-top: 1px solid var(--rule);
+  padding-top: 16px;
+  color: var(--ash);
+  font: 11px/1.6 var(--font-mono);
+}
+
 @media (min-width: 640px) {
   .site-footer-copy {
     display: none;

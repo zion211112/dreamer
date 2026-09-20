@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import BoardCard from "../../../components/BoardCard";
 import BuildCard from "../../../components/BuildCard";
-import GeoArt from "../../../components/GeoArt";
 import "./benben.css";
 import {
   addBuild,
@@ -234,12 +233,7 @@ export default function BenBenPage() {
 
   return (
     <main className="site-page benben-page bg-void text-ink">
-      <div className="site-frame relative max-w-[1120px] overflow-hidden py-8 md:py-12">
-        <GeoArt
-          variant="ring"
-          className="pointer-events-none absolute -top-16 right-[-80px] h-[300px] w-[300px] text-signal opacity-[0.06]"
-        />
-
+      <div className="site-frame relative max-w-[760px] overflow-hidden py-8 md:py-12">
         {/* masthead */}
         <div className="benben-masthead">
           <div>
@@ -279,7 +273,7 @@ export default function BenBenPage() {
                   setNotice("");
                   setOpen((o) => !o);
                 }}
-                className="bb-btn rounded-full px-6 py-3 text-sm font-semibold transition"
+                className="bb-btn px-6 py-3 text-sm font-semibold transition"
               >
                 {open ? "Close the desk" : "Propose commitment →"}
               </button>
