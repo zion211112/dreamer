@@ -53,7 +53,7 @@
   font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 700;
-  border-radius: 5px;
+  border-radius: 0;
   transition: background-color 120ms ease, color 120ms ease;
 }
 
@@ -93,7 +93,7 @@
   font-weight: 500;
   color: var(--dust);
   text-decoration: none;
-  border-radius: 5px;
+  border-radius: 0;
   transition: color 120ms ease, background-color 120ms ease;
   position: relative;
 }
@@ -132,7 +132,7 @@
   background: transparent;
   border: 1px solid var(--rule);
   color: var(--ink);
-  border-radius: 6px;
+  border-radius: 0;
   cursor: pointer;
   font-family: var(--font-mono);
   font-size: 11px;
@@ -195,7 +195,7 @@
   font-weight: 500;
   color: var(--dust);
   text-decoration: none;
-  border-radius: 5px;
+  border-radius: 0;
   border-bottom: 1px solid var(--rule);
   transition: color 120ms ease, background-color 120ms ease;
 }
@@ -274,7 +274,7 @@
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
-  border-radius: 4px;
+  border-radius: 0;
 }
 
 .site-footer-name {
@@ -334,11 +334,4 @@
   }
 }
 
-/* Light mode — the sticky bar was hardcoded dark in both schemes,
-   making nav text unreadable when the system flipped. */
-@media (prefers-color-scheme: light) {
-  .site-nav {
-    background: rgba(247, 245, 240, 0.92);
-  }
-}
 

@@ -7,17 +7,17 @@
 import Link from "next/link";
 
 export const monoLabel = "font-mono text-[11px] uppercase tracking-[0.25em] text-dim";
-export const panel = "min-w-0 rounded-[21px] border border-ivory/10 bg-panel p-[21px]";
-export const moduleField = "mt-2 block w-full min-w-0 rounded-xl border border-ivory/10 bg-void px-3 py-2.5 text-sm leading-6 text-ivory outline-none focus:border-amber";
-export const quietAction = "rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-panelHi hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber disabled:opacity-40";
+export const panel = "min-w-0 border border-ivory/10 bg-panel p-[21px]";
+export const moduleField = "mt-2 block min-h-11 w-full min-w-0 border border-ivory/10 bg-void px-3 py-2.5 text-sm leading-6 text-ivory outline-none focus:border-teal";
+export const quietAction = "min-h-11 px-3 py-2 text-sm text-muted transition-colors hover:bg-panelHi hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal disabled:opacity-40";
 export const btn =
-  "rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-obsidian transition hover:bg-amber disabled:cursor-not-allowed disabled:opacity-40";
+  "min-h-11 border border-teal bg-teal px-6 py-3 text-sm font-semibold text-obsidian transition hover:bg-signalDim disabled:cursor-not-allowed disabled:opacity-40";
 export const btnGhost =
-  "rounded-full border border-ivory/10 px-6 py-3 text-sm font-semibold text-ivory transition hover:border-ivory/30";
+  "min-h-11 border border-ivory/10 px-6 py-3 text-sm font-semibold text-ivory transition hover:border-teal hover:text-teal";
 export const field =
-  "w-full rounded-full border border-ivory/10 bg-panel px-5 py-3 text-sm text-ivory outline-none transition-colors placeholder:text-dim focus:border-amber";
+  "min-h-11 w-full border border-ivory/10 bg-panel px-5 py-3 text-sm text-ivory outline-none transition-colors placeholder:text-dim focus:border-teal";
 export const cellInput =
-  "w-16 rounded-lg border border-ivory/10 bg-panel px-2 py-1.5 text-right font-mono text-[12px] text-ivory outline-none transition-colors focus:border-amber";
+  "min-h-11 w-16 border border-ivory/10 bg-panel px-2 py-1.5 text-right font-mono text-[12px] text-ivory outline-none transition-colors focus:border-teal";
 
 export function Loading() {
   return <p className={`${monoLabel} py-16 text-center`}>Reading the roll…</p>;
@@ -37,7 +37,7 @@ export function Gate({
   return (
     <div className={`${panel} flex min-h-[220px] flex-col justify-between`}>
       <div>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-amber ring-1 ring-inset ring-amber/30">
+        <span className="inline-flex items-center gap-1.5 border border-teal/30 bg-teal/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-teal">
           <span className="h-1.5 w-1.5 rounded-full bg-amber/80" aria-hidden="true" />
           Waiting
         </span>

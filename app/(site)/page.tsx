@@ -16,14 +16,6 @@ export const metadata: Metadata = {
   },
 };
 
-/* Demo snapshot of the roll. Becomes live client rows when the data
-   layer lands; `.roll-line.is-pending` already covers the loading state. */
-const roll = [
-  { id: "0347", name: "J. Mwangi", craft: "mason", status: "sealed" },
-  { id: "0351", name: "A. Kinyua", craft: "wiring", status: "open" },
-  { id: "0352", name: "S. Njeru", craft: "plumbing", status: "sealed" },
-];
-
 const surfaces = [
   {
     number: "01",
@@ -51,6 +43,13 @@ const surfaces = [
 export default function HomePage() {
   return (
     <main className="landing">
+      <div className="landing-system-strip" role="status">
+        <div className="landing-frame landing-strip-inner">
+          <span className="landing-status"><i aria-hidden="true" /> LOCAL-FIRST RECORD</span>
+          <span>APT-LABS <b>/</b> KIRINYAGA NODE</span>
+          <span>PUBLIC PROOF · PRIVATE IDENTITY</span>
+        </div>
+      </div>
       <section className="landing-hero" aria-labelledby="landing-title">
         <div className="landing-frame landing-hero-grid">
           <div className="landing-hero-copy">
@@ -70,22 +69,18 @@ export default function HomePage() {
             </div>
           </div>
 
-          <aside className="landing-roll" aria-label="The roll, three current entries">
-            <p className="lp-label">The roll · today</p>
-            <ul className="roll-lines">
-              {roll.map((row) => (
-                <li
-                  key={row.id}
-                  className={`roll-line${row.status === "open" ? " is-open" : ""}`}
-                >
-                  <span className="roll-id">{row.id}</span>
-                  <span className="roll-name">{row.name}</span>
-                  <span className="roll-craft">{row.craft}</span>
-                  <span className="roll-status">{row.status}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="roll-total">1,254 sealed · 21 open today · full roll in the ledger</p>
+          <aside className="landing-roll" aria-label="Record protocol">
+            <div className="landing-panel-head">
+              <p className="lp-label">Record protocol</p>
+              <span className="landing-panel-code">OPEN</span>
+            </div>
+            <dl className="protocol-list">
+              <div><dt>Source</dt><dd>people who do the work</dd></div>
+              <div><dt>State</dt><dd>derived from proof</dd></div>
+              <div><dt>Identity</dt><dd>kept private</dd></div>
+              <div><dt>Region</dt><dd>Kirinyaga, Kenya</dd></div>
+            </dl>
+            <p className="roll-total">No imaginary money · no vanity metrics</p>
           </aside>
         </div>
       </section>

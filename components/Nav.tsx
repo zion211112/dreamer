@@ -7,7 +7,6 @@ import { useEffect, useId, useState } from "react";
 type NavItem = { href: string; label: string };
 
 const NAV_ITEMS: NavItem[] = [
-  { href: "/", label: "Home" },
   { href: "/ledger", label: "Ledger" },
   { href: "/benben", label: "Floor" },
   { href: "/console", label: "Console" },

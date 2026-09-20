@@ -50,7 +50,7 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
   const menu = CONSOLE_MENU[tool.module];
 
   return (
-    <main className="flex min-h-dvh flex-col bg-void font-body text-ivory print:bg-white print:text-black">
+    <main className="console-ui flex min-h-dvh flex-col bg-void font-body text-ivory print:bg-white print:text-black">
       <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ivory/8 px-[21px] print:hidden">
         <div className="flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

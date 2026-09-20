@@ -15,6 +15,39 @@
   margin-inline: auto;
 }
 
+.landing-system-strip {
+  border-bottom: 1px solid var(--rule);
+  background: var(--panel);
+  color: var(--dust);
+  font: 10px/1.5 var(--font-mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.landing-strip-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 32px;
+}
+
+.landing-strip-inner b { color: var(--signal); }
+
+.landing-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--signal);
+}
+
+.landing-status i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
 /* ─── Hero ─── */
 
 .landing-hero {
@@ -134,64 +167,47 @@
   padding: 16px;
 }
 
-.roll-lines {
-  margin: 8px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.roll-line {
-  display: grid;
-  grid-template-columns: 5ch minmax(0, 1fr) 9ch 7ch;
-  gap: 8px;
-  padding: 8px;
-  margin: 0 -8px;
+.landing-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
   border-bottom: 1px solid var(--rule);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 400;
-  letter-spacing: 0.04em;
-  line-height: 1.6;
 }
 
-.roll-line:last-child {
-  border-bottom: none;
+.landing-panel-code {
+  border: 1px solid rgba(20, 184, 166, .3);
+  background: rgba(20, 184, 166, .08);
+  color: var(--signal);
+  padding: 3px 6px;
+  font: 10px var(--font-mono);
+  letter-spacing: .1em;
 }
 
-.roll-line:hover {
-  background: var(--edge);
+.protocol-list {
+  margin: 8px 0 0;
 }
 
-.roll-id,
-.roll-craft {
-  color: var(--dust);
+.protocol-list > div {
+  display: grid;
+  grid-template-columns: 7ch 1fr;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
 }
 
-.roll-name {
-  font-weight: 600;
-  color: var(--ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.protocol-list dt,
+.protocol-list dd {
+  margin: 0;
+  font: 11px/1.5 var(--font-mono);
 }
 
-.roll-status {
-  text-align: right;
-  color: var(--dust);
+.protocol-list dt {
+  color: var(--ash);
+  text-transform: uppercase;
 }
 
-.roll-line.is-open .roll-status {
-  color: var(--amber);
-}
-
-/* Loading — pending rows shimmer until the roll goes live in the
-   client. The static build emits no .is-pending: zero cost today. */
-.roll-line.is-pending {
-  background: linear-gradient(90deg, var(--panel) 25%, var(--edge) 50%, var(--panel) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  color: transparent;
-}
+.protocol-list dd { color: var(--ink); }
 
 .roll-total {
   margin: 8px 0 0;
@@ -322,6 +338,8 @@
 /* ─── Breakpoints ─── */
 
 @media (max-width: 800px) {
+  .landing-strip-inner { flex-wrap: wrap; padding-block: 8px; }
+
   .landing-hero-grid {
     grid-template-columns: 1fr;
     padding-block: 64px 48px;
@@ -358,17 +376,3 @@
   }
 }
 
-/* Light mode — the one contrast pair that inverts is the primary
-   button: near-black text on #0D9488 fails AA, so it steps down to
-   signal-strong. Everything else rides the tokens. */
-@media (prefers-color-scheme: light) {
-  .landing-button-primary {
-    background: var(--signal-strong);
-    border-color: var(--signal-strong);
-  }
-
-  .landing-button-primary:hover {
-    background: var(--signal);
-    border-color: var(--signal);
-  }
-}

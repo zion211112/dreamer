@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import BoardCard from "../../../components/BoardCard";
 import BuildCard from "../../../components/BuildCard";
 import GeoArt from "../../../components/GeoArt";
+import "./benben.css";
 import {
   addBuild,
   allMembers,
@@ -83,6 +84,7 @@ export default function BenBenPage() {
   const [voteErr, setVoteErr] = useState<string | null>(null);
   const [voteErrId, setVoteErrId] = useState<string | null>(null);
   const [tab, setTab] = useState<BoardTab>("all");
+  const [search, setSearch] = useState("");
   const desk = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -215,8 +217,15 @@ export default function BenBenPage() {
     return counts;
   }, [boardList, now]);
   const shownBoard = useMemo(
-    () => (tab === "all" ? boardList : boardList.filter((b) => tabBucket(deriveState(b, now)) === tab)),
-    [boardList, tab, now]
+    () => {
+      const query = search.trim().toLowerCase();
+      return boardList.filter((b) => {
+        if (tab !== "all" && tabBucket(deriveState(b, now)) !== tab) return false;
+        if (!query) return true;
+        return `${b.title} ${b.body} ${b.by} ${b.domain} ${b.location}`.toLowerCase().includes(query);
+      });
+    },
+    [boardList, tab, now, search]
   );
 
   if (!ready) {
@@ -224,71 +233,61 @@ export default function BenBenPage() {
   }
 
   return (
-    <main className="site-page bg-void text-ink">
-      <div className="site-frame relative max-w-[960px] overflow-hidden py-12 md:py-20">
+    <main className="site-page benben-page bg-void text-ink">
+      <div className="site-frame relative max-w-[1120px] overflow-hidden py-8 md:py-12">
         <GeoArt
           variant="ring"
           className="pointer-events-none absolute -top-16 right-[-80px] h-[300px] w-[300px] text-signal opacity-[0.06]"
         />
 
         {/* masthead */}
-        <div className="site-section-head flex-wrap">
-          <div className="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.3em] text-ash">
-            <span
-              aria-hidden
-              className="grid h-6 w-6 shrink-0 rotate-45 place-items-center border border-signal/70 bg-void"
-            />
-            <span>Ben-Ben · The Floor</span>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-teal/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-signal ring-1 ring-inset ring-teal/25 tabular-nums">
-              {feed.length} builds
-            </span>
-            <span className="rounded-full bg-amber/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-amber ring-1 ring-inset ring-amber/25 tabular-nums">
-              {totalVotes} votes · {totalForks} forks
-            </span>
-            <span className="rounded-full bg-teal/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-signal ring-1 ring-inset ring-teal/25 tabular-nums">
-              {openBoard} open on the board
-            </span>
-          </div>
-        </div>
-
-        <h1 className="mt-10 max-w-[12ch] font-serif text-4xl leading-[1.04] tracking-tight sm:text-5xl md:text-6xl">
-          Post. Vote. Claim. <span className="text-signal">Prove.</span>
-        </h1>
-        <p className="mt-5 max-w-[52ch] text-[0.95rem] leading-7 text-dust">
-          A commons of builders for local projects, skills, and trusted work. The board decides
-          by count; the floor remembers by proof. No emojis, no images, no noise.
-        </p>
-
-        <div className="mt-8 flex flex-wrap items-center gap-4">
-          <button
-            type="button"
-            onClick={() => {
-              setForkOf(null);
-              setErr("");
-              setNotice("");
-              setOpen((o) => !o);
-            }}
-            className="bb-btn rounded-full px-6 py-3 text-sm font-semibold transition"
-          >
-            {open ? "Close the desk" : "Fork the floor →"}
-          </button>
-          <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-ash">
-            {me ? `signed · @${me}` : "signed in as no one yet"}
-          </span>
-        </div>
-
-        {/* the board: commitments made public — state derived, never written */}
-        <section className="bb-board mt-12">
+        <div className="benben-masthead">
           <div>
-            <h2 className="font-serif text-[2rem] font-medium leading-tight text-ink">The Commitments</h2>
-            <span aria-hidden className="mt-3 block h-px w-[5.5rem] bg-amber/70" />
-            <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-3 font-mono text-[11px] uppercase tracking-[0.24em]">
-              <span className="text-amber">Propose · Ratify · Claim · Prove</span>
-              <span className="text-ash">state is derived — the floor decides</span>
+            <p className="benben-brand">BEN-BEN <strong>/</strong> THE FLOOR <span>APT-LABS KIRINYAGA</span></p>
+            <h1 className="benben-title">The Floor Commons</h1>
+            <p className="benben-philosophy">
+              Post. Vote. Claim. Prove. The board decides by count; the floor remembers by proof.
+            </p>
+          </div>
+          <div className="benben-telemetry">
+            <span className="benben-beacon"><i aria-hidden="true" /> LOCAL FLOOR ACTIVE</span>
+            <span>{feed.length} builds · {totalVotes} votes · {totalForks} forks</span>
+            <span>{openBoard} open commitments</span>
+          </div>
+        </div>
+
+        <div className="benben-control-console">
+          <div className="benben-console-top">
+            <label className="benben-search">
+              <span className="sr-only">Search commitments</span>
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="SEARCH TITLE · HANDLE · LOCATION · DOMAIN"
+                aria-label="Search commitments"
+              />
+              {search && <button type="button" onClick={() => setSearch("")} aria-label="Clear commitment search">×</button>}
+              {!search && <kbd>/</kbd>}
+            </label>
+            <div className="benben-actions">
+              <span className="benben-signed">{me ? `signed · @${me}` : "unsigned operator"}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setForkOf(null);
+                  setErr("");
+                  setNotice("");
+                  setOpen((o) => !o);
+                }}
+                className="bb-btn rounded-full px-6 py-3 text-sm font-semibold transition"
+              >
+                {open ? "Close the desk" : "Propose commitment →"}
+              </button>
             </div>
-            <div role="tablist" aria-label="Board state" className="mt-5 flex border-b border-rule/10" aria-orientation="horizontal">
+          </div>
+          <div className="benben-console-bottom">
+            <span className="benben-control-label">STATE</span>
+            <div role="tablist" aria-label="Board state" className="benben-tabs" aria-orientation="horizontal">
               {BOARD_TABS.map((t) => (
                 <button
                   key={t.key}
@@ -297,17 +296,26 @@ export default function BenBenPage() {
                   aria-controls="board-panel"
                   aria-selected={tab === t.key}
                   onClick={() => setTab(t.key)}
-                  className={`min-h-11 border-b-2 px-2.5 font-mono text-[10px] uppercase tracking-[0.13em] transition sm:px-4 ${
-                    tab === t.key
-                      ? "border-amber text-amber"
-                      : "border-transparent text-ash hover:border-rule/30 hover:text-ink"
-                  }`}
+                  className={tab === t.key ? "active" : ""}
                 >
-                  {t.name} <span className="tabular-nums opacity-60">{boardTabs[t.key]}</span>
+                  {t.name} <span>{boardTabs[t.key]}</span>
                 </button>
               ))}
             </div>
+            <span className="benben-control-note">state is derived · proof is appended</span>
           </div>
+        </div>
+
+        <div className="benben-board-heading">
+          <div>
+            <p className="benben-kicker">Commitment ledger</p>
+            <h2>The work, nested by proof.</h2>
+          </div>
+          <span>{shownBoard.length} visible</span>
+        </div>
+
+        {/* the board: commitments made public — state derived, never written */}
+        <section className="bb-board benben-board">
           <div id="board-panel" role="tabpanel" aria-labelledby={`board-tab-${tab}`} tabIndex={-1}>
             {shownBoard.length === 0 ? (
               <div className="mt-8 border border-dashed border-rule/15 px-5 py-8">

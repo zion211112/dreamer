@@ -150,22 +150,16 @@ export default function LedgerPage() {
       <header className="page-header">
         <div className="page-header-inner">
           <div className="page-header-text">
-            <p className="label label-signal">The ledger</p>
-            <h1 className="page-title">Names, proof, and the shared record.</h1>
+            <p className="ledger-brand">APT-LABS <em>/</em> KIRINYAGA NODE <span>LOCAL RECORD</span></p>
+            <h1 className="page-title">The Sovereign Ledger</h1>
             <p className="page-desc">
-              Everyone who can do something is on the roll — verified by work, not by paperwork.
+              Names, skills, and proof in one public record. Verified by work, not by paperwork.
             </p>
           </div>
-          <div className="page-header-stats" aria-label="Ledger summary">
-            <div className="stat">
-              <span className="stat-value">{total}</span>
-              <span className="stat-label">on the roll</span>
-            </div>
-            <div className="stat-divider" aria-hidden="true" />
-            <div className="stat">
-              <span className="stat-value">{verified}</span>
-              <span className="stat-label">verified</span>
-            </div>
+          <div className="ledger-telemetry" aria-label="Ledger status">
+            <span className="ledger-beacon"><i aria-hidden="true" /> LOCAL RECORD ACTIVE</span>
+            <span className="ledger-mesh">{total} entries · {verified} verified</span>
+            <span className="ledger-seal">SEAL {shortHash(masterSeal)}</span>
           </div>
         </div>
       </header>

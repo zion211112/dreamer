@@ -102,7 +102,7 @@ const ROLE_META: Record<ConsoleRole, { label: string; desc: string }> = {
 };
 
 const loginInput =
-  "w-full rounded-full border border-ivory/10 bg-panel px-5 py-3 text-sm text-ivory placeholder:text-dim outline-none transition-all duration-150 focus-visible:border-teal focus-visible:ring-2 focus-visible:ring-teal/40";
+  "min-h-11 w-full border border-ivory/10 bg-panel px-5 py-3 text-sm text-ivory placeholder:text-dim outline-none transition-all duration-150 focus-visible:border-teal focus-visible:ring-2 focus-visible:ring-teal/40";
 
 function ConsoleLogin({
   initialRole,
@@ -123,7 +123,7 @@ function ConsoleLogin({
   }
 
   return (
-    <main className="flex h-dvh flex-col bg-void font-body text-ivory">
+    <main className="console-ui flex h-dvh flex-col bg-void font-body text-ivory">
       <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ivory/8 px-[21px]">
         <div className="flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
           <Diamond size={15} className="text-amber" />
@@ -153,7 +153,7 @@ function ConsoleLogin({
                   type="button"
                   onClick={() => setRole(r)}
                   aria-pressed={role === r}
-                  className={`rounded-2xl border p-5 text-left transition ${
+                    className={`border p-5 text-left transition ${
                     role === r ? "border-amber/70 bg-amber/10" : "border-ivory/10 bg-ivory/[0.04] hover:border-ivory/25"
                   }`}
                 >
@@ -187,7 +187,7 @@ function ConsoleLogin({
               <button
                 type="submit"
                 disabled={!valid}
-                className="min-h-11 rounded-full bg-ivory px-6 py-3 text-sm font-semibold text-obsidian transition duration-150 hover:bg-amber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-void disabled:cursor-not-allowed disabled:opacity-40"
+                className="min-h-11 border border-teal bg-teal px-6 py-3 text-sm font-semibold text-obsidian transition duration-150 hover:bg-signalDim focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-void disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Enter the {ROLE_META[role].label.toLowerCase()} console →
               </button>
@@ -251,7 +251,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
   const showModules = mod === "all" && q === "";
 
   return (
-    <div className="flex h-dvh flex-col overflow-hidden bg-void font-body text-ivory">
+    <div className="console-ui flex h-dvh flex-col overflow-hidden bg-void font-body text-ivory">
       <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ivory/8 px-[21px]">
         <div className="flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
           <Diamond size={15} className="text-amber" />
