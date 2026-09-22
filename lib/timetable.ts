@@ -39,7 +39,72 @@ export const DEMO_GRADE_123: WeeklyTimetable = {
     FRI: ["PPI", "ENGLISH LANGUAGE", "ENVIRONMENTAL ACTIVITIES", "—", "KISWAHILI LANGUAGE", "CREATIVE ACTIVITIES", "—", "MATHEMATICAL ACTIVITIES", "RELIGIOUS EDUCATION", "LUNCH BREAK"]
   }
 };
-export const DEMO_TIMETABLES: WeeklyTimetable[] = [DEMO_CBC_LOWER, DEMO_GRADE_123];
+// A senior school week, the shape a Form 2 wall grid actually takes:
+// early bells, two short breaks, a long lunch, subjects in KICD order.
+export const DEMO_FORM_2: WeeklyTimetable = {
+  name: "Form 2 · Kenya",
+  className: "Form 2",
+  times: [T("07:40", "08:30"), T("08:30", "09:20"), T("09:20", "09:40", "break"), T("09:40", "10:30"), T("10:30", "11:20"), T("11:20", "11:40", "break"), T("11:40", "12:30"), T("12:30", "13:10"), T("13:10", "14:10", "lunch"), T("14:10", "15:00")],
+  cells: {
+    MON: ["ENGLISH", "MATHS", "B", "PHYSICS", "KISWAHILI", "B", "CHEMISTRY", "BIOLOGY", "L", "CRE"],
+    TUE: ["MATHS", "PHYSICS", "B", "ENGLISH", "CHEMISTRY", "B", "KISWAHILI", "MATHS", "L", "PHE"],
+    WED: ["ENGLISH", "CHEMISTRY", "B", "MATHS", "PHYSICS", "B", "BIOLOGY", "ICT", "L", "CRE"],
+    THUR: ["KISWAHILI", "MATHS", "B", "PHYSICS", "ENGLISH", "B", "CHEMISTRY", "BIOLOGY", "L", "PHE"],
+    FRI: ["SBA PRACTICAL", "ENGLISH", "B", "MATHS", "CRE", "B", "ICT", "KISWAHILI", "L", "SCHOOL PROGRAMME"]
+  }
+};
+
+export const DEMO_TIMETABLES: WeeklyTimetable[] = [DEMO_CBC_LOWER, DEMO_GRADE_123, DEMO_FORM_2];
+
+/* ------------------------------------------------------------------ */
+/* Colour and calendar — the two things that make the week readable   */
+/* ------------------------------------------------------------------ */
+
+// A subject is always the same colour, everywhere in the console: one
+// deterministic hash into a ten-colour muted palette. No config, no drift.
+export const SUBJECT_PALETTE = [
+  "#d4a53c", // gold (the house colour)
+  "#4ea1d8",
+  "#5fbf9f",
+  "#d87a6e",
+  "#a684d8",
+  "#d8c25f",
+  "#6fb3d8",
+  "#c97bd8",
+  "#8fbf6f",
+  "#d88f6f"
+];
+
+export function subjectTint(name: string): string {
+  const s = name.trim().toUpperCase();
+  if (s === "" || s === "—" || s === "LUNCH" || s === "BREAK" || s === "ROLL CALL") return "";
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return SUBJECT_PALETTE[h % SUBJECT_PALETTE.length];
+}
+
+// Monday-first month grid — what the calendar view lays the week out on.
+export function monthWeeks(year: number, month: number): Date[][] {
+  const first = new Date(year, month, 1);
+  const startOffset = (first.getDay() + 6) % 7; // 0 = Monday
+  const gridStart = new Date(year, month, 1 - startOffset);
+  const weeks: Date[][] = [];
+  for (let w = 0; w < 6; w++) {
+    const row: Date[] = [];
+    for (let d = 0; d < 7; d++) {
+      const dt = new Date(gridStart);
+      dt.setDate(gridStart.getDate() + w * 7 + d);
+      row.push(dt);
+    }
+    weeks.push(row);
+  }
+  return weeks;
+}
+
+/** 0 = MON … 4 = FRI, 5/6 = weekend. JS is Sunday-first; the school is not. */
+export function weekdayIndex(d: Date): number {
+  return (d.getDay() + 6) % 7;
+}
 const APPROVED_KEY = "aptlabs.timetable.approved.v1";
 export function loadApprovedTimetable(): WeeklyTimetable | null {
   if (typeof window === "undefined") return null;

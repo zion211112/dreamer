@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Fragment, type ComponentType } from "react";
+import { type ComponentType } from "react";
 import { CONSOLE_MENU, toolById } from "../../../../lib/console";
-import { ModuleTile } from "../../../../components/console/bits";
+import { ModuleGlyph, ModuleTile } from "../../../../components/console/bits";
 import RosterImport from "../../../../components/console/RosterImport";
 import TermReports from "../../../../components/console/TermReports";
 import AutoMarking from "../../../../components/console/AutoMarking";
@@ -31,14 +31,20 @@ const WORKSPACES: Record<string, ComponentType> = {
   "18": ContentStudio
 };
 
-// The teacher's path, in order. Numbered 01–05 in the shell; anything off
-// it says so with a signal chip instead of a silent dead step.
-const STEPS: Array<[string, string]> = [
+// The module rail — every workspace in one quiet tab strip. No step
+// numbering, no "off the path" chip: the console is a toolkit, and the
+// week is just the way most people happen to use it.
+const RAIL: Array<[string, string]> = [
   ["9", "Roster"],
   ["6", "Timetable"],
   ["17", "My Day"],
   ["7", "Mark"],
-  ["2", "Reports"]
+  ["2", "Reports"],
+  ["8", "Forecast"],
+  ["3", "Fees"],
+  ["4", "Inspection"],
+  ["18", "Studio"],
+  ["12", "Comms"]
 ];
 
 export default function ConsoleToolPage({ params }: { params: { id: string } }) {
@@ -63,37 +69,26 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
         </Link>
       </header>
 
-      {/* The week, in order — a numbered stepper instead of a wall of chips. */}
-      <nav aria-label="Console workspaces" className="flex items-center gap-4 overflow-x-auto border-b border-ink/8 bg-panel px-5 py-4 print:hidden">
-        <span className="shrink-0 font-mono text-micro uppercase tracking-[0.28em] text-ash">The week, in order</span>
-        {!STEPS.some(([s]) => s === tool.id) && (
-          <span className="rounded-full bg-signal/10 px-3 py-1 font-mono text-micro uppercase tracking-[0.14em] text-signal/90 ring-1 ring-inset ring-signal/25">
-            Off the week path
-          </span>
-        )}
-        {STEPS.map(([id, label], i) => (
-          <Fragment key={id}>
+      {/* The module rail — one quiet tab strip, glyph per tool. */}
+      <nav aria-label="Console modules" className="flex items-center gap-1 overflow-x-auto border-b border-ink/8 bg-panel px-5 py-1.5 print:hidden">
+        {RAIL.map(([id, label]) => {
+          const t = toolById(id);
+          if (!t) return null;
+          const isActive = tool.id === id;
+          return (
             <Link
+              key={id}
               href={`/console/${id}`}
-              aria-current={tool.id === id ? "page" : undefined}
-              className="group flex min-h-11 shrink-0 items-center gap-2.5"
+              aria-current={isActive ? "page" : undefined}
+              className={`flex min-h-11 shrink-0 items-center gap-2 border-b-2 px-3 transition-colors ${
+                isActive ? "border-signal text-ink" : "border-transparent text-dust hover:text-ink"
+              }`}
             >
-              <span
-                className={`grid h-7 w-7 place-items-center rounded-full border font-mono text-label transition-colors ${
-                  tool.id === id
-                    ? "border-signal/60 bg-signal/10 text-signal"
-                    : "border-ink/10 bg-ink/5 text-dust group-hover:border-ink/30 group-hover:text-ink"
-                }`}
-              >
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span className={`text-ui font-medium transition-colors ${tool.id === id ? "text-ink" : "text-dust group-hover:text-ink"}`}>
-                {label}
-              </span>
+              <ModuleGlyph module={t.module} size={14} className={isActive ? "text-signal" : "text-ash"} />
+              <span className="whitespace-nowrap font-mono text-label uppercase tracking-[0.14em]">{label}</span>
             </Link>
-            {i < STEPS.length - 1 && <span aria-hidden="true" className="h-px w-6 bg-ink/15" />}
-          </Fragment>
-        ))}
+          );
+        })}
       </nav>
         <div className="mx-auto w-full max-w-[1440px] flex-1 px-5 py-8 md:px-[34px] md:py-12 print:p-0">
           <div className="mb-8 flex flex-wrap items-start gap-4 border-b border-ink/10 pb-6 print:hidden">

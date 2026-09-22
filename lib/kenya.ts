@@ -11,7 +11,7 @@
 // pick one at the console door and the whole console arrives populated —
 // roll, marks, fees, timetable — the way a teacher's term actually looks.
 
-import { Assessment, Student, studentId } from "./school";
+import { Assessment, Student, studentId, scoreKey } from "./school";
 import { WeeklyTimetable, TimetableTime } from "./timetable";
 
 /* ------------------------------------------------------------------ */

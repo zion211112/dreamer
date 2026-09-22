@@ -34,7 +34,8 @@ export const CATEGORY_LABEL: Record<Category, string> = Object.fromEntries(
   CATEGORIES.map((c) => [c.id, c.label])
 ) as Record<Category, string>;
 
-// CBC grade bands: Lower Primary 1–3, Upper 4–6, Junior 7–9.
+// Grade bands across the whole Kenyan ladder: Lower Primary 1–3,
+// Upper 4–6, Junior 7–9, and the senior school's Forms 1–4 (KCSE).
 export const GRADE_BANDS = [
   "Lower 1",
   "Lower 2",
@@ -45,6 +46,10 @@ export const GRADE_BANDS = [
   "Junior 7",
   "Junior 8",
   "Junior 9",
+  "Form 1",
+  "Form 2",
+  "Form 3",
+  "Form 4",
   "All"
 ];
 

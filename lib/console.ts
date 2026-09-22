@@ -62,9 +62,9 @@ export const CONSOLE_MENU: Record<string, { modules: string[]; icon: string; des
 // keep is not a card.
 export const CONSOLE_TOOLS: ConsoleTool[] = [
   { id: "18", title: "Content Studio", desc: "Lesson plans, semester outlines and video-note tests from your own notes.", module: "Content Studio", fav: true },
-  { id: "7", title: "Auto-Marking", desc: "Upload a test paper. Get back a weakness map.", module: "Auto-Marking", fav: true },
+  { id: "7", title: "Auto-Marking", desc: "Mark the stack — typed or scanned — auto-grade it, fill the records, read the weakness map.", module: "Auto-Marking", fav: true },
   { id: "17", title: "My Day", desc: "Today on one timeline — lessons, attendance, grades, notes, tomorrow.", module: "My Day", fav: false },
-  { id: "6", title: "Timetable Solver", desc: "Build the week, print it for the wall, approve it — Today reads from it.", module: "Timetable", fav: false },
+  { id: "6", title: "Timetable Solver", desc: "Build the week, read it as a calendar, print it for the wall, approve it — Today reads from it.", module: "Timetable", fav: false },
   { id: "9", title: "Roster Import", desc: "Bulk CSV paste. Classes and streams.", module: "Roster", fav: false },
   { id: "2", title: "Term Reports", desc: "One-click reports for every student.", module: "Reports", fav: false },
   { id: "8", title: "Grade Forecast", desc: "KCSE projection per student.", module: "Reports", fav: false },

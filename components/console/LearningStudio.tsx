@@ -1,8 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { briefError, buildDocument, buildQuestions, OutputKind, SAMPLE_BRIEF, testDocument } from "../../lib/learning-demo";
+import { loadContent, ContentItem } from "../../lib/content";
 import { btn, btnGhost, field, monoLabel, panel } from "./bits";
+
+// The bank half of the studio: the seeded exemplar lessons — including the
+// Form 1–4 Mathematics / Physics / Biology bank — are read here, not
+// duplicated. Filters: subject and form, one plan open at a time.
+const SENIOR_SUBJECTS = ["All", "Mathematics", "Physics", "Biology"];
+const SENIOR_FORMS = ["All", "Form 1", "Form 2", "Form 3", "Form 4"];
+
+function planLines(plan: string): string[] {
+  // The five-line scaffold runs "Intention: … Inputs: … Activity: …
+  // Evidence: … Adjustment: …" in one string — split it back into lines.
+  return plan
+    .split(/\s*(?=Intention:|Inputs:|Activity:|Evidence:|Adjustment:)/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
 
 export default function LearningStudio({ initialKind = "lesson" }: { initialKind?: OutputKind }) {
   const [brief, setBrief] = useState(SAMPLE_BRIEF);
@@ -10,6 +26,30 @@ export default function LearningStudio({ initialKind = "lesson" }: { initialKind
   const [draft, setDraft] = useState("");
   const [key, setKey] = useState("");
   const [notice, setNotice] = useState("");
+  const [bankLessons, setBankLessons] = useState<ContentItem[]>([]);
+  const [bankSubject, setBankSubject] = useState("All");
+  const [bankForm, setBankForm] = useState("All");
+  const [bankOpen, setBankOpen] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { items } = await loadContent();
+        setBankLessons(
+          items.filter((i) => i.category === "lesson" && i.gradeBand.startsWith("Form")).sort((a, b) => a.title.localeCompare(b.title))
+        );
+      } catch {
+        /* memory-only mode — the bank panel stays empty */
+      }
+    })();
+  }, []);
+
+  const bankShown = bankLessons.filter(
+    (l) =>
+      (bankSubject === "All" || l.subject === bankSubject) &&
+      (bankForm === "All" || l.gradeBand === bankForm)
+  );
+  const bankCurrent = bankShown.find((l) => l.id === bankOpen) ?? bankShown[0];
 
   function generate() {
     const error = briefError(brief);
@@ -59,6 +99,87 @@ export default function LearningStudio({ initialKind = "lesson" }: { initialKind
         </> : <><h2 className="mt-8 font-serif text-3xl">One source. A lesson.<br />A term. A way to know.</h2><p className="mt-5 max-w-md text-sm leading-7 text-dust">Turn the same concepts into something you can teach and something you can check. The example is ready—create your first draft on the left.</p><p className="mt-12 text-sm text-signal">Source → plan → practise → understand</p></>}
       </section>
     </div>
+    <section className={panel}>
+      <p className={monoLabel}>03 / From the bank · Form 1–4 lessons</p>
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <label className="text-sm text-dust">
+          Subject
+          <select
+            className={field + " mt-1"}
+            value={bankSubject}
+            onChange={(e) => {
+              setBankSubject(e.target.value);
+              setBankOpen("");
+            }}
+          >
+            {SENIOR_SUBJECTS.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+        </label>
+        <label className="text-sm text-dust">
+          Form
+          <select
+            className={field + " mt-1"}
+            value={bankForm}
+            onChange={(e) => {
+              setBankForm(e.target.value);
+              setBankOpen("");
+            }}
+          >
+            {SENIOR_FORMS.map((f) => (
+              <option key={f} value={f}>{f}</option>
+            ))}
+          </select>
+        </label>
+        <p className="ml-auto font-mono text-micro uppercase tracking-[0.15em] text-ash">{bankShown.length} lessons</p>
+      </div>
+      {bankLessons.length === 0 ? (
+        <p className="mt-4 text-sm leading-6 text-dust">The bank is empty on this device — seed the exemplar school first.</p>
+      ) : bankShown.length === 0 ? (
+        <p className="mt-4 text-sm leading-6 text-dust">No {bankSubject !== "All" ? bankSubject + " " : ""}lessons in {bankForm !== "All" ? bankForm + " " : ""}right now. Widen the filter.</p>
+      ) : (
+        <div className="mt-4 grid gap-6 lg:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
+          <ul className="space-y-1.5">
+            {bankShown.map((l) => (
+              <li key={l.id}>
+                <button
+                  onClick={() => setBankOpen(l.id)}
+                  className={`w-full rounded-xl border px-3 py-2 text-left transition-colors ${
+                    bankCurrent?.id === l.id ? "border-signal/50 bg-signal/5" : "border-ink/10 bg-void hover:border-ink/30"
+                  }`}
+                >
+                  <span className="block truncate text-sm text-ink">{l.title}</span>
+                  <span className="font-mono text-micro uppercase tracking-[0.15em] text-ash">{l.subject} · {l.gradeBand}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+          {bankCurrent && (
+            <div>
+              <h3 className="font-serif text-2xl">{bankCurrent.title}</h3>
+              <p className="mt-1 font-mono text-micro uppercase tracking-[0.15em] text-ash">
+                {bankCurrent.subject} · {bankCurrent.gradeBand} · {bankCurrent.durationMin} min
+              </p>
+              {bankCurrent.misconception !== "" && (
+                <p className="mt-3 rounded-xl border border-signal/30 bg-signal/5 px-4 py-3 text-sm leading-6 text-ink">
+                  <span className="font-mono text-micro uppercase tracking-[0.15em] text-signal">Watch for · </span>
+                  {bankCurrent.misconception}
+                </p>
+              )}
+              <div className="mt-4 space-y-2">
+                {planLines(bankCurrent.plan).map((line, i) => (
+                  <p key={i} className="text-sm leading-6 text-dust">{line}</p>
+                ))}
+              </div>
+              {bankCurrent.kras.length > 0 && (
+                <p className="mt-3 font-mono text-micro uppercase tracking-[0.15em] text-ash">Traces {bankCurrent.kras.join(" · ")}</p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </section>
     <p role="status" className="text-sm text-signal">{notice}</p>
   </div>;
 }

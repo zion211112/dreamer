@@ -18,6 +18,7 @@ import {
 } from "./proto-school";
 import { EXEMPLAR_ITEMS, EXEMPLAR_EXAMS } from "./exemplars";
 import { EXEMPLAR_MEDIA } from "./exemplars-media";
+import { EXEMPLAR_SENIOR } from "./exemplars-senior";
 
 export interface SeedResult {
   seeded: boolean;
@@ -39,7 +40,7 @@ export async function seedExemplarSchool(): Promise<SeedResult> {
   const students = EXEMPLAR_ROSTER;
   const assessments: Assessment[] = EXEMPLAR_ASSESSMENTS;
   const fees: Array<FeeTerm | FeePayment> = [EXEMPLAR_FEE_TERM, ...EXEMPLAR_FEE_PAYMENTS];
-  const items: ContentItem[] = [...EXEMPLAR_ITEMS, ...EXEMPLAR_MEDIA];
+  const items: ContentItem[] = [...EXEMPLAR_ITEMS, ...EXEMPLAR_MEDIA, ...EXEMPLAR_SENIOR];
   const exams: ExamPaper[] = EXEMPLAR_EXAMS;
 
   await idbBulkPut("students", students);
