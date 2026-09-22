@@ -160,13 +160,13 @@ export function deriveState(b: Build, now: number): LifeState {
 
 // Monogram, name, tone and board order — the display layer of the machine.
 export const STATE: Record<LifeState, { glyph: string; name: string; tone: string; rank: number }> = {
-  proposed: { glyph: "○", name: "open", tone: "text-dim", rank: 0 },
+  proposed: { glyph: "○", name: "open", tone: "text-dust", rank: 0 },
   ratified: { glyph: "◐", name: "ratified", tone: "text-amber", rank: 1 },
-  claimed: { glyph: "▣", name: "in hand", tone: "text-teal", rank: 2 },
-  active: { glyph: "◉", name: "in motion", tone: "text-ivory", rank: 3 },
-  done: { glyph: "∎", name: "closed", tone: "text-teal", rank: 4 },
-  parked: { glyph: "‖", name: "parked", tone: "text-dim", rank: 5 },
-  lapsed: { glyph: "⊘", name: "lapsed", tone: "text-dim", rank: 6 }
+  claimed: { glyph: "▣", name: "in hand", tone: "text-signal", rank: 2 },
+  active: { glyph: "◉", name: "in motion", tone: "text-ink", rank: 3 },
+  done: { glyph: "∎", name: "proved", tone: "text-signal", rank: 4 },
+  parked: { glyph: "‖", name: "resting", tone: "text-dust", rank: 5 },
+  lapsed: { glyph: "⊘", name: "resting", tone: "text-dust", rank: 6 }
 };
 
 export function boardStatus(b: Build, now: number): string {
@@ -189,7 +189,7 @@ export function boardStatus(b: Build, now: number): string {
       return `in motion · ${a.have} of ${a.need} attestations${r.hallQuorum ? ` (${hall} hall)` : ""} to close`;
     }
     case "done":
-      return `closed ∎ · ${validAttestations(b).length} attestation${validAttestations(b).length === 1 ? "" : "s"}`;
+      return `proved ∎ · ${validAttestations(b).length} attestation${validAttestations(b).length === 1 ? "" : "s"}`;
     case "parked":
       return b.parkedAt ? `parked by @${b.parkedBy ?? "the floor"}` : "stillness — the floor let it rest";
     case "lapsed":

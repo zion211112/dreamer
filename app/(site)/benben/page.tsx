@@ -37,15 +37,15 @@ const field =
   "w-full border-b border-rule bg-transparent py-2.5 text-body text-ink outline-none transition focus:border-amber placeholder:text-dust/60";
 const label = "block font-mono text-label uppercase tracking-[0.25em] text-dust";
 
-// The floor's lanes: the tabs speak the machine's own state vocabulary —
-// open (proposed/ratified), in hand (claimed/active), done (proved), rest (the rest).
+// The floor's lanes: one vocabulary, shared with lib/board STATE names —
+// open (proposed/ratified), in hand (claimed/active), proved (done).
+// Parked + lapsed rest under a quiet link, not a peer tab.
 type BoardTab = "all" | "open" | "hand" | "done" | "rest";
 const BOARD_TABS: { key: BoardTab; name: string }[] = [
   { key: "all", name: "all" },
   { key: "open", name: "open" },
   { key: "hand", name: "in hand" },
-  { key: "done", name: "proved" },
-  { key: "rest", name: "resting" }
+  { key: "done", name: "proved" }
 ];
 function tabBucket(s: LifeState): BoardTab {
   if (s === "proposed" || s === "ratified") return "open";
@@ -227,6 +227,11 @@ export default function BenBenPage() {
     for (const b of boardList) counts[tabBucket(deriveState(b, now))]++;
     return counts;
   }, [boardList, now]);
+
+  const restCount = useMemo(() =>
+    boardList.filter((b) => tabBucket(deriveState(b, now)) === "rest").length,
+    [boardList, now]
+  );
   const shownBoard = useMemo(
     () => {
       const query = search.trim().toLowerCase();
@@ -263,39 +268,54 @@ export default function BenBenPage() {
     <main className="site-page benben-page bg-void text-ink">
       <div className="site-frame site-frame--narrow relative overflow-hidden py-8 md:py-12">
         {/* masthead */}
-        <div className="floor-mast">
-          <div>
-            <p className="floor-kicker-top">BenBen · The Floor</p>
-            <h1 className="floor-doctrine">Post. Vote. Claim. <em>Prove.</em></h1>
-            <p className="floor-sub">
-              The board decides by count. The floor remembers by proof. A build is a commitment, not a post.
-            </p>
-            <div className="floor-tabs" role="tablist" aria-label="Floor lanes" aria-orientation="horizontal">
-              {BOARD_TABS.map((t) => (
-                <button
-                  key={t.key}
-                  role="tab"
-                  id={`board-tab-${t.key}`}
-                  aria-controls="board-panel"
-                  aria-selected={tab === t.key}
-                  onClick={() => setTab(t.key)}
-                  className={tab === t.key ? "active" : ""}
-                >
-                  {t.name} <span>{boardTabs[t.key]}</span>
-                </button>
+        <header className="floor-masthead">
+          <p className="floor-brand">
+            <strong>Post. Vote. Claim. Prove.</strong>
+            <span>BenBen · The Floor</span>
+          </p>
+          <h1 className="floor-title">The board decides by count. The floor remembers by proof.</h1>
+          <p className="floor-philosophy">
+            A build is a commitment, not a post. State is derived, never written.
+          </p>
+          <nav
+            className="floor-tabs"
+            role="tablist"
+            aria-label="Floor lanes"
+            aria-orientation="horizontal"
+            onKeyDown={(e) => {
+              if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+              e.preventDefault();
+              const i = BOARD_TABS.findIndex((t) => t.key === tab);
+              const d = e.key === "ArrowRight" ? 1 : -1;
+              const next = BOARD_TABS[(i + d + BOARD_TABS.length) % BOARD_TABS.length];
+              setTab(next.key);
+              document.getElementById(`board-tab-${next.key}`)?.focus();
+            }}
+          >
+            {BOARD_TABS.map((t) => (
+              <button
+                key={t.key}
+                role="tab"
+                id={`board-tab-${t.key}`}
+                aria-controls="board-panel"
+                aria-selected={tab === t.key}
+                tabIndex={tab === t.key ? 0 : -1}
+                onClick={() => setTab(t.key)}
+              >
+                {t.name} <span>{boardTabs[t.key]}</span>
+              </button>
               ))}
-            </div>
-          </div>
-          <div className="benben-telemetry floor-telemetry">
-            <span className="benben-beacon"><i aria-hidden="true" /> LOCAL FLOOR ACTIVE</span>
-            <span>{boardList.length} builds · {totalVotes} votes · {totalForks} forks</span>
-            <span>{openBoard} open commitments</span>
-          </div>
+            </nav>
+        </header>
+        <div className="floor-telemetry">
+          <span className="floor-beacon"><i aria-hidden="true" /> LOCAL FLOOR ACTIVE</span>
+          <span>{boardList.length} builds · {totalVotes} votes · {totalForks} forks</span>
+          <span>{openBoard} open commitments</span>
         </div>
 
-        <div className="benben-control-console">
-          <div className="benben-console-top">
-            <label className="benben-search">
+        <div className="floor-console">
+          <div className="floor-console-row">
+            <label className="floor-search">
               <span className="sr-only">Search commitments</span>
               <input
                 id="floor-search"
@@ -307,9 +327,12 @@ export default function BenBenPage() {
               {search && <button type="button" onClick={() => setSearch("")} aria-label="Clear commitment search">×</button>}
               {!search && <kbd title="Press / to search">/</kbd>}
             </label>
-            <div className="benben-actions">
-              <span className="benben-signed">{me ? `signed · @${me}` : "unsigned operator"}</span>
+            <div className="floor-actions">
+              <span className="floor-signed">{me ? `signed · @${me}` : "unsigned operator"}</span>
             </div>
+          </div>
+          <div className="floor-console-row">
+            <p className="floor-console-note">Press <kbd>/</kbd> to search. Press <kbd>Esc</kbd> to close the desk.</p>
           </div>
         </div>
 
@@ -348,26 +371,39 @@ export default function BenBenPage() {
               </li>
             ) : (
               shownBoard.map((b) => (
-                <BoardCard
-                  key={b.id}
-                  b={b}
-                  now={now}
-                  me={me}
-                  tier={tier}
-                  all={builds}
-                  onVote={vote}
-                  onFork={fork}
-                  onClaim={onClaim}
-                  onAccept={onAccept}
-                  onWithdraw={onWithdraw}
-                  onProgress={onProgress}
-                  onAttest={onAttest}
-                  onPark={onPark}
-                />
+                <li key={b.id} className="floor-card">
+                  <BoardCard
+                    b={b}
+                    now={now}
+                    me={me}
+                    tier={tier}
+                    all={builds}
+                    onVote={vote}
+                    onFork={fork}
+                    onClaim={onClaim}
+                    onAccept={onAccept}
+                    onWithdraw={onWithdraw}
+                    onProgress={onProgress}
+                    onAttest={onAttest}
+                    onPark={onPark}
+                  />
+                </li>
               ))
             )}
           </ol>
         </section>
+
+        {restCount > 0 && (
+          <div className="rest-link">
+            <button
+              type="button"
+              onClick={() => setTab("all")}
+              aria-expanded={false}
+            >
+              {restCount} resting {restCount === 1 ? "build" : "builds"} — parked & lapsed
+            </button>
+          </div>
+        )}
 
         {/* the desk */}
         <div ref={desk} id="desk" className="mt-12 scroll-mt-24">

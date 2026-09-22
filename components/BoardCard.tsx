@@ -4,30 +4,19 @@ import {
   STATE,
   activeBuilders,
   attestationState,
-  boardStatus,
   deriveState,
   lineageOf,
   openClaims,
   upDown,
-  LifeState
+  upNeeded,
+  validAttestations,
+  RATIFY
 } from "../lib/board";
 
-// The seal: a commitment marker, not a progress meter. The fill's length
-// encodes how far down the ladder the build sits; its color, the state.
-const SEAL: Record<LifeState, { w: number; c: string; tick?: boolean }> = {
-  proposed: { w: 16, c: "bg-amber/40" },
-  ratified: { w: 42, c: "bg-amber" },
-  claimed: { w: 42, c: "bg-amber", tick: true },
-  active: { w: 72, c: "bg-signal" },
-  done: { w: 100, c: "bg-signal/85" },
-  parked: { w: 42, c: "bg-ash/50" },
-  lapsed: { w: 30, c: "bg-ash/30" }
-};
-
-const inField =
-  "border-b border-rule/10 bg-transparent px-0 py-1.5 font-mono text-meta text-ink outline-none transition focus:border-amber";
-const ghost = "font-mono text-label uppercase tracking-[0.2em] text-amber transition hover:text-ink";
-const ghostDim = "font-mono text-label uppercase tracking-[0.2em] text-ash transition hover:text-ink";
+// CSS class constants (inline styles via Tailwind tokens)
+const ghost = "font-mono text-micro uppercase tracking-[0.14em] text-dust hover:text-ink transition";
+const ghostDim = "font-mono text-micro uppercase tracking-[0.14em] text-dust/60 hover:text-dust transition";
+const inField = "w-full border-b border-rule bg-transparent py-1.5 text-body text-ink outline-none focus:border-amber placeholder:text-dust/60";
 
 // Real date beside the relative time — the floor remembers by proof.
 const asOf = (ts: number) =>
@@ -59,14 +48,14 @@ function LineNode({
       </span>
       <div className="min-w-0">
         <div className="flex flex-wrap items-baseline gap-x-2">
-          <span className={`font-mono text-micro uppercase tracking-[0.2em] ${subject ? "text-amber" : "text-ash"}`}>
+          <span className={`font-mono text-micro uppercase tracking-[0.2em] ${subject ? "text-amber" : "text-dust"}`}>
             {tag}
           </span>
           <span className={`font-serif ${subject ? "text-[1.05rem] text-ink" : "text-[0.95rem] text-dust"}`}>
             {b.title}
           </span>
         </div>
-        <p className="mt-0.5 font-mono text-micro uppercase tracking-[0.14em] text-ash">
+        <p className="mt-0.5 font-mono text-micro uppercase tracking-[0.14em] text-dust">
           by @{b.by} · {st.name} · ▲{up}
         </p>
       </div>
@@ -74,8 +63,111 @@ function LineNode({
   );
 }
 
-// One commitment on the board. No card frame, no avatar, no karma — a ruled
-// line, a signature, and the state seal are the furniture. Counts, not noise.
+// The seal: a threshold bar, not a progress meter. Fill = share of the
+// ratification quorum (votes) or closing quorum (attestations); the tick
+// marks the bar. Amber while open, signal once proved.
+function Threshold({ b, now }: { b: Build; now: number }) {
+  const s = deriveState(b, now);
+  const proved = s === "done";
+  const { up } = upDown(b);
+  const need = upNeeded(b);
+  const bar = (b.risk === "medium" || b.risk === "high" ? RATIFY[b.risk] : RATIFY.low).minVoters;
+  const pct = Math.min(100, Math.round((up / Math.max(1, bar)) * 100));
+  const atts = attestationState(b);
+  const label = proved
+    ? `proved · ${atts.have} attestation${atts.have === 1 ? "" : "s"}`
+    : s === "claimed" || s === "active"
+      ? `${atts.have} of ${atts.need} attestations to close`
+      : `${up} of ${bar} votes · ${need} more`;
+  return (
+    <div className="threshold">
+      <div className="flex items-center gap-3" role="img" aria-label={label}>
+        <div className="threshold-track">
+          <div
+            className={`threshold-fill ${proved ? "proved" : ""}`}
+            style={{ width: `${proved ? 100 : pct}%` }}
+          />
+        </div>
+        <span className="shrink-0 font-mono text-micro uppercase tracking-[0.14em] text-dust tabular-nums">
+          {proved ? `${atts.have}/${atts.need}` : `${up}/${bar}`}
+        </span>
+      </div>
+      <p className="mt-1.5 font-mono text-micro uppercase tracking-[0.14em] text-dust">{label}</p>
+    </div>
+  );
+}
+
+// Proof inset — always visible latest attestation, not hidden in details.
+function ProofInset({ b, now }: { b: Build; now: number }) {
+  const atts = validAttestations(b);
+  if (!atts.length) return null;
+  const latest = atts[atts.length - 1];
+  return (
+    <blockquote className="proof-inset" aria-label="Latest proof">
+      <p className="font-serif italic text-[1.05rem] leading-7 text-ink">&ldquo;{latest.evidence}&rdquo;</p>
+      <footer className="mt-2 flex items-baseline gap-2 font-mono text-micro uppercase tracking-[0.14em] text-dust">
+        <cite>by @{latest.by}</cite>
+        <time dateTime={new Date(latest.ts).toISOString()}>{asOf(latest.ts)}</time>
+      </footer>
+    </blockquote>
+  );
+}
+
+// Facts grid (dl/dt/dd) — structured metadata, no noise.
+function Facts({ b, now, all }: { b: Build; now: number; all: Build[] }) {
+  const { up, down } = upDown(b);
+  const st = deriveState(b, now);
+  const stName = STATE[st].name;
+  const atts = attestationState(b);
+  const builders = activeBuilders(b);
+  const forks = lineageOf(b, all, now).children.length;
+  const needs = needsLine(b);
+
+  return (
+    <dl className="facts">
+      <div>
+        <dt>State</dt>
+        <dd>{stName}</dd>
+      </div>
+      <div>
+        <dt>Risk</dt>
+        <dd className="uppercase">{b.risk}</dd>
+      </div>
+      <div>
+        <dt>Votes</dt>
+        <dd>
+          <span className="text-amber">▲{up}</span>
+          <span className="text-dust ml-1">▼{down}</span>
+        </dd>
+      </div>
+      <div>
+        <dt>Attestations</dt>
+        <dd>
+          {atts.have} / {atts.need}
+        </dd>
+      </div>
+      <div>
+        <dt>Builders</dt>
+        <dd>
+          {builders.length ? builders.map((u) => <span key={u} className="mr-1">@{u}</span>) : "—"}
+        </dd>
+      </div>
+      <div>
+        <dt>Forks</dt>
+        <dd>{forks}</dd>
+      </div>
+      {needs && (
+        <div>
+          <dt>Needs</dt>
+          <dd>{needs}</dd>
+        </div>
+      )}
+    </dl>
+  );
+}
+
+// One commitment on the board. Ruled line, signature, threshold, facts,
+// proof — counts, not noise.
 export default function BoardCard({
   b,
   now,
@@ -107,21 +199,13 @@ export default function BoardCard({
 }) {
   const s = deriveState(b, now);
   const meta = STATE[s];
-  const seal = SEAL[s];
   const { up, down } = upDown(b);
-  const seated = openClaims(b);
+  const seats = openClaims(b);
   const builders = activeBuilders(b);
   const atts = attestationState(b);
+  const proof = validAttestations(b)[0] ?? null;
   const { ancestors, children, hasFork } = lineageOf(b, all, now);
-  const open = seated.length;
   const prog = (b.progress ?? []).length;
-  const att = (b.attestations ?? []).length;
-  const activity = [
-    open ? `${open} seat${open > 1 ? "s" : ""}` : null,
-    builders.length ? `${builders.length} building` : null,
-    prog ? `${prog} progress` : null,
-    att ? `${att} attestation${att > 1 ? "s" : ""}` : null
-  ].filter(Boolean).join(" · ");
 
   const [form, setForm] = useState<null | "claim" | "progress" | "attest">(null);
   const [role, setRole] = useState<BoardRole>("builder");
@@ -142,99 +226,91 @@ export default function BoardCard({
     !!me && (b.attestations ?? []).some((a) => a.by.toLowerCase() === me.toLowerCase());
   const holdsReviewer =
     !!me &&
-    seated.some((c) => c.by.toLowerCase() === me.toLowerCase() && c.role === "reviewer" && c.status === "active");
+    seats.some((c) => c.by.toLowerCase() === me.toLowerCase() && c.role === "reviewer" && c.status === "active");
   const canAttest =
     s === "active" && !myBuilding && !alreadyAttested && !atts.ok && (tier === "hall" || holdsReviewer);
 
   return (
-    <article className="border-t border-rule/8 py-9">
-      <h3 className="max-w-[30ch] font-serif text-[1.65rem] font-medium leading-[1.12] text-ink">
+    <article className="border-b border-rule py-9 last:border-b-0">
+      <div className="flex items-baseline justify-between gap-3">
+        <p className="font-mono text-micro uppercase tracking-[0.2em] text-dust">{b.domain}</p>
+        <p className={`font-mono text-micro uppercase tracking-[0.2em] ${meta.tone}`}>{meta.name}</p>
+      </div>
+      <h3 className="mt-3 max-w-[32ch] font-serif text-[1.65rem] font-normal leading-[1.15] text-ink">
         {b.title}
       </h3>
-      <span aria-hidden className="mt-3 block h-px w-[5.5rem] bg-amber/70" />
+      <p className="mt-3 max-w-[60ch] text-[0.95rem] leading-7 text-dust">{b.body}</p>
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 font-mono text-label uppercase tracking-[0.14em] text-ash">
-        <span className="flex flex-wrap items-center gap-x-2">
-          <span className="text-amber/80">{b.risk}</span>
-          <span aria-hidden>·</span>
-          <span>[{b.domain}]</span>
-          <span aria-hidden>·</span>
-          <span className="text-amber">@{b.by}</span>
-          <span aria-hidden>·</span>
-          <span className="normal-case tracking-[0.05em]">{timeAgo(b.createdTs, now)}</span>
-          <span aria-hidden>·</span>
-          <span className="normal-case tracking-[0.05em] text-ash/70">{asOf(b.createdTs)}</span>
+      <div className="mt-5">
+        <Threshold b={b} now={now} />
+      </div>
+
+      <dl className="mt-5 space-y-1.5 font-mono text-meta">
+        <div className="flex gap-3">
+          <dt className="w-16 shrink-0 uppercase tracking-[0.14em] text-dust">Needs</dt>
+          <dd className="text-ink/90">{needsLine(b)}</dd>
+        </div>
+        <div className="flex gap-3">
+          <dt className="w-16 shrink-0 uppercase tracking-[0.14em] text-dust">Done</dt>
+          <dd className="italic text-dust">{b.done}</dd>
+        </div>
+      </dl>
+
+      {proof && (
+        <figure className="mt-5 border-l-2 border-signal pl-4">
+          <blockquote className="font-serif text-[1.02rem] italic leading-relaxed text-ink">
+            &ldquo;{proof.evidence}&rdquo;
+          </blockquote>
+          <figcaption className="mt-1.5 font-mono text-micro uppercase tracking-[0.14em] text-dust">
+            @{proof.by}
+            {proof.hall ? " · hall" : ""} · {asOf(proof.ts)}
+          </figcaption>
+        </figure>
+      )}
+
+      <div className="mt-4 flex flex-wrap items-center gap-x-2 font-mono text-micro uppercase tracking-[0.14em] text-dust">
+        <span className="text-amber/90">{b.risk}</span>
+        <span aria-hidden>·</span>
+        <span>@{b.by}</span>
+        <span aria-hidden>·</span>
+        <span className="normal-case tracking-[0.05em]">
+          {timeAgo(b.createdTs, now)} · {asOf(b.createdTs)}
         </span>
-        <span className="flex items-center gap-3 tabular-nums">
+        {(b.skills ?? []).length > 0 && (
+          <>
+            <span aria-hidden>·</span>
+            <span className="text-signal/90">{(b.skills ?? []).join(" · ")}</span>
+          </>
+        )}
+        <span aria-hidden>·</span>
+        <span className="tabular-nums">
           <button
             onClick={() => onVote(b.id, 1)}
             aria-label={`Upvote ${b.title}`}
-            className={`min-h-11 min-w-11 px-1 transition ${myVote === 1 ? "text-amber" : "text-ash hover:text-ink"}`}
+            aria-pressed={myVote === 1}
+            className={`min-h-11 min-w-11 px-1 transition ${myVote === 1 ? "text-amber" : "hover:text-ink"}`}
           >
             ▲{up}
           </button>
           <button
             onClick={() => onVote(b.id, -1)}
             aria-label={`Downvote ${b.title}`}
-            className={`min-h-11 min-w-11 px-1 transition ${myVote === -1 ? "text-ash" : "text-ash hover:text-ink"}`}
+            aria-pressed={myVote === -1}
+            className={`min-h-11 min-w-11 px-1 transition ${myVote === -1 ? "text-ink" : "hover:text-ink"}`}
           >
             ▼{down}
           </button>
         </span>
       </div>
 
-      {(b.skills ?? []).length > 0 && (
-        <div className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-label uppercase tracking-[0.18em] text-signal/90">
-          {(b.skills ?? []).map((k, i) => (
-            <span key={k} className="flex items-center gap-2.5">
-              {i > 0 && <span aria-hidden className="text-ash/50">·</span>}
-              {k}
-            </span>
-          ))}
-        </div>
-      )}
-
-      <div className="mt-5 flex items-center gap-3">
-        <div className="flex min-w-0 flex-1 items-center gap-2.5">
-          <span aria-hidden className={`font-mono text-sm leading-none ${meta.tone}`}>
-            {meta.glyph}
-          </span>
-          <div className="relative h-1.5 flex-1 bg-edge/50">
-            <div className={`relative h-full ${seal.c}`} style={{ width: `${seal.w}%` }}>
-              {seal.tick && (
-                <span aria-hidden className="absolute right-0 top-1/2 h-3 w-1 -translate-y-1/2 bg-signal" />
-              )}
-            </div>
-          </div>
-        </div>
-        <span className={`shrink-0 font-mono text-label uppercase tracking-[0.22em] ${meta.tone}`}>
-          {meta.name}
-        </span>
-      </div>
-
-      <p className="mt-3 font-mono text-meta text-dust">{boardStatus(b, now)}</p>
-
-      <p className="mt-4 max-w-[64ch] text-[0.95rem] leading-7 text-dust">{b.body}</p>
-      <div className="mt-3 space-y-1 font-mono text-meta text-ash">
-        <p>{needsLine(b)}</p>
-        <p className="italic text-dust/80">Done: {b.done}</p>
-      </div>
-
-      {activity && (
-        <p className="mt-4 font-mono text-meta text-dust/80">
-          <span aria-hidden className="text-signal">▸ </span>
-          {activity}
-        </p>
-      )}
-
-      {open > 0 && (
-        <div className="mt-5 border-l-2 border-rule/10 pl-4">
-          <p className="font-mono text-micro uppercase tracking-[0.28em] text-ash">Seats</p>
+      {seats.length > 0 && (
+        <div className="mt-4 border-l border-rule pl-4">
+          <p className="font-mono text-micro uppercase tracking-[0.24em] text-dust">Seats</p>
           <ul className="mt-2 space-y-1.5">
-            {seated.map((c, i) => (
+            {seats.map((c, i) => (
               <li key={i} className="flex flex-wrap items-center gap-x-2 font-mono text-meta text-dust">
                 <span className={c.role === "reviewer" ? "text-signal" : "text-amber"}>{c.role}</span>
-                <span aria-hidden className="text-ash">·</span>
+                <span aria-hidden className="text-dust">·</span>
                 <span className="text-ink">@{c.by}</span>
                 {canAccept && (
                   <button onClick={() => setMsg(onAccept(b.id, c.by, c.role))} className={`ml-1 ${ghost}`}>
@@ -253,26 +329,26 @@ export default function BoardCard({
       )}
 
       {prog > 0 && (
-        <div className="mt-5 border-l-2 border-rule/10 pl-4">
-          <p className="font-mono text-micro uppercase tracking-[0.28em] text-ash">Progress</p>
+        <div className="mt-4 border-l border-rule pl-4">
+          <p className="font-mono text-micro uppercase tracking-[0.24em] text-dust">Progress</p>
           <ul className="mt-2 space-y-1.5">
             {(b.progress ?? []).slice(-3).map((p, i) => (
               <li key={i} className="font-mono text-meta text-dust">
                 <span className="text-ink">@{p.by}</span>
-                <span aria-hidden className="text-ash"> · </span>
+                <span aria-hidden className="text-dust"> · </span>
                 {p.text}
-                <span className="text-ash/70"> ({timeAgo(p.ts, now)})</span>
+                <span className="text-dust/70"> ({timeAgo(p.ts, now)})</span>
               </li>
             ))}
           </ul>
         </div>
       )}
 
-      {att > 0 && (
-        <div className="mt-5 border-l-2 border-signal/30 pl-4">
-          <p className="font-mono text-micro uppercase tracking-[0.28em] text-ash">Attestations</p>
+      {(b.attestations ?? []).length > 1 && (
+        <div className="mt-4 border-l border-rule pl-4">
+          <p className="font-mono text-micro uppercase tracking-[0.24em] text-dust">Attestations</p>
           <ul className="mt-2 space-y-1.5">
-            {(b.attestations ?? []).map((a, i) => (
+            {(b.attestations ?? []).slice(1).map((a, i) => (
               <li key={i} className="font-mono text-meta text-dust">
                 <span className="text-signal">∎</span>
                 <span className="ml-1.5 text-ink">@{a.by}</span>
@@ -285,8 +361,8 @@ export default function BoardCard({
       )}
 
       {hasFork && (
-        <details className="mt-6 border-t border-rule/8 pt-4">
-          <summary className="select-none font-mono text-label uppercase tracking-[0.24em] text-ash transition hover:text-ink">
+        <details className="mt-5 border-t border-rule pt-4">
+          <summary className="select-none font-mono text-label uppercase tracking-[0.24em] text-dust transition hover:text-ink">
             lineage · {ancestors.length} before · {children.length} after
           </summary>
           <ul className="mt-4 list-none">
@@ -312,7 +388,7 @@ export default function BoardCard({
         </details>
       )}
 
-      <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-3 border-t border-rule/8 pt-5">
+      <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-3 border-t border-rule pt-5">
         {me ? (
           <>
             {canClaim &&

@@ -103,7 +103,7 @@ test('attestation: distinct hands, not the builders, with evidence', () => {
   assert.equal(deriveState(b, T0 + 3 * D), 'active');
   b = attest(b, 'Shemsu_1', 'photos from both banks', 'hall', T0 + 3 * D + 2000).b;
   assert.equal(deriveState(b, T0 + 3 * D), 'done');
-  assert.ok(boardStatus(b, T0 + 3 * D).includes('closed'));
+  assert.ok(boardStatus(b, T0 + 3 * D).includes('proved'));
 });
 
 test('high risk closes with a hall hand in the quorum', () => {
