@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import BoardCard from "../../../components/BoardCard";
-import BuildCard from "../../../components/BuildCard";
 import "./benben.css";
 import {
   addBuild,
@@ -16,7 +15,6 @@ import {
   memberByUsername,
   myUsername,
   persistBuilds,
-  rankFeed,
   tierOf,
   TYPES,
   validateBuild
@@ -36,26 +34,27 @@ import {
 import type { LifeState, Risk } from "../../../lib/board";
 
 const field =
-  "w-full border-b border-rule/10 bg-transparent py-2.5 text-sm text-ink outline-none transition focus:border-amber";
-const label = "block font-mono text-label uppercase tracking-[0.25em] text-ash";
+  "w-full border-b border-rule bg-transparent py-2.5 text-body text-ink outline-none transition focus:border-amber placeholder:text-dust/60";
+const label = "block font-mono text-label uppercase tracking-[0.25em] text-dust";
 
-// The board's lanes: the tabs speak the machine's own state vocabulary —
-// open (proposed/ratified), in hand (claimed/active), closed (the rest).
-type BoardTab = "all" | "open" | "hand" | "closed";
+// The floor's lanes: the tabs speak the machine's own state vocabulary —
+// open (proposed/ratified), in hand (claimed/active), done (proved), rest (the rest).
+type BoardTab = "all" | "open" | "hand" | "done" | "rest";
 const BOARD_TABS: { key: BoardTab; name: string }[] = [
   { key: "all", name: "all" },
   { key: "open", name: "open" },
   { key: "hand", name: "in hand" },
-  { key: "closed", name: "closed" }
+  { key: "done", name: "proved" },
+  { key: "rest", name: "resting" }
 ];
 function tabBucket(s: LifeState): BoardTab {
   if (s === "proposed" || s === "ratified") return "open";
   if (s === "claimed" || s === "active") return "hand";
-  return "closed";
+  if (s === "done") return "done";
+  return "rest";
 }
 
-// The floor: a commons of builders for local projects, skills, and trusted work.
-// The feed is the ranking — vote-driven, local, useful.
+// The floor: one board, lanes by commitment state. Counts, not noise.
 export default function BenBenPage() {
   const [builds, setBuilds] = useState<Build[]>([]);
   const [ready, setReady] = useState(false);
@@ -91,6 +90,20 @@ export default function BenBenPage() {
     setMe(myUsername());
     setNow(Date.now());
     setReady(true);
+  }, []);
+
+  // "/" jumps to the floor search from anywhere on the page. The hint
+  // is not decorative; this wires it.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key !== "/") return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT")) return;
+      e.preventDefault();
+      document.getElementById("floor-search")?.focus();
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
   }, []);
 
   const voteKey = me || "Guest";
@@ -198,10 +211,9 @@ export default function BenBenPage() {
   const onAttest = (id: string, evidence: string) => apply(id, (b) => attest(b, me ?? "", evidence, tier, at()));
   const onPark = (id: string) => apply(id, (b) => park(b, me ?? "", tier, at()));
 
-  const feed = useMemo(() => rankFeed(builds, now), [builds, now]);
-  const totalVotes = feed.reduce((n, b) => n + Math.max(b.votes, 0), 0);
-  const totalForks = feed.reduce((n, b) => n + b.comments.filter((c) => c.fork).length, 0);
   const boardList = useMemo(() => boardOrder(builds, now), [builds, now]);
+  const totalVotes = boardList.reduce((n, b) => n + Math.max(b.votes, 0), 0);
+  const totalForks = boardList.reduce((n, b) => n + b.comments.filter((c) => c.fork).length, 0);
   const openBoard = useMemo(
     () =>
       boardList.filter((b) => {
@@ -211,7 +223,7 @@ export default function BenBenPage() {
     [boardList, now]
   );
   const boardTabs = useMemo(() => {
-    const counts: Record<BoardTab, number> = { all: boardList.length, open: 0, hand: 0, closed: 0 };
+    const counts: Record<BoardTab, number> = { all: boardList.length, open: 0, hand: 0, done: 0, rest: 0 };
     for (const b of boardList) counts[tabBucket(deriveState(b, now))]++;
     return counts;
   }, [boardList, now]);
@@ -251,53 +263,14 @@ export default function BenBenPage() {
     <main className="site-page benben-page bg-void text-ink">
       <div className="site-frame site-frame--narrow relative overflow-hidden py-8 md:py-12">
         {/* masthead */}
-        <div className="benben-masthead">
+        <div className="floor-mast">
           <div>
-            <p className="benben-brand">BEN-BEN <strong>/</strong> THE FLOOR <span>APT-LABS KIRINYAGA</span></p>
-            <h1 className="benben-title">The Floor Commons</h1>
-            <p className="benben-philosophy">
-              Post. Vote. Claim. Prove. The board decides by count; the floor remembers by proof.
+            <p className="floor-kicker-top">BenBen · The Floor</p>
+            <h1 className="floor-doctrine">Post. Vote. Claim. <em>Prove.</em></h1>
+            <p className="floor-sub">
+              The board decides by count. The floor remembers by proof. A build is a commitment, not a post.
             </p>
-          </div>
-          <div className="benben-telemetry">
-            <span className="benben-beacon"><i aria-hidden="true" /> LOCAL FLOOR ACTIVE</span>
-            <span>{feed.length} builds · {totalVotes} votes · {totalForks} forks</span>
-            <span>{openBoard} open commitments</span>
-          </div>
-        </div>
-
-        <div className="benben-control-console">
-          <div className="benben-console-top">
-            <label className="benben-search">
-              <span className="sr-only">Search commitments</span>
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="SEARCH TITLE · HANDLE · LOCATION · DOMAIN"
-                aria-label="Search commitments"
-              />
-              {search && <button type="button" onClick={() => setSearch("")} aria-label="Clear commitment search">×</button>}
-              {!search && <kbd>/</kbd>}
-            </label>
-            <div className="benben-actions">
-              <span className="benben-signed">{me ? `signed · @${me}` : "unsigned operator"}</span>
-              <button
-                type="button"
-                onClick={() => {
-                  setForkOf(null);
-                  setErr("");
-                  setNotice("");
-                  setOpen((o) => !o);
-                }}
-                className="bb-btn px-6 py-3 text-sm font-semibold transition"
-              >
-                {open ? "Close the desk" : "Propose commitment →"}
-              </button>
-            </div>
-          </div>
-          <div className="benben-console-bottom">
-            <span className="benben-control-label">STATE</span>
-            <div role="tablist" aria-label="Board state" className="benben-tabs" aria-orientation="horizontal">
+            <div className="floor-tabs" role="tablist" aria-label="Floor lanes" aria-orientation="horizontal">
               {BOARD_TABS.map((t) => (
                 <button
                   key={t.key}
@@ -312,28 +285,67 @@ export default function BenBenPage() {
                 </button>
               ))}
             </div>
-            <span className="benben-control-note">state is derived · proof is appended</span>
+          </div>
+          <div className="benben-telemetry floor-telemetry">
+            <span className="benben-beacon"><i aria-hidden="true" /> LOCAL FLOOR ACTIVE</span>
+            <span>{boardList.length} builds · {totalVotes} votes · {totalForks} forks</span>
+            <span>{openBoard} open commitments</span>
           </div>
         </div>
 
-        <div className="benben-board-heading">
+        <div className="benben-control-console">
+          <div className="benben-console-top">
+            <label className="benben-search">
+              <span className="sr-only">Search commitments</span>
+              <input
+                id="floor-search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="SEARCH TITLE · HANDLE · LOCATION · DOMAIN"
+                aria-label="Search commitments"
+              />
+              {search && <button type="button" onClick={() => setSearch("")} aria-label="Clear commitment search">×</button>}
+              {!search && <kbd title="Press / to search">/</kbd>}
+            </label>
+            <div className="benben-actions">
+              <span className="benben-signed">{me ? `signed · @${me}` : "unsigned operator"}</span>
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setForkOf(null);
+            setErr("");
+            setNotice("");
+            setOpen((o) => !o);
+            requestAnimationFrame(() => desk.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+          }}
+          className="post-fab"
+          aria-expanded={open}
+        >
+          {open ? "Close the desk" : "+ Post a build"}
+        </button>
+
+        <div className="floor-board-heading">
           <div>
-            <p className="benben-kicker">Commitment ledger</p>
-            <h2>The work, nested by proof.</h2>
+            <p className="floor-kicker">The board</p>
+            <h2>Count, not noise.</h2>
           </div>
           <span>{shownBoard.length} visible</span>
         </div>
 
         {/* the board: commitments made public — state derived, never written */}
-        <section className="benben-board">
-          <div id="board-panel" role="tabpanel" aria-labelledby={`board-tab-${tab}`} tabIndex={-1}>
+        <section className="floor-board">
+          <ol id="board-panel" role="tabpanel" aria-labelledby={`board-tab-${tab}`} tabIndex={-1}>
             {shownBoard.length === 0 ? (
-              <div className="mt-8 border border-dashed border-rule/15 px-5 py-8">
+              <li className="mt-8 border border-dashed border-rule px-5 py-8 list-none">
                 <p className="font-serif text-xl text-ink">Nothing in this lane.</p>
-                <p className="mt-2 max-w-[48ch] font-mono text-label uppercase leading-6 tracking-[0.16em] text-ash">
+                <p className="mt-2 max-w-[48ch] font-mono text-label uppercase leading-6 tracking-[0.16em] text-dust">
                   The floor is waiting for a commitment that belongs here.
                 </p>
-              </div>
+              </li>
             ) : (
               shownBoard.map((b) => (
                 <BoardCard
@@ -354,7 +366,7 @@ export default function BenBenPage() {
                 />
               ))
             )}
-          </div>
+          </ol>
         </section>
 
         {/* the desk */}
@@ -572,14 +584,14 @@ export default function BenBenPage() {
                       setErr("");
                       setNotice("");
                     }}
-                    className="font-mono text-label uppercase tracking-[0.2em] text-ash transition hover:text-ink"
+                    className="font-mono text-label uppercase tracking-[0.2em] text-dust transition hover:text-ink"
                   >
                     close the desk
                   </button>
                   <div className="flex items-center gap-4">
                     {err && <p role="alert" className="font-mono text-xs text-amber">{err}</p>}
                     {notice && <p role="status" className="font-mono text-xs text-signal">{notice}</p>}
-                    <button className="bb-btn rounded-full px-6 py-3 text-sm font-semibold transition">
+                    <button className="post-fab post-fab--inline">
                       {forkOf ? "Put the fork on the floor →" : "Put it on the floor →"}
                     </button>
                   </div>
@@ -589,36 +601,9 @@ export default function BenBenPage() {
           )}
         </div>
 
-        {/* the feed */}
-        <section className="mt-12">
-          <div className="flex items-baseline justify-between border-b border-rule/15 pb-3 font-mono text-label uppercase tracking-[0.3em]">
-            <span className="text-amber">On the floor</span>
-            <span className="text-ash">velocity, not vanity</span>
-          </div>
-          {feed.length === 0 && (
-            <div className="border-b border-rule/10 px-1 py-10">
-              <p className="font-serif text-2xl text-ink">The floor is clear.</p>
-              <p className="mt-2 max-w-[48ch] text-sm leading-7 text-dust">
-                Start the first build and give the commons something concrete to move.
-              </p>
-            </div>
-          )}
-          {feed.map((b) => (
-            <BuildCard
-              key={b.id}
-              b={b}
-              now={now}
-              myVote={b.votedBy[voteKey]?.value ?? 0}
-              voteErr={voteErrId === b.id ? voteErr : null}
-              onVote={vote}
-              onFork={fork}
-            />
-          ))}
-        </section>
-
-        <p className="mt-16 border-t border-rule/10 pt-6 text-center font-mono text-label uppercase tracking-[0.35em] text-ash">
-          count, not noise · commit, then prove
-        </p>
+        {/* colophon lives above the FAB now; keep bottom padding for its overlap */}
+        <p className="page-foot">count, not noise · commit, then prove</p>
+        <div aria-hidden className="h-24" />
       </div>
     </main>
   );

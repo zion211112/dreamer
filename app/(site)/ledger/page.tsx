@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   LOCATIONS,
   Member,
@@ -23,10 +24,31 @@ import {
 import "./ledger.css";
 
 type FormErrors = Partial<Record<"name" | "skill", string>>;
-type Status = "idle" | "loading" | "success";
 type Verdict = "" | "found" | "no";
 
+const PAGE_SIZE = 25;
+
+function nextLedgerId(entries: Member[]): string {
+  let peak = 41;
+  for (const e of entries) {
+    const m = /^AL-(\d+)$/.exec((e.id || "").trim());
+    if (m) peak = Math.max(peak, parseInt(m[1], 10));
+  }
+  return "AL-" + String(peak + 1).padStart(4, "0");
+}
+
 export default function LedgerPage() {
+  return (
+    <Suspense fallback={<main className="ledger-page" aria-busy="true"><div className="page-body"><p className="label">Loading the roll…</p></div></main>}>
+      <LedgerInner />
+    </Suspense>
+  );
+}
+
+function LedgerInner() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
   const [entries, setEntries] = useState<Member[]>(SEED_MEMBERS);
   const [form, setForm] = useState({
     name: "",
@@ -35,10 +57,17 @@ export default function LedgerPage() {
     skill: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
-  const [status, setStatus] = useState<Status>("idle");
-  const [search, setSearch] = useState("");
-  const [location, setLocation] = useState<string>("all");
-  const [openId, setOpenId] = useState<string | null>(null);
+  const [registeredId, setRegisteredId] = useState<string | null>(null);
+  const [search, setSearch] = useState(params.get("q") ?? "");
+  const locParam = params.get("loc");
+  const [location, setLocation] = useState<string>(
+    locParam && LOCATIONS.includes(locParam) ? locParam : "all"
+  );
+  const [page, setPage] = useState(() => {
+    const p = parseInt(params.get("page") ?? "1", 10);
+    return Number.isFinite(p) && p > 0 ? Math.min(p, 99) : 1;
+  });
+  const [openId, setOpenId] = useState<string | null>(params.get("open"));
   const [token, setToken] = useState("");
   const [verdict, setVerdict] = useState<Verdict>("");
 
@@ -46,6 +75,29 @@ export default function LedgerPage() {
     const stored = loadStored<Member>(KEYS.members);
     if (stored.length > 0) setEntries(stored);
   }, []);
+
+  // Shareable roll state. The filter lives in the URL (debounced 250ms) so a
+  // query survives a reload and a link carries the same view. Defaults stay
+  // clean: no params.
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const next = new URLSearchParams();
+      if (search.trim()) next.set("q", search.trim());
+      if (location !== "all") next.set("loc", location);
+      if (page > 1) next.set("page", String(page));
+      if (openId) next.set("open", openId);
+      const qs = next.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    }, 250);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, location, page, openId]);
+
+  // Reset to the first page whenever the query changes, or a shared link
+  // could land on an empty page of a shorter result set.
+  useEffect(() => {
+    setPage(1);
+  }, [search, location]);
 
   // "/" jumps to the roll search from anywhere on the page.
   useEffect(() => {
@@ -63,17 +115,23 @@ export default function LedgerPage() {
   const total = entries.length;
   const verified = entries.filter((e) => e.verified).length;
 
-  const filtered = entries.filter((e) => {
-    if (location !== "all" && e.location !== location) return false;
+  const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return true;
-    return (
-      e.name.toLowerCase().includes(q) ||
-      e.occupation.toLowerCase().includes(q) ||
-      e.location.toLowerCase().includes(q) ||
-      e.skills.some((s) => s.toLowerCase().includes(q))
-    );
-  });
+    return entries.filter((e) => {
+      if (location !== "all" && e.location !== location) return false;
+      if (!q) return true;
+      return (
+        e.name.toLowerCase().includes(q) ||
+        e.occupation.toLowerCase().includes(q) ||
+        e.location.toLowerCase().includes(q) ||
+        e.skills.some((s) => s.toLowerCase().includes(q))
+      );
+    });
+  }, [entries, search, location]);
+
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(page, pageCount);
+  const visible = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   const locationCounts = LOCATIONS.map((l) => ({
     name: l,
@@ -106,37 +164,40 @@ export default function LedgerPage() {
       return;
     }
     setErrors({});
-    setStatus("loading");
-    setTimeout(() => {
-      const nextId = `AL-${String(total + 42).padStart(4, "0")}`;
-      const newMember: Member = {
-        id: nextId,
-        name: form.name.trim(),
-        username: form.name.trim().toLowerCase().replace(/\s+/g, "_"),
-        occupation: form.role,
-        location: form.location,
-        skills: form.skill.split(",").map((s) => s.trim()).filter(Boolean),
-        paid: false,
-        // Sealed, not verified: a hash proves the record exists and has not
-        // been altered. Nobody has attested this person's skill yet, so the
-        // verified count must not move. Attestation flips this, not a submit.
-        verified: false,
-        hallPaid: false,
-        tier: null,
-        testScore: null,
-        testTs: 0,
-        hall: null,
-        certNo: null,
-        answers: [],
-        hash: seal({ id: nextId, name: form.name.trim(), occupation: form.role, location: form.location }),
-      };
-      const next = [newMember, ...entries];
-      setEntries(next);
-      saveStored(KEYS.members, next);
-      setStatus("success");
-      setForm({ name: "", role: OCCUPATIONS[0], location: LOCATIONS[0], skill: "" });
-      setTimeout(() => setStatus("idle"), 3000);
-    }, 600);
+    // A local write lands in the same frame. No staged delay, no loading
+    // theatre: the roll either updates or it reports why.
+    const nextId = nextLedgerId(entries);
+    const name = form.name.trim();
+    const newMember: Member = {
+      id: nextId,
+      name,
+      username: name.toLowerCase().replace(/\s+/g, "_"),
+      occupation: form.role,
+      location: form.location,
+      skills: form.skill.split(",").map((s) => s.trim()).filter(Boolean),
+      paid: false,
+      // Sealed, not verified: a hash proves the record exists and has not
+      // been altered. Nobody has attested this person's skill yet, so the
+      // verified count must not move. Attestation flips this, not a submit.
+      verified: false,
+      hallPaid: false,
+      tier: null,
+      testScore: null,
+      testTs: 0,
+      hall: null,
+      certNo: null,
+      answers: [],
+      hash: seal({ id: nextId, name, occupation: form.role, location: form.location }),
+    };
+    // Same-frame write: state, storage, then the success note. It stays until
+    // the next keystroke — no auto-dismiss timer to race a slow reader.
+    const next = [newMember, ...entries];
+    setEntries(next);
+    saveStored(KEYS.members, next);
+    setRegisteredId(nextId);
+    setForm({ name: "", role: OCCUPATIONS[0], location: LOCATIONS[0], skill: "" });
+    setOpenId(nextId);
+    setPage(1);
   }
 
   function verifyToken(e: React.FormEvent) {
@@ -279,8 +340,9 @@ export default function LedgerPage() {
                 </button>
               </div>
             ) : (
+              <>
               <ul className="roll-list" aria-label="People on the roll">
-                {filtered.map((entry) => {
+                {visible.map((entry) => {
                   const open = openId === entry.id;
                   return (
                     <li key={entry.id} className={open ? "roll-entry is-open" : "roll-entry"}>
@@ -349,6 +411,30 @@ export default function LedgerPage() {
                   );
                 })}
               </ul>
+              {pageCount > 1 && (
+                <nav className="roll-pager" aria-label="Roll pages">
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    disabled={safePage <= 1}
+                    onClick={() => setPage(safePage - 1)}
+                  >
+                    ← Newer
+                  </button>
+                  <span className="label" aria-live="polite" aria-atomic="true">
+                    Page {safePage} of {pageCount}
+                  </span>
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    disabled={safePage >= pageCount}
+                    onClick={() => setPage(safePage + 1)}
+                  >
+                    Older →
+                  </button>
+                </nav>
+              )}
+              </>
             )}
 
             {/* ── Under one roof ── */}
@@ -411,13 +497,11 @@ export default function LedgerPage() {
             <h2 id="register-heading" className="panel-title">Add yourself to the roll</h2>
             <p className="panel-desc">A name, a skill, and a line of proof. That is all the roll asks.</p>
 
-            {status === "loading" && (
-              <div className="message message-status" role="status">Writing to the roll…</div>
-            )}
-            {status === "success" && (
+            {registeredId && (
               <div className="message message-status" role="status">
-                You are on the roll and the record is sealed. Verification is a
-                separate step — it arrives when someone attests your work.
+                You are on the roll as {registeredId} and the record is sealed.
+                Verification is a separate step — it arrives when someone attests
+                your work.
               </div>
             )}
 
@@ -476,8 +560,8 @@ export default function LedgerPage() {
                 {errors.skill && <p id="err-skill" className="field-error" role="alert">{errors.skill}</p>}
               </div>
 
-              <button type="submit" className="btn btn-primary submit-btn" disabled={status === "loading"} aria-busy={status === "loading"}>
-                {status === "loading" ? "Writing…" : "Put me on the roll →"}
+              <button type="submit" className="btn btn-primary submit-btn">
+                Put me on the roll →
               </button>
 
               <p className="form-fine-print">
