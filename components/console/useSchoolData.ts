@@ -15,6 +15,7 @@ import {
   replaceSchool
 } from "../../lib/school";
 import { idbBulkPut, idbDelete, idbPut } from "../../lib/db";
+import { isSchoolEmpty, isExemplarRoll, seedExemplarSchool } from "../../lib/exemplar-seed";
 
 export type DumpData = { students: Student[]; assessments: Assessment[] };
 
@@ -23,6 +24,9 @@ export interface SchoolData {
   students: Student[];
   assessments: Assessment[];
   school: string;
+  /** true when the loaded roll is the built-in exemplar school */
+  exemplar: boolean;
+  clearExemplar: () => Promise<void>;
   addStudents: (s: Student[]) => Promise<void>;
   upsertStudent: (s: Student) => Promise<void>;
   removeStudent: (id: string) => Promise<void>;
@@ -38,12 +42,19 @@ export function useSchoolData(): SchoolData {
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [loading, setLoading] = useState(true);
   const [school, setSchool] = useState("");
+  const [exemplar, setExemplar] = useState(false);
 
   useEffect(() => {
     (async () => {
+      // First visit on a device: build the exemplar school so every
+      // module opens with real material instead of an empty gate.
+      if (await isSchoolEmpty()) {
+        try { await seedExemplarSchool(); } catch { /* memory-only mode */ }
+      }
       const [s, a] = await Promise.all([loadStudents(), loadAssessments()]);
       setStudents(s);
       setAssessments(a);
+      setExemplar(isExemplarRoll(s));
       try {
         const raw = window.localStorage.getItem("aptlabs.console.session");
         if (raw) setSchool(((JSON.parse(raw) as { school?: string }).school || "Your school").slice(0, 40));
@@ -52,6 +63,14 @@ export function useSchoolData(): SchoolData {
       }
       setLoading(false);
     })();
+  }, []);
+
+  const clearExemplar = useCallback(async () => {
+    const { clearExemplarSchool } = await import("../../lib/exemplar-seed");
+    await clearExemplarSchool();
+    setStudents([]);
+    setAssessments([]);
+    setExemplar(false);
   }, []);
 
   const addStudents = useCallback(async (rows: Student[]) => {
@@ -118,6 +137,8 @@ export function useSchoolData(): SchoolData {
     students,
     assessments,
     school,
+    exemplar,
+    clearExemplar,
     addStudents,
     upsertStudent,
     removeStudent,
