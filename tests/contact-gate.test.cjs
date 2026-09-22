@@ -5,11 +5,23 @@ const path = require('node:path');
 const read = (p) => fs.readFileSync(path.join(__dirname, '..', p), 'utf8');
 
 const contact = read('app/(site)/contact/page.tsx');
-const gate = read('components/PayGate.tsx');
-const css = read('app/globals.css');
+const contactCss = read('app/(site)/contact/contact.css');
+const layout = read('app/(site)/layout.tsx');
 
-test('the contact page is minimal classic: heading, two lines, one place', () => {
-  assert.ok(contact.includes('className="contact-classic"'));
+// Walk a directory, collecting every .ts/.tsx/.css/.cjs source file.
+function sources(dir, out = []) {
+  for (const f of fs.readdirSync(dir, { withFileTypes: true })) {
+    const n = path.join(dir, f.name);
+    if (f.isDirectory()) {
+      if (['.next', 'node_modules'].includes(f.name)) continue;
+      sources(n, out);
+    } else if (/\.(tsx?|css|cjs)$/.test(f.name)) out.push(n);
+  }
+  return out;
+}
+
+test('the contact page is minimal classic: one column, two lines, one place', () => {
+  assert.ok(contact.includes('className="contact-classic site-frame"'));
   assert.ok(contact.includes('className="contact-title"'));
   assert.equal([...contact.matchAll(/className="contact-line"/g)].length, 2, 'exactly two lines: email, whatsapp');
   assert.ok(contact.includes('mailto:aptlabske@gmail.com?subject=Schools%20%2B%20partners'));
@@ -17,36 +29,32 @@ test('the contact page is minimal classic: heading, two lines, one place', () =>
   assert.ok(contact.includes('Kirinyaga, Kenya'));
 });
 
-test('no envelope, no sigil, no artwork of any kind survives', () => {
-  for (const dead of ['vesica', 'sigil', 'Knock Knock', 'contact-plate', 'envelope', 'flap', 'stamp', 'seal', 'GeoArt', 'CONTACTS']) {
+test('no envelope, no sigil, no hand-drawn artwork of any kind survives', () => {
+  for (const dead of ['vesica', 'sigil', 'Knock Knock', 'contact-plate', 'envelope', 'flap', 'stamp', 'seal']) {
     assert.ok(!contact.toLowerCase().includes(dead), dead + ' should be gone');
   }
-  assert.equal(contact.includes('<svg'), false, 'no artwork, no SVG');
-  assert.ok(!css.includes('envelope') && !css.includes('contact-plate'), 'letter CSS should be out of globals.css');
+  // The identity mark comes back only as the shared GeoArt accent — never
+  // hand-drawn inline SVG in the page itself.
+  assert.equal(contact.includes('<svg'), false, 'no inline SVG in the page');
+  assert.ok(contact.includes('GeoArt'), 'the shared GeoArt accent is allowed');
 });
 
 test('the classic page carries no motion: no keyframes, no transforms', () => {
-  assert.ok(css.includes('.contact-classic'));
-  for (const dead of ['mail-rise', 'mail-fade', 'seal-pulse', 'contact-draw', 'contact-pulse', 'rotateX']) {
-    assert.ok(!css.includes(dead), dead + ' should be gone');
+  assert.ok(contactCss.includes('.contact-classic'), 'contact styles live in contact.css');
+  for (const dead of ['mail-rise', 'mail-fade', 'seal-pulse', 'contact-draw', 'contact-pulse', 'rotateX', '@keyframes']) {
+    assert.ok(!contactCss.includes(dead), dead + ' should be gone');
   }
 });
 
-test('/contact is the only address the paywall leaves open', () => {
-  const exempt = gate.match(/const EXEMPT = \[([^\]]*)\]/);
-  assert.ok(exempt, 'EXEMPT list is missing');
-  assert.deepEqual(
-    exempt[1].split(',').map((s) => s.trim()).filter(Boolean),
-    ['"/contact"']
+test('the gate layer is fully out: no Paywall, PayGate, or gates.ts anywhere', () => {
+  // The paywall was deliberately retired, not just bypassed: /contact (and
+  // every page) is reachable by design, so no exemption list may reappear.
+  assert.ok(!fs.existsSync(path.join(__dirname, '..', 'components', 'Paywall.tsx')), 'Paywall.tsx should stay deleted');
+  assert.ok(!fs.existsSync(path.join(__dirname, '..', 'components', 'PayGate.tsx')), 'PayGate.tsx should stay deleted');
+  assert.ok(!fs.existsSync(path.join(__dirname, '..', 'lib', 'gates.ts')), 'gates.ts should stay deleted');
+  assert.ok(!layout.includes('Paywall'), 'the site layout wraps no gate');
+  const stray = sources(path.join(__dirname, '..', 'app')).filter(
+    (f) => /Paywall|PayGate|gates\.ts/.test(fs.readFileSync(f, 'utf8'))
   );
-});
-
-test('a locked page renders the paybill and no page content', () => {
-  const childrenRenders = [...gate.matchAll(/\{children\}/g)];
-  assert.equal(childrenRenders.length, 1, 'children must render on one path only');
-  assert.ok(
-    childrenRenders[0].index > gate.indexOf('if (isExempt(pathname) || unlocked)'),
-    'that one path is the exempt one'
-  );
-  assert.ok(gate.includes('return <Paywall onUnlock={() => setUnlocked(true)} escape />;'));
+  assert.equal(stray.length, 0, 'no page may reference a gate: ' + stray.join(', '));
 });

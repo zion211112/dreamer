@@ -141,7 +141,7 @@ export default function Student360({
         <section className={panel}>
           <HeadRow label="Scores — every recorded assessment" />
           {scores.length === 0 ? (
-            <p className="py-6 text-sm text-dust">No scores yet. Enter grades from My Day → today's class.</p>
+            <p className="py-6 text-sm text-dust">No scores yet. Enter grades from My Day → today&apos;s class.</p>
           ) : (
             <table className="w-full text-left text-ui">
               <thead>

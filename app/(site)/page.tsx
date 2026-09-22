@@ -52,7 +52,7 @@ export default function HomePage() {
             <p className="lp-label">Kirinyaga, Kenya · Public record</p>
             <h1 id="landing-title">The ledger of useful work.</h1>
             <p className="landing-lead">
-              We're making a list of everyone in Kirinyaga who can actually do
+              We&apos;re making a list of everyone in Kirinyaga who can actually do
               things — and the roll is public.
             </p>
             <div className="landing-actions">

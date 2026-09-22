@@ -69,21 +69,22 @@ test('class taxonomy: ECDE → Form 6, streams, and base-class resolution', () =
   assert.ok(sch.CLASS_STREAMS.includes('X'));
 });
 
-test('My Day gains import + mini calendar + classic class, drops the chatty lines', () => {
+test('My Day plans from the approved week + mini calendar + classic class, drops the chatty lines', () => {
   const day = read('components/console/MyDay.tsx');
-  assert.match(day, /Import timetable/); // the quick import
-  assert.match(day, /Add your first lesson below/); // honest empty state
-  assert.match(day, /Up next/); // the incoming-class cue
+  // The plan tab reads the week the Timetable Solver approved — the quick
+  // "Import timetable" panel is gone on purpose.
+  assert.match(day, /loadApprovedTimetable/); // the approved week is the source
+  assert.match(day, /No approved week yet/); // honest empty state
+  assert.match(day, /Open Timetable Solver/); // the loop back to /console/6
   assert.match(day, /ClassPicker/); // classic cascading class entry
   assert.match(day, /MiniCalendar/); // the elite mini calendar
-  assert.match(day, /importTimetable/);
   // Planning demotes to its own tab; the day owns "now".
   assert.match(day, /tab === "plan"/);
   assert.doesNotMatch(day, /Nothing invented — the day is yours/);
   assert.doesNotMatch(day, /No classes on your day/);
   assert.doesNotMatch(day, /Nothing on today yet/);
   assert.doesNotMatch(day, /placeholder="Teacher"/); // teacher field removed
-  assert.match(day, /\+ Add to today/);
+  assert.match(day, /\+ Add one period/);
 });
 
 test('MiniCalendar flags collisions, offers personal vs class items, aligns times', () => {

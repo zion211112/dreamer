@@ -562,13 +562,3 @@
   }
 }
 
-/* ─── Print sheets (console) ─── */
-
-@media print {
-  .print-sheet {
-    display: block;
-    break-inside: avoid;
-    color: #000;
-  }
-}
-

@@ -304,6 +304,13 @@ body {
     color: #000;
     text-decoration: underline;
   }
+  /* Print sheets (console reports, timetables, test papers). Lives here,
+     not in site.css, so every route tree — console included — can print. */
+  .print-sheet {
+    display: block;
+    break-inside: avoid;
+    color: #000;
+  }
 }
 
 /* ─── Utility: Flex row, center-aligned, gap ─── */

@@ -55,26 +55,24 @@ test('makeClassNote writes one class-level line, not tied to a learner', () => {
   assert.ok(e.id && e.ts);
 });
 
-test('My Day drives the day: NOW hero, arc strip, owed band, uniform chips, bulk register', () => {
+test('My Day drives the day: NOW hairline, arc strip, owed queue, status flags, bulk register', () => {
   const day = read('components/console/MyDay.tsx');
-  // One first-class question — the phase picks the primary action.
-  assert.match(day, /Take register/);
-  assert.match(day, /Close the day/);
   // The day's shape reads in one second; segments are tappable.
   assert.match(day, /arc/);
   // Past folds into a queue, not a graveyard.
   assert.match(day, /owed/);
-  // Same three chips, same order, on every class row.
-  assert.match(day, /chip\(lesson, "att", attSt/);
-  assert.match(day, /chip\(lesson, "grades", grSt/);
-  assert.match(day, /chip\(lesson, "notes", notesSt/);
+  // One status per concern, computed per row: done / pending / none.
+  assert.match(day, /attSt/);
+  assert.match(day, /"done" \| "pending" \| "none"/);
   // The NOW hairline still moves with the day.
   assert.match(day, /Now \u00b7 /);
   // Register: bulk is the default, exceptions are the adjust path.
   assert.match(day, /All present/);
   assert.match(day, /absentNames/);
+  // The register panel is named after the class it fills.
+  assert.match(day, /Register · /);
   // The footer tells the truth: online/offline + today's record count + one add-link.
-  assert.match(day, /\+ Add to today/);
+  assert.match(day, /\+ Add one period/);
   assert.match(day, /todayEvents\.length/);
   // The day is declared, never invented.
   assert.match(day, /loadDayPlan/);
@@ -84,17 +82,20 @@ test('My Day drives the day: NOW hero, arc strip, owed band, uniform chips, bulk
   assert.doesNotMatch(day, /flagFor/);
   assert.doesNotMatch(day, /Quick actions/);
   assert.doesNotMatch(day, /Today's classes/);
-  // "In session" is claimed only inside the 40-minute period window; the gap
+  // "In session" is claimed only inside the period window; the gap
   // between periods is a named break, and the day closes when the last
   // window — not the last start — has passed.
   assert.match(day, /SCHEDULE_SPAN_MS/);
   assert.match(day, /liveSlot/);
   assert.match(day, /dayOver/);
   assert.match(day, /"between"/);
-  assert.match(day, /Break/);
-  // A class label with no learners on the roll never offers a register CTA.
-  assert.match(day, /Register the first period/);
-  assert.match(day, /has \? "att" : "grades"/);
+  assert.match(day, /"break"/);
+  // A class with no learners on the roll never offers a register.
+  assert.match(day, /"none"/);
+  // The old contract is gone for good.
+  assert.doesNotMatch(day, /Take register/);
+  assert.doesNotMatch(day, /Close the day/);
+  assert.doesNotMatch(day, /chip\(lesson/);
 });
 
 test('state is computed from the ledger, matched by learner id (class+stream safe)', () => {
