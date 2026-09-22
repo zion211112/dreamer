@@ -28,6 +28,11 @@
   --signal:      #14B8A6;
   --signal-dim:  #0D9488;
   --signal-strong:#0F766E;
+  /* Signal at low alpha — tinted surfaces (beacon, chip, focus ring).
+     Undefined here they collapse the whole declaration, leaving
+     transparent backgrounds/borders on controls that use them. */
+  --signal-a30:  rgba(20, 184, 166, 0.30);
+  --signal-a08:  rgba(20, 184, 166, 0.08);
 
   /* Informational — never interactive */
   --amber:  #D97706;

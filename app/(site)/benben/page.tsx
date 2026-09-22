@@ -228,7 +228,23 @@ export default function BenBenPage() {
   );
 
   if (!ready) {
-    return <main className="min-h-[60vh] bg-void text-ink" />;
+    // Never an empty shell: the board reads from local storage, so the
+    // first paint has nothing in it. Mirror (site)/loading.tsx so the
+    // route always has on-brand structure and a non-empty a11y tree.
+    return (
+      <main className="site-page bg-void text-ink" aria-busy="true">
+        <div className="site-frame site-frame--narrow">
+          <span className="sr-only">Loading the floor</span>
+          <div className="skeleton h-6 w-52" />
+          <div className="skeleton mt-6 h-12 w-[min(100%,26rem)]" />
+          <div className="skeleton mt-4 h-4 w-[min(100%,34rem)]" />
+          <div className="mt-10 space-y-4">
+            <div className="skeleton h-28 w-full" />
+            <div className="skeleton h-28 w-full" />
+          </div>
+        </div>
+      </main>
+    );
   }
 
   return (

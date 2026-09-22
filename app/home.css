@@ -54,23 +54,35 @@
   position: relative;
   overflow: hidden;
   border-bottom: 1px solid var(--rule);
+  /* A faint bloom of light (ink, not the accent token — that stays reserved
+     for interactive states) so the tiling has a source, not just a swatch. */
+  background: radial-gradient(
+    45% 55% at 84% 50%,
+    rgba(242, 239, 233, 0.05),
+    transparent 70%
+  );
 }
 
-/* GeoArt motif — the identity mark, shared with the 404. Sits behind the
-   hero copy at watermark strength. */
+/* GeoArt motif — the identity mark, shared with the 404 and contact. A
+   hyperbolic {7,3} tiling sitting behind the hero copy as the focal mark. */
 .landing-hero-art {
   position: absolute;
+  z-index: 0;
   top: 50%;
   right: -220px;
   width: 680px;
   height: 680px;
   transform: translateY(-50%);
   color: var(--ink);
-  opacity: 0.05;
+  opacity: 0.2;
   pointer-events: none;
 }
 
 .landing-hero-grid {
+  position: relative;
+  /* Sits above the absolutely-positioned art — otherwise the tiling paints
+     over the copy and the opaque Record-protocol panel. */
+  z-index: 1;
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(240px, 3fr);
   gap: 48px;
@@ -362,6 +374,12 @@
     padding-block: 64px 48px;
   }
 
+  /* On one column the tiling sits behind full-width copy — dial it back so
+     ink-on-ink never softens the headline. */
+  .landing-hero-art {
+    opacity: 0.11;
+  }
+
   .landing-roll {
     max-width: 360px;
   }
@@ -380,12 +398,20 @@
   .landing-hero-grid {
     min-height: calc(100vh - 84px);
     min-height: calc(100svh - 84px);
-    padding-block: 48px 40px;
+    padding-block: 40px 32px;
   }
 
+  /* Keep both actions on one row instead of stretching to full width.
+     Full-width stacking made the primary CTA oversized and pushed the
+     secondary action below the fold at 390px. Row + wrap keeps each
+     button at its intrinsic size (still ≥44px tap target) and both land
+     inside the first screen. */
   .landing-actions {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
   }
 
   .surface-row {
