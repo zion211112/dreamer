@@ -47,9 +47,9 @@ export const CONSOLE_MODULES = [
 export const CONSOLE_MENU: Record<string, { modules: string[]; icon: string; desc: string; tint: string }> = {
   "Content Studio": { modules: ["Content Studio"], icon: "Content Studio", desc: "Lesson plans, semester outlines, video-note tests — built from your own notes.", tint: "border-amber/20 bg-amber/10 text-amber" },
   "Auto-Marking": { modules: ["Auto-Marking"], icon: "Auto-Marking", desc: "Upload a test paper. Get back a weakness map.", tint: "border-amber/20 bg-amber/10 text-amber" },
-  "My Day": { modules: ["My Day"], icon: "My Day", desc: "Today on one timeline — lessons, attendance, grades, notes, tomorrow.", tint: "border-amber/20 bg-amber/10 text-amber" },
+  "My Day": { modules: ["My Day"], icon: "My Day", desc: "Today on one timeline — lessons, attendance, grades, notes, and the queue of what's owed.", tint: "border-amber/20 bg-amber/10 text-amber" },
   "Timetable": { modules: ["Timetable"], icon: "Timetable", desc: "Build the week, print it for the wall, approve it — Today reads from it.", tint: "border-teal/20 bg-teal/10 text-teal" },
-  "Roster": { modules: ["Roster"], icon: "Roster", desc: "Bulk CSV paste. Classes and streams.", tint: "border-amber/20 bg-amber/10 text-amber" },
+  "Roster": { modules: ["Roster"], icon: "Roster", desc: "The roll, in and out: CSV into classes and streams, and the school's one-file backup.", tint: "border-amber/20 bg-amber/10 text-amber" },
   "Reports": { modules: ["Reports"], icon: "Reports", desc: "One-click term reports and KCSE forecasts, per student.", tint: "border-amber/20 bg-amber/10 text-amber" },
   "Fees": { modules: ["Fees"], icon: "Fees", desc: "Invoices, M-Pesa reconciliation, balances.", tint: "border-amber/20 bg-amber/10 text-amber" },
   "Inspection": { modules: ["Inspection"], icon: "Inspection", desc: "Audit checklists, one-click exports.", tint: "border-amber/20 bg-amber/10 text-amber" },
@@ -63,9 +63,9 @@ export const CONSOLE_MENU: Record<string, { modules: string[]; icon: string; des
 export const CONSOLE_TOOLS: ConsoleTool[] = [
   { id: "18", title: "Content Studio", desc: "Lesson plans, semester outlines and video-note tests from your own notes.", module: "Content Studio", fav: true },
   { id: "7", title: "Auto-Marking", desc: "Mark the stack — typed or scanned — auto-grade it, fill the records, read the weakness map.", module: "Auto-Marking", fav: true },
-  { id: "17", title: "My Day", desc: "Today on one timeline — lessons, attendance, grades, notes, tomorrow.", module: "My Day", fav: false },
+  { id: "17", title: "My Day", desc: "Today on one timeline — lessons, attendance, grades, notes, and the queue of what's owed.", module: "My Day", fav: false },
   { id: "6", title: "Timetable Solver", desc: "Build the week, read it as a calendar, print it for the wall, approve it — Today reads from it.", module: "Timetable", fav: false },
-  { id: "9", title: "Roster Import", desc: "Bulk CSV paste. Classes and streams.", module: "Roster", fav: false },
+  { id: "9", title: "Roster Import", desc: "The roll, in and out: CSV into classes and streams, and the school's one-file backup.", module: "Roster", fav: false },
   { id: "2", title: "Term Reports", desc: "One-click reports for every student.", module: "Reports", fav: false },
   { id: "8", title: "Grade Forecast", desc: "KCSE projection per student.", module: "Reports", fav: false },
   { id: "3", title: "Fee Tracking", desc: "M-Pesa reconciliation and default prediction.", module: "Fees", fav: false },

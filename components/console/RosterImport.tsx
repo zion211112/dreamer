@@ -5,9 +5,9 @@
 // This is the tool that opens the other four: without a roll, the console
 // is a room with no one in it.
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
-import { SAMPLE_ROSTER, RosterParse, parseRosterCsv, studentId, Student } from "../../lib/school";
+import { SAMPLE_ROSTER, RosterParse, parseRosterCsv, studentId, Student, loadDump } from "../../lib/school";
 import { useSchoolData } from "./useSchoolData";
 import { btn, btnGhost, HeadRow, Loading, monoLabel, Notice, panel } from "./bits";
 
@@ -16,8 +16,33 @@ export default function RosterImport() {
   const [text, setText] = useState("");
   const [parsed, setParsed] = useState<RosterParse | null>(null);
   const [notice, setNotice] = useState("");
+  const backupRef = useRef<HTMLInputElement>(null);
 
   if (data.loading) return <Loading />;
+
+  /** The whole school, as one file: the roll and the term's ledger. */
+  function downloadBackup() {
+    const blob = new Blob([data.exportDump()], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `apt-labs-${data.school || "school"}-backup.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  /** Restore replaces the roll and the scores — not the whole device. */
+  async function importBackup(f: File | null) {
+    if (!f) return;
+    const d = loadDump(await f.text());
+    if (!d) {
+      setNotice("That file is not a school backup. Nothing was touched.");
+      return;
+    }
+    await data.importDump(d);
+    setNotice(`Restored ${d.students.length} students and ${d.assessments.length} scores from the backup.`);
+    if (backupRef.current) backupRef.current.value = "";
+  }
 
   function refreshParse(t: string) {
     setParsed(parseRosterCsv(t, data.students));
@@ -152,6 +177,31 @@ export default function RosterImport() {
             Build the week
           </Link>
         </div>
+
+        <div className="mt-6 border-t border-ink/10 pt-5">
+          <p className={monoLabel}>The school, as one file</p>
+          <p className="mt-2 max-w-[52ch] text-sm leading-6 text-dust">
+            The roll and the term&apos;s ledger, in one JSON file — nothing on this device ever leaves
+            it on its own. Carry it, keep it, restore it. A restore replaces the roll and the scores,
+            and nothing else.
+          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <button className={btnGhost} onClick={downloadBackup}>
+              Download the backup
+            </button>
+            <label className={btnGhost + " cursor-pointer"}>
+              Restore a backup
+              <input
+                ref={backupRef}
+                type="file"
+                accept=".json,application/json"
+                className="hidden"
+                onChange={(e) => void importBackup(e.target.files?.[0] ?? null)}
+              />
+            </label>
+          </div>
+        </div>
+
         {notice && <Notice>{notice}</Notice>}
       </div>
     </div>
