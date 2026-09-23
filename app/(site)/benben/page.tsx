@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import BoardCard from "../../../components/BoardCard";
+import HyperbolicHeptagon from "../../../components/HyperbolicHeptagon";
 import "./benben.css";
 import {
   addBuild,
@@ -266,7 +267,10 @@ export default function BenBenPage() {
 
   return (
     <main className="site-page benben-page bg-void text-ink">
-      <div className="site-frame site-frame--narrow relative overflow-hidden py-8 md:py-12">
+      <div className="site-frame site-frame--narrow floor-frame relative overflow-hidden py-8 md:py-12">
+        {/* the hall: the {7,3} mark, shared with hero/404/contact, behind the board */}
+        <HyperbolicHeptagon depth={2} className="floor-hall-art" />
+        <div className="floor-hall-bloom" aria-hidden />
         {/* masthead */}
         <header className="floor-masthead">
           <p className="floor-brand">
@@ -306,6 +310,7 @@ export default function BenBenPage() {
               </button>
               ))}
             </nav>
+          <HyperbolicHeptagon depth={1} className="floor-seal" />
         </header>
         <div className="floor-telemetry">
           <span className="floor-beacon"><i aria-hidden="true" /> LOCAL FLOOR ACTIVE</span>
@@ -479,7 +484,7 @@ export default function BenBenPage() {
                         type="button"
                         onClick={() => setRisk(r)}
                         aria-pressed={risk === r}
-                        className={`min-h-11 border px-4 py-2 font-mono text-label uppercase tracking-[0.16em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal ${
+                        className={`min-h-11 border px-4 py-2 font-mono text-label uppercase tracking-[0.16em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber ${
                           risk === r
                             ? "border-amber bg-amber/10 text-amber"
                             : "border-rule/12 text-ash hover:border-rule/25 hover:text-ink"
@@ -504,9 +509,9 @@ export default function BenBenPage() {
                           onClick={() =>
                             setSkillsSel((p) => (p.includes(k) ? p.filter((x) => x !== k) : [...p, k]))
                           }
-                          className={`min-h-11 border px-3 py-1.5 font-mono text-label uppercase tracking-[0.12em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal ${
+                          className={`min-h-11 border px-3 py-1.5 font-mono text-label uppercase tracking-[0.12em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber ${
                             on
-                              ? "border-signal/60 bg-signal/10 text-signal"
+                              ? "border-amber/60 bg-amber/10 text-amber"
                               : "border-rule/12 text-ash hover:border-rule/25 hover:text-ink"
                           }`}
                         >
@@ -626,7 +631,7 @@ export default function BenBenPage() {
                   </button>
                   <div className="flex items-center gap-4">
                     {err && <p role="alert" className="font-mono text-xs text-amber">{err}</p>}
-                    {notice && <p role="status" className="font-mono text-xs text-signal">{notice}</p>}
+                    {notice && <p role="status" className="font-mono text-xs text-amber">{notice}</p>}
                     <button className="post-fab post-fab--inline">
                       {forkOf ? "Put the fork on the floor →" : "Put it on the floor →"}
                     </button>

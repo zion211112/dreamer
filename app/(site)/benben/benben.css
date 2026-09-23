@@ -1,27 +1,52 @@
-/* BenBen — the floor. One surface ramp, one interactive accent (amber, scoped).
-   All legacy .benben-* classes removed; only .floor-* and .benben-page remain. */
+/* BenBen — the floor, one hall.
+   One warm accent (amber) for everything in motion; ink — the brightest
+   colour on the floor — for what is proved. No second hue. The {7,3}
+   heptagon mark, shared with the hero, 404 and contact, sits behind the
+   board as a watermark with an ink bloom as its source: the data reads as
+   engraved in the hall, not drawn on a sheet.
+   Amber is this route's interactive colour by exception; signal never
+   enters the floor. Scoped to .benben-page so the rest of the site keeps
+   its single accent. All legacy .benben-* classes removed; only .floor-*
+   and .benben-page remain. */
 .benben-page {
-  --floor-gold: var(--amber); /* informational only — never interactive */
+  --floor-gold: var(--amber);
+}
+
+/* The hall's own register: focus rings and the selection tint take the
+   floor's gold, not the site's signal. */
+.benben-page :focus-visible { outline-color: var(--floor-gold); }
+.benben-page ::selection { background: color-mix(in srgb, var(--floor-gold) 22%, transparent); }
+
+/* The watermark: the identity mark behind the board. Content sits above;
+   the art and its bloom are whispers, never surfaces. */
+.floor-frame > *:not(.floor-hall-art):not(.floor-hall-bloom) { position: relative; z-index: 1; }
+.floor-hall-art {
+  position: absolute; top: 160px; right: 0;
+  width: 480px; height: 480px;
+  color: var(--ink); opacity: 0.05; z-index: 0; pointer-events: none;
+}
+.floor-hall-bloom {
+  position: absolute; top: 80px; right: 0;
+  width: 64%; height: 480px; z-index: 0; pointer-events: none;
+  background: radial-gradient(58% 62% at 92% 22%, rgba(242, 239, 233, 0.05), transparent 70%);
 }
 
 /* ── refined floor: 720 column, underline tabs, ruled cards, FAB ── */
-/* Amber is this route's interactive color by exception: the global rule
-   reserves amber as informational-only, but the floor's whole register —
-   votes, seats, claims, FAB, proved emphasis — is amber, with signal kept
-   for proved state only. Scoped to .benben-page so nothing else drifts. */
 .benben-page .site-frame--narrow { max-width: 720px; }
 
-/* Masthead */
-.floor-masthead { display: grid; gap: 20px; padding-bottom: 24px; border-bottom: 1px solid var(--rule); }
+/* Masthead — the hall's seal, a small {7,3} heptagon, sits top-right;
+   the doctrine line rides above it. */
+.floor-masthead { position: relative; display: grid; gap: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--rule); }
+.floor-seal { position: absolute; top: 0; right: 0; width: 64px; height: 64px; color: var(--floor-gold); opacity: 0.45; z-index: 0; pointer-events: none; }
 .floor-brand { margin: 0 0 8px; color: var(--dust); font: 500 11px/1.5 var(--font-mono); letter-spacing: .15em; text-transform: uppercase; }
-.floor-brand strong { color: var(--amber); }
+.floor-brand strong { color: var(--floor-gold); }
 .floor-brand span { margin-left: 8px; border: 1px solid var(--rule); color: var(--ink); padding: 2px 6px; font-size: 10px; }
-.floor-title { margin: 0; color: var(--ink); font: italic 400 clamp(32px, 4vw, 48px)/1.1 var(--font-serif); letter-spacing: -.02em; }
+.floor-title { position: relative; z-index: 1; margin: 0; color: var(--ink); font: italic 400 clamp(32px, 4vw, 48px)/1.1 var(--font-serif); letter-spacing: -.02em; }
 .floor-philosophy { max-width: 680px; margin: 8px 0 0; color: var(--dust); font-size: 13px; line-height: 1.5; }
 
 /* Telemetry */
 .floor-telemetry { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; color: var(--dust); font: 10px/1.5 var(--font-mono); letter-spacing: .05em; text-transform: uppercase; }
-.floor-beacon { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--signal-a30); background: var(--signal-a08); color: var(--signal); padding: 5px 8px; font-size: 10px; letter-spacing: .08em; }
+.floor-beacon { display: inline-flex; align-items: center; gap: 8px; border: 1px solid color-mix(in srgb, var(--floor-gold) 32%, transparent); background: color-mix(in srgb, var(--floor-gold) 8%, transparent); color: var(--floor-gold); padding: 5px 8px; font-size: 10px; letter-spacing: .08em; }
 .floor-beacon i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
 /* Console */
@@ -29,11 +54,11 @@
 .floor-console-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .floor-console-row + .floor-console-row { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--rule); }
 .floor-search { display: flex; align-items: center; flex: 1 1 320px; min-height: 42px; border: 1px solid var(--rule); background: var(--void); }
-.floor-search:focus-within { border-color: var(--signal); }
+.floor-search:focus-within { border-color: var(--floor-gold); }
 .floor-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; padding: 0 12px; color: var(--ink); font: 11px var(--font-mono); letter-spacing: .05em; }
 .floor-search input::placeholder { color: var(--dust); }
 .floor-search button, .floor-search kbd { border: 0; background: transparent; color: var(--dust); padding: 0 12px; font: 12px var(--font-mono); }
-.floor-search button:hover { color: var(--signal); }
+.floor-search button:hover { color: var(--floor-gold); }
 .floor-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .floor-signed { color: var(--dust); font: 10px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
 .floor-console-note { color: var(--dust); font: 10px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
@@ -48,21 +73,25 @@
 
 /* Board */
 .floor-board-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-top: 40px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
-.floor-kicker { margin: 0 0 4px; color: var(--signal); font: 10px var(--font-mono); letter-spacing: .2em; text-transform: uppercase; }
-.floor-board-heading h2 { margin: 0; color: var(--ink); font: 400 28px/1.15 var(--font-serif); }
+.floor-kicker { margin: 0 0 4px; color: var(--floor-gold); font: 10px var(--font-mono); letter-spacing: .2em; text-transform: uppercase; }
+.floor-board-heading h2 { margin: 0; color: var(--ink); font: 400 34px/1.1 var(--font-serif); letter-spacing: -.02em; }
 .floor-board-heading > span { color: var(--dust); font: 10px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
 .floor-board { margin-top: 8px; list-style: none; padding: 0; }
 
 /* Cards render the ruled register natively — no overrides needed. */
-.floor-card { border-bottom: 1px solid var(--rule); padding: 36px 0; }
+/* Cards ride the single ruled register: one hairline per card (on the li),
+   one padding source, 8px rhythm. The card's own <article> carries no
+   border or padding — the doubled rule of the first pass is gone. */
+.floor-card { border-bottom: 1px solid var(--rule); padding: 40px 0; }
 .floor-card:last-child { border-bottom: 0; }
 
 /* ── Threshold seal (BoardCard) — a bar, not a meter ──
    Track is the quorum; fill is the count that has shown up.
-   Amber while the window is open, signal once proved. */
+   Amber while the window is open; ink once proved — whiteness is the
+   colour of the finished record, not a second hue. */
 .threshold-track { position: relative; flex: 1 1 220px; max-width: 360px; height: 2px; background: var(--rule); }
-.threshold-fill { position: absolute; top: 0; left: 0; height: 100%; background: var(--amber); transition: width 240ms ease; }
-.threshold-fill.proved { background: var(--signal); }
+.threshold-fill { position: absolute; top: 0; left: 0; height: 100%; background: var(--floor-gold); transition: width 240ms ease; }
+.threshold-fill.proved { background: var(--ink); }
 
 /* ── Nested registers: seats · progress · attestations.
    One rail, one head with a count, one tick per line. Quiet:
@@ -110,4 +139,8 @@
   .floor-tabs { overflow-x: auto; }
   .floor-tabs button { flex: 1 0 auto; min-width: max-content; }
   .floor-board-heading { align-items: flex-start; flex-direction: column; }
+  /* The watermark shrinks to a corner whisper on small screens. */
+  .floor-hall-art { top: 80px; width: 300px; height: 300px; opacity: 0.04; }
+  .floor-hall-bloom { height: 300px; }
+  .floor-seal { width: 44px; height: 44px; }
 }

@@ -39,8 +39,7 @@ function LineNode({
   const st = deriveState(b, now);
   const meta = STATE[st];
   const { up } = upDown(b);
-  const live = st === "claimed" || st === "active" || st === "done";
-  const mark = subject ? "text-amber" : live ? "text-signal" : "text-ash";
+  const mark = subject ? "text-amber" : meta.tone;
   return (
     <li>
       <div className="flex flex-wrap items-baseline gap-x-2">
@@ -50,7 +49,7 @@ function LineNode({
         <span className={`font-mono text-micro uppercase tracking-[0.2em] ${subject ? "text-amber" : "text-ash"}`}>
           {tag}
         </span>
-        <span className={`font-serif ${subject ? "text-[1.05rem] text-ink" : "text-[0.95rem] text-dust"}`}>
+        <span className={`font-serif ${subject ? "text-body text-ink" : "text-ui text-dust"}`}>
           {b.title}
         </span>
       </div>
@@ -85,7 +84,7 @@ function Register({
 
 // The seal: a threshold bar, not a progress meter. Fill = share of the
 // ratification quorum (votes) or closing quorum (attestations); the tick
-// marks the bar. Amber while open, signal once proved.
+// marks the bar. Amber while open, ink once proved.
 function Threshold({ b, now }: { b: Build; now: number }) {
   const s = deriveState(b, now);
   const proved = s === "done";
@@ -184,15 +183,18 @@ export default function BoardCard({
     s === "active" && !myBuilding && !alreadyAttested && !atts.ok && (tier === "hall" || holdsReviewer);
 
   return (
-    <article className="border-b border-rule py-9 last:border-b-0">
+    <article>
       <div className="flex items-baseline justify-between gap-3">
         <p className="font-mono text-micro uppercase tracking-[0.2em] text-dust">{b.domain}</p>
-        <p className={`font-mono text-micro uppercase tracking-[0.2em] ${meta.tone}`}>{meta.name}</p>
+        <p className={`font-mono text-micro uppercase tracking-[0.2em] ${meta.tone}`}>
+          <span aria-hidden className="mr-1.5">{meta.glyph}</span>
+          {meta.name}
+        </p>
       </div>
-      <h3 className="mt-3 max-w-[32ch] font-serif text-[1.65rem] font-normal leading-[1.15] text-ink">
+      <h3 className="mt-3 max-w-[32ch] font-serif text-h2 font-normal text-ink">
         {b.title}
       </h3>
-      <p className="mt-3 max-w-[60ch] text-[0.95rem] leading-7 text-dust">{b.body}</p>
+      <p className="mt-3 max-w-[60ch] text-body text-dust">{b.body}</p>
 
       <div className="mt-5">
         <Threshold b={b} now={now} />
@@ -210,8 +212,8 @@ export default function BoardCard({
       </dl>
 
       {proof && (
-        <figure className="mt-5 border-l-2 border-signal pl-4">
-          <blockquote className="font-serif text-[1.02rem] italic leading-relaxed text-ink">
+        <figure className="mt-5 border-l-2 border-ink pl-4">
+          <blockquote className="font-serif text-lead italic text-ink">
             &ldquo;{proof.evidence}&rdquo;
           </blockquote>
           <figcaption className="mt-1.5 font-mono text-micro uppercase tracking-[0.14em] text-dust">
@@ -222,7 +224,7 @@ export default function BoardCard({
       )}
 
       <div className="mt-4 flex flex-wrap items-center gap-x-2 font-mono text-micro uppercase tracking-[0.14em] text-dust">
-        <span className="text-amber/90">{b.risk}</span>
+        <span className="text-amber">{b.risk}</span>
         <span aria-hidden>·</span>
         <span>@{b.by}</span>
         <span aria-hidden>·</span>
@@ -232,7 +234,7 @@ export default function BoardCard({
         {(b.skills ?? []).length > 0 && (
           <>
             <span aria-hidden>·</span>
-            <span className="text-signal/90">{(b.skills ?? []).join(" · ")}</span>
+            <span className="text-ash">{(b.skills ?? []).join(" · ")}</span>
           </>
         )}
         <span aria-hidden>·</span>
@@ -263,7 +265,7 @@ export default function BoardCard({
               key={`${c.by}-${c.role}-${c.ts}`}
               className="flex flex-wrap items-baseline gap-x-2 font-mono text-meta text-dust"
             >
-              <span className={c.role === "reviewer" ? "text-signal" : "text-amber"}>{c.role}</span>
+              <span className="text-amber">{c.role}</span>
               <span className="text-ink">@{c.by}</span>
               <span>{c.reason}</span>
               {c.status === "pending" && (
@@ -313,9 +315,8 @@ export default function BoardCard({
               key={`${a.by}-${i}`}
               className="flex flex-wrap items-baseline gap-x-2 font-mono text-meta text-dust"
             >
-              <span aria-hidden className="text-signal">∎</span>
               <span className="text-ink">@{a.by}</span>
-              {a.hall && <span className="font-mono text-micro uppercase text-amber/70">hall</span>}
+              {a.hall && <span className="font-mono text-micro uppercase text-ash">hall</span>}
               <span>— {a.evidence}</span>
             </li>
           ))}

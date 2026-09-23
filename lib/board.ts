@@ -162,9 +162,9 @@ export function deriveState(b: Build, now: number): LifeState {
 export const STATE: Record<LifeState, { glyph: string; name: string; tone: string; rank: number }> = {
   proposed: { glyph: "○", name: "open", tone: "text-dust", rank: 0 },
   ratified: { glyph: "◐", name: "ratified", tone: "text-amber", rank: 1 },
-  claimed: { glyph: "▣", name: "in hand", tone: "text-signal", rank: 2 },
+  claimed: { glyph: "▣", name: "in hand", tone: "text-amber", rank: 2 },
   active: { glyph: "◉", name: "in motion", tone: "text-ink", rank: 3 },
-  done: { glyph: "∎", name: "proved", tone: "text-signal", rank: 4 },
+  done: { glyph: "∎", name: "proved", tone: "text-ink", rank: 4 },
   parked: { glyph: "‖", name: "resting", tone: "text-dust", rank: 5 },
   lapsed: { glyph: "⊘", name: "resting", tone: "text-dust", rank: 6 }
 };
