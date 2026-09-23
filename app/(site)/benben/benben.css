@@ -191,6 +191,56 @@
 .floor-desk { position: relative; border: 1px solid var(--rule); background: color-mix(in srgb, var(--ink) 2%, transparent); }
 .floor-desk::before { content: ""; position: absolute; top: -1px; left: 0; width: 96px; height: 2px; background: var(--floor-gold); }
 
+/* The desk's seal: a kicker that names the ritual, and the oath — the room's
+   voice, in serif, before the machinery of the form. */
+.desk-seal { position: relative; }
+.desk-kicker { margin: 0; color: var(--floor-gold); font: 500 10px var(--font-mono); letter-spacing: .24em; text-transform: uppercase; }
+.desk-fork-src { margin: 6px 0 0; color: var(--ash); font: 500 12px/1.4 var(--font-mono); letter-spacing: .04em; }
+.desk-oath { margin: 12px 0 0; max-width: 52ch; color: var(--ash); font: italic 400 14px/1.5 var(--font-serif); letter-spacing: 0; }
+
+/* A movement: one ruled section of the desk. A roman numeral rides the label
+   — the desk reads as a vow being drawn up, not a grid of inputs. */
+.desk-movement { position: relative; padding: 18px 0 4px; border-top: 1px solid var(--rule); }
+.desk-movement > header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+.desk-movement > header::after { content: ""; flex: 1; align-self: center; height: 1px; background: var(--rule); }
+.desk-num { color: var(--floor-gold); font: 600 11px var(--font-mono); letter-spacing: .1em; }
+.desk-move-title { margin: 0; color: var(--ink); font: italic 400 16px var(--font-serif); letter-spacing: 0; }
+.desk-field-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+.desk-count { color: var(--dust); font: 10px var(--font-mono); letter-spacing: .1em; font-variant-numeric: tabular-nums; transition: color 140ms ease; }
+.desk-count.near { color: var(--amber); }
+
+/* The live bar: the price of the commitment, moving as the risk pick moves.
+   A gold spine signals "this is the contract, not the form." */
+.terms-live { margin-top: 14px; padding: 11px 14px 11px 16px; border-left: 2px solid var(--floor-gold); background: color-mix(in srgb, var(--floor-gold) 6%, transparent); color: var(--ash); font: 12px/1.55 var(--font-mono); letter-spacing: .02em; transition: background 140ms ease; }
+.terms-live b { color: var(--floor-gold); font-weight: 600; }
+
+/* Risk pills now carry the terms on their face — the pick *is* the contract. */
+.desk-risk { display: inline-flex; flex-direction: column; gap: 2px; min-width: 84px; text-align: left; }
+.desk-risk .desk-risk-sub { font-size: 9px; letter-spacing: .06em; opacity: .6; text-transform: none; }
+.desk-risk[aria-pressed="true"] .desk-risk-sub { opacity: .85; }
+
+/* Signature row: the close, the doctrine whisper, and the act. */
+.desk-signature { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding-top: 18px; border-top: 1px solid var(--rule); }
+.desk-sign-note { color: var(--dust); font: italic 400 12px/1.4 var(--font-serif); letter-spacing: 0; }
+
+/* ── Card wit: the record answers, and the floor remembers the moment. ──
+   Title answers a hover with the floor's gold; the ledger already breathes. */
+.floor-card .entry-title { transition: color 160ms ease; }
+.floor-card:hover .entry-title { color: var(--floor-gold); }
+/* A vote lands with a pop — the count is the feedback, made tactile. */
+.floor-card .vote-btn { font: 500 11px var(--font-mono); letter-spacing: .08em; min-height: 44px; min-width: 44px; padding: 0 5px; transition: color 120ms ease, transform 110ms ease; }
+.floor-card .vote-btn:active { transform: scale(.9); }
+.vote-pop { display: inline-block; animation: vote-pop 340ms ease; }
+@keyframes vote-pop { 0% { transform: scale(1.6); } 100% { transform: scale(1); } }
+/* Cards rise into the lane — one quiet motion, and only on the way in.
+   Voting keeps the node, so it never replays; new cards animate the moment
+   they land. Reduced motion holds the room still. */
+.floor-board > li { animation: floor-rise 260ms ease both; animation-delay: calc(min(var(--i, 0), 10) * 30ms); }
+@keyframes floor-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .vote-pop, .floor-board > li { animation: none; }
+}
+
 /* The mesh strip: a static merkle-mesh echo of the hall's record —
    one quiet register of small cells, a caption, done. Pure CSS grid,
    aria-hidden, no motion, no cost. */

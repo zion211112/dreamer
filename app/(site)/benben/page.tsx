@@ -30,7 +30,8 @@ import {
   RISKS,
   SKILLS,
   submitClaim,
-  withdrawClaim
+  withdrawClaim,
+  ratifyTerms
 } from "../../../lib/board";
 import type { LifeState, Risk } from "../../../lib/board";
 
@@ -268,6 +269,9 @@ export default function BenBenPage() {
     return () => window.removeEventListener("keydown", onKey);
   }, [shownBoard.length]);
 
+  // The desk's word meter: a count, not a cap warning — amber as it nears.
+  const bodyWordCount = body.trim() ? body.trim().split(/\s+/).length : 0;
+
   if (!ready) {
     // Never an empty shell: the board reads from local storage, so the
     // first paint has nothing in it. Mirror (site)/loading.tsx so the
@@ -380,7 +384,7 @@ export default function BenBenPage() {
           className="post-fab"
           aria-expanded={open}
         >
-          {open ? "Close the desk" : "+ Post a build"}
+          {open ? "Close the desk" : "+ raise a commitment"}
         </button>
 
         <div className="floor-board-heading">
@@ -400,12 +404,12 @@ export default function BenBenPage() {
               <li className="mt-8 border border-dashed border-rule px-5 py-8 list-none">
                 <p className="font-serif text-xl text-ink">Nothing in this lane.</p>
                 <p className="mt-2 max-w-[48ch] font-mono text-label uppercase leading-6 tracking-[0.16em] text-dust">
-                  The floor is waiting for a commitment that belongs here.
+                  An empty lane is a door, not a verdict. Raise the first commitment here.
                 </p>
               </li>
             ) : (
               shownBoard.map((b, i) => (
-                <li key={b.id}>
+                <li key={b.id} style={{ "--i": i } as React.CSSProperties}>
                   <BoardCard
                     b={b}
                     now={now}
@@ -445,119 +449,110 @@ export default function BenBenPage() {
         <div ref={desk} id="desk" className="mt-12 scroll-mt-24">
           {open && (
             <form onSubmit={submit} className="floor-desk p-5 sm:p-6 md:p-8">
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <p className="font-mono text-label uppercase tracking-[0.3em] text-amber">
-                  {forkOf ? `Forking · ${forkOf.id}` : "New build"}
+              <div className="desk-seal">
+                <p className="desk-kicker">
+                  {forkOf ? "Forking · the floor keeps the branch" : "The desk · where the floor takes a vow"}
                 </p>
                 {forkOf && (
-                  <p className="font-mono text-label text-ash">
+                  <p className="desk-fork-src">
                     “{forkOf.title.slice(0, 44)}” · @{forkOf.by}
                   </p>
                 )}
+                <p className="desk-oath">
+                  The floor keeps your word. Say it plainly — the bar moves with the risk, and counts, not noise, decide it.
+                </p>
               </div>
 
-              <div className="mt-6 grid gap-6">
-                <div>
-                  <label className={label} htmlFor="bb-title">
-                    Title · 89 max
-                  </label>
-                  <input
-                    id="bb-title"
-                    className={field}
-                    value={title}
-                    maxLength={89}
-                    placeholder="What is being built, or what is missing"
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
-                </div>
-
-                <div className="grid gap-5 sm:grid-cols-2">
+              <div className="mt-6 grid gap-7">
+                <section className="desk-movement">
+                  <header>
+                    <span className="desk-num">I</span>
+                    <h3 className="desk-move-title">The word</h3>
+                  </header>
                   <div>
-                    <label className={label} htmlFor="bb-domain">
-                      Domain
-                    </label>
-                    <select
-                      id="bb-domain"
-                      className={`${field} [&>option]:bg-void`}
-                      value={domain}
-                      onChange={(e) => setDomain(e.target.value)}
-                    >
-                      {DOMAINS.map((d) => (
-                        <option key={d}>{d}</option>
-                      ))}
-                    </select>
+                    <div className="desk-field-row">
+                      <label className={label} htmlFor="bb-title">Title</label>
+                      <span className={`desk-count ${title.length >= 80 ? "near" : ""}`}>
+                        {title.length} / 89
+                      </span>
+                    </div>
+                    <input
+                      id="bb-title"
+                      className={field}
+                      value={title}
+                      maxLength={89}
+                      placeholder="What is being built, or what is missing"
+                      onChange={(e) => setTitle(e.target.value)}
+                    />
                   </div>
-                  <div>
-                    <label className={label} htmlFor="bb-type">
-                      Type
-                    </label>
-                    <select
-                      id="bb-type"
-                      className={`${field} [&>option]:bg-void`}
-                      value={type}
-                      onChange={(e) => setType(e.target.value)}
-                    >
-                      {TYPES.map((t) => (
-                        <option key={t}>{t}</option>
-                      ))}
-                    </select>
+                  <div className="mt-5">
+                    <div className="desk-field-row">
+                      <label className={label} htmlFor="bb-body">Body</label>
+                      <span className={`desk-count ${bodyWordCount >= 450 ? "near" : ""}`}>
+                        {bodyWordCount} words
+                      </span>
+                    </div>
+                    <textarea
+                      id="bb-body"
+                      className={`${field} h-24 resize-y`}
+                      value={body}
+                      placeholder="Enough for a stranger to act on"
+                      onChange={(e) => setBody(e.target.value)}
+                    />
                   </div>
-                </div>
+                  <div className="mt-5">
+                    <div className="desk-field-row">
+                      <label className={label} htmlFor="bb-done">Done looks like</label>
+                      <span className={`desk-count ${done.length >= 130 ? "near" : ""}`}>
+                        {done.length} / 144
+                      </span>
+                    </div>
+                    <input
+                      id="bb-done"
+                      className={field}
+                      value={done}
+                      maxLength={144}
+                      placeholder="The done-line a closing hand will prove"
+                      onChange={(e) => setDone(e.target.value)}
+                    />
+                  </div>
+                </section>
 
-                <div>
-                  <label className={label} htmlFor="bb-risk">
-                    Risk · sets the bar, the window, and the closing quorum
-                  </label>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {RISKS.map((r) => (
-                      <button
-                        key={r}
-                        type="button"
-                        onClick={() => setRisk(r)}
-                        aria-pressed={risk === r}
-                        className={`min-h-11 border px-4 py-2 font-mono text-label uppercase tracking-[0.16em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber ${
-                          risk === r
-                            ? "border-amber bg-amber/10 text-amber"
-                            : "border-rule/12 text-ash hover:border-rule/25 hover:text-ink"
-                        }`}
+                <section className="desk-movement">
+                  <header>
+                    <span className="desk-num">II</span>
+                    <h3 className="desk-move-title">The ground</h3>
+                  </header>
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <div>
+                      <label className={label} htmlFor="bb-domain">Domain</label>
+                      <select
+                        id="bb-domain"
+                        className={`${field} [&>option]:bg-void`}
+                        value={domain}
+                        onChange={(e) => setDomain(e.target.value)}
                       >
-                        {r}
-                      </button>
-                    ))}
+                        {DOMAINS.map((d) => (
+                          <option key={d}>{d}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className={label} htmlFor="bb-type">Type</label>
+                      <select
+                        id="bb-type"
+                        className={`${field} [&>option]:bg-void`}
+                        value={type}
+                        onChange={(e) => setType(e.target.value)}
+                      >
+                        {TYPES.map((t) => (
+                          <option key={t}>{t}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
-                </div>
-
-                <div>
-                  <label className={label}>Skills · the yard</label>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {SKILLS.map((k) => {
-                      const on = skillsSel.includes(k);
-                      return (
-                        <button
-                          key={k}
-                          type="button"
-                          aria-pressed={on}
-                          onClick={() =>
-                            setSkillsSel((p) => (p.includes(k) ? p.filter((x) => x !== k) : [...p, k]))
-                          }
-                          className={`min-h-11 border px-3 py-1.5 font-mono text-label uppercase tracking-[0.12em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber ${
-                            on
-                              ? "border-amber/60 bg-amber/10 text-amber"
-                              : "border-rule/12 text-ash hover:border-rule/25 hover:text-ink"
-                          }`}
-                        >
-                          {k}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <div>
-                    <label className={label} htmlFor="bb-location">
-                      Location · optional
-                    </label>
+                  <div className="mt-5">
+                    <label className={label} htmlFor="bb-location">Location · optional</label>
                     <input
                       id="bb-location"
                       className={field}
@@ -567,88 +562,129 @@ export default function BenBenPage() {
                       onChange={(e) => setLocation(e.target.value)}
                     />
                   </div>
-                  <div>
-                    <label className={label} htmlFor="bb-done">
-                      Done looks like · 144 max
-                    </label>
-                    <input
-                      id="bb-done"
-                      className={field}
-                      value={done}
-                      maxLength={144}
-                      placeholder="One sentence"
-                      onChange={(e) => setDone(e.target.value)}
-                    />
+                  <div className="mt-5">
+                    <label className={label}>Skills · the yard</label>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {SKILLS.map((k) => {
+                        const on = skillsSel.includes(k);
+                        return (
+                          <button
+                            key={k}
+                            type="button"
+                            aria-pressed={on}
+                            onClick={() =>
+                              setSkillsSel((p) => (p.includes(k) ? p.filter((x) => x !== k) : [...p, k]))
+                            }
+                            className={`min-h-11 border px-3 py-1.5 font-mono text-label uppercase tracking-[0.12em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber ${
+                              on
+                                ? "border-amber/60 bg-amber/10 text-amber"
+                                : "border-rule/12 text-ash hover:border-rule/25 hover:text-ink"
+                            }`}
+                          >
+                            {k}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
+                </section>
 
-                <div>
-                  <label className={label} htmlFor="bb-body">
-                    Body · 500 words
-                  </label>
-                  <textarea
-                    id="bb-body"
-                    className={`${field} h-24 resize-y`}
-                    value={body}
-                    placeholder="Enough for a stranger to act on"
-                    onChange={(e) => setBody(e.target.value)}
-                  />
-                </div>
+                <section className="desk-movement">
+                  <header>
+                    <span className="desk-num">III</span>
+                    <h3 className="desk-move-title">The bar</h3>
+                  </header>
+                  <div className="flex flex-wrap gap-2">
+                    {RISKS.map((r) => {
+                      const t = ratifyTerms(r);
+                      return (
+                        <button
+                          key={r}
+                          type="button"
+                          onClick={() => setRisk(r)}
+                          aria-pressed={risk === r}
+                          className={`desk-risk min-h-11 border px-4 py-2 font-mono text-label uppercase tracking-[0.16em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber ${
+                            risk === r
+                              ? "border-amber bg-amber/10 text-amber"
+                              : "border-rule/12 text-ash hover:border-rule/25 hover:text-ink"
+                          }`}
+                        >
+                          <span>{r}</span>
+                          <span className="desk-risk-sub">{t.bar} up · {t.days}d</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {(() => {
+                    const t = ratifyTerms(risk);
+                    return (
+                      <div className="terms-live" aria-live="polite">
+                        <b>{t.barLabel}</b> · {t.windowLabel} · {t.closeLabel}.
+                      </div>
+                    );
+                  })()}
+                </section>
 
-                <fieldset>
-                  <legend className={label}>What is missing</legend>
-                  <div className="mt-3 grid gap-5 sm:grid-cols-2 md:grid-cols-4">
-                    <label className="flex min-h-11 items-center gap-2 font-mono text-label text-dust">
-                      <input
-                        type="checkbox"
-                        checked={nothing}
-                        onChange={(e) => setNothing(e.target.checked)}
-                        className="accent-amber"
-                      />
-                      Nothing
-                    </label>
-                    <div>
-                      <span className="font-mono text-micro uppercase text-ash">Hands</span>
-                      <input
-                        className={field}
-                        type="number"
-                        min={0}
-                        value={labor}
-                        onChange={(e) => setLabor(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <span className="font-mono text-micro uppercase text-ash">Funds · KES</span>
-                      <input
-                        className={field}
-                        type="number"
-                        min={0}
-                        value={funds}
-                        onChange={(e) => setFunds(e.target.value)}
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-3 sm:col-span-2 md:col-span-1">
+                <section className="desk-movement">
+                  <header>
+                    <span className="desk-num">IV</span>
+                    <h3 className="desk-move-title">The need</h3>
+                  </header>
+                  <fieldset>
+                    <legend className="sr-only">What is missing</legend>
+                    <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-4">
+                      <label className="flex min-h-11 items-center gap-2 font-mono text-label text-dust">
+                        <input
+                          type="checkbox"
+                          checked={nothing}
+                          onChange={(e) => setNothing(e.target.checked)}
+                          className="accent-amber"
+                        />
+                        Nothing
+                      </label>
                       <div>
-                        <span className="font-mono text-micro uppercase text-ash">Materials</span>
+                        <span className="font-mono text-micro uppercase text-ash">Hands</span>
                         <input
                           className={field}
-                          value={materials}
-                          onChange={(e) => setMaterials(e.target.value)}
+                          type="number"
+                          min={0}
+                          value={labor}
+                          onChange={(e) => setLabor(e.target.value)}
                         />
                       </div>
                       <div>
-                        <span className="font-mono text-micro uppercase text-ash">Intellect</span>
+                        <span className="font-mono text-micro uppercase text-ash">Funds · KES</span>
                         <input
                           className={field}
-                          value={intellect}
-                          onChange={(e) => setIntellect(e.target.value)}
+                          type="number"
+                          min={0}
+                          value={funds}
+                          onChange={(e) => setFunds(e.target.value)}
                         />
                       </div>
+                      <div className="grid grid-cols-2 gap-3 sm:col-span-2 md:col-span-1">
+                        <div>
+                          <span className="font-mono text-micro uppercase text-ash">Materials</span>
+                          <input
+                            className={field}
+                            value={materials}
+                            onChange={(e) => setMaterials(e.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <span className="font-mono text-micro uppercase text-ash">Intellect</span>
+                          <input
+                            className={field}
+                            value={intellect}
+                            onChange={(e) => setIntellect(e.target.value)}
+                          />
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </fieldset>
+                  </fieldset>
+                </section>
 
-                <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
+                <footer className="desk-signature">
                   <button
                     type="button"
                     onClick={() => {
@@ -660,14 +696,15 @@ export default function BenBenPage() {
                   >
                     close the desk
                   </button>
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-wrap items-center gap-4">
+                    <p className="desk-sign-note">On the floor it cannot be unsaid — only proved, or parked.</p>
                     {err && <p role="alert" className="font-mono text-xs text-amber">{err}</p>}
                     {notice && <p role="status" className="font-mono text-xs text-amber">{notice}</p>}
                     <button className="post-fab post-fab--inline">
-                      {forkOf ? "Put the fork on the floor →" : "Put it on the floor →"}
+                      {forkOf ? "Sign the fork →" : "Sign the record →"}
                     </button>
                   </div>
-                </div>
+                </footer>
               </div>
             </form>
           )}

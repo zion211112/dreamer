@@ -69,6 +69,25 @@ export const RATIFY: Record<
   medium: { minVoters: 3, upShare: 0.6, windowH: 72, quorum: 2, hallQuorum: 0 },
   high: { minVoters: 5, upShare: 0.7, windowH: 96, quorum: 2, hallQuorum: 1 }
 };
+// Human terms for a risk class — the price of a commitment, spelled out so a
+// member feels the consequence while they choose it. Used by the desk (where
+// the bar moves with the pick) and the cards (what this one already costs).
+export function ratifyTerms(r: Risk) {
+  const c = RATIFY[r];
+  const days = Math.round(c.windowH / 24);
+  return {
+    bar: c.minVoters,
+    days,
+    quorum: c.quorum,
+    hall: c.hallQuorum,
+    barLabel: `${c.minVoters} must show up`,
+    windowLabel: days >= 1 ? `a ${days}-day window` : `a ${c.windowH}-hour window`,
+    closeLabel: `closes at ${c.quorum} attestation${c.quorum === 1 ? "" : "s"}${
+      c.hallQuorum ? `, ${c.hallQuorum} from the hall` : ""
+    }`
+  };
+}
+
 export const STALE_MS = 90 * 24 * H;
 
 function riskOf(b: Build): Risk {

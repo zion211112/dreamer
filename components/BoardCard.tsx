@@ -10,7 +10,8 @@ import {
   upDown,
   upNeeded,
   validAttestations,
-  RATIFY
+  RATIFY,
+  ratifyTerms
 } from "../lib/board";
 
 // CSS class constants (inline styles via Tailwind tokens)
@@ -96,11 +97,16 @@ function Threshold({ b, now }: { b: Build; now: number }) {
   // Quorum reached but the record is not closed: the fill takes the gold —
   // Snapshot's shift from mute to alive. Ink only when proved.
   const quorumHit = !proved && up >= bar;
+  const terms = ratifyTerms(b.risk === "medium" || b.risk === "high" ? b.risk : "low");
+  // The line speaks the machine's own voice: counts, not percentages — a
+  // count cannot be moved by not showing up.
   const label = proved
     ? `proved · ${atts.have} attestation${atts.have === 1 ? "" : "s"}`
     : s === "claimed" || s === "active"
-      ? `${atts.have} of ${atts.need} attestations to close`
-      : `${up} of ${bar} votes · ${need} more`;
+      ? `${atts.have} of ${atts.need} to close · ${terms.closeLabel}`
+      : need > 0
+        ? `${up} of ${bar} shown · ${need} more to show up`
+        : `${up} of ${bar} shown · the bar is met — waiting to close`;
   return (
     <div className="threshold">
       <div className="flex items-center gap-3" role="img" aria-label={label}>
@@ -238,7 +244,7 @@ export default function BoardCard({
           <button type="button" onClick={() => onFork(b)} className="entry-action" aria-label={`Fork ${b.title}`}>Fork</button>
         </div>
       </div>
-      <h3 className="mt-3 max-w-[32ch] font-serif text-h2 font-normal text-ink">
+      <h3 className="entry-title mt-3 max-w-[32ch] font-serif text-h2 font-normal text-ink">
         {b.title}
       </h3>
       <p className="mt-3 max-w-[60ch] text-body text-dust line-clamp-2">{b.body}</p>
@@ -285,22 +291,22 @@ export default function BoardCard({
           </>
         )}
         <span className="sep" aria-hidden>·</span>
-        <span className="tabular-nums flex items-center gap-1">
+        <span className="tabular-nums flex items-center gap-0.5">
           <button
             onClick={() => onVote(b.id, 1)}
-            aria-label={`Upvote ${b.title}`}
+            aria-label={`Support ${b.title}`}
             aria-pressed={myVote === 1}
-            className={`min-h-11 min-w-11 px-1 transition ${myVote === 1 ? "text-amber" : "hover:text-ink"}`}
+            className={`vote-btn ${myVote === 1 ? "text-amber" : "text-ink hover:text-amber"}`}
           >
-            ▲{up}
+            ▲<span key={up} className="vote-pop">{up}</span>
           </button>
           <button
             onClick={() => onVote(b.id, -1)}
-            aria-label={`Downvote ${b.title}`}
+            aria-label={`Push back on ${b.title}`}
             aria-pressed={myVote === -1}
-            className={`min-h-11 min-w-11 px-1 transition ${myVote === -1 ? "text-ink" : "hover:text-ink"}`}
+            className={`vote-btn ${myVote === -1 ? "text-amber" : "text-ink hover:text-amber"}`}
           >
-            ▼{down}
+            ▼<span key={down} className="vote-pop">{down}</span>
           </button>
         </span>
       </div>
