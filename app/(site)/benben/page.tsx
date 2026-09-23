@@ -184,6 +184,9 @@ export default function BenBenPage() {
     ));
   };
 
+  const proveable = (build: Build) =>
+    build.state === "claimed" || (build.state === "open" && build.votes >= build.threshold);
+
   return (
     <main className="benben-legacy-page">
       <div className="page">
@@ -293,7 +296,7 @@ export default function BenBenPage() {
                       {build.state === "open" && build.votes < build.threshold && (
                         <button type="button" className="action" onClick={(event) => { event.stopPropagation(); signBuild(build.id); }}>sign</button>
                       )}
-                      {(build.state === "claimed" || (build.state === "open" && build.votes >= build.threshold)) && build.state !== "sealed" && (
+                      {build.state !== "sealed" && proveable(build) && (
                         <button type="button" className="action" onClick={(event) => { event.stopPropagation(); proveBuild(build.id); }}>prove</button>
                       )}
                       {build.state !== "sealed" && (
