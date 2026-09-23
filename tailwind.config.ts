@@ -43,22 +43,21 @@ const config = {
         edgeHi:   "#1F1F22",      // → rule
       },
       fontFamily: {
-        // System font stack — no network requests. Works offline.
+        // Google Fonts with system fallbacks — Mirror.xyz editorial + Linear instrument.
         sans: [
           "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto",
           "Helvetica Neue", "Arial", "Noto Sans", "system-ui", "sans-serif"
         ],
         serif: [
-          "Iowan Old Style", "Apple Garamond", "Baskerville",
+          "Playfair Display", "Iowan Old Style", "Apple Garamond", "Baskerville",
           "Palatino Linotype", "Times New Roman", "Georgia", "serif"
         ],
         mono: [
-          "ui-monospace", "SF Mono", "Cascadia Code", "Roboto Mono",
+          "JetBrains Mono", "ui-monospace", "SF Mono", "Cascadia Code", "Roboto Mono",
           "Menlo", "Consolas", "Liberation Mono", "monospace"
         ],
-        // Legacy alias — console components predate this system.
         display: [
-          "Iowan Old Style", "Apple Garamond", "Baskerville",
+          "Playfair Display", "Iowan Old Style", "Apple Garamond", "Baskerville",
           "Palatino Linotype", "Times New Roman", "Georgia", "serif"
         ],
         body: [

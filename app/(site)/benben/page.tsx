@@ -245,6 +245,29 @@ export default function BenBenPage() {
     [boardList, tab, now, search]
   );
 
+  // J/K walk the board — the Linear muscle memory, arrow keys riding along
+  // for the discoverable path. Escape lets go. The focused card takes
+  // V/C/Space from BoardCard; this list only moves the cursor.
+  const [focusIdx, setFocusIdx] = useState(-1);
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable)) return;
+      const k = e.key.toLowerCase();
+      if (k === "j" || e.key === "ArrowDown") {
+        e.preventDefault();
+        setFocusIdx((i) => Math.min(i + 1, shownBoard.length - 1));
+      } else if (k === "k" || e.key === "ArrowUp") {
+        e.preventDefault();
+        setFocusIdx((i) => (i <= 0 ? 0 : i - 1));
+      } else if (e.key === "Escape") {
+        setFocusIdx(-1);
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [shownBoard.length]);
+
   if (!ready) {
     // Never an empty shell: the board reads from local storage, so the
     // first paint has nothing in it. Mirror (site)/loading.tsx so the
@@ -341,7 +364,7 @@ export default function BenBenPage() {
             </div>
           </div>
           <div className="floor-console-row">
-            <p className="floor-console-note">Press <kbd>/</kbd> to search. Press <kbd>Esc</kbd> to close the desk.</p>
+            <p className="floor-console-note">Press <kbd>/</kbd> to search · <kbd>J</kbd>/<kbd>K</kbd> to walk the board · <kbd>V</kbd> vote · <kbd>C</kbd> claim · <kbd>Space</kbd> inspect · <kbd>Esc</kbd> let go</p>
           </div>
         </div>
 
@@ -368,9 +391,11 @@ export default function BenBenPage() {
           <span>{shownBoard.length} visible</span>
         </div>
 
-        {/* the board: commitments made public — state derived, never written */}
-        <section className="floor-board">
-          <ol id="board-panel" role="tabpanel" aria-labelledby={`board-tab-${tab}`} tabIndex={-1}>
+        {/* the board: commitments made public — state derived, never written.
+            The ol carries .floor-board (the ruled register: counter-reset,
+            no list markers); the entry is the article inside a bare li. */}
+        <section>
+          <ol id="board-panel" className="floor-board" role="tabpanel" aria-labelledby={`board-tab-${tab}`} tabIndex={-1}>
             {shownBoard.length === 0 ? (
               <li className="mt-8 border border-dashed border-rule px-5 py-8 list-none">
                 <p className="font-serif text-xl text-ink">Nothing in this lane.</p>
@@ -379,8 +404,8 @@ export default function BenBenPage() {
                 </p>
               </li>
             ) : (
-              shownBoard.map((b) => (
-                <li key={b.id} className="floor-card">
+              shownBoard.map((b, i) => (
+                <li key={b.id}>
                   <BoardCard
                     b={b}
                     now={now}
@@ -395,6 +420,8 @@ export default function BenBenPage() {
                     onProgress={onProgress}
                     onAttest={onAttest}
                     onPark={onPark}
+                    focused={i === focusIdx}
+                    onActivate={() => setFocusIdx(-1)}
                   />
                 </li>
               ))

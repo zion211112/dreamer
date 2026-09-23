@@ -119,8 +119,9 @@
 .floor-board { margin-top: 8px; list-style: none; padding: 0; }
 
 /* Cards ride the single ruled register: one hairline per card (on the li),
-   one padding source, 8px rhythm. */
-.floor-card { position: relative; border-bottom: 1px solid var(--rule); padding: 40px 0 40px 64px; }
+   one padding source, 8px rhythm. Feed-card hover glow — Linear/Roll
+   style: 1px rule, subtle gold breath. */
+.floor-card { position: relative; border: 1px solid transparent; border-bottom: 1px solid var(--rule); padding: 40px 0 40px 64px; }
 .floor-card:last-child { border-bottom: 0; }
 /* The ledgered index: every commitment carries its number on a ruled
    spine, read top-to-bottom like a commons ledger, not a feed. The
@@ -164,12 +165,24 @@
 /* The vote buttons keep their Tailwind tones (amber when cast, ink on
    hover): they inherit dust from .entry-foot — no element-scoped colour. */
 
-/* ── Threshold seal (BoardCard) — a bar, not a meter ──
+/* Feed-card hover glow — Linear/Roll-style: 1px rule, subtle gold breath. */
+.floor-card { border: 1px solid transparent; }
+.floor-card:hover { border-color: color-mix(in srgb, var(--rule) 60%, transparent); box-shadow: 0 0 14px -4px color-mix(in srgb, var(--floor-gold) 18%, transparent); }
+/* Keyboard focus: gold ring, no outline offset clash. */
+.floor-card--focused { border-color: var(--floor-gold); box-shadow: 0 0 0 1px var(--floor-gold), 0 0 16px -4px color-mix(in srgb, var(--floor-gold) 30%, transparent); outline: none; }
+
+/* Inline actions — Claim · Fork pills in the entry head. */
+.entry-actions { display: flex; gap: 6px; margin-left: auto; }
+.entry-action { min-height: 22px; padding: 2px 8px; border: 1px solid var(--rule); background: transparent; color: var(--dust); font: 500 9px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; cursor: pointer; transition: color 120ms ease, border-color 120ms ease, background 120ms ease; }
+.entry-action:hover { color: var(--ink); border-color: color-mix(in srgb, var(--floor-gold) 40%, transparent); background: color-mix(in srgb, var(--floor-gold) 8%, transparent); }
+
+/* ── Threshold — Snapshot style: ivory-mute → gold at quorum → ink proved ──
    Track is the quorum; fill is the count that has shown up.
-   Amber while the window is open; ink once proved — whiteness is the
-   colour of the finished record, not a second hue. */
+   Amber while the window is open; gold when quorum hits;
+   ink once proved — whiteness is the colour of the finished record. */
 .threshold-track { position: relative; flex: 1 1 220px; max-width: 360px; height: 2px; background: var(--rule); }
-.threshold-fill { position: absolute; top: 0; left: 0; height: 100%; background: var(--floor-gold); box-shadow: 0 0 8px color-mix(in srgb, var(--floor-gold) 50%, transparent); transition: width 240ms ease; }
+.threshold-fill { position: absolute; top: 0; left: 0; height: 100%; background: color-mix(in srgb, var(--ink) 22%, transparent); box-shadow: 0 0 6px color-mix(in srgb, var(--ink) 8%, transparent); transition: width 240ms ease, background 240ms ease, box-shadow 240ms ease; }
+.threshold-fill.quorum { background: var(--floor-gold); box-shadow: 0 0 8px color-mix(in srgb, var(--floor-gold) 45%, transparent); }
 /* Proved: the gold retires; ink is the colour of the finished record. */
 .threshold-fill.proved { background: var(--ink); box-shadow: none; }
 

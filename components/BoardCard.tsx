@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, useRef, type ReactNode } from "react";
 import { Build, FloorTier, BoardRole, timeAgo, needsLine } from "../lib/benben";
 import {
   STATE,
@@ -93,6 +93,9 @@ function Threshold({ b, now }: { b: Build; now: number }) {
   const bar = (b.risk === "medium" || b.risk === "high" ? RATIFY[b.risk] : RATIFY.low).minVoters;
   const pct = Math.min(100, Math.round((up / Math.max(1, bar)) * 100));
   const atts = attestationState(b);
+  // Quorum reached but the record is not closed: the fill takes the gold —
+  // Snapshot's shift from mute to alive. Ink only when proved.
+  const quorumHit = !proved && up >= bar;
   const label = proved
     ? `proved · ${atts.have} attestation${atts.have === 1 ? "" : "s"}`
     : s === "claimed" || s === "active"
@@ -103,7 +106,7 @@ function Threshold({ b, now }: { b: Build; now: number }) {
       <div className="flex items-center gap-3" role="img" aria-label={label}>
         <div className="threshold-track">
           <div
-            className={`threshold-fill ${proved ? "proved" : ""}`}
+            className={["threshold-fill", quorumHit ? "quorum" : "", proved ? "proved" : ""].filter(Boolean).join(" ")}
             style={{ width: `${proved ? 100 : pct}%` }}
           />
         </div>
@@ -131,7 +134,9 @@ export default function BoardCard({
   onProgress,
   onAttest,
   onPark,
-  onFork
+  onFork,
+  focused,
+  onActivate
 }: {
   b: Build;
   now: number;
@@ -146,6 +151,8 @@ export default function BoardCard({
   onAttest: (id: string, evidence: string) => string | null;
   onPark: (id: string) => string | null;
   onFork: (b: Build) => void;
+  focused?: boolean;
+  onActivate?: () => void;
 }) {
   const s = deriveState(b, now);
   const meta = STATE[s];
@@ -166,6 +173,32 @@ export default function BoardCard({
   const [msg, setMsg] = useState<string | null>(null);
   const [lineOpen, setLineOpen] = useState(false);
 
+  // Keyboard — the Linear register: V vote · C claim · Space inspect · Esc let go.
+  // Guards mirror the visible affordances: a key never grants an action the
+  // pointer could not take. The focused card rides into view, never jumps.
+  const cardRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    if (!focused) return;
+    function handle(e: KeyboardEvent) {
+      if (e.key === "v" || e.key === "V") { e.preventDefault(); onVote(b.id, 1); }
+      if (e.key === "c" || e.key === "C") {
+        const st = deriveState(b, now);
+        if (me && (st === "proposed" || st === "ratified" || st === "claimed")) {
+          e.preventDefault();
+          setForm("claim");
+          setMsg(null);
+        }
+      }
+      if (e.key === " ") { e.preventDefault(); setLineOpen((o) => !o); }
+      if (e.key === "Escape") { e.preventDefault(); setLineOpen(false); onActivate?.(); }
+    }
+    window.addEventListener("keydown", handle);
+    return () => window.removeEventListener("keydown", handle);
+  }, [focused, b, me, now, onVote, onActivate]);
+  useEffect(() => {
+    if (focused) cardRef.current?.scrollIntoView({ block: "nearest" });
+  }, [focused]);
+
   const myVote = me ? b.votedBy[me]?.value ?? 0 : 0;
   const isAuthor = !!me && me.toLowerCase() === b.by.toLowerCase();
   const canAccept = !!me && (isAuthor || tier === "hall");
@@ -183,7 +216,7 @@ export default function BoardCard({
     s === "active" && !myBuilding && !alreadyAttested && !atts.ok && (tier === "hall" || holdsReviewer);
 
   return (
-    <article>
+    <article ref={cardRef} className={`floor-card ${focused ? "floor-card--focused" : ""}`} tabIndex={focused ? 0 : -1}>
       <div className="entry-head">
         <p className="entry-kind">
           {b.domain}
@@ -198,11 +231,17 @@ export default function BoardCard({
           <span aria-hidden>{meta.glyph}</span>
           {meta.name}
         </p>
+        <div className="entry-actions">
+          {canClaim && (
+            <button type="button" onClick={() => { setForm("claim"); setMsg(null); }} className="entry-action" aria-label={`Claim ${b.title}`}>Claim</button>
+          )}
+          <button type="button" onClick={() => onFork(b)} className="entry-action" aria-label={`Fork ${b.title}`}>Fork</button>
+        </div>
       </div>
       <h3 className="mt-3 max-w-[32ch] font-serif text-h2 font-normal text-ink">
         {b.title}
       </h3>
-      <p className="mt-3 max-w-[60ch] text-body text-dust">{b.body}</p>
+      <p className="mt-3 max-w-[60ch] text-body text-dust line-clamp-2">{b.body}</p>
 
       <div className="mt-5">
         <Threshold b={b} now={now} />
