@@ -64,7 +64,7 @@ export default function BenBenPage() {
   const [me, setMe] = useState<string | null>(null);
 
   // the desk
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [forkOf, setForkOf] = useState<Build | null>(null);
   const [title, setTitle] = useState("");
   const [domain, setDomain] = useState(DOMAINS[0]);
@@ -272,6 +272,19 @@ export default function BenBenPage() {
   // The desk's word meter: a count, not a cap warning — amber as it nears.
   const bodyWordCount = body.trim() ? body.trim().split(/\s+/).length : 0;
 
+  // The desk's live preview: one plain line of what the commitment asks, so
+  // the member sees the statement before it is drawn up.
+  const needsSummary = nothing
+    ? "nothing — already built"
+    : [
+        Number(labor) ? `${labor} hands` : "",
+        Number(funds) ? `${Number(funds).toLocaleString("en")} KES` : "",
+        materials.trim(),
+        intellect.trim()
+      ]
+        .filter(Boolean)
+        .join(" · ") || "nothing yet";
+
   if (!ready) {
     // Never an empty shell: the board reads from local storage, so the
     // first paint has nothing in it. Mirror (site)/loading.tsx so the
@@ -307,7 +320,9 @@ export default function BenBenPage() {
           </p>
           <h1 className="floor-title">The board decides by count. The floor remembers by proof.</h1>
           <p className="floor-philosophy">
-            A build is a commitment, not a post. State is derived, never written.
+            A build is a commitment, not a post. State is never written — only counts decide, and a
+            count cannot be moved by not showing up. What is raised here is on the record: it can be
+            proved, or parked, but not unsaid.
           </p>
           <nav
             className="floor-tabs"
@@ -338,10 +353,6 @@ export default function BenBenPage() {
               </button>
               ))}
             </nav>
-          <figure className="floor-seal">
-            <HyperbolicHeptagon depth={1} />
-            <figcaption>{`the hall · {7,3}`}</figcaption>
-          </figure>
         </header>
         <div className="floor-telemetry">
           <span className="floor-beacon"><i aria-hidden="true" /> LOCAL FLOOR ACTIVE</span>
@@ -349,6 +360,8 @@ export default function BenBenPage() {
           <span>{openBoard} open commitments</span>
         </div>
 
+        <div className="floor-hall">
+          <div className="floor-hall-main">
         <div className="floor-console">
           <div className="floor-console-row">
             <label className="floor-search">
@@ -446,7 +459,7 @@ export default function BenBenPage() {
         )}
 
         {/* the desk */}
-        <div ref={desk} id="desk" className="mt-12 scroll-mt-24">
+        <div ref={desk} id="desk" className="mt-10 scroll-mt-24">
           {open && (
             <form onSubmit={submit} className="floor-desk p-5 sm:p-6 md:p-8">
               <div className="desk-seal">
@@ -684,6 +697,40 @@ export default function BenBenPage() {
                   </fieldset>
                 </section>
 
+                <div className="desk-preview" aria-live="polite">
+                  <p className="desk-preview-kicker">On the floor, it reads</p>
+                  <p className={`desk-preview-title ${title.trim() ? "" : "is-empty"}`}>
+                    {title.trim() || "An unspoken title."}
+                  </p>
+                  <div className="desk-preview-meta">
+                    <div>
+                      <span className="k">Kind</span>
+                      <span className={title.trim() ? "" : "muted"}>
+                        {domain} · {type}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="k">Risk</span>
+                      <span>
+                        <b>{risk}</b> · {(() => {
+                          const t = ratifyTerms(risk);
+                          return `${t.bar} must show up · closes ${t.closeLabel}`;
+                        })()}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="k">Needs</span>
+                      <span className={needsSummary === "nothing yet" ? "muted" : ""}>{needsSummary}</span>
+                    </div>
+                    {location.trim() && (
+                      <div>
+                        <span className="k">Where</span>
+                        <span>{location}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 <footer className="desk-signature">
                   <button
                     type="button"
@@ -709,6 +756,85 @@ export default function BenBenPage() {
             </form>
           )}
         </div>
+          </div>
+
+          {/* the hall's standing register: the floor's own counts, always in view */}
+          <aside className="floor-rail" aria-label="The hall's register">
+            <div className="rail-plate">
+              <p className="rail-plate-title">The register</p>
+              <div className="rail-stats">
+                <div className="rail-stat">
+                  <span className="rail-stat-num is-live">{openBoard}</span>
+                  <span className="rail-stat-label">open</span>
+                </div>
+                <div className="rail-stat">
+                  <span className="rail-stat-num">{boardList.length}</span>
+                  <span className="rail-stat-label">on the floor</span>
+                </div>
+                <div className="rail-stat">
+                  <span className="rail-stat-num">{totalVotes}</span>
+                  <span className="rail-stat-label">votes cast</span>
+                </div>
+                <div className="rail-stat">
+                  <span className="rail-stat-num">{boardTabs.done}</span>
+                  <span className="rail-stat-label">proved</span>
+                </div>
+                <div className="rail-stat">
+                  <span className="rail-stat-num">{totalForks}</span>
+                  <span className="rail-stat-label">forks</span>
+                </div>
+                <div className="rail-stat">
+                  <span className="rail-stat-num">{restCount}</span>
+                  <span className="rail-stat-label">resting</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="rail-plate">
+              <p className="rail-plate-title">How the floor decides</p>
+              <div className="rail-doctrine">
+                {RISKS.map((r) => {
+                  const t = ratifyTerms(r);
+                  return (
+                    <div className="rail-risk" key={r}>
+                      <span className="rail-risk-tag">{r}</span>
+                      <span className="rail-risk-terms">
+                        <b>{t.bar}</b> must show up · {t.windowLabel}
+                      </span>
+                      <span className="rail-risk-terms">closes {t.closeLabel}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="rail-note">The bar moves with the risk. A count cannot be moved by not showing up.</p>
+            </div>
+
+            <div className="rail-plate">
+              <p className="rail-plate-title">The doors</p>
+              <ul className="rail-seats">
+                <li>
+                  <b>visitor</b>
+                  <span>may raise · may vote</span>
+                </li>
+                <li>
+                  <b>member</b>
+                  <span>may claim a seat</span>
+                </li>
+                <li>
+                  <b>hall</b>
+                  <span>may close · may let rest</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="rail-seal">
+              <HyperbolicHeptagon depth={1} />
+              <span className="rail-seal-cap">
+                the hall · {"{7,3}"} · {boardList.length} on the record
+              </span>
+            </div>
+          </aside>
+        </div>
 
         {/* the mesh: a static echo of the record — the hall's own seal */}
         <div aria-hidden className="floor-mesh">
@@ -725,7 +851,7 @@ export default function BenBenPage() {
 
         {/* colophon lives above the FAB now; keep bottom padding for its overlap */}
         <p className="page-foot">count, not noise · commit, then prove</p>
-        <div aria-hidden className="h-24" />
+        <div aria-hidden className="h-16" />
       </div>
     </main>
   );

@@ -1,5 +1,9 @@
+
+> apt-labs-osawi@1.0.0 start
+> next start
+
   ▲ Next.js 14.2.35
-  - Local:        http://localhost:3123
+  - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 1571ms
+ ✓ Ready in 3.8s

@@ -97,6 +97,8 @@ function Threshold({ b, now }: { b: Build; now: number }) {
   // Quorum reached but the record is not closed: the fill takes the gold —
   // Snapshot's shift from mute to alive. Ink only when proved.
   const quorumHit = !proved && up >= bar;
+  const closing = s === "claimed" || s === "active" || proved;
+  const sealClass = proved ? "is-proved" : atts.ok ? "is-quorum" : "";
   const terms = ratifyTerms(b.risk === "medium" || b.risk === "high" ? b.risk : "low");
   // The line speaks the machine's own voice: counts, not percentages — a
   // count cannot be moved by not showing up.
@@ -116,9 +118,18 @@ function Threshold({ b, now }: { b: Build; now: number }) {
             style={{ width: `${proved ? 100 : pct}%` }}
           />
         </div>
-        <span className="shrink-0 font-mono text-micro uppercase tracking-[0.14em] text-dust tabular-nums">
-          {proved ? `${atts.have}/${atts.need}` : `${up}/${bar}`}
-        </span>
+        {closing ? (
+          <span
+            className={`close-seal ${sealClass}`.trim()}
+            title={`attestations · ${atts.have} of ${atts.need}`}
+          >
+            {atts.ok ? "∎" : `${atts.have}/${atts.need}`}
+          </span>
+        ) : (
+          <span className="shrink-0 font-mono text-micro uppercase tracking-[0.14em] text-dust tabular-nums">
+            {up}/{bar}
+          </span>
+        )}
       </div>
       <p className="mt-1.5 font-mono text-micro uppercase tracking-[0.14em] text-dust">{label}</p>
     </div>
@@ -179,6 +190,19 @@ export default function BoardCard({
   const [msg, setMsg] = useState<string | null>(null);
   const [lineOpen, setLineOpen] = useState(false);
 
+  // The hall-seal moment: the one loud instant on the floor. When this record
+  // crosses into "proved", the card blooms in gold once — the room remembers.
+  const [bloom, setBloom] = useState(false);
+  const prevState = useRef<ReturnType<typeof deriveState> | null>(null);
+  useEffect(() => {
+    const justProved = s === "done" && prevState.current !== "done";
+    prevState.current = s;
+    if (!justProved) return;
+    setBloom(true);
+    const t = setTimeout(() => setBloom(false), 1000);
+    return () => clearTimeout(t);
+  }, [s]);
+
   // Keyboard — the Linear register: V vote · C claim · Space inspect · Esc let go.
   // Guards mirror the visible affordances: a key never grants an action the
   // pointer could not take. The focused card rides into view, never jumps.
@@ -222,7 +246,11 @@ export default function BoardCard({
     s === "active" && !myBuilding && !alreadyAttested && !atts.ok && (tier === "hall" || holdsReviewer);
 
   return (
-    <article ref={cardRef} className={`floor-card ${focused ? "floor-card--focused" : ""}`} tabIndex={focused ? 0 : -1}>
+    <article
+      ref={cardRef}
+      className={`floor-card ${focused ? "floor-card--focused" : ""} ${bloom ? "hall-bloom" : ""}`.trim()}
+      tabIndex={focused ? 0 : -1}
+    >
       <div className="entry-head">
         <p className="entry-kind">
           {b.domain}
@@ -249,11 +277,11 @@ export default function BoardCard({
       </h3>
       <p className="mt-3 max-w-[60ch] text-body text-dust line-clamp-2">{b.body}</p>
 
-      <div className="mt-5">
+      <div className="mt-4">
         <Threshold b={b} now={now} />
       </div>
 
-      <dl className="mt-5 space-y-1.5 font-mono text-meta">
+      <dl className="mt-4 space-y-1.5 font-mono text-meta">
         <div className="flex gap-3">
           <dt className="w-16 shrink-0 uppercase tracking-[0.14em] text-dust">Needs</dt>
           <dd className="text-ink/90">{needsLine(b)}</dd>
