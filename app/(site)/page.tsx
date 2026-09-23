@@ -71,12 +71,12 @@ export default function HomePage() {
               <span className="landing-panel-code">OPEN</span>
             </div>
             <dl className="protocol-list">
-              <div><dt>Source</dt><dd>people who do the work</dd></div>
-              <div><dt>State</dt><dd>derived from proof</dd></div>
-              <div><dt>Identity</dt><dd>kept private</dd></div>
-              <div><dt>Region</dt><dd>Kirinyaga, Kenya</dd></div>
+              <div><dt>Source</dt><dd>hands, not slides</dd></div>
+              <div><dt>Basis</dt><dd>marks to work</dd></div>
+              <div><dt>Custody</dt><dd>unlisted</dd></div>
+              <div><dt>Region</dt><dd>Kirinyaga, Kenya · UTC+04</dd></div>
             </dl>
-            <p className="roll-total">No imaginary money · no vanity metrics</p>
+            <p className="roll-total">AUDIT: 0 imaginary money · 0 vanity metrics</p>
           </aside>
         </div>
       </section>
