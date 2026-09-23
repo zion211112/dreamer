@@ -78,8 +78,35 @@
 .floor-brand { margin: 0 0 8px; color: var(--dust); font: 500 11px/1.5 var(--font-mono); letter-spacing: .15em; text-transform: uppercase; }
 .floor-brand strong { color: var(--floor-gold); }
 .floor-brand span { margin-left: 8px; border: 1px solid var(--rule); color: var(--ink); padding: 2px 6px; font-size: 10px; }
-.floor-title { position: relative; z-index: 1; margin: 0; max-width: 20ch; color: var(--ink); font: italic 400 clamp(34px, 4.6vw, 58px)/1.05 var(--font-serif); letter-spacing: -.025em; }
-.floor-philosophy { max-width: 680px; margin: 8px 0 0; color: var(--dust); font-size: 13px; line-height: 1.5; }
+.floor-title { position: relative; z-index: 1; margin: 0; max-width: 11ch; color: var(--ink); font: italic 400 clamp(34px, 4.1vw, 52px)/1.04 var(--font-serif); letter-spacing: -.025em; }
+.floor-philosophy { max-width: 620px; margin: 8px 0 0; color: var(--dust); font-size: 13px; line-height: 1.5; }
+
+.floor-cta-row {
+  display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px;
+}
+.floor-cta {
+  min-height: 42px; padding: 0 16px; border: 1px solid var(--rule); background: transparent; color: var(--ink);
+  font: 600 10px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+.floor-cta:hover { transform: translateY(-1px); }
+.floor-cta--primary {
+  border-color: color-mix(in srgb, var(--floor-gold) 58%, transparent); background: color-mix(in srgb, var(--floor-gold) 9%, transparent); color: var(--amber);
+}
+.floor-cta--primary:hover { background: color-mix(in srgb, var(--floor-gold) 15%, transparent); }
+.floor-cta--ghost:hover { border-color: color-mix(in srgb, var(--floor-gold) 40%, transparent); background: rgba(242, 239, 233, 0.02); }
+
+.floor-summary {
+  display: flex; flex-wrap: wrap; gap: 10px; margin: 8px 0 0;
+}
+.floor-summary-item {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 12px;
+  border: 1px solid color-mix(in srgb, var(--rule) 80%, transparent); background: rgba(242, 239, 233, 0.02); color: var(--dust);
+  font: 500 10px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase;
+  transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+.floor-summary-item:hover { color: var(--ink); border-color: color-mix(in srgb, var(--floor-gold) 42%, var(--rule)); transform: translateY(-1px); }
+.floor-summary-item strong { color: var(--ink); font-weight: 600; }
 
 /* Telemetry */
 .floor-telemetry { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; color: var(--dust); font: 10px/1.5 var(--font-mono); letter-spacing: .05em; text-transform: uppercase; }
@@ -107,15 +134,21 @@
 .floor-search button:hover { color: var(--floor-gold); }
 .floor-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .floor-signed { color: var(--dust); font: 10px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
-.floor-console-note { color: var(--dust); font: 10px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
+.floor-console-note { color: var(--dust); font: 500 10px/1.5 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
 
 /* Underline tabs — accessible, arrow-key nav wired in page.tsx */
 .floor-tabs { display: flex; border-bottom: 1px solid var(--rule); gap: 0; }
-.floor-tabs button { position: relative; min-height: 44px; border: 0; background: transparent; color: var(--dust); padding: 0 16px; font: 500 10px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; transition: color 120ms ease; }
+.floor-tabs button {
+  position: relative; min-height: 48px; border: 0; background: transparent; color: var(--dust);
+  padding: 0 18px; font: 600 10px var(--font-mono); letter-spacing: .12em; text-transform: uppercase;
+  transition: color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
 .floor-tabs button:hover { color: var(--ink); }
-.floor-tabs button[aria-selected="true"] { color: var(--amber); }
+.floor-tabs button[aria-selected="true"] {
+  color: var(--amber); background: rgba(242, 239, 233, 0.02);
+}
 .floor-tabs button[aria-selected="true"]::after { content: ""; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: var(--amber); }
-.floor-tabs button span { color: inherit; opacity: .7; }
+.floor-tabs button span { color: inherit; opacity: .8; }
 
 /* Board */
 .floor-board-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-top: 40px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
@@ -127,7 +160,11 @@
 /* Cards ride the single ruled register: one hairline per card (on the li),
    one padding source, 8px rhythm. Feed-card hover glow — Linear/Roll
    style: 1px rule, subtle gold breath. */
-.floor-card { position: relative; border: 1px solid transparent; border-bottom: 1px solid var(--rule); padding: 28px 0 28px 64px; }
+.floor-card {
+  position: relative; border: 1px solid transparent; border-bottom: 1px solid var(--rule);
+  padding: 28px 18px 28px 64px; background: linear-gradient(90deg, rgba(242, 239, 233, 0.01), rgba(242, 239, 233, 0));
+  transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
 .floor-card:last-child { border-bottom: 0; }
 /* The ledgered index: every commitment carries its number on a ruled
    spine, read top-to-bottom like a commons ledger, not a feed. The
@@ -159,7 +196,11 @@
 .entry-head { display: flex; align-items: center; justify-content: space-between; gap: 12px 32px; flex-wrap: wrap; }
 .entry-kind { color: var(--dust); font: 500 10px/1 var(--font-mono); letter-spacing: .2em; text-transform: uppercase; }
 .entry-kind b { color: var(--ash); font-weight: 500; }
-.entry-status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border: 1px solid var(--rule); font: 500 10px/1 var(--font-mono); letter-spacing: .2em; text-transform: uppercase; white-space: nowrap; }
+.entry-status {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid color-mix(in srgb, var(--rule) 75%, transparent);
+  background: rgba(242, 239, 233, 0.02); color: var(--ink);
+  font: 600 9px/1 var(--font-mono); letter-spacing: .18em; text-transform: uppercase; white-space: nowrap;
+}
 
 /* The entry's foot: author, time, risk, skills, the vote counts.
    One register, one weight — the ledger's smallest line. */
@@ -172,17 +213,30 @@
    hover): they inherit dust from .entry-foot — no element-scoped colour. */
 
 /* Feed-card hover glow — Linear/Roll-style: 1px rule, subtle gold breath. */
-.floor-card { border: 1px solid transparent; transition: background 200ms ease, border-color 200ms ease, box-shadow 200ms ease; }
+.floor-card { border: 1px solid transparent; transition: background 200ms ease, border-color 200ms ease, box-shadow 200ms ease, transform 180ms ease; }
 /* The card answers a hover with a quiet wash — the ledger breathes; the gold
    edge keeps the record alive without a box. */
-.floor-card:hover { background: color-mix(in srgb, var(--ink) 2.5%, transparent); border-color: color-mix(in srgb, var(--rule) 60%, transparent); box-shadow: 0 0 14px -4px color-mix(in srgb, var(--floor-gold) 18%, transparent); }
+.floor-card:hover {
+  background: color-mix(in srgb, var(--ink) 3%, transparent); border-color: color-mix(in srgb, var(--rule) 60%, transparent);
+  box-shadow: 0 0 14px -4px color-mix(in srgb, var(--floor-gold) 18%, transparent); transform: translateY(-1px);
+}
 /* Keyboard focus: gold ring, no outline offset clash. */
-.floor-card--focused { border-color: var(--floor-gold); box-shadow: 0 0 0 1px var(--floor-gold), 0 0 16px -4px color-mix(in srgb, var(--floor-gold) 30%, transparent); outline: none; }
+.floor-card--focused {
+  border-color: color-mix(in srgb, var(--floor-gold) 70%, transparent); box-shadow: 0 0 0 1px var(--floor-gold), 0 0 18px -4px color-mix(in srgb, var(--floor-gold) 26%, transparent);
+  outline: none; background: color-mix(in srgb, var(--floor-gold) 6%, transparent);
+}
 
 /* Inline actions — Claim · Fork pills in the entry head. */
 .entry-actions { display: flex; gap: 6px; margin-left: auto; }
-.entry-action { min-height: 22px; padding: 2px 8px; border: 1px solid var(--rule); background: transparent; color: var(--dust); font: 500 9px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; cursor: pointer; transition: color 120ms ease, border-color 120ms ease, background 120ms ease; }
-.entry-action:hover { color: var(--ink); border-color: color-mix(in srgb, var(--floor-gold) 40%, transparent); background: color-mix(in srgb, var(--floor-gold) 8%, transparent); }
+.entry-action {
+  min-height: 30px; padding: 0 10px; border: 1px solid color-mix(in srgb, var(--rule) 80%, transparent);
+  background: rgba(242, 239, 233, 0.015); color: var(--dust); font: 600 9px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase;
+  cursor: pointer; transition: color 140ms ease, border-color 140ms ease, background 140ms ease, transform 140ms ease;
+}
+.entry-action:hover {
+  color: var(--ink); border-color: color-mix(in srgb, var(--floor-gold) 44%, transparent);
+  background: color-mix(in srgb, var(--floor-gold) 9%, transparent); transform: translateY(-1px);
+}
 
 /* ── Threshold — Snapshot style: ivory-mute → gold at quorum → ink proved ──
    Track is the quorum; fill is the count that has shown up.
@@ -238,6 +292,11 @@
 /* A vote lands with a pop — the count is the feedback, made tactile. */
 .floor-card .vote-btn { font: 500 11px var(--font-mono); letter-spacing: .08em; min-height: 44px; min-width: 44px; padding: 0 5px; transition: color 120ms ease, transform 110ms ease; }
 .floor-card .vote-btn:active { transform: scale(.9); }
+.vote-btn {
+  min-height: 32px; min-width: 32px; padding: 0 8px; border: 1px solid transparent; border-radius: 0; background: rgba(242, 239, 233, 0.015);
+  transition: color 120ms ease, border-color 120ms ease, background 120ms ease, transform 120ms ease;
+}
+.vote-btn:hover { border-color: color-mix(in srgb, var(--floor-gold) 35%, var(--rule)); background: rgba(242, 239, 233, 0.02); }
 .vote-pop { display: inline-block; animation: vote-pop 340ms ease; }
 @keyframes vote-pop { 0% { transform: scale(1.6); } 100% { transform: scale(1); } }
 /* Cards rise into the lane — one quiet motion, and only on the way in.
@@ -288,8 +347,12 @@
 .fork-rail > li:has(> .fork-children)::before { top: 12px; }
 
 /* FAB */
-.post-fab { position: fixed; bottom: 24px; right: 24px; z-index: 10; padding: 13px 22px; background: var(--void); border: 1px solid var(--amber); color: var(--amber); font: 500 12.5px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; box-shadow: 0 6px 24px -10px rgba(0,0,0,.8), 0 0 26px -8px color-mix(in srgb, var(--amber) 38%, transparent); transition: background 120ms ease, color 120ms ease, box-shadow 120ms ease; }
-.post-fab:hover { background: var(--amber); color: var(--void); box-shadow: 0 6px 28px -8px color-mix(in srgb, var(--amber) 55%, transparent); }
+.post-fab {
+  position: fixed; bottom: 24px; right: 24px; z-index: 10; padding: 14px 22px; background: linear-gradient(180deg, rgba(242, 239, 233, 0.06), rgba(242, 239, 233, 0.01));
+  border: 1px solid var(--amber); color: var(--amber); font: 600 12px var(--font-mono); letter-spacing: .12em; text-transform: uppercase;
+  box-shadow: 0 8px 28px -10px rgba(0,0,0,.8), 0 0 24px -8px color-mix(in srgb, var(--amber) 42%, transparent); transition: background 140ms ease, color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+.post-fab:hover { background: var(--amber); color: var(--void); box-shadow: 0 10px 30px -8px color-mix(in srgb, var(--amber) 55%, transparent); transform: translateY(-1px); }
 .post-fab:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
 .post-fab--inline { position: static; box-shadow: none; }
 

@@ -272,7 +272,7 @@ export default function BoardCard({
           <button type="button" onClick={() => onFork(b)} className="entry-action" aria-label={`Fork ${b.title}`}>Fork</button>
         </div>
       </div>
-      <h3 className="entry-title mt-3 max-w-[32ch] font-serif text-h2 font-normal text-ink">
+      <h3 className="entry-title mt-3 max-w-[32ch] font-serif text-h2 font-normal text-ink transition-colors duration-150">
         {b.title}
       </h3>
       <p className="mt-3 max-w-[60ch] text-body text-dust line-clamp-2">{b.body}</p>

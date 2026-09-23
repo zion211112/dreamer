@@ -318,12 +318,47 @@ export default function BenBenPage() {
             <strong>Post. Vote. Claim. Prove.</strong>
             <span>BenBen · The Floor</span>
           </p>
-          <h1 className="floor-title">The board decides by count. The floor remembers by proof.</h1>
+          <div className="floor-summary" aria-label="Floor status summary">
+            <div className="floor-summary-item">
+              <span>Open</span>
+              <strong>{openBoard}</strong>
+            </div>
+            <div className="floor-summary-item">
+              <span>Active</span>
+              <strong>{boardTabs.hand}</strong>
+            </div>
+            <div className="floor-summary-item">
+              <span>Votes</span>
+              <strong>{totalVotes}</strong>
+            </div>
+          </div>
+          <h1 className="floor-title">The board decides by count.</h1>
           <p className="floor-philosophy">
-            A build is a commitment, not a post. State is never written — only counts decide, and a
-            count cannot be moved by not showing up. What is raised here is on the record: it can be
-            proved, or parked, but not unsaid.
+            A build is a commitment, not a post. State is derived, not written. Raise the work, show up,
+            and let the floor keep the proof.
           </p>
+          <div className="floor-cta-row">
+            <button
+              type="button"
+              className="floor-cta floor-cta--primary"
+              onClick={() => {
+                setForkOf(null);
+                setErr("");
+                setNotice("");
+                setOpen((o) => !o);
+                requestAnimationFrame(() => desk.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+              }}
+            >
+              {open ? "Close the desk" : "Raise a commitment"}
+            </button>
+            <button
+              type="button"
+              className="floor-cta floor-cta--ghost"
+              onClick={() => setTab("all")}
+            >
+              View the board
+            </button>
+          </div>
           <nav
             className="floor-tabs"
             role="tablist"
@@ -381,7 +416,7 @@ export default function BenBenPage() {
             </div>
           </div>
           <div className="floor-console-row">
-            <p className="floor-console-note">Press <kbd>/</kbd> to search · <kbd>J</kbd>/<kbd>K</kbd> to walk the board · <kbd>V</kbd> vote · <kbd>C</kbd> claim · <kbd>Space</kbd> inspect · <kbd>Esc</kbd> let go</p>
+            <p className="floor-console-note">Quick actions: <kbd>/</kbd> search · <kbd>J</kbd>/<kbd>K</kbd> move · <kbd>V</kbd> vote · <kbd>C</kbd> claim</p>
           </div>
         </div>
 
