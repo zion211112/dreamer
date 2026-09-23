@@ -13,6 +13,7 @@ import {
   ConsoleRole,
   ConsoleSession,
   ConsoleTool,
+  gateOpen,
   clearConsoleSession,
   loadConsoleFavs,
   loadConsoleSession,
@@ -38,7 +39,10 @@ function ConsoleApp() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setSession(loadConsoleSession());
+    const stored = loadConsoleSession();
+    // A session only counts while it matches the gate. A stale session from a
+    // different identity is dropped, so the door stays closed to strangers.
+    setSession(stored && gateOpen(stored.name, stored.school) ? stored : null);
     setReady(true);
   }, []);
 
@@ -114,11 +118,17 @@ function ConsoleLogin({
   const [role, setRole] = useState<ConsoleRole>(initialRole);
   const [name, setName] = useState("");
   const [school, setSchool] = useState("");
+  const [denied, setDenied] = useState(false);
   const valid = name.trim() !== "" && school.trim() !== "";
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!valid) return;
+    if (!gateOpen(name, school)) {
+      setDenied(true);
+      return;
+    }
+    setDenied(false);
     onEnter({ role, name: name.trim().slice(0, 60), school: school.trim().slice(0, 60), ts: Date.now() });
   }
 
@@ -143,7 +153,8 @@ function ConsoleLogin({
             <p className="font-mono text-label uppercase tracking-[0.35em] text-signal">Build capacity · Console</p>
             <h1 className="mt-4 font-serif text-4xl font-light tracking-tight">Who are you?</h1>
             <p className="mt-3 text-sm leading-6 text-dust">
-              Pick your door. The console opens on this device — nothing you type leaves it.
+              Pick your door, then knock. This console is access-gated — the
+              registered pilot alone opens it, on this device.
             </p>
 
             <div className="mt-8 grid grid-cols-2 gap-3">
@@ -168,7 +179,7 @@ function ConsoleLogin({
               <input
                 id="console-name"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => { setName(e.target.value); if (denied) setDenied(false); }}
                 placeholder="Your name"
                 maxLength={60}
                 className={loginInput}
@@ -179,7 +190,7 @@ function ConsoleLogin({
               <input
                 id="console-school"
                 value={school}
-                onChange={(e) => setSchool(e.target.value)}
+                onChange={(e) => { setSchool(e.target.value); if (denied) setDenied(false); }}
                 placeholder={role === "school" ? "School name" : "Your school"}
                 maxLength={60}
                 className={loginInput}
@@ -191,9 +202,15 @@ function ConsoleLogin({
               >
                 Enter the {ROLE_META[role].label.toLowerCase()} console →
               </button>
-              <p className="text-center font-mono text-micro uppercase tracking-[0.2em] text-ash">
-                Local session · Stored on this device only · Free · 0 credits
-              </p>
+              {denied ? (
+                <p className="text-center font-mono text-micro uppercase tracking-[0.2em] text-amber" role="alert">
+                  Not recognized — this console is gated.
+                </p>
+              ) : (
+                <p className="text-center font-mono text-micro uppercase tracking-[0.2em] text-ash">
+                  Local session · Stored on this device only · Free · 0 credits
+                </p>
+              )}
             </form>
           </div>
         </div>

@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 export default function Contact() {
   const email = "mailto:aptlabske@gmail.com?subject=Schools%20%2B%20partners";
   const whatsapp = "https://wa.me/254704260906?text=Greetings.";
+  const lead = "Kiarie Mũgendi"; // ← swap for the real node lead
 
   return (
     <main className="site-page contact-page">
@@ -43,6 +44,11 @@ export default function Contact() {
             </dd>
           </div>
         </dl>
+
+        <p className="contact-named">
+          <span className="contact-named-label">Node lead</span>
+          <span className="contact-named-value">{lead} · Kirinyaga · +254 704 260 906</span>
+        </p>
 
         <p className="contact-loc">Kirinyaga, Kenya · local-first record</p>
       </section>

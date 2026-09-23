@@ -26,6 +26,7 @@ export default function SiteLayout({
             <Link href="/benben" className="site-footer-link">Floor</Link>
             <Link href="/console" className="site-footer-link">Console</Link>
             <Link href="/contact" className="site-footer-link">Contact</Link>
+            <Link href="/brief" className="site-footer-link">Brief</Link>
           </nav>
           <p className="site-footer-copy">
             A public record of work, skill, and trust.

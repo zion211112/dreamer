@@ -16,3 +16,11 @@ tsconfig.tsbuildinfo
 
 # logs
 npm-debug.log*
+
+# local build / log artifacts
+*.log
+build.done
+.next-build.txt
+*.tsbuildinfo
+NUL
+

@@ -13,6 +13,7 @@ import ContentStudio from "../../../../components/console/ContentStudio";
 import FeeTracking from "../../../../components/console/FeeTracking";
 import Inspection from "../../../../components/console/Inspection";
 import Comms from "../../../../components/console/Comms";
+import ConsoleGate from "../../../../components/console/ConsoleGate";
 
 // Every tool opens a workspace — ten seats, ten workspaces. The teacher's
 // week runs in order: Roster (9) → Timetable Solver (6, build + print +
@@ -102,7 +103,9 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
             </div>
           </div>
           <div>
-            <Workspace key={tool.id} />
+            <ConsoleGate>
+              <Workspace key={tool.id} />
+            </ConsoleGate>
           </div>
           <div className="mt-14 print:hidden">
             <Link

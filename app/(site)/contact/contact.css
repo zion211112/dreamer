@@ -125,3 +125,23 @@
   text-transform: uppercase;
   color: var(--ash);
 }
+
+.contact-named {
+  margin: 22px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 12px;
+}
+.contact-named-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+.contact-named-value {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--ink);
+}
