@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Build, FloorTier, BoardRole, timeAgo, needsLine } from "../lib/benben";
 import {
   STATE,
@@ -22,44 +22,64 @@ const inField = "w-full border-b border-rule bg-transparent py-1.5 text-body tex
 const asOf = (ts: number) =>
   new Date(ts).toLocaleDateString("en", { month: "short", day: "numeric", year: "numeric" });
 
-// One node in the fork family. Filled dot = the live branch; hollow = the rest.
+// One node on the fork rail. Glyph and tone come straight from STATE — the
+// family reads in the same vocabulary as the board, not a separate one.
+// The rail and ticks are CSS (.fork-rail); the node only carries content.
 function LineNode({
   b,
   now,
-  mark,
-  tone,
   tag,
   subject
 }: {
   b: Build;
   now: number;
-  mark: string;
-  tone: string;
   tag: string;
   subject?: boolean;
 }) {
-  const st = STATE[deriveState(b, now)];
+  const st = deriveState(b, now);
+  const meta = STATE[st];
   const { up } = upDown(b);
+  const live = st === "claimed" || st === "active" || st === "done";
+  const mark = subject ? "text-amber" : live ? "text-signal" : "text-ash";
   return (
-    <li className="relative py-2 pl-5">
-      <span aria-hidden className="absolute left-0 top-0 h-full w-px bg-ink/8" />
-      <span aria-hidden className={`absolute left-0 top-2 font-mono text-label ${tone}`}>
-        {mark}
-      </span>
-      <div className="min-w-0">
-        <div className="flex flex-wrap items-baseline gap-x-2">
-          <span className={`font-mono text-micro uppercase tracking-[0.2em] ${subject ? "text-amber" : "text-dust"}`}>
-            {tag}
-          </span>
-          <span className={`font-serif ${subject ? "text-[1.05rem] text-ink" : "text-[0.95rem] text-dust"}`}>
-            {b.title}
-          </span>
-        </div>
-        <p className="mt-0.5 font-mono text-micro uppercase tracking-[0.14em] text-dust">
-          by @{b.by} · {st.name} · ▲{up}
-        </p>
+    <li>
+      <div className="flex flex-wrap items-baseline gap-x-2">
+        <span aria-hidden className={`font-mono text-micro ${mark}`}>
+          {meta.glyph}
+        </span>
+        <span className={`font-mono text-micro uppercase tracking-[0.2em] ${subject ? "text-amber" : "text-ash"}`}>
+          {tag}
+        </span>
+        <span className={`font-serif ${subject ? "text-[1.05rem] text-ink" : "text-[0.95rem] text-dust"}`}>
+          {b.title}
+        </span>
       </div>
+      <p className="mt-0.5 font-mono text-micro uppercase tracking-[0.14em] text-dust">
+        <span className={meta.tone}>{meta.name}</span> · by @{b.by} · {timeAgo(b.createdTs, now)} · ▲{up}
+      </p>
     </li>
+  );
+}
+
+// A nested register — one shape for seats, progress and attestations:
+// a rail, a head with its count, ticked lines. Quiet: no card inside a card.
+function Register({
+  title,
+  count,
+  children
+}: {
+  title: string;
+  count?: number;
+  children: ReactNode;
+}) {
+  return (
+    <div className="reg">
+      <div className="reg-head">
+        <p className="reg-title">{title}</p>
+        {typeof count === "number" && count > 0 && <p className="reg-count">{count}</p>}
+      </div>
+      <ul className="reg-list">{children}</ul>
+    </div>
   );
 }
 
@@ -94,75 +114,6 @@ function Threshold({ b, now }: { b: Build; now: number }) {
       </div>
       <p className="mt-1.5 font-mono text-micro uppercase tracking-[0.14em] text-dust">{label}</p>
     </div>
-  );
-}
-
-// Proof inset — always visible latest attestation, not hidden in details.
-function ProofInset({ b, now }: { b: Build; now: number }) {
-  const atts = validAttestations(b);
-  if (!atts.length) return null;
-  const latest = atts[atts.length - 1];
-  return (
-    <blockquote className="proof-inset" aria-label="Latest proof">
-      <p className="font-serif italic text-[1.05rem] leading-7 text-ink">&ldquo;{latest.evidence}&rdquo;</p>
-      <footer className="mt-2 flex items-baseline gap-2 font-mono text-micro uppercase tracking-[0.14em] text-dust">
-        <cite>by @{latest.by}</cite>
-        <time dateTime={new Date(latest.ts).toISOString()}>{asOf(latest.ts)}</time>
-      </footer>
-    </blockquote>
-  );
-}
-
-// Facts grid (dl/dt/dd) — structured metadata, no noise.
-function Facts({ b, now, all }: { b: Build; now: number; all: Build[] }) {
-  const { up, down } = upDown(b);
-  const st = deriveState(b, now);
-  const stName = STATE[st].name;
-  const atts = attestationState(b);
-  const builders = activeBuilders(b);
-  const forks = lineageOf(b, all, now).children.length;
-  const needs = needsLine(b);
-
-  return (
-    <dl className="facts">
-      <div>
-        <dt>State</dt>
-        <dd>{stName}</dd>
-      </div>
-      <div>
-        <dt>Risk</dt>
-        <dd className="uppercase">{b.risk}</dd>
-      </div>
-      <div>
-        <dt>Votes</dt>
-        <dd>
-          <span className="text-amber">▲{up}</span>
-          <span className="text-dust ml-1">▼{down}</span>
-        </dd>
-      </div>
-      <div>
-        <dt>Attestations</dt>
-        <dd>
-          {atts.have} / {atts.need}
-        </dd>
-      </div>
-      <div>
-        <dt>Builders</dt>
-        <dd>
-          {builders.length ? builders.map((u) => <span key={u} className="mr-1">@{u}</span>) : "—"}
-        </dd>
-      </div>
-      <div>
-        <dt>Forks</dt>
-        <dd>{forks}</dd>
-      </div>
-      {needs && (
-        <div>
-          <dt>Needs</dt>
-          <dd>{needs}</dd>
-        </div>
-      )}
-    </dl>
   );
 }
 
@@ -203,7 +154,8 @@ export default function BoardCard({
   const seats = openClaims(b);
   const builders = activeBuilders(b);
   const atts = attestationState(b);
-  const proof = validAttestations(b)[0] ?? null;
+  const validAtts = validAttestations(b);
+  const proof = validAtts[0] ?? null;
   const { ancestors, children, hasFork } = lineageOf(b, all, now);
   const prog = (b.progress ?? []).length;
 
@@ -213,6 +165,7 @@ export default function BoardCard({
   const [pText, setPText] = useState("");
   const [evidence, setEvidence] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
+  const [lineOpen, setLineOpen] = useState(false);
 
   const myVote = me ? b.votedBy[me]?.value ?? 0 : 0;
   const isAuthor = !!me && me.toLowerCase() === b.by.toLowerCase();
@@ -304,86 +257,95 @@ export default function BoardCard({
       </div>
 
       {seats.length > 0 && (
-        <div className="mt-4 border-l border-rule pl-4">
-          <p className="font-mono text-micro uppercase tracking-[0.24em] text-dust">Seats</p>
-          <ul className="mt-2 space-y-1.5">
-            {seats.map((c, i) => (
-              <li key={i} className="flex flex-wrap items-center gap-x-2 font-mono text-meta text-dust">
-                <span className={c.role === "reviewer" ? "text-signal" : "text-amber"}>{c.role}</span>
-                <span aria-hidden className="text-dust">·</span>
-                <span className="text-ink">@{c.by}</span>
-                {canAccept && (
-                  <button onClick={() => setMsg(onAccept(b.id, c.by, c.role))} className={`ml-1 ${ghost}`}>
-                    seat
-                  </button>
-                )}
-                {me && c.by.toLowerCase() === me.toLowerCase() && (
-                  <button onClick={() => setMsg(onWithdraw(b.id, c.role))} className={`ml-1 ${ghostDim}`}>
-                    withdraw
-                  </button>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <Register title="Seats" count={seats.length}>
+          {seats.map((c) => (
+            <li
+              key={`${c.by}-${c.role}-${c.ts}`}
+              className="flex flex-wrap items-baseline gap-x-2 font-mono text-meta text-dust"
+            >
+              <span className={c.role === "reviewer" ? "text-signal" : "text-amber"}>{c.role}</span>
+              <span className="text-ink">@{c.by}</span>
+              <span>{c.reason}</span>
+              {c.status === "pending" && (
+                <>
+                  <span className="text-ash">awaiting seat</span>
+                  {canAccept && (
+                    <button onClick={() => setMsg(onAccept(b.id, c.by, c.role))} className={ghost}>
+                      seat
+                    </button>
+                  )}
+                </>
+              )}
+              {me && c.by.toLowerCase() === me.toLowerCase() && (
+                <button onClick={() => setMsg(onWithdraw(b.id, c.role))} className={`ml-1 ${ghostDim}`}>
+                  withdraw
+                </button>
+              )}
+            </li>
+          ))}
+        </Register>
       )}
 
       {prog > 0 && (
-        <div className="mt-4 border-l border-rule pl-4">
-          <p className="font-mono text-micro uppercase tracking-[0.24em] text-dust">Progress</p>
-          <ul className="mt-2 space-y-1.5">
-            {(b.progress ?? []).slice(-3).map((p, i) => (
-              <li key={i} className="font-mono text-meta text-dust">
-                <span className="text-ink">@{p.by}</span>
-                <span aria-hidden className="text-dust"> · </span>
-                {p.text}
-                <span className="text-dust/70"> ({timeAgo(p.ts, now)})</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <Register title="Progress" count={prog}>
+          {(b.progress ?? []).slice(-3).map((p) => (
+            <li
+              key={p.ts}
+              className="flex flex-wrap items-baseline gap-x-2 font-mono text-meta text-dust"
+            >
+              <span className="text-ink">@{p.by}</span>
+              <span>{p.text}</span>
+              <span className="text-ash">({timeAgo(p.ts, now)})</span>
+            </li>
+          ))}
+          {prog > 3 && (
+            <li className="font-mono text-micro uppercase tracking-[0.14em] text-ash">
+              + {prog - 3} earlier line{prog - 3 === 1 ? "" : "s"}
+            </li>
+          )}
+        </Register>
       )}
 
-      {(b.attestations ?? []).length > 1 && (
-        <div className="mt-4 border-l border-rule pl-4">
-          <p className="font-mono text-micro uppercase tracking-[0.24em] text-dust">Attestations</p>
-          <ul className="mt-2 space-y-1.5">
-            {(b.attestations ?? []).slice(1).map((a, i) => (
-              <li key={i} className="font-mono text-meta text-dust">
-                <span className="text-signal">∎</span>
-                <span className="ml-1.5 text-ink">@{a.by}</span>
-                {a.hall && <span className="ml-1.5 font-mono text-micro uppercase text-amber/70">hall</span>}
-                <span className="ml-2">— {a.evidence}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+      {validAtts.length > 1 && (
+        <Register title="Attestations" count={validAtts.length}>
+          {validAtts.slice(1).map((a, i) => (
+            <li
+              key={`${a.by}-${i}`}
+              className="flex flex-wrap items-baseline gap-x-2 font-mono text-meta text-dust"
+            >
+              <span aria-hidden className="text-signal">∎</span>
+              <span className="text-ink">@{a.by}</span>
+              {a.hall && <span className="font-mono text-micro uppercase text-amber/70">hall</span>}
+              <span>— {a.evidence}</span>
+            </li>
+          ))}
+        </Register>
       )}
 
       {hasFork && (
-        <details className="mt-5 border-t border-rule pt-4">
-          <summary className="select-none font-mono text-label uppercase tracking-[0.24em] text-dust transition hover:text-ink">
-            lineage · {ancestors.length} before · {children.length} after
+        <details className="lineage" open={lineOpen} onToggle={(e) => setLineOpen(e.currentTarget.open)}>
+          <summary className="flex select-none flex-wrap items-baseline gap-x-3 gap-y-1 font-mono text-label uppercase tracking-[0.24em] text-dust transition hover:text-ink">
+            lineage
+            <span className="font-mono text-micro normal-case tracking-[0.14em] text-ash tabular-nums">
+              {ancestors.length} before · {children.length} after
+            </span>
           </summary>
-          <ul className="mt-4 list-none">
+          {/* one spine: ancestors, then the subject; forks step in on a
+              nested rail under the subject */}
+          <ul className="fork-rail">
             {ancestors.map((a, i) => (
-              <LineNode key={"a" + a.id} b={a} now={now} mark="○" tone="text-ash" tag={`before ${i + 1}`} />
+              <LineNode key={"a" + a.id} b={a} now={now} tag={i === 0 ? "root" : `n${i + 1}`} />
             ))}
-            <LineNode b={b} now={now} mark="●" tone="text-amber" tag="now" subject />
-            {children.map((c, i) => {
-              const cs = deriveState(c, now);
-              const live = cs === "claimed" || cs === "active" || cs === "done";
-              return (
-                <LineNode
-                  key={"c" + c.id}
-                  b={c}
-                  now={now}
-                  mark={live ? "●" : "○"}
-                  tone={live ? "text-signal" : "text-signal/60"}
-                  tag={`fork ${i + 1}`}
-                />
-              );
-            })}
+            <LineNode b={b} now={now} tag="now" subject />
+            {children.length > 0 && (
+              <li>
+                <ul className="fork-children">
+                  {children.map((c, i) => (
+                    <LineNode key={"c" + c.id} b={c} now={now} tag={`fork ${i + 1}`} />
+                  ))}
+                </ul>
+              </li>
+            )}
           </ul>
         </details>
       )}

@@ -57,6 +57,39 @@
 .floor-card { border-bottom: 1px solid var(--rule); padding: 36px 0; }
 .floor-card:last-child { border-bottom: 0; }
 
+/* ── Threshold seal (BoardCard) — a bar, not a meter ──
+   Track is the quorum; fill is the count that has shown up.
+   Amber while the window is open, signal once proved. */
+.threshold-track { position: relative; flex: 1 1 220px; max-width: 360px; height: 2px; background: var(--rule); }
+.threshold-fill { position: absolute; top: 0; left: 0; height: 100%; background: var(--amber); transition: width 240ms ease; }
+.threshold-fill.proved { background: var(--signal); }
+
+/* ── Nested registers: seats · progress · attestations.
+   One rail, one head with a count, one tick per line. Quiet:
+   no card inside a card, no shadow inside a shadow. */
+.reg { margin-top: 16px; border-left: 1px solid var(--rule); padding-left: 14px; }
+.reg-head { display: flex; align-items: baseline; gap: 8px; }
+.reg-title { margin: 0; color: var(--dust); font: 500 10px var(--font-mono); letter-spacing: .2em; text-transform: uppercase; }
+.reg-count { margin: 0; color: var(--ash); font: 10px var(--font-mono); letter-spacing: .08em; }
+.reg-list { list-style: none; margin: 8px 0 0; padding: 0; }
+.reg-list li { position: relative; padding: 3px 0 3px 12px; }
+.reg-list li::before { content: ""; position: absolute; left: -13px; top: 12px; width: 12px; height: 1px; background: var(--rule); }
+
+/* ── Fork family: one spine, one branch, a nested rail for children.
+   Depth is real: ancestors and the subject ride the spine; forks
+   step in under the subject on their own rail. No box, no dots
+   drawn per node — the rail does the work. */
+.lineage { margin-top: 20px; border-top: 1px solid var(--rule); padding-top: 14px; }
+.fork-rail { position: relative; list-style: none; margin: 4px 0 0; padding: 0 0 0 18px; }
+.fork-rail::before { content: ""; position: absolute; left: 4px; top: 10px; bottom: 10px; width: 1px; background: var(--rule); }
+.fork-rail > li { position: relative; padding: 6px 0; }
+.fork-rail > li::before { content: ""; position: absolute; left: -14px; top: 15px; width: 13px; height: 1px; background: var(--rule); }
+.fork-children { list-style: none; margin: 4px 0 0; padding: 0 0 0 14px; border-left: 1px solid var(--rule); }
+.fork-children > li { position: relative; padding: 6px 0; }
+.fork-children > li::before { content: ""; position: absolute; left: -14px; top: 15px; width: 13px; height: 1px; background: var(--rule); }
+/* The branch row carries the nested rail, so its tick meets the rail's top. */
+.fork-rail > li:has(> .fork-children)::before { top: 12px; }
+
 /* FAB */
 .post-fab { position: fixed; bottom: 24px; right: 24px; z-index: 10; padding: 13px 22px; background: var(--void); border: 1px solid var(--amber); color: var(--amber); font: 500 12.5px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; box-shadow: 0 6px 24px -10px rgba(0,0,0,.8); transition: background 120ms ease, color 120ms ease; }
 .post-fab:hover { background: var(--amber); color: var(--void); }
