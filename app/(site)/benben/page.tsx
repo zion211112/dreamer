@@ -271,6 +271,7 @@ export default function BenBenPage() {
         {/* the hall: the {7,3} mark, shared with hero/404/contact, behind the board */}
         <HyperbolicHeptagon depth={2} className="floor-hall-art" />
         <div className="floor-hall-bloom" aria-hidden />
+        <div className="floor-hall-light" aria-hidden />
         {/* masthead */}
         <header className="floor-masthead">
           <p className="floor-brand">
@@ -310,7 +311,10 @@ export default function BenBenPage() {
               </button>
               ))}
             </nav>
-          <HyperbolicHeptagon depth={1} className="floor-seal" />
+          <figure className="floor-seal">
+            <HyperbolicHeptagon depth={1} />
+            <figcaption>{`the hall · {7,3}`}</figcaption>
+          </figure>
         </header>
         <div className="floor-telemetry">
           <span className="floor-beacon"><i aria-hidden="true" /> LOCAL FLOOR ACTIVE</span>
@@ -413,7 +417,7 @@ export default function BenBenPage() {
         {/* the desk */}
         <div ref={desk} id="desk" className="mt-12 scroll-mt-24">
           {open && (
-            <form onSubmit={submit} className="site-surface p-5 sm:p-6 md:p-8">
+            <form onSubmit={submit} className="floor-desk p-5 sm:p-6 md:p-8">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <p className="font-mono text-label uppercase tracking-[0.3em] text-amber">
                   {forkOf ? `Forking · ${forkOf.id}` : "New build"}
@@ -640,6 +644,19 @@ export default function BenBenPage() {
               </div>
             </form>
           )}
+        </div>
+
+        {/* the mesh: a static echo of the record — the hall's own seal */}
+        <div aria-hidden className="floor-mesh">
+          <div className="floor-mesh-cells">
+            {Array.from({ length: 28 }, (_, i) => (
+              <i key={i} />
+            ))}
+          </div>
+          <div className="floor-mesh-caption">
+            <span>merkle strip · the hall record</span>
+            <span>state is derived, never written</span>
+          </div>
         </div>
 
         {/* colophon lives above the FAB now; keep bottom padding for its overlap */}

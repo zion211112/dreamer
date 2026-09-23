@@ -184,10 +184,18 @@ export default function BoardCard({
 
   return (
     <article>
-      <div className="flex items-baseline justify-between gap-3">
-        <p className="font-mono text-micro uppercase tracking-[0.2em] text-dust">{b.domain}</p>
-        <p className={`font-mono text-micro uppercase tracking-[0.2em] ${meta.tone}`}>
-          <span aria-hidden className="mr-1.5">{meta.glyph}</span>
+      <div className="entry-head">
+        <p className="entry-kind">
+          {b.domain}
+          {b.type && (
+            <>
+              {" · "}
+              <b>{b.type}</b>
+            </>
+          )}
+        </p>
+        <p className={`entry-status ${meta.tone}`}>
+          <span aria-hidden>{meta.glyph}</span>
           {meta.name}
         </p>
       </div>
@@ -223,22 +231,22 @@ export default function BoardCard({
         </figure>
       )}
 
-      <div className="mt-4 flex flex-wrap items-center gap-x-2 font-mono text-micro uppercase tracking-[0.14em] text-dust">
-        <span className="text-amber">{b.risk}</span>
-        <span aria-hidden>·</span>
-        <span>@{b.by}</span>
-        <span aria-hidden>·</span>
-        <span className="normal-case tracking-[0.05em]">
+      <div className="entry-foot">
+        <span className="risk">{b.risk}</span>
+        <span className="sep" aria-hidden>·</span>
+        <span className="who">@{b.by}</span>
+        <span className="sep" aria-hidden>·</span>
+        <span className="time">
           {timeAgo(b.createdTs, now)} · {asOf(b.createdTs)}
         </span>
         {(b.skills ?? []).length > 0 && (
           <>
-            <span aria-hidden>·</span>
+            <span className="sep" aria-hidden>·</span>
             <span className="text-ash">{(b.skills ?? []).join(" · ")}</span>
           </>
         )}
-        <span aria-hidden>·</span>
-        <span className="tabular-nums">
+        <span className="sep" aria-hidden>·</span>
+        <span className="tabular-nums flex items-center gap-1">
           <button
             onClick={() => onVote(b.id, 1)}
             aria-label={`Upvote ${b.title}`}

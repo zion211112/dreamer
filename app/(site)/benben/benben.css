@@ -4,6 +4,10 @@
    heptagon mark, shared with the hero, 404 and contact, sits behind the
    board as a watermark with an ink bloom as its source: the data reads as
    engraved in the hall, not drawn on a sheet.
+   The hall's canvas is layered: a gold source-light top-right, a quiet
+   ink breath top-left, and a vignette that holds the room. Numbers are
+   ledgered — every commitment carries its index on a ruled spine, the
+   way a commons ledger is read, not a feed.
    Amber is this route's interactive colour by exception; signal never
    enters the floor. Scoped to .benben-page so the rest of the site keeps
    its single accent. All legacy .benben-* classes removed; only .floor-*
@@ -18,8 +22,10 @@
 .benben-page ::selection { background: color-mix(in srgb, var(--floor-gold) 22%, transparent); }
 
 /* The watermark: the identity mark behind the board. Content sits above;
-   the art and its bloom are whispers, never surfaces. */
-.floor-frame > *:not(.floor-hall-art):not(.floor-hall-bloom) { position: relative; z-index: 1; }
+   the art and its bloom are whispers, never surfaces. The hall's canvas
+   is layered behind it: a gold source-light where the watermark breathes,
+   a quiet ink field opposite, and a vignette that pulls the room in. */
+.floor-frame > *:not(.floor-hall-art):not(.floor-hall-bloom):not(.floor-hall-light) { position: relative; z-index: 1; }
 .floor-hall-art {
   position: absolute; top: 160px; right: 0;
   width: 480px; height: 480px;
@@ -30,14 +36,39 @@
   width: 64%; height: 480px; z-index: 0; pointer-events: none;
   background: radial-gradient(58% 62% at 92% 22%, rgba(242, 239, 233, 0.05), transparent 70%);
 }
+.floor-hall-light {
+  position: absolute; top: -120px; right: -160px;
+  width: 720px; height: 720px; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(closest-side at 70% 30%, color-mix(in srgb, var(--floor-gold) 7%, transparent), transparent 72%),
+    radial-gradient(closest-side at 12% 8%, rgba(242, 239, 233, 0.03), transparent 60%);
+}
+/* The vignette holds the hall: darker at the seams, quiet in the middle. */
+.floor-frame::after {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(120% 80% at 50% 30%, transparent 55%, rgba(6, 7, 8, 0.55) 100%);
+}
 
 /* ── refined floor: 720 column, underline tabs, ruled cards, FAB ── */
 .benben-page .site-frame--narrow { max-width: 720px; }
 
-/* Masthead — the hall's seal, a small {7,3} heptagon, sits top-right;
-   the doctrine line rides above it. */
-.floor-masthead { position: relative; display: grid; gap: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--rule); }
-.floor-seal { position: absolute; top: 0; right: 0; width: 64px; height: 64px; color: var(--floor-gold); opacity: 0.45; z-index: 0; pointer-events: none; }
+/* Masthead — the hall's seal, a small {7,3} heptagon in a ruled plate,
+   top-right; the doctrine line rides above it. The plate answers to a
+   hover with a gold breath — the one moving ornament in the masthead. */
+.floor-masthead { position: relative; display: grid; gap: 24px; padding: 0 96px 24px 0; border-bottom: 1px solid var(--rule); }
+.floor-seal {
+  position: absolute; top: 0; right: 0; z-index: 1;
+  display: grid; justify-items: center; gap: 6px;
+  width: 84px; padding: 8px 6px 7px;
+  border: 1px solid color-mix(in srgb, var(--floor-gold) 26%, transparent);
+  background: color-mix(in srgb, var(--floor-gold) 4%, transparent);
+  color: var(--floor-gold); opacity: 0.85;
+  transition: box-shadow 240ms ease, border-color 240ms ease, opacity 240ms ease;
+  pointer-events: auto;
+}
+.floor-seal:hover { opacity: 1; border-color: color-mix(in srgb, var(--floor-gold) 55%, transparent); box-shadow: 0 0 26px -6px color-mix(in srgb, var(--floor-gold) 45%, transparent); }
+.floor-seal svg { width: 52px; height: 52px; }
+.floor-seal figcaption { margin: 0; color: var(--dust); font: 500 8px/1.3 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; text-align: center; }
 .floor-brand { margin: 0 0 8px; color: var(--dust); font: 500 11px/1.5 var(--font-mono); letter-spacing: .15em; text-transform: uppercase; }
 .floor-brand strong { color: var(--floor-gold); }
 .floor-brand span { margin-left: 8px; border: 1px solid var(--rule); color: var(--ink); padding: 2px 6px; font-size: 10px; }
@@ -47,7 +78,16 @@
 /* Telemetry */
 .floor-telemetry { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; color: var(--dust); font: 10px/1.5 var(--font-mono); letter-spacing: .05em; text-transform: uppercase; }
 .floor-beacon { display: inline-flex; align-items: center; gap: 8px; border: 1px solid color-mix(in srgb, var(--floor-gold) 32%, transparent); background: color-mix(in srgb, var(--floor-gold) 8%, transparent); color: var(--floor-gold); padding: 5px 8px; font-size: 10px; letter-spacing: .08em; }
-.floor-beacon i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+/* The beacon's pulse: the hall is alive, and it says so once every few
+   seconds. A whisper, not a strobe. Disappears under reduced motion. */
+.floor-beacon i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: floor-pulse 3.2s ease-in-out infinite; }
+@keyframes floor-pulse {
+  0%, 100% { opacity: 0.35; box-shadow: 0 0 0 0 transparent; }
+  50% { opacity: 1; box-shadow: 0 0 8px 1px color-mix(in srgb, var(--floor-gold) 45%, transparent); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .floor-beacon i { animation: none; opacity: 1; }
+}
 
 /* Console */
 .floor-console { margin-top: 24px; padding: 12px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
@@ -78,20 +118,77 @@
 .floor-board-heading > span { color: var(--dust); font: 10px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
 .floor-board { margin-top: 8px; list-style: none; padding: 0; }
 
-/* Cards render the ruled register natively — no overrides needed. */
 /* Cards ride the single ruled register: one hairline per card (on the li),
-   one padding source, 8px rhythm. The card's own <article> carries no
-   border or padding — the doubled rule of the first pass is gone. */
-.floor-card { border-bottom: 1px solid var(--rule); padding: 40px 0; }
+   one padding source, 8px rhythm. */
+.floor-card { position: relative; border-bottom: 1px solid var(--rule); padding: 40px 0 40px 64px; }
 .floor-card:last-child { border-bottom: 0; }
+/* The ledgered index: every commitment carries its number on a ruled
+   spine, read top-to-bottom like a commons ledger, not a feed. The
+   number and the spine answer to the card's hover with the gold. */
+.floor-board { counter-reset: entry; }
+.floor-card { counter-increment: entry; }
+.floor-card::before {
+  content: counter(entry, decimal-leading-zero);
+  position: absolute; left: 0; top: 40px;
+  width: 48px;
+  color: var(--ash); font: 500 11px/1 var(--font-mono); letter-spacing: .12em;
+  text-align: center;
+  transition: color 200ms ease;
+}
+.floor-card::after {
+  content: ""; position: absolute; left: 48px; top: 48px; bottom: 48px; width: 1px;
+  background: var(--rule);
+  transition: background 200ms ease;
+}
+.floor-card:hover::before { color: var(--amber); }
+.floor-card:hover::after { background: color-mix(in srgb, var(--amber) 40%, var(--rule)); }
+/* The empty lane is not an entry: it carries no number, no spine. */
+.floor-board > li:not(.floor-card)::before,
+.floor-board > li:not(.floor-card)::after { content: none; }
+
+/* Entry head — the ruled top line of a commitment: its domain and kind
+   ride left; the derived state rides right as a bordered glyph chip.
+   The chip's colour IS the state's tone; the border is neutral rule. */
+.entry-head { display: flex; align-items: center; justify-content: space-between; gap: 12px 32px; flex-wrap: wrap; }
+.entry-kind { color: var(--dust); font: 500 10px/1 var(--font-mono); letter-spacing: .2em; text-transform: uppercase; }
+.entry-kind b { color: var(--ash); font-weight: 500; }
+.entry-status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border: 1px solid var(--rule); font: 500 10px/1 var(--font-mono); letter-spacing: .2em; text-transform: uppercase; white-space: nowrap; }
+
+/* The entry's foot: author, time, risk, skills, the vote counts.
+   One register, one weight — the ledger's smallest line. */
+.entry-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-top: 16px; color: var(--dust); font: 500 10px/1.4 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; }
+.entry-foot .sep { color: var(--ash); }
+.entry-foot .who { color: var(--ink); }
+.entry-foot .risk { color: var(--amber); }
+.entry-foot .time { text-transform: none; letter-spacing: .05em; }
+/* The vote buttons keep their Tailwind tones (amber when cast, ink on
+   hover): they inherit dust from .entry-foot — no element-scoped colour. */
 
 /* ── Threshold seal (BoardCard) — a bar, not a meter ──
    Track is the quorum; fill is the count that has shown up.
    Amber while the window is open; ink once proved — whiteness is the
    colour of the finished record, not a second hue. */
 .threshold-track { position: relative; flex: 1 1 220px; max-width: 360px; height: 2px; background: var(--rule); }
-.threshold-fill { position: absolute; top: 0; left: 0; height: 100%; background: var(--floor-gold); transition: width 240ms ease; }
-.threshold-fill.proved { background: var(--ink); }
+.threshold-fill { position: absolute; top: 0; left: 0; height: 100%; background: var(--floor-gold); box-shadow: 0 0 8px color-mix(in srgb, var(--floor-gold) 50%, transparent); transition: width 240ms ease; }
+/* Proved: the gold retires; ink is the colour of the finished record. */
+.threshold-fill.proved { background: var(--ink); box-shadow: none; }
+
+/* The desk: the one paneled surface on the floor. Ruled, not lifted —
+   a plate with a hairline of gold at the top, like a folder, not a card. */
+.floor-desk { position: relative; border: 1px solid var(--rule); background: color-mix(in srgb, var(--ink) 2%, transparent); }
+.floor-desk::before { content: ""; position: absolute; top: -1px; left: 0; width: 96px; height: 2px; background: var(--floor-gold); }
+
+/* The mesh strip: a static merkle-mesh echo of the hall's record —
+   one quiet register of small cells, a caption, done. Pure CSS grid,
+   aria-hidden, no motion, no cost. */
+.floor-mesh { margin-top: 64px; border-top: 1px solid var(--rule); padding-top: 24px; }
+.floor-mesh-cells { display: grid; grid-template-columns: repeat(28, 6px); gap: 5px; }
+.floor-mesh-cells i { width: 6px; height: 6px; background: color-mix(in srgb, var(--floor-gold) 42%, var(--rule)); }
+/* Most cells are the mesh's hush; a few carry the gold — the record. */
+.floor-mesh-cells i:nth-child(7n + 3) { background: color-mix(in srgb, var(--floor-gold) 78%, var(--rule)); }
+.floor-mesh-cells i:nth-child(11n + 5) { background: color-mix(in srgb, var(--ink) 26%, var(--rule)); }
+.floor-mesh-cells i:nth-child(13n + 8) { background: var(--floor-gold); }
+.floor-mesh-caption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; margin-top: 12px; color: var(--dust); font: 500 10px/1.5 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
 
 /* ── Nested registers: seats · progress · attestations.
    One rail, one head with a count, one tick per line. Quiet:
@@ -120,13 +217,13 @@
 .fork-rail > li:has(> .fork-children)::before { top: 12px; }
 
 /* FAB */
-.post-fab { position: fixed; bottom: 24px; right: 24px; z-index: 10; padding: 13px 22px; background: var(--void); border: 1px solid var(--amber); color: var(--amber); font: 500 12.5px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; box-shadow: 0 6px 24px -10px rgba(0,0,0,.8); transition: background 120ms ease, color 120ms ease; }
-.post-fab:hover { background: var(--amber); color: var(--void); }
+.post-fab { position: fixed; bottom: 24px; right: 24px; z-index: 10; padding: 13px 22px; background: var(--void); border: 1px solid var(--amber); color: var(--amber); font: 500 12.5px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; box-shadow: 0 6px 24px -10px rgba(0,0,0,.8), 0 0 26px -8px color-mix(in srgb, var(--amber) 38%, transparent); transition: background 120ms ease, color 120ms ease, box-shadow 120ms ease; }
+.post-fab:hover { background: var(--amber); color: var(--void); box-shadow: 0 6px 28px -8px color-mix(in srgb, var(--amber) 55%, transparent); }
 .post-fab:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
 .post-fab--inline { position: static; box-shadow: none; }
 
 /* Colophon */
-.page-foot { margin-top: 96px; padding-top: 22px; border-top: 1px solid var(--rule); font: 500 11px var(--font-mono); letter-spacing: .12em; color: var(--dust); text-align: center; }
+.page-foot { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--rule); font: 500 11px var(--font-mono); letter-spacing: .12em; color: var(--dust); text-align: center; }
 
 /* Resting link */
 .rest-link { margin-top: 28px; text-align: center; }
@@ -142,5 +239,15 @@
   /* The watermark shrinks to a corner whisper on small screens. */
   .floor-hall-art { top: 80px; width: 300px; height: 300px; opacity: 0.04; }
   .floor-hall-bloom { height: 300px; }
-  .floor-seal { width: 44px; height: 44px; }
+  .floor-hall-light { top: -160px; right: -200px; width: 520px; height: 520px; }
+  /* The seal plate compacts; the masthead keeps clear of it. */
+  .floor-seal { width: 72px; }
+  .floor-seal svg { width: 44px; height: 44px; }
+  .floor-masthead { padding-right: 84px; }
+  /* The ledger spine gives its width back to the entry. */
+  .floor-card { padding-left: 0; }
+  .floor-card::before { content: none; display: none; }
+  .floor-card::after { content: none; display: none; }
+  /* The mesh closes its gap so the strip never overflows. */
+  .floor-mesh-cells { gap: 4px; }
 }
