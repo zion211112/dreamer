@@ -130,7 +130,7 @@ export default function RosterImport() {
             <p className={`${monoLabel} mb-3`}>
               Preview · {fresh} new · {dupes} already on the roll
             </p>
-            <div className="max-h-[320px] overflow-y-auto rounded-[21px] border border-ink/10">
+            <div className="max-h-[320px] overflow-x-auto overflow-y-auto rounded-[21px] border border-ink/10">
               <table className="w-full border-collapse text-left">
                 <thead className="sticky top-0 bg-panel">
                   <tr>

@@ -50,7 +50,7 @@ export default function HomePage() {
         <div className="landing-frame landing-hero-grid">
           <div className="landing-hero-copy">
             <p className="lp-label">Kirinyaga, Kenya · Public record</p>
-            <h1 id="landing-title">The ledger of useful work.</h1>
+            <h1 id="landing-title" className="page-title">The ledger of useful work.</h1>
             <p className="landing-lead">
               We&apos;re making a list of everyone in Kirinyaga who can actually do
               things — and the roll is public.

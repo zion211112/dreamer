@@ -18,7 +18,7 @@ export default function Contact() {
         <div className="site-section-head"><span>Contact / APT-LABS</span><span>one reply · no queue</span></div>
         <div className="record-intro contact-intro">
           <p className="site-kicker">For schools, partners, and doers</p>
-          <h1 className="contact-title">Write to us.</h1>
+           <h1 className="contact-title">Write to us.</h1>
           <p className="contact-lead">A useful question, a school that needs capacity, or work that belongs on the roll.</p>
         </div>
 

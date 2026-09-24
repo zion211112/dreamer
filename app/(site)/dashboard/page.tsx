@@ -52,9 +52,7 @@ export default function Dashboard() {
 
         {!me ? (
           <>
-            <h1 className="mt-10 max-w-[12ch] font-serif text-5xl leading-[1.04] tracking-tight sm:text-6xl">
-              The floor is ready.
-            </h1>
+            <h1 className="page-title">The floor is ready.</h1>
             <p className="mt-5 max-w-[48ch] text-[0.95rem] leading-7 text-dust">
               Claim your slot in the roll and this page becomes your standing — no gate, no
               forms, no redundant flow.
@@ -76,9 +74,7 @@ export default function Dashboard() {
           </>
         ) : (
           <>
-            <h1 className="mt-10 max-w-[12ch] font-serif text-5xl leading-[1.04] tracking-tight sm:text-6xl">
-              @{me.username}
-            </h1>
+            <h1 className="page-title">@{me.username}</h1>
             <p className="mt-3 font-serif text-xl italic text-ink/75">{me.name}</p>
 
             <div className="mt-10">

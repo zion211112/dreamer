@@ -1,20 +1,24 @@
-/* Type comes from next/font: Inter is loaded by the page and exposed as
-   --font-inter; the serif/mono fall back to the site-wide faces in
-   globals.css. No CSS @import here (render-blocking, third-party origin). */
+/* Type and tokens come from the shared APT-LABS system. The floor keeps its
+   own timeline geometry, but it does not carry a second product skin. */
 
 .benben-legacy-page {
-  --void: #0a0a0a;
-  --line: #1c1c1c;
-  --line-hi: #333;
-  --ivory: #f5f0e6;
-  --ivory-dim: #a8a29e;
-  --ivory-mute: #57534e;
-  --gold: #d4af37;
-  --earth: #8b3a2f;
-  --forest: #1a7a5c;
+  /* The floor keeps its timeline layout, but it speaks the APT-LABS
+     material language: canonical surfaces, one interactive accent, and the
+     shared type stack. */
+  --void: #060708;
+  --line: #1F1F22;
+  --line-hi: #141416;
+  --ivory: #F2EFE9;
+  --ivory-dim: #8A8580;
+  --ivory-mute: #857F7A;
+  --gold: #14B8A6;
+  --earth: #EF4444;
+  --forest: #0F766E;
+  --font-playfair: "Playfair Display", "Iowan Old Style", "Apple Garamond", Baskerville, "Palatino Linotype", "Times New Roman", Georgia, serif;
+  --font-jetbrains: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --u: 8px;
   --ease: cubic-bezier(.2,.8,.2,1);
-  --t: 520ms;
+  --t: 180ms;
 }
 
 .benben-legacy-page * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,7 +27,7 @@
 .benben-legacy-page body {
   background: var(--void);
   color: var(--ivory);
-  font: 15px/1.6 var(--font-inter),sans-serif;
+  font: 15px/1.6 var(--font-sans),sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
@@ -70,9 +74,11 @@
 .benben-legacy-page .head .kicker .gold { color: var(--gold); }
 
 .benben-legacy-page .head h1 {
-  font: 300 42px/1.1 var(--font-playfair),serif;
+  font: 400 clamp(36px, 5vw, 56px)/1.05 var(--font-serif);
+  font-style: italic;
   letter-spacing: -.02em;
-  margin-bottom: calc(var(--u)*2);
+  margin: 0 0 calc(var(--u)*2);
+  text-align: center;
 }
 
 .benben-legacy-page .head .sub {
@@ -149,7 +155,7 @@
 .benben-legacy-page .entry[data-state="sealed"] .state-dot {
   background: var(--gold);
   border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(212,175,55,.12);
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, .12);
 }
 .benben-legacy-page .entry[data-state="claimed"] .state-dot {
   background: var(--forest);
@@ -268,7 +274,7 @@
   height: 8px;
   border-radius: 50%;
   background: var(--gold);
-  box-shadow: 0 0 0 2px rgba(212,175,55,.15);
+  box-shadow: 0 0 0 2px rgba(20, 184, 166, .15);
   margin-right: 8px;
   vertical-align: middle;
   transform: translateY(-2px);
@@ -465,7 +471,7 @@
   border: 1px solid var(--line);
   padding: calc(var(--u)*1.5) calc(var(--u)*2);
   color: var(--ivory);
-  font: 13px/1.5 var(--font-inter),sans-serif;
+  font: 13px/1.5 var(--font-sans),sans-serif;
   outline: none;
   transition: border-color 200ms var(--ease);
   text-align: left;
@@ -535,7 +541,7 @@
   background: var(--gold);
   position: relative;
   z-index: 2;
-  box-shadow: 0 0 0 4px rgba(212,175,55,.1), 0 0 0 8px rgba(212,175,55,.04);
+  box-shadow: 0 0 0 4px rgba(20, 184, 166, .1), 0 0 0 8px rgba(20, 184, 166, .04);
 }
 .benben-legacy-page .root::before {
   content: "";
@@ -562,10 +568,10 @@
 
 @media (max-width: 760px) {
   .benben-legacy-page .page { padding: calc(var(--u) * 5) calc(var(--u) * 3) calc(var(--u) * 6); }
-  .benben-legacy-page .head h1 { font-size: 32px; }
-  .benben-legacy-page .spine { left: 21px; top: calc(var(--u) * 26); }
-  .benben-legacy-page .entry { grid-template-columns: 1fr; padding-left: calc(var(--u) * 5); }
-  .benben-legacy-page .marker { position: absolute; left: -42px; top: 2px; padding-top: 0; grid-column: auto; }
+  .benben-legacy-page .head h1 { font-size: clamp(36px, 5vw, 56px); }
+  .benben-legacy-page .spine { left: 16px; top: calc(var(--u) * 26); }
+  .benben-legacy-page .entry { grid-template-columns: 1fr; padding-left: 48px; }
+  .benben-legacy-page .marker { position: absolute; left: 13px; top: 2px; padding-top: 0; grid-column: auto; }
   .benben-legacy-page .strip { top: calc(var(--u) * 3.5); }
   .benben-legacy-page .content, .benben-legacy-page .entry.right .content { grid-column: 1; text-align: left; padding: 0; }
   .benben-legacy-page .entry.left .meta-line { flex-direction: row; }
@@ -580,6 +586,21 @@
   .benben-legacy-page .entry.left .c-body { text-align: left; }
   .benben-legacy-page .entry.left .comment-submit { align-self: flex-end; }
   .benben-legacy-page .entry.open .title { font-size: 26px; }
+  .benben-legacy-page .entry { min-width: 0; }
+  .benben-legacy-page .content { min-width: 0; cursor: pointer; }
+  .benben-legacy-page .content:focus-visible { outline: 2px solid var(--gold); outline-offset: 6px; }
+  .benben-legacy-page .title,
+  .benben-legacy-page .body,
+  .benben-legacy-page .fact dd,
+  .benben-legacy-page .c-text { overflow-wrap: anywhere; }
+  .benben-legacy-page .meta-line { min-width: 0; }
+  .benben-legacy-page .domain { min-width: 0; overflow-wrap: anywhere; }
+  .benben-legacy-page .actions { gap: calc(var(--u)*1.5) calc(var(--u)*2); }
+  .benben-legacy-page .action,
+  .benben-legacy-page .comment-submit { min-height: 44px; display: inline-flex; align-items: center; }
+  .benben-legacy-page .comment-input { min-height: 80px; }
+  .benben-legacy-page .comments-head { gap: calc(var(--u)*1.5); }
+  .benben-legacy-page .comment-form { min-width: 0; }
   .benben-legacy-page .body { max-width: 100%; }
 }
 

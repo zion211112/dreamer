@@ -134,7 +134,7 @@ function ConsoleLogin({
 
   return (
     <main className="console-ui flex h-dvh flex-col bg-void font-sans text-ink">
-      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/8 px-[21px]">
+      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/8 px-4 sm:px-[21px]">
         <div className="flex items-center gap-3 font-mono text-meta uppercase tracking-[0.14em] text-dust">
           <Diamond size={15} className="text-signal" />
           <span>APT-LABS · Console</span>
@@ -147,8 +147,8 @@ function ConsoleLogin({
         </Link>
       </header>
 
-      <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center overflow-y-auto px-6 py-12">
-        <div className="relative overflow-hidden border border-ink/10 bg-panel p-6 sm:p-8 md:p-10">
+      <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center overflow-y-auto px-4 py-8 sm:px-6 sm:py-12">
+        <div className="relative overflow-hidden border border-ink/10 bg-panel p-5 sm:p-8 md:p-10">
           <div className="relative">
             <p className="font-mono text-label uppercase tracking-[0.35em] text-signal">Build capacity · Console</p>
             <h1 className="mt-4 font-serif text-4xl font-light tracking-tight">Who are you?</h1>
@@ -157,7 +157,7 @@ function ConsoleLogin({
               registered pilot alone opens it, on this device.
             </p>
 
-            <div className="mt-8 grid grid-cols-2 gap-3">
+            <div className="mt-8 grid grid-cols-1 gap-3 min-[420px]:grid-cols-2">
               {(Object.keys(ROLE_META) as ConsoleRole[]).map((r) => (
                 <button
                   key={r}
@@ -269,7 +269,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
 
   return (
     <div className="console-ui flex h-dvh flex-col overflow-hidden bg-void font-sans text-ink">
-      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/8 px-[21px]">
+      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/8 px-4 sm:px-[21px]">
         <div className="flex items-center gap-3 font-mono text-meta uppercase tracking-[0.14em] text-dust">
           <Diamond size={15} className="text-signal" />
           <span>APT-LABS · Console</span>
@@ -291,7 +291,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
       </header>
 
       <div className="flex min-h-0 flex-1">
-        <aside className="flex w-[62px] shrink-0 flex-col justify-between border-r border-ink/10 bg-gradient-to-b from-void via-panel to-edge lg:w-[220px]">
+        <aside className="flex w-[58px] shrink-0 flex-col justify-between border-r border-ink/10 bg-gradient-to-b from-void via-panel to-edge lg:w-[220px]">
           <div>
             <div className="flex h-[89px] items-center justify-center gap-3 border-b border-ink/10 px-[13px] lg:justify-between lg:px-[21px]">
               <Diamond filled size={30} className="shrink-0 text-ink" />
@@ -306,7 +306,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
                 type="button"
                 onClick={() => setMod("all")}
                 aria-pressed={activeKey === "all"}
-                className={`flex h-[38px] items-center justify-center gap-2.5 rounded-lg px-3 text-ui transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void lg:justify-start ${
+                className={`flex min-h-11 items-center justify-center gap-2.5 rounded-lg px-3 text-ui transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void lg:justify-start ${
                   activeKey === "all" ? "bg-ink/15 font-medium text-ink shadow-[inset_0_0_0_1px_rgba(245,240,230,0.08)]" : "text-ink/50 hover:bg-ink/5 hover:text-ink"
                 }`}
               >
@@ -320,7 +320,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
                   onClick={() => setMod(m)}
                   aria-pressed={activeKey === m}
                   title={m}
-                  className={`flex h-[38px] items-center justify-center gap-2.5 rounded-lg px-3 text-ui transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void lg:justify-start ${
+                  className={`flex min-h-11 items-center justify-center gap-2.5 rounded-lg px-3 text-ui transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void lg:justify-start ${
                     activeKey === m ? "bg-ink/15 font-medium text-ink shadow-[inset_0_0_0_1px_rgba(245,240,230,0.08)]" : "text-ink/50 hover:bg-ink/5 hover:text-ink"
                   }`}
                 >
@@ -337,7 +337,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
           </div>
         </aside>
 
-        <main className="flex-1 overflow-y-auto p-5 sm:p-7 lg:p-[34px]">
+        <main className="min-w-0 flex-1 overflow-y-auto p-4 sm:p-7 lg:p-[34px]">
           <div className="mb-[21px] flex flex-col gap-3 border-b border-ink/10 pb-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h1 className="font-serif text-h1 font-light leading-tight sm:text-h1">

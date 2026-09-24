@@ -61,7 +61,7 @@ export function PrintButton({ label = "Print", onClick }: { label?: string; onCl
       type="button"
       onClick={onClick ?? (() => window.print())}
       title="Print this sheet — or save it as PDF"
-      className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-ink/10 px-3 py-1.5 font-mono text-label uppercase tracking-wider text-dust transition-colors hover:border-signal hover:text-signal focus-visible:outline focus-visible:outline-2 focus-visible:outline-signal print:hidden"
+      className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-ink/10 px-3 py-1.5 font-mono text-label uppercase tracking-wider text-dust transition-colors hover:border-signal hover:text-signal focus-visible:outline focus-visible:outline-2 focus-visible:outline-signal print:hidden"
     >
       ⎙ {label}
     </button>

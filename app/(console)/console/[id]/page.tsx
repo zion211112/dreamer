@@ -58,7 +58,7 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
 
   return (
     <main className="console-ui flex min-h-dvh flex-col bg-void font-sans text-ink print:bg-white print:text-black">
-      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/8 px-[21px] print:hidden">
+      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/8 px-4 sm:px-[21px] print:hidden">
         <div className="flex items-center gap-3 font-mono text-meta uppercase tracking-[0.14em] text-dust">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <polygon points="12 2 22 12 12 22 2 12" />
@@ -71,7 +71,7 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
       </header>
 
       {/* The module rail — one quiet tab strip, glyph per tool. */}
-      <nav aria-label="Console modules" className="flex items-center gap-1 overflow-x-auto border-b border-ink/8 bg-panel px-5 py-1.5 print:hidden">
+      <nav aria-label="Console modules" className="flex items-center gap-1 overflow-x-auto border-b border-ink/8 bg-panel px-4 py-1.5 sm:px-5 print:hidden">
         {RAIL.map(([id, label]) => {
           const t = toolById(id);
           if (!t) return null;
@@ -91,8 +91,8 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
           );
         })}
       </nav>
-        <div className="mx-auto w-full max-w-[1440px] flex-1 px-5 py-8 md:px-[34px] md:py-12 print:p-0">
-          <div className="mb-8 flex flex-wrap items-start gap-4 border-b border-ink/10 pb-6 print:hidden">
+        <div className="mx-auto w-full max-w-[1440px] flex-1 px-4 py-6 sm:px-[34px] sm:py-10 md:px-[34px] md:py-12 print:p-0">
+          <div className="mb-8 flex min-w-0 flex-wrap items-start gap-4 border-b border-ink/10 pb-6 print:hidden">
             <ModuleTile module={tool.module} tint={menu?.tint} size={52} />
             <div>
               <p className="mb-2 font-mono text-label uppercase tracking-[0.2em] text-signal">

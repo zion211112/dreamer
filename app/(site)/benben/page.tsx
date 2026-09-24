@@ -1,18 +1,7 @@
 "use client";
 
-import { Inter } from "next/font/google";
 import { useEffect, useState } from "react";
 import "./benben.css";
-
-// benben is a self-contained legacy theme with its own type stack. It only
-// needs Inter for body text; its serif and mono come from the site-wide
-// next/font faces loaded in the root layout.
-const inter = Inter({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-inter",
-  display: "swap",
-});
 
 type Comment = {
   handle: string;
@@ -199,19 +188,19 @@ export default function BenBenPage() {
     build.state === "claimed" || (build.state === "open" && build.votes >= build.threshold);
 
   return (
-    <main className={`benben-legacy-page ${inter.variable}`}>
+    <main className="benben-legacy-page">
       <div className="page">
         <header className="head">
           <span className="kicker">
             BenBen <span className="sep">·</span> Block <span className="gold">0008</span> <span className="sep">·</span> Kirinyaga
           </span>
-          <h1>The Floor</h1>
+          <h1 className="page-title">The Floor</h1>
           <p className="sub">Post. Vote. Sign. Prove.</p>
         </header>
 
         <div className="spine" aria-hidden="true" />
 
-        <main className="ledger" id="ledger" role="list">
+        <div className="ledger" id="ledger" role="list">
           {builds.map((build, index) => {
             const side = index % 2 === 0 ? "left" : "right";
             const ph = phase(build);
@@ -285,7 +274,25 @@ export default function BenBenPage() {
                     <div className="strip-fill" style={{ height: `${stripPct(build)}%` }} />
                   </div>
                 </div>
-                <div className="content" onClick={() => toggleFocused(build.id)}>
+             <div
+               className="content"
+               role="group"
+               tabIndex={0}
+               aria-label={`${open ? "Collapse" : "Expand"} ${build.title}`}
+               onClick={(event) => {
+                  const target = event.target as HTMLElement;
+                  if (target.closest("button, form, textarea, input, a")) return;
+                  toggleFocused(build.id);
+                }}
+               onKeyDown={(event) => {
+                 if (event.target !== event.currentTarget) return;
+                 if (event.key === "Enter" || event.key === " ") {
+                   event.preventDefault();
+                   toggleFocused(build.id);
+                 }
+               }}
+             >
+
                   <div className="meta-line">
                     <span className="domain">{build.domain}</span>
                     <span className="meta-rule" />
@@ -341,7 +348,7 @@ export default function BenBenPage() {
               </article>
             );
           })}
-        </main>
+        </div>
 
         <div className="root" aria-hidden="true">
           <div className="mark" />

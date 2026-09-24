@@ -22,7 +22,7 @@ export default function NotFound() {
         />
         <div className="relative mx-auto w-full max-w-2xl px-6 py-20 text-center">
           <p className="font-mono text-xs tracking-[0.35em] text-dust uppercase">404 · Not on the list</p>
-          <h1 className="mt-8 font-serif text-5xl md:text-6xl tracking-tight">No such page.</h1>
+          <h1 className="page-title">No such page.</h1>
           <p className="mx-auto mt-5 max-w-[44ch] text-sm leading-6 text-dust">
             The roll has no entry for that address. It will, when someone claims it.
           </p>
