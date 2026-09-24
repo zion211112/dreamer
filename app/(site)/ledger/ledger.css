@@ -65,24 +65,8 @@
   letter-spacing: 0.08em;
 }
 
-.page-title {
-  max-width: 20ch;
-  margin: 16px 0 0;
-  font-family: var(--font-serif);
-  font-size: clamp(36px, 5vw, 56px);
-  font-weight: 400;
-  font-style: italic;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-  line-height: 1.05;
-  text-wrap: balance;
-}
-
-@media (min-width: 768px) {
-  .page-title {
-    font-size: clamp(36px, 4vw, 48px);
-  }
-}
+/* Page title is defined once in app/globals.css. Ledger uses the shared
+   .page-title treatment so the public routes stay in one rhythm. */
 
 .page-desc {
   font-size: 14px;
@@ -197,19 +181,19 @@
 }
 
 .field-search {
-  padding-right: 40px;
+  padding-right: 52px;
 }
 
 .search-clear {
   position: absolute;
-  right: 10px;
+  right: 0;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   background: transparent;
   border: none;
@@ -298,6 +282,12 @@
   margin-bottom: 4px;
   font-size: 12px;
   color: var(--ash);
+}
+
+.roll-meta-item {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .roll-meta-sep {
@@ -846,9 +836,11 @@ select.field {
 
 .roll-entry-detail-grid dd {
   margin: 0;
+  min-width: 0;
   font-size: 13px;
   line-height: 1.5;
   color: var(--ink);
+  overflow-wrap: anywhere;
 }
 
 .roll-detail-hash {
@@ -917,8 +909,19 @@ select.field {
     width: 100%;
   }
   .ledger-telemetry {
-    align-items: flex-start;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
     width: 100%;
+  }
+  .ledger-beacon {
+    flex: 1 0 100%;
+  }
+  .ledger-mesh,
+  .ledger-seal {
+    white-space: nowrap;
   }
   .page-body {
     padding: 16px;
@@ -930,21 +933,22 @@ select.field {
   }
   .section-head {
     align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
   }
   .section-tools {
     width: 100%;
-    justify-content: flex-end;
+    justify-content: flex-start;
   }
   .filter-chips {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    margin-right: -16px;
-    padding-right: 16px;
-    padding-bottom: 4px;
-    scrollbar-width: none;
+    flex-wrap: wrap;
+    overflow: visible;
+    margin-right: 0;
+    padding-right: 0;
+    padding-bottom: 0;
   }
-  .filter-chips::-webkit-scrollbar {
-    display: none;
+  .btn-sm {
+    min-height: 44px;
   }
   .chip {
     flex: 0 0 auto;
