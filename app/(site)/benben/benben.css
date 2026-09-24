@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500&family=Inter:wght@400&family=JetBrains+Mono:wght@400;500&display=swap');
+/* Type comes from next/font: Inter is loaded by the page and exposed as
+   --font-inter; the serif/mono fall back to the site-wide faces in
+   globals.css. No CSS @import here (render-blocking, third-party origin). */
 
 .benben-legacy-page {
   --void: #0a0a0a;
@@ -21,7 +23,7 @@
 .benben-legacy-page body {
   background: var(--void);
   color: var(--ivory);
-  font: 15px/1.6 'Inter',sans-serif;
+  font: 15px/1.6 var(--font-inter),sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
@@ -56,7 +58,7 @@
 }
 
 .benben-legacy-page .head .kicker {
-  font: 11px/1 'JetBrains Mono',monospace;
+  font: 11px/1 var(--font-jetbrains),monospace;
   letter-spacing: .24em;
   text-transform: uppercase;
   color: var(--ivory-mute);
@@ -68,13 +70,13 @@
 .benben-legacy-page .head .kicker .gold { color: var(--gold); }
 
 .benben-legacy-page .head h1 {
-  font: 300 42px/1.1 'Playfair Display',serif;
+  font: 300 42px/1.1 var(--font-playfair),serif;
   letter-spacing: -.02em;
   margin-bottom: calc(var(--u)*2);
 }
 
 .benben-legacy-page .head .sub {
-  font: italic 300 17px/1.4 'Playfair Display',serif;
+  font: italic 300 17px/1.4 var(--font-playfair),serif;
   color: var(--ivory-dim);
 }
 
@@ -121,7 +123,7 @@
 }
 
 .benben-legacy-page .num {
-  font: 13px/1 'JetBrains Mono',monospace;
+  font: 13px/1 var(--font-jetbrains),monospace;
   letter-spacing: .15em;
   color: var(--ivory-mute);
   background: var(--void);
@@ -210,7 +212,7 @@
   align-items: center;
   gap: calc(var(--u)*1.5);
   margin-bottom: calc(var(--u)*2);
-  font: 10px/1 'JetBrains Mono',monospace;
+  font: 10px/1 var(--font-jetbrains),monospace;
   letter-spacing: .18em;
   text-transform: uppercase;
   color: var(--ivory-mute);
@@ -242,11 +244,11 @@
 .benben-legacy-page .dot.filled { background: var(--ivory-dim); border-color: var(--ivory-dim); }
 .benben-legacy-page .entry[data-state="sealed"] .dot.filled { background: var(--gold); border-color: var(--gold); }
 .benben-legacy-page .entry[data-state="expired"] .dot { border-color: var(--earth); opacity: .4; }
-.benben-legacy-page .vote-num { font: 10px/1 'JetBrains Mono',monospace; color: var(--ivory-mute); letter-spacing: .1em; margin: 0 4px; }
+.benben-legacy-page .vote-num { font: 10px/1 var(--font-jetbrains),monospace; color: var(--ivory-mute); letter-spacing: .1em; margin: 0 4px; }
 .benben-legacy-page .entry[data-over="true"] .vote-num { color: var(--gold); }
 
 .benben-legacy-page .title {
-  font: 400 24px/1.25 'Playfair Display',serif;
+  font: 400 24px/1.25 var(--font-playfair),serif;
   letter-spacing: -.01em;
   color: var(--ivory);
   margin-bottom: calc(var(--u) * 1.5);
@@ -279,7 +281,7 @@
 }
 
 .benben-legacy-page .author {
-  font: italic 400 13px/1.5 'Playfair Display',serif;
+  font: italic 400 13px/1.5 var(--font-playfair),serif;
   color: var(--ivory-mute);
   margin-bottom: calc(var(--u) * 1.5);
 }
@@ -287,7 +289,7 @@
 .benben-legacy-page .author .sep { padding: 0 5px; color: var(--line); }
 
 .benben-legacy-page .clock {
-  font: 10px/1 'JetBrains Mono',monospace;
+  font: 10px/1 var(--font-jetbrains),monospace;
   letter-spacing: .18em;
   text-transform: uppercase;
   color: var(--ivory-mute);
@@ -343,7 +345,7 @@
 .benben-legacy-page .fact { display: flex; flex-direction: column; gap: 3px; }
 .benben-legacy-page .entry.left .fact { align-items: flex-end; }
 .benben-legacy-page .fact dt {
-  font: 10px/1 'JetBrains Mono',monospace;
+  font: 10px/1 var(--font-jetbrains),monospace;
   letter-spacing: .18em;
   text-transform: uppercase;
   color: var(--ivory-mute);
@@ -359,7 +361,7 @@
 .benben-legacy-page .actions {
   display: flex;
   gap: calc(var(--u)*2.5);
-  font: 10px/1 'JetBrains Mono',monospace;
+  font: 10px/1 var(--font-jetbrains),monospace;
   letter-spacing: .18em;
   text-transform: uppercase;
   flex-wrap: wrap;
@@ -399,7 +401,7 @@
   justify-content: space-between;
   align-items: baseline;
   margin-bottom: calc(var(--u) * 2.5);
-  font: 10px/1 'JetBrains Mono',monospace;
+  font: 10px/1 var(--font-jetbrains),monospace;
   letter-spacing: .18em;
   text-transform: uppercase;
   color: var(--ivory-mute);
@@ -424,7 +426,7 @@
 .benben-legacy-page .entry.left .comment .c-body { text-align: right; }
 
 .benben-legacy-page .c-num {
-  font: 10px/1.5 'JetBrains Mono',monospace;
+  font: 10px/1.5 var(--font-jetbrains),monospace;
   color: var(--ivory-mute);
   letter-spacing: .05em;
   padding-top: 2px;
@@ -435,7 +437,7 @@
   display: flex;
   align-items: baseline;
   gap: calc(var(--u)*1);
-  font: 10px/1.5 'JetBrains Mono',monospace;
+  font: 10px/1.5 var(--font-jetbrains),monospace;
   letter-spacing: .05em;
   color: var(--ivory-mute);
   margin-bottom: 4px;
@@ -447,7 +449,7 @@
 .benben-legacy-page .c-text { font-size: 13px; line-height: 1.65; color: var(--ivory-dim); }
 
 .benben-legacy-page .comments-empty {
-  font: italic 300 14px/1.6 'Playfair Display',serif;
+  font: italic 300 14px/1.6 var(--font-playfair),serif;
   color: var(--ivory-mute);
   margin-bottom: calc(var(--u) * 2.5);
 }
@@ -463,7 +465,7 @@
   border: 1px solid var(--line);
   padding: calc(var(--u)*1.5) calc(var(--u)*2);
   color: var(--ivory);
-  font: 13px/1.5 'Inter',sans-serif;
+  font: 13px/1.5 var(--font-inter),sans-serif;
   outline: none;
   transition: border-color 200ms var(--ease);
   text-align: left;
@@ -472,7 +474,7 @@
 .benben-legacy-page .comment-input::placeholder { color: var(--ivory-mute); }
 .benben-legacy-page .comment-submit {
   align-self: flex-end;
-  font: 10px/1 'JetBrains Mono',monospace;
+  font: 10px/1 var(--font-jetbrains),monospace;
   letter-spacing: .18em;
   text-transform: uppercase;
   color: var(--ivory-mute);
@@ -509,7 +511,7 @@
 
 .benben-legacy-page .entry[data-state="empty"] .content { opacity: .5; }
 .benben-legacy-page .entry[data-state="empty"] .title {
-  font: italic 300 18px/1.3 'Playfair Display',serif;
+  font: italic 300 18px/1.3 var(--font-playfair),serif;
   color: var(--ivory-mute);
   font-style: italic;
 }
@@ -549,7 +551,7 @@
 .benben-legacy-page .foot {
   text-align: center;
   padding-top: calc(var(--u) * 4);
-  font: 10px/1.6 'JetBrains Mono',monospace;
+  font: 10px/1.6 var(--font-jetbrains),monospace;
   letter-spacing: .2em;
   text-transform: uppercase;
   color: var(--ivory-mute);

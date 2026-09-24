@@ -38,7 +38,7 @@ const surfaces = [
 export default function HomePage() {
   return (
     <main className="landing">
-      <div className="landing-system-strip" role="status">
+      <div className="landing-system-strip">
         <div className="landing-frame landing-strip-inner">
           <span className="landing-status"><i aria-hidden="true" /> LOCAL-FIRST RECORD</span>
           <span>APT-LABS <b>/</b> KIRINYAGA NODE</span>
@@ -111,30 +111,6 @@ export default function HomePage() {
         <span className="rule-text">Work first. Proof follows.</span>
         <span className="rule-sub">Counts visible · identity yours</span>
       </div>
-
-      <section className="landing-frame landing-county" aria-labelledby="county-title">
-        <p className="lp-label">For the county</p>
-        <h2 id="county-title" className="county-title">One county. One roll. Ninety days.</h2>
-        <p className="county-text">
-          We open the ledger for Kirinyaga. Every skill on the roll stays
-          verifiable, but the work gets measured the way a county actually
-          measures it — tasks done, terms marked, a principal able to act.
-        </p>
-      </section>
-
-      <section className="landing-frame landing-ask" aria-labelledby="ask-title">
-        <p className="lp-label">The ask</p>
-        <h2 id="ask-title" className="ask-title">Ninety days, one school, one signal.</h2>
-        <p className="ask-text">
-          A pilot, not a pitch. We mark two terms for a single school and hand
-          the principal a signal they can act on.
-        </p>
-        <dl className="ask-terms">
-          <div><dt>Entry</dt><dd>KES 100 / hall seat</dd></div>
-          <div><dt>School day</dt><dd>KES 3,000 / month</dd></div>
-          <div><dt>Proof</dt><dd>sealed · hash-linked · verifiable on the roll</dd></div>
-        </dl>
-      </section>
     </main>
   );
 }

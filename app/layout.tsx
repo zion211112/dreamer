@@ -1,10 +1,27 @@
 import type { Metadata, Viewport } from "next";
+import { Playfair_Display, JetBrains_Mono } from "next/font/google";
+import { SITE_URL } from "../lib/site";
 import "./globals.css";
 
+// Self-hosted, preloaded, subsetted — replaces the render-blocking CSS
+// @import. Weights match the faces the site actually uses.
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-playfair",
+  display: "swap",
+});
+
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-jetbrains",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_BASE_URL ?? "https://apt-labs.vercel.app"
-  ),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "APT-LABS — The ledger of useful work.",
     template: "%s — APT-LABS",
@@ -47,7 +64,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${playfair.variable} ${jetbrains.variable}`}
+      suppressHydrationWarning
+    >
       <body>
         <a href="#main-content" className="skip-link">
           Skip to content

@@ -1,11 +1,10 @@
 import type { MetadataRoute } from "next";
+import { SITE_URL } from "../lib/site";
 
 // Contacts live behind acceptance and identity. Crawlers get the porch:
 // landing and contact only. Everything human stays human-readable,
 // nothing machine-harvestable.
 export default function robots(): MetadataRoute.Robots {
-  const base =
-    process.env.NEXT_PUBLIC_BASE_URL ?? "https://apt-labs.vercel.app";
   return {
     rules: [
       {
@@ -16,6 +15,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/dashboard", "/benben", "/search", "/console"],
       },
     ],
-    sitemap: `${base}/sitemap.xml`,
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

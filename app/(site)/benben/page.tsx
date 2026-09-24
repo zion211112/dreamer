@@ -1,7 +1,18 @@
 "use client";
 
+import { Inter } from "next/font/google";
 import { useEffect, useState } from "react";
 import "./benben.css";
+
+// benben is a self-contained legacy theme with its own type stack. It only
+// needs Inter for body text; its serif and mono come from the site-wide
+// next/font faces loaded in the root layout.
+const inter = Inter({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-inter",
+  display: "swap",
+});
 
 type Comment = {
   handle: string;
@@ -188,7 +199,7 @@ export default function BenBenPage() {
     build.state === "claimed" || (build.state === "open" && build.votes >= build.threshold);
 
   return (
-    <main className="benben-legacy-page">
+    <main className={`benben-legacy-page ${inter.variable}`}>
       <div className="page">
         <header className="head">
           <span className="kicker">
