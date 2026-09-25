@@ -1,4 +1,4 @@
-import { COMPANY, FACES, INTAKE } from "../../../lib/company";
+import { COMPANY, FACES, INTAKE, ORGANIZATION_RECORD, SUSTAINABILITY_RECORD } from "../../../lib/company";
 import { faceMetadata } from "../../../lib/metadata";
 import { EvidenceList, PageShell, RouteLink, Section } from "../../../components/IdentityPage";
 import "../../identity.css";
@@ -17,13 +17,7 @@ export default function AboutPage() {
       description={COMPANY.description}
     >
       <Section label="Organisation" title="Current record">
-        <EvidenceList items={[
-          { label: "Operating geography", value: COMPANY.geography.text, state: COMPANY.geography.state },
-          { label: "Legal registration", value: COMPANY.legalStatus.text, state: COMPANY.legalStatus.state },
-          { label: "Founder / team record", value: "Not published", state: "UNKNOWN" },
-          { label: "Pilot partner", value: "None documented", state: "UNKNOWN" },
-          { label: "Verified school deployment", value: "None on record", state: "UNKNOWN" },
-        ]} />
+        <EvidenceList items={ORGANIZATION_RECORD} />
       </Section>
 
       <Section label="Purpose" title="Who the system is designed for">
@@ -60,11 +54,7 @@ export default function AboutPage() {
           recurring-cost comparisons, procurement records and deployment revenue are not
           documented, so none is presented as a result.
         </p>
-        <EvidenceList items={[
-          { label: "Unit economics", value: "Not yet measured", state: "UNKNOWN" },
-          { label: "Recorded local procurement", value: "None on record", state: "UNKNOWN" },
-          { label: "Recurring-cost comparison", value: "Not yet measured", state: "UNKNOWN" },
-        ]} />
+        <EvidenceList items={SUSTAINABILITY_RECORD} />
       </Section>
 
       <Section label="Contact" title="Direct project contact">

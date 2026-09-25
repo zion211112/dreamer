@@ -51,7 +51,7 @@ export function Section({
   );
 }
 
-export function EvidenceList({ items }: { items: Array<{ label: string; value: string; state: string }> }) {
+export function EvidenceList({ items }: { items: ReadonlyArray<{ label: string; value: string; state: string }> }) {
   return (
     <dl className="evidence-list">
       {items.map((item) => (

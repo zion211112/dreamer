@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { COMPANY } from "../../../lib/company";
+import { COMPANY, EVIDENCE_SNAPSHOT } from "../../../lib/company";
 import { faceMetadata } from "../../../lib/metadata";
 import { EvidenceList, PageShell, Section, StatusTag } from "../../../components/IdentityPage";
 import "../../identity.css";
@@ -18,13 +18,36 @@ export default function EvidencePage() {
       description="Another institution should be able to understand what was built, what it cost, why it worked or failed, and what would be required to reproduce it. Anything not yet documented remains visibly unknown."
     >
       <Section label="Evidence record" title="What exists in this repository">
-        <EvidenceList items={[
-          { label: "Sealing and rolling hashes", value: "SHA-256 canonical records and master seals", state: "VERIFIED" },
-          { label: "APT Deploy", value: "Nine modules and ten tools in a local prototype", state: "PROTOTYPE" },
-          { label: "APT Fab", value: "Architecture defined; no fabrication record", state: "PLANNED" },
-          { label: "APT Studio", value: "Architecture defined; no installation record", state: "PLANNED" },
-          { label: "The Roll", value: "People and asset registers using the same trust model", state: "PROTOTYPE" },
-        ]} />
+        <EvidenceList items={EVIDENCE_SNAPSHOT} />
+      </Section>
+
+      <Section label="Evidence posture" title="Current, being tested, unknown">
+        <div className="evidence-posture" role="list" aria-label="Evidence posture">
+          <div className="evidence-posture-row" role="listitem" data-state="verified">
+            <span>01</span>
+            <strong>What exists</strong>
+            <p>Code-native Deploy preview, SHA-256 sealing, local-first records and two register interfaces.</p>
+            <b>VERIFIED / PROTOTYPE</b>
+          </div>
+          <div className="evidence-posture-row" role="listitem" data-state="planned">
+            <span>02</span>
+            <strong>What is being tested</strong>
+            <p>A bounded institutional pilot across cost, performance, adoption, repair and local production.</p>
+            <b>PLANNED</b>
+          </div>
+          <div className="evidence-posture-row" role="listitem" data-state="unknown">
+            <span>03</span>
+            <strong>What remains unknown</strong>
+            <p>Field outcomes, unit economics, procurement, physical assets, partners and measured impact.</p>
+            <b>UNKNOWN</b>
+          </div>
+          <div className="evidence-posture-row" role="listitem" data-state="reproduce">
+            <span>04</span>
+            <strong>What can be reproduced</strong>
+            <p>The architecture and evidence model today; a complete hardware replication kit is not yet published.</p>
+            <b>PROTOTYPE / PLANNED</b>
+          </div>
+        </div>
       </Section>
 
       <Section label="Method" title="From pilot to replication kit">

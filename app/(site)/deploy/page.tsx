@@ -1,3 +1,4 @@
+import { CONSOLE_MODULES, CONSOLE_TOOLS } from "../../../lib/console";
 import { FACES } from "../../../lib/company";
 import { faceMetadata } from "../../../lib/metadata";
 import { FacePage } from "../../../components/FacePage";
@@ -14,11 +15,11 @@ export default function DeployPage() {
     <FacePage
       face={FACES.deploy}
       lead="Institutional software that can run on institution-owned devices without depending on a constant network or recurring subscription."
-      primaryAction={{ href: "/console", label: "Open the demonstration console" }}
+      primaryAction={{ href: "/console", label: "Open the local console" }}
       sections={[
         {
           title: "What exists today",
-          body: "The working prototype contains nine modules and ten tools covering the administrative week: planning, marking, attendance, records, reporting, fees, inspection and communication.",
+          body: `The working prototype contains ${CONSOLE_MODULES.length} modules and ${CONSOLE_TOOLS.length} tools covering the administrative week: planning, marking, attendance, records, reporting, fees, inspection and communication.`,
           items: [
             "Local sessions, favourites and records held on the device",
             "CSV roster import and export, plus a one-file school backup",
@@ -36,7 +37,7 @@ export default function DeployPage() {
         },
         {
           title: "Evidence status",
-          body: "The software is a verified local prototype. A verified school deployment is not yet recorded. The console entry screen is explicitly a demonstration door, not an authentication system or a partner credential.",
+          body: "The software is a local prototype. A verified school deployment is not yet recorded. The console entry screen is explicitly a demonstration door, not an authentication system or a partner credential.",
         },
       ]}
     />

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Face } from "../lib/company";
+import { FaceSurface } from "./FaceSurface";
 
 export interface FaceSection {
   title: string;
@@ -41,6 +42,8 @@ export function FacePage({ face, lead, sections, primaryAction }: FacePageProps)
           State: <strong>{face.status}</strong> · Evidence: {face.evidenceRefs.join(" · ")}
         </p>
       </header>
+
+      <FaceSurface face={face} />
 
       <div className="site-frame identity-sections">
         {sections.map((section, index) => (

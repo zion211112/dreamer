@@ -19,6 +19,21 @@
   --edge:   #141416;
   --rule:   #1F1F22;
 
+  /* Semantic surface aliases — components should consume meaning, not hex. */
+  --surface-void:   var(--void);
+  --surface-panel:  var(--panel);
+  --surface-raised: #111316;
+  --surface-hover:  var(--edge);
+  --text-primary:   var(--ink);
+  --text-secondary: var(--dust);
+  --text-tertiary:  var(--ash);
+  --border-subtle:  var(--rule);
+  --border-strong:  #34363A;
+  --verified:       #34D399;
+  --planned:        #FBBF24;
+  --unknown:        #A8A29E;
+  --focus:          var(--signal);
+
   /* Text — primary and secondary */
   /* Contrast on --void / --panel / --edge:
      --ink 17.6 / 16.9 / 15.8  ·  --dust 5.52 / 5.32 / 5.04  ·  --ash 5.10 / 4.92 / 4.66

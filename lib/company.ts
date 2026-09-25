@@ -1,3 +1,5 @@
+import { CONSOLE_MODULES, CONSOLE_TOOLS } from "./console";
+
 // lib/company.ts — RUNTIME SOURCE OF TRUTH for public company identity.
 //
 // Every public route reads its company-level copy from here. It is the only
@@ -111,6 +113,89 @@ export const COMPANY = {
   },
   repository: { label: "Source repository", value: "Access on request", state: "UNKNOWN" as EvidenceState },
 } as const;
+
+export const FACE_SURFACES = {
+  deploy: {
+    eyebrow: "LOCAL-FIRST SOFTWARE",
+    title: "A working surface for the institutional week.",
+    body: "The current console is a device-local prototype with a defined module and tool registry. It is inspectable; it is not presented as a school deployment.",
+    boundary: "No verified school deployment",
+    stages: [
+      { label: "Session", value: "LOCAL" },
+      { label: "Modules", value: String(CONSOLE_MODULES.length) },
+      { label: "Tools", value: String(CONSOLE_TOOLS.length) },
+      { label: "Cloud", value: "NOT REQUIRED" },
+    ],
+    action: { href: "/console", label: "Open local console" },
+  },
+  fab: {
+    eyebrow: "DOCUMENTED HARDWARE",
+    title: "From design note to repairable record.",
+    body: "The production chain is defined. No verified fabrication, installation or field-service record is published yet.",
+    stages: [
+      { label: "01", value: "DESIGN" },
+      { label: "02", value: "BOM" },
+      { label: "03", value: "SOURCE" },
+      { label: "04", value: "MAKE" },
+      { label: "05", value: "REPAIR" },
+      { label: "06", value: "RECORD" },
+    ],
+    action: { href: "/evidence", label: "Inspect the evidence boundary" },
+  },
+  studio: {
+    eyebrow: "CREATIVE COMPUTING",
+    title: "Compute that stays close to the work.",
+    body: "APT Studio is the planned creative-computing face of the system. The Mwea Animation Box is a demonstration node, not a claimed production facility.",
+    stages: [
+      { label: "Input", value: "NOTES / MEDIA" },
+      { label: "Process", value: "FRAME / TIMELINE" },
+      { label: "Compute", value: "LOCAL WORKSTATION" },
+      { label: "Output", value: "DOCUMENTED ASSET" },
+    ],
+    action: { href: "/evidence", label: "See what is known" },
+  },
+  roll: {
+    eyebrow: "TRUST LAYER",
+    title: "People and assets, separately recorded.",
+    body: "The Roll is one sealing discipline with two registers. A hash detects changes to a record; it does not manufacture truth or shared storage.",
+    stages: [
+      { label: "Register A", value: "PEOPLE" },
+      { label: "Register B", value: "ASSETS" },
+      { label: "State", value: "EXPLICIT" },
+      { label: "Seal", value: "SHA-256" },
+    ],
+    action: { href: "/roll/assets", label: "Open the Asset Register" },
+  },
+} as const;
+
+export const ORGANIZATION_RECORD = [
+  { label: "Operating geography", value: COMPANY.geography.text, state: COMPANY.geography.state },
+  { label: "Legal registration", value: COMPANY.legalStatus.text, state: COMPANY.legalStatus.state },
+  { label: "Founder / team record", value: "Not published", state: "UNKNOWN" as EvidenceState },
+  { label: "Pilot partner", value: "None documented", state: "UNKNOWN" as EvidenceState },
+  { label: "Verified school deployment", value: "None on record", state: "UNKNOWN" as EvidenceState },
+] as const;
+
+export const SUSTAINABILITY_RECORD = [
+  { label: "Unit economics", value: "Not yet measured", state: "UNKNOWN" as EvidenceState },
+  { label: "Recorded local procurement", value: "None on record", state: "UNKNOWN" as EvidenceState },
+  { label: "Recurring-cost comparison", value: "Not yet measured", state: "UNKNOWN" as EvidenceState },
+] as const;
+
+export const EVIDENCE_SNAPSHOT = [
+  { label: "Sealing and rolling hashes", value: "SHA-256 canonical records and master seals", state: "VERIFIED" as EvidenceState },
+  { label: "APT Deploy", value: `${CONSOLE_MODULES.length} modules and ${CONSOLE_TOOLS.length} tools in a local prototype`, state: "PROTOTYPE" as EvidenceState },
+  { label: "APT Fab", value: "Architecture defined; no fabrication record", state: "PLANNED" as EvidenceState },
+  { label: "APT Studio", value: "Architecture defined; no installation record", state: "PLANNED" as EvidenceState },
+  { label: "The Roll", value: "People and asset registers using the same trust model", state: "PROTOTYPE" as EvidenceState },
+] as const;
+
+export const FACE_SURFACE_CLASS: Record<Face["key"], string> = {
+  deploy: "face-surface--deploy",
+  fab: "face-surface--fab",
+  studio: "face-surface--studio",
+  roll: "face-surface--roll",
+};
 
 /**
  * One company, four faces. `status` must equal the row in the status ledger

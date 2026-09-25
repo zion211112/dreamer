@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import DeployPreview from "../../components/DeployPreview";
+import SystemMap from "../../components/SystemMap";
 import GeoArt from "../../components/GeoArt";
-import { COMPANY, FACES, INTAKE, OPERATING_LOOP } from "../../lib/company";
+import { COMPANY, INTAKE, OPERATING_LOOP, PROBLEM, RESPONSE } from "../../lib/company";
 import "../home.css";
 
 export const metadata: Metadata = {
   title: { absolute: "APT-LABS — Locally owned institutional infrastructure systems." },
   description: COMPANY.oneSentence,
 };
-
-const faceList = Object.values(FACES);
 
 export default function HomePage() {
   return (
@@ -25,92 +25,104 @@ export default function HomePage() {
         <GeoArt variant="cells" className="landing-hero-art" />
         <div className="landing-frame landing-hero-grid">
           <div className="landing-hero-copy">
-            <p className="lp-label">{COMPANY.geography.text} · Institutional infrastructure</p>
-            <h1 id="landing-title" className="page-title">Locally owned institutional infrastructure.</h1>
-            <p className="landing-lead">{COMPANY.oneSentence}</p>
+            <p className="lp-label">APT-LABS / {COMPANY.geography.text} / INSTITUTIONAL INFRASTRUCTURE</p>
+            <h1 id="landing-title" className="page-title">Infrastructure that institutions can run, repair and reproduce locally.</h1>
+            <p className="landing-lead">{RESPONSE}</p>
+            <p className="landing-supporting">Software, hardware, creative-computing capacity and the documentation needed to operate, repair and improve institutional systems locally.</p>
             <div className="landing-actions">
-              <Link href="/deploy" className="landing-button landing-button-primary">
-                Inspect APT Deploy
-              </Link>
-              <Link href="/evidence" className="landing-button">
-                See the evidence
-              </Link>
+              <Link href="/console" className="landing-button landing-button-primary">Open the local console</Link>
+              <Link href="/evidence" className="landing-button">Read the evidence record</Link>
             </div>
+            <a href="#architecture" className="landing-tertiary-link">View the architecture <span aria-hidden="true">↓</span></a>
+            <p className="landing-hero-note">Current public record: local prototype. No verified school deployment is claimed.</p>
           </div>
-
-          <aside className="landing-roll" aria-label="System protocol">
-            <div className="landing-panel-head">
-              <p className="lp-label">System protocol</p>
-              <span className="landing-panel-code">OPEN</span>
-            </div>
-            <dl className="protocol-list">
-              <div><dt>Problem</dt><dd>{COMPANY.problem}</dd></div>
-              <div><dt>Faces</dt><dd>Deploy · Fab · Studio · Roll</dd></div>
-              <div><dt>Evidence</dt><dd>State before scale</dd></div>
-              <div><dt>Region</dt><dd>{COMPANY.geography.text}</dd></div>
-            </dl>
-            <p className="roll-total">No fabricated outcomes. Every result remains state-labelled.</p>
-          </aside>
+          <DeployPreview />
         </div>
       </section>
 
-      <section className="landing-surfaces" aria-labelledby="faces-title">
-        <div className="landing-frame">
-          <div className="landing-section-head">
-            <h2 id="faces-title" className="lp-label">One system · Four faces</h2>
+      <section className="landing-problem" aria-labelledby="problem-title">
+        <div className="landing-frame landing-problem-grid">
+          <div>
+            <p className="lp-label">The problem</p>
+            <h2 id="problem-title">{PROBLEM}</h2>
           </div>
-
-          <ol className="surface-rows">
-            {faceList.map((face, index) => (
-              <li key={face.key} className="surface-row">
-                <span className="surface-number" aria-hidden="true">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <div className="surface-text">
-                  <h3>{face.name}</h3>
-                  <p>{face.description} · State: {face.status}</p>
-                </div>
-                <Link href={face.route} className="surface-link">
-                  Open face
-                </Link>
-              </li>
-            ))}
-          </ol>
+          <div className="landing-response">
+            <span className="lp-label">The APT-LABS response</span>
+            <p>{COMPANY.oneSentence}</p>
+          </div>
         </div>
       </section>
 
-      <section className="landing-surfaces" aria-labelledby="floor-title">
+      <section id="architecture" className="landing-architecture" aria-label="APT-LABS system architecture">
         <div className="landing-frame">
-          <div className="landing-section-head">
-            <h2 id="floor-title" className="lp-label">Intake layer</h2>
-          </div>
-          <ol className="surface-rows">
-            <li className="surface-row">
-              <span className="surface-number" aria-hidden="true">+</span>
-              <div className="surface-text">
-                <h3>{INTAKE.name}</h3>
-                <p>{INTAKE.summary} · State: {INTAKE.status}</p>
-              </div>
-              <Link href={INTAKE.route} className="surface-link">Enter intake</Link>
-            </li>
-          </ol>
+          <SystemMap />
+          <p className="landing-architecture-note"><strong>Intake layer</strong> · {INTAKE.name} is where capability enters before it can move into APT Fab or APT Studio and be recorded in The Roll.</p>
         </div>
       </section>
 
-      <section className="landing-surfaces" aria-labelledby="loop-title">
+      <section className="landing-evidence" aria-labelledby="evidence-title">
         <div className="landing-frame">
           <div className="landing-section-head">
-            <h2 id="loop-title" className="lp-label">The scale loop</h2>
+            <h2 id="evidence-title" className="lp-label">Evidence before scale</h2>
+            <span>State before claim</span>
+          </div>
+          <div className="evidence-grid">
+            <article className="evidence-panel evidence-panel--verified">
+              <span>01 / What exists</span>
+              <h3>Working software and an evidence model.</h3>
+              <p>The local console, SHA-256 record discipline and two empty local-first registers are inspectable in this repository.</p>
+              <strong>PROTOTYPE</strong>
+            </article>
+            <article className="evidence-panel evidence-panel--planned">
+              <span>02 / What needs testing</span>
+              <h3>A bounded institutional pilot.</h3>
+              <p>Cost, performance, adoption, repair and local production must be measured before a replication claim is made.</p>
+              <strong>PLANNED</strong>
+            </article>
+            <article className="evidence-panel evidence-panel--unknown">
+              <span>03 / What is unknown</span>
+              <h3>Field outcomes and unit economics.</h3>
+              <p>No verified school deployment, beneficiary result, revenue figure, partner, procurement record or cost saving is published.</p>
+              <strong>UNKNOWN</strong>
+            </article>
+            <article className="evidence-panel evidence-panel--reproduce">
+              <span>04 / What can be reproduced</span>
+              <h3>The architecture, not a success story.</h3>
+              <p>Another team can inspect the system model and sealing machinery. A physical replication kit is not yet complete.</p>
+              <Link href="/evidence">Inspect the record <span aria-hidden="true">→</span></Link>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section className="landing-loop" aria-labelledby="loop-title">
+        <div className="landing-frame">
+          <div className="landing-section-head">
+            <h2 id="loop-title" className="lp-label">From prototype to replication</h2>
             <span>Method, not completed result</span>
           </div>
-          <ol className="surface-rows">
+          <ol className="loop-rail">
             {OPERATING_LOOP.map((step, index) => (
-              <li key={step} className="surface-row">
-                <span className="surface-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-                <div className="surface-text"><h3>{step}</h3></div>
+              <li key={step}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <strong>{step}</strong>
               </li>
             ))}
           </ol>
+        </div>
+      </section>
+
+      <section className="landing-cta" aria-labelledby="cta-title">
+        <div className="landing-frame landing-cta-inner">
+          <div>
+            <p className="lp-label">Start with inspection</p>
+            <h2 id="cta-title">See the system before scaling the story.</h2>
+            <p>Open the local prototype, read the evidence boundary, or contact APT-LABS about a bounded institutional conversation.</p>
+          </div>
+          <div className="landing-actions">
+            <Link href="/console" className="landing-button landing-button-primary">Open the local console</Link>
+            <Link href="/contact" className="landing-button">Start a conversation</Link>
+          </div>
         </div>
       </section>
     </main>
