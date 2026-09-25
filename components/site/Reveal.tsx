@@ -2,8 +2,9 @@
 
 import { useEffect } from "react";
 
-// Reveals [data-reveal] descendants once, on entry. The page stays fully
-// rendered without JS; this only adds motion.
+// Reveals [data-reveal] descendants once, on entry, honoring
+// [data-reveal-delay="1..5"] stagger. The page stays fully rendered
+// without JS; this only adds motion.
 export function Reveal() {
   useEffect(() => {
     const targets = Array.from(document.querySelectorAll(".sb [data-reveal]"));

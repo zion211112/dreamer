@@ -25,6 +25,26 @@ export function Nav() {
     setMobileOpen(false);
   }, [pathname]);
 
+  // Elevate the chrome once the page moves — backdrop deepens, hairline lifts.
+  useEffect(() => {
+    const header = document.querySelector(".site-nav");
+    if (!header) return;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      header.classList.toggle("scrolled", window.scrollY > 8);
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
   useEffect(() => {
     if (!mobileOpen) return;
     const handleKey = (e: KeyboardEvent) => {

@@ -1036,3 +1036,213 @@
   .sb-roll-head { grid-template-columns: 1fr; }
   .sb-footer { flex-direction: column; align-items: flex-start; }
 }
+
+/* ============================================================
+   Aura layer — 2077 polish. Transform/opacity only; every motion
+   dies under prefers-reduced-motion (see guard below).
+   ============================================================ */
+
+/* Slow rotating beam behind the hero composition */
+.sb-hero-beam {
+  position: absolute;
+  width: 1100px;
+  height: 1100px;
+  left: 50%;
+  top: 50%;
+  margin: -550px 0 0 -550px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(215, 167, 95, 0.05) 40deg,
+    transparent 90deg,
+    transparent 180deg,
+    rgba(65, 168, 115, 0.035) 220deg,
+    transparent 270deg
+  );
+  mask-image: radial-gradient(circle, #000 0%, transparent 62%);
+  -webkit-mask-image: radial-gradient(circle, #000 0%, transparent 62%);
+  animation: sb-spin 46s linear infinite;
+  pointer-events: none;
+}
+
+/* Second drifting orb — green answer to the brass one */
+.sb-orb-2 {
+  position: absolute;
+  width: 560px;
+  height: 560px;
+  left: -220px;
+  bottom: -260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(65, 168, 115, 0.09), transparent 65%);
+  filter: blur(22px);
+  animation: sb-drift 19s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Pointer-tracked glow (JS sets --mx/--my on .sb-hero; pointer:fine only) */
+.sb-hero-glow {
+  position: absolute;
+  width: 620px;
+  height: 620px;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(240, 199, 125, 0.075), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.6s var(--sb-ease);
+  pointer-events: none;
+}
+
+.sb-hero.lit .sb-hero-glow {
+  opacity: 1;
+}
+
+/* Scroll progress hairline */
+.sb-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 120;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--brass), var(--brass2));
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  pointer-events: none;
+}
+
+/* Marquee divider */
+.sb-marquee {
+  border-top: 1px solid var(--sb-line);
+  border-bottom: 1px solid var(--sb-line);
+  background: rgba(255, 255, 255, 0.008);
+  overflow: hidden;
+  padding: 14px 0;
+}
+
+.sb-marquee-track {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+  width: max-content;
+  animation: sb-marquee 30s linear infinite;
+}
+
+.sb-marquee:hover .sb-marquee-track {
+  animation-play-state: paused;
+}
+
+.sb-marquee-track span {
+  font-family: var(--font-dm);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--sb-dim);
+  white-space: nowrap;
+}
+
+.sb-marquee-track i {
+  width: 5px;
+  height: 5px;
+  background: var(--brass);
+  flex-shrink: 0;
+}
+
+/* Button shine sweep */
+.sb-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.sb-btn-primary::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 60px;
+  left: -80px;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: skewX(-18deg);
+  transition: left 0.6s var(--sb-ease);
+}
+
+.sb-btn-primary:hover::after {
+  left: calc(100% + 80px);
+}
+
+/* Card lift + brass kiss */
+.sb-work-card {
+  transition: transform 0.35s var(--sb-ease), border-color 0.35s var(--sb-ease), box-shadow 0.35s var(--sb-ease);
+}
+
+.sb-work-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(215, 167, 95, 0.35);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+}
+
+.sb-metric {
+  transition: border-color 0.25s var(--sb-ease), background-color 0.25s var(--sb-ease);
+}
+
+.sb-metric:hover {
+  border-color: rgba(215, 167, 95, 0.3);
+  background: rgba(215, 167, 95, 0.04);
+}
+
+/* Live signal pulse */
+.sb-signal-bar span.live {
+  animation: sb-pulse 2.6s ease-in-out infinite;
+}
+
+.sb-signal-bar span.live:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+/* Staggered entrances */
+.sb [data-reveal-delay="1"] { transition-delay: 0.08s; }
+.sb [data-reveal-delay="2"] { transition-delay: 0.16s; }
+.sb [data-reveal-delay="3"] { transition-delay: 0.24s; }
+.sb [data-reveal-delay="4"] { transition-delay: 0.32s; }
+.sb [data-reveal-delay="5"] { transition-delay: 0.4s; }
+
+@keyframes sb-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes sb-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(34px, -26px, 0) scale(1.08); }
+}
+
+@keyframes sb-marquee {
+  to { transform: translateX(calc(-50% - 17px)); }
+}
+
+@keyframes sb-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sb-hero-beam,
+  .sb-orb-2,
+  .sb-marquee-track,
+  .sb-signal-bar span.live {
+    animation: none !important;
+  }
+  .sb-hero-glow,
+  .sb-btn-primary::after {
+    display: none !important;
+  }
+  .sb-work-card:hover {
+    transform: none;
+  }
+  .sb [data-reveal-delay="1"],
+  .sb [data-reveal-delay="2"],
+  .sb [data-reveal-delay="3"],
+  .sb [data-reveal-delay="4"],
+  .sb [data-reveal-delay="5"] {
+    transition-delay: 0ms !important;
+  }
+}

@@ -2,6 +2,8 @@ import Link from "next/link";
 import { COMPANY, BENBEN_BUILDS } from "../../lib/company";
 import { Reveal } from "../../components/site/Reveal";
 import { RollPreview } from "../../components/site/RollPreview";
+import { HeroGlow } from "../../components/site/HeroGlow";
+import { ScrollProgress } from "../../components/site/ScrollProgress";
 
 export const metadata: { title: string; description: string } = {
   title: "Infrastructure institutions can own",
@@ -23,25 +25,29 @@ export default function HomePage() {
         </svg>
       </div>
       <Reveal />
+      <ScrollProgress />
 
       {/* ── Hero ── */}
       <section className="sb-hero">
         <div className="sb-grid-bg" aria-hidden="true" />
+        <div className="sb-hero-beam" aria-hidden="true" />
         <div className="sb-hero-orb" aria-hidden="true" />
+        <div className="sb-orb-2" aria-hidden="true" />
+        <HeroGlow />
         <div className="sb-container sb-hero-layout">
           <div>
             <div className="sb-eyebrow" data-reveal>
               {COMPANY.name} / {COMPANY.geography.text} / Institutional infrastructure
             </div>
-            <h1 className="sb-title" data-reveal>
+            <h1 className="sb-title" data-reveal data-reveal-delay="1">
               Infrastructure <em>institutions can own.</em>
             </h1>
-            <p className="sb-lead" data-reveal>
+            <p className="sb-lead" data-reveal data-reveal-delay="2">
               APT-LABS builds physical infrastructure, productive computing
               capacity, and the evidence systems that make local technical
               capability easier to operate, repair, and reproduce.
             </p>
-            <div className="sb-actions" data-reveal>
+            <div className="sb-actions" data-reveal data-reveal-delay="3">
               <Link className="sb-btn sb-btn-primary" href="/work">
                 Explore Capabilities
               </Link>
@@ -49,7 +55,7 @@ export default function HomePage() {
                 Inspect The Roll
               </Link>
             </div>
-            <div className="sb-meta" data-reveal>
+            <div className="sb-meta" data-reveal data-reveal-delay="4">
               <span className="sb-pill">
                 <span className="sb-dot" aria-hidden="true" /> Local-first
               </span>
@@ -123,6 +129,18 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Marquee divider ── */}
+      <div className="sb-marquee" aria-hidden="true">
+        <div className="sb-marquee-track">
+          <span>Physical infrastructure</span><i /><span>Productive compute</span><i />
+          <span>Evidence systems</span><i /><span>Local capability</span><i />
+          <span>Repair-aware</span><i /><span>Evidence-led</span><i />
+          <span>Physical infrastructure</span><i /><span>Productive compute</span><i />
+          <span>Evidence systems</span><i /><span>Local capability</span><i />
+          <span>Repair-aware</span><i /><span>Evidence-led</span><i />
+        </div>
+      </div>
+
       {/* ── Statement ── */}
       <section className="sb-statement">
         <div className="sb-container sb-statement-row">
@@ -177,7 +195,7 @@ export default function HomePage() {
               </div>
             </article>
 
-            <article className="sb-work-card" data-reveal>
+            <article className="sb-work-card" data-reveal data-reveal-delay="1">
               <div className="sb-work-num">02 / APT STUDIO</div>
               <h3>Productive computing.</h3>
               <div className="sb-work-tag">Compute · create · render · output</div>
@@ -197,7 +215,7 @@ export default function HomePage() {
             </article>
           </div>
 
-          <div className="sb-studio-layout" data-reveal>
+          <div className="sb-studio-layout" data-reveal data-reveal-delay="2">
             <div className="sb-studio-canvas">
               <div className="sb-micro" style={{ marginBottom: 12 }}>
                 Creative compute / Visualized
@@ -237,7 +255,7 @@ export default function HomePage() {
                 </div>
               </div>
             </article>
-            <div className="sb-boundary" data-reveal>
+            <div className="sb-boundary" data-reveal data-reveal-delay="1">
               <div className="sb-boundary-layout">
                 <div>
                   <small>BenBen Builds · Product track</small>

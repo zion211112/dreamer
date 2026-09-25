@@ -13,6 +13,12 @@
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--rule);
+  transition: background-color 250ms ease, box-shadow 250ms ease;
+}
+
+.site-nav.scrolled {
+  background: rgba(8, 9, 11, 0.94);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
 }
 
 .nav-inner {
