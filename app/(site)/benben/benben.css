@@ -1,0 +1,366 @@
+/* benben.css — sublime minimal Floor.
+   Intake layer, not a face. One accent (--signal), one surface ramp,
+   ruled rows like the reference SaaS trios, dark by design. */
+
+.benben-sublime {
+  position: relative;
+  overflow: hidden;
+}
+
+.benben-hero {
+  min-height: auto;
+  padding-block: 64px 48px;
+}
+
+.benben-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.7fr);
+  gap: 48px;
+  align-items: center;
+}
+
+/* Honest product panel — stands in for the reference photography.
+   Evidence pack §16 forbids field photos; the state rail is the visual. */
+.benben-visual {
+  position: relative;
+  z-index: 1;
+  border: 1px solid var(--rule);
+  background: linear-gradient(135deg, var(--surface-raised), var(--surface-panel) 72%);
+  overflow: hidden;
+}
+
+.benben-visual::before {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--signal-a08) 1px, transparent 1px);
+  background-size: 48px 100%;
+  content: "";
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+.benben-visual-head,
+.benben-visual-grid,
+.benben-visual-note {
+  position: relative;
+  z-index: 1;
+}
+
+.benben-visual-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+
+.benben-visual-head > :last-child {
+  color: var(--signal);
+}
+
+.benben-visual-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.benben-visual-grid > div {
+  display: grid;
+  gap: 8px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.benben-visual-grid > div:nth-child(odd) {
+  border-right: 1px solid var(--rule);
+}
+
+.benben-visual-grid span {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+
+.benben-visual-grid strong {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+}
+
+.benben-visual-note {
+  margin: 0;
+  padding: 14px 18px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--ash);
+}
+
+.benben-strip {
+  background: var(--panel);
+}
+
+/* Floor grid — the BloomFi trio / Miraculum cards, rendered as ruled slots */
+.benben-floor {
+  position: relative;
+  z-index: 1;
+  background: var(--void);
+}
+
+.benben-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.benben-card {
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  padding: 20px;
+  min-width: 0;
+  transition: border-color 120ms ease, background-color 120ms ease;
+}
+
+.benben-card:hover {
+  border-color: var(--ash);
+}
+
+.benben-card.open {
+  border-color: var(--signal);
+  background: var(--void);
+}
+
+.benben-card.dimmed {
+  opacity: 0.55;
+}
+
+.benben-card--empty {
+  border-style: dashed;
+}
+
+.benben-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+
+.benben-card-top:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+.benben-idx {
+  color: var(--signal);
+}
+
+.benben-domain {
+  color: var(--ink);
+}
+
+.benben-votes {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.benben-dot {
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--ash);
+  border-radius: 999px;
+}
+
+.benben-dot.filled {
+  background: var(--signal);
+  border-color: var(--signal);
+}
+
+.benben-vote-num {
+  margin-left: 6px;
+  color: var(--dust);
+}
+
+.benben-title {
+  margin: 16px 0 0;
+  font-family: var(--font-sans);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.benben-meta,
+.benben-clock {
+  margin: 8px 0 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--dust);
+}
+
+.benben-clock {
+  text-transform: uppercase;
+}
+
+.benben-btn {
+  margin-top: 16px;
+  min-height: 44px;
+}
+
+.benben-expand {
+  margin-top: 16px;
+  border-top: 1px solid var(--rule);
+  padding-top: 16px;
+}
+
+.benben-body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--dust);
+}
+
+.benben-facts {
+  display: grid;
+  gap: 12px;
+  margin: 16px 0 0;
+}
+
+.benben-facts > div {
+  display: grid;
+  gap: 4px;
+}
+
+.benben-facts dt {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.benben-facts dd {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.benben-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.benben-comments {
+  margin-top: 16px;
+  border-top: 1px solid var(--rule);
+  padding-top: 16px;
+}
+
+.benben-comments-head {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+
+.benben-comment {
+  display: grid;
+  gap: 4px;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid var(--rule);
+  background: var(--void);
+}
+
+.benben-comment-handle {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--signal);
+}
+
+.benben-comment-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.benben-comments-empty {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--ash);
+}
+
+.benben-comment-form {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.benben-comment-input {
+  min-height: 44px;
+}
+
+.benben-boundary {
+  margin-top: 24px;
+}
+
+.benben-boundary a {
+  color: var(--signal);
+}
+
+@media (max-width: 900px) {
+  .benben-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .benben-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .benben-hero {
+    padding-block: 40px 32px;
+  }
+
+  .benben-actions .site-action,
+  .benben-actions .site-action-secondary,
+  .benben-btn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .benben-card {
+    transition: none;
+  }
+}

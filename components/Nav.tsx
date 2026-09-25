@@ -6,11 +6,13 @@ import { useEffect, useId, useState } from "react";
 
 type NavItem = { href: string; label: string };
 
-// The public site is deliberately small: three quiet routes. The console is
-// the one product, and it is not the main site — it is built on the floor.
+// The public site is deliberately small: three quiet routes + the Floor.
+// The Floor is an intake layer, not a face — local-first, kept out of the
+// index. The console is the one product, entered separately.
 const NAV_ITEMS: NavItem[] = [
   { href: "/about", label: "About" },
   { href: "/evidence", label: "Evidence" },
+  { href: "/benben", label: "Floor" },
   { href: "/contact", label: "Contact" },
 ];
 

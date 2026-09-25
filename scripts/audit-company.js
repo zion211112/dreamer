@@ -114,7 +114,9 @@ faces.forEach(([, key, name, status, route]) => {
 console.log("\n== 3. The public surface is intentionally small ==");
 // The four faces live on the Floor and inside the console; they are the
 // internal architecture, not public marketing routes. The public site is
-// deliberately cloaked to four quiet routes, and each must export metadata.
+// deliberately cloaked to four quiet indexed routes plus one local-only
+// intake layer (/benben): linked in chrome, with metadata, disallowed in
+// robots, absent from the sitemap. Each must export metadata.
 const PUBLIC_ROUTES = [
   { rel: "page.tsx", name: "Home" },
   { rel: "about/page.tsx", name: "About" },
@@ -129,6 +131,23 @@ PUBLIC_ROUTES.forEach(({ rel, name }) => {
     pass(`${name} route exports metadata`);
   } else fail(`${name} route exports no metadata`);
 });
+
+// Local-only intake: metadata yes, robots disallow yes, sitemap no.
+const benbenPage = path.join("app", "(site)", "benben", "page.tsx");
+if (fs.existsSync(benbenPage)) pass("Floor route exists: benben/page.tsx");
+else fail("Floor route has no page: app/(site)/benben/page.tsx");
+if (fs.existsSync(benbenPage) && /export const metadata|faceMetadata/.test(fs.readFileSync(benbenPage, "utf8")) || fs.existsSync(path.join("app", "(site)", "benben", "layout.tsx"))) {
+  pass("Floor route exports metadata");
+} else fail("Floor route exports no metadata");
+const robotsSrc = fs.existsSync("app/robots.ts") ? fs.readFileSync("app/robots.ts", "utf8") : "";
+if (robotsSrc.includes('"/benben"') && robotsSrc.includes("disallow")) pass("Floor is disallowed in robots (local-only)");
+else fail('Floor must be disallowed in robots.ts (local-only intake)');
+const sitemapSrc = fs.existsSync("app/sitemap.ts") ? fs.readFileSync("app/sitemap.ts", "utf8") : "";
+if (!sitemapSrc.includes("`${base}/benben`") && !sitemapSrc.includes('"/benben"') && !sitemapSrc.includes("'/benben'")) pass("Floor stays out of the sitemap (local-only)");
+else fail("Floor must stay out of sitemap.ts (local-only intake)");
+const benbenSrc = fs.existsSync(benbenPage) ? fs.readFileSync(benbenPage, "utf8") : "";
+if (benbenSrc.includes("NO SEEDED BUILDS") && benbenSrc.includes("stays in this browser")) pass("Floor starts empty and visibly bounded");
+else fail("Floor must state that seeded builds are absent and entries stay local");
 
 console.log("\n== 4. Published metrics carry state and provenance ==");
 const metricsBlock = grab(/export const METRICS: Metric\[\] = \[([\s\S]*?)\];/, "METRICS");

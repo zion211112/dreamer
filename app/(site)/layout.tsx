@@ -40,6 +40,7 @@ export default function SiteLayout({
             <Link href="/" className="site-footer-link">Home</Link>
             <Link href="/about" className="site-footer-link">About</Link>
             <Link href="/evidence" className="site-footer-link">Evidence</Link>
+            <Link href="/benben" className="site-footer-link">Floor</Link>
             <Link href="/contact" className="site-footer-link">Contact</Link>
             <Link href="/console" className="site-footer-link">Console</Link>
           </nav>

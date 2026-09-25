@@ -33,6 +33,168 @@
   padding-block: 56px;
 }
 
+.sublime-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.7fr);
+  gap: 48px;
+  align-items: center;
+}
+
+/* Honest visual panel — same compositional slot as the reference photography,
+   but evidence pack §16 forbids field photos, so state stands in. */
+.sublime-panel {
+  position: relative;
+  border: 1px solid var(--rule);
+  background: linear-gradient(135deg, var(--surface-raised), var(--surface-panel) 72%);
+  overflow: hidden;
+}
+
+.sublime-panel::before {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--signal-a08) 1px, transparent 1px);
+  background-size: 48px 100%;
+  content: "";
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+.sublime-panel-head,
+.sublime-panel-grid,
+.sublime-panel-note {
+  position: relative;
+  z-index: 1;
+}
+
+.sublime-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+
+.sublime-panel-head > :last-child {
+  color: var(--signal);
+}
+
+.sublime-panel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.sublime-panel-grid > div {
+  display: grid;
+  gap: 8px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.sublime-panel-grid > div:nth-child(odd) {
+  border-right: 1px solid var(--rule);
+}
+
+.sublime-panel-grid span {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+
+.sublime-panel-grid strong {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+}
+
+.sublime-panel-note {
+  margin: 0;
+  padding: 14px 18px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--ash);
+}
+
+.sublime-panel-note a {
+  color: var(--signal);
+}
+
+/* ── Trio: the reference three-card row, honest content ── */
+.sublime-trio {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid var(--rule);
+  background: var(--void);
+  padding-block: 48px 56px;
+}
+
+.sublime-trio-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.sublime-card {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  padding: 20px;
+  text-decoration: none;
+  transition: border-color 120ms ease, background-color 120ms ease;
+}
+
+.sublime-card:hover {
+  border-color: var(--signal);
+  background: var(--void);
+}
+
+.sublime-card-kicker {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
+.sublime-card strong {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.sublime-card p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--dust);
+}
+
+.sublime-card-go {
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
 .sublime-eyebrow {
   display: flex;
   align-items: center;
@@ -126,6 +288,17 @@
 }
 
 /* ── Mobile ── */
+@media (max-width: 900px) {
+  .sublime-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .sublime-trio-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 640px) {
   .sublime-hero {
     min-height: calc(100svh - 52px);

@@ -2,7 +2,8 @@ import type { MetadataRoute } from "next";
 import { SITE_URL } from "../lib/site";
 
 // The public surface is intentionally small: home, the posture, the proof, and
-// contact. The console is a local-first product and stays out of the index.
+// contact. The Floor (/benben) is a local-first intake layer and the console
+// is a local-first product — both stay out of the index by design.
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = SITE_URL;
   return [
