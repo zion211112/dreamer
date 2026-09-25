@@ -26,9 +26,46 @@ export default function AssetRegisterPage() {
       </header>
 
       <section className="site-frame identity-section" aria-labelledby="asset-state-title">
-        <div className="site-section-head"><h2 id="asset-state-title">Evidence states</h2><span>Lifecycle</span></div>
-        <div className="identity-state-ledger">
-          {ASSET_STATES.map((state) => <div key={state}><span>{state}</span><strong>State</strong></div>)}
+        <div className="site-section-head"><h2 id="asset-state-title">Evidence states</h2><span>Lifecycle · no active record</span></div>
+        <div className="asset-lifecycle" aria-label="Asset evidence lifecycle">
+          {ASSET_STATES.map((state, index) => (
+            <div key={state} className="asset-lifecycle-step" data-state={state}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <strong>{state}</strong>
+              <small>NOT RECORDED</small>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="site-frame asset-anatomy" aria-labelledby="asset-anatomy-title">
+        <div className="site-section-head">
+          <h2 id="asset-anatomy-title">Record anatomy</h2>
+          <span>Illustrative schema · not a published asset</span>
+        </div>
+        <div className="asset-record-template" aria-label="Illustrative asset record template">
+          <div className="asset-record-header">
+            <div>
+              <span className="asset-record-kicker">TEMPLATE RECORD</span>
+              <h3>ASSET-TEMPLATE</h3>
+            </div>
+            <span className="asset-record-state">PLANNED</span>
+          </div>
+          <dl className="asset-record-fields">
+            <div><dt>Record ID</dt><dd>ASSET-TEMPLATE</dd></div>
+            <div><dt>Name</dt><dd>Asset name</dd></div>
+            <div><dt>Face</dt><dd>Deploy / Fab / Studio</dd></div>
+            <div><dt>Current state</dt><dd>Planned until evidence exists</dd></div>
+            <div><dt>Evidence</dt><dd>Required before state advances</dd></div>
+            <div><dt>Bill of materials</dt><dd>Not recorded</dd></div>
+            <div><dt>Location</dt><dd>Not recorded</dd></div>
+            <div><dt>Review date</dt><dd>No date</dd></div>
+            <div><dt>Seal</dt><dd>Computed when a record exists</dd></div>
+          </dl>
+          <div className="asset-record-footer">
+            <span>Schema preview · no historical asset is asserted</span>
+            <code>record → evidence → state → seal</code>
+          </div>
         </div>
       </section>
 
