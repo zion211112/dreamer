@@ -6,17 +6,12 @@ import { useEffect, useId, useState } from "react";
 
 type NavItem = { href: string; label: string };
 
-const PRIMARY_NAV_ITEMS: NavItem[] = [
-  { href: "/deploy", label: "Deploy" },
-  { href: "/fab", label: "Fab" },
-  { href: "/studio", label: "Studio" },
-  { href: "/roll", label: "Roll" },
-];
-
-const UTILITY_NAV_ITEMS: NavItem[] = [
-  { href: "/benben", label: "Floor" },
-  { href: "/evidence", label: "Evidence" },
+// The public site is deliberately small: three quiet routes. The console is
+// the one product, and it is not the main site — it is built on the floor.
+const NAV_ITEMS: NavItem[] = [
   { href: "/about", label: "About" },
+  { href: "/evidence", label: "Evidence" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export function Nav() {
@@ -49,11 +44,7 @@ export function Nav() {
   }, [mobileOpen]);
 
   const isActive = (href: string) =>
-    href === "/"
-      ? pathname === "/"
-      : href === "/roll"
-        ? pathname.startsWith("/roll") || pathname.startsWith("/ledger")
-        : pathname.startsWith(href);
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
     <header className="site-nav" role="banner">
@@ -61,17 +52,14 @@ export function Nav() {
         <Link
           href="/"
           className="nav-brand"
-          aria-label="APT-LABS — locally owned institutional infrastructure systems"
+          aria-label="APT-LABS home"
         >
           <span className="nav-brand-mark" aria-hidden="true">A</span>
           <span className="nav-brand-text">APT-LABS</span>
         </Link>
 
-        <nav
-          aria-label="Primary navigation"
-          className="nav-links"
-        >
-          {PRIMARY_NAV_ITEMS.map((item) => {
+        <nav aria-label="Primary navigation" className="nav-links">
+          {NAV_ITEMS.map((item) => {
             const active = isActive(item.href);
             return (
               <Link
@@ -84,21 +72,7 @@ export function Nav() {
               </Link>
             );
           })}
-          <span className="nav-divider" aria-hidden="true" />
-          {UTILITY_NAV_ITEMS.map((item) => {
-            const active = isActive(item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={active ? "page" : undefined}
-                className={["nav-link", "nav-link--utility", active ? "nav-link--active" : ""].filter(Boolean).join(" ")}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-          <Link href="/console" className="nav-console-action">Open Console</Link>
+          <Link href="/console" className="nav-console-action">Console</Link>
         </nav>
 
         <button
@@ -134,25 +108,8 @@ export function Nav() {
       >
         <div className="nav-mobile-inner">
           <div className="nav-mobile-group">
-            <span className="nav-mobile-label">Faces</span>
-            {PRIMARY_NAV_ITEMS.map((item) => {
-              const active = isActive(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  aria-current={active ? "page" : undefined}
-                  className={["nav-mobile-link", active ? "nav-mobile-link--active" : ""].filter(Boolean).join(" ")}
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </div>
-          <div className="nav-mobile-group">
             <span className="nav-mobile-label">Explore</span>
-            {UTILITY_NAV_ITEMS.map((item) => {
+            {NAV_ITEMS.map((item) => {
               const active = isActive(item.href);
               return (
                 <Link
@@ -167,7 +124,9 @@ export function Nav() {
               );
             })}
           </div>
-          <Link href="/console" className="nav-mobile-console" onClick={() => setMobileOpen(false)}>Open Console <span aria-hidden="true">→</span></Link>
+          <Link href="/console" className="nav-mobile-console" onClick={() => setMobileOpen(false)}>
+            Open Console <span aria-hidden="true">→</span>
+          </Link>
         </div>
       </nav>
     </header>

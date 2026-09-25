@@ -1,0 +1,154 @@
+/* home.css — the "minimal sublime" front.
+   The public site is a calm, cloaked prototype: one hero, one CTA, one
+   whisper. No faces, no loops, no registers. The console is the product.
+   Scoped to the home route; the shared site primitives (.site-frame,
+   .site-action, .page-title) come from site.css + globals.css. */
+
+.sublime {
+  position: relative;
+  overflow: hidden;
+  background: var(--void);
+}
+
+/* ── Ambient elevation: a soft, sublime glow behind the hero.
+      A cool core up top, a whisper of warm low-right. Subtle on purpose. ── */
+.sublime-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(42rem 30rem at 50% -8rem, rgba(20, 184, 166, 0.16), transparent 62%),
+    radial-gradient(34rem 26rem at 90% 110%, rgba(217, 119, 6, 0.08), transparent 60%),
+    radial-gradient(60rem 42rem at 50% 38%, rgba(20, 184, 166, 0.05), transparent 72%);
+}
+
+/* ── Hero: one statement, one CTA, plenty of air ── */
+.sublime-hero {
+  position: relative;
+  z-index: 1;
+  min-height: calc(100svh - 56px);
+  display: grid;
+  align-content: center;
+  padding-block: 56px;
+}
+
+.sublime-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 26px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+
+.sublime-eyebrow-dot {
+  width: 5px;
+  height: 5px;
+  background: var(--signal);
+  box-shadow: 0 0 10px var(--signal-a30);
+}
+
+.sublime-title {
+  margin: 0;
+  max-width: 20ch;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(40px, 6.4vw, 68px);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.sublime-lede {
+  max-width: 44ch;
+  margin: 24px 0 0;
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--dust);
+}
+
+.sublime-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 40px;
+}
+
+/* ── Whisper: three quiet postures, a single soft rule ── */
+.sublime-whisper {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid var(--rule);
+  background: var(--panel);
+  padding-block: 30px;
+}
+
+.sublime-whisper-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 40px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.sublime-whisper-row span {
+  position: relative;
+  padding-left: 14px;
+}
+
+.sublime-whisper-row span::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  transform: translateY(-50%);
+  background: var(--signal);
+}
+
+.sublime-whisper-note {
+  max-width: 44ch;
+  margin: 20px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ash);
+}
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .sublime-hero {
+    min-height: calc(100svh - 52px);
+    padding-block: 40px;
+  }
+
+  .sublime-title {
+    font-size: clamp(34px, 11vw, 48px);
+  }
+
+  .sublime-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sublime-whisper-row {
+    gap: 10px 24px;
+  }
+}
+
+/* Respect reduced motion: the glow is static, but keep it quiet anyway. */
+@media (prefers-reduced-motion: reduce) {
+  .sublime-glow {
+    background: none;
+  }
+}

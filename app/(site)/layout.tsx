@@ -38,17 +38,13 @@ export default function SiteLayout({
           </div>
           <nav aria-label="Footer" className="site-footer-links">
             <Link href="/" className="site-footer-link">Home</Link>
-            <Link href="/deploy" className="site-footer-link">Deploy</Link>
-            <Link href="/fab" className="site-footer-link">Fab</Link>
-            <Link href="/studio" className="site-footer-link">Studio</Link>
-            <Link href="/roll" className="site-footer-link">Roll</Link>
-            <Link href="/benben" className="site-footer-link">Floor</Link>
-            <Link href="/evidence" className="site-footer-link">Evidence</Link>
             <Link href="/about" className="site-footer-link">About</Link>
+            <Link href="/evidence" className="site-footer-link">Evidence</Link>
             <Link href="/contact" className="site-footer-link">Contact</Link>
+            <Link href="/console" className="site-footer-link">Console</Link>
           </nav>
           <p className="site-footer-copy">
-            One institutional infrastructure system. Four faces. One evidence model.
+            A quiet prototype, built to be owned, repaired and reproduced locally.
           </p>
         </div>
       </footer>

@@ -7,12 +7,9 @@ const read = (rel) => fs.readFileSync(path.join(__dirname, "..", rel), "utf8");
 
 test("public truth surfaces do not ship seeded people or fake console credentials", () => {
   const ledger = read("lib/ledger.ts");
-  const floor = read("app/(site)/benben/page.tsx");
   const consolePage = read("app/(console)/console/page.tsx");
   assert.match(ledger, /SEED_MEMBERS: Member\[\] = \[\]/);
   assert.doesNotMatch(ledger, /SCHOOL_STATS|TREASURY|HALL_FEE|TEACHER_FEE|SCHOOL_FEE|SUBSCRIBED_SCHOOLS/);
-  assert.match(floor, /NO SEEDED BUILDS/);
-  assert.doesNotMatch(floor, /KES [0-9]|costs [0-9]+%|votes: [1-9]/);
   assert.doesNotMatch(consolePage, /RUNPILOT|PILOTRUN|gateOpen|GATE_NAME|GATE_SCHOOL/);
 });
 

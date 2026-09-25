@@ -7,7 +7,7 @@ import "./site.css";
 
 export const metadata: Metadata = {
   title: "No such page",
-  description: "The roll has no entry for that address.",
+  description: "That address is not on the map yet.",
   robots: { index: false, follow: true },
 };
 
@@ -21,17 +21,17 @@ export default function NotFound() {
           className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 text-ink opacity-[0.09]"
         />
         <div className="relative mx-auto w-full max-w-2xl px-6 py-20 text-center">
-          <p className="font-mono text-xs tracking-[0.35em] text-dust uppercase">404 · Not on the list</p>
+          <p className="font-mono text-xs tracking-[0.35em] text-dust uppercase">404 · Not found</p>
           <h1 className="page-title">No such page.</h1>
           <p className="mx-auto mt-5 max-w-[44ch] text-sm leading-6 text-dust">
-            The roll has no entry for that address. It will, when someone claims it.
+            That address is not on the map yet. Start from the front, or read the posture.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             <Link href="/" className="site-action">
-              Back to the porch →
+              Back to the start →
             </Link>
-            <Link href="/ledger" className="site-action-secondary">
-              Open the roll
+            <Link href="/about" className="site-action-secondary">
+              Why we build like this
             </Link>
           </div>
         </div>
@@ -39,4 +39,3 @@ export default function NotFound() {
     </main>
   );
 }
-

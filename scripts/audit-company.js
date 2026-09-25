@@ -111,15 +111,21 @@ faces.forEach(([, key, name, status, route]) => {
   } else fail(`face ${key} has illegal state: ${status}`);
 });
 
-console.log("\n== 3. Every face has a live route with metadata ==");
-faces.forEach(([, key, name, status, route]) => {
-  const dir = path.join("app", "(site)", route.replace(/^\//, ""));
-  const page = path.join(dir, "page.tsx");
-  const layout = path.join(dir, "layout.tsx");
-  if (fs.existsSync(page)) pass(`${name} route exists: ${route}`);
+console.log("\n== 3. The public surface is intentionally small ==");
+// The four faces live on the Floor and inside the console; they are the
+// internal architecture, not public marketing routes. The public site is
+// deliberately cloaked to four quiet routes, and each must export metadata.
+const PUBLIC_ROUTES = [
+  { rel: "page.tsx", name: "Home" },
+  { rel: "about/page.tsx", name: "About" },
+  { rel: "evidence/page.tsx", name: "Evidence" },
+  { rel: "contact/page.tsx", name: "Contact" },
+];
+PUBLIC_ROUTES.forEach(({ rel, name }) => {
+  const page = path.join("app", "(site)", rel);
+  if (fs.existsSync(page)) pass(`${name} route exists: ${rel}`);
   else fail(`${name} route has no page: ${page}`);
-  const file = fs.existsSync(page) ? page : fs.existsSync(layout) ? layout : null;
-  if (file && /export const metadata/.test(fs.readFileSync(file, "utf8"))) {
+  if (fs.existsSync(page) && /export const metadata/.test(fs.readFileSync(page, "utf8"))) {
     pass(`${name} route exports metadata`);
   } else fail(`${name} route exports no metadata`);
 });

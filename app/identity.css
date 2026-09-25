@@ -651,4 +651,15 @@
     flex-direction: column;
     gap: 8px;
   }
+
+/* about page — quiet sans body copy under the serif lead */
+.about-body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  color: var(--dust);
+  line-height: 1.7;
+  max-width: 56ch;
+  margin-top: 0;
+}
+
 }

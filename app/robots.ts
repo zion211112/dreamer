@@ -1,26 +1,15 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "../lib/site";
 
-// Public architecture and evidence routes are discoverable. The console,
-// dashboard and search surface remain outside the index.
+// The quiet public routes are discoverable. The console is a local-first
+// product and is kept out of the index on purpose.
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
         userAgent: "*",
-        allow: [
-          "/",
-          "/about",
-          "/deploy",
-          "/fab",
-          "/studio",
-          "/roll",
-          "/roll/assets",
-          "/evidence",
-          "/ledger",
-          "/contact",
-        ],
-        disallow: ["/dashboard", "/benben", "/search", "/console"],
+        allow: ["/", "/about", "/evidence", "/contact"],
+        disallow: ["/console"],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
