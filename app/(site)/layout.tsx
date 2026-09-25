@@ -3,6 +3,7 @@ import { SITE_URL } from "../../lib/site";
 import Link from "next/link";
 import { Nav } from "../../components/Nav";
 import "../site.css";
+import "./sublime.css";
 
 export default function SiteLayout({
   children,
@@ -38,14 +39,14 @@ export default function SiteLayout({
           </div>
           <nav aria-label="Footer" className="site-footer-links">
             <Link href="/" className="site-footer-link">Home</Link>
+            <Link href="/work" className="site-footer-link">Work</Link>
+            <Link href="/roll" className="site-footer-link">Roll</Link>
             <Link href="/about" className="site-footer-link">About</Link>
             <Link href="/evidence" className="site-footer-link">Evidence</Link>
-            <Link href="/benben" className="site-footer-link">Floor</Link>
             <Link href="/contact" className="site-footer-link">Contact</Link>
-            <Link href="/console" className="site-footer-link">Console</Link>
           </nav>
           <p className="site-footer-copy">
-            A quiet prototype, built to be owned, repaired and reproduced locally.
+            Build locally. Keep capability local.
           </p>
         </div>
       </footer>

@@ -128,3 +128,49 @@
   text-transform: uppercase;
   color: var(--ash);
 }
+
+/* Three paths — quiet ruled rows above the two classic lines. No motion,
+   no transforms: the classic page carries none by contract. */
+.contact-paths {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0 0 32px;
+  border: 1px solid var(--rule);
+  background: var(--rule);
+}
+
+.contact-path {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 20px;
+  background: var(--void);
+}
+
+.contact-path-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--signal);
+}
+
+.contact-path-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.contact-path-copy {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--dust);
+}
+
+@media (max-width: 640px) {
+  .contact-paths {
+    grid-template-columns: 1fr;
+  }
+}

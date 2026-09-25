@@ -403,7 +403,7 @@ export default function BenBenPage() {
           </div>
 
           <div className="identity-notice benben-boundary" role="note">
-            Intake layer — not a company face. Local where practical. Import where
+            Intake layer for the BenBen Builds track — not a company face. Local where practical. Import where
             necessary. Document the difference. Nothing here leaves this device until
             exported. See <Link href="/evidence">the evidence boundary</Link>.
           </div>

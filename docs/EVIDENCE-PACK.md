@@ -23,7 +23,7 @@ Every entry carries one of seven states:
 
 ## 1. Company
 
-APT-LABS is a Kenyan technology and infrastructure company building locally owned, resilient institutional systems for schools, training centres, creative facilities and other organizations operating under connectivity, cost and supply-chain constraints. It combines four capabilities: offline-first software, locally fabricated hardware, creative-computing infrastructure, and transparent technical documentation.
+APT-LABS is a Kenyan technology and infrastructure company building locally owned institutional infrastructure. It works across physical infrastructure, creative-computing capacity and the systems that document, maintain and reproduce them locally.
 
 - **Operating geography:** Kirinyaga, Kenya — `DECLARED` (stated by the organisation; not an independently verified field presence).
 - **Organisation legal status:** `UNKNOWN` — not published until documented. Do not invent registration numbers, PBO/company numbers or founding dates.
@@ -51,23 +51,34 @@ cost-of-failure numbers are claimed anywhere, because none are yet sourced.
 
 ## 4. APT-LABS Architecture
 
-One infrastructure system, four faces, one intake layer, one evidence model.
+One infrastructure company, three pillars, one build track, one evidence model.
+APT-LABS is the environment that can produce and support products; BenBen
+Builds is the track where products get built. The School Console is a BenBen
+Builds product — never a company face and never the company's proof.
 
 ```text
-                 APT-LABS
-                    │
-        ┌───────────┼───────────┐
-        │           │           │
-      DEPLOY       FAB        STUDIO
-        │           │           │
-        └───────────┼───────────┘
-                    │
-                 THE ROLL
-          ┌─────────┴─────────┐
-       PEOPLE               ASSETS
-          ▲                   ▲
-          └──── BENBEN / ────┘
-               THE FLOOR
+                     APT-LABS
+            infrastructure company / lab
+                         │
+           ┌─────────────┼─────────────┐
+           │             │             │
+        APT FAB      APT STUDIO     THE ROLL
+        physical      creative      evidence /
+     infrastructure   compute       provenance
+           │             │             │
+           └─────────────┼─────────────┘
+                         │
+                 LOCAL CAPABILITY
+                         │
+                  selected builds
+                         │
+                   BENBEN BUILDS
+                   build track
+                         │
+              ┌──────────┴──────────┐
+              │                     │
+        school console        other products
+        teacher tools         / experiments
 ```
 
 Operating loop:
@@ -82,14 +93,21 @@ Status ledger — this table is machine-checked against `lib/company.ts`:
 
 | Face | Status | Public route | Application route |
 | --- | --- | --- | --- |
-| APT Deploy | PROTOTYPE | /deploy | /console |
-| APT Fab | PLANNED | /fab | — |
-| APT Studio | PLANNED | /studio | — |
-| The Roll | PROTOTYPE | /roll | /ledger, /roll/assets |
+| APT Fab | PLANNED | /work | — |
+| APT Studio | PLANNED | /work | — |
+| The Roll | PROTOTYPE | /roll | — |
 
-## 5. APT Deploy
+BenBen Builds is the build / product track, not a face: `PROTOTYPE`,
+presented at `/work`, with the School Console product at `/console`
+(local-first prototype, no verified deployment) and the Floor intake at
+`/benben` (local-only, starts empty). The retired Deploy face is gone on
+purpose: a product prototype must never stand as a company pillar.
 
-Offline-capable institutional software for schools and training institutions.
+## 5. BenBen Builds
+
+The track where practical ideas become working products. Its current product
+is the School Console: teacher and school operations that work where
+connectivity doesn't.
 
 **What exists today (`PROTOTYPE`, verifiable by running the build):**
 
@@ -104,7 +122,7 @@ Offline-capable institutional software for schools and training institutions.
   timetable, fee and inspection engines in `lib/`.
 - CSV roster in and out, plus a one-file school backup.
 
-**What does not exist:** any verified school deployment. The console is a local prototype with no account or credential gate; anything entered stays in the browser unless exported.
+**What does not exist:** any verified school deployment. The console is a BenBen Builds local prototype with no account or credential gate; anything entered stays in the browser unless exported. It is not an APT-LABS face, not an APT-LABS product, and not the company's proof.
 
 ## 6. APT Fab
 
@@ -136,8 +154,8 @@ One ledger, two registers. Same seal, same hash machinery, same trust model.
 
 | Register | Route | State | Contents |
 | --- | --- | --- | --- |
-| People | `/ledger` | `PROTOTYPE` | Names, skills, credentials, seals |
-| Assets | `/roll/assets` | `PROTOTYPE` | Designed / purchased / fabricated / installed / repaired / trained / tested / accepted / documented |
+| People | `/roll` | `PROTOTYPE` | Makers, builders, creators, contributors |
+| Assets | `/roll` | `PROTOTYPE` | Designed / purchased / fabricated / installed / repaired / trained / tested / accepted / documented |
 
 Mechanics that exist in code (`VERIFIED`): a SHA-256 seal per entry
 (`lib/hash.ts`), a rolling master seal over the register (`lib/ledger.ts`),
@@ -148,11 +166,13 @@ The register ships empty. Any local record created on the page is labelled and r
 
 ## 9. BenBen / The Floor
 
-**Intake layer — not a company face.**
+**Intake layer — not a company face.** Capability enters here and selected
+builds move into BenBen Builds products before evidence is recorded in
+The Roll.
 
 ```text
-local capability → Floor → verification → APT Fab / APT Studio
-                → The Roll evidence → reusable asset
+local capability → Floor → verification → BenBen Builds products
+                 → The Roll evidence → reusable asset
 ```
 
 State: `PROTOTYPE`. The Floor starts with empty slots. Build posts are organised by
@@ -167,9 +187,9 @@ State: `PROTOTYPE`. The Floor starts with empty slots. Build posts are organised
 - `npm test` — 41 tests pass.
 - `node scripts/audit-classes.js` — zero undefined class names.
 - `node scripts/audit-funder.js` — route metadata, empty registers, no fake gates, legacy demo constants, and grant lenses are coherent.
-- Public routes: `/`, `/deploy`, `/fab`, `/studio`, `/roll`, `/roll/assets`,
-  `/about`, `/evidence`, `/ledger`, `/benben`, `/contact`, with the console
-  application at `/console`.
+- Public routes: `/`, `/work`, `/roll`, `/about`, `/evidence`, `/contact`, with the Floor
+  intake at `/benben` (local-only, kept out of the index) and the BenBen Builds
+  School Console at `/console` (local-first product, kept out of the index).
 
 ## 11. Pilot Partner(s)
 
@@ -228,7 +248,7 @@ assets without one are marked accordingly.
 
 ## 18. Asset Register
 
-Implemented at `/roll/assets` with states:
+Presented at `/roll` with states:
 
 `PLANNED` → `PROTOTYPE` → `FABRICATED` → `INSTALLED` → `TESTED` → `ACCEPTED` → `VERIFIED`
 

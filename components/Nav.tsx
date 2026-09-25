@@ -6,13 +6,13 @@ import { useEffect, useId, useState } from "react";
 
 type NavItem = { href: string; label: string };
 
-// The public site is deliberately small: three quiet routes + the Floor.
-// The Floor is an intake layer, not a face — local-first, kept out of the
-// index. The console is the one product, entered separately.
+// The company site is five pages: Work, Roll, About, Contact. Products live
+// on the BenBen Builds track (/work → /console) and never in this header —
+// the header sells the company, not a prototype.
 const NAV_ITEMS: NavItem[] = [
+  { href: "/work", label: "Work" },
+  { href: "/roll", label: "Roll" },
   { href: "/about", label: "About" },
-  { href: "/evidence", label: "Evidence" },
-  { href: "/benben", label: "Floor" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -74,7 +74,7 @@ export function Nav() {
               </Link>
             );
           })}
-          <Link href="/console" className="nav-console-action">Console</Link>
+          <Link href="/contact" className="nav-console-action">Talk to APT-LABS</Link>
         </nav>
 
         <button
@@ -126,8 +126,8 @@ export function Nav() {
               );
             })}
           </div>
-          <Link href="/console" className="nav-mobile-console" onClick={() => setMobileOpen(false)}>
-            Open Console <span aria-hidden="true">→</span>
+          <Link href="/contact" className="nav-mobile-console" onClick={() => setMobileOpen(false)}>
+            Talk to APT-LABS <span aria-hidden="true">→</span>
           </Link>
         </div>
       </nav>

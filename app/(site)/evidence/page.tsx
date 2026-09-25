@@ -43,11 +43,11 @@ export default function EvidencePage() {
         </div>
 
         <div className="identity-actions">
-          <Link className="site-action" href="/console">
-            Enter the console <span aria-hidden="true">→</span>
+          <Link className="site-action" href="/roll">
+            Inspect the Roll <span aria-hidden="true">→</span>
           </Link>
-          <Link className="site-action-secondary" href="/contact">
-            Request the record
+          <Link className="site-action-secondary" href="/work">
+            See the work
           </Link>
         </div>
       </div>

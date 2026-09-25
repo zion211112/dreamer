@@ -40,16 +40,40 @@
   align-items: center;
 }
 
-/* Honest visual panel — same compositional slot as the reference photography,
-   but evidence pack §16 forbids field photos, so state stands in. */
-.sublime-panel {
+.sublime-lede--second {
+  margin-top: 12px;
+  color: var(--ink);
+}
+
+.sublime-subtle {
+  margin: 20px 0 0;
+  font-size: 13px;
+}
+
+.sublime-subtle a {
+  color: var(--dust);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 2px;
+}
+
+.sublime-subtle a:hover {
+  color: var(--signal);
+  border-color: var(--signal);
+}
+
+/* ── Composition: physical → productive → documented.
+      The company visual. Text-diagram, never the console. ── */
+.sublime-composition {
   position: relative;
+  display: grid;
+  gap: 0;
   border: 1px solid var(--rule);
   background: linear-gradient(135deg, var(--surface-raised), var(--surface-panel) 72%);
   overflow: hidden;
 }
 
-.sublime-panel::before {
+.sublime-composition::before {
   position: absolute;
   inset: 0;
   background: linear-gradient(90deg, var(--signal-a08) 1px, transparent 1px);
@@ -59,140 +83,115 @@
   pointer-events: none;
 }
 
-.sublime-panel-head,
-.sublime-panel-grid,
-.sublime-panel-note {
+.sublime-part {
   position: relative;
   z-index: 1;
-}
-
-.sublime-panel-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--rule);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--dust);
-}
-
-.sublime-panel-head > :last-child {
-  color: var(--signal);
-}
-
-.sublime-panel-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-
-.sublime-panel-grid > div {
   display: grid;
   gap: 8px;
-  padding: 16px 18px;
+  padding: 20px 22px;
   border-bottom: 1px solid var(--rule);
 }
 
-.sublime-panel-grid > div:nth-child(odd) {
-  border-right: 1px solid var(--rule);
+.sublime-part:last-child {
+  border-bottom: 0;
 }
 
-.sublime-panel-grid span {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--dust);
-}
-
-.sublime-panel-grid strong {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: var(--ink);
-}
-
-.sublime-panel-note {
-  margin: 0;
-  padding: 14px 18px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  line-height: 1.6;
-  color: var(--ash);
-}
-
-.sublime-panel-note a {
-  color: var(--signal);
-}
-
-/* ── Trio: the reference three-card row, honest content ── */
-.sublime-trio {
-  position: relative;
-  z-index: 1;
-  border-top: 1px solid var(--rule);
-  background: var(--void);
-  padding-block: 48px 56px;
-}
-
-.sublime-trio-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: 24px;
-}
-
-.sublime-card {
-  display: grid;
-  gap: 10px;
-  align-content: start;
-  border: 1px solid var(--rule);
-  background: var(--panel);
-  padding: 20px;
-  text-decoration: none;
-  transition: border-color 120ms ease, background-color 120ms ease;
-}
-
-.sublime-card:hover {
-  border-color: var(--signal);
-  background: var(--void);
-}
-
-.sublime-card-kicker {
+.sublime-part-kicker {
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--signal);
 }
 
-.sublime-card strong {
-  font-size: 20px;
+.sublime-part strong {
+  font-size: 19px;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--ink);
 }
 
-.sublime-card p {
+.sublime-part p {
   margin: 0;
-  font-size: 14px;
-  line-height: 1.65;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--dust);
 }
 
-.sublime-card-go {
-  margin-top: 6px;
+.sublime-plus {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ash);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14px;
+  background: var(--void);
+}
+
+/* ── BenBen Builds band: deliberately distinct from the pillars ── */
+.sublime-builds {
+  position: relative;
+  z-index: 1;
+  border-top: 1px dashed var(--strong);
+  background: var(--panel);
+  padding-block: 48px 56px;
+}
+
+.sublime-builds-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(240px, 0.6fr);
+  gap: 40px;
+  align-items: end;
+  margin-top: 24px;
+}
+
+.sublime-builds-title {
+  margin: 0;
+  max-width: 24ch;
+  font-family: var(--font-sans);
+  font-size: clamp(24px, 3vw, 34px);
   font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--signal);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.sublime-builds-copy {
+  max-width: 52ch;
+  margin: 16px 0 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--dust);
+}
+
+.sublime-builds-actions {
+  display: grid;
+  gap: 12px;
+}
+
+/* ── Closing principle ── */
+.sublime-close {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid var(--rule);
+  background: var(--void);
+  padding-block: 40px;
+}
+
+.sublime-close-text {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(24px, 3.4vw, 36px);
+  letter-spacing: -0.02em;
+  color: var(--ink);
 }
 
 .sublime-eyebrow {
@@ -294,8 +293,9 @@
     gap: 32px;
   }
 
-  .sublime-trio-grid {
+  .sublime-builds-grid {
     grid-template-columns: 1fr;
+    gap: 24px;
   }
 }
 

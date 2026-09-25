@@ -235,6 +235,12 @@ body {
   --amber:  #D97706;
   --danger: #EF4444;
 
+  /* Sublime site accent — brass for company chrome, green for live states.
+     Console keeps --signal; the company site speaks brass. */
+  --brass:  #D7A75F;
+  --brass2: #F0C77D;
+  --green:  #41A873;
+
   /* Semantic aliases */
   --bg:       var(--void);
   --fg:       var(--ink);
@@ -275,8 +281,10 @@ body {
 /* ─── Type families — Google Faces with system fallbacks ─── */
 
 :root {
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
                "Helvetica Neue", Arial, "Noto Sans", system-ui, sans-serif;
+  --font-display: var(--font-grotesk), "Space Grotesk", system-ui, sans-serif;
+  --font-dm: var(--font-dmmono), "DM Mono", ui-monospace, Menlo, Consolas, monospace;
   --font-serif: var(--font-playfair), "Iowan Old Style", "Apple Garamond", Baskerville,
                 "Palatino Linotype", "Times New Roman", Georgia, serif;
   --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono",

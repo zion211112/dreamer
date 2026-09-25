@@ -54,7 +54,7 @@ const packNorm = norm(pack.replace(/^>\s?/gm, " "));
 console.log("\n== 1. Evidence pack structure ==");
 
 const REQUIRED_SECTIONS = [
-  "Company", "Founder / Team", "Problem", "APT-LABS Architecture", "APT Deploy",
+  "Company", "Founder / Team", "Problem", "APT-LABS Architecture", "BenBen Builds",
   "APT Fab", "APT Studio", "The Roll", "BenBen / The Floor",
   "Current Prototype State", "Pilot Partner(s)", "Unit Economics",
   "Local Procurement", "Impact Metrics", "Technical Evidence",
@@ -92,17 +92,18 @@ else if (response) fail("RESPONSE is not present in the evidence pack");
 // Status ledger: every row in company.ts must exist in pack §4's table.
 const ledgerBlock = grab(/export const STATUS_LEDGER = \[([\s\S]*?)\];/, "STATUS_LEDGER");
 const rows = [...ledgerBlock.matchAll(/face: "([^"]+)", status: "([^"]+)", route: "([^"]+)"/g)];
-if (rows.length !== 4) fail(`STATUS_LEDGER has ${rows.length} rows, expected 4`);
+if (rows.length !== 3) fail(`STATUS_LEDGER has ${rows.length} rows, expected 3`);
 rows.forEach(([, face, status, route]) => {
   const cell = `| ${face} | ${status} | ${route} |`;
   if (pack.includes(cell)) pass(`status ledger: ${face} · ${status} · ${route}`);
   else fail(`status ledger row missing from evidence pack §4: ${cell}`);
 });
 
-// Faces: name + status must be documented in the pack.
+// Faces: name + status must be documented in the pack. Three pillars —
+// products live on the BenBen Builds track, never as faces.
 const faceBlock = grab(/export const FACES: Record<Face\["key"\], Face> = \{([\s\S]*?)\n\};/, "FACES");
 const faces = [...faceBlock.matchAll(/key: "(\w+)",\s*\n\s*name: "([^"]+)",[\s\S]*?status: "([A-Z]+)",\s*\n\s*route: "([^"]+)"/g)];
-if (faces.length !== 4) fail(`FACES has ${faces.length} entries, expected 4`);
+if (faces.length !== 3) fail(`FACES has ${faces.length} entries, expected 3`);
 faces.forEach(([, key, name, status, route]) => {
   if (pack.includes(name)) pass(`face documented: ${name}`);
   else fail(`face not documented in evidence pack: ${name}`);
@@ -111,14 +112,25 @@ faces.forEach(([, key, name, status, route]) => {
   } else fail(`face ${key} has illegal state: ${status}`);
 });
 
-console.log("\n== 3. The public surface is intentionally small ==");
-// The four faces live on the Floor and inside the console; they are the
-// internal architecture, not public marketing routes. The public site is
-// deliberately cloaked to four quiet indexed routes plus one local-only
-// intake layer (/benben): linked in chrome, with metadata, disallowed in
-// robots, absent from the sitemap. Each must export metadata.
+// BenBen Builds is the product track, never a face: it must exist in code,
+// be marked isFace: false, and be documented in pack §5 — while no face may
+// be named Deploy and no face may point at the console as its app route.
+if (/export const BENBEN_BUILDS = \{/.test(src) && /isFace: false/.test(src)) {
+  pass("BENBEN_BUILDS track exists and isFace is false");
+} else fail("BENBEN_BUILDS must exist in lib/company.ts with isFace: false");
+if (/key: "deploy"|face: "APT Deploy"|"\/deploy"|appRoute: "\/console"/.test(src)) {
+  fail("retired Deploy model leaks in lib/company.ts (deploy key, /deploy route, or console appRoute)");
+} else pass("no Deploy face, /deploy route, or console appRoute in lib/company.ts");
+
+console.log("\n== 3. The company site is five pages plus local tracks ==");
+// The company is three pillars (Fab, Studio, Roll) presented across five
+// indexed pages. Products live on the BenBen Builds track and the Floor is
+// a local-only intake layer: linked from /work, with metadata, disallowed
+// in robots, absent from the sitemap. Each indexed page must export metadata.
 const PUBLIC_ROUTES = [
   { rel: "page.tsx", name: "Home" },
+  { rel: "work/page.tsx", name: "Work" },
+  { rel: "roll/page.tsx", name: "Roll" },
   { rel: "about/page.tsx", name: "About" },
   { rel: "evidence/page.tsx", name: "Evidence" },
   { rel: "contact/page.tsx", name: "Contact" },

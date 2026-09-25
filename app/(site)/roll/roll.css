@@ -1,0 +1,127 @@
+/* roll.css — the Roll page. Two registers, one lifecycle, ruled rows. */
+
+.roll-page {
+  padding-bottom: 72px;
+}
+
+.roll-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 48px;
+  margin-top: 48px;
+  padding-bottom: 48px;
+}
+
+.roll-register {
+  min-width: 0;
+}
+
+.roll-register-copy {
+  max-width: 52ch;
+  margin: 20px 0 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--dust);
+}
+
+.roll-list {
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.roll-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.roll-list li::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  background: var(--signal);
+  flex-shrink: 0;
+}
+
+.roll-lifecycle {
+  padding-block: 8px 40px;
+}
+
+.roll-chain {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--rule);
+}
+
+.roll-chain li {
+  position: relative;
+  padding: 16px 12px;
+  border-right: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.roll-chain li:last-child {
+  border-right: 0;
+}
+
+.roll-chain li::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 12px;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--signal);
+  background: var(--void);
+}
+
+@media (max-width: 800px) {
+  .roll-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .roll-chain {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .roll-chain li:nth-child(3) {
+    border-right: 0;
+  }
+
+  .roll-chain li:nth-child(n + 4) {
+    border-top: 1px solid var(--rule);
+  }
+}
+
+@media (max-width: 520px) {
+  .roll-chain {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .roll-chain li:nth-child(3) {
+    border-right: 1px solid var(--rule);
+  }
+
+  .roll-chain li:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .roll-chain li:nth-child(n + 3) {
+    border-top: 1px solid var(--rule);
+  }
+}

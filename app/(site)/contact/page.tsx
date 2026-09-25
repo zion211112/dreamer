@@ -4,9 +4,24 @@ import "./contact.css";
 
 export const metadata = faceMetadata({
   title: "Contact",
-  description: "Contact APT-LABS by email or WhatsApp. A direct project enquiry about infrastructure, prototypes, evidence or collaboration.",
+  description: "Build with APT-LABS — for institutions, makers and technical partners, and funders.",
   path: "/contact",
 });
+
+const PATHS = [
+  {
+    title: "Institution",
+    copy: "Infrastructure designed around your actual constraints — operation, repair and reproduction included.",
+  },
+  {
+    title: "Maker / Technical Partner",
+    copy: "Fabrication, engineering, repair or production — bring the capability you hold.",
+  },
+  {
+    title: "Funder / Partner",
+    copy: "Pilot, evidence, deployment or scale — against the record in /evidence and /roll.",
+  },
+];
 
 export default function Contact() {
   const email = "mailto:aptlabske@gmail.com?subject=APT-LABS%20enquiry";
@@ -19,8 +34,18 @@ export default function Contact() {
         <div className="site-section-head"><span>Contact / APT-LABS</span><span>direct project contact</span></div>
         <div className="record-intro contact-intro">
           <p className="site-kicker">For institutions, builders, and local teams</p>
-           <h1 className="contact-title">Write to us.</h1>
-          <p className="contact-lead">A useful question about institutional infrastructure, a prototype, evidence, or local technical work.</p>
+           <h1 className="contact-title">Build with us.</h1>
+          <p className="contact-lead">Three paths, one inbox. Write with the constraint you hold and the work you want done.</p>
+        </div>
+
+        <div className="contact-paths" role="list" aria-label="Three paths">
+          {PATHS.map((path, i) => (
+            <div key={path.title} className="contact-path" role="listitem">
+              <span className="contact-path-num">0{i + 1}</span>
+              <strong className="contact-path-title">{path.title}</strong>
+              <p className="contact-path-copy">{path.copy}</p>
+            </div>
+          ))}
         </div>
 
         <dl className="contact-lines">
@@ -50,5 +75,4 @@ export default function Contact() {
     </main>
   );
 }
-
 
