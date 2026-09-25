@@ -4,8 +4,8 @@ import { COMPANY, FACES, INTAKE, OPERATING_LOOP } from "../../lib/company";
 import "../globals.css";
 import "../home.css";
 
-export const metaMetadata = {
-  title: { absolute: "APT-LABS — Institutional Infrastructure Systems" },
+export const metadata: { title: string; description: string } = {
+  title: "APT-LABS — Institutional Infrastructure Systems",
   description: "Locally owned institutional infrastructure systems. Terminal-grade aesthetic.",
 };
 
