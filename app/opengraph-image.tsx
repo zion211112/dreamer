@@ -77,7 +77,7 @@ export default function OpengraphImage() {
           }}
         >
           <div style={{ display: "flex" }}>KIRINYAGA · KENYA</div>
-          <div style={{ display: "flex" }}>PUBLIC RECORD</div>
+          <div style={{ display: "flex" }}>EVIDENCE MODEL</div>
         </div>
 
         {/* title block */}

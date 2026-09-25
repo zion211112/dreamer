@@ -1,4 +1,8 @@
-"use client";
+  "use client";
+
+// The console is a local demonstration surface, not an authenticated product.
+  // There is no credential gate: anyone who opens the route can inspect the
+  // prototype, and anything entered remains on that device until exported.
 
 import Link from "next/link";
 import { Suspense, useEffect, useRef, useState } from "react";
@@ -13,7 +17,6 @@ import {
   ConsoleRole,
   ConsoleSession,
   ConsoleTool,
-  gateOpen,
   clearConsoleSession,
   loadConsoleFavs,
   loadConsoleSession,
@@ -40,9 +43,7 @@ function ConsoleApp() {
 
   useEffect(() => {
     const stored = loadConsoleSession();
-    // A session only counts while it matches the gate. A stale session from a
-    // different identity is dropped, so the door stays closed to strangers.
-    setSession(stored && gateOpen(stored.name, stored.school) ? stored : null);
+    setSession(stored ?? null);
     setReady(true);
   }, []);
 
@@ -118,17 +119,11 @@ function ConsoleLogin({
   const [role, setRole] = useState<ConsoleRole>(initialRole);
   const [name, setName] = useState("");
   const [school, setSchool] = useState("");
-  const [denied, setDenied] = useState(false);
   const valid = name.trim() !== "" && school.trim() !== "";
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!valid) return;
-    if (!gateOpen(name, school)) {
-      setDenied(true);
-      return;
-    }
-    setDenied(false);
     onEnter({ role, name: name.trim().slice(0, 60), school: school.trim().slice(0, 60), ts: Date.now() });
   }
 
@@ -153,9 +148,7 @@ function ConsoleLogin({
             <p className="font-mono text-label uppercase tracking-[0.35em] text-signal">Build capacity · Console</p>
             <h1 className="mt-4 font-serif text-4xl font-light tracking-tight">Who are you?</h1>
             <p className="mt-3 text-sm leading-6 text-dust">
-              Pick your door, then knock. This console is a demonstration door —
-              entry is a local code held on this device, and nothing you
-              type here leaves the browser.
+              This is a local prototype surface, not an authentication system. No account or credential is required; anything you type stays in this browser unless you export it.
             </p>
 
             <div className="mt-8 grid grid-cols-1 gap-3 min-[420px]:grid-cols-2">
@@ -180,7 +173,7 @@ function ConsoleLogin({
               <input
                 id="console-name"
                 value={name}
-                onChange={(e) => { setName(e.target.value); if (denied) setDenied(false); }}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="Your name"
                 maxLength={60}
                 className={loginInput}
@@ -191,7 +184,7 @@ function ConsoleLogin({
               <input
                 id="console-school"
                 value={school}
-                onChange={(e) => { setSchool(e.target.value); if (denied) setDenied(false); }}
+                onChange={(e) => setSchool(e.target.value)}
                 placeholder={role === "school" ? "School name" : "Your school"}
                 maxLength={60}
                 className={loginInput}
@@ -203,15 +196,9 @@ function ConsoleLogin({
               >
                 Enter the {ROLE_META[role].label.toLowerCase()} console →
               </button>
-              {denied ? (
-                <p className="text-center font-mono text-micro uppercase tracking-[0.2em] text-amber" role="alert">
-                  Not recognized — this console is gated.
-                </p>
-              ) : (
-                <p className="text-center font-mono text-micro uppercase tracking-[0.2em] text-ash">
-                  Local session · Stored on this device only · Free · 0 credits
-                </p>
-              )}
+              <p className="text-center font-mono text-micro uppercase tracking-[0.2em] text-ash">
+                Local session · Stored on this device only · No account · No server sync
+              </p>
             </form>
           </div>
         </div>
@@ -334,7 +321,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
 
           <div className="space-y-1 border-t border-ink/10 p-[13px] font-mono text-micro uppercase tracking-[0.16em] text-ink/35 lg:px-[21px]">
             <p>Local session</p>
-            <p>Free · 0 credits</p>
+            <p>Local prototype · No account · No server sync</p>
           </div>
         </aside>
 

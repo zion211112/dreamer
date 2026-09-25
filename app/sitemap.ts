@@ -12,7 +12,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/studio`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/roll`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${base}/roll/assets`, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${base}/benben`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${base}/evidence`, changeFrequency: "monthly", priority: 0.9 },
     { url: `${base}/about`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${base}/ledger`, changeFrequency: "daily", priority: 0.9 },

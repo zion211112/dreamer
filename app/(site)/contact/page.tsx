@@ -1,25 +1,26 @@
-import type { Metadata } from "next";
+import { faceMetadata } from "../../../lib/metadata";
 import GeoArt from "../../../components/GeoArt";
 import "./contact.css";
 
-export const metadata: Metadata = {
+export const metadata = faceMetadata({
   title: "Contact",
-  description: "Write to APT-LABS. One reply, no queue.",
-};
+  description: "Contact APT-LABS by email or WhatsApp. A direct project enquiry about infrastructure, prototypes, evidence or collaboration.",
+  path: "/contact",
+});
 
 export default function Contact() {
-  const email = "mailto:aptlabske@gmail.com?subject=Schools%20%2B%20partners";
+  const email = "mailto:aptlabske@gmail.com?subject=APT-LABS%20enquiry";
   const whatsapp = "https://wa.me/254704260906?text=Greetings.";
 
   return (
     <main className="site-page contact-page">
       <section className="contact-classic site-frame">
         <GeoArt variant="corner" className="contact-art" />
-        <div className="site-section-head"><span>Contact / APT-LABS</span><span>one reply · no queue</span></div>
+        <div className="site-section-head"><span>Contact / APT-LABS</span><span>direct project contact</span></div>
         <div className="record-intro contact-intro">
-          <p className="site-kicker">For schools, partners, and doers</p>
+          <p className="site-kicker">For institutions, builders, and local teams</p>
            <h1 className="contact-title">Write to us.</h1>
-          <p className="contact-lead">A useful question, a school that needs capacity, or work that belongs on the roll.</p>
+          <p className="contact-lead">A useful question about institutional infrastructure, a prototype, evidence, or local technical work.</p>
         </div>
 
         <dl className="contact-lines">
@@ -44,7 +45,7 @@ export default function Contact() {
           </div>
         </dl>
 
-        <p className="contact-loc">Kirinyaga, Kenya · local-first record</p>
+        <p className="contact-loc">Kirinyaga, Kenya · declared operating geography</p>
       </section>
     </main>
   );

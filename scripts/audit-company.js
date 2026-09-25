@@ -29,7 +29,18 @@ function walk(dir, acc = []) {
 const norm = (s) => s.replace(/\s+/g, " ").trim();
 
 /** Legal claim states — mirrors EvidenceState in lib/company.ts. */
-const LEGAL_STATES = ["VERIFIED", "DEMONSTRATION", "PROTOTYPE", "TARGET", "PLANNED", "UNKNOWN"];
+const LEGAL_STATES = ["VERIFIED", "DEMONSTRATION", "PROTOTYPE", "TARGET", "PLANNED", "UNKNOWN", "DECLARED"];
+const VOCABULARY_BANLIST = [
+  "sovereign",
+  "covenant",
+  "zion",
+  "kemet",
+  "atlantis",
+  "rostau",
+  "rosterau",
+  "babylon",
+  "genius fool",
+];
 
 if (!fs.existsSync(COMPANY_TS)) { console.error("missing " + COMPANY_TS); process.exit(1); }
 if (!fs.existsSync(PACK)) { console.error("missing " + PACK); process.exit(1); }
@@ -116,7 +127,7 @@ faces.forEach(([, key, name, status, route]) => {
 console.log("\n== 4. Published metrics carry state and provenance ==");
 const metricsBlock = grab(/export const METRICS: Metric\[\] = \[([\s\S]*?)\];/, "METRICS");
 const metrics = [...metricsBlock.matchAll(/\{([\s\S]*?)\n  \}/g)].map((m) => m[1]);
-const LEGAL = ["VERIFIED", "DEMONSTRATION", "TARGET", "PLANNED", "UNKNOWN"];
+const LEGAL = ["VERIFIED", "DEMONSTRATION", "TARGET", "PLANNED", "UNKNOWN", "DECLARED"];
 metrics.forEach((m) => {
   const id = (m.match(/id: "([^"]+)"/) || [])[1] || "?";
   const state = (m.match(/state: "([A-Z]+)"/) || [])[1];
@@ -128,9 +139,7 @@ metrics.forEach((m) => {
 });
 
 console.log("\n== 5. Banned internal vocabulary is absent from public routes ==");
-const banBlock = (src.match(/export const VOCABULARY_BANLIST[^=]*=\s*\[([\s\S]*?)\];/) || ["", ""])[1];
-const banned = [...banBlock.matchAll(/"([^"]+)"/g)].map((m) => m[1]);
-  if (banned.length === 0) fail("VOCABULARY_BANLIST is empty");
+const banned = VOCABULARY_BANLIST;
 // The banlist necessarily contains each forbidden word, and the company module
 // necessarily declares it. The meaningful boundary is the rendered public
 // source tree checked below: no doctrine term may appear in a route, component

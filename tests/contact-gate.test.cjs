@@ -24,7 +24,7 @@ test('the contact page is minimal classic: one column, two lines, one place', ()
   assert.ok(contact.includes('className="contact-classic site-frame"'));
   assert.ok(contact.includes('className="contact-title"'));
   assert.equal([...contact.matchAll(/className="contact-line"/g)].length, 2, 'exactly two lines: email, whatsapp');
-  assert.ok(contact.includes('mailto:aptlabske@gmail.com?subject=Schools%20%2B%20partners'));
+  assert.ok(contact.includes('mailto:aptlabske@gmail.com?subject=APT-LABS%20enquiry'));
   assert.ok(contact.includes('https://wa.me/254704260906?text=Greetings.'));
   assert.ok(contact.includes('Kirinyaga, Kenya'));
 });

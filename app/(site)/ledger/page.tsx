@@ -172,18 +172,7 @@ function LedgerInner() {
       occupation: form.role,
       location: form.location,
       skills: form.skill.split(",").map((s) => s.trim()).filter(Boolean),
-      paid: false,
-      // Sealed, not verified: a hash proves the record exists and has not
-      // been altered. Nobody has attested this person's skill yet, so the
-      // verified count must not move. Attestation flips this, not a submit.
       verified: false,
-      hallPaid: false,
-      tier: null,
-      testScore: null,
-      testTs: 0,
-      hall: null,
-      certNo: null,
-      answers: [],
       hash: seal({ id: nextId, name, occupation: form.role, location: form.location }),
     };
     // Same-frame write: state, storage, then the success note. It stays until
@@ -222,12 +211,11 @@ function LedgerInner() {
             <p className="ledger-brand">APT-LABS <em>/</em> KIRINYAGA NODE <span>LOCAL RECORD</span></p>
             <h1 className="page-title">The Roll — People Register</h1>
             <p className="page-desc">
-              Names, skills, and seals in one public record. Proof is added by
-              others — never claimed by the person on the roll.
+              Names, skills, and seals in a device-local register. The current page is inspectable, but it is not a shared public directory.
             </p>
           </div>
           <div className="ledger-telemetry" aria-label="Ledger status">
-            <span className="ledger-beacon"><i aria-hidden="true" /> LOCAL RECORD ACTIVE</span>
+            <span className="ledger-beacon"><i aria-hidden="true" /> LOCAL-FIRST REGISTER</span>
             <span className="ledger-mesh">{total} entries · {verified} verified</span>
             <span className="ledger-seal">SEAL {shortHash(masterSeal)}</span>
           </div>
@@ -264,8 +252,7 @@ function LedgerInner() {
             </div>
 
             <p className="message message-info" role="note">
-              DEMONSTRATION DATA — sample entries ship with the site so the register can be
-              inspected. They are not verified project results.
+              NO SEEDED RECORDS — the interface starts empty. Records added here remain on this device until exported; they are not public reach, beneficiaries or project results.
             </p>
 
             <div className="filter-chips" role="group" aria-label="Filter the roll by location">
@@ -310,8 +297,8 @@ function LedgerInner() {
                   <circle cx="11" cy="11" r="7" />
                   <path d="M21 21l-4.3-4.3" />
                 </svg>
-                <p className="empty-state-heading">No one matches that search.</p>
-                <p className="empty-state-body">Try a shorter name, a location, or a skill.</p>
+                <p className="empty-state-heading">{entries.length === 0 ? "The register is empty." : "No one matches that search."}</p>
+                <p className="empty-state-body">{entries.length === 0 ? "Add a device-local record to inspect the interface. Nothing is published." : "Try a shorter name, a location, or a skill."}</p>
                 {searchExamples.length > 0 && (
                   <p className="empty-state-suggest">
                     <span className="label">Try</span>
@@ -393,15 +380,8 @@ function LedgerInner() {
                         <dl className="roll-entry-detail-grid">
                           <dt className="label">Seal</dt>
                           <dd><code className="roll-detail-hash">{entry.hash}</code></dd>
-                          <dt className="label">Standing</dt>
-                          <dd>
-                            {entry.verified ? `Verified${entry.tier ? ` · ${entry.tier} tier` : ""}` : "Unverified"}
-                            {entry.paid ? " · paid" : ""}
-                          </dd>
-                          <dt className="label">Hall</dt>
-                          <dd>{entry.hall ?? "—"}</dd>
-                          <dt className="label">Certificate</dt>
-                          <dd>{entry.certNo ?? "—"}</dd>
+                          <dt className="label">State</dt>
+                          <dd>{entry.verified ? "Locally attested" : "Unattested"}</dd>
                           <dt className="label">Proof</dt>
                           <dd>{entry.skills.join(", ")}</dd>
                         </dl>
@@ -504,11 +484,9 @@ function LedgerInner() {
             <p className="panel-desc">A name, a skill, and a line of proof. That is all the roll asks.</p>
 
             {registeredId && (
-              <div className="message message-status" role="status">
-                You are on the roll as {registeredId} and the record is sealed.
-                Verification is a separate step — it arrives when someone attests
-                your work.
-              </div>
+              <p className="message message-status" role="status">
+                A device-local record was created as {registeredId} and sealed. It is not published or externally verified.
+              </p>
             )}
 
             <form className="register-form" onSubmit={handleSubmit} noValidate aria-label="New roll entry">
@@ -572,7 +550,7 @@ function LedgerInner() {
 
               <p className="form-fine-print">
                 The seal is a hash of your name, role, and location. It does not
-                reveal anything else. Verification checks the seal — not your identity.
+                reveal anything else and does not publish this record.
               </p>
             </form>
           </div>

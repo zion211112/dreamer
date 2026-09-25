@@ -7,7 +7,7 @@ the two in CI — they may not disagree.
 **Rule of the pack:** unknown ≠ zero · planned ≠ completed · prototype ≠ deployed ·
 demo data ≠ impact data · intention ≠ evidence.
 
-Every entry carries one of six states:
+Every entry carries one of seven states:
 
 | State | Meaning |
 | --- | --- |
@@ -17,6 +17,7 @@ Every entry carries one of six states:
 | `TARGET` | Intended outcome, not yet achieved |
 | `PLANNED` | Designed but not yet built |
 | `UNKNOWN` | Not known. Never render as zero, never omit silently |
+| `DECLARED` | Stated by APT-LABS but not independently verified |
 
 ---
 
@@ -24,7 +25,7 @@ Every entry carries one of six states:
 
 APT-LABS is a Kenyan technology and infrastructure company building locally owned, resilient institutional systems for schools, training centres, creative facilities and other organizations operating under connectivity, cost and supply-chain constraints. It combines four capabilities: offline-first software, locally fabricated hardware, creative-computing infrastructure, and transparent technical documentation.
 
-- **Operating geography:** Kirinyaga, Kenya — `VERIFIED` (stated by the organisation, consistent across every public route and the contact record).
+- **Operating geography:** Kirinyaga, Kenya — `DECLARED` (stated by the organisation; not an independently verified field presence).
 - **Organisation legal status:** `UNKNOWN` — not published until documented. Do not invent registration numbers, PBO/company numbers or founding dates.
 - **Contact record:** `VERIFIED` in the current project record — `aptlabske@gmail.com` and WhatsApp `+254 704 260 906`.
 - **Doctrine (internal only):** *Sovereign Infrastructure*. Never rendered on a public route.
@@ -103,8 +104,7 @@ Offline-capable institutional software for schools and training institutions.
   timetable, fee and inspection engines in `lib/`.
 - CSV roster in and out, plus a one-file school backup.
 
-**What does not exist:** any verified school deployment. Console entry is a
-demonstration door (`RUNPILOT` / `PILOTRUN`), not an authentication system.
+**What does not exist:** any verified school deployment. The console is a local prototype with no account or credential gate; anything entered stays in the browser unless exported.
 
 ## 6. APT Fab
 
@@ -144,8 +144,7 @@ Mechanics that exist in code (`VERIFIED`): a SHA-256 seal per entry
 CSV and JSON export, and credential verification that returns existence and not
 identity.
 
-The register ships with sample entries, labelled on the page as
-**DEMONSTRATION DATA — NOT A VERIFIED PROJECT RESULT**.
+The register ships empty. Any local record created on the page is labelled and remains on that device until export.
 
 ## 9. BenBen / The Floor
 
@@ -156,9 +155,9 @@ local capability → Floor → verification → APT Fab / APT Studio
                 → The Roll evidence → reusable asset
 ```
 
-State: `PROTOTYPE` with `DEMONSTRATION` seed posts. Build posts are organised by
-domain with needs, thresholds and expiry. The name is kept because users know it;
-the company-level framing is demoted.
+State: `PROTOTYPE`. The Floor starts with empty slots. Build posts are organised by
+ domain with needs, thresholds and expiry. The name is kept because users know it;
+ the company-level framing is demoted.
 
 ## 10. Current Prototype State
 
@@ -167,7 +166,7 @@ the company-level framing is demoted.
 - `npm run build` succeeds; all routes compile.
 - `npm test` — 41 tests pass.
 - `node scripts/audit-classes.js` — zero undefined class names.
-- `node scripts/audit-company.js` — evidence pack and runtime identity agree.
+- `node scripts/audit-funder.js` — route metadata, empty registers, no fake gates, legacy demo constants, and grant lenses are coherent.
 - Public routes: `/`, `/deploy`, `/fab`, `/studio`, `/roll`, `/roll/assets`,
   `/about`, `/evidence`, `/ledger`, `/benben`, `/contact`, with the console
   application at `/console`.
@@ -198,7 +197,7 @@ Published metrics in `lib/company.ts` carry an explicit state. Currently:
 
 | Metric | State | Provenance |
 | --- | --- | --- |
-| Entries shown on the people register | `DEMONSTRATION` | Seeded sample entries in `lib/ledger.ts`; the page carries the demonstration notice |
+| Public server-backed people register | `UNKNOWN` | No shared server-backed register is published; the local interface starts empty |
 
 Runtime counts rendered by a page (entry totals, seal digests) are computed live
 from the data on the device — they are readings, not claims, and must not be

@@ -22,7 +22,6 @@ export default function SiteLayout({
             description: COMPANY.oneSentence,
             email: COMPANY.contact.email,
             telephone: COMPANY.contact.whatsapp,
-            areaServed: COMPANY.geography.text,
           }),
         }}
       />

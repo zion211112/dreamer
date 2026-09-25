@@ -1,7 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 
-
 const problems = [];
 const pass = (message) => console.log(`  ok   ${message}`);
 const fail = (message) => {
@@ -28,6 +27,9 @@ const required = [
   "docs/EVIDENCE-PACK.md",
   "scripts/audit-company.js",
   "scripts/audit-classes.js",
+  "app/(site)/benben/layout.tsx",
+  "app/(site)/ledger/layout.tsx",
+  "app/(site)/contact/page.tsx",
   "app/(site)/deploy/page.tsx",
   "app/(site)/fab/page.tsx",
   "app/(site)/studio/page.tsx",
@@ -52,6 +54,9 @@ for (const [name, route, file] of faces) {
     robots.includes(`"${route}"`) ? pass(`${name} allowed by robots`) : fail(`${name} missing from robots`);
     sitemap.includes(`\`\${base}${route}\``) ? pass(`${name} present in sitemap`) : fail(`${name} missing from sitemap`);
   }
+}
+for (const [name, file] of [["BenBen / The Floor", "app/(site)/benben/layout.tsx"], ["The Roll / People Register", "app/(site)/ledger/layout.tsx"], ["Contact", "app/(site)/contact/page.tsx"]]) {
+  fs.existsSync(file) && /export const metadata/.test(read(file)) ? pass(`${name} metadata exists`) : fail(`${name} metadata missing`);
 }
 
 const company = read("lib/company.ts");
@@ -88,11 +93,11 @@ for (const file of publicFiles.filter((item) => item.endsWith(".tsx"))) {
 if (!problems.some((problem) => problem.startsWith("unsupported claim"))) pass("public routes contain no prohibited claim phrases");
 
 const ledger = read("app/(site)/ledger/page.tsx");
-if (ledger.includes("DEMONSTRATION DATA") && ledger.includes("Unknown — no verified pilot")) pass("ledger demo values are visibly bounded");
-else fail("ledger demo values must carry a demonstration/unknown notice");
+if (ledger.includes("NO SEEDED RECORDS") && ledger.includes("Unknown — no verified pilot")) pass("ledger starts empty and visibly bounded");
+else fail("ledger must state that seeded records are absent and pilot evidence is unknown");
 const benben = read("app/(site)/benben/page.tsx");
-if (benben.includes("DEMONSTRATION DATA — NOT A VERIFIED PROJECT RESULT")) pass("Floor seeded data is visibly bounded");
-else fail("Floor seeded data must carry the demonstration notice");
+if (benben.includes("NO SEEDED BUILDS") && benben.includes("starts with empty slots")) pass("Floor starts empty and visibly bounded");
+else fail("Floor must state that seeded builds are absent");
 
 const dead = ["BoardCard", "BuildCard", "DoorsModal", "ZionChamber"];
 for (const name of dead) {
@@ -103,8 +108,17 @@ if (!fs.existsSync("app/(site)/roll/assets/page.tsx")) fail("asset register rout
 else pass("asset register route exists");
 
 const deploy = read("app/(site)/deploy/page.tsx");
-if (deploy.includes("What exists today") && deploy.includes("Offline resilience") && deploy.includes("Evidence status")) pass("Deploy has public content before the console gate");
-else fail("Deploy needs a public overview before the console gate");
+if (deploy.includes("What exists today") && deploy.includes("Offline resilience") && deploy.includes("Evidence status")) pass("Deploy has public content before the console surface");
+else fail("Deploy needs a public overview before the console surface");
+
+const ledgerSource = read("lib/ledger.ts");
+if (ledgerSource.includes("SEED_MEMBERS: Member[] = []")) pass("People Register has no seeded records");
+else fail("SEED_MEMBERS must remain empty until records are evidenced");
+if (!/SCHOOL_STATS|TREASURY|HALL_FEE|TEACHER_FEE|SCHOOL_FEE|SUBSCRIBED_SCHOOLS/.test(ledgerSource)) pass("legacy public demo constants removed");
+else fail("legacy public demo constants remain in lib/ledger.ts");
+const consoleSource = read("app/(console)/console/page.tsx") + read("lib/console.ts") + read("components/console/ConsoleSession.tsx");
+if (!/RUNPILOT|PILOTRUN|GATE_NAME|GATE_SCHOOL|gateOpen/.test(consoleSource)) pass("no fake console credential gate remains");
+else fail("fake console credential gate remains");
 
 const grantFiles = [
   "mastercard-ihub.md", "usaid-div.md", "dprize.md", "gca.md", "heva.md", "giz.md", "kenia.md", "safaricom.md", "roddenberry.md", "mozilla.md",

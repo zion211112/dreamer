@@ -59,7 +59,7 @@ export default function EvidencePage() {
 
       <Section label="Documentation" title="What another reviewer can inspect">
         <EvidenceList items={[
-          { label: "Source repository", value: COMPANY.repository, state: "UNKNOWN" },
+          { label: "Source repository", value: COMPANY.repository.value, state: COMPANY.repository.state },
           { label: "Published BOMs", value: "None yet", state: "PLANNED" },
           { label: "Field photographs", value: "None published", state: "UNKNOWN" },
           { label: "Unit economics", value: "Not yet measured", state: "UNKNOWN" },

@@ -18,17 +18,9 @@ export interface ConsoleSession {
   ts: number;
 }
 
-// Access gate. The console is a demonstration door, not a security boundary
-// and not evidence of a deployment: a local-first app has no server to verify
-// against, so entry is a knock code held on the device. RUNPILOT at PILOTRUN
-// opens it. Compared case-insensitively so the codes are easy to type
-// mid-demonstration.
-export const GATE_NAME = "RUNPILOT";
-export const GATE_SCHOOL = "PILOTRUN";
-export const normGate = (s: string) => s.trim().toUpperCase();
-export const gateOpen = (name: string, school: string) =>
-  normGate(name) === GATE_NAME && normGate(school) === GATE_SCHOOL;
-
+// The console is a local demonstration surface, not an authenticated product.
+// There is no credential gate: anyone who opens the route can inspect the
+// prototype, and anything entered remains on that device until exported.
 export interface ConsoleTool {
   id: string;
   title: string;

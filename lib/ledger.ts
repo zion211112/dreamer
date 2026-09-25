@@ -7,15 +7,7 @@ export type Member = {
   occupation: string;
   location: string;
   skills: string[];
-  paid: boolean; // active ledger entry / voting access
-  verified: boolean; // profile seal / active status
-  hallPaid: boolean; // hall access fee
-  tier: string | null;
-  testScore: number | null;
-  testTs: number;
-  hall: string | null; // the one hall entered
-  certNo: string | null;
-  answers: string[];
+  verified: boolean; // profile seal / local record state
   hash: string;
 };
 
@@ -31,12 +23,7 @@ export const OCCUPATIONS: string[] = [
 
 export const LOCATIONS: string[] = ["Mwea", "Kagio", "Kerugoya", "Embu", "Sagana", "Mugumo"];
 
-export const HALL_FEE = "KES 100";
-export const TEACHER_FEE = "KES 250/month";
-export const SCHOOL_FEE = "from KES 3,000/month";
-
-// Default usernames for those who'd rather pick from the yard than invent.
-// Usernames are public. Phone numbers never leave the OTP gate.
+// Username generation is local-only; no public directory or OTP flow is implied.
 export const DEFAULT_NAMES: string[] = [
   "Mgeni", "Jirani", "Mkulima", "Fundi", "Mwalimu",
   "Mvuvi", "Mchuuzi", "Dereva", "Kijana", "Mama",
@@ -60,12 +47,6 @@ export function validUsername(s: string, taken: string[]): string | null {
   if (taken.some((t) => t.toLowerCase() === v.toLowerCase())) return "Taken on this roll. Pick another.";
   return null;
 }
-
-export const SUBSCRIBED_SCHOOLS: string[] = [
-  "Ngurubani Primary",
-  "Kagio Secondary",
-  "Mugumo Primary"
-];
 
 // Crucible: 8 choice questions. Scored. No memorization. Pure friction.
 export type CrucibleQ = { q: string; options: string[]; answer: number; why: string };
@@ -158,33 +139,9 @@ export function seal(m: Pick<Member, "id" | "name" | "occupation" | "location">)
   return sha256(canonical(m));
 }
 
-function member(
-  id: string,
-  name: string,
-  username: string,
-  occupation: string,
-  location: string,
-  skills: string[],
-  paid: boolean,
-  verified: boolean,
-  tier: string | null = null,
-  hallPaid = false
-): Member {
-  const base = { id, name, occupation, location };
-  return { ...base, username, skills, paid, verified, hallPaid, tier, testScore: verified ? 6 : null, testTs: 0, hall: null, certNo: null, answers: [], hash: seal(base) };
-}
-
-// The founding roll. Eight handles. Everywhere.
-export const SEED_MEMBERS: Member[] = [
-  member("AL-0042", "@Shemsu_Node", "Shemsu_Node", "Maths Tutor", "Mwea", ["KCSE Maths", "Revision drills"], true, true, "Stone", true),
-  member("AL-0137", "@ZepTepi_Zero", "ZepTepi_Zero", "Solar Assistant", "Kagio", ["Lantern assembly", "Maintenance"], true, true, "Stone", true),
-  member("AL-0201", "@KeeperOfRecord", "KeeperOfRecord", "Data Enumerator", "Sagana", ["Surveys", "Entry"], true, true, "Stone", true),
-  member("AL-0311", "@VrilToSekhem", "VrilToSekhem", "Masonry Assistant", "Embu", ["Block work", "Repairs"], false, false),
-  member("AL-0420", "@Thoth_Architect", "Thoth_Architect", "Animator", "Mwea", ["Explainer clips", "Posters"], true, true, "Stone", true),
-  member("AL-0488", "@BenBen_Codex", "BenBen_Codex", "Tailor", "Kerugoya", ["Uniforms", "Repairs"], true, true, "Stone", true),
-  member("AL-0513", "@Iunu_Sunset", "Iunu_Sunset", "Maths Tutor", "Kerugoya", ["KCSE Physics", "Drills"], false, false),
-  member("AL-0777", "@The_Osirion", "The_Osirion", "Solar Assistant", "Mwea", ["Installation", "Wiring"], false, false)
-];
+// The register starts empty. Device-local records are created by the person
+// using the interface and are not a public directory.
+export const SEED_MEMBERS: Member[] = [];
 
 export function loadStored<T>(key: string): T[] {
   try {
@@ -211,9 +168,9 @@ export function shortHash(hash: string): string {
   return hash.slice(0, 10) + "…" + hash.slice(-4);
 }
 
-// ── Export the roll. A public record ships in two formats:
+// ── Export the roll. A local register can be exported in two formats:
 //    CSV for people, JSON for machines.
-const CSV_HEADERS = ["id", "name", "username", "occupation", "location", "skills", "verified", "paid", "tier", "hall", "certNo", "seal"];
+const CSV_HEADERS = ["id", "name", "username", "occupation", "location", "skills", "verified", "seal"];
 
 function csvField(v: string): string {
   return /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
@@ -229,10 +186,6 @@ export function ledgerToCsv(members: Member[]): string {
       m.location,
       m.skills.join("; "),
       String(m.verified),
-      String(m.paid),
-      m.tier ?? "",
-      m.hall ?? "",
-      m.certNo ?? "",
       m.hash,
     ]
       .map(csvField)
@@ -253,18 +206,6 @@ export function ledgerVersion(count: number): string {
 export function isMpesaCode(s: string): boolean {
   return /^[A-Z0-9]{10}$/.test(s.trim().toUpperCase());
 }
-
-// Snapshot ground truth. Schools + treasury are demo figures;
-// individuals, projects, current build and master hash are live.
-export type SchoolStat = { name: string; students: number };
-
-export const SCHOOL_STATS: SchoolStat[] = [
-  { name: "Ngurubani Primary", students: 420 },
-  { name: "Kagio Secondary", students: 650 },
-  { name: "Mugumo Primary", students: 310 }
-];
-
-export const TREASURY = { total: 250000, usedPct: 70 };
 
 // Master hash: rolling seal over every member hash on the roll.
 export function masterHash(hashes: string[]): string {

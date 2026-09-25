@@ -6,7 +6,7 @@
 //
 // docs/EVIDENCE-PACK.md is the *human* evidence record.
 // scripts/audit-company.js cross-checks the two and fails CI on disagreement:
-//   runtime truth ←— audit —→ evidence record
+//       runtime truth ←— audit —→ evidence record
 //
 // Unknown ≠ zero. Planned ≠ completed. Prototype ≠ deployed.
 // Demonstration data ≠ impact data. Intention ≠ evidence.
@@ -18,7 +18,8 @@ export type EvidenceState =
   | "PROTOTYPE"
   | "TARGET"
   | "PLANNED"
-  | "UNKNOWN";
+  | "UNKNOWN"
+  | "DECLARED";
 
 export const EVIDENCE_STATES: EvidenceState[] = [
   "VERIFIED",
@@ -27,6 +28,7 @@ export const EVIDENCE_STATES: EvidenceState[] = [
   "TARGET",
   "PLANNED",
   "UNKNOWN",
+  "DECLARED",
 ];
 
 /** Legal states for the asset register. The order is the handoff order. */
@@ -55,19 +57,6 @@ export const VOCABULARY_ALLOWLIST: string[] = [
   "local economic participation",
   "technology independence",
   "reproducible infrastructure",
-];
-
-/** Internal doctrine language. Never rendered on a public route. */
-export const VOCABULARY_BANLIST: string[] = [
-  "sovereign",
-  "covenant",
-  "zion",
-  "kemet",
-  "atlantis",
-  "rostau",
-  "rosterau",
-  "babylon",
-  "genius fool",
 ];
 
 /** The central problem — one framing, never a generic "schools lack tech". */
@@ -112,7 +101,7 @@ export const COMPANY = {
   problem: PROBLEM,
   response: RESPONSE,
   externalVocabulary: VOCABULARY_ALLOWLIST,
-  geography: { text: "Kirinyaga, Kenya", state: "VERIFIED" as EvidenceState },
+  geography: { text: "Kirinyaga, Kenya", state: "DECLARED" as EvidenceState },
   /** UNKNOWN until documented. Never invent a registration status. */
   legalStatus: { text: "Not published", state: "UNKNOWN" as EvidenceState },
   contact: {
@@ -120,7 +109,7 @@ export const COMPANY = {
     whatsapp: "+254 704 260 906",
     whatsappUrl: "https://wa.me/254704260906",
   },
-  repository: "Source repository available on request",
+  repository: { label: "Source repository", value: "Access on request", state: "UNKNOWN" as EvidenceState },
 } as const;
 
 /**
@@ -164,7 +153,7 @@ export const FACES: Record<Face["key"], Face> = {
     name: "The Roll",
     oneLine: "One ledger. Two registers. Same evidence machinery.",
     description:
-      "The people register and the asset register share one seal, one hash model and one trust model — so capability and infrastructure are recorded the same way, and both can be checked by anyone.",
+      "The people and asset interfaces share one seal, one hash model and one trust model. The current prototype is local-first; neither register is presented as a shared institutional database.",
     status: "PROTOTYPE",
     route: "/roll",
     evidenceRefs: ["EVIDENCE-PACK.md §8"],
@@ -177,7 +166,7 @@ export const REGISTERS = [
     name: "People Register",
     route: "/ledger",
     summary:
-      "Names, skills, credentials and seals — a public record of capability. Proof is added by others, never claimed by the person on the roll.",
+      "Names, skills, credentials and seals in a local-first register interface. The current page is inspectable, but this is not a shared server-backed directory.",
     status: "PROTOTYPE" as EvidenceState,
   },
   {
@@ -196,7 +185,7 @@ export const INTAKE = {
   isFace: false,
   route: "/benben",
   summary:
-    "Local capability, work, makers and ideas enter here, are verified, then move into APT Fab or APT Studio and out onto The Roll as a reusable asset.",
+    "Local capability, work, makers and ideas enter here, are reviewed on the device, then can move into APT Fab or APT Studio before evidence is recorded in The Roll.",
   status: "PROTOTYPE" as EvidenceState,
 };
 
@@ -211,12 +200,12 @@ export interface Metric {
 
 export const METRICS: Metric[] = [
   {
-    id: "register-entries",
-    label: "Entries shown on the people register",
-    value: "computed at runtime",
-    state: "DEMONSTRATION",
+    id: "people-register",
+    label: "Public server-backed people register",
+    value: "Not published",
+    state: "UNKNOWN",
     provenance:
-      "Seeded sample entries in lib/ledger.ts; the page carries the demonstration notice. Not reach, not beneficiaries.",
+          "The current register is local-first and starts without seeded records. A device-local count is a runtime reading, not a public directory or beneficiary claim.",
   },
 ];
 
@@ -225,7 +214,7 @@ export const EVIDENCE_LINKS = [
   { label: "Core Evidence Pack", href: "/evidence", state: "VERIFIED" as EvidenceState },
   { label: "People Register", href: "/ledger", state: "PROTOTYPE" as EvidenceState },
   { label: "Asset Register", href: "/roll/assets", state: "PROTOTYPE" as EvidenceState },
-  { label: "Source repository", href: COMPANY.repository, state: "UNKNOWN" as EvidenceState },
+  { label: "Request repository access", href: "/contact", state: "UNKNOWN" as EvidenceState },
 ];
 
 /** Status ledger rows — compared against docs/EVIDENCE-PACK.md §4. */

@@ -31,26 +31,27 @@ type Build = {
 const HOUR = 3600000;
 const NOW = Date.now();
 
-const initialBuilds: Build[] = [
-  { id: "power", idx: "01", slot: 0, domain: "Power", state: "open", title: "Bike-powered phone charger for 1,800 KES — parts list and wiring", body: "Dynamo 800, rectifier 350, regulator 250, casing and wire 400. Mount on the rear fork, output 5V 1A at walking pace. Full wiring order on request.", author: "@Fundi_0002", location: "Mwea", postedAt: NOW - 2 * HOUR, expiresAt: NOW + 50 * HOUR, votes: 1, threshold: 2, needs: "nothing — already built", done: "Anyone can build this with local parts", comments: [
-    { handle: "@Mwalimu_0005", time: "1h", text: "Used this on my brother's boda last month. Works. The regulator runs warm but holds." },
-    { handle: "@KeeperOfRecord", time: "42m", text: "Post the exact wiring order when you can. I want to build three for the Sagana survey team." }
-  ] },
-  { id: "edu", idx: "02", slot: 1, domain: "Education", state: "open", title: "I can animate 3-minute KCSE explainers — free in exchange for skill work", body: "Ten explainers queued: matrices, photosynthesis, Sarufi. I want them listed on the ledger instead of cash. Reviewers welcome.", author: "@Mwalimu_0005", location: "Mwea", postedAt: NOW - 2 * HOUR, expiresAt: NOW + 22 * HOUR, votes: 1, threshold: 3, needs: "intellect — reviewers for the ten explainers", done: "10 explainers published on APT-LABS, my name on the ledger", comments: [] },
-  { id: "housing", idx: "03", slot: 2, domain: "Housing", state: "open", title: "Stabilized soil block recipe after 6 months of tests — 7% cement, 2% lime", body: "Tested across two rainy seasons. Passes county building standards, costs 40% less than fired brick. Full ratios and curing schedule in thread.", author: "@Seremala_0006", location: "Embu", postedAt: NOW - 3 * HOUR, expiresAt: NOW + 4 * HOUR, votes: 2, threshold: 2, needs: "nothing — already built", done: "Blocks that pass county standards, 40% cheaper than brick", comments: [
-    { handle: "@VrilToSekhem", time: "2h", text: "I want to rework this with 5% cement and see if it holds through March. Same ratios otherwise." }
-  ] },
-  { id: "bridge", idx: "04", slot: 3, domain: "Mobility", state: "open", title: "Rebuild the Witeithie Kibute footbridge over reeds and stone", body: "The crossing is failed timber. Lashed reeds on two cinder piers, timber decking, load survey first. Fourteen pairs of hands. The KES ledger stays on the floor, line by line.", author: "@AptLabs", location: "Kagio", postedAt: NOW - 6 * HOUR, expiresAt: NOW + 66 * HOUR, votes: 2, threshold: 5, needs: "hands (14) · KES 180,000 · truss ratios", done: "A 500 kg truck crosses; two photos from either bank", comments: [
-    { handle: "@Fundi_0002", time: "4h", text: "I can bring two welders and a grinder. Say when." },
-    { handle: "@Seremala_0006", time: "3h", text: "Can supply 240 cinder blocks from Embu at cost. Logistics still open." }
-  ] },
-  { id: "legal", idx: "05", slot: 4, domain: "Legal", state: "sealed", title: "Swahili-first legal document Q&A agent for Kenyan SMEs", body: "Contracts, tenancy, and business registration — the documents a small firm actually signs. Swahili is the working language, English is the export.", author: "@AptLabs", location: "Mwea", postedAt: NOW - 22 * HOUR, expiresAt: NOW + 50 * HOUR, votes: 3, threshold: 3, needs: "hands (3) · KES 45,000 · Swahili legal corpus", done: "Fifty filed test questions answered with sources; one advocate's review on the floor", comments: [
-    { handle: "@Shemsu_Node", time: "18h", text: "Ran the first twenty questions through it. Citations held. One error on a tenancy term." }
-  ] },
-  { id: "audit", idx: "06", slot: 5, domain: "Audit", state: "open", title: "Purple-team audit kit for Kenyan SMEs", body: "Ten probes a small business can run on itself: phishing drills, credential checks, a day of open shares. Written in plain language; the fixes as cards, in English and Swahili.", author: "@AptLabs", location: "Kagio", postedAt: NOW - 1 * HOUR, expiresAt: NOW + 71 * HOUR, votes: 0, threshold: 3, needs: "hands (2) · KES 12,000 · phishing templates", done: "Ten probes run on a consenting SME box; fix cards in English and Swahili", comments: [] },
-  { id: "empty-07", idx: "07", slot: 6, domain: "Open", state: "empty", title: "an unclaimed slot", body: "", author: "", location: "", postedAt: NOW, expiresAt: NOW, votes: 0, threshold: 1, needs: "", done: "", comments: [] },
-  { id: "empty-08", idx: "08", slot: 7, domain: "Open", state: "empty", title: "an unclaimed slot", body: "", author: "", location: "", postedAt: NOW, expiresAt: NOW, votes: 0, threshold: 1, needs: "", done: "", comments: [] }
-];
+function initialBuilds(): Build[] {
+  const initialBuildCount = 4;
+  return Array.from({ length: initialBuildCount }, (_, index) => ({
+    id: `empty-${index + 1}`,
+    idx: String(index + 1).padStart(2, "0"),
+    slot: index,
+    domain: "Open",
+    state: "empty",
+    title: "an unclaimed slot",
+    body: "",
+    author: "",
+    location: "",
+    postedAt: NOW,
+    expiresAt: NOW,
+    votes: 0,
+    threshold: 1,
+    needs: "",
+    done: "",
+    comments: [],
+  } satisfies Build));
+}
 
 const esc = (value: string) =>
   value.replace(/[&<>"']/g, (char) => ({
@@ -191,8 +192,8 @@ export default function BenBenPage() {
     <main className="benben-legacy-page">
       <div className="page">
         <div className="benben-demo-notice" role="note">
-          <strong>DEMONSTRATION DATA — NOT A VERIFIED PROJECT RESULT.</strong>
-          <span>Seeded entries and figures make the intake interface inspectable. They are not deployments, beneficiaries, procurement records or impact results.</span>
+          <strong>NO SEEDED BUILDS — THE FLOOR STARTS EMPTY.</strong>
+          <span>The Floor starts with empty slots. Anything entered here stays in this browser until exported. No deployment, beneficiary, procurement or impact record is implied.</span>
         </div>
 
         <header className="head">

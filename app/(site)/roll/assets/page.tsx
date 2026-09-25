@@ -36,7 +36,11 @@ export default function AssetRegisterPage() {
         <p className="site-kicker">Current register</p>
         <h2 id="empty-title">No verified assets are published.</h2>
         <p>The correct initial state is empty. A future entry must carry its evidence, date, location, bill-of-materials state and review status. The register will not be back-filled with demonstration assets.</p>
-        <code className="identity-seal">Register seal {shortHash(registerSeal)}</code>
+        {ASSET_RECORDS.length === 0 ? (
+          <span className="identity-seal">EMPTY REGISTER · NO ASSET SEAL</span>
+        ) : (
+          <code className="identity-seal">Register seal {shortHash(registerSeal)}</code>
+        )}
       </section>
     </main>
   );

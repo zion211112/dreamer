@@ -6,7 +6,7 @@ import "../../identity.css";
 
 export const metadata: Metadata = faceMetadata({
   title: FACES.roll.name,
-  description: "The Roll is APT-LABS' single evidence model: one ledger with a public People Register and an institutional Asset Register.",
+  description: "The Roll is APT-LABS' local-first evidence model: one sealing discipline for a People Register and an Asset Register, without claiming a shared server-backed database.",
   path: "/roll",
 });
 
@@ -42,17 +42,17 @@ export default function RollPage() {
           </div>
         </section>
 
-        <aside aria-labelledby="trust-title">
+        <section className="site-frame identity-section" aria-labelledby="trust-title">
           <div className="site-section-head"><span>Trust model</span><span>{COMPANY.name}</span></div>
-          <h2 id="trust-title" className="identity-register-title">The seal proves a record exists.</h2>
-          <p className="identity-register-copy">A hash detects changes to a canonical record. It does not prove the truth of an unverified statement, and it does not reveal private identity.</p>
+          <h2 id="trust-title" className="identity-register-title">A seal proves a record’s bytes, not its truth.</h2>
+          <p className="identity-register-copy">A hash detects changes to a canonical record. It does not prove the truth of an unverified statement, reveal private identity, or make a local-first record shared.</p>
           <div className="identity-state-ledger">
             {REGISTERS.map((register) => (
               <div key={register.name}><span>{register.name}</span><strong>{register.status}</strong></div>
             ))}
             <div><span>Seal algorithm</span><strong>SHA-256</strong></div>
           </div>
-        </aside>
+        </section>
       </div>
     </main>
   );
