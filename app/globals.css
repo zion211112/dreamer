@@ -1,16 +1,195 @@
 /* ============================================================
-   APT-LABS — Design Tokens
-   8px grid. One accent. Type does the work.
+   APT-LABS — Design System
+   Zero-decorative. Structural. Technical.
+   Reference: Vercel + Palantir + Linear.
+   Green accent: teal-400. Borders: muted-gray.
+   No cards. No gradients. No glows. Grid only.
    ============================================================ */
-
-/* ─── Google Fonts — Mirror.xyz editorial + Linear instrument ─── */
-/* Self-hosted, preloaded and subsetted by next/font in app/layout.tsx; the
-   tokens below resolve the generated --font-* variables. No CSS @import
-   here — an @import is render-blocking and adds a third-party origin. */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ─── Design Tokens (Atomic) ─── */
+
+:root {
+  /* Surfaces — Technical Void */
+  --void:   #040405;        /* Deepest black-slate */
+  --panel:  #08080A;        /* Component frame */
+  --edge:   #0E0E10;        /* Hover, active */
+  --surface: #121214;
+
+  /* Borders */
+  --rule:   #1A1A1D;        /* Subtle divider */
+  --strong: #2A2A2F;        /* Active element */
+  --focus:  #58585C;        /* Focus ring */
+
+  /* Typography */
+  --text:   #FAFAFA;        /* Primary */
+  --dim:    #99999D;        /* Secondary */
+  --mute:   #555559;        /* Tertiary */
+  --block:  #333338;        /* Timed/defunct */
+
+  /* Signal — Technical Accent (Tailwind green-400) */
+  --sig:    #34D399;        /* Primary interactive */
+  --sig-dim: #26A69A;       /* Hover */
+  --sig-sub: #065F46;       /* Darker */
+  --sig-soft: rgba(52, 211, 153, 0.10);     /* Subtle tint */
+
+  /* Status */
+  --tag-verified: #10B981;
+  --tag-planned:  #FBBF24;
+  --tag-unknown:  #52525B;
+}
+
+/* ─── Base Reset ─── */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--void);
+  color: var(--text);
+  font-family: -apple-system, -apple-system-font, 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ─── Type Families ─── */
+
+.mono {
+  font-family: ui-monospace, 'JetBrains Mono', 'SF Mono', 'Cascadia Code', 'Roboto Mono', monospace;
+}
+
+.sans {
+  font-family: -apple-system, -apple-system-font, 'Inter', system-ui, sans-serif;
+}
+
+.display {
+  font-family: -apple-system, -apple-system-font, 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+/* ─── Utility Primitives ─── */
+
+.border-rule {
+  border: 1px solid var(--rule);
+}
+
+.border-strong {
+  border: 1px solid var(--strong);
+}
+
+.border-sig {
+  border-color: var(--sig);
+}
+
+.bg-panel {
+  background-color: var(--panel);
+}
+
+.bg-surface {
+  background-color: var(--surface);
+}
+
+.text-sig {
+  color: var(--sig);
+}
+
+.text-dim {
+  color: var(--dim);
+}
+
+.text-mute {
+  color: var(--mute);
+}
+
+.text-block {
+  color: var(--block);
+}
+
+/* Hover states - technical, minimal */
+.hover-surface:hover {
+  background-color: var(--edge);
+}
+
+.hover-border-strong:hover {
+  border-color: var(--strong);
+}
+
+/* ─── Layout Systems ─── */
+
+.entry {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.entry-left {
+  min-width: 0;
+  flex: 1;
+}
+
+.entry-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* ─── Tag Chips ─── */
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tag-verified {
+  color: var(--tag-verified);
+  background: var(--sig-soft);
+}
+
+.tag-planned {
+  color: var(--tag-planned);
+  background: transparent;
+}
+
+.tag-unknown {
+  color: var(--tag-unknown);
+  background: transparent;
+}
 
 :root {
   /* Surfaces — deepest to raised */

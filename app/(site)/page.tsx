@@ -1,130 +1,161 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import DeployPreview from "../../components/DeployPreview";
-import SystemMap from "../../components/SystemMap";
-import GeoArt from "../../components/GeoArt";
-import { COMPANY, INTAKE, OPERATING_LOOP, PROBLEM, RESPONSE } from "../../lib/company";
+import { COMPANY, FACES, INTAKE, OPERATING_LOOP } from "../../lib/company";
+import "../globals.css";
 import "../home.css";
 
-export const metadata: Metadata = {
-  title: { absolute: "APT-LABS — Locally owned institutional infrastructure systems." },
-  description: COMPANY.oneSentence,
+export const metaMetadata = {
+  title: { absolute: "APT-LABS — Institutional Infrastructure Systems" },
+  description: "Locally owned institutional infrastructure systems. Terminal-grade aesthetic.",
 };
 
 export default function HomePage() {
   return (
-    <main className="landing">
-      <div className="landing-system-strip">
-        <div className="landing-frame landing-strip-inner">
-          <span className="landing-status"><i aria-hidden="true" /> ONE COMPANY · FOUR FACES</span>
-          <span>APT-LABS <b>/</b> INFRASTRUCTURE SYSTEMS</span>
-          <span>OFFLINE-FIRST · LOCALLY OWNED · REPRODUCIBLE</span>
+    <main style={{ minHeight: "100vh" }}>
+      {/* System Strip */}
+      <div className="system-strip">
+        <div className="system-strip-inner">
+          <span className="mono text-sig" style={{ fontSize: "11px", letterSpacing: "0.15em" }}>SYS: ONE ENTITY · FOUR FACES</span>
+          <span className="mono text-dim">APT-LABS / {COMPANY.geography.text}</span>
+          <span className="mono text-dim">OFFLINE → ONLINE → REPLICABLE</span>
         </div>
       </div>
-      <section className="landing-hero" aria-labelledby="landing-title">
-        <GeoArt variant="cells" className="landing-hero-art" />
-        <div className="landing-frame landing-hero-grid">
-          <div className="landing-hero-copy">
-            <p className="lp-label">APT-LABS / {COMPANY.geography.text} / INSTITUTIONAL INFRASTRUCTURE</p>
-            <h1 id="landing-title" className="page-title">Infrastructure that institutions can run, repair and reproduce locally.</h1>
-            <p className="landing-lead">{RESPONSE}</p>
-            <p className="landing-supporting">Software, hardware, creative-computing capacity and the documentation needed to operate, repair and improve institutional systems locally.</p>
-            <div className="landing-actions">
-              <Link href="/console" className="landing-button landing-button-primary">Open the local console</Link>
-              <Link href="/evidence" className="landing-button">Read the evidence record</Link>
+
+      {/* Hero */}
+      <section className="home-hero">
+        <div className="hero-grid">
+          <div className="hero-content">
+            <span className="mono text-sig" style={{ fontSize: "11px", letterSpacing: "0.15em", display: "block" }}>PROJECT / {COMPANY.geography.text.toUpperCase()} / INFRASTRUCTURE_SYSTEM</span>
+            <h1 className="head" style={{ marginTop: "16px", letterSpacing: "-0.04em", lineHeight: "1.1" }}>
+              Infrastructure that institutions can run, repair and reproduce locally.
+            </h1>
+            <span style={{ display: "block", marginTop: "16px", maxWidth: "42ch", fontSize: "15px", lineHeight: "1.5", color: "var(--dim)" }}>
+              Software. Hardware. Creative-computing capacity. Documentation layer for local technical adoption.
+            </span>
+            <div className="hero-actions" style={{ marginTop: "32px", display: "flex", flexWrap: "wrap", gap: "12px" }}>
+              <Link href="/console" className="btn btn-primary" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", minHeight: "36px", padding: "0 20px", fontSize: "12px", fontWeight: "500", letterSpacing: "0.05em", textTransform: "uppercase", borderRadius: "2px", textDecoration: "none", border: "1px solid var(--sig)", color: "var(--sig)", background: "transparent" }}>
+                CONSOLE.EXE
+              </Link>
+              <Link href="/evidence" className="btn btn-secondary" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", minHeight: "36px", padding: "0 20px", fontSize: "12px", fontWeight: "500", letterSpacing: "0.05em", textTransform: "uppercase", borderRadius: "2px", textDecoration: "none", border: "1px solid var(--rule)", color: "var(--dim)", background: "transparent" }}>
+                EVIDENCE.MD
+              </Link>
             </div>
-            <a href="#architecture" className="landing-tertiary-link">View the architecture <span aria-hidden="true">↓</span></a>
-            <p className="landing-hero-note">Current public record: local prototype. No verified school deployment is claimed.</p>
           </div>
-          <DeployPreview />
-        </div>
-      </section>
-
-      <section className="landing-problem" aria-labelledby="problem-title">
-        <div className="landing-frame landing-problem-grid">
-          <div>
-            <p className="lp-label">The problem</p>
-            <h2 id="problem-title">{PROBLEM}</h2>
-          </div>
-          <div className="landing-response">
-            <span className="lp-label">The APT-LABS response</span>
-            <p>{COMPANY.oneSentence}</p>
+          <div className="hero-preview" style={{ display: "flex", flexDirection: "column" }}>
+            <DeployPreview />
           </div>
         </div>
       </section>
 
-      <section id="architecture" className="landing-architecture" aria-label="APT-LABS system architecture">
-        <div className="landing-frame">
-          <SystemMap />
-          <p className="landing-architecture-note"><strong>Intake layer</strong> · {INTAKE.name} is where capability enters before it can move into APT Fab or APT Studio and be recorded in The Roll.</p>
-        </div>
-      </section>
-
-      <section className="landing-evidence" aria-labelledby="evidence-title">
-        <div className="landing-frame">
-          <div className="landing-section-head">
-            <h2 id="evidence-title" className="lp-label">Evidence before scale</h2>
-            <span>State before claim</span>
+      {/* Architecture Grid */}
+      <section id="architecture">
+        <div className="section-frame">
+          <div className="section-head" style={{ margin: "40px 0 16px" }}>
+            <span style={{ margin: "0", fontFamily: "var(--font-mono)", fontSize: "11px", fontWeight: "500", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--sig)", display: "block" }}>ARCHITECTURE_GRID</span>
+            <h2 style={{ margin: "8px 0 0", fontSize: "clamp(24px, 3vw, 32px)", fontWeight: "500", letterSpacing: "-0.03em", lineHeight: "1.15", color: "var(--text)", maxWidth: "20ch", textWrap: "balance" }}>
+              One system. One evidence model.
+            </h2>
           </div>
-          <div className="evidence-grid">
-            <article className="evidence-panel evidence-panel--verified">
-              <span>01 / What exists</span>
-              <h3>Working software and an evidence model.</h3>
-              <p>The local console, SHA-256 record discipline and two empty local-first registers are inspectable in this repository.</p>
-              <strong>PROTOTYPE</strong>
-            </article>
-            <article className="evidence-panel evidence-panel--planned">
-              <span>02 / What needs testing</span>
-              <h3>A bounded institutional pilot.</h3>
-              <p>Cost, performance, adoption, repair and local production must be measured before a replication claim is made.</p>
-              <strong>PLANNED</strong>
-            </article>
-            <article className="evidence-panel evidence-panel--unknown">
-              <span>03 / What is unknown</span>
-              <h3>Field outcomes and unit economics.</h3>
-              <p>No verified school deployment, beneficiary result, revenue figure, partner, procurement record or cost saving is published.</p>
-              <strong>UNKNOWN</strong>
-            </article>
-            <article className="evidence-panel evidence-panel--reproduce">
-              <span>04 / What can be reproduced</span>
-              <h3>The architecture, not a success story.</h3>
-              <p>Another team can inspect the system model and sealing machinery. A physical replication kit is not yet complete.</p>
-              <Link href="/evidence">Inspect the record <span aria-hidden="true">→</span></Link>
-            </article>
+          <div className="arch-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: "1px", background: "var(--rule)", border: "1px solid var(--rule)" }}>
+            <div className="arch-item" style={{ background: "var(--panel)", padding: "20px 24px", display: "flex", flexDirection: "column", minHeight: "0" }}>
+              <span style={{ marginBottom: "8px", fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: "500", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--dim)" }}>01_CAPABILITY</span>
+              <h3 style={{ margin: "12px 0 8px", fontSize: "14px", fontWeight: "600", color: "var(--text)" }}>{INTAKE.name}</h3>
+              <span style={{ margin: "0", fontSize: "13px", lineHeight: "1.5", color: "var(--dim)" }}>Local capability enters here, is verified, then can move into APT Deploy, Fab or Studio.</span>
+            </div>
+            <div className="arch-item" style={{ background: "var(--panel)", padding: "20px 24px", display: "flex", flexDirection: "column", minHeight: "0" }}>
+              <span style={{ marginBottom: "8px", fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: "500", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--dim)" }}>02_APPLICATION</span>
+              <h3 style={{ margin: "12px 0 8px", fontSize: "14px", fontWeight: "600", color: "var(--text)" }}>{FACES.deploy.name}</h3>
+              <span style={{ margin: "0", fontSize: "13px", lineHeight: "1.5", color: "var(--dim)" }}>Offline-first institutional software for records, assessment and operations.</span>
+            </div>
+            <div className="arch-item" style={{ background: "var(--panel)", padding: "20px 24px", display: "flex", flexDirection: "column", minHeight: "0" }}>
+              <span style={{ marginBottom: "8px", fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: "500", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--dim)" }}>03_PRODUCTION</span>
+              <h3 style={{ margin: "12px 0 8px", fontSize: "14px", fontWeight: "600", color: "var(--text)" }}>{FACES.fab.name}</h3>
+              <span style={{ margin: "0", fontSize: "13px", lineHeight: "1.5", color: "var(--dim)" }}>Documented, repairable hardware for local production and maintenance.</span>
+            </div>
+            <div className="arch-item" style={{ background: "var(--panel)", padding: "20px 24px", display: "flex", flexDirection: "column", minHeight: "0" }}>
+              <span style={{ marginBottom: "8px", fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: "500", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--dim)" }}>04_RECORDING</span>
+              <h3 style={{ margin: "12px 0 8px", fontSize: "14px", fontWeight: "600", color: "var(--text)" }}>{FACES.roll.name}</h3>
+              <span style={{ margin: "0", fontSize: "13px", lineHeight: "1.5", color: "var(--dim)" }}>One ledger. Two registers. One SHA-256 sealing discipline.</span>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="landing-loop" aria-labelledby="loop-title">
-        <div className="landing-frame">
-          <div className="landing-section-head">
-            <h2 id="loop-title" className="lp-label">From prototype to replication</h2>
-            <span>Method, not completed result</span>
+      {/* Evidence Framework */}
+      <section className="evidence">
+        <div className="section-frame">
+          <div className="section-head" style={{ margin: "40px 0 16px" }}>
+            <span style={{ margin: "0", fontFamily: "var(--font-mono)", fontSize: "11px", fontWeight: "500", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--sig)", display: "block" }}>EVIDENCE_FRAME</span>
+            <h2 style={{ margin: "8px 0 0", fontSize: "clamp(24px, 3vw, 32px)", fontWeight: "500", letterSpacing: "-0.03em", lineHeight: "1.15", color: "var(--text)", maxWidth: "20ch", textWrap: "balance" }}>
+              State before claim
+            </h2>
           </div>
-          <ol className="loop-rail">
+          <div className="evidence-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: "1px", background: "var(--rule)", border: "1px solid var(--rule)" }}>
+            <article className="evidence-card" style={{ background: "var(--panel)", padding: "18px 20px", display: "flex", flexDirection: "column", minHeight: "0" }}>
+              <span style={{ display: "inline-block", marginBottom: "12px", padding: "2px 8px", fontSize: "9px", fontWeight: "500", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--tag-verified)", background: "var(--sig-soft)" }}>PROTOTYPE</span>
+              <span style={{ marginBottom: "4px", fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: "600", letterSpacing: "0.1em", color: "var(--rule)" }}>01</span>
+              <h3 style={{ margin: "8px 0 6px", fontSize: "14px", fontWeight: "600", color: "var(--text)" }}>What exists</h3>
+              <span style={{ margin: "0", fontSize: "13px", lineHeight: "1.5", color: "var(--dim)", overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical" }}>Working software and an evidence model. The local console, SHA-256 record discipline and two empty local-first registers are inspectable.</span>
+            </article>
+            <article className="evidence-card" style={{ background: "var(--panel)", padding: "18px 20px", display: "flex", flexDirection: "column", minHeight: "0" }}>
+              <span style={{ display: "inline-block", marginBottom: "12px", padding: "2px 8px", fontSize: "9px", fontWeight: "500", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--tag-planned)", background: "transparent" }}>PLANNED</span>
+              <span style={{ marginBottom: "4px", fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: "600", letterSpacing: "0.1em", color: "var(--rule)" }}>02</span>
+              <h3 style={{ margin: "8px 0 6px", fontSize: "14px", fontWeight: "600", color: "var(--text)" }}>Bounded pilot</h3>
+              <span style={{ margin: "0", fontSize: "13px", lineHeight: "1.5", color: "var(--dim)", overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical" }}>Cost, performance, adoption, repair and local production must be measured first.</span>
+            </article>
+            <article className="evidence-card" style={{ background: "var(--panel)", padding: "18px 20px", display: "flex", flexDirection: "column", minHeight: "0" }}>
+              <span style={{ display: "inline-block", marginBottom: "12px", padding: "2px 8px", fontSize: "9px", fontWeight: "500", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--tag-unknown)", background: "transparent" }}>UNKNOWN</span>
+              <span style={{ marginBottom: "4px", fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: "600", letterSpacing: "0.1em", color: "var(--rule)" }}>03</span>
+              <h3 style={{ margin: "8px 0 6px", fontSize: "14px", fontWeight: "600", color: "var(--text)" }}>Field outcomes</h3>
+              <span style={{ margin: "0", fontSize: "13px", lineHeight: "1.5", color: "var(--dim)", overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical" }}>No verified school deployment, beneficiary result, revenue figure or partner is published.</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      {/* Process Loop */}
+      <section className="process">
+        <div className="section-frame">
+          <div className="section-head" style={{ margin: "40px 0 16px" }}>
+            <span style={{ margin: "0", fontFamily: "var(--font-mono)", fontSize: "11px", fontWeight: "500", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--sig)", display: "block" }}>PROCESS_ORDER</span>
+            <h2 style={{ margin: "8px 0 0", fontSize: "clamp(24px, 3vw, 32px)", fontWeight: "500", letterSpacing: "-0.03em", lineHeight: "1.15", color: "var(--text)", maxWidth: "20ch", textWrap: "balance" }}>
+              From prototype to replication
+            </h2>
+          </div>
+          <div className="process-rail" style={{ display: "grid", gridTemplateColumns: "repeat(7, minmax(0, 1fr))", gap: "0", background: "var(--panel)", borderTop: "1px solid var(--rule)", borderBottom: "1px solid var(--rule)" }}>
             {OPERATING_LOOP.map((step, index) => (
-              <li key={step}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <strong>{step}</strong>
-              </li>
+              <div key={step} className="process-step" style={{ display: "flex", flexDirection: "column", padding: "20px 8px", minHeight: "0", borderRight: "1px solid var(--rule)" }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: "600", letterSpacing: "0.1em", color: "var(--sig)", marginBottom: "4px" }}>{String(index + 1).padStart(2, "0")}</span>
+                <span style={{ fontSize: "12px", lineHeight: "1.4", color: "var(--dim)" }}>{step}</span>
+              </div>
             ))}
-          </ol>
+          </div>
         </div>
       </section>
 
-      <section className="landing-cta" aria-labelledby="cta-title">
-        <div className="landing-frame landing-cta-inner">
-          <div>
-            <p className="lp-label">Start with inspection</p>
-            <h2 id="cta-title">See the system before scaling the story.</h2>
-            <p>Open the local prototype, read the evidence boundary, or contact APT-LABS about a bounded institutional conversation.</p>
-          </div>
-          <div className="landing-actions">
-            <Link href="/console" className="landing-button landing-button-primary">Open the local console</Link>
-            <Link href="/contact" className="landing-button">Start a conversation</Link>
+      {/* Footer CTA */}
+      <section className="initiate">
+        <div className="section-frame">
+          <div className="initiate-content" style={{ padding: "48px 24px" }}>
+            <span style={{ margin: "0", fontFamily: "var(--font-mono)", fontSize: "11px", fontWeight: "500", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--sig)", display: "block" }}>INITIATE_SESSION</span>
+            <h2 style={{ margin: "8px 0 12px", fontSize: "clamp(24px, 3vw, 32px)", fontWeight: "500", letterSpacing: "-0.03em", lineHeight: "1.15", color: "var(--text)", maxWidth: "20ch", textWrap: "balance" }}>
+              Start with inspection.
+            </h2>
+            <span style={{ display: "block", marginBottom: "24px", fontSize: "14px", lineHeight: "1.5", color: "var(--dim)" }}>
+              Open the local prototype, read the evidence boundary, or contact APT-LABS about a bounded institutional conversation.
+            </span>
+            <div className="hero-actions" style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
+              <Link href="/console" className="btn btn-primary" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", minHeight: "36px", padding: "0 20px", fontSize: "12px", fontWeight: "500", letterSpacing: "0.05em", textTransform: "uppercase", borderRadius: "2px", textDecoration: "none", border: "1px solid var(--sig)", color: "var(--sig)", background: "transparent" }}>
+                OPEN_CONSOLE.EXE
+              </Link>
+              <Link href="/contact" className="btn btn-secondary" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", minHeight: "36px", padding: "0 20px", fontSize: "12px", fontWeight: "500", letterSpacing: "0.05em", textTransform: "uppercase", borderRadius: "2px", textDecoration: "none", border: "1px solid var(--rule)", color: "var(--dim)", background: "transparent" }}>
+                INITIATE_CONTACT
+              </Link>
+            </div>
           </div>
         </div>
       </section>
     </main>
   );
 }
+
