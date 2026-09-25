@@ -1,0 +1,412 @@
+/* ─── Public identity pages ─── */
+
+.identity-page {
+  background: var(--void);
+}
+
+.identity-hero {
+  padding-block: 48px 64px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.identity-state {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 8px;
+  border: 1px solid var(--signal-a30);
+  background: var(--signal-a08);
+  color: var(--signal);
+  font: 600 10px/1 var(--font-mono);
+  letter-spacing: .14em;
+}
+
+.identity-hero .site-kicker {
+  margin-top: 40px;
+}
+
+.identity-lead {
+  max-width: 56ch;
+  margin: 24px 0 0;
+  color: var(--ink);
+  font: 400 clamp(20px, 3vw, 28px)/1.35 var(--font-serif);
+}
+
+.identity-description {
+  max-width: 60ch;
+  margin: 16px 0 0;
+  color: var(--dust);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.identity-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.identity-provenance {
+  margin: 24px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+  color: var(--ash);
+  font: 11px/1.6 var(--font-mono);
+}
+
+.identity-provenance strong {
+  color: var(--signal);
+  font-weight: 600;
+}
+
+.identity-sections {
+  padding-block: 8px 72px;
+}
+
+.identity-section {
+  padding-block: 40px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.identity-section .site-section-head h2 {
+  margin: 0;
+  font: inherit;
+}
+
+.identity-section-body {
+  max-width: 62ch;
+  margin: 24px 0 0;
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.identity-list {
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.identity-list li {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--dust);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.identity-list li::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  margin-top: .65em;
+  background: var(--signal);
+}
+
+.identity-notice {
+  margin: 32px 0 0;
+  padding: 16px;
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  color: var(--dust);
+  font: 12px/1.7 var(--font-mono);
+}
+
+.identity-flow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 24px;
+  border: 1px solid var(--rule);
+}
+
+.identity-flow > div {
+  padding: 16px;
+  border-right: 1px solid var(--rule);
+}
+
+.identity-flow > div:last-child {
+  border-right: 0;
+}
+
+.identity-flow span {
+  display: block;
+  color: var(--signal);
+  font: 600 10px/1 var(--font-mono);
+  letter-spacing: .12em;
+}
+
+.identity-flow strong {
+  display: block;
+  margin-top: 10px;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.identity-register-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, .55fr);
+  gap: 48px;
+  padding-block: 48px;
+}
+
+.identity-register-grid > div {
+  min-width: 0;
+}
+
+.identity-register-title {
+  margin: 20px 0 0;
+  color: var(--ink);
+  font: 400 clamp(28px, 4vw, 42px)/1.15 var(--font-serif);
+}
+
+.identity-register-copy {
+  max-width: 56ch;
+  margin: 16px 0 0;
+  color: var(--dust);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.identity-register-link {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.identity-register-link:hover {
+  color: var(--signal);
+}
+
+.identity-register-link span:last-child {
+  color: var(--signal);
+  font: 600 11px/1.5 var(--font-mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.identity-state-ledger {
+  margin: 24px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.identity-state-ledger div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--dust);
+  font: 11px/1.5 var(--font-mono);
+}
+
+.identity-state-ledger strong {
+  color: var(--signal);
+  font-weight: 600;
+}
+
+.identity-empty {
+  padding: 32px 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.identity-empty h2 {
+  margin: 0;
+  color: var(--ink);
+  font: 400 28px/1.2 var(--font-serif);
+}
+
+.identity-empty p {
+  max-width: 56ch;
+  margin: 12px 0 0;
+  color: var(--dust);
+  line-height: 1.7;
+}
+
+.identity-seal {
+  display: block;
+  margin-top: 24px;
+  color: var(--ash);
+  font: 11px/1.6 var(--font-mono);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 800px) {
+  .identity-flow {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .identity-flow > div:nth-child(2) {
+    border-right: 0;
+  }
+
+  .identity-flow > div:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .identity-register-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .identity-hero {
+    padding-block: 32px 48px;
+  }
+
+  .identity-actions {
+    flex-direction: column;
+  }
+
+  .identity-flow {
+    grid-template-columns: 1fr;
+  }
+
+  .identity-flow > div {
+    border-right: 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .identity-flow > div:last-child {
+    border-bottom: 0;
+  }
+}
+
+/* ─── Shared identity shell and evidence primitives ─── */
+
+.identity-frame {
+  padding-block: 8px 72px;
+}
+
+.identity-header {
+  padding-block: 40px 48px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.identity-header .identity-lead {
+  max-width: 62ch;
+}
+
+.identity-section-body > :first-child {
+  margin-top: 0;
+}
+
+.evidence-list {
+  margin: 24px 0 0;
+  border-top: 1px solid var(--rule);
+}
+
+.evidence-row {
+  display: grid;
+  grid-template-columns: minmax(150px, .42fr) minmax(0, 1fr);
+  gap: 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.evidence-row dt,
+.evidence-row dd {
+  margin: 0;
+  font: 11px/1.6 var(--font-mono);
+}
+
+.evidence-row dt {
+  color: var(--ash);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.evidence-row dd {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--ink);
+}
+
+.evidence-row dd > span:first-child {
+  overflow-wrap: anywhere;
+}
+
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-height: 22px;
+  padding: 0 7px;
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  color: var(--dust);
+  font: 600 9px/1 var(--font-mono);
+  letter-spacing: .12em;
+}
+
+.status-tag[data-state="verified"] {
+  border-color: var(--signal-a30);
+  color: var(--signal);
+}
+
+.status-tag[data-state="prototype"],
+.status-tag[data-state="planned"],
+.status-tag[data-state="target"] {
+  border-color: var(--signal-dim);
+  color: var(--ink);
+}
+
+.status-tag[data-state="unknown"] {
+  color: var(--ash);
+}
+
+.identity-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.identity-link:hover,
+.identity-link:focus-visible {
+  border-color: var(--signal);
+  color: var(--signal);
+}
+
+.identity-register-links {
+  margin-top: 24px;
+}
+
+.identity-register-links .identity-register-link {
+  border-top: 1px solid var(--rule);
+}
+
+.identity-register-links .identity-register-copy {
+  display: inline;
+  margin-top: 4px;
+}
+
+@media (max-width: 600px) {
+  .evidence-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .evidence-row dd {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

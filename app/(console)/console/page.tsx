@@ -153,8 +153,9 @@ function ConsoleLogin({
             <p className="font-mono text-label uppercase tracking-[0.35em] text-signal">Build capacity · Console</p>
             <h1 className="mt-4 font-serif text-4xl font-light tracking-tight">Who are you?</h1>
             <p className="mt-3 text-sm leading-6 text-dust">
-              Pick your door, then knock. This console is access-gated — the
-              registered pilot alone opens it, on this device.
+              Pick your door, then knock. This console is a demonstration door —
+              entry is a local code held on this device, and nothing you
+              type here leaves the browser.
             </p>
 
             <div className="mt-8 grid grid-cols-1 gap-3 min-[420px]:grid-cols-2">

@@ -5,7 +5,7 @@ import { ImageResponse } from "next/og";
 // filesystem to resolve and renders the same markup via wasm.
 export const runtime = "edge";
 
-export const alt = "APT-LABS — The ledger of useful work.";
+export const alt = "APT-LABS — Locally owned institutional infrastructure systems.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -93,7 +93,7 @@ export default function OpengraphImage() {
             APT-LABS
           </div>
           <div style={{ display: "flex", fontSize: 88, fontWeight: 700 }}>
-            The ledger of useful work.
+            Locally owned institutional infrastructure.
           </div>
           <div style={{ display: "flex", fontSize: 28, color: DUST }}>
             Counts are visible. Identity stays yours.
@@ -113,8 +113,8 @@ export default function OpengraphImage() {
             color: DUST,
           }}
         >
-          <div style={{ display: "flex", color: INK }}>LOCAL-FIRST RECORD</div>
-          <div style={{ display: "flex" }}>ROLL · FLOOR · CONSOLE</div>
+          <div style={{ display: "flex", color: INK }}>ONE SYSTEM · FOUR FACES</div>
+          <div style={{ display: "flex" }}>DEPLOY · FAB · STUDIO · ROLL</div>
         </div>
       </div>
     ),

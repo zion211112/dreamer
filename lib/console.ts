@@ -18,11 +18,11 @@ export interface ConsoleSession {
   ts: number;
 }
 
-// Access gate. The console is a demo door, not a security boundary: a
-// local-first app has no server to verify against, so entry is a knock code
-// held on the device. Only the registered pilot — RUNPILOT at PILOTRUN —
-// opens the console. Compared case-insensitively so the codes are easy to
-// type mid-pitch.
+// Access gate. The console is a demonstration door, not a security boundary
+// and not evidence of a deployment: a local-first app has no server to verify
+// against, so entry is a knock code held on the device. RUNPILOT at PILOTRUN
+// opens it. Compared case-insensitively so the codes are easy to type
+// mid-demonstration.
 export const GATE_NAME = "RUNPILOT";
 export const GATE_SCHOOL = "PILOTRUN";
 export const normGate = (s: string) => s.trim().toUpperCase();

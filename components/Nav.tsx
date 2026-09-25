@@ -7,10 +7,13 @@ import { useEffect, useId, useState } from "react";
 type NavItem = { href: string; label: string };
 
 const NAV_ITEMS: NavItem[] = [
-  { href: "/ledger", label: "Ledger" },
+  { href: "/deploy", label: "Deploy" },
+  { href: "/fab", label: "Fab" },
+  { href: "/studio", label: "Studio" },
+  { href: "/roll", label: "Roll" },
   { href: "/benben", label: "Floor" },
-  { href: "/console", label: "Console" },
-  { href: "/contact", label: "Contact" },
+  { href: "/evidence", label: "Evidence" },
+  { href: "/about", label: "About" },
 ];
 
 export function Nav() {
@@ -43,7 +46,11 @@ export function Nav() {
   }, [mobileOpen]);
 
   const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+    href === "/"
+      ? pathname === "/"
+      : href === "/roll"
+        ? pathname.startsWith("/roll") || pathname.startsWith("/ledger")
+        : pathname.startsWith(href);
 
   return (
     <header className="site-nav" role="banner">
@@ -51,7 +58,7 @@ export function Nav() {
         <Link
           href="/"
           className="nav-brand"
-          aria-label="APT-LABS — The ledger of useful work"
+          aria-label="APT-LABS — locally owned institutional infrastructure systems"
         >
           <span className="nav-brand-mark" aria-hidden="true">A</span>
           <span className="nav-brand-text">APT-LABS</span>

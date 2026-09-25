@@ -7,11 +7,8 @@ import {
   LOCATIONS,
   Member,
   OCCUPATIONS,
-  SCHOOL_STATS,
   SEED_MEMBERS,
-  SUBSCRIBED_SCHOOLS,
   KEYS,
-  TREASURY,
   loadStored,
   saveStored,
   seal,
@@ -223,7 +220,7 @@ function LedgerInner() {
         <div className="page-header-inner">
           <div className="page-header-text">
             <p className="ledger-brand">APT-LABS <em>/</em> KIRINYAGA NODE <span>LOCAL RECORD</span></p>
-            <h1 className="page-title">The Sovereign Ledger</h1>
+            <h1 className="page-title">The Roll — People Register</h1>
             <p className="page-desc">
               Names, skills, and seals in one public record. Proof is added by
               others — never claimed by the person on the roll.
@@ -265,6 +262,11 @@ function LedgerInner() {
                 </button>
               </div>
             </div>
+
+            <p className="message message-info" role="note">
+              DEMONSTRATION DATA — sample entries ship with the site so the register can be
+              inspected. They are not verified project results.
+            </p>
 
             <div className="filter-chips" role="group" aria-label="Filter the roll by location">
               <button type="button" className="chip" aria-pressed={location === "all"} onClick={() => setLocation("all")}>
@@ -437,25 +439,29 @@ function LedgerInner() {
               </>
             )}
 
-            {/* ── Under one roof ── */}
+            {/* ── Evidence status ── */}
             <section className="under-roof" aria-labelledby="under-roof-heading">
               <div className="section-head">
-                <h2 id="under-roof-heading" className="label label-signal">Under one roof · pilot</h2>
+                <h2 id="under-roof-heading" className="label label-signal">Evidence status</h2>
               </div>
               <dl className="roof-list">
                 <div className="cred-row">
-                  <dt><span className="label">Pilot schools · ~{SCHOOL_STATS.reduce((n, s) => n + s.students, 0)} students</span></dt>
-                  <dd className="cred-value">{SUBSCRIBED_SCHOOLS.join(" · ")}</dd>
+                  <dt><span className="label">Pilot schools</span></dt>
+                  <dd className="cred-value">Unknown — no verified pilot on record</dd>
                 </div>
                 <div className="cred-row">
                   <dt><span className="label">Build budget</span></dt>
-                  <dd className="cred-value">KES {TREASURY.total.toLocaleString()} · {TREASURY.usedPct}% spent</dd>
+                  <dd className="cred-value">Unknown — no verified spend record</dd>
                 </div>
                 <div className="cred-row">
                   <dt><span className="label">Master seal</span></dt>
                   <dd className="cred-value"><code className="roll-meta-hash">{shortHash(masterSeal)}</code></dd>
                 </div>
               </dl>
+              <p className="verify-note">
+                Every figure carries a state: verified, demonstration, target, planned or
+                unknown. The master seal is computed live from the entries loaded above.
+              </p>
             </section>
 
             {/* ── Verify a credential ── */}

@@ -86,6 +86,27 @@
   color: var(--ivory-dim);
 }
 
+.benben-legacy-page .benben-demo-notice {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 auto 28px;
+  max-width: 680px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--gold) 36%, var(--line));
+  background: color-mix(in srgb, var(--gold) 8%, var(--void));
+  color: var(--ivory-dim);
+  font: 11px/1.5 var(--font-jetbrains),monospace;
+}
+
+.benben-legacy-page .benben-demo-notice strong {
+  color: var(--gold);
+  font-weight: 600;
+  letter-spacing: .08em;
+}
+
 .benben-legacy-page .spine {
   position: absolute;
   top: calc(var(--u)*34);

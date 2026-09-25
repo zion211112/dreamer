@@ -34,7 +34,7 @@ const NOW = Date.now();
 const initialBuilds: Build[] = [
   { id: "power", idx: "01", slot: 0, domain: "Power", state: "open", title: "Bike-powered phone charger for 1,800 KES — parts list and wiring", body: "Dynamo 800, rectifier 350, regulator 250, casing and wire 400. Mount on the rear fork, output 5V 1A at walking pace. Full wiring order on request.", author: "@Fundi_0002", location: "Mwea", postedAt: NOW - 2 * HOUR, expiresAt: NOW + 50 * HOUR, votes: 1, threshold: 2, needs: "nothing — already built", done: "Anyone can build this with local parts", comments: [
     { handle: "@Mwalimu_0005", time: "1h", text: "Used this on my brother's boda last month. Works. The regulator runs warm but holds." },
-    { handle: "@KeeperOfRostau", time: "42m", text: "Post the exact wiring order when you can. I want to build three for the Sagana survey team." }
+    { handle: "@KeeperOfRecord", time: "42m", text: "Post the exact wiring order when you can. I want to build three for the Sagana survey team." }
   ] },
   { id: "edu", idx: "02", slot: 1, domain: "Education", state: "open", title: "I can animate 3-minute KCSE explainers — free in exchange for skill work", body: "Ten explainers queued: matrices, photosynthesis, Sarufi. I want them listed on the ledger instead of cash. Reviewers welcome.", author: "@Mwalimu_0005", location: "Mwea", postedAt: NOW - 2 * HOUR, expiresAt: NOW + 22 * HOUR, votes: 1, threshold: 3, needs: "intellect — reviewers for the ten explainers", done: "10 explainers published on APT-LABS, my name on the ledger", comments: [] },
   { id: "housing", idx: "03", slot: 2, domain: "Housing", state: "open", title: "Stabilized soil block recipe after 6 months of tests — 7% cement, 2% lime", body: "Tested across two rainy seasons. Passes county building standards, costs 40% less than fired brick. Full ratios and curing schedule in thread.", author: "@Seremala_0006", location: "Embu", postedAt: NOW - 3 * HOUR, expiresAt: NOW + 4 * HOUR, votes: 2, threshold: 2, needs: "nothing — already built", done: "Blocks that pass county standards, 40% cheaper than brick", comments: [
@@ -190,6 +190,11 @@ export default function BenBenPage() {
   return (
     <main className="benben-legacy-page">
       <div className="page">
+        <div className="benben-demo-notice" role="note">
+          <strong>DEMONSTRATION DATA — NOT A VERIFIED PROJECT RESULT.</strong>
+          <span>Seeded entries and figures make the intake interface inspectable. They are not deployments, beneficiaries, procurement records or impact results.</span>
+        </div>
+
         <header className="head">
           <span className="kicker">
             BenBen <span className="sep">·</span> Block <span className="gold">0008</span> <span className="sep">·</span> Kirinyaga

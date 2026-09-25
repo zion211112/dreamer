@@ -1,7 +1,4 @@
-// The Source. Unredacted manifesto, shown ONLY inside root access.
-// Never linked, never indexed, never quoted on public pages.
-
-export const SOURCE_TEXT: string = `# THE OSAWI MANIFESTO
+# THE OSAWI MANIFESTO
 ## *A Declaration of Sovereign Intelligence*
 
 ---
@@ -291,4 +288,4 @@ There is a civilization to be born.
 **CatalyIQ**
 **DElphi-laBS**
 **Kirinyaga, Kenya**
-**2026**`;
+**2026**

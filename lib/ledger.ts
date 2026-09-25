@@ -178,7 +178,7 @@ function member(
 export const SEED_MEMBERS: Member[] = [
   member("AL-0042", "@Shemsu_Node", "Shemsu_Node", "Maths Tutor", "Mwea", ["KCSE Maths", "Revision drills"], true, true, "Stone", true),
   member("AL-0137", "@ZepTepi_Zero", "ZepTepi_Zero", "Solar Assistant", "Kagio", ["Lantern assembly", "Maintenance"], true, true, "Stone", true),
-  member("AL-0201", "@KeeperOfRostau", "KeeperOfRostau", "Data Enumerator", "Sagana", ["Surveys", "Entry"], true, true, "Stone", true),
+  member("AL-0201", "@KeeperOfRecord", "KeeperOfRecord", "Data Enumerator", "Sagana", ["Surveys", "Entry"], true, true, "Stone", true),
   member("AL-0311", "@VrilToSekhem", "VrilToSekhem", "Masonry Assistant", "Embu", ["Block work", "Repairs"], false, false),
   member("AL-0420", "@Thoth_Architect", "Thoth_Architect", "Animator", "Mwea", ["Explainer clips", "Posters"], true, true, "Stone", true),
   member("AL-0488", "@BenBen_Codex", "BenBen_Codex", "Tailor", "Kerugoya", ["Uniforms", "Repairs"], true, true, "Stone", true),

@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Playfair_Display, JetBrains_Mono } from "next/font/google";
+import { COMPANY } from "../lib/company";
 import { SITE_URL } from "../lib/site";
 import "./globals.css";
+
 
 // Self-hosted, preloaded, subsetted — replaces the render-blocking CSS
 // @import. Weights match the faces the site actually uses.
@@ -23,26 +25,23 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "APT-LABS — The ledger of useful work.",
+    default: "APT-LABS — Locally owned institutional infrastructure systems.",
     template: "%s — APT-LABS",
   },
-  description:
-    "A public record of work, skill, and trust. Built for places where the network is a suggestion, not a guarantee.",
-  keywords: ["ledger", "skills", "community", "local-first", "offline"],
+  description: COMPANY.description,
+  keywords: ["institutional infrastructure", "offline-first software", "local ownership", "reproducible infrastructure"],
   openGraph: {
     type: "website",
-    siteName: "APT-LABS",
+    siteName: COMPANY.name,
     locale: "en_KE",
-    title: "APT-LABS — The ledger of useful work.",
-    description:
-      "A public record of work, skill, and trust. Counts are visible. Identity stays yours.",
+    title: "APT-LABS — Locally owned institutional infrastructure systems.",
+    description: COMPANY.oneSentence,
     url: "/",
   },
   twitter: {
     card: "summary_large_image",
-    title: "APT-LABS — The ledger of useful work.",
-    description:
-      "A public record of work, skill, and trust. Counts are visible. Identity stays yours.",
+    title: "APT-LABS — Locally owned institutional infrastructure systems.",
+    description: COMPANY.oneSentence,
   },
   robots: { index: true, follow: true },
   icons: {

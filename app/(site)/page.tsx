@@ -1,104 +1,77 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import GeoArt from "../../components/GeoArt";
+import { COMPANY, FACES, INTAKE, OPERATING_LOOP } from "../../lib/company";
 import "../home.css";
 
 export const metadata: Metadata = {
-  title: { absolute: "APT-LABS — The ledger of useful work." },
-  description:
-    "A public record of work, skill, and trust in Kirinyaga, Kenya. Built for places where the network is a suggestion, not a guarantee.",
-  // openGraph comes from the root layout + app/opengraph-image.tsx; a
-  // page-level object here would override the generated og:image.
+  title: { absolute: "APT-LABS — Locally owned institutional infrastructure systems." },
+  description: COMPANY.oneSentence,
 };
 
-const surfaces = [
-  {
-    number: "01",
-    name: "The Roll",
-    description: "Names, skills, and sealed proof of work, in one public record.",
-    href: "/ledger",
-    action: "Read the roll",
-  },
-  {
-    number: "02",
-    name: "The Floor",
-    description: "Proposals move to proof, in public. Watch the work happen.",
-    href: "/benben",
-    action: "Enter the floor",
-  },
-  {
-    number: "03",
-    name: "The Console",
-    description: "A school's day, marked into signals a principal can act on.",
-    href: "/console",
-    action: "Open the console",
-  },
-];
+const faceList = Object.values(FACES);
 
 export default function HomePage() {
   return (
     <main className="landing">
       <div className="landing-system-strip">
         <div className="landing-frame landing-strip-inner">
-          <span className="landing-status"><i aria-hidden="true" /> LOCAL-FIRST RECORD</span>
-          <span>APT-LABS <b>/</b> KIRINYAGA NODE</span>
-          <span>PUBLIC PROOF · PRIVATE IDENTITY</span>
+          <span className="landing-status"><i aria-hidden="true" /> ONE COMPANY · FOUR FACES</span>
+          <span>APT-LABS <b>/</b> INFRASTRUCTURE SYSTEMS</span>
+          <span>OFFLINE-FIRST · LOCALLY OWNED · REPRODUCIBLE</span>
         </div>
       </div>
       <section className="landing-hero" aria-labelledby="landing-title">
         <GeoArt variant="cells" className="landing-hero-art" />
         <div className="landing-frame landing-hero-grid">
           <div className="landing-hero-copy">
-            <p className="lp-label">Kirinyaga, Kenya · Public record</p>
-            <h1 id="landing-title" className="page-title">The ledger of useful work.</h1>
-            <p className="landing-lead">
-              We&apos;re making a list of everyone in Kirinyaga who can actually do
-              things — and the roll is public.
-            </p>
+            <p className="lp-label">{COMPANY.geography.text} · Institutional infrastructure</p>
+            <h1 id="landing-title" className="page-title">Locally owned institutional infrastructure.</h1>
+            <p className="landing-lead">{COMPANY.oneSentence}</p>
             <div className="landing-actions">
-              <Link href="/ledger" className="landing-button landing-button-primary">
-                Open the ledger
+              <Link href="/deploy" className="landing-button landing-button-primary">
+                Inspect APT Deploy
               </Link>
-              <Link href="/benben" className="landing-button">
-                Enter the floor
+              <Link href="/evidence" className="landing-button">
+                See the evidence
               </Link>
             </div>
           </div>
 
-          <aside className="landing-roll" aria-label="Record protocol">
+          <aside className="landing-roll" aria-label="System protocol">
             <div className="landing-panel-head">
-              <p className="lp-label">Record protocol</p>
+              <p className="lp-label">System protocol</p>
               <span className="landing-panel-code">OPEN</span>
             </div>
             <dl className="protocol-list">
-              <div><dt>Source</dt><dd>hands, not slides</dd></div>
-              <div><dt>Basis</dt><dd>marks to work</dd></div>
-              <div><dt>Custody</dt><dd>unlisted</dd></div>
-              <div><dt>Region</dt><dd>Kirinyaga, Kenya · UTC+04</dd></div>
+              <div><dt>Problem</dt><dd>{COMPANY.problem}</dd></div>
+              <div><dt>Faces</dt><dd>Deploy · Fab · Studio · Roll</dd></div>
+              <div><dt>Evidence</dt><dd>State before scale</dd></div>
+              <div><dt>Region</dt><dd>{COMPANY.geography.text}</dd></div>
             </dl>
-            <p className="roll-total">AUDIT: 0 imaginary money · 0 vanity metrics</p>
+            <p className="roll-total">No fabricated outcomes. Every result remains state-labelled.</p>
           </aside>
         </div>
       </section>
 
-      <section className="landing-surfaces" aria-labelledby="surfaces-title">
+      <section className="landing-surfaces" aria-labelledby="faces-title">
         <div className="landing-frame">
           <div className="landing-section-head">
-            <h2 id="surfaces-title" className="lp-label">Three working surfaces</h2>
+            <h2 id="faces-title" className="lp-label">One system · Four faces</h2>
           </div>
 
           <ol className="surface-rows">
-            {surfaces.map((surface) => (
-              <li key={surface.number} className="surface-row">
+            {faceList.map((face, index) => (
+              <li key={face.key} className="surface-row">
                 <span className="surface-number" aria-hidden="true">
-                  {surface.number}
+                  {String(index + 1).padStart(2, "0")}
                 </span>
                 <div className="surface-text">
-                  <h3>{surface.name}</h3>
-                  <p>{surface.description}</p>
+                  <h3>{face.name}</h3>
+                  <p>{face.description} · State: {face.status}</p>
                 </div>
-                <Link href={surface.href} className="surface-link">
-                  {surface.action}
+                <Link href={face.route} className="surface-link">
+                  Open face
                 </Link>
               </li>
             ))}
@@ -106,11 +79,40 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="landing-frame landing-rule-line">
-        <span className="lp-label">The operating rule</span>
-        <span className="rule-text">Work first. Proof follows.</span>
-        <span className="rule-sub">Counts visible · identity yours</span>
-      </div>
+      <section className="landing-surfaces" aria-labelledby="floor-title">
+        <div className="landing-frame">
+          <div className="landing-section-head">
+            <h2 id="floor-title" className="lp-label">Intake layer</h2>
+          </div>
+          <ol className="surface-rows">
+            <li className="surface-row">
+              <span className="surface-number" aria-hidden="true">+</span>
+              <div className="surface-text">
+                <h3>{INTAKE.name}</h3>
+                <p>{INTAKE.summary} · State: {INTAKE.status}</p>
+              </div>
+              <Link href={INTAKE.route} className="surface-link">Enter intake</Link>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section className="landing-surfaces" aria-labelledby="loop-title">
+        <div className="landing-frame">
+          <div className="landing-section-head">
+            <h2 id="loop-title" className="lp-label">The scale loop</h2>
+            <span>Method, not completed result</span>
+          </div>
+          <ol className="surface-rows">
+            {OPERATING_LOOP.map((step, index) => (
+              <li key={step} className="surface-row">
+                <span className="surface-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                <div className="surface-text"><h3>{step}</h3></div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
     </main>
   );
 }
