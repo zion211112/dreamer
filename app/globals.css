@@ -192,36 +192,43 @@ body {
 }
 
 :root {
-  /* Surfaces — deepest to raised */
-  --void:   #060708;
-  --panel:  #0C0D0F;
-  --edge:   #141416;
-  --rule:   #1F1F22;
+  /* Surfaces — warm graphite, deepest to raised.
+     R≈G>B by a hair: the site is lit warm, never a cold black.
+     This ramp also feeds the console; its live green (--signal)
+     still carries product state on top. */
+  --void:   #0C0B09;
+  --panel:  #141310;
+  --edge:   #1C1A16;
+  --rule:   #26241E;
 
   /* Semantic surface aliases — components should consume meaning, not hex. */
   --surface-void:   var(--void);
   --surface-panel:  var(--panel);
-  --surface-raised: #111316;
+  --surface-raised: #1A1815;
   --surface-hover:  var(--edge);
   --text-primary:   var(--ink);
   --text-secondary: var(--dust);
   --text-tertiary:  var(--ash);
   --border-subtle:  var(--rule);
-  --border-strong:  #34363A;
+  --border-strong:  #3A3730;
+  --strong:         #35322B;
   --verified:       #34D399;
   --planned:        #FBBF24;
   --unknown:        #A8A29E;
   --focus:          var(--signal);
 
-  /* Text — primary and secondary */
-  /* Contrast on --void / --panel / --edge:
-     --ink 17.6 / 16.9 / 15.8  ·  --dust 5.52 / 5.32 / 5.04  ·  --ash 5.10 / 4.92 / 4.66
+  /* Text — brighter, cleaner warm ramp. The old warm-gray-on-cold-black
+     read muddy; on warm graphite it is quiet but crisp.
+     Contrast on --void / --panel / --edge:
+     --ink ≈ 17.4 / 16.4 / 15.2  ·  --dust ≈ 7.4 / 7.0 / 6.5  ·  --ash ≈ 5.6 / 5.3 / 4.9
      All three clear WCAG AA (4.5:1) for body text on every surface. */
-  --ink:    #F2EFE9;
-  --dust:   #8A8580;
-  --ash:    #857F7A;
+  --ink:    #F5F1E6;
+  --dust:   #A69E90;
+  --ash:    #8F887B;
 
-  /* Accent — one interactive color */
+  /* Accent — one interactive color: the console's live green.
+     Public chrome re-resolves these aliases to brass inside
+     .site-nav / .site-content / .site-footer (see site.css). */
   --signal:      #14B8A6;
   --signal-dim:  #0D9488;
   --signal-strong:#0F766E;
@@ -235,11 +242,21 @@ body {
   --amber:  #D97706;
   --danger: #EF4444;
 
-  /* Sublime site accent — brass for company chrome, green for live states.
-     Console keeps --signal; the company site speaks brass. */
-  --brass:  #D7A75F;
-  --brass2: #F0C77D;
+  /* Sublime site accent — the public site speaks one warm brass;
+     --ice is the quiet cool counter, used by aura light only. */
+  --brass:  #DFAF60;
+  --brass2: #F3CD8E;
   --green:  #41A873;
+  --ice:    #7FA0C2;
+
+  /* Sublime depth — light comes from above: a warm top-light hairline
+     over layered dark falloff. Consume the pair, not the raw values. */
+  --top-light:   inset 0 1px 0 rgba(255, 246, 224, 0.05);
+  --shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.42),
+                 inset 0 1px 0 rgba(255, 246, 224, 0.045);
+  --shadow-deep: 0 28px 70px rgba(0, 0, 0, 0.55),
+                 0 6px 18px rgba(0, 0, 0, 0.35),
+                 inset 0 1px 0 rgba(255, 246, 224, 0.055);
 
   /* Semantic aliases */
   --bg:       var(--void);

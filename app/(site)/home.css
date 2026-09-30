@@ -18,9 +18,9 @@
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(42rem 30rem at 50% -8rem, rgba(20, 184, 166, 0.16), transparent 62%),
-    radial-gradient(34rem 26rem at 90% 110%, rgba(217, 119, 6, 0.08), transparent 60%),
-    radial-gradient(60rem 42rem at 50% 38%, rgba(20, 184, 166, 0.05), transparent 72%);
+    radial-gradient(46rem 30rem at 50% -10rem, rgba(223, 175, 96, 0.15), transparent 60%),
+    radial-gradient(38rem 30rem at 92% 108%, rgba(127, 160, 194, 0.06), transparent 62%),
+    radial-gradient(64rem 44rem at 50% 42%, rgba(223, 175, 96, 0.05), transparent 70%);
 }
 
 /* ── Hero: one statement, one CTA, plenty of air ── */
@@ -69,7 +69,9 @@
   display: grid;
   gap: 0;
   border: 1px solid var(--rule);
-  background: linear-gradient(135deg, var(--surface-raised), var(--surface-panel) 72%);
+  background: linear-gradient(180deg, rgba(255, 246, 224, 0.03), transparent 46%),
+    linear-gradient(135deg, var(--surface-raised), var(--surface-panel) 72%);
+  box-shadow: var(--shadow-deep);
   overflow: hidden;
 }
 

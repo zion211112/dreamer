@@ -73,13 +73,17 @@
   margin-top: 40px;
   padding: 32px 24px;
   border: 1px dashed var(--strong);
-  background: var(--panel);
+  background: linear-gradient(180deg, rgba(255, 246, 224, 0.02), transparent 40%),
+    var(--panel);
+  box-shadow: var(--top-light);
 }
 
 .work-product {
   margin-top: 28px;
   border: 1px solid var(--rule);
-  background: var(--void);
+  background: linear-gradient(180deg, rgba(255, 246, 224, 0.02), transparent 45%),
+    var(--void);
+  box-shadow: var(--top-light);
 }
 
 .work-product-head {

@@ -25,7 +25,9 @@
   position: relative;
   z-index: 1;
   border: 1px solid var(--rule);
-  background: linear-gradient(135deg, var(--surface-raised), var(--surface-panel) 72%);
+  background: linear-gradient(180deg, rgba(255, 246, 224, 0.03), transparent 46%),
+    linear-gradient(135deg, var(--surface-raised), var(--surface-panel) 72%);
+  box-shadow: var(--shadow-soft);
   overflow: hidden;
 }
 
@@ -132,11 +134,12 @@
   background: var(--panel);
   padding: 20px;
   min-width: 0;
+  box-shadow: var(--top-light);
   transition: border-color 120ms ease, background-color 120ms ease;
 }
 
 .benben-card:hover {
-  border-color: var(--ash);
+  border-color: var(--brass);
 }
 
 .benben-card.open {

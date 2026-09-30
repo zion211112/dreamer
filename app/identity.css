@@ -1,7 +1,13 @@
 /* ─── Public identity pages ─── */
 
 .identity-page {
-  background: var(--void);
+  /* Sublime aura: a warm brass key light up-right, a quiet ice
+     counter-light at the left edge, warm light pooling low. */
+  background:
+    radial-gradient(1100px 520px at 78% -8%, rgba(223, 175, 96, 0.1), transparent 60%),
+    radial-gradient(820px 560px at -4% 52%, rgba(127, 160, 194, 0.05), transparent 62%),
+    radial-gradient(1300px 700px at 50% 118%, rgba(223, 175, 96, 0.04), transparent 60%),
+    var(--void);
 }
 
 .identity-hero {
@@ -272,8 +278,8 @@
 .asset-lifecycle-step[data-state="prototype"] strong { color: var(--signal); }
 
 .asset-anatomy { padding-block: 48px; }
-.asset-record-template { margin-top: 24px; border: 1px solid var(--border-strong); background: var(--surface-raised); box-shadow: 0 20px 60px rgba(0, 0, 0, .18); }
-.asset-record-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 18px; border-bottom: 1px solid var(--border-subtle); background: rgba(6, 7, 8, .38); }
+.asset-record-template { margin-top: 24px; border: 1px solid var(--border-strong); background: linear-gradient(180deg, rgba(255, 246, 224, 0.03), transparent 40%), var(--surface-raised); box-shadow: var(--shadow-soft); }
+.asset-record-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 18px; border-bottom: 1px solid var(--border-subtle); background: rgba(12, 11, 9, .5); box-shadow: var(--top-light); }
 .asset-record-kicker { display: block; color: var(--signal); font: 600 9px/1 var(--font-mono); letter-spacing: .14em; }
 .asset-record-header h3 { margin: 10px 0 0; color: var(--ink); font: 600 14px/1 var(--font-mono); letter-spacing: .08em; }
 .asset-record-state { padding: 5px 7px; border: 1px solid var(--signal-a30); color: var(--signal); font: 600 9px/1 var(--font-mono); letter-spacing: .1em; }
@@ -381,10 +387,10 @@
   pointer-events: none;
 }
 
-.face-surface--deploy { background: linear-gradient(135deg, #121719, var(--surface-panel) 72%); }
-.face-surface--fab { background: linear-gradient(135deg, #151615, var(--surface-panel) 72%); }
-.face-surface--studio { background: linear-gradient(135deg, #111416, var(--surface-panel) 72%); }
-.face-surface--roll { background: linear-gradient(135deg, #101416, var(--surface-panel) 72%); }
+.face-surface--deploy { background: linear-gradient(135deg, #161410, var(--surface-panel) 72%); }
+.face-surface--fab { background: linear-gradient(135deg, #181510, var(--surface-panel) 72%); }
+.face-surface--studio { background: linear-gradient(135deg, #14120E, var(--surface-panel) 72%); }
+.face-surface--roll { background: linear-gradient(135deg, #12100C, var(--surface-panel) 72%); }
 
 .face-surface-head,
 .face-surface-copy,

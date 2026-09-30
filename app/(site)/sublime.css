@@ -6,14 +6,16 @@
    ============================================================ */
 
 .sb {
-  --sb-bg: #08090b;
-  --sb-panel: #101317;
-  --sb-panel2: #14181d;
-  --sb-line: rgba(255, 255, 255, 0.085);
-  --sb-strong: rgba(255, 255, 255, 0.16);
-  --sb-text: #f4f0e8;
-  --sb-muted: #b5b8bd;
-  --sb-dim: #747980;
+  /* Warm graphite ramp — one step brighter than --void so panels
+     read as lit surfaces, not flat holes. R≈G>B, matching globals. */
+  --sb-bg: #0C0B09;
+  --sb-panel: #141310;
+  --sb-panel2: #1C1A16;
+  --sb-line: rgba(255, 246, 224, 0.09);
+  --sb-strong: rgba(255, 246, 224, 0.18);
+  --sb-text: #F5F1E6;
+  --sb-muted: #B7B0A3;
+  --sb-dim: #837C70;
   --sb-max: 1320px;
   --sb-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
 
@@ -26,15 +28,20 @@
         These are NOT interactive accents; --brass remains the warm
         interactive accent. */
   --sb-state-verified:  #8FB89E; /* known, evidenced — muted sage */
-  --sb-state-prototype: #D7A75F; /* working, not field-outcome (== --brass) */
+  --sb-state-prototype: #DFAF60; /* working, not field-outcome (== --brass) */
   --sb-state-planned:   #96A6BE; /* defined, not started — cool slate */
-  --sb-state-unknown:   #857F7A; /* no inference substituted — ash */
+  --sb-state-unknown:   #8F887B; /* no inference substituted — ash */
 
+  /* Sublime aura — three-layer light: a warm brass key light up-right,
+     a quiet ice counter-light at the left edge, warm light pooling on
+     the floor. Alphas high enough to read on graphite, soft enough to
+     stay ambient. */
   position: relative;
   overflow-x: clip;
   background:
-    radial-gradient(1200px 600px at 72% -5%, rgba(215, 167, 95, 0.085), transparent 55%),
-    radial-gradient(1000px 700px at 0% 55%, rgba(65, 168, 115, 0.035), transparent 60%),
+    radial-gradient(1200px 640px at 72% -6%, rgba(223, 175, 96, 0.17), transparent 58%),
+    radial-gradient(900px 640px at -6% 48%, rgba(127, 160, 194, 0.065), transparent 62%),
+    radial-gradient(1500px 900px at 50% 122%, rgba(223, 175, 96, 0.05), transparent 60%),
     var(--sb-bg);
   color: var(--sb-text);
   font-family: var(--font-sans);
@@ -152,7 +159,7 @@
 
 .sb-dot.brass {
   background: var(--sb-state-prototype);
-  box-shadow: 0 0 14px rgba(215, 167, 95, 0.35);
+  box-shadow: 0 0 14px rgba(223, 175, 96, 0.35);
 }
 
 /* Buttons */
@@ -180,10 +187,13 @@
   color: #101010;
   background: var(--brass);
   border-color: var(--brass);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 8px 24px rgba(223, 175, 96, 0.22);
 }
 
 .sb-btn-primary:hover {
   background: var(--brass2);
+  border-color: var(--brass2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 10px 28px rgba(223, 175, 96, 0.3);
 }
 
 .sb-btn-ghost {
@@ -209,8 +219,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+    linear-gradient(to right, rgba(255, 246, 224, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 246, 224, 0.02) 1px, transparent 1px);
   background-size: 58px 58px;
   mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 82%, transparent);
   -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 82%, transparent);
@@ -224,7 +234,7 @@
   right: -250px;
   top: -170px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(215, 167, 95, 0.13), rgba(215, 167, 95, 0.025) 34%, transparent 68%);
+  background: radial-gradient(circle, rgba(223, 175, 96, 0.2), rgba(223, 175, 96, 0.03) 34%, transparent 68%);
   filter: blur(18px);
   animation: sb-orb 14s ease-in-out infinite;
   pointer-events: none;
@@ -288,7 +298,7 @@
   content: "";
   position: absolute;
   inset: 14% 8% -6% 3%;
-  border: 1px solid rgba(215, 167, 95, 0.11);
+  border: 1px solid rgba(223, 175, 96, 0.11);
   transform: skewY(-4deg);
   pointer-events: none;
 }
@@ -297,14 +307,16 @@
   position: relative;
   border: 1px solid var(--sb-strong);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 24%), var(--sb-panel);
-  box-shadow: 0 44px 90px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: 0 54px 110px rgba(0, 0, 0, 0.5), 0 10px 30px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 246, 224, 0.06);
   transform: perspective(1500px) rotateY(-6deg) rotateX(1deg);
   transition: transform 0.6s var(--sb-ease), box-shadow 0.6s var(--sb-ease);
 }
 
 .sb-stage:hover .sb-product {
   transform: perspective(1500px) rotateY(-1deg) rotateX(0deg) translateY(-5px);
-  box-shadow: 0 60px 110px rgba(0, 0, 0, 0.43);
+  box-shadow: 0 64px 130px rgba(0, 0, 0, 0.55), 0 12px 34px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 246, 224, 0.07);
 }
 
 .sb-product-top {
@@ -366,8 +378,8 @@
 
 .sb-product-side-item.active {
   color: var(--sb-text);
-  border-color: rgba(215, 167, 95, 0.2);
-  background: rgba(215, 167, 95, 0.055);
+  border-color: rgba(223, 175, 96, 0.2);
+  background: rgba(223, 175, 96, 0.055);
 }
 
 .sb-product-content {
@@ -428,7 +440,9 @@
   min-height: 84px;
   padding: 13px;
   border: 1px solid var(--sb-line);
-  background: rgba(255, 255, 255, 0.012);
+  background: linear-gradient(180deg, rgba(255, 246, 224, 0.03), transparent 60%),
+    var(--sb-panel2);
+  box-shadow: var(--top-light);
 }
 
 .sb-metric small {
@@ -478,7 +492,7 @@
   padding: 42px 0;
   border-top: 1px solid var(--sb-line);
   border-bottom: 1px solid var(--sb-line);
-  background: linear-gradient(90deg, rgba(215, 167, 95, 0.035), transparent 50%, rgba(65, 168, 115, 0.02));
+  background: linear-gradient(90deg, rgba(223, 175, 96, 0.035), transparent 50%, rgba(127, 160, 194, 0.02));
 }
 
 .sb-statement-row {
@@ -547,7 +561,7 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  border-bottom: 1px solid rgba(215, 167, 95, 0.35);
+  border-bottom: 1px solid rgba(223, 175, 96, 0.35);
   padding-bottom: 3px;
 }
 
@@ -567,7 +581,9 @@
   min-height: 440px;
   padding: 28px;
   border: 1px solid var(--sb-line);
-  background: var(--sb-panel);
+  background: linear-gradient(180deg, rgba(255, 246, 224, 0.02), transparent 42%),
+    var(--sb-panel);
+  box-shadow: var(--shadow-soft);
   overflow: hidden;
 }
 
@@ -583,7 +599,7 @@
   right: -160px;
   bottom: -170px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(215, 167, 95, 0.08), transparent 68%);
+  background: radial-gradient(circle, rgba(223, 175, 96, 0.08), transparent 68%);
   pointer-events: none;
 }
 
@@ -678,7 +694,7 @@
   min-height: 240px;
   padding: 18px;
   border: 1px solid var(--sb-line);
-  background: linear-gradient(130deg, rgba(255, 255, 255, 0.024), transparent 50%), #0d1114;
+  background: linear-gradient(130deg, rgba(255, 246, 224, 0.03), transparent 52%), #100F0C;
   overflow: hidden;
 }
 
@@ -693,7 +709,7 @@
   position: relative;
   min-height: 200px;
   border: 1px solid rgba(255, 255, 255, 0.07);
-  background: linear-gradient(180deg, rgba(215, 167, 95, 0.09), transparent 65%), #11151a;
+  background: linear-gradient(180deg, rgba(223, 175, 96, 0.1), transparent 65%), #12110D;
   overflow: hidden;
 }
 
@@ -701,7 +717,7 @@
   content: "";
   position: absolute;
   inset: 18% 16% 16% 18%;
-  border: 1px solid rgba(215, 167, 95, 0.16);
+  border: 1px solid rgba(223, 175, 96, 0.16);
   transform: skewY(-9deg);
 }
 
@@ -863,7 +879,7 @@
 }
 
 .sb-shell tbody tr:hover {
-  background: rgba(215, 167, 95, 0.035);
+  background: rgba(223, 175, 96, 0.035);
 }
 
 .sb-state {
@@ -1112,10 +1128,10 @@
   background: conic-gradient(
     from 0deg,
     transparent 0deg,
-    rgba(215, 167, 95, 0.05) 40deg,
+    rgba(223, 175, 96, 0.1) 40deg,
     transparent 90deg,
     transparent 180deg,
-    rgba(65, 168, 115, 0.035) 220deg,
+    rgba(127, 160, 194, 0.05) 220deg,
     transparent 270deg
   );
   mask-image: radial-gradient(circle, #000 0%, transparent 62%);
@@ -1124,7 +1140,7 @@
   pointer-events: none;
 }
 
-/* Second drifting orb — green answer to the brass one */
+/* Second drifting orb — cool ice answer to the warm brass one */
 .sb-orb-2 {
   position: absolute;
   width: 560px;
@@ -1132,7 +1148,7 @@
   left: -220px;
   bottom: -260px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(65, 168, 115, 0.09), transparent 65%);
+  background: radial-gradient(circle, rgba(127, 160, 194, 0.09), transparent 65%);
   filter: blur(22px);
   animation: sb-drift 19s ease-in-out infinite;
   pointer-events: none;
@@ -1146,7 +1162,7 @@
   left: 0;
   top: 0;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(240, 199, 125, 0.075), transparent 60%);
+  background: radial-gradient(circle, rgba(243, 205, 142, 0.09), transparent 60%);
   opacity: 0;
   transition: opacity 0.6s var(--sb-ease);
   pointer-events: none;
@@ -1236,8 +1252,8 @@
 
 .sb-work-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(215, 167, 95, 0.35);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  border-color: rgba(223, 175, 96, 0.35);
+  box-shadow: var(--shadow-deep);
 }
 
 .sb-metric {
@@ -1245,8 +1261,8 @@
 }
 
 .sb-metric:hover {
-  border-color: rgba(215, 167, 95, 0.3);
-  background: rgba(215, 167, 95, 0.04);
+  border-color: rgba(223, 175, 96, 0.3);
+  background: rgba(223, 175, 96, 0.04);
 }
 
 /* Live signal pulse */

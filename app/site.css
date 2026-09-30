@@ -3,13 +3,30 @@
    Site chrome: nav, footer, page rhythm.
    ============================================================ */
 
+/* ─── Public accent channel ───
+   The public site speaks one warm accent: brass. The console keeps
+   --signal green for live product states. Inside the public route
+   group (nav, content, footer) the generic interactive-accent
+   aliases re-resolve to brass, so shared chrome and page registers
+   read one hue. The console, outside these elements, is untouched. */
+.site-nav,
+.site-content,
+.site-footer {
+  --signal: var(--brass);
+  --signal-dim: var(--brass2);
+  --signal-strong: #B8863B;
+  --signal-a30: rgba(223, 175, 96, 0.30);
+  --signal-a08: rgba(223, 175, 96, 0.08);
+  --focus: var(--brass);
+}
+
 /* ─── Site nav ─── */
 
 .site-nav {
   position: sticky;
   top: 0;
   z-index: 80;
-  background: rgba(8, 9, 11, 0.78);
+  background: rgba(12, 11, 9, 0.8);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--rule);
@@ -17,8 +34,8 @@
 }
 
 .site-nav.scrolled {
-  background: rgba(8, 9, 11, 0.94);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  background: rgba(12, 11, 9, 0.95);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
 }
 
 .nav-inner {
@@ -225,7 +242,7 @@
 
 .site-nav .nav-mobile-link--active {
   color: var(--signal);
-  background: rgba(20, 184, 166, 0.06);
+  background: var(--signal-a08);
 }
 
 /* ─── Site content ─── */
