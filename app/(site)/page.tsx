@@ -72,7 +72,9 @@ export default function HomePage() {
             <div className="sb-product" role="img" aria-label="APT-LABS system surface: physical systems, productive compute, public evidence">
               <div className="sb-product-top">
                 <span className="name">APT-LABS / SYSTEM SURFACE</span>
-                <span className="state">● PROTOTYPE RECORD</span>
+                <span className="state">
+                  <span className="sb-state-dot" data-state="prototype" aria-hidden="true" /> PROTOTYPE RECORD
+                </span>
               </div>
               <div className="sb-product-main">
                 <div className="sb-product-side" aria-hidden="true">

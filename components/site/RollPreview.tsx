@@ -92,22 +92,22 @@ export function RollPreview() {
       )}
 
       <div className="sb-truth-note" data-reveal>
-        <div className="sb-truth">
+        <div className="sb-truth" data-state="verified">
           <div className="label">Verified</div>
           <h4>Evidence exists.</h4>
           <p>Claims backed by an identifiable source.</p>
         </div>
-        <div className="sb-truth">
+        <div className="sb-truth" data-state="prototype">
           <div className="label">Prototype</div>
           <h4>Working model.</h4>
           <p>Implemented but not presented as field outcome.</p>
         </div>
-        <div className="sb-truth">
+        <div className="sb-truth" data-state="planned">
           <div className="label">Planned</div>
           <h4>Defined next.</h4>
           <p>Specified work not yet completed.</p>
         </div>
-        <div className="sb-truth">
+        <div className="sb-truth" data-state="unknown">
           <div className="label">Unknown</div>
           <h4>Not claimed.</h4>
           <p>No inference is substituted for evidence.</p>

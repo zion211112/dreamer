@@ -1,48 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, JetBrains_Mono, Inter, Space_Grotesk, DM_Mono } from "next/font/google";
 import { COMPANY } from "../lib/company";
 import { SITE_URL } from "../lib/site";
 import "./globals.css";
+// Self-hosted @font-face (bundled into the CSS graph — no manual <link>).
+import "./fonts.css";
 
-
-// Self-hosted, preloaded, subsetted — replaces the render-blocking CSS
-// @import. Weights match the faces the site actually uses.
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "600"],
-  style: ["normal", "italic"],
-  variable: "--font-playfair",
-  display: "swap",
-});
-
-const jetbrains = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-jetbrains",
-  display: "swap",
-});
-
-// Site display system — self-hosted via next/font (no runtime font requests).
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const grotesk = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-grotesk",
-  display: "swap",
-});
-
-const dmmono = DM_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-dmmono",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -90,11 +52,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`${playfair.variable} ${jetbrains.variable} ${inter.variable} ${grotesk.variable} ${dmmono.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Preload the face that renders first (body) to avoid a late FOUT.
+            The @font-face rules ship in the bundled CSS (fonts.css). */}
+        <link
+          rel="preload"
+          href="/fonts/inter-latin-400.woff2"
+          as="font"
+          type="font/woff2"
+        />
+      </head>
       <body>
         <a href="#main-content" className="skip-link">
           Skip to content

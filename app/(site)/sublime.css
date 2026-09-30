@@ -17,6 +17,19 @@
   --sb-max: 1320px;
   --sb-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
 
+  /* ── Trust channel — four hairline state tones, applied at strict
+        sub-percent areas only (1px rules, 6px dots, 2px underlines).
+        Low-saturation, on-palette set: calm on the cloaked brass-on-black
+        surface. Hierarchy by quietness — verified is the confident but
+        restrained tone; planned is a cool slate, not a bright amber, so
+        "defined, not started" reads quiet, never the loudest mark.
+        These are NOT interactive accents; --brass remains the warm
+        interactive accent. */
+  --sb-state-verified:  #8FB89E; /* known, evidenced — muted sage */
+  --sb-state-prototype: #D7A75F; /* working, not field-outcome (== --brass) */
+  --sb-state-planned:   #96A6BE; /* defined, not started — cool slate */
+  --sb-state-unknown:   #857F7A; /* no inference substituted — ash */
+
   position: relative;
   overflow-x: clip;
   background:
@@ -109,18 +122,37 @@
   letter-spacing: 0.08em;
 }
 
+/* ── State dot — the trust channel made legible. One 6px disc, no
+      shadow bloom: it reads against --void without dominating the
+      composition (strict sub-percent area). Default is "unknown" —
+      the honest zero-state — so a missing modifier can never
+      masquerade as verified. Set explicitly via [data-state]. */
+.sb-state-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sb-state-unknown);
+  flex-shrink: 0;
+}
+.sb-state-dot[data-state="verified"] { background: var(--sb-state-verified); }
+.sb-state-dot[data-state="prototype"] { background: var(--sb-state-prototype); }
+.sb-state-dot[data-state="planned"] { background: var(--sb-state-planned); }
+.sb-state-dot[data-state="unknown"] { background: var(--sb-state-unknown); }
+
+/* Kept for existing call sites; now delegates to the state tokens so the
+   whole system reads one truth. */
 .sb-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 14px rgba(65, 168, 115, 0.6);
+  background: var(--sb-state-verified);
+  box-shadow: 0 0 14px rgba(52, 211, 153, 0.35);
   flex-shrink: 0;
 }
 
 .sb-dot.brass {
-  background: var(--brass);
-  box-shadow: 0 0 14px rgba(215, 167, 95, 0.45);
+  background: var(--sb-state-prototype);
+  box-shadow: 0 0 14px rgba(215, 167, 95, 0.35);
 }
 
 /* Buttons */
@@ -294,7 +326,10 @@
 }
 
 .sb-product-top .state {
-  color: var(--green);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--sb-state-prototype);
 }
 
 .sb-product-main {
@@ -375,7 +410,7 @@
 }
 
 .sb-signal-bar span.live {
-  background: var(--green);
+  background: var(--sb-state-verified);
 }
 
 .sb-signal-bar span.brass {
@@ -417,7 +452,7 @@
 }
 
 .sb-metric strong.green {
-  color: var(--green);
+  color: var(--sb-state-verified);
 }
 
 .sb-metric strong.brass {
@@ -867,9 +902,27 @@
 }
 
 .sb-truth {
+  position: relative;
   padding: 20px;
   border-right: 1px solid var(--sb-line);
 }
+
+/* A single 2px state-tone rule at the card's top edge — the trust channel
+   made visible in the composition, not the copy. Default tone is unknown;
+   each card opts in via [data-state]. Kept at 2px so it stays a whisper,
+   never a filled banner. */
+.sb-truth::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--sb-state-unknown);
+}
+.sb-truth[data-state="verified"]::before { background: var(--sb-state-verified); }
+.sb-truth[data-state="prototype"]::before { background: var(--sb-state-prototype); }
+.sb-truth[data-state="planned"]::before { background: var(--sb-state-planned); }
 
 .sb-truth:last-child {
   border-right: 0;

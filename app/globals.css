@@ -278,9 +278,18 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* ─── Type families — Google Faces with system fallbacks ─── */
+/* ─── Type families — self-hosted (fonts/font-face.css) with system fallbacks ─── */
 
 :root {
+  /* Base family hooks. These were previously set by next/font/google on
+     <html>; now they resolve to the self-hosted families loaded via
+     /fonts/font-face.css, so there is zero build-time font fetching. */
+  --font-inter: "Inter";
+  --font-grotesk: "Space Grotesk";
+  --font-dmmono: "DM Mono";
+  --font-playfair: "Playfair Display";
+  --font-jetbrains: "JetBrains Mono";
+
   --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
                "Helvetica Neue", Arial, "Noto Sans", system-ui, sans-serif;
   --font-display: var(--font-grotesk), "Space Grotesk", system-ui, sans-serif;
