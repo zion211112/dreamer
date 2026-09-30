@@ -1,12 +1,12 @@
 /* ─── Public identity pages ─── */
 
 .identity-page {
-  /* Sublime aura: a warm brass key light up-right, a quiet ice
+  /* Sublime aura: a green key light up-right, a quiet ice
      counter-light at the left edge, warm light pooling low. */
   background:
-    radial-gradient(1100px 520px at 78% -8%, rgba(223, 175, 96, 0.1), transparent 60%),
+    radial-gradient(1100px 520px at 78% -8%, rgba(52, 211, 153, 0.1), transparent 60%),
     radial-gradient(820px 560px at -4% 52%, rgba(127, 160, 194, 0.05), transparent 62%),
-    radial-gradient(1300px 700px at 50% 118%, rgba(223, 175, 96, 0.04), transparent 60%),
+    radial-gradient(1300px 700px at 50% 118%, rgba(52, 211, 153, 0.04), transparent 60%),
     var(--void);
 }
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-// 2px brass scroll-progress hairline. rAF-throttled, transform-only.
+// 2px green scroll-progress hairline. rAF-throttled, transform-only.
 export function ScrollProgress() {
   const ref = useRef<HTMLDivElement>(null);
 

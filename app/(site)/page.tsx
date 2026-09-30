@@ -3,6 +3,7 @@ import { COMPANY, BENBEN_BUILDS } from "../../lib/company";
 import { Reveal } from "../../components/site/Reveal";
 import { RollPreview } from "../../components/site/RollPreview";
 import { HeroGlow } from "../../components/site/HeroGlow";
+import { HeroGeoart } from "../../components/site/HeroGeoart";
 import { ScrollProgress } from "../../components/site/ScrollProgress";
 
 export const metadata: { title: string; description: string } = {
@@ -30,9 +31,7 @@ export default function HomePage() {
       {/* ── Hero ── */}
       <section className="sb-hero">
         <div className="sb-grid-bg" aria-hidden="true" />
-        <div className="sb-hero-beam" aria-hidden="true" />
-        <div className="sb-hero-orb" aria-hidden="true" />
-        <div className="sb-orb-2" aria-hidden="true" />
+        <HeroGeoart />
         <HeroGlow />
         <div className="sb-container sb-hero-layout">
           <div>

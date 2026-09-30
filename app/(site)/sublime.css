@@ -1,6 +1,6 @@
 /* ============================================================
    APT-LABS — Sublime site system (homepage).
-   Adapted from the approved brass-on-black reference, refined:
+   Green-on-graphite site system. Refined:
    scoped .sb tokens (never global), visible focus states, honest
    empty register rows, reduced-motion guard. Console untouched.
    ============================================================ */
@@ -21,27 +21,26 @@
 
   /* ── Trust channel — four hairline state tones, applied at strict
         sub-percent areas only (1px rules, 6px dots, 2px underlines).
-        Low-saturation, on-palette set: calm on the cloaked brass-on-black
+        Low-saturation, on-palette set: calm on the cloaked green-on-graphite
         surface. Hierarchy by quietness — verified is the confident but
-        restrained tone; planned is a cool slate, not a bright amber, so
+        restrained tone; planned is a cool slate, not a bright tone, so
         "defined, not started" reads quiet, never the loudest mark.
-        These are NOT interactive accents; --brass remains the warm
+        These are NOT interactive accents; the green accent remains
         interactive accent. */
   --sb-state-verified:  #8FB89E; /* known, evidenced — muted sage */
-  --sb-state-prototype: #DFAF60; /* working, not field-outcome (== --brass) */
+  --sb-state-prototype: #34D399; /* working, not field-outcome (== --brass) */
   --sb-state-planned:   #96A6BE; /* defined, not started — cool slate */
   --sb-state-unknown:   #8F887B; /* no inference substituted — ash */
 
-  /* Sublime aura — three-layer light: a warm brass key light up-right,
-     a quiet ice counter-light at the left edge, warm light pooling on
-     the floor. Alphas high enough to read on graphite, soft enough to
-     stay ambient. */
+  /* Ground — near-transparent. One whisper of green key light off the
+     top edge, one quiet ice counter-light on the left; everything else
+     is raw graphite so the hero's {7,3} mark and grid read on a flat,
+     open field rather than under stacked washes. */
   position: relative;
   overflow-x: clip;
   background:
-    radial-gradient(1200px 640px at 72% -6%, rgba(223, 175, 96, 0.17), transparent 58%),
-    radial-gradient(900px 640px at -6% 48%, rgba(127, 160, 194, 0.065), transparent 62%),
-    radial-gradient(1500px 900px at 50% 122%, rgba(223, 175, 96, 0.05), transparent 60%),
+    radial-gradient(1100px 520px at 72% -8%, rgba(52, 211, 153, 0.07), transparent 58%),
+    radial-gradient(900px 640px at -6% 48%, rgba(127, 160, 194, 0.05), transparent 62%),
     var(--sb-bg);
   color: var(--sb-text);
   font-family: var(--font-sans);
@@ -87,21 +86,22 @@
 .sb-eyebrow {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   color: var(--brass);
   font-family: var(--font-dm);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   line-height: 1;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
 .sb-eyebrow::before {
   content: "";
-  width: 26px;
+  width: 20px;
   height: 1px;
   background: currentColor;
+  opacity: 0.65;
   flex-shrink: 0;
 }
 
@@ -159,7 +159,7 @@
 
 .sb-dot.brass {
   background: var(--sb-state-prototype);
-  box-shadow: 0 0 14px rgba(223, 175, 96, 0.35);
+  box-shadow: 0 0 14px rgba(52, 211, 153, 0.35);
 }
 
 /* Buttons */
@@ -187,13 +187,13 @@
   color: #101010;
   background: var(--brass);
   border-color: var(--brass);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 8px 24px rgba(223, 175, 96, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 8px 24px rgba(52, 211, 153, 0.22);
 }
 
 .sb-btn-primary:hover {
   background: var(--brass2);
   border-color: var(--brass2);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 10px 28px rgba(223, 175, 96, 0.3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 10px 28px rgba(52, 211, 153, 0.3);
 }
 
 .sb-btn-ghost {
@@ -209,7 +209,7 @@
 /* ── Hero ── */
 .sb-hero {
   position: relative;
-  min-height: calc(100svh - 74px);
+  min-height: calc(100svh - 68px);
   display: grid;
   align-items: center;
   overflow: hidden;
@@ -227,17 +227,27 @@
   pointer-events: none;
 }
 
-.sb-hero-orb {
+/* The {7,3} mark — the hero's focal artwork. It rests slightly right of
+   centre; HeroGeoart eases --geo-x/--geo-y toward the cursor as parallax,
+   so the mark answers the pointer instead of chasing it. The hero layout
+   (z 2) and its card stay in front; the grid and glow keep painting
+   around it. */
+.sb-hero-geoart {
   position: absolute;
-  width: 780px;
-  height: 780px;
-  right: -250px;
-  top: -170px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(223, 175, 96, 0.2), rgba(223, 175, 96, 0.03) 34%, transparent 68%);
-  filter: blur(18px);
-  animation: sb-orb 14s ease-in-out infinite;
+  z-index: 1;
+  left: 62%;
+  top: 48%;
+  width: min(52vw, 720px);
+  aspect-ratio: 1;
+  transform: translate3d(calc(-50% + var(--geo-x, 0px)), calc(-50% + var(--geo-y, 0px)), 0);
+  color: var(--brass);
+  opacity: 0.5;
+  transition: opacity 0.6s var(--sb-ease);
   pointer-events: none;
+}
+
+.sb-hero.geo-lit .sb-hero-geoart {
+  opacity: 0.72;
 }
 
 .sb-hero-layout {
@@ -252,34 +262,34 @@
 
 .sb-title {
   max-width: 880px;
-  margin: 24px 0 0;
+  margin: 28px 0 0;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(54px, 6.4vw, 92px);
-  line-height: 0.93;
-  letter-spacing: -0.065em;
+  font-size: clamp(52px, 6vw, 88px);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
   color: var(--sb-text);
   text-wrap: balance;
 }
 
 .sb-title em {
-  color: var(--brass2);
+  color: var(--brass);
   font-style: normal;
 }
 
 .sb-lead {
-  max-width: 720px;
-  margin: 28px 0 0;
+  max-width: 640px;
+  margin: 24px 0 0;
   color: var(--sb-muted);
-  font-size: 18px;
-  line-height: 1.72;
+  font-size: 17px;
+  line-height: 1.75;
 }
 
 .sb-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 38px;
+  margin-top: 34px;
 }
 
 .sb-meta {
@@ -298,7 +308,7 @@
   content: "";
   position: absolute;
   inset: 14% 8% -6% 3%;
-  border: 1px solid rgba(223, 175, 96, 0.11);
+  border: 1px solid rgba(52, 211, 153, 0.11);
   transform: skewY(-4deg);
   pointer-events: none;
 }
@@ -306,7 +316,7 @@
 .sb-product {
   position: relative;
   border: 1px solid var(--sb-strong);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 24%), var(--sb-panel);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 24%), rgba(20, 19, 16, 0.82);
   box-shadow: 0 54px 110px rgba(0, 0, 0, 0.5), 0 10px 30px rgba(0, 0, 0, 0.35),
     inset 0 1px 0 rgba(255, 246, 224, 0.06);
   transform: perspective(1500px) rotateY(-6deg) rotateX(1deg);
@@ -378,8 +388,8 @@
 
 .sb-product-side-item.active {
   color: var(--sb-text);
-  border-color: rgba(223, 175, 96, 0.2);
-  background: rgba(223, 175, 96, 0.055);
+  border-color: rgba(52, 211, 153, 0.2);
+  background: rgba(52, 211, 153, 0.055);
 }
 
 .sb-product-content {
@@ -492,7 +502,7 @@
   padding: 42px 0;
   border-top: 1px solid var(--sb-line);
   border-bottom: 1px solid var(--sb-line);
-  background: linear-gradient(90deg, rgba(223, 175, 96, 0.035), transparent 50%, rgba(127, 160, 194, 0.02));
+  background: linear-gradient(90deg, rgba(52, 211, 153, 0.035), transparent 50%, rgba(127, 160, 194, 0.02));
 }
 
 .sb-statement-row {
@@ -561,7 +571,7 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  border-bottom: 1px solid rgba(223, 175, 96, 0.35);
+  border-bottom: 1px solid rgba(52, 211, 153, 0.35);
   padding-bottom: 3px;
 }
 
@@ -599,7 +609,7 @@
   right: -160px;
   bottom: -170px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(223, 175, 96, 0.08), transparent 68%);
+  background: radial-gradient(circle, rgba(52, 211, 153, 0.08), transparent 68%);
   pointer-events: none;
 }
 
@@ -709,7 +719,7 @@
   position: relative;
   min-height: 200px;
   border: 1px solid rgba(255, 255, 255, 0.07);
-  background: linear-gradient(180deg, rgba(223, 175, 96, 0.1), transparent 65%), #12110D;
+  background: linear-gradient(180deg, rgba(52, 211, 153, 0.1), transparent 65%), #12110D;
   overflow: hidden;
 }
 
@@ -717,7 +727,7 @@
   content: "";
   position: absolute;
   inset: 18% 16% 16% 18%;
-  border: 1px solid rgba(223, 175, 96, 0.16);
+  border: 1px solid rgba(52, 211, 153, 0.16);
   transform: skewY(-9deg);
 }
 
@@ -879,7 +889,7 @@
 }
 
 .sb-shell tbody tr:hover {
-  background: rgba(223, 175, 96, 0.035);
+  background: rgba(52, 211, 153, 0.035);
 }
 
 .sb-state {
@@ -1044,11 +1054,6 @@
   transform: none;
 }
 
-@keyframes sb-orb {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.72; }
-  50% { transform: translate3d(-18px, 12px, 0) scale(1.06); opacity: 1; }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .sb *, .sb *::before, .sb *::after {
     scroll-behavior: auto !important;
@@ -1067,10 +1072,23 @@
   .sb-stage { max-width: 780px; }
   .sb-section-header { grid-template-columns: 1fr; gap: 18px; }
   .sb-work-grid, .sb-studio-layout { grid-template-columns: 1fr; }
+  /* Single-column hero: the mark moves to centre, drops a size,
+     and stays quieter so it frames the copy instead of competing. */
+  .sb-hero-geoart {
+    left: 50%;
+    top: 42%;
+    width: min(74vw, 560px);
+    opacity: 0.4;
+  }
 }
 
 @media (max-width: 820px) {
   .sb-hero { min-height: auto; }
+  .sb-hero-geoart {
+    top: 34%;
+    width: min(92vw, 440px);
+    opacity: 0.34;
+  }
   .sb-statement-row { grid-template-columns: 1fr; }
   .sb-boundary-layout { grid-template-columns: 1fr; }
   .sb-truth-note { grid-template-columns: 1fr 1fr; }
@@ -1117,44 +1135,7 @@
    dies under prefers-reduced-motion (see guard below).
    ============================================================ */
 
-/* Slow rotating beam behind the hero composition */
-.sb-hero-beam {
-  position: absolute;
-  width: 1100px;
-  height: 1100px;
-  left: 50%;
-  top: 50%;
-  margin: -550px 0 0 -550px;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg,
-    rgba(223, 175, 96, 0.1) 40deg,
-    transparent 90deg,
-    transparent 180deg,
-    rgba(127, 160, 194, 0.05) 220deg,
-    transparent 270deg
-  );
-  mask-image: radial-gradient(circle, #000 0%, transparent 62%);
-  -webkit-mask-image: radial-gradient(circle, #000 0%, transparent 62%);
-  animation: sb-spin 46s linear infinite;
-  pointer-events: none;
-}
-
-/* Second drifting orb — cool ice answer to the warm brass one */
-.sb-orb-2 {
-  position: absolute;
-  width: 560px;
-  height: 560px;
-  left: -220px;
-  bottom: -260px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(127, 160, 194, 0.09), transparent 65%);
-  filter: blur(22px);
-  animation: sb-drift 19s ease-in-out infinite;
-  pointer-events: none;
-}
-
-/* Pointer-tracked glow (JS sets --mx/--my on .sb-hero; pointer:fine only) */
+/* Pointer-tracked glow (HeroGlow places it; fine pointers only) */
 .sb-hero-glow {
   position: absolute;
   width: 620px;
@@ -1162,7 +1143,7 @@
   left: 0;
   top: 0;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(243, 205, 142, 0.09), transparent 60%);
+  background: radial-gradient(circle, rgba(110, 231, 183, 0.09), transparent 60%);
   opacity: 0;
   transition: opacity 0.6s var(--sb-ease);
   pointer-events: none;
@@ -1245,14 +1226,14 @@
   left: calc(100% + 80px);
 }
 
-/* Card lift + brass kiss */
+/* Card lift + accent kiss */
 .sb-work-card {
   transition: transform 0.35s var(--sb-ease), border-color 0.35s var(--sb-ease), box-shadow 0.35s var(--sb-ease);
 }
 
 .sb-work-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(223, 175, 96, 0.35);
+  border-color: rgba(52, 211, 153, 0.35);
   box-shadow: var(--shadow-deep);
 }
 
@@ -1261,8 +1242,8 @@
 }
 
 .sb-metric:hover {
-  border-color: rgba(223, 175, 96, 0.3);
-  background: rgba(223, 175, 96, 0.04);
+  border-color: rgba(52, 211, 153, 0.3);
+  background: rgba(52, 211, 153, 0.04);
 }
 
 /* Live signal pulse */
@@ -1281,15 +1262,6 @@
 .sb [data-reveal-delay="4"] { transition-delay: 0.32s; }
 .sb [data-reveal-delay="5"] { transition-delay: 0.4s; }
 
-@keyframes sb-spin {
-  to { transform: rotate(360deg); }
-}
-
-@keyframes sb-drift {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(34px, -26px, 0) scale(1.08); }
-}
-
 @keyframes sb-marquee {
   to { transform: translateX(calc(-50% - 17px)); }
 }
@@ -1300,8 +1272,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sb-hero-beam,
-  .sb-orb-2,
   .sb-marquee-track,
   .sb-signal-bar span.live {
     animation: none !important;

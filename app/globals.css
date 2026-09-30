@@ -227,7 +227,7 @@ body {
   --ash:    #8F887B;
 
   /* Accent — one interactive color: the console's live green.
-     Public chrome re-resolves these aliases to brass inside
+     Public chrome re-resolves these aliases to the green accent inside
      .site-nav / .site-content / .site-footer (see site.css). */
   --signal:      #14B8A6;
   --signal-dim:  #0D9488;
@@ -242,10 +242,12 @@ body {
   --amber:  #D97706;
   --danger: #EF4444;
 
-  /* Sublime site accent — the public site speaks one warm brass;
-     --ice is the quiet cool counter, used by aura light only. */
-  --brass:  #DFAF60;
-  --brass2: #F3CD8E;
+  /* Site accent — green. The public accent is the green the site ran
+     on before the brass experiment (Technical Void teal-400): one
+     interactive hue across public chrome, hero and console. --ice
+     stays the quiet cool counter, used by aura light only. */
+  --brass:  #34D399;
+  --brass2: #6EE7B7;
   --green:  #41A873;
   --ice:    #7FA0C2;
 

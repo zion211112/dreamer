@@ -76,7 +76,7 @@ export function Nav() {
           className="nav-brand"
           aria-label="APT-LABS home"
         >
-          <span className="nav-brand-mark" aria-hidden="true">A</span>
+          <span className="nav-brand-mark" aria-hidden="true" />
           <span className="nav-brand-text">APT-LABS</span>
         </Link>
 

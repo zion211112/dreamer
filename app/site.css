@@ -4,19 +4,20 @@
    ============================================================ */
 
 /* ─── Public accent channel ───
-   The public site speaks one warm accent: brass. The console keeps
+   The public site speaks one accent: green. The console keeps
    --signal green for live product states. Inside the public route
    group (nav, content, footer) the generic interactive-accent
-   aliases re-resolve to brass, so shared chrome and page registers
-   read one hue. The console, outside these elements, is untouched. */
+   aliases re-resolve to the green accent, so shared chrome and page
+   registers read one hue. The console, outside these elements, is
+   untouched. */
 .site-nav,
 .site-content,
 .site-footer {
   --signal: var(--brass);
   --signal-dim: var(--brass2);
-  --signal-strong: #B8863B;
-  --signal-a30: rgba(223, 175, 96, 0.30);
-  --signal-a08: rgba(223, 175, 96, 0.08);
+  --signal-strong: #059669;
+  --signal-a30: rgba(52, 211, 153, 0.30);
+  --signal-a08: rgba(52, 211, 153, 0.08);
   --focus: var(--brass);
 }
 
@@ -42,7 +43,7 @@
   max-width: 1320px;
   margin: 0 auto;
   padding: 0 20px;
-  min-height: 74px;
+  min-height: 68px;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
@@ -51,11 +52,12 @@
 
 @media (max-width: 640px) {
   .nav-inner {
-    min-height: 64px;
+    min-height: 60px;
   }
 }
 
-/* Brand */
+/* Brand — the {7} seal. A heptagon echo of the hero's {7,3} tiling:
+   green ring, void ground, letter on top. Hover floods the ring. */
 
 .site-nav .nav-brand {
   display: flex;
@@ -68,22 +70,46 @@
 }
 
 .site-nav .nav-brand-mark {
+  position: relative;
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
-  border: 1.5px solid var(--brass);
-  color: var(--brass);
-  font-family: var(--font-dm);
-  font-size: 13px;
-  font-weight: 700;
-  border-radius: 0;
-  transition: background-color 120ms ease, color 120ms ease;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  background: var(--brass);
+  clip-path: polygon(50% 0%, 83.08% 12.5%, 98.43% 62.35%, 71.69% 95.05%, 28.31% 95.05%, 1.57% 62.35%, 10.91% 18.83%);
+  transition: background-color 150ms ease;
 }
 
-.site-nav .nav-brand:hover .nav-brand-mark {
+/* Hollow ground so the seal reads as a ring, not a filled plaque */
+
+.site-nav .nav-brand-mark::before {
+  content: "";
+  position: absolute;
+  inset: 2.5px;
+  background: var(--void);
+  clip-path: inherit;
+  transition: background-color 150ms ease;
+}
+
+.site-nav .nav-brand-mark::after {
+  content: "A";
+  position: relative;
+  z-index: 1;
+  color: var(--brass);
+  font-family: var(--font-dm);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  transition: color 150ms ease;
+}
+
+.site-nav .nav-brand:hover .nav-brand-mark::before {
   background: var(--brass);
-  color: #101010;
+}
+
+.site-nav .nav-brand:hover .nav-brand-mark::after {
+  color: #08120D;
 }
 
 .site-nav .nav-brand-text {
@@ -112,11 +138,11 @@
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  padding: 28px 0;
+  padding: 22px 0;
   font-family: var(--font-dm);
   font-size: 11px;
   font-weight: 400;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--dust);
   text-decoration: none;
@@ -134,7 +160,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 19px;
+  bottom: 13px;
   height: 1px;
   background: var(--brass);
   transform: scaleX(0);
@@ -144,6 +170,13 @@
 .site-nav .nav-link:hover::after,
 .site-nav .nav-link--active::after {
   transform: scaleX(1);
+}
+
+/* The active route reads as ink, not accent: the underline already
+   carries the green, the label just steps up. */
+.site-nav .nav-link--active {
+  color: var(--ink);
+  font-weight: 500;
 }
 
 .site-nav .nav-link--active {
