@@ -1,0 +1,27 @@
+{
+  "name": "APT-LABS",
+  "short_name": "APT",
+  "description": "Locally owned institutional infrastructure. Counts are visible; identity stays yours.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#060708",
+  "theme_color": "#060708",
+  "orientation": "any",
+  "lang": "en-KE",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

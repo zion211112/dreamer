@@ -771,6 +771,12 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   cursor: pointer;
+  transition: background-color 0.18s, color 0.18s, transform 0.12s;
+}
+
+/* Press pulse — a brief settle on tap, dies under reduced motion. */
+.sb-switch button:active {
+  transform: scale(0.96);
 }
 
 .sb-switch button.active {
