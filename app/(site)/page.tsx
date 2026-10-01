@@ -41,7 +41,7 @@ export default function HomePage() {
         <div className="sb-container sb-hero-layout">
           <div>
             <div className="sb-eyebrow" data-reveal>
-              {COMPANY.name} / {COMPANY.geography.text} / Institutional infrastructure
+              {COMPANY.name} / {COMPANY.geography.text}
             </div>
             <h1 className="sb-title" data-reveal data-reveal-delay="1">
               Infrastructure
@@ -65,17 +65,6 @@ export default function HomePage() {
                 Inspect The Roll
               </Link>
             </div>
-            <div className="sb-meta" data-reveal data-reveal-delay="4">
-              <span className="sb-pill">
-                <span className="sb-dot" aria-hidden="true" /> Local-first
-              </span>
-              <span className="sb-pill">
-                <span className="sb-dot brass" aria-hidden="true" /> Repair-aware
-              </span>
-              <span className="sb-pill">
-                <span className="sb-dot brass" aria-hidden="true" /> Evidence-led
-              </span>
-            </div>
           </div>
 
           <div className="sb-stage" data-reveal>
@@ -98,7 +87,6 @@ export default function HomePage() {
                   <div className="sb-product-heading">
                     <div>
                       <h2>Infrastructure Stack</h2>
-                      <p>Physical systems · productive compute · public evidence</p>
                     </div>
                     <span className="sb-pill">
                       <span className="sb-dot" aria-hidden="true" /> Local
@@ -199,10 +187,8 @@ export default function HomePage() {
         <div className="sb-marquee-track">
           <span>Physical infrastructure</span><i /><span>Productive compute</span><i />
           <span>Evidence systems</span><i /><span>Local capability</span><i />
-          <span>Repair-aware</span><i /><span>Evidence-led</span><i />
           <span>Physical infrastructure</span><i /><span>Productive compute</span><i />
           <span>Evidence systems</span><i /><span>Local capability</span><i />
-          <span>Repair-aware</span><i /><span>Evidence-led</span><i />
         </div>
       </div>
 
@@ -265,7 +251,6 @@ export default function HomePage() {
                 </span>
               </div>
               <h3>Physical infrastructure.</h3>
-              <div className="sb-work-tag">Design · sourcing · fabrication · repair</div>
               <p>
                 Institutional requirements become documented physical systems:
                 clear requirements, sensible parts, traceable sourcing,
@@ -296,7 +281,6 @@ export default function HomePage() {
                 </span>
               </div>
               <h3>Productive computing.</h3>
-              <div className="sb-work-tag">Compute · create · render · output</div>
               <p>
                 Local creative-computing environments for rendering, digital
                 production, and technical skill development.
@@ -347,7 +331,6 @@ export default function HomePage() {
                 </span>
               </div>
               <h3>The evidence layer.</h3>
-              <div className="sb-work-tag">Record · verify · audit · reproduce</div>
               <p>
                 The Roll records the work behind the work: designs, assets,
                 costs, contributors, maintenance, tests, and the evidence

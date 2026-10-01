@@ -400,13 +400,6 @@
   margin-top: 34px;
 }
 
-.sb-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 24px;
-  margin-top: 28px;
-}
-
 /* ── System surface (hero card) ── */
 .sb-stage {
   position: relative;
@@ -783,15 +776,6 @@
   line-height: 1;
   letter-spacing: -0.045em;
   color: var(--sb-text);
-}
-
-.sb-work-tag {
-  color: var(--brass);
-  font-family: var(--font-dm);
-  font-size: 10px;
-  line-height: 1;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 .sb-work-card p {
