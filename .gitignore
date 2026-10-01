@@ -23,4 +23,17 @@ build.done
 .next-build.txt
 *.tsbuildinfo
 NUL
+tmp-*.log
+
+# Screenshot tooling. The harness (capture.cjs) is worth keeping; its browser
+# profile, node_modules and captures are throwaway artifacts.
+/tmp-shot/edge-profile/
+/tmp-shot/edge-profile-*/
+tmp-shot/shots/
+tmp-shot/node_modules/
+/tmp-shot/package-lock.json
+/tmp-shot/capture.done
+/tmp-shot/cap2.sh
+/tmp-shot/install.done
+/tmp-shot/tmp-shot-run.sh
 
