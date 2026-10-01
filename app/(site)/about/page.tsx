@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { faceMetadata } from "../../../lib/metadata";
+import { Reveal } from "../../../components/site/Reveal";
 import "../../identity.css";
 
 export const metadata = faceMetadata({
@@ -29,11 +30,12 @@ const METHOD = ["Build", "Measure", "Document", "Repeat"];
 export default function AboutPage() {
   return (
     <main className="site-page identity-page">
+      <Reveal />
       <div className="site-frame">
-        <p className="site-kicker">About · APT-LABS</p>
-        <h1 className="page-title">APT-LABS</h1>
-        <p className="identity-lead">Build locally. Keep capability local.</p>
-        <p className="identity-description">
+        <p className="site-kicker" data-reveal>About · APT-LABS</p>
+        <h1 className="page-title" data-reveal data-reveal-delay="1">APT-LABS</h1>
+        <p className="identity-lead" data-reveal data-reveal-delay="2">Build locally. Keep capability local.</p>
+        <p className="identity-description" data-reveal data-reveal-delay="3">
           APT-LABS builds institutional infrastructure around a simple
           principle: technology is more durable when the people who depend on
           it can understand, maintain and reproduce it.
@@ -41,7 +43,7 @@ export default function AboutPage() {
       </div>
 
       <div className="site-frame identity-sections">
-        <section className="identity-section" aria-label="What we work on">
+        <section className="identity-section" aria-label="What we work on" data-reveal>
           <div className="site-section-head">
             <span>What we work on</span>
             <span>three pillars</span>
@@ -59,7 +61,7 @@ export default function AboutPage() {
           </ul>
         </section>
 
-        <section className="identity-section" aria-label="How we work">
+        <section className="identity-section" aria-label="How we work" data-reveal>
           <div className="site-section-head">
             <span>How we work</span>
             <span>the loop</span>
@@ -74,7 +76,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="identity-section" aria-label="Current stage">
+        <section className="identity-section" aria-label="Current stage" data-reveal>
           <div className="site-section-head">
             <span>Current stage</span>
             <span>stated plainly</span>

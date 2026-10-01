@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Reveal } from "../../../components/site/Reveal";
 import "../home.css";
 import "./benben.css";
 
@@ -147,23 +148,24 @@ export default function BenBenPage() {
 
   return (
     <main className="sublime benben-sublime">
+      <Reveal />
       <div className="sublime-glow" aria-hidden="true" />
 
       {/* Hero — distilled from reference images: eyebrow + short H1 + one sub + dual CTA */}
       <section className="sublime-hero benben-hero">
         <div className="site-frame benben-hero-grid">
           <div>
-            <p className="sublime-eyebrow">
+            <p className="sublime-eyebrow" data-reveal>
               <span className="sublime-eyebrow-dot" aria-hidden="true" />
               BenBen · The Floor · Intake layer
             </p>
-            <h1 className="page-title sublime-title">Capability enters here.</h1>
-            <p className="sublime-lede">
+            <h1 className="page-title sublime-title" data-reveal data-reveal-delay="1">Capability enters here.</h1>
+            <p className="sublime-lede" data-reveal data-reveal-delay="2">
               Local capability, work, makers and ideas enter here, are reviewed on this
               device, then can move into Fab or Studio before evidence is recorded in
               The Roll. Most of it is still being built.
             </p>
-            <div className="sublime-actions">
+            <div className="sublime-actions" data-reveal data-reveal-delay="3">
               <a href="#floor" className="site-action">
                 Sign a slot <span aria-hidden="true">→</span>
               </a>
@@ -176,7 +178,7 @@ export default function BenBenPage() {
           {/* Product visual slot — honest system diagram, not photography.
               Reference images use chair / phone / calendar; evidence pack §16
               forbids field photography, so the motif + state rail stands in. */}
-          <aside className="benben-visual" aria-label="Intake state">
+          <aside className="benben-visual" aria-label="Intake state" data-reveal data-reveal-delay="2">
             <div className="benben-visual-head">
               <span>Floor state</span>
               <span>Prototype</span>
@@ -210,13 +212,13 @@ export default function BenBenPage() {
           Their “Trusted by” row becomes our evidence-state row. */}
       <section className="sublime-whisper benben-strip" aria-label="How the floor works">
         <div className="site-frame">
-          <div className="sublime-whisper-row" role="list">
+          <div className="sublime-whisper-row" role="list" data-reveal>
             <span role="listitem">Post</span>
             <span role="listitem">Vote</span>
             <span role="listitem">Sign</span>
             <span role="listitem">Prove</span>
           </div>
-          <p className="sublime-whisper-note">
+          <p className="sublime-whisper-note" data-reveal data-reveal-delay="1">
             NO SEEDED BUILDS — the Floor starts with empty slots. Anything entered here
             stays in this browser until exported.
           </p>

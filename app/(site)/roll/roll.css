@@ -1,47 +1,136 @@
-/* roll.css — the Roll page. Two registers, one lifecycle, ruled rows. */
+/* roll.css — /roll. The shell (hero, strip, section heads, panels,
+   tiles, reveal) comes from register.css; this file owns the thesis
+   statement, the two-register ledger, the lifecycle track, and the
+   state-discipline table. */
 
 .roll-page {
-  padding-bottom: 72px;
+  padding-bottom: 88px;
 }
 
-.roll-grid {
+/* ── Thesis — why the register exists ── */
+
+.rl-thesis {
+  padding: 84px 0 92px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.rl-split {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 180px minmax(0, 1fr);
   gap: 48px;
-  margin-top: 48px;
-  padding-bottom: 48px;
 }
 
-.roll-register {
-  min-width: 0;
+.rl-thesis h2 {
+  max-width: 26ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(30px, 3.9vw, 54px);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  text-wrap: balance;
 }
 
-.roll-register-copy {
-  max-width: 52ch;
-  margin: 20px 0 0;
-  font-size: 15px;
-  line-height: 1.7;
+.rl-thesis h2 em {
+  font-style: normal;
+  color: var(--signal);
+}
+
+.rl-thesis-sub {
+  max-width: 700px;
+  margin: 22px 0 0;
   color: var(--dust);
+  font-size: 14px;
+  line-height: 1.75;
 }
 
-.roll-list {
-  margin: 20px 0 0;
-  padding: 0;
-  list-style: none;
+.rl-rule {
+  height: 1px;
+  margin-top: 40px;
+  background: linear-gradient(90deg, var(--signal-a30), rgba(52, 211, 153, 0.04) 62%, transparent);
+}
+
+/* ── Ledger — two registers around one spine ── */
+
+.rl-ledger-canvas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px minmax(0, 1fr);
+  min-height: 520px;
+}
+
+.rl-panel {
+  padding: 34px 0;
+}
+
+.rl-panel-left {
+  padding-right: 38px;
+  border-right: 1px solid var(--rule);
+}
+
+.rl-panel-right {
+  padding-left: 38px;
+  border-left: 1px solid var(--rule);
+}
+
+.rl-panel-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.rl-panel-name {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.rl-panel-name small {
+  display: block;
+  margin-top: 8px;
+  color: var(--signal);
+  font-family: var(--font-dm);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.rl-panel-copy {
+  max-width: 46ch;
+  margin: 0 0 24px;
+  color: var(--dust);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.rl-lines {
   border-top: 1px solid var(--rule);
 }
 
-.roll-list li {
+.rl-line {
+  min-height: 48px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 0;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 2px;
   border-bottom: 1px solid var(--rule);
-  font-size: 14px;
   color: var(--ink);
+  font-size: 12px;
 }
 
-.roll-list li::before {
+.rl-line span {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rl-line span::before {
   content: "";
   width: 4px;
   height: 4px;
@@ -49,80 +138,231 @@
   flex-shrink: 0;
 }
 
-.roll-lifecycle {
-  padding-block: 8px 40px;
+.rl-line small {
+  color: var(--ash);
+  font-family: var(--font-dm);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
-.roll-chain {
+/* Spine — the seal the two registers share */
+.rl-spine {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.rl-spine::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--signal-a30) 16%, var(--signal-a30) 84%, transparent);
+}
+
+.rl-spine-core {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border: 1px solid var(--signal-a30);
+  background: var(--void);
+  transform: rotate(45deg);
+  display: grid;
+  place-items: center;
+  box-shadow: 11px 11px 0 -1px rgba(52, 211, 153, 0.06), 0 0 60px rgba(52, 211, 153, 0.06);
+}
+
+.rl-spine-core::after {
+  content: "";
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--rule);
+}
+
+.rl-spine-text {
+  position: absolute;
+  z-index: 2;
+  width: 120px;
+  color: var(--ink);
+  font-family: var(--font-dm);
+  font-size: 8px;
+  line-height: 1.7;
+  letter-spacing: 0.16em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* ── Lifecycle — intention to inspectable history ── */
+
+.rl-track {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  margin: 24px 0 0;
-  padding: 0;
-  list-style: none;
-  border: 1px solid var(--rule);
-  box-shadow: var(--top-light);
 }
 
-.roll-chain li {
+.rl-step {
   position: relative;
-  padding: 16px 12px;
+  min-height: 132px;
+  padding: 18px 14px 16px;
   border-right: 1px solid var(--rule);
-  font-family: var(--font-mono);
+}
+
+.rl-step:last-child {
+  border-right: 0;
+}
+
+.rl-step::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 13px;
+  width: 5px;
+  height: 5px;
+  background: var(--signal);
+  transform: rotate(45deg);
+}
+
+.rl-step-index {
+  display: block;
+  margin-bottom: 22px;
+  color: var(--ash);
+  font-family: var(--font-dm);
+  font-size: 9px;
+}
+
+.rl-step strong {
+  display: block;
+  color: var(--ink);
+  font-family: var(--font-dm);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+.rl-step p {
+  margin: 9px 0 0;
+  color: var(--dust);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+/* ── State discipline — the four states, ranked by evidence ── */
+
+.rl-states {
+  border-top: 1px solid var(--strong);
+}
+
+.rl-state-row {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) 100px;
+  gap: 24px;
+  align-items: center;
+  min-height: 92px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.rl-state-name {
   color: var(--ink);
+  font-family: var(--font-dm);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
-.roll-chain li:last-child {
-  border-right: 0;
+.rl-state-desc {
+  color: var(--dust);
+  font-size: 12px;
+  line-height: 1.6;
 }
 
-.roll-chain li::before {
-  content: "";
-  position: absolute;
-  top: -4px;
-  left: 12px;
-  width: 7px;
-  height: 7px;
-  border: 1px solid var(--signal);
-  background: var(--void);
+.rl-state-mark {
+  justify-self: end;
+  color: var(--ash);
+  font-family: var(--font-dm);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
-@media (max-width: 800px) {
-  .roll-grid {
+.rl-state-row[data-state="planned"] .rl-state-name,
+.rl-state-row[data-state="planned"] .rl-state-mark {
+  color: var(--planned);
+}
+
+.rl-state-row[data-state="prototype"] .rl-state-name,
+.rl-state-row[data-state="prototype"] .rl-state-mark {
+  color: var(--signal);
+}
+
+.rl-state-row[data-state="verified"] .rl-state-name,
+.rl-state-row[data-state="verified"] .rl-state-mark {
+  color: var(--verified);
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 1080px) {
+  .rl-ledger-canvas {
     grid-template-columns: 1fr;
-    gap: 40px;
   }
 
-  .roll-chain {
-    grid-template-columns: repeat(3, 1fr);
+  .rl-panel-left,
+  .rl-panel-right {
+    padding: 30px 0;
+    border: 0;
   }
 
-  .roll-chain li:nth-child(3) {
-    border-right: 0;
-  }
-
-  .roll-chain li:nth-child(n + 4) {
+  .rl-panel-right {
     border-top: 1px solid var(--rule);
+  }
+
+  .rl-spine {
+    min-height: 190px;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .rl-spine::before {
+    display: none;
   }
 }
 
-@media (max-width: 520px) {
-  .roll-chain {
-    grid-template-columns: repeat(2, 1fr);
+@media (max-width: 900px) {
+  .rl-thesis {
+    padding: 68px 0 74px;
   }
 
-  .roll-chain li:nth-child(3) {
-    border-right: 1px solid var(--rule);
+  .rl-split {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 720px) {
+  .rl-track {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .roll-chain li:nth-child(2n) {
+  .rl-step {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .rl-step:nth-child(2n) {
     border-right: 0;
   }
 
-  .roll-chain li:nth-child(n + 3) {
-    border-top: 1px solid var(--rule);
+  .rl-state-row {
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 14px;
+    padding: 14px 0;
+  }
+
+  .rl-state-mark {
+    grid-column: 2;
+    justify-self: start;
   }
 }
+

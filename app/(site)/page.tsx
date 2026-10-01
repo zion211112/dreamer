@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { COMPANY, BENBEN_BUILDS } from "../../lib/company";
+import { COMPANY, FACES, BENBEN_BUILDS } from "../../lib/company";
 import { Reveal } from "../../components/site/Reveal";
 import { RollPreview } from "../../components/site/RollPreview";
 import { HeroGlow } from "../../components/site/HeroGlow";
@@ -14,6 +14,9 @@ export const metadata: { title: string; description: string } = {
 
 const product = BENBEN_BUILDS.products[0];
 
+/** Evidence states are stored uppercase; the state channel speaks lowercase keys. */
+const stateKey = (state: string) => state.toLowerCase();
+
 export default function HomePage() {
   return (
     <main className="sb">
@@ -25,6 +28,8 @@ export default function HomePage() {
           <rect width="100%" height="100%" filter="url(#sb-noise-filter)" />
         </svg>
       </div>
+      <div className="sb-scan" aria-hidden="true" />
+      <div className="sb-datum" aria-hidden="true" />
       <Reveal />
       <ScrollProgress />
 
@@ -39,7 +44,13 @@ export default function HomePage() {
               {COMPANY.name} / {COMPANY.geography.text} / Institutional infrastructure
             </div>
             <h1 className="sb-title" data-reveal data-reveal-delay="1">
-              Infrastructure <em>institutions can own.</em>
+              Infrastructure
+              <br />
+              <em>
+                institutions
+                <br />
+                can own.
+              </em>
             </h1>
             <p className="sb-lead" data-reveal data-reveal-delay="2">
               APT-LABS builds physical infrastructure, productive computing
@@ -128,6 +139,59 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+
+        <div className="sb-hero-spec" data-reveal data-reveal-delay="4">
+          <div className="sb-container sb-spec-grid">
+            <div className="sb-spec-cell">
+              <span className="sb-spec-label">01 / Core</span>
+              <span className="sb-spec-name">APT Fab · Physical infrastructure</span>
+              <span className="sb-spec-state">
+                <span
+                  className="sb-state-dot"
+                  data-state={stateKey(FACES.fab.status)}
+                  aria-hidden="true"
+                />
+                {FACES.fab.status}
+              </span>
+            </div>
+            <div className="sb-spec-cell">
+              <span className="sb-spec-label">02 / Core</span>
+              <span className="sb-spec-name">APT Studio · Productive computing</span>
+              <span className="sb-spec-state">
+                <span
+                  className="sb-state-dot"
+                  data-state={stateKey(FACES.studio.status)}
+                  aria-hidden="true"
+                />
+                {FACES.studio.status}
+              </span>
+            </div>
+            <div className="sb-spec-cell">
+              <span className="sb-spec-label">03 / Track</span>
+              <span className="sb-spec-name">BenBen Builds · Product development</span>
+              <span className="sb-spec-state">
+                <span
+                  className="sb-state-dot"
+                  data-state={stateKey(BENBEN_BUILDS.status)}
+                  aria-hidden="true"
+                />
+                {BENBEN_BUILDS.status}
+              </span>
+            </div>
+            <div className="sb-spec-cell">
+              <span className="sb-spec-label">Record</span>
+              <span className="sb-spec-name">The Roll · Evidence / provenance</span>
+              <span className="sb-spec-state">
+                <span
+                  className="sb-state-dot"
+                  data-state={stateKey(FACES.roll.status)}
+                  aria-hidden="true"
+                />
+                {FACES.roll.status}
+              </span>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* ── Marquee divider ── */}
@@ -142,13 +206,24 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── Statement ── */}
+      {/* ── Proposition ── */}
       <section className="sb-statement">
-        <div className="sb-container sb-statement-row">
-          <h2>
-            Build locally. <span>Keep capability local.</span>
-          </h2>
-          <span className="sb-micro">System / 01</span>
+        <div className="sb-container sb-prop">
+          <div className="sb-prop-main">
+            <strong>Build locally. Keep capability local.</strong>
+          </div>
+          <div className="sb-prop-cell">
+            <small>Problem</small>
+            <span>Institutions depend on systems they cannot fully own or repair.</span>
+          </div>
+          <div className="sb-prop-cell">
+            <small>Approach</small>
+            <span>Build → Measure → Document → Repeat</span>
+          </div>
+          <div className="sb-prop-cell">
+            <small>Proof</small>
+            <span>The Roll records what the evidence supports.</span>
+          </div>
         </div>
       </section>
 
@@ -156,8 +231,10 @@ export default function HomePage() {
       <section id="work" className="sb-section">
         <div className="sb-container">
           <div className="sb-section-header">
-            <div>
+            <div className="sb-section-tag">
               <div className="sb-eyebrow">01 / Work</div>
+            </div>
+            <div>
               <h2 className="sb-section-title" data-reveal>
                 Three operating pillars.
               </h2>
@@ -176,7 +253,17 @@ export default function HomePage() {
 
           <div className="sb-work-grid">
             <article className="sb-work-card large" data-reveal>
-              <div className="sb-work-num">01 / APT FAB</div>
+              <div className="sb-work-top">
+                <div className="sb-work-num">01 / APT FAB</div>
+                <span className="sb-work-state">
+                  <span
+                    className="sb-state-dot"
+                    data-state={stateKey(FACES.fab.status)}
+                    aria-hidden="true"
+                  />
+                  {FACES.fab.status}
+                </span>
+              </div>
               <h3>Physical infrastructure.</h3>
               <div className="sb-work-tag">Design · sourcing · fabrication · repair</div>
               <p>
@@ -197,7 +284,17 @@ export default function HomePage() {
             </article>
 
             <article className="sb-work-card" data-reveal data-reveal-delay="1">
-              <div className="sb-work-num">02 / APT STUDIO</div>
+              <div className="sb-work-top">
+                <div className="sb-work-num">02 / APT STUDIO</div>
+                <span className="sb-work-state">
+                  <span
+                    className="sb-state-dot"
+                    data-state={stateKey(FACES.studio.status)}
+                    aria-hidden="true"
+                  />
+                  {FACES.studio.status}
+                </span>
+              </div>
               <h3>Productive computing.</h3>
               <div className="sb-work-tag">Compute · create · render · output</div>
               <p>
@@ -238,7 +335,17 @@ export default function HomePage() {
 
           <div className="sb-work-grid" style={{ marginTop: 54 }}>
             <article className="sb-work-card" data-reveal>
-              <div className="sb-work-num">03 / THE ROLL</div>
+              <div className="sb-work-top">
+                <div className="sb-work-num">03 / THE ROLL</div>
+                <span className="sb-work-state">
+                  <span
+                    className="sb-state-dot"
+                    data-state={stateKey(FACES.roll.status)}
+                    aria-hidden="true"
+                  />
+                  {FACES.roll.status}
+                </span>
+              </div>
               <h3>The evidence layer.</h3>
               <div className="sb-work-tag">Record · verify · audit · reproduce</div>
               <p>
@@ -287,8 +394,10 @@ export default function HomePage() {
       <section id="about" className="sb-section">
         <div className="sb-container">
           <div className="sb-section-header">
-            <div>
+            <div className="sb-section-tag">
               <div className="sb-eyebrow">03 / About</div>
+            </div>
+            <div>
               <h2 className="sb-section-title" data-reveal>
                 Build locally. Keep capability local.
               </h2>
@@ -338,10 +447,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className="sb-container sb-footer">
-        <span>APT-LABS / Kirinyaga</span>
-        <span>Physical · Compute · Evidence · Local capability</span>
-      </footer>
-    </main>
+      </main>
   );
 }
