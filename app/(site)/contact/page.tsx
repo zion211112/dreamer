@@ -1,5 +1,4 @@
 import { faceMetadata } from "../../../lib/metadata";
-import GeoArt from "../../../components/GeoArt";
 import "./contact.css";
 
 export const metadata = faceMetadata({
@@ -30,7 +29,6 @@ export default function Contact() {
   return (
     <main className="site-page contact-page">
       <section className="contact-classic site-frame">
-        <GeoArt variant="corner" className="contact-art" />
         <div className="site-section-head"><span>Contact / APT-LABS</span><span>direct project contact</span></div>
         <div className="record-intro contact-intro">
           <p className="site-kicker">For institutions, builders, and local teams</p>

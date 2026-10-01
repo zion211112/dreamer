@@ -33,10 +33,14 @@ test('no envelope, no sigil, no hand-drawn artwork of any kind survives', () => 
   for (const dead of ['vesica', 'sigil', 'Knock Knock', 'contact-plate', 'envelope', 'flap', 'stamp', 'seal']) {
     assert.ok(!contact.toLowerCase().includes(dead), dead + ' should be gone');
   }
-  // The identity mark comes back only as the shared GeoArt accent — never
-  // hand-drawn inline SVG in the page itself.
+  // No artwork of any kind: the shared GeoArt identity mark is gone too,
+  // so this page carries no SVG and no imported mark component.
   assert.equal(contact.includes('<svg'), false, 'no inline SVG in the page');
-  assert.ok(contact.includes('GeoArt'), 'the shared GeoArt accent is allowed');
+  assert.ok(!contact.includes('GeoArt'), 'the GeoArt accent has been removed');
+  assert.ok(
+    !fs.existsSync(path.join(__dirname, '..', 'components', 'GeoArt.tsx')),
+    'GeoArt.tsx should stay deleted'
+  );
 });
 
 test('the classic page carries no motion: no keyframes, no transforms', () => {

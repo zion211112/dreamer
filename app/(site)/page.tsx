@@ -3,7 +3,6 @@ import { COMPANY, FACES, BENBEN_BUILDS } from "../../lib/company";
 import { Reveal } from "../../components/site/Reveal";
 import { RollPreview } from "../../components/site/RollPreview";
 import { HeroGlow } from "../../components/site/HeroGlow";
-import { HeroGeoart } from "../../components/site/HeroGeoart";
 import { ScrollProgress } from "../../components/site/ScrollProgress";
 
 export const metadata: { title: string; description: string } = {
@@ -36,7 +35,6 @@ export default function HomePage() {
       {/* ── Hero ── */}
       <section className="sb-hero">
         <div className="sb-grid-bg" aria-hidden="true" />
-        <HeroGeoart />
         <HeroGlow />
         <div className="sb-container sb-hero-layout">
           <div>
@@ -382,7 +380,7 @@ export default function HomePage() {
             </div>
             <div>
               <h2 className="sb-section-title" data-reveal>
-                Build locally. Keep capability local.
+                What a durable system actually requires.
               </h2>
             </div>
             <div>

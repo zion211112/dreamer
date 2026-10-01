@@ -48,7 +48,7 @@ export default function OpengraphImage() {
           color: INK,
         }}
       >
-        {/* ring motif, right side — echoes the GeoArt watermark system */}
+        {/* concentric ring motif, right side */}
         <Ring r={250} />
         <Ring r={170} />
         <Ring r={92} />
