@@ -1,0 +1,472 @@
+/* ============================================================
+   register.css — the register shell shared by /work and /roll.
+   The sublime landing's institutional sibling: type → whitespace
+   → hairline → state → detail. One accent (green), one ramp
+   (graphite); nothing the page cannot evidence.
+
+   register.css owns the shell (hero, strip, section heads,
+   panels, pipelines, tiles, reveal). work.css and roll.css own
+   the structures specific to each register.
+   ============================================================ */
+
+.rg-page {
+  --rg-ease: cubic-bezier(0.22, 0.7, 0.24, 1);
+  padding-block: 0;
+  background:
+    radial-gradient(1100px 520px at 78% -10%, rgba(52, 211, 153, 0.055), transparent 60%),
+    radial-gradient(900px 620px at -6% 46%, rgba(127, 160, 194, 0.04), transparent 62%);
+  color: var(--ink);
+}
+
+.rg-frame {
+  width: min(calc(100% - 40px), 1320px);
+  margin-inline: auto;
+}
+
+@media (max-width: 640px) {
+  .rg-frame { width: min(calc(100% - 40px), 1320px); }
+}
+
+/* ── Eyebrow — the green tick label ── */
+
+.rg-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: var(--signal);
+  font-family: var(--font-dm);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.rg-eyebrow::before {
+  content: "";
+  width: 20px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+/* ── Hero ── */
+
+.rg-hero {
+  padding: 92px 0 60px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.rg-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) 320px;
+  gap: 84px;
+  align-items: end;
+}
+
+.rg-title {
+  max-width: 16ch;
+  margin: 20px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(54px, 7.6vw, 104px);
+  font-weight: 600;
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.rg-title em {
+  font-style: normal;
+  color: var(--signal);
+}
+
+.rg-lead {
+  max-width: 660px;
+  margin: 22px 0 0;
+  font-size: clamp(17px, 1.6vw, 21px);
+  line-height: 1.5;
+  letter-spacing: -0.012em;
+  color: var(--dust);
+}
+
+.rg-aside {
+  border-top: 1px solid var(--strong);
+}
+
+.rg-aside-row {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+  min-height: 58px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.rg-aside-row span {
+  color: var(--ash);
+  font-family: var(--font-dm);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.rg-aside-row strong {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.rg-base {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding-top: 22px;
+  color: var(--ash);
+  font-family: var(--font-dm);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* ── Strip — the operating-state row ── */
+
+.rg-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-bottom: 1px solid var(--rule);
+}
+
+.rg-cell {
+  min-height: 92px;
+  padding: 16px 18px;
+  border-right: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ── Section ── */
+
+.rg-section { padding: 96px 0; }
+
+.rg-head {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 48px;
+  margin-bottom: 44px;
+}
+
+.rg-mark {
+  margin: 0;
+  color: var(--signal);
+  font-family: var(--font-dm);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.rg-h2 {
+  max-width: 24ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(32px, 4.2vw, 58px);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.rg-copy {
+  max-width: 680px;
+  margin: 16px 0 0;
+  color: var(--dust);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* ── Panel — the ruled register block ── */
+
+.rg-panel {
+  border-top: 1px solid var(--strong);
+  border-bottom: 1px solid var(--strong);
+}
+
+.rg-panel-head {
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ash);
+  font-family: var(--font-dm);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.rg-panel-foot {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 12px 0;
+  border-top: 1px solid var(--rule);
+  color: var(--ash);
+  font-family: var(--font-dm);
+  font-size: 9px;
+  line-height: 1.6;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── State chip — dot + word; the only colour a row needs ── */
+
+.rg-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--dust);
+  font-family: var(--font-dm);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.rg-chip::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ash);
+  flex-shrink: 0;
+}
+
+.rg-chip[data-state="prototype"] { color: var(--signal); }
+.rg-chip[data-state="prototype"]::before { background: var(--signal); }
+
+.rg-chip[data-state="verified"] { color: var(--verified); }
+.rg-chip[data-state="verified"]::before { background: var(--verified); }
+
+.rg-chip[data-state="planned"] { color: var(--planned); }
+.rg-chip[data-state="planned"]::before { background: var(--planned); }
+
+/* ── Pipeline — the sequence rail ── */
+
+.rg-pipeline {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  margin-top: 30px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.rg-pipeline[data-steps="4"] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.rg-step {
+  min-height: 66px;
+  padding: 11px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  border-right: 1px solid var(--rule);
+}
+
+.rg-step:last-child { border-right: 0; }
+
+.rg-step small {
+  color: var(--ash);
+  font-family: var(--font-dm);
+  font-size: 9px;
+}
+
+.rg-step strong {
+  color: var(--ink);
+  font-family: var(--font-dm);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── Closing — headline + action tiles ── */
+
+.rg-end {
+  padding: 96px 0 8px;
+}
+
+.rg-end-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 56px;
+  align-items: end;
+  padding: 44px 0 38px;
+  border-top: 1px solid var(--strong);
+  border-bottom: 1px solid var(--strong);
+}
+
+.rg-end h2 {
+  max-width: 20ch;
+  margin: 14px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(34px, 4.4vw, 60px);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.rg-end h2 span { color: var(--signal); }
+
+.rg-end-copy {
+  max-width: 520px;
+  margin: 0;
+  color: var(--dust);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.rg-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.rg-tile {
+  min-height: 92px;
+  padding: 14px;
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  text-decoration: none;
+  transition: border-color 200ms ease, transform 200ms var(--rg-ease);
+}
+
+.rg-tile:hover {
+  border-color: var(--signal-a30);
+  transform: translateY(-2px);
+}
+
+.rg-tile small {
+  color: var(--ash);
+  font-family: var(--font-dm);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.rg-tile strong {
+  color: var(--ink);
+  font-family: var(--font-dm);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── Reveal — register pages ── */
+
+.rg-page [data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 620ms var(--rg-ease), transform 620ms var(--rg-ease);
+}
+
+.rg-page [data-reveal].visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rg-page [data-reveal] { opacity: 1; transform: none; transition: none; }
+  .rg-tile { transition: none; }
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 1080px) {
+  .rg-hero-grid { grid-template-columns: minmax(0, 1fr) 280px; gap: 56px; }
+}
+
+@media (max-width: 900px) {
+  .rg-hero { padding: 72px 0 48px; }
+  .rg-hero-grid { grid-template-columns: 1fr; gap: 44px; }
+  .rg-aside { max-width: 640px; }
+  .rg-section { padding: 76px 0; }
+  .rg-head { grid-template-columns: 1fr; gap: 16px; margin-bottom: 34px; }
+  .rg-end-grid { grid-template-columns: 1fr; gap: 36px; }
+}
+
+@media (max-width: 720px) {
+  .rg-strip { grid-template-columns: 1fr 1fr; }
+  .rg-cell:nth-child(2n) { border-right: 0; }
+  .rg-cell:nth-child(-n + 2) { border-bottom: 1px solid var(--rule); }
+  .rg-base { flex-direction: column; gap: 8px; }
+  .rg-pipeline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rg-pipeline[data-steps="4"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rg-step { border-bottom: 1px solid var(--rule); }
+  .rg-step:nth-child(2n) { border-right: 0; }
+  .rg-tiles { grid-template-columns: 1fr; }
+  .rg-panel-head,
+  .rg-panel-foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 14px 0;
+  }
+}
+
+  /* ── Notes ── */
+
+.rg-note {
+  max-width: 660px;
+  margin: 20px 0 0;
+  color: var(--ash);
+  font-family: var(--font-dm);
+  font-size: 10px;
+  line-height: 1.7;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.rg-note strong {
+  color: var(--signal);
+  font-weight: 500;
+}
+
+.rg-cell:last-child { border-right: 0; }
+
+.rg-cell-label {
+  color: var(--ash);
+  font-family: var(--font-dm);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.rg-cell-value {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
