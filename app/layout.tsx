@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/icons/icon.svg", type: "image/svg+xml", sizes: "any" },
-      "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%23060708'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='16' font-weight='700' fill='%2314B8A6'>A</text></svg>",
+      "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%23060807'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='16' font-weight='700' fill='%2334D399'>A</text></svg>",
     ],
     apple: [{ url: "/icons/icon.svg", type: "image/svg+xml" }],
   },
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   // Dark-only by design. Advertising a light theme the site never renders
   // sends the browser chrome a false signal.
-  themeColor: "#060708",
+  themeColor: "#060807",
   width: "device-width",
   initialScale: 1,
 };
@@ -54,13 +54,38 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Preload the face that renders first (body) to avoid a late FOUT.
-            The @font-face rules ship in the bundled CSS (fonts.css). */}
+        {/* Preload the faces that paint first — body copy, nav micro-type
+            and display titles — to avoid a late FOUT. The @font-face rules
+            ship in the bundled CSS (fonts.css). `crossOrigin` is required:
+            fonts are always fetched in CORS mode, even same-origin, so a
+            preload without it never matches the actual request. */}
         <link
           rel="preload"
           href="/fonts/inter-latin-400.woff2"
           as="font"
           type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/dm-mono-latin-400.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/dm-mono-latin-500.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/space-grotesk-latin-600.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
         />
       </head>
       <body>

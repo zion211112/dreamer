@@ -10,11 +10,11 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 // Mirrors globals.css tokens. Keep in sync if the palette moves.
-const VOID = "#060708";
-const SIGNAL = "#14B8A6";
-const INK = "#EDEAE4";
-const DUST = "#857F7A";
-const RULE = "#26292B";
+const VOID = "#060807";
+const SIGNAL = "#34D399";
+const INK = "#F2F5F2";
+const DUST = "#A9B2AB";
+const RULE = "#26241E";
 
 function Ring({ r, color = RULE }: { r: number; color?: string }) {
   return (

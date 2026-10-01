@@ -4,10 +4,16 @@ import { useEffect } from "react";
 
 // Reveals [data-reveal] descendants once, on entry, honoring
 // [data-reveal-delay="1..5"] stagger. The page stays fully rendered
-// without JS; this only adds motion.
+// without JS; this only adds motion. Scoped to the landing (.sb),
+// the identity register pages (work, roll) and the identity pages
+// (about, evidence, benben) that carry data-reveal.
 export function Reveal() {
   useEffect(() => {
-    const targets = Array.from(document.querySelectorAll(".sb [data-reveal]"));
+    const targets = Array.from(
+      document.querySelectorAll(
+        ".sb [data-reveal], .work-page [data-reveal], .roll-page [data-reveal], .identity-page [data-reveal], .benben-sublime [data-reveal]"
+      )
+    );
     if (!targets.length) return;
     if (typeof IntersectionObserver === "undefined") {
       targets.forEach((el) => el.classList.add("visible"));

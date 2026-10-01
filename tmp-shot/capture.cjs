@@ -51,17 +51,10 @@ async function shoot(page, p, prefix, width, height) {
 (async () => {
   require("fs").mkdirSync(`${OUT}/desktop`, { recursive: true });
   require("fs").mkdirSync(`${OUT}/mobile`, { recursive: true });
-  const browser = await puppeteer.launch({
-    executablePath: EDGE,
-    headless: "new",
-    args: [
-      "--no-sandbox",
-      "--disable-gpu",
-      "--user-data-dir=" + require("path").join(__dirname, "edge-profile"),
-      "--hide-scrollbars",
-      "--force-color-profile=srgb",
-    ],
-  });
+  // Edge 154's process handoff breaks puppeteer's spawn handshake on this
+  // host — launch the headless browser manually with --remote-debugging-port
+  // and connect over CDP instead.
+  const browser = await puppeteer.connect({ browserURL: "http://127.0.0.1:9333" });
 
   const page = await browser.newPage();
   for (const p of PAGES) await shoot(page, p, "desktop", 1440, 900);

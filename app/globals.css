@@ -26,19 +26,19 @@
 
   /* Typography */
   --text:   #FAFAFA;        /* Primary */
-  --dim:    #99999D;        /* Secondary */
-  --mute:   #555559;        /* Tertiary */
+  --dim:    #9BA39C;        /* Secondary */
+  --mute:   #555F58;        /* Tertiary */
   --block:  #333338;        /* Timed/defunct */
 
   /* Signal — Technical Accent (Tailwind green-400) */
   --sig:    #34D399;        /* Primary interactive */
-  --sig-dim: #26A69A;       /* Hover */
+  --sig-dim: #10B981;       /* Hover */
   --sig-sub: #065F46;       /* Darker */
   --sig-soft: rgba(52, 211, 153, 0.10);     /* Subtle tint */
 
   /* Status */
   --tag-verified: #10B981;
-  --tag-planned:  #FBBF24;
+  --tag-planned:  #96A6BE;
   --tag-unknown:  #52525B;
 }
 
@@ -196,25 +196,25 @@ body {
      R≈G>B by a hair: the site is lit warm, never a cold black.
      This ramp also feeds the console; its live green (--signal)
      still carries product state on top. */
-  --void:   #0C0B09;
-  --panel:  #141310;
-  --edge:   #1C1A16;
+  --void:   #060807;
+  --panel:  #0B0E0C;
+  --edge:   #111513;
   --rule:   #26241E;
 
   /* Semantic surface aliases — components should consume meaning, not hex. */
   --surface-void:   var(--void);
   --surface-panel:  var(--panel);
-  --surface-raised: #1A1815;
+  --surface-raised: #101413;
   --surface-hover:  var(--edge);
   --text-primary:   var(--ink);
   --text-secondary: var(--dust);
   --text-tertiary:  var(--ash);
   --border-subtle:  var(--rule);
-  --border-strong:  #3A3730;
-  --strong:         #35322B;
+  --border-strong:  #333B35;
+  --strong:         #2E352F;
   --verified:       #34D399;
-  --planned:        #FBBF24;
-  --unknown:        #A8A29E;
+  --planned:       #96A6BE;
+  --unknown:        #9EA79F;
   --focus:          var(--signal);
 
   /* Text — brighter, cleaner warm ramp. The old warm-gray-on-cold-black
@@ -222,21 +222,21 @@ body {
      Contrast on --void / --panel / --edge:
      --ink ≈ 17.4 / 16.4 / 15.2  ·  --dust ≈ 7.4 / 7.0 / 6.5  ·  --ash ≈ 5.6 / 5.3 / 4.9
      All three clear WCAG AA (4.5:1) for body text on every surface. */
-  --ink:    #F5F1E6;
-  --dust:   #A69E90;
-  --ash:    #8F887B;
+  --ink:    #F2F5F2;
+  --dust:   #A9B2AB;
+  --ash:    #8A928B;
 
   /* Accent — one interactive color: the console's live green.
      Public chrome re-resolves these aliases to the green accent inside
      .site-nav / .site-content / .site-footer (see site.css). */
-  --signal:      #14B8A6;
-  --signal-dim:  #0D9488;
-  --signal-strong:#0F766E;
+  --signal:      #34D399;
+  --signal-dim:  #10B981;
+  --signal-strong:#059669;
   /* Signal at low alpha — tinted surfaces (beacon, chip, focus ring).
      Undefined here they collapse the whole declaration, leaving
      transparent backgrounds/borders on controls that use them. */
-  --signal-a30:  rgba(20, 184, 166, 0.30);
-  --signal-a08:  rgba(20, 184, 166, 0.08);
+  --signal-a30:  rgba(52, 211, 153, 0.30);
+  --signal-a08:  rgba(52, 211, 153, 0.08);
 
   /* Informational — never interactive */
   --amber:  #D97706;
@@ -253,12 +253,12 @@ body {
 
   /* Sublime depth — light comes from above: a warm top-light hairline
      over layered dark falloff. Consume the pair, not the raw values. */
-  --top-light:   inset 0 1px 0 rgba(255, 246, 224, 0.05);
+  --top-light:   inset 0 1px 0 rgba(214, 232, 219, 0.05);
   --shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.42),
-                 inset 0 1px 0 rgba(255, 246, 224, 0.045);
+                 inset 0 1px 0 rgba(214, 232, 219, 0.045);
   --shadow-deep: 0 28px 70px rgba(0, 0, 0, 0.55),
                  0 6px 18px rgba(0, 0, 0, 0.35),
-                 inset 0 1px 0 rgba(255, 246, 224, 0.055);
+                 inset 0 1px 0 rgba(214, 232, 219, 0.055);
 
   /* Semantic aliases */
   --bg:       var(--void);
@@ -275,6 +275,8 @@ html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* Anchor targets clear the sticky header (68px + breathing room). */
+  scroll-padding-top: 88px;
   /* Dark-only by design. Without this the UA paints native selects, date
      pickers and number spinners light-on-dark inside black panels. */
   color-scheme: dark;
@@ -330,7 +332,7 @@ body {
 /* ─── Selection ─── */
 
 ::selection {
-  background-color: rgba(20, 184, 166, 0.25);
+  background-color: rgba(52, 211, 153, 0.25);
   color: var(--ink);
 }
 

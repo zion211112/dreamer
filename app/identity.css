@@ -278,8 +278,8 @@
 .asset-lifecycle-step[data-state="prototype"] strong { color: var(--signal); }
 
 .asset-anatomy { padding-block: 48px; }
-.asset-record-template { margin-top: 24px; border: 1px solid var(--border-strong); background: linear-gradient(180deg, rgba(255, 246, 224, 0.03), transparent 40%), var(--surface-raised); box-shadow: var(--shadow-soft); }
-.asset-record-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 18px; border-bottom: 1px solid var(--border-subtle); background: rgba(12, 11, 9, .5); box-shadow: var(--top-light); }
+.asset-record-template { margin-top: 24px; border: 1px solid var(--border-strong); background: linear-gradient(180deg, rgba(214, 232, 219, 0.03), transparent 40%), var(--surface-raised); box-shadow: var(--shadow-soft); }
+.asset-record-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 18px; border-bottom: 1px solid var(--border-subtle); background: rgba(6, 8, 7, .5); box-shadow: var(--top-light); }
 .asset-record-kicker { display: block; color: var(--signal); font: 600 9px/1 var(--font-mono); letter-spacing: .14em; }
 .asset-record-header h3 { margin: 10px 0 0; color: var(--ink); font: 600 14px/1 var(--font-mono); letter-spacing: .08em; }
 .asset-record-state { padding: 5px 7px; border: 1px solid var(--signal-a30); color: var(--signal); font: 600 9px/1 var(--font-mono); letter-spacing: .1em; }
@@ -657,15 +657,33 @@
     flex-direction: column;
     gap: 8px;
   }
-
-/* about page — quiet sans body copy under the serif lead */
-.about-body {
-  font-family: var(--font-sans);
-  font-size: 16px;
-  color: var(--dust);
-  line-height: 1.7;
-  max-width: 56ch;
-  margin-top: 0;
 }
 
+/* ── Reveal — identity pages (about, evidence) ──
+   Same choreography as the register pages: a short rise + fade,
+   staggered by data-reveal-delay. Content is fully rendered without
+   JS; this only adds motion, and reduced motion gets none. */
+
+.identity-page [data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 620ms cubic-bezier(0.22, 0.7, 0.24, 1),
+              transform 620ms cubic-bezier(0.22, 0.7, 0.24, 1);
+}
+
+.identity-page [data-reveal].visible {
+  opacity: 1;
+  transform: none;
+}
+
+.identity-page [data-reveal-delay="1"] { transition-delay: 0.08s; }
+.identity-page [data-reveal-delay="2"] { transition-delay: 0.16s; }
+.identity-page [data-reveal-delay="3"] { transition-delay: 0.24s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .identity-page [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

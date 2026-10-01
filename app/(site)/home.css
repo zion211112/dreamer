@@ -27,7 +27,7 @@
 .sublime-hero {
   position: relative;
   z-index: 1;
-  min-height: calc(100svh - 56px);
+  min-height: calc(100svh - 68px);
   display: grid;
   align-content: center;
   padding-block: 56px;
@@ -69,7 +69,7 @@
   display: grid;
   gap: 0;
   border: 1px solid var(--rule);
-  background: linear-gradient(180deg, rgba(255, 246, 224, 0.03), transparent 46%),
+  background: linear-gradient(180deg, rgba(214, 232, 219, 0.03), transparent 46%),
     linear-gradient(135deg, var(--surface-raised), var(--surface-panel) 72%);
   box-shadow: var(--shadow-deep);
   overflow: hidden;
@@ -303,7 +303,7 @@
 
 @media (max-width: 640px) {
   .sublime-hero {
-    min-height: calc(100svh - 52px);
+    min-height: calc(100svh - 60px);
     padding-block: 40px;
   }
 
@@ -325,5 +325,33 @@
 @media (prefers-reduced-motion: reduce) {
   .sublime-glow {
     background: none;
+  }
+}
+
+/* ── Reveal — the floor page's static sections ──
+   Same choreography as the landing and register pages. The interactive
+   floor grid stays out of it: state you can act on never hides. */
+
+.benben-sublime [data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 620ms cubic-bezier(0.22, 0.7, 0.24, 1),
+              transform 620ms cubic-bezier(0.22, 0.7, 0.24, 1);
+}
+
+.benben-sublime [data-reveal].visible {
+  opacity: 1;
+  transform: none;
+}
+
+.benben-sublime [data-reveal-delay="1"] { transition-delay: 0.08s; }
+.benben-sublime [data-reveal-delay="2"] { transition-delay: 0.16s; }
+.benben-sublime [data-reveal-delay="3"] { transition-delay: 0.24s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .benben-sublime [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
