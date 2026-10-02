@@ -202,7 +202,7 @@ export const FACES: Record<Face["key"], Face> = {
     description:
       "Where a matched allocation becomes procurement, BOM, fabrication, installation, acceptance test, maintenance and appended evidence. The chain a proposal opens, Fab closes.",
     status: "PLANNED",
-    route: "/work",
+    route: "/",
     evidenceRefs: ["EVIDENCE-PACK.md §6"],
   },
   studio: {
@@ -212,7 +212,7 @@ export const FACES: Record<Face["key"], Face> = {
     description:
       "Credential issuance and verification, ZK proofs, local model workloads, node operations, training runs and recovery paths — the node keeping its own house in order, on the hardware it serves.",
     status: "PLANNED",
-    route: "/work",
+    route: "/",
     evidenceRefs: ["EVIDENCE-PACK.md §7"],
   },
   roll: {
@@ -250,7 +250,7 @@ export const BENBEN_BUILDS = {
   name: "BenBen Builds",
   role: "Product build track",
   isFace: false,
-  route: "/work",
+  route: "/",
   summary:
     "Where the protocol node's products are built, on the node's own evidence rules. Its current product is the School Console: a local-first operating console, a local prototype — not a deployment.",
   status: "PROTOTYPE" as EvidenceState,
@@ -308,7 +308,7 @@ export const EVIDENCE_LINKS = [
 
 /** Status ledger rows — compared against docs/EVIDENCE-PACK.md §4. */
 export const STATUS_LEDGER = [
-  { face: "APT Fab", status: "PLANNED", route: "/work", appRoute: "—" },
-  { face: "APT Studio", status: "PLANNED", route: "/work", appRoute: "—" },
+  { face: "APT Fab", status: "PLANNED", route: "/", appRoute: "—" },
+  { face: "APT Studio", status: "PLANNED", route: "/", appRoute: "—" },
   { face: "The Roll", status: "PROTOTYPE", route: "/roll", appRoute: "/" },
 ];

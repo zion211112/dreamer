@@ -6,13 +6,14 @@ import { useEffect, useId, useState } from "react";
 
 type NavItem = { href: string; label: string };
 
-// One product: the protocol node at the root. The support routes — execution,
-// record, doctrine and engagement — hang off it. Products ship on the BenBen
-// Builds track (/work → /console) and never in this header.
+// One product: the protocol node at the root. The support routes — record,
+// doctrine, evidence and engagement — hang off it. The console is a build
+// inside the node's write-up (#writeup), never a peer destination, so it does
+// not appear in this header.
 const NAV_ITEMS: NavItem[] = [
-  { href: "/work", label: "Work" },
   { href: "/roll", label: "Roll" },
   { href: "/about", label: "About" },
+  { href: "/evidence", label: "Evidence" },
   { href: "/contact", label: "Contact" },
 ];
 

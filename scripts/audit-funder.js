@@ -33,7 +33,6 @@ const required = [
   "scripts/audit-classes.js",
   "app/(site)/page.tsx",
   "app/(site)/protocol/layout.tsx",
-  "app/(site)/work/page.tsx",
   "app/(site)/roll/page.tsx",
   "app/(site)/about/page.tsx",
   "app/(site)/evidence/page.tsx",
@@ -44,19 +43,23 @@ const required = [
 required.forEach((file) => file && (fs.existsSync(file) ? pass(`exists: ${file}`) : fail(`missing: ${file}`)));
 
 // No retired company-model routes may return.
-for (const dead of ["app/(site)/deploy", "app/(site)/fab", "app/(site)/studio", "app/(site)/ledger", "app/(site)/dashboard", "app/(site)/search"]) {
+for (const dead of ["app/(site)/deploy", "app/(site)/fab", "app/(site)/studio", "app/(site)/work", "app/(site)/ledger", "app/(site)/dashboard", "app/(site)/search"]) {
   fs.existsSync(dead) ? fail(`retired route still present: ${dead}`) : pass(`retired route absent: ${dead}`);
 }
 
 // One product: the Protocol Node, at the root. Support routes carry the
-// execution surfaces, the record, doctrine, evidence and engagement.
+// record, doctrine, evidence and engagement. There is no /work.
 const robots = read("app/robots.ts");
 const sitemap = read("app/sitemap.ts");
-for (const [name, route] of [["Protocol Node", "/"], ["APT Fab", "/work"], ["APT Studio", "/work"], ["The Roll", "/roll"]]) {
+for (const [name, route] of [["Protocol Node", "/"], ["The Roll", "/roll"]]) {
   robots.includes(`"${route}"`) ? pass(`${name} allowed by robots (${route})`) : fail(`${name} missing from robots (${route})`);
   sitemap.includes(route === "/" ? "url: base" : `\`\${base}${route}\``) ? pass(`${name} present in sitemap (${route})`) : fail(`${name} missing from sitemap (${route})`);
 }
-for (const [name, file] of [["Work", "app/(site)/work/page.tsx"], ["The Roll", "app/(site)/roll/page.tsx"], ["BenBen / The Floor", "app/(site)/benben/layout.tsx"], ["Contact", "app/(site)/contact/page.tsx"]]) {
+for (const gone of ["/work"]) {
+  !robots.includes(`"${gone}"`) ? pass(`retired route absent from robots (${gone})`) : fail(`retired route still allowed by robots: ${gone}`);
+  !sitemap.includes(`\${base}${gone}`) ? pass(`retired route absent from sitemap (${gone})`) : fail(`retired route still in sitemap: ${gone}`);
+}
+for (const [name, file] of [["The Roll", "app/(site)/roll/page.tsx"], ["BenBen / The Floor", "app/(site)/benben/layout.tsx"], ["Contact", "app/(site)/contact/page.tsx"]]) {
   fs.existsSync(file) && /export const metadata/.test(read(file)) ? pass(`${name} metadata exists`) : fail(`${name} metadata missing`);
 }
 // The node is a local-first surface: indexed for its root, but its
@@ -81,7 +84,7 @@ else pass("no Deploy face in lib/company.ts");
 const nav = read("components/Nav.tsx");
 if (!nav.includes('"/console"') && !nav.includes("'/console'")) pass("header links no product console");
 else fail("header must not link /console (products live on /work)");
-for (const item of ['"/work"', '"/roll"', '"/about"', '"/contact"']) {
+for (const item of ['"/roll"', '"/about"', '"/evidence"', '"/contact"']) {
   nav.includes(item) ? pass(`header links ${item}`) : fail(`header missing ${item}`);
 }
 
@@ -136,8 +139,16 @@ for (const name of dead) {
 }
 
 const work = read("app/(site)/work/page.tsx");
-if (work.includes("FACES.fab") && work.includes("FACES.studio") && work.includes("BENBEN_BUILDS") && work.includes("product.route") && work.includes("product.floorRoute")) pass("Work presents the execution surfaces plus the product track with its intake");
-else fail("Work must present Fab, Studio, BenBen Builds, the School Console, and links to /console and /benben");
+if (work) fail("the retired /work page still exists");
+else pass("the retired /work page is gone");
+// The console is a build inside the write-up, not a peer destination.
+const nodeSrc = read("components/protocol-node.tsx");
+if (nodeSrc.includes("BENBEN_BUILDS.products[0]") && nodeSrc.includes("EXAMPLE.route")) {
+  pass("node presents the product track with its build example");
+} else fail("node must present the BenBen Builds track with the School Console as its example");
+const nodeIndex = nodeSrc.slice(nodeSrc.indexOf("const SUPPORT"), nodeSrc.indexOf("const LOOP"));
+if (nodeIndex && !nodeIndex.includes("/console")) pass("node index links no product console");
+else fail("node index must not link /console — the console is a build, not a route");
 
 const ledgerSource = read("lib/ledger.ts");
 if (ledgerSource.includes("SEED_MEMBERS: Member[] = []")) pass("People Register has no seeded records");

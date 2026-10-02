@@ -91,15 +91,15 @@ Status ledger — this table is machine-checked against `lib/company.ts`:
 
 | Face | Status | Public route | Application route |
 | --- | --- | --- | --- |
-| APT Fab | PLANNED | /work | — |
-| APT Studio | PLANNED | /work | — |
+| APT Fab | PLANNED | / | — |
+| APT Studio | PLANNED | / | — |
 | The Roll | PROTOTYPE | /roll | / |
 
 BenBen Builds is the product track, not a face: `PROTOTYPE`,
-presented at `/work`, with the School Console product at `/console`
-(local-first prototype, no verified deployment) and the Floor intake at
-`/benben` (local-only, starts empty). A product prototype must never stand
-as a company face.
+presented inside the node's write-up (`/#writeup`), with the School Console
+product at `/console` (local-first prototype, no verified deployment) and the
+Floor intake at `/benben` (local-only, starts empty). A product prototype must
+never stand as a company face.
 
 ## 5. BenBen Builds
 
@@ -185,9 +185,10 @@ State: `PROTOTYPE`. The Floor starts with empty slots. Build posts are organised
 - `npm test` — 44 tests pass.
 - `node scripts/audit-classes.js` — zero undefined class names.
 - `node scripts/audit-funder.js` — route metadata, empty registers, no fake gates, legacy demo constants, and grant lenses are coherent.
-- Public routes: `/`, `/work`, `/roll`, `/about`, `/evidence`, `/contact`, with the Floor
+- Public routes: `/`, `/roll`, `/about`, `/evidence`, `/contact`, with the Floor
   intake at `/benben` (local-only, kept out of the index) and the BenBen Builds
-  School Console at `/console` (local-first product, kept out of the index).
+  School Console at `/console` (local-first product, opened from the node's
+  write-up and kept out of the index).
 
 ## 11. Pilot Partner(s)
 

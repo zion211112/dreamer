@@ -14,7 +14,6 @@ import { Nav } from "./Nav";
 
 const FOOTER_LINKS = [
   { href: "/", label: "Home" },
-  { href: "/work", label: "Work" },
   { href: "/roll", label: "Roll" },
   { href: "/about", label: "About" },
   { href: "/evidence", label: "Evidence" },

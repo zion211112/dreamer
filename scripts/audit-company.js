@@ -124,13 +124,11 @@ if (/key: "deploy"|face: "APT Deploy"|"\/deploy"|appRoute: "\/console"/.test(src
 } else pass("no Deploy face, /deploy route, or console appRoute in lib/company.ts");
 
 console.log("\n== 3. The site is one node plus support routes ==");
-// The Protocol Node is the product at the root. Support routes — execution,
-// record, doctrine, evidence and engagement — hang off it. The Floor is a
-// local-only intake layer: linked from /work, with metadata, disallowed in
-// robots, absent from the sitemap. Each indexed route must export metadata.
+// The Protocol Node is the product at the root. Support routes — record,
+// doctrine, evidence and engagement — hang off it. There is no /work: the
+// console is a build inside the node's write-up, not a route of its own.
 const PUBLIC_ROUTES = [
   { rel: "page.tsx", name: "Node (root)" },
-  { rel: "work/page.tsx", name: "Work" },
   { rel: "roll/page.tsx", name: "Roll" },
   { rel: "about/page.tsx", name: "About" },
   { rel: "evidence/page.tsx", name: "Evidence" },
@@ -144,6 +142,9 @@ PUBLIC_ROUTES.forEach(({ rel, name }) => {
     pass(`${name} route exports metadata`);
   } else fail(`${name} route exports no metadata`);
 });
+if (!fs.existsSync(path.join("app", "(site)", "work"))) {
+  pass("retired /work route is absent");
+} else fail("the retired /work route must not return — the console is a build inside the node's write-up");
 
 // The node lives at the root: the root page mounts the protocol surface.
 const rootNode = fs.readFileSync(path.join("app", "(site)", "page.tsx"), "utf8");

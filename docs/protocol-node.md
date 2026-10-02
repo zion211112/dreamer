@@ -25,19 +25,20 @@ policy → bounded influence. QF policy layer exposes pool internals;
 capture-alert replaces auto-slashing; sortition is a first-class object.
 The UI reads as a local protocol instrument, not a website.
 
-## Views (9)
+## Views (10)
 
 | # | View | Focus |
 | --- | --- | --- |
-| 01 | Overview | Node topology, protocol pulse, illustrative measures |
+| 01 | Overview | The loop in order, node topology, the node's own state |
 | 02 | Identity | Credential objects (proposed / prototype) |
 | 03 | Contributions | Contribution events (illustrative) |
 | 04 | Proposals | Open proposals with explicit rules |
 | 05 | Juries | Sortition panels, illustrative |
 | 06 | Allocation pools | Prototype economics |
-| 07 | Assets | Asset register lifecycle states |
-| 08 | The Roll | Audit trail (illustrative records) |
-| 09 | Audit | High-impact transition trace + capture controls |
+| 07 | The write-up | Product track, evidence ledger, and the console as its example |
+| 08 | Assets | Asset register lifecycle states |
+| 09 | The Roll | Audit trail (illustrative records) |
+| 10 | Audit | High-impact transition trace + design principles |
 
 ## Support routes
 
@@ -46,12 +47,15 @@ shells:
 
 | Route | Role |
 | --- | --- |
-| `/work` | Execution surfaces + product track (Fab, Studio, BenBen Builds) |
 | `/roll` | The substrate — people and asset registers |
 | `/about` | Doctrine: "a protocol node, not a platform" |
 | `/evidence` | Falsifier framing + evidence boundary |
 | `/contact` | Engagement |
 | `/protocol` | Legacy deep link — redirects to `/` |
+
+There is no `/work`. The console is a **build** inside the write-up (view 07),
+not a peer destination, so neither the site header nor the node's own index
+links it: it is opened from the surface that presents it.
 
 ## Evidence boundary (non-negotiable)
 
@@ -75,9 +79,9 @@ architecture:
 
 | Group | Contents |
 | --- | --- |
-| Control plane | Overview · Identity · Contributions · Proposals · Juries · Pools |
-| Execution | Assets · The Roll · Audit |
-| Support routes | `/work` · `/roll` · `/about` · `/evidence` · `/contact` |
+| Control plane | Overview · Identity · Contributions · Proposals · Juries · Allocation pools |
+| Execution | The write-up · Assets · The Roll · Audit |
+| Support routes | `/roll` · `/about` · `/evidence` · `/contact` |
 
 Implementation: `components/SiteFrame.tsx` renders the header, content column
 and footer for every site route and returns `children` unchanged for `/`. The
@@ -99,14 +103,33 @@ absorbed into the node.
 - **No fabricated measures.** The overview shows the protocol loop and the
   node's own state (mode, records, storage, export) — not invented percentages.
 
-Refinement of the `preview (2).html` protocol-node mock: same structure, same
-visual register (obsidian / signal green / gold, DM Mono + Inter + Space
-Grotesk), with:
+## Visual program — the instrument ledger
+
+The surface is built from three rules, in this order of priority:
+
+1. **Compression.** Each view makes one statement, set once, at scale in the
+   display face. Nothing competes with it. There is no second headline.
+2. **Order.** Hairlines are the only material: full-width rules, a spine down
+   the content margin that every section head ticks against, tabular numerals
+   on every instrument field, and sharp geometry (no rounded containers).
+   Structure is read before content.
+3. **Restraint.** One interactive accent. The second colour is a state, never
+   an ornament: amber means *review / pending*, red means *blocked*, green
+   means *active or sealed*. There are no gradients, no glow, no pills and no
+   glyph decoration.
+
+Type registers, each with one job: **DM Mono** for every id, path, state,
+label and figure; **Space Grotesk** for statements and record names; **Inter**
+for explanatory prose only — prose never appears in caps, and the instrument
+never appears as a sentence. Depth comes from one top hairline, not from
+shadow.
+
+Requirements carried over from the mock's refinement pass:
 
 - WCAG-compliant contrast (no sub-4.5:1 text)
 - `color-scheme: dark` on all native controls
 - A real type scale (no arbitrary px sizes)
-- `prefers-reduced-motion` honoured
-- Keyboard-reachable tab navigation with `aria-current`
-- A fixed sidebar that collapses on mobile without hiding the control plane
+- `prefers-reduced-motion` honoured — the surface reads without the beat
+- Keyboard-reachable navigation with `aria-current`
+- A sidebar that re-flows on narrow screens without hiding the control plane
 - A visible "local node interface" state, never a fake "connected" state

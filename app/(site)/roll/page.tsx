@@ -318,7 +318,7 @@ export default function RollPage() {
               </p>
 
               <div className="rg-tiles">
-                <Link className="rg-tile" href="/work">
+                <Link className="rg-tile" href="/#writeup">
                   <small>Execution</small>
                   <strong>Where the node builds ↗</strong>
                 </Link>
