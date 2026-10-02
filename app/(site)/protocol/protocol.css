@@ -621,50 +621,7 @@
 }
 
 /* ============================================================
-   EXECUTION SURFACES — the product tracks, read from lib/company.
-   ============================================================ */
-.pn-surfaces { display: block; }
-.pn-surface {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-areas:
-    "name state"
-    "path state";
-  gap: 4px 16px;
-  align-items: center;
-  min-height: 70px;
-  padding: 13px 0;
-  border-bottom: 1px solid var(--pn-rule);
-  transition: background-color var(--pn-fast) var(--pn-ease);
-}
-.pn-surface:last-child { border-bottom: 0; }
-.pn-surface:hover { background: linear-gradient(90deg, rgba(237, 241, 238, 0.014), transparent 60%); }
-.pn-surface-name {
-  grid-area: name;
-  font-family: var(--pn-display);
-  font-weight: 600;
-  font-size: 15.5px;
-  letter-spacing: -0.02em;
-  color: var(--pn-ink);
-}
-.pn-surface-note {
-  grid-area: path;
-  font-size: 11.5px;
-  line-height: 1.55;
-  color: var(--pn-muted);
-}
-.pn-surface-state {
-  grid-area: state;
-  font-family: var(--pn-mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--pn-quiet);
-  white-space: nowrap;
-}
-
-/* ============================================================
+   (Execution-surface rows folded into the surface ladder.)
    REGISTRY — the row language for identity / contributions /
    assets. An expandable ledger line, not a card.
    ============================================================ */
@@ -705,9 +662,11 @@
   text-transform: uppercase;
   color: var(--pn-quiet);
 }
+/* P3 detail. The copy is inspectable supporting text — it must read
+   below the record title and state, never at their altitude. */
 .pn-rowcopy {
-  color: var(--pn-muted);
-  font-size: 12.5px;
+  color: var(--pn-quiet);
+  font-size: 12px;
   line-height: 1.6;
 }
 .pn-state {
@@ -769,33 +728,7 @@
   color: var(--pn-ink-2);
 }
 
-/* ── Panel — a ruled block, not a rounded card. ── */
-.pn-panel { border-top: 1px solid var(--pn-rule-2); }
-.pn-panelhead {
-  min-height: 50px;
-  padding: 0;
-  border-bottom: 1px solid var(--pn-rule);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-.pn-panelhead span {
-  font-family: var(--pn-mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--pn-quiet);
-}
-.pn-panelhead strong {
-  font-family: var(--pn-mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--pn-ink-2);
-}
+/* ── Grid pairs — a ruled block, not a rounded card. ── */
 .pn-grid2 {
   display: grid;
   grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
@@ -803,140 +736,281 @@
 }
 
 /* ============================================================
-   TOPOLOGY — the node drawn as what it is: a ledger graph.
-   A centre, four surfaces, orthogonal links. No glow, no ring.
+   LOOP GRAPH — the node's central claim, drawn as the thing it
+   claims to be. Deterministic authored geometry, never physics.
+   Hairline edges, node cards as real records, one inspector.
    ============================================================ */
-.pn-map {
+.pn-graphwrap { margin-top: 8px; }
+
+.pn-graph {
   position: relative;
-  height: 340px;
-  margin-top: 26px;
+  width: 100%;
+  aspect-ratio: 12 / 7;
+  min-height: 420px;
+  border: 1px solid var(--pn-rule);
+  background:
+    linear-gradient(var(--pn-rule) 1px, transparent 1px) 0 0 / 100% 46px,
+    linear-gradient(90deg, var(--pn-rule) 1px, transparent 1px) 0 0 / 46px 100%;
   overflow: hidden;
-  background:
-    linear-gradient(var(--pn-rule) 1px, transparent 1px) 0 0 / 100% 40px,
-    linear-gradient(90deg, var(--pn-rule) 1px, transparent 1px) 0 0 / 40px 100%;
-}
-.pn-map::before, .pn-map::after {
-  content: "";
-  position: absolute;
-  background: var(--pn-rule-2);
-}
-.pn-map::before { left: 50%; top: 20%; bottom: 20%; width: 1px; }
-.pn-map::after { top: 50%; left: 12%; right: 12%; height: 1px; }
-
-/* The four links from the core to its surfaces — drawn in on
-   entry, half-diagonals so the graph reads corner to corner. */
-.pn-link {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 71%;
-  height: 1px;
-  transform-origin: 0 50%;
-  --a: 45deg;
-  background: linear-gradient(90deg, var(--pn-rule-2), transparent 92%);
-  pointer-events: none;
-}
-.pn-link--1 { --a: 45deg; }
-.pn-link--2 { --a: 135deg; }
-.pn-link--3 { --a: 225deg; }
-.pn-link--4 { --a: 315deg; }
-@media (prefers-reduced-motion: no-preference) {
-  .pn-view.is-active .pn-link { animation: pn-draw 1.1s var(--pn-ease) 350ms backwards; }
-}
-@keyframes pn-draw {
-  from { transform: rotate(var(--a)) scaleX(0); }
-  to { transform: rotate(var(--a)) scaleX(1); }
 }
 
-.pn-core {
+.pn-graph-edges {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) rotate(45deg);
-  width: 108px;
-  height: 108px;
-  border: 1px solid var(--pn-signal-line);
-  background:
-    radial-gradient(circle, rgba(52, 227, 156, 0.07), transparent 72%),
-    var(--pn-void);
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
-@media (prefers-reduced-motion: no-preference) {
-  .pn-core { animation: pn-core-breathe 4.5s ease-in-out infinite; }
+.pn-graph-edges path {
+  fill: none;
+  stroke: var(--pn-rule-3);
+  stroke-width: 1.25;
+  transition: stroke var(--pn-mid) var(--pn-ease);
 }
-@keyframes pn-core-breathe {
-  0%, 100% { transform: translate(-50%, -50%) rotate(45deg) scale(1); }
-  50% { transform: translate(-50%, -50%) rotate(45deg) scale(1.045); }
+.pn-graph-edges path.is-lit {
+  stroke: var(--pn-signal-line);
+  stroke-width: 1.75;
 }
-.pn-core::after {
-  content: "";
-  position: absolute;
-  inset: 36px;
-  border: 1px solid var(--pn-rule-2);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .pn-core::after { animation: pn-spin 26s linear infinite; }
-}
-@keyframes pn-spin { to { transform: rotate(360deg); } }
-.pn-core-label {
+#pn-arrow path { fill: var(--pn-rule-3); }
+#pn-arrow-lit path { fill: var(--pn-signal); }
+
+/* Centre — the node identity. Small, quiet, never competing. */
+.pn-graph-core {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  z-index: 2;
-  width: 92px;
   text-align: center;
+  pointer-events: none;
+}
+.pn-graph-core b {
+  display: block;
   font-family: var(--pn-mono);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
-  line-height: 1.7;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--pn-ink-2);
 }
-.pn-mnode {
+.pn-graph-core span {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--pn-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pn-quiet);
+}
+
+/* Node — a record card, not a bubble. Reads at a glance, opens on demand. */
+.pn-gnode {
   position: absolute;
-  width: 132px;
-  padding: 11px 13px;
+  transform: translate(-50%, -50%);
+  width: 168px;
+  padding: 9px 11px 10px;
   border: 1px solid var(--pn-rule-2);
-  border-left-width: 2px;
-  background:
-    linear-gradient(180deg, rgba(237, 241, 238, 0.02), transparent 45%),
-    var(--pn-void);
+  border-left: 2px solid var(--pn-rule-3);
+  background: linear-gradient(180deg, rgba(237, 241, 238, 0.03), transparent 55%), var(--pn-void);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--pn-fast) var(--pn-ease),
+              background-color var(--pn-fast) var(--pn-ease),
+              transform var(--pn-fast) var(--pn-ease);
 }
-@media (prefers-reduced-motion: no-preference) {
-  .pn-mnode { animation: pn-float 7s ease-in-out infinite alternate; }
-  .pn-mnode--2 { animation-delay: -1.7s; }
-  .pn-mnode--3 { animation-delay: -3.4s; }
-  .pn-mnode--4 { animation-delay: -5.1s; }
+.pn-gnode:hover { border-color: var(--pn-rule-3); }
+.pn-gnode.is-sel {
+  border-color: var(--pn-signal-line);
+  border-left-color: var(--pn-signal);
+  background: linear-gradient(180deg, rgba(52, 227, 156, 0.05), transparent 60%), var(--pn-void);
 }
-@keyframes pn-float {
-  from { transform: translateY(-2px); }
-  to { transform: translateY(2px); }
+.pn-gnode > i {
+  font-style: normal;
+  font-family: var(--pn-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--pn-signal-2);
 }
-.pn-mnode small {
+.pn-gnode > b {
+  font-family: var(--pn-display);
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--pn-ink);
+}
+.pn-gstate {
+  align-self: start;
+  margin-top: 2px;
+  padding: 3px 7px;
+  border: 1px solid var(--pn-rule-2);
+  font-family: var(--pn-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.pn-gstate.pn-ladder-state--recorded  { color: var(--pn-ink-2);  border-color: var(--pn-rule-3); }
+.pn-gstate.pn-ladder-state--planned   { color: var(--pn-warn-2); border-color: rgba(217, 167, 85, 0.34); }
+.pn-gstate.pn-ladder-state--verified  { color: var(--pn-signal-2); border-color: var(--pn-signal-line); }
+
+/* Inspector — selection detail below the canvas. */
+.pn-inspect {
+  margin-top: 1px;
+  padding: 16px 18px;
+  border: 1px solid var(--pn-rule);
+  border-top: 0;
+  background: rgba(237, 241, 238, 0.014);
+}
+.pn-inspect-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.pn-inspect-head b {
+  font-family: var(--pn-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--pn-signal-2);
+}
+.pn-inspect-head > span {
+  font-family: var(--pn-display);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: var(--pn-ink);
+}
+.pn-inspect-state {
+  padding: 3px 8px;
+  border: 1px solid var(--pn-rule-2);
+  font-family: var(--pn-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.pn-inspect-state.pn-ladder-state--recorded  { color: var(--pn-ink-2);  border-color: var(--pn-rule-3); }
+.pn-inspect-state.pn-ladder-state--planned   { color: var(--pn-warn-2); border-color: rgba(217, 167, 85, 0.34); }
+.pn-inspect-state.pn-ladder-state--verified  { color: var(--pn-signal-2); border-color: var(--pn-signal-line); }
+.pn-inspect p {
+  margin: 11px 0 0;
+  max-width: var(--pn-measure);
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--pn-muted);
+}
+
+.pn-ladder-state--recorded { color: var(--pn-ink-2); border-color: var(--pn-rule-3); }
+.pn-ladder-state--verified { color: var(--pn-signal-2); border-color: var(--pn-signal-line); }
+
+/* ============================================================
+   SURFACE LADDER — each surface as the stages it runs and the
+   state it has reached. This replaced a drawn topology graph:
+   the graph carried no state, this carries both the process
+   and the position on it. Ruled rows, no cards, no motion.
+   ============================================================ */
+.pn-lede {
+  margin: 0 0 26px;
+  max-width: var(--pn-measure);
+  color: var(--pn-muted);
+  font-size: 13.5px;
+  line-height: 1.65;
+}
+.pn-ladder { border-top: 1px solid var(--pn-rule-2); }
+.pn-ladder-row {
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr) 108px;
+  align-items: center;
+  gap: 28px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--pn-rule);
+  transition: background-color var(--pn-fast) var(--pn-ease);
+}
+.pn-ladder-row:hover {
+  background: linear-gradient(90deg, rgba(237, 241, 238, 0.018), transparent 65%);
+}
+.pn-ladder-id b {
+  display: block;
+  font-family: var(--pn-display);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--pn-ink);
+}
+.pn-ladder-id small {
+  display: block;
+  margin-top: 5px;
   font-family: var(--pn-mono);
   font-size: 10px;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--pn-quiet);
 }
-.pn-mnode b {
+/* The stages: a run of cells separated by hairlines. Reached or not
+   is carried by weight and ink, never by colour alone. */
+.pn-ladder-stages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 2px;
+}
+.pn-ladder-stage {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 5px 11px;
+  border: 1px solid var(--pn-rule);
   font-family: var(--pn-mono);
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--pn-ink-2);
+  background: rgba(237, 241, 238, 0.012);
 }
-.pn-mnode--live { border-left-color: var(--pn-signal); }
-.pn-mnode--review { border-left-color: var(--pn-warn); }
-.pn-mnode--1 { left: 3%;  top: 12%; }
-.pn-mnode--2 { right: 3%; top: 12%; }
-.pn-mnode--3 { left: 3%;  bottom: 12%; }
-.pn-mnode--4 { right: 3%; bottom: 12%; }
+.pn-ladder-stage i {
+  font-style: normal;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--pn-quiet);
+}
+.pn-ladder-state {
+  justify-self: end;
+  padding: 5px 10px;
+  border: 1px solid var(--pn-rule-2);
+  font-family: var(--pn-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+/* State speaks in ink and border. Green marks a surface that runs;
+   amber marks one whose sequence is defined but not yet reached. */
+.pn-ladder-state--live      { color: var(--pn-signal-2); border-color: var(--pn-signal-line); }
+.pn-ladder-state--planned   { color: var(--pn-warn-2);   border-color: rgba(217, 167, 85, 0.34); }
+.pn-ladder-state--prototype { color: var(--pn-ink-2);    border-color: var(--pn-rule-3); }
+
+.pn-footnote {
+  margin: 22px 0 0;
+  max-width: var(--pn-measure);
+  font-family: var(--pn-mono);
+  font-size: 10.5px;
+  line-height: 1.75;
+  letter-spacing: 0.02em;
+  color: var(--pn-quiet);
+}
+.pn-footnote code {
+  font-family: var(--pn-mono);
+  color: var(--pn-muted);
+}
 
 /* ============================================================
    LOOP — the sequence, walked in order. The only numbered list
@@ -1453,6 +1527,15 @@
   .pn-rowcopy { grid-column: 2 / -1; }
   .pn-juryrow { grid-template-columns: 90px minmax(0, 1fr); }
   .pn-jstate { grid-column: 2; }
+  /* Tablet: the ring survives, tightened. Nodes and stage cells compress;
+     the loop list below remains the full-detail reading. */
+  .pn-graph { min-height: 360px; }
+  .pn-gnode { width: 138px; padding: 7px 9px 8px; }
+  .pn-gnode > b { font-size: 11.5px; }
+  .pn-ladder-row { grid-template-columns: 130px minmax(0, 1fr); gap: 14px; }
+  .pn-ladder-state { grid-column: 2; justify-self: start; }
+  .pn-ladder-stages { gap: 2px; }
+  .pn-ladder-stage { padding: 5px 9px; font-size: 9.5px; }
 }
 
 @media (max-width: 640px) {
@@ -1466,8 +1549,11 @@
   .pn-build-top { grid-template-columns: 40px minmax(0, 1fr); gap: 4px 14px; }
   .pn-build-state { grid-column: 2; justify-self: start; }
   .pn-example-head { flex-wrap: wrap; }
-  .pn-map { height: 280px; }
-  .pn-mnode { width: 108px; padding: 8px 10px; }
+  /* The ring cannot hold six readable records at 360px. Rather than
+     shrink it into illegibility, the loop becomes the ordered list it
+     already is below the canvas — the graph is the desktop reading. */
+  .pn-graph { display: none; }
+  .pn-graphwrap .pn-inspect { display: none; }
   .pn-row {
     grid-template-columns: 40px minmax(0, 1fr);
     grid-template-rows: auto auto auto;
