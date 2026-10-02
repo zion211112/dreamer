@@ -65,7 +65,39 @@ shells:
   which rule applied, where resources went, what was built, and what evidence
   supports the outcome — without asking anyone involved.
 
-## Design intent
+## Shell
+
+The node owns the root route's chrome. `/` renders the control plane alone —
+no marketing header, no site footer — because both duplicated the navigation
+and the sticky header sat on top of the node's fixed sidebar, hiding its brand
+and its node block. The sidebar therefore carries the whole information
+architecture:
+
+| Group | Contents |
+| --- | --- |
+| Control plane | Overview · Identity · Contributions · Proposals · Juries · Pools |
+| Execution | Assets · The Roll · Audit |
+| Support routes | `/work` · `/roll` · `/about` · `/evidence` · `/contact` |
+
+Implementation: `components/SiteFrame.tsx` renders the header, content column
+and footer for every site route and returns `children` unchanged for `/`. The
+Organization JSON-LD lives in `app/layout.tsx`, so it travels with the node too.
+The support routes remain site routes with the normal chrome; they are not
+absorbed into the node.
+
+## Interaction
+
+- **Views are URL state.** `#juries` is a deep link; back and forward step
+  through the control plane. Nav items are real anchors with
+  `aria-current="location"`, not buttons pretending to be pages.
+- **Records disclose in place.** A registry row expands to its record id, its
+  state (explicitly labelled illustrative) and the evidence it would have to
+  carry to leave that state. There is no "open" button that opens nothing.
+- **Export is local.** "Export view" writes a JSON snapshot of the active
+  view to the visitor's own downloads and reports the filename it wrote. There
+  is no sync control, because there is no server to sync with.
+- **No fabricated measures.** The overview shows the protocol loop and the
+  node's own state (mode, records, storage, export) — not invented percentages.
 
 Refinement of the `preview (2).html` protocol-node mock: same structure, same
 visual register (obsidian / signal green / gold, DM Mono + Inter + Space

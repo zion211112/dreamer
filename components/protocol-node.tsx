@@ -8,6 +8,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { BENBEN_BUILDS, STATUS_LEDGER } from "@/lib/company";
 
 export type PnView =
   | "overview"
@@ -36,7 +37,7 @@ const EXECUTION: { view: PnView; label: string; glyph: string }[] = [
   { view: "assets", label: "Assets",   glyph: "▣" },
   { view: "roll",   label: "The Roll", glyph: "⌁" },
   { view: "audit",  label: "Audit",    glyph: "≡" },
-] as const;
+];
 
 const VIEW_TITLES: Record<PnView, string> = {
   overview: "Overview",
@@ -50,35 +51,173 @@ const VIEW_TITLES: Record<PnView, string> = {
   audit: "Audit",
 };
 
+// The node owns "/", so it has to carry the whole information architecture —
+// the support routes included — not just its own nine views.
+const SUPPORT: { href: string; label: string }[] = [
+  { href: "/work",     label: "Work" },
+  { href: "/roll",     label: "Roll" },
+  { href: "/about",    label: "About" },
+  { href: "/evidence", label: "Evidence" },
+  { href: "/contact",  label: "Contact" },
+];
+
+/** The loop the system closes. Same wording as lib/company.ts. */
+const LOOP =
+  "Person → contribution → proposal → allocation → execution → evidence → record";
+
+function prefersReducedMotion(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
+function exportName(view: PnView, at: Date): string {
+  const day = at.toISOString().slice(0, 10).replace(/-/g, "");
+  return `apt-labs-node-${view}-${day}.json`;
+}
+
+type Rec = {
+  id: string;
+  title: string;
+  type: string;
+  copy: string;
+  state: string;
+  tint?: string;
+};
+type Jury = { id: string; sub: string; meta: string; state: string; tint: string };
+type CardRec = {
+  meta: string;
+  state: string;
+  title: string;
+  copy: string;
+  footL: string;
+  footR: string;
+  gold?: boolean;
+};
+type Trace = { key: string; msg: string; state: string; tint: string };
+
+// One source for the node's illustrative data: the views render it, the export
+// serialises it, and each section declares its own state. Records are labelled
+// by the section they sit in — nothing here is a deployment claim.
+const NODE = {
+  identity: [
+    { id: "ID-01", title: "Local participation credential", type: "Presence / contribution", copy: "Proves a defined eligibility condition without exposing every underlying attribute.", state: "Proposed" },
+    { id: "ID-02", title: "Skill credential", type: "APT Studio / learning", copy: "Links a verified skill or completed task to an issuer and evidence bundle.", state: "Proposed" },
+    { id: "ID-03", title: "Contributor credential", type: "The Roll / attribution", copy: "Connects a contribution to a person, time, scope and supporting evidence.", state: "Prototype" },
+  ] as Rec[],
+  contributions: [
+    { id: "C-109", title: "Water node maintenance", type: "APT Fab / field work", copy: "Maintenance event linked to an asset with service record and verifier signature.", state: "Recorded", tint: "recorded" },
+    { id: "C-108", title: "Local compute setup", type: "APT Studio / node work", copy: "Node provisioning and technical handover record.", state: "Recorded", tint: "recorded" },
+    { id: "C-107", title: "Supply-chain mediation", type: "Civic process / dispute", copy: "Resolution record with roles, evidence bundle and appeal window.", state: "Review", tint: "review" },
+  ] as Rec[],
+  assets: [
+    { id: "AF-014", title: "Solar service node", type: "APT Fab / energy", copy: "BOM, sourcing record, installer record and acceptance checklist linked.", state: "Planned" },
+    { id: "AS-007", title: "Creative compute node", type: "APT Studio / compute", copy: "Hardware inventory and node test record available; installation remains scoped.", state: "Fabricated" },
+    { id: "BB-003", title: "School Console", type: "BenBen Builds / software", copy: "Local prototype; no verified school deployment.", state: "Prototype" },
+  ] as Rec[],
+  /* NODE-DATA-B */
+  juries: [
+    { id: "J-009", sub: "Solar service node siting", meta: "6 seats · 9-day term · eligibility proof required", state: "Selected", tint: "live" },
+    { id: "J-008", sub: "Supply-chain dispute", meta: "5 seats · 5-day term · decision recorded", state: "Concluded", tint: "neutral" },
+    { id: "J-007", sub: "Compute allocation review", meta: "7 seats · 7-day term · conflicts disclosed", state: "Appeal", tint: "gold" },
+  ] as Jury[],
+  proposals: [
+    { meta: "PR-014", state: "Open", title: "Where should the next service node go?", copy: "Scope, eligibility, allocation pool, implementation constraints and evidence checklist published together.", footL: "Allocation rule / candidate", footR: "9d remaining" },
+    { meta: "PR-013", state: "Review", title: "Approve a community compute expansion.", copy: "Capacity, maintenance burden, procurement record and operator plan exposed before decision.", footL: "Decision / mixed", footR: "Appeal open", gold: true },
+  ] as CardRec[],
+  pools: [
+    { meta: "POOL-014", state: "Pending", title: "Solar service node", copy: "Deployment candidate with explicit release conditions and evidence checklist.", footL: "KSh 420K illustrative", footR: "Release pending" },
+    { meta: "POOL-013", state: "Review", title: "Local compute node", copy: "Expansion candidate with hardware, power, maintenance and operator requirements.", footL: "KSh 300K illustrative", footR: "Review", gold: true },
+  ] as CardRec[],
+  transitions: [
+    { key: "00:12:41", msg: "Contribution C-109 linked to asset AF-014", state: "Sealed", tint: "signed" },
+    { key: "00:09:20", msg: "Jury J-009 selection proof published", state: "Published", tint: "published" },
+    { key: "23:51:02", msg: "Pool POOL-014 threshold recalculated", state: "Recorded", tint: "recorded" },
+    { key: "23:44:19", msg: "Asset AF-014 evidence bundle appended", state: "Hashed", tint: "hashed" },
+  ] as Trace[],
+  audit: [
+    { key: "T-08", msg: "Credential recorded after contribution evidence", state: "Sealed", tint: "signed" },
+    { key: "T-07", msg: "Proposal rule version updated before opening", state: "Recorded", tint: "recorded" },
+    { key: "T-06", msg: "Jury conflict disclosure appended", state: "Published", tint: "published" },
+    { key: "T-05", msg: "Pool disbursement withheld pending evidence", state: "Blocked", tint: "blocked" },
+  ] as Trace[],
+};
+
+/** Execution surfaces, read from the runtime truth module — never retyped. */
+const SURFACES = [
+  ...STATUS_LEDGER.map((r) => ({ name: r.face, path: r.route, state: r.status })),
+  { name: BENBEN_BUILDS.name, path: BENBEN_BUILDS.route, state: BENBEN_BUILDS.status },
+];
+
+/** What "Export view" writes: the records themselves, never a rendered claim. */
+function exportRecords(view: PnView): unknown[] {
+  switch (view) {
+    case "identity":      return NODE.identity;
+    case "contributions": return NODE.contributions;
+    case "assets":        return NODE.assets;
+    case "juries":        return NODE.juries;
+    case "proposals":     return NODE.proposals;
+    case "pools":         return NODE.pools;
+    case "roll":          return NODE.transitions;
+    case "audit":         return NODE.audit;
+    default:              return SURFACES;
+  }
+}
+
 export default function ProtocolNode() {
   const [view, setView] = useState<PnView>("overview");
-  const [synced, setSynced] = useState(false);
+  const [saved, setSaved] = useState("");
 
-  const go = useCallback((next: PnView) => {
-    setView(next);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
-
-  // "/" focuses nothing (no search here); but keep a keyboard shortcut to
-  // jump to the overview so the control plane is always one keystroke away.
+  // The active view is URL state, not component state: "#juries" is a real
+  // deep link and the back button steps through the control plane.
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setView("overview");
+    const read = () => hashView(window.location.hash);
+    setView(read());
+    const onHash = () => {
+      setView(read());
+      window.scrollTo({
+        top: 0,
+        behavior: prefersReducedMotion() ? "auto" : "smooth",
+      });
     };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
-  const sync = () => {
-    setSynced(true);
-    window.setTimeout(() => setSynced(false), 1400);
-  };
+  // Local-first: nothing leaves this device, so "export" is the honest verb.
+  // The control writes a JSON snapshot of the surface to this machine's
+  // downloads. It never claims a server round-trip it cannot perform.
+  const exportView = useCallback(() => {
+    const at = new Date();
+    const name = exportName(view, at);
+    const payload = {
+      surface: "APT-LABS protocol node",
+      state: "PROTOTYPE",
+      view: VIEW_TITLES[view],
+      exportedAt: at.toISOString(),
+      loop: LOOP,
+      boundary:
+        "Local export of a prototype surface. Records are illustrative; this file is not a deployment, beneficiary or impact claim.",
+      records: exportRecords(view),
+    };
+    const url = URL.createObjectURL(
+      new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" })
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = name;
+    link.click();
+    URL.revokeObjectURL(url);
+    setSaved(`Saved ${name}`);
+    window.setTimeout(() => setSaved(""), 5000);
+  }, [view]);
 
   return (
     <div className="protocol-node">
       <div className="pn-shell">
         {/* ── Sidebar ── */}
-        <aside className="pn-side" aria-label="Protocol node control plane">
+        <aside className="pn-side" aria-label="Protocol node">
           <Link className="pn-brand" href={PROTOCOL_HOME}>
             <span className="pn-mark" aria-hidden="true">A</span>
             <span>APT-LABS</span>
@@ -90,35 +229,43 @@ export default function ProtocolNode() {
             <div className="pn-live">Local node interface</div>
           </div>
 
-          <div className="pn-navlabel">Control plane</div>
-          <nav className="pn-navgroup" aria-label="Control plane">
+          <div className="pn-navlabel" id="pn-grp-control">Control plane</div>
+          <nav className="pn-navgroup" aria-labelledby="pn-grp-control">
             {CONTROL.map((n) => (
-              <button
+              <a
                 key={n.view}
-                type="button"
+                href={`#${n.view}`}
                 className="pn-nav"
-                aria-current={view === n.view ? "page" : undefined}
-                onClick={() => go(n.view)}
+                aria-current={view === n.view ? "location" : undefined}
               >
                 <span className="pn-nav-glyph" aria-hidden="true">{n.glyph}</span>
                 {n.label}
-              </button>
+              </a>
             ))}
           </nav>
 
-          <div className="pn-navlabel">Execution</div>
-          <nav className="pn-navgroup" aria-label="Execution">
+          <div className="pn-navlabel" id="pn-grp-execution">Execution</div>
+          <nav className="pn-navgroup" aria-labelledby="pn-grp-execution">
             {EXECUTION.map((n) => (
-              <button
+              <a
                 key={n.view}
-                type="button"
+                href={`#${n.view}`}
                 className="pn-nav"
-                aria-current={view === n.view ? "page" : undefined}
-                onClick={() => go(n.view)}
+                aria-current={view === n.view ? "location" : undefined}
               >
                 <span className="pn-nav-glyph" aria-hidden="true">{n.glyph}</span>
                 {n.label}
-              </button>
+              </a>
+            ))}
+          </nav>
+
+          <div className="pn-navlabel" id="pn-grp-routes">Support routes</div>
+          <nav className="pn-navgroup pn-navgroup--routes" aria-labelledby="pn-grp-routes">
+            {SUPPORT.map((s) => (
+              <Link key={s.href} href={s.href} className="pn-route">
+                <span className="pn-route-label">{s.label}</span>
+                <span className="pn-route-path" aria-hidden="true">{s.href}</span>
+              </Link>
             ))}
           </nav>
 
@@ -128,34 +275,26 @@ export default function ProtocolNode() {
             Local-first / evidence-first
             <br />
             Protocol state / prototype
+            <Link className="pn-footlink" href="/contact">Talk to APT-LABS →</Link>
           </div>
         </aside>
 
         {/* ── Main ── */}
         <main className="pn-main">
-          <button
-            type="button"
-            className="pn-mobiletoggle"
-            aria-label="Protocol node control plane"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-            Control plane
-          </button>
-
           <div className="pn-top">
             <div className="pn-crumb">
               APT-LABS / <b>{VIEW_TITLES[view]}</b>
             </div>
-            <div>
+            <div className="pn-topactions">
+              <span className="pn-status" role="status" aria-live="polite">
+                {saved || "Local node · illustrative records"}
+              </span>
               <button
                 type="button"
-                className={`pn-topbtn${synced ? " is-synced" : ""}`}
-                onClick={sync}
-                aria-live="polite"
+                className={`pn-topbtn${saved ? " is-saved" : ""}`}
+                onClick={exportView}
               >
-                {synced ? "Record synced" : "Sync record"}
+                Export view
               </button>
             </div>
           </div>
@@ -173,18 +312,6 @@ export default function ProtocolNode() {
 /* View shell: one active view at a time.                          */
 /* ---------------------------------------------------------------- */
 
-const VIEW_ORDER: PnView[] = [
-  "overview",
-  "identity",
-  "contributions",
-  "proposals",
-  "juries",
-  "pools",
-  "assets",
-  "roll",
-  "audit",
-];
-
 const VIEW_COMPONENTS: Record<PnView, React.ComponentType> = {
   overview: OverviewView,
   identity: IdentityView,
@@ -196,6 +323,16 @@ const VIEW_COMPONENTS: Record<PnView, React.ComponentType> = {
   roll: RollView,
   audit: AuditView,
 };
+
+// The view list is derived from the router table, so the two cannot drift:
+// adding a view to PnView forces an entry above, and the hash reader sees it.
+const VIEWS = Object.keys(VIEW_COMPONENTS) as PnView[];
+
+/** The hash is the router: #juries is deep-linkable and back/forward works. */
+function hashView(hash: string): PnView {
+  const key = hash.replace(/^#\/?/, "");
+  return (VIEWS as string[]).includes(key) ? (key as PnView) : "overview";
+}
 
 function ViewShell({ active }: { active: PnView }) {
   const Active = VIEW_COMPONENTS[active];
@@ -236,15 +373,15 @@ function OverviewView() {
         ]}
       />
 
-      <div className="pn-pulse" role="group" aria-label="Protocol pulse">
+      <div className="pn-pulse" role="group" aria-label="Protocol state">
         <div className="pn-pulse-main">
-          <div className="eyebrow">Protocol pulse</div>
-          <strong>Contribution → allocation → execution → evidence</strong>
+          <div className="eyebrow">Protocol loop</div>
+          <strong>{LOOP}</strong>
         </div>
-        <div className="pn-pulse-cell"><small>People</small><b>Registered</b></div>
-        <div className="pn-pulse-cell"><small>Work</small><b>Attributed</b></div>
-        <div className="pn-pulse-cell"><small>Allocations</small><b>Scoped</b></div>
-        <div className="pn-pulse-cell"><small>Claims</small><b>Evidence-bound</b></div>
+        <div className="pn-pulse-cell"><small>Mode</small><b>Prototype</b></div>
+        <div className="pn-pulse-cell"><small>Records</small><b>Illustrative</b></div>
+        <div className="pn-pulse-cell"><small>Storage</small><b>This browser</b></div>
+        <div className="pn-pulse-cell"><small>Export</small><b>Local JSON</b></div>
       </div>
 
       <div className="pn-section">
@@ -270,14 +407,17 @@ function OverviewView() {
 
           <div className="pn-panel">
             <div className="pn-panelhead">
-              <span>Illustrative measures</span>
+              <span>Execution surfaces</span>
               <strong>Prototype</strong>
             </div>
-            <div className="pn-bars">
-              <Bar label="Contribution trace" value={78} />
-              <Bar label="Evidence coverage" value={64} gold />
-              <Bar label="Allocation spread" value={71} />
-              <Bar label="Node health" value={91} />
+            <div className="pn-surfaces">
+              {SURFACES.map((s) => (
+                <div className="pn-surface" key={s.name}>
+                  <span className="pn-surface-name">{s.name}</span>
+                  <span className="pn-surface-path">{s.path}</span>
+                  <span className="pn-surface-state">{s.state}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -291,29 +431,7 @@ function OverviewView() {
 /* ---------------------------------------------------------------- */
 
 function IdentityView() {
-  const rows = [
-    {
-      id: "ID-01",
-      title: "Local participation credential",
-      type: "Presence / contribution",
-      copy: "Proves a defined eligibility condition without exposing every underlying attribute.",
-      state: "Proposed",
-    },
-    {
-      id: "ID-02",
-      title: "Skill credential",
-      type: "APT Studio / learning",
-      copy: "Links a verified skill or completed task to an issuer and evidence bundle.",
-      state: "Proposed",
-    },
-    {
-      id: "ID-03",
-      title: "Contributor credential",
-      type: "The Roll / attribution",
-      copy: "Connects a contribution to a person, time, scope and supporting evidence.",
-      state: "Prototype",
-    },
-  ];
+  const rows = NODE.identity;
   return (
     <>
       <Command
@@ -338,7 +456,10 @@ function IdentityView() {
           <h2>Credential objects</h2>
           <span>Prototype policy</span>
         </div>
-        <Registry rows={rows} />
+        <Registry
+          rows={rows}
+          evidence="Issuer or witness record for the claimed attribute, plus the disclosure scope."
+        />
       </div>
     </>
   );
@@ -349,32 +470,7 @@ function IdentityView() {
 /* ---------------------------------------------------------------- */
 
 function ContributionsView() {
-  const rows = [
-    {
-      id: "C-109",
-      title: "Water node maintenance",
-      type: "APT Fab / field work",
-      copy: "Maintenance event linked to an asset with service record and verifier signature.",
-      state: "Verified",
-      tint: "verified",
-    },
-    {
-      id: "C-108",
-      title: "Local compute setup",
-      type: "APT Studio / node work",
-      copy: "Node provisioning and technical handover record.",
-      state: "Recorded",
-      tint: "recorded",
-    },
-    {
-      id: "C-107",
-      title: "Supply-chain mediation",
-      type: "Civic process / dispute",
-      copy: "Resolution record with roles, evidence bundle and appeal window.",
-      state: "Review",
-      tint: "review",
-    },
-  ];
+  const rows = NODE.contributions;
   return (
     <>
       <Command
@@ -399,7 +495,11 @@ function ContributionsView() {
           <h2>Contribution events</h2>
           <span>Illustrative records</span>
         </div>
-        <Registry rows={rows} tinted />
+        <Registry
+          rows={rows}
+          tinted
+          evidence="Issuer or witness signature, the contributing person, the linked asset and the event timestamp."
+        />
       </div>
     </>
   );
@@ -435,23 +535,9 @@ function ProposalsView() {
           <span>No outcome implied</span>
         </div>
         <div className="pn-cards">
-          <Card
-            meta="PR-014"
-            state="Open"
-            title="Where should the next service node go?"
-            copy="Scope, eligibility, allocation pool, implementation constraints and evidence checklist published together."
-            footL="Allocation rule / candidate"
-            footR="9d remaining"
-          />
-          <Card
-            meta="PR-013"
-            state="Review"
-            gold
-            title="Approve a community compute expansion."
-            copy="Capacity, maintenance burden, procurement record and operator plan exposed before decision."
-            footL="Decision / mixed"
-            footR="Appeal open"
-          />
+          {NODE.proposals.map((p) => (
+            <Card key={p.meta} {...p} />
+          ))}
         </div>
       </div>
     </>
@@ -463,11 +549,7 @@ function ProposalsView() {
 /* ---------------------------------------------------------------- */
 
 function JuriesView() {
-  const rows = [
-    { id: "J-009", sub: "Solar service node siting", meta: "6 seats · 9-day term · eligibility proof required", state: "Selected", tint: "live" },
-    { id: "J-008", sub: "Supply-chain dispute", meta: "5 seats · 5-day term · decision recorded", state: "Concluded", tint: "neutral" },
-    { id: "J-007", sub: "Compute allocation review", meta: "7 seats · 7-day term · conflicts disclosed", state: "Appeal", tint: "gold" },
-  ];
+  const rows = NODE.juries;
   return (
     <>
       <Command
@@ -541,23 +623,9 @@ function PoolsView() {
           <span>Prototype economics</span>
         </div>
         <div className="pn-cards">
-          <Card
-            meta="POOL-014"
-            state="Pending"
-            title="Solar service node"
-            copy="Deployment candidate with explicit release conditions and evidence checklist."
-            footL="KSh 420K illustrative"
-            footR="Release pending"
-          />
-          <Card
-            meta="POOL-013"
-            state="Review"
-            gold
-            title="Local compute node"
-            copy="Expansion candidate with hardware, power, maintenance and operator requirements."
-            footL="KSh 300K illustrative"
-            footR="Review"
-          />
+          {NODE.pools.map((p) => (
+            <Card key={p.meta} {...p} />
+          ))}
         </div>
       </div>
     </>
@@ -569,29 +637,7 @@ function PoolsView() {
 /* ---------------------------------------------------------------- */
 
 function AssetsView() {
-  const rows = [
-    {
-      id: "AF-014",
-      title: "Solar service node",
-      type: "APT Fab / energy",
-      copy: "BOM, sourcing record, installer record and acceptance checklist linked.",
-      state: "Designed",
-    },
-    {
-      id: "AS-007",
-      title: "Creative compute node",
-      type: "APT Studio / compute",
-      copy: "Hardware inventory and node test record available; installation remains scoped.",
-      state: "Built",
-    },
-    {
-      id: "BB-003",
-      title: "School Console",
-      type: "BenBen Builds / software",
-      copy: "Local prototype; no verified school deployment.",
-      state: "Prototype",
-    },
-  ];
+  const rows = NODE.assets;
   return (
     <>
       <Command
@@ -605,8 +651,8 @@ function AssetsView() {
         )}
         copy="Allocation is not completion. Assets move through explicit lifecycle states, each requiring the evidence appropriate to that state."
         specs={[
-          ["Designed", "Specification"],
-          ["Built", "Fabrication evidence"],
+          ["Planned", "Specification"],
+          ["Fabricated", "Build evidence"],
           ["Installed", "Handover evidence"],
           ["Verified", "Claim-specific proof"],
         ]}
@@ -616,7 +662,10 @@ function AssetsView() {
           <h2>Asset register</h2>
           <span>The Roll / asset side</span>
         </div>
-        <Registry rows={rows} />
+        <Registry
+          rows={rows}
+          evidence="BOM or build record, source note, installer or handover record and the acceptance checklist."
+        />
       </div>
     </>
   );
@@ -627,12 +676,7 @@ function AssetsView() {
 /* ---------------------------------------------------------------- */
 
 function RollView() {
-  const rows = [
-    { t: "00:12:41", msg: "Contribution C-109 linked to asset AF-014", state: "Signed", tint: "signed" },
-    { t: "00:09:20", msg: "Jury J-009 selection proof published", state: "Published", tint: "published" },
-    { t: "23:51:02", msg: "Pool POOL-014 threshold recalculated", state: "Recorded", tint: "recorded" },
-    { t: "23:44:19", msg: "Asset AF-014 evidence bundle appended", state: "Hashed", tint: "hashed" },
-  ];
+  const rows = NODE.transitions;
   return (
     <>
       <Command
@@ -659,8 +703,8 @@ function RollView() {
         </div>
         <div className="pn-auditlist">
           {rows.map((r) => (
-            <div className="pn-auditrow" key={r.t}>
-              <span>{r.t}</span>
+            <div className="pn-auditrow" key={r.key}>
+              <span>{r.key}</span>
               <p>{r.msg}</p>
               <span className={`pn-auditstate pn-auditstate--${r.tint}`}>{r.state}</span>
             </div>
@@ -676,12 +720,7 @@ function RollView() {
 /* ---------------------------------------------------------------- */
 
 function AuditView() {
-  const rows = [
-    { id: "T-08", msg: "Credential issued after verified contribution", state: "Signed", tint: "signed" },
-    { id: "T-07", msg: "Proposal rule version updated before opening", state: "Recorded", tint: "recorded" },
-    { id: "T-06", msg: "Jury conflict disclosure appended", state: "Published", tint: "published" },
-    { id: "T-05", msg: "Pool disbursement withheld pending evidence", state: "Blocked", tint: "blocked" },
-  ];
+  const rows = NODE.audit;
   const principles = [
     ["01 / Identity separation", "Identity assurance does not automatically determine governance weight."],
     ["02 / Privacy", "Reveal only the attributes required for the claim being verified."],
@@ -720,8 +759,8 @@ function AuditView() {
               <strong>Trace</strong>
             </div>
             {rows.map((r) => (
-              <div className="pn-auditrow" key={r.id}>
-                <span>{r.id}</span>
+              <div className="pn-auditrow" key={r.key}>
+                <span>{r.key}</span>
                 <p>{r.msg}</p>
                 <span className={`pn-auditstate pn-auditstate--${r.tint}`}>{r.state}</span>
               </div>
@@ -776,54 +815,70 @@ function Command({
   );
 }
 
-function Bar({ label, value, gold }: { label: string; value: number; gold?: boolean }) {
-  return (
-    <div className="pn-bar">
-      <small>{label}</small>
-      <div
-        className="pn-track"
-        role="meter"
-        aria-label={label}
-        aria-valuenow={value}
-        aria-valuemin={0}
-        aria-valuemax={100}
-      >
-        <div className={`pn-fill${gold ? " pn-fill--gold" : ""}`} style={{ width: `${value}%` }} />
-      </div>
-      <div className="pn-val">{value}</div>
-    </div>
-  );
-}
-
 function Registry({
   rows,
   tinted,
+  evidence,
 }: {
-  rows: { id: string; title: string; type: string; copy: string; state: string; tint?: string }[];
+  rows: Rec[];
   tinted?: boolean;
+  /** The evidence a record in this register must carry to leave "illustrative". */
+  evidence: string;
 }) {
+  const [open, setOpen] = useState<string | null>(null);
   return (
-    <div className="pn-registry" role="group" aria-label="Protocol object register">
-      {rows.map((r) => (
-        <div key={r.id} className={`pn-row${r.tint && tinted ? ` pn-state--${r.tint}` : ""}`}>
-          <div className="pn-rowid">{r.id}</div>
-          <div>
-            <div className="pn-rowtitle">{r.title}</div>
-            <div className="pn-rowtype">{r.type}</div>
-          </div>
-          <div className="pn-rowcopy">{r.copy}</div>
-          <div className="pn-state">{r.state}</div>
-          <button
-            type="button"
-            className="pn-open"
-            aria-label={`Open ${r.title}`}
+    <div className="pn-registry" role="list" aria-label="Protocol object register">
+      {rows.map((r) => {
+        const detailId = `pn-detail-${r.id}`;
+        const isOpen = open === r.id;
+        return (
+          <div
+            key={r.id}
+            role="listitem"
+            className={`pn-record${r.tint && tinted ? ` pn-state--${r.tint}` : ""}`}
           >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M7 17L17 7M17 7H8M17 7V16" />
-            </svg>
-          </button>
-        </div>
-      ))}
+            <div className="pn-row">
+              <div className="pn-rowid">{r.id}</div>
+              <div>
+                <div className="pn-rowtitle">{r.title}</div>
+                <div className="pn-rowtype">{r.type}</div>
+              </div>
+              <div className="pn-rowcopy">{r.copy}</div>
+              <div className="pn-state">{r.state}</div>
+              <button
+                type="button"
+                className="pn-open"
+                aria-expanded={isOpen}
+                aria-controls={detailId}
+                onClick={() => setOpen(isOpen ? null : r.id)}
+                aria-label={`${isOpen ? "Hide" : "Show"} fields for record ${r.id}`}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+            </div>
+            {isOpen && (
+              <dl className="pn-rowdetail" id={detailId}>
+                <div className="pn-field">
+                  <dt>Record</dt>
+                  <dd>
+                    {r.id} · {r.type}
+                  </dd>
+                </div>
+                <div className="pn-field">
+                  <dt>State</dt>
+                  <dd>{r.state} — illustrative, not a deployment claim</dd>
+                </div>
+                <div className="pn-field">
+                  <dt>Evidence required</dt>
+                  <dd>{evidence}</dd>
+                </div>
+              </dl>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

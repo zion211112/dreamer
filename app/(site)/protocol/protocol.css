@@ -22,7 +22,7 @@
   --pn-ink:    #f2f0e9; /* primary */
   --pn-ink-2:  #d0cec6; /* secondary, 9.4:1 on void */
   --pn-muted:  #878b86; /* tertiary,  4.9:1 on void — AA */
-  --pn-quiet:  #5d625d; /* label,     3.4:1 on void — used only ≥11px caps */
+  --pn-quiet:  #7b817b; /* label,     5.2:1 on void — AA for small caps text */
 
   /* Signal — one interactive accent. */
   --pn-g:      #42d391;
@@ -171,7 +171,7 @@
 .pn-node small {
   display: block;
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -190,7 +190,7 @@
 .pn-live {
   margin-top: 9px;
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -221,7 +221,7 @@
 .pn-navlabel {
   margin: 0 6px 8px;
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -237,12 +237,15 @@
 /* ── Nav button ── */
 .pn-nav {
   position: relative;
+  display: flex;
+  align-items: center;
   width: 100%;
   border: 1px solid transparent;
   border-radius: 7px;
   background: none;
   color: var(--pn-muted);
   text-align: left;
+  text-decoration: none;
   padding: 10px 11px;
   margin: 0;
   cursor: pointer;
@@ -267,13 +270,39 @@
   background: var(--pn-panel);
   border-color: var(--pn-rule);
 }
-.pn-nav[aria-current="page"] {
+.pn-nav[aria-current] {
   color: var(--pn-ink);
   background: var(--pn-panel);
   border-color: var(--pn-rule-2);
   box-shadow: inset 2px 0 0 var(--pn-g);
 }
-.pn-nav[aria-current="page"] .pn-nav-glyph { color: var(--pn-g); }
+.pn-nav[aria-current] .pn-nav-glyph { color: var(--pn-g); }
+
+/* ── Support routes — the rest of the information architecture. ── */
+.pn-navgroup--routes { gap: 1px; }
+.pn-route {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 11px;
+  border-radius: 6px;
+  color: var(--pn-muted);
+  text-decoration: none;
+  font-family: var(--pn-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  transition:
+    color var(--pn-fast) var(--pn-ease),
+    background-color var(--pn-fast) var(--pn-ease);
+}
+.pn-route:hover { color: var(--pn-ink); background: var(--pn-panel); }
+.pn-route-label { font-weight: 500; }
+.pn-route-path {
+  color: var(--pn-quiet);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
 
 /* ── Footer ── */
 .pn-foot {
@@ -282,12 +311,19 @@
   border-top: 1px solid var(--pn-rule);
   color: var(--pn-quiet);
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.08em;
   line-height: 1.8;
   text-transform: uppercase;
 }
+.pn-footlink {
+  display: inline-block;
+  margin-top: 10px;
+  color: var(--pn-g-2);
+  text-decoration: none;
+}
+.pn-footlink:hover { text-decoration: underline; }
 
 /* ============================================================
    MAIN — top bar + content.
@@ -345,7 +381,19 @@
   color: var(--pn-g-2);
   border-color: var(--pn-g-line);
 }
-.pn-topbtn.is-synced {
+.pn-topactions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.pn-status {
+  font-family: var(--pn-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--pn-quiet);
+}
+.pn-topbtn.is-saved {
   color: var(--pn-g-2);
   border-color: var(--pn-g-line);
   background: var(--pn-g-soft);
@@ -416,7 +464,7 @@
 }
 .pn-spec small {
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -461,7 +509,7 @@
 .pn-pulse-cell small {
   display: block;
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -499,7 +547,7 @@
 }
 .pn-sectionhead span {
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -524,7 +572,7 @@
 }
 .pn-panelhead span {
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -585,7 +633,7 @@
 .pn-mnode:hover { border-color: var(--pn-g-line); }
 .pn-mnode small {
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   color: var(--pn-quiet);
 }
@@ -631,7 +679,7 @@
   text-align: center;
   color: var(--pn-ink-2);
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   line-height: 1.6;
   letter-spacing: 0.1em;
@@ -639,54 +687,58 @@
 }
 
 /* ============================================================
-   BARS — illustrative measures.
+   EXECUTION SURFACES — the product tracks, read from lib/company.
    ============================================================ */
-.pn-bars { padding: 14px; }
-.pn-bar {
-  min-height: 72px;
-  border-bottom: 1px solid var(--pn-rule);
+.pn-surfaces { padding: 14px; }
+.pn-surface {
   display: grid;
-  grid-template-columns: 110px 1fr 42px;
-  gap: 10px;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "name state"
+    "path state";
+  gap: 2px 14px;
   align-items: center;
+  min-height: 62px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--pn-rule);
 }
-.pn-bar:last-child { border-bottom: 0; }
-.pn-bar small {
+.pn-surface:last-child { border-bottom: 0; }
+.pn-surface-name {
+  grid-area: name;
+  font-family: var(--pn-display);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: var(--pn-ink);
+}
+.pn-surface-path {
+  grid-area: path;
   font-family: var(--pn-mono);
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.04em;
   color: var(--pn-quiet);
 }
-.pn-bar .pn-track {
-  height: 5px;
-  background: var(--pn-edge);
-  border-radius: 3px;
-  overflow: hidden;
-}
-.pn-bar .pn-fill {
-  height: 100%;
-  background: var(--pn-g);
-  border-radius: 3px;
-  transition: width 480ms var(--pn-ease);
-}
-.pn-bar .pn-fill--gold { background: var(--pn-gold); }
-.pn-bar .pn-val {
-  text-align: right;
+.pn-surface-state {
+  grid-area: state;
+  padding: 5px 8px;
+  border: 1px solid var(--pn-rule-2);
+  border-radius: 6px;
   font-family: var(--pn-mono);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
-  color: var(--pn-ink-2);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pn-muted);
+  white-space: nowrap;
 }
 
 /* ============================================================
    REGISTRY — the row language for identity / contributions / assets.
    ============================================================ */
 .pn-registry { border-top: 1px solid var(--pn-rule-2); }
+.pn-record { border-bottom: 1px solid var(--pn-rule); }
 .pn-row {
   min-height: 96px;
-  border-bottom: 1px solid var(--pn-rule);
   display: grid;
   grid-template-columns: 60px 1.05fr 1fr 116px 32px;
   gap: 16px;
@@ -694,7 +746,7 @@
   padding: 8px 0;
   transition: background-color var(--pn-fast) var(--pn-ease);
 }
-.pn-row:hover { background: rgba(10, 13, 15, 0.5); }
+.pn-record:hover { background: rgba(10, 13, 15, 0.5); }
 .pn-rowid {
   font-family: var(--pn-mono);
   font-size: 10px;
@@ -712,7 +764,7 @@
 .pn-rowtype {
   margin-top: 5px;
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -729,14 +781,15 @@
   border-radius: 6px;
   color: var(--pn-muted);
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
 }
-/* State tints — one color per protocol state, never decorative. */
-.pn-state--verified .pn-state { border-color: var(--pn-g-line); color: var(--pn-g-2); background: var(--pn-g-soft); }
+/* State tints — one color per protocol state, never decorative.
+   "verified" is deliberately absent: a prototype surface may not render a
+   verified claim, so no record can wear that tint. */
 .pn-state--recorded .pn-state { border-color: var(--pn-rule-3); color: var(--pn-ink-2); }
 .pn-state--review   .pn-state { border-color: rgba(213, 168, 92, 0.4); color: var(--pn-gold-2); background: var(--pn-gold-soft); }
 .pn-state--blocked  .pn-state { border-color: rgba(239, 68, 68, 0.4); color: #f87171; }
@@ -756,6 +809,38 @@
 .pn-open:hover {
   color: var(--pn-g-2);
   border-color: var(--pn-g-line);
+}
+.pn-open svg { transition: transform var(--pn-fast) var(--pn-ease); }
+.pn-open[aria-expanded="true"] {
+  color: var(--pn-g-2);
+  border-color: var(--pn-g-line);
+}
+.pn-open[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+/* Row detail — progressive disclosure, never a dead affordance. */
+.pn-rowdetail {
+  margin: 0 0 16px;
+  padding: 14px 16px 16px;
+  border: 1px solid var(--pn-rule);
+  border-radius: 8px;
+  background: var(--pn-panel);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px 24px;
+}
+.pn-field dt {
+  font-family: var(--pn-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pn-quiet);
+}
+.pn-field dd {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--pn-ink-2);
 }
 
 /* ============================================================
@@ -792,7 +877,7 @@
   justify-content: space-between;
   gap: 12px;
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -830,7 +915,7 @@
   justify-content: space-between;
   gap: 12px;
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -852,7 +937,7 @@
 }
 .pn-juryrow .pn-jid {
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -866,7 +951,7 @@
 .pn-juryrow .pn-jmeta {
   margin-top: 4px;
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -879,7 +964,7 @@
   border-radius: 6px;
   color: var(--pn-muted);
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -913,7 +998,7 @@
 .pn-auditrow:last-child { border-bottom: 0; }
 .pn-auditrow span {
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -963,7 +1048,7 @@
   display: block;
   margin-bottom: 4px;
   font-family: var(--pn-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -971,32 +1056,11 @@
 }
 
 /* ============================================================
-   MOBILE CONTROL TOGGLE (≤980px)
-   The sidebar collapses into a floating control toggle; the
-   control plane stays reachable without losing the nav.
+   NARROW SCREENS
+   The sidebar is this surface's only navigation, so it stays in the
+   document and re-flows into a wrapping control strip. There is no
+   floating toggle, because there is nothing left to toggle.
    ============================================================ */
-.pn-mobiletoggle {
-  display: none;
-  position: fixed;
-  inset: 14px auto auto 14px;
-  z-index: 50;
-  align-items: center;
-  gap: 8px;
-  min-height: 38px;
-  padding: 0 14px;
-  border: 1px solid var(--pn-rule-2);
-  border-radius: 8px;
-  background: var(--pn-float);
-  backdrop-filter: blur(18px);
-  color: var(--pn-ink);
-  cursor: pointer;
-  font-family: var(--pn-mono);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.pn-mobiletoggle svg { flex: none; }
 
 /* ============================================================
    RESPONSIVE
@@ -1018,7 +1082,7 @@
     border-bottom: 1px solid var(--pn-rule);
     padding: 14px;
   }
-  .pn-node, .pn-navlabel, .pn-foot { display: none; }
+  .pn-node, .pn-foot { display: none; }
   .pn-nav {
     display: inline-flex;
     width: auto;
@@ -1026,6 +1090,7 @@
     padding: 8px 12px;
   }
   .pn-nav .pn-nav-glyph { display: none; }
+  .pn-route { padding: 8px 12px; }
   .pn-navgroup {
     flex-direction: row;
     flex-wrap: wrap;
@@ -1033,7 +1098,6 @@
   }
   .pn-brand { margin: 0 0 16px; }
 
-  .pn-mobiletoggle { display: inline-flex; }
   .pn-main { grid-column: 1; }
 
   .pn-command { grid-template-columns: 1fr; gap: 24px; align-items: start; }
@@ -1072,7 +1136,7 @@
   .pn-pulse > *:first-child { border-top: 0; }
   .pn-map { height: 320px; }
   .pn-mnode { width: 100px; height: 58px; }
-  .pn-bar { grid-template-columns: 92px 1fr 38px; }
+  .pn-status { display: none; }
   .pn-row {
     grid-template-columns: 35px 1fr auto;
     grid-template-rows: auto auto;

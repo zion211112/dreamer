@@ -87,6 +87,22 @@ export default function RootLayout({
           type="font/woff2"
           crossOrigin="anonymous"
         />
+        {/* Organization identity travels with every route — including the
+            protocol node at "/", which renders outside the site chrome. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: COMPANY.name,
+              url: SITE_URL,
+              description: COMPANY.oneSentence,
+              email: COMPANY.contact.email,
+              telephone: COMPANY.contact.whatsapp,
+            }),
+          }}
+        />
       </head>
       <body>
         <a href="#main-content" className="skip-link">

@@ -1,56 +1,17 @@
-import { COMPANY } from "../../lib/company";
-import { SITE_URL } from "../../lib/site";
-import Link from "next/link";
-import { Nav } from "../../components/Nav";
+import { SiteFrame } from "../../components/SiteFrame";
 import "../site.css";
 import "./sublime.css";
 
+// The site chrome lives in a client frame so the one route that is a product
+// rather than a page — the protocol node at "/" — can opt out of it.
+// The Organization JSON-LD moved to app/layout.tsx: it is site-wide identity,
+// and the node at "/" no longer passes through this layout's markup.
 export default function SiteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            name: COMPANY.name,
-            url: SITE_URL,
-            description: COMPANY.oneSentence,
-            email: COMPANY.contact.email,
-            telephone: COMPANY.contact.whatsapp,
-          }),
-        }}
-      />
-      <Nav />
-      <div className="site-content">
-        {children}
-      </div>
-      <footer className="site-footer" role="contentinfo">
-        <div className="site-footer-inner">
-          <div className="site-footer-brand">
-            <span className="site-footer-mark" aria-hidden="true">A</span>
-            <span className="site-footer-name">{COMPANY.name}</span>
-            <span className="site-footer-loc">{COMPANY.geography.text}</span>
-          </div>
-          <nav aria-label="Footer" className="site-footer-links">
-            <Link href="/" className="site-footer-link">Home</Link>
-            <Link href="/work" className="site-footer-link">Work</Link>
-            <Link href="/roll" className="site-footer-link">Roll</Link>
-            <Link href="/about" className="site-footer-link">About</Link>
-            <Link href="/evidence" className="site-footer-link">Evidence</Link>
-            <Link href="/contact" className="site-footer-link">Contact</Link>
-          </nav>
-          <p className="site-footer-copy">
-            The node is the product. Records are the substrate.
-          </p>
-        </div>
-      </footer>
-    </>
-  );
+  return <SiteFrame>{children}</SiteFrame>;
 }
+
 

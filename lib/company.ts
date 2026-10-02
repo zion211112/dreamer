@@ -301,7 +301,7 @@ export const METRICS: Metric[] = [
 /** Linkable evidence. Everything the site points at for verification. */
 export const EVIDENCE_LINKS = [
   { label: "Core Evidence Pack", href: "/evidence", state: "VERIFIED" as EvidenceState },
-  { label: "People Register", href: "/ledger", state: "PROTOTYPE" as EvidenceState },
+  { label: "People Register", href: "/roll", state: "PROTOTYPE" as EvidenceState },
   { label: "Asset Register", href: "/roll/assets", state: "PROTOTYPE" as EvidenceState },
   { label: "Request repository access", href: "/contact", state: "UNKNOWN" as EvidenceState },
 ];
