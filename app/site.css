@@ -10,9 +10,7 @@
    aliases re-resolve to the green accent, so shared chrome and page
    registers read one hue. The console, outside these elements, is
    untouched. */
-.site-nav,
-.site-content,
-.site-footer {
+.site-nav, .site-content, .site-footer {
   --signal: var(--brass);
   --signal-dim: var(--brass2);
   --signal-strong: #059669;
@@ -167,8 +165,7 @@
   transition: transform 250ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-.site-nav .nav-link:hover::after,
-.site-nav .nav-link--active::after {
+.site-nav .nav-link:hover::after, .site-nav .nav-link--active::after {
   transform: scaleX(1);
 }
 
@@ -418,27 +415,12 @@
   line-height: 1.6;
 }
 
-.record-panel {
-  border: 1px solid var(--rule);
-  background: var(--panel);
-  padding: 16px;
-}
-
-.record-note {
-  margin: 16px 0 0;
-  border-top: 1px solid var(--rule);
-  padding-top: 16px;
-  color: var(--ash);
-  font: 11px/1.6 var(--font-mono);
-}
-
 @media (min-width: 640px) {
   .site-footer-inner {
     /* the tagline stays visible — this row has room for it */
     align-items: flex-start;
   }
 }
-
 
 /* ============================================================
    Site primitives — page shell, container, section head, field, action.
@@ -540,8 +522,7 @@
 
 /* ─── Action ─── */
 
-.site-action,
-.site-action-secondary {
+.site-action, .site-action-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -581,34 +562,17 @@
   color: var(--signal);
 }
 
-.site-action:active,
-.site-action-secondary:active {
+.site-action:active, .site-action-secondary:active {
   transform: translateY(1px);
 }
 
 @media (max-width: 520px) {
-  .site-action,
-  .site-action-secondary {
+  .site-action, .site-action-secondary {
     width: 100%;
   }
 }
 
 /* ─── Ledger: roll column + meta rows ─── */
-
-.roll-section {
-  min-width: 0;
-}
-
-.roll-meta-item {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--dust);
-}
 
 /* ─── Nav toggle label ─── */
 
@@ -623,22 +587,6 @@
 }
 
 /* ─── Navigation hierarchy ─── */
-
-.site-nav .nav-divider {
-  width: 1px;
-  height: 20px;
-  margin: 0 8px;
-  background: var(--border-subtle);
-}
-
-.site-nav .nav-link--utility {
-  color: var(--text-tertiary);
-  font-size: 12px;
-}
-
-.site-nav .nav-link--utility:hover {
-  color: var(--text-secondary);
-}
 
 .site-nav .nav-console-action {
   display: inline-flex;
@@ -666,8 +614,7 @@
   transform: translateY(-2px);
 }
 
-.site-nav .nav-console-action:focus-visible,
-.site-nav .nav-mobile-console:focus-visible {
+.site-nav .nav-console-action:focus-visible, .site-nav .nav-mobile-console:focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 3px;
 }
@@ -706,7 +653,7 @@
 }
 
 @media (max-width: 1060px) {
-  .site-nav .nav-divider { margin-inline: 4px; }
+  
   .site-nav .nav-link { padding-inline: 9px; }
   .site-nav .nav-console-action { margin-left: 6px; }
 }
@@ -723,4 +670,3 @@
   .site-nav .nav-mobile--open { max-height: 560px; }
   .site-nav .nav-mobile-inner { padding-bottom: 16px; }
 }
-

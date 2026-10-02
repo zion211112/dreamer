@@ -69,127 +69,62 @@ body {
 
 /* ─── Type Families ─── */
 
-.mono {
-  font-family: ui-monospace, 'JetBrains Mono', 'SF Mono', 'Cascadia Code', 'Roboto Mono', monospace;
-}
 
-.sans {
-  font-family: -apple-system, -apple-system-font, 'Inter', system-ui, sans-serif;
-}
 
-.display {
-  font-family: -apple-system, -apple-system-font, 'Inter', system-ui, sans-serif;
-  font-weight: 600;
-  letter-spacing: -0.04em;
-}
+
+
+
 
 /* ─── Utility Primitives ─── */
 
-.border-rule {
-  border: 1px solid var(--rule);
-}
 
-.border-strong {
-  border: 1px solid var(--strong);
-}
 
-.border-sig {
-  border-color: var(--sig);
-}
+
+
+
 
 .bg-panel {
   background-color: var(--panel);
 }
 
-.bg-surface {
-  background-color: var(--surface);
-}
 
-.text-sig {
-  color: var(--sig);
-}
 
-.text-dim {
-  color: var(--dim);
-}
 
-.text-mute {
-  color: var(--mute);
-}
 
-.text-block {
-  color: var(--block);
-}
+
+
+
+
+
 
 /* Hover states - technical, minimal */
-.hover-surface:hover {
-  background-color: var(--edge);
-}
 
-.hover-border-strong:hover {
-  border-color: var(--strong);
-}
+
+
 
 /* ─── Layout Systems ─── */
 
-.entry {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
 
-.entry-left {
-  min-width: 0;
-  flex: 1;
-}
 
-.entry-right {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
 
-.grid-2 {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
 
-.grid-3 {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
 
-.grid-4 {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
+
+
+
+
+
+
 
 /* ─── Tag Chips ─── */
 
-.tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
 
-.tag-verified {
-  color: var(--tag-verified);
-  background: var(--sig-soft);
-}
 
-.tag-planned {
-  color: var(--tag-planned);
-  background: transparent;
-}
 
-.tag-unknown {
-  color: var(--tag-unknown);
-  background: transparent;
-}
+
+
+
+
 
 :root {
   /* Surfaces — warm graphite, deepest to raised.
@@ -282,9 +217,7 @@ html {
   color-scheme: dark;
 }
 
-input,
-select,
-textarea {
+input, select, textarea {
   color-scheme: dark;
 }
 
@@ -359,9 +292,7 @@ body {
   html {
     scroll-behavior: auto;
   }
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -393,27 +324,11 @@ body {
   outline-offset: 2px;
 }
 
-.bb-btn {
-  display: inline-flex;
-  min-height: 44px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--signal);
-  background: var(--signal);
-  color: var(--void);
-  font-weight: 700;
-  transition: background-color 150ms ease, border-color 150ms ease;
-}
 
-.bb-btn:hover {
-  border-color: var(--signal-dim);
-  background: var(--signal-dim);
-}
 
-.bb-btn:focus-visible {
-  outline: 2px solid var(--signal);
-  outline-offset: 3px;
-}
+
+
+
 
 /* Canonical cross-route surface. Console and site routes share this register. */
 .console-ui {
@@ -425,10 +340,7 @@ body {
 /* `rounded-full` is deliberately absent: pills and circles are intentional
    shapes (chips, favourite stars, the diamond glyph) and must keep their
    radius. Only the card/panel steps collapse to the square register. */
-.console-ui .rounded-3xl,
-.console-ui .rounded-2xl,
-.console-ui .rounded-xl,
-.console-ui .rounded-lg {
+.console-ui .rounded-2xl, .console-ui .rounded-xl, .console-ui .rounded-lg {
   border-radius: 2px;
 }
 
@@ -438,10 +350,7 @@ body {
 
 /* ─── Ruled separator ─── */
 
-.rule {
-  border: none;
-  border-top: 1px solid var(--rule);
-}
+
 
 /* ─── Mono label — the signature label style ─── */
 
@@ -455,19 +364,13 @@ body {
   margin: 0;
 }
 
-.label-ink {
-  color: var(--ink);
-}
 
-.label-signal {
-  color: var(--signal);
-}
+
+
 
 /* ─── Content measure — prose column ─── */
 
-.prose {
-  max-width: 65ch;
-}
+
 
 /* ─── Page title — one treatment, every route ─── */
 
@@ -486,14 +389,10 @@ body {
 
 /* ─── Section rhythm ─── */
 
-.page-section {
-  padding-block: 48px;
-}
+
 
 @media (max-width: 640px) {
-  .page-section {
-    padding-block: 32px;
-  }
+  
 }
 
 /* ─── Skeleton loading ─── */
@@ -537,9 +436,7 @@ body {
     color: #000;
     font-size: 12pt;
   }
-  .no-print {
-    display: none !important;
-  }
+  
   a {
     color: #000;
     text-decoration: underline;
@@ -555,37 +452,12 @@ body {
 
 /* ─── Utility: Flex row, center-aligned, gap ─── */
 
-.flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
-.flex-between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+
+
 
 /* ─── Tap target minimum (44px) ─── */
 
-.tap-target {
-  min-height: 44px;
-  min-width: 44px;
-}
+
 
 /* ─── Line clamp (for preview text) ─── */
-
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}

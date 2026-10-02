@@ -134,7 +134,11 @@ for (const f of sources) {
 
 const declared = new Map();
 for (const file of files) {
-  const txt = fs.readFileSync(file, "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+  const txt = fs.readFileSync(file, "utf8")
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/url\([^)]*\)/g, " ")
+    .replace(/"[^"]*"/g, " ")
+    .replace(/'[^']*'/g, " ");
   for (const m of txt.matchAll(/\.([a-zA-Z][a-zA-Z0-9_-]*)/g)) {
     if (!declared.has(m[1])) declared.set(m[1], new Set());
     declared.get(m[1]).add(file);

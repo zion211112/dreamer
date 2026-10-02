@@ -41,9 +41,7 @@
   pointer-events: none;
 }
 
-.benben-visual-head,
-.benben-visual-grid,
-.benben-visual-note {
+.benben-visual-head, .benben-visual-grid, .benben-visual-note {
   position: relative;
   z-index: 1;
 }
@@ -147,9 +145,7 @@
   background: var(--void);
 }
 
-.benben-card.dimmed {
-  opacity: 0.55;
-}
+
 
 .benben-card--empty {
   border-style: dashed;
@@ -215,8 +211,7 @@
   text-wrap: balance;
 }
 
-.benben-meta,
-.benben-clock {
+.benben-meta, .benben-clock {
   margin: 8px 0 0;
   font-family: var(--font-mono);
   font-size: 11px;
@@ -355,9 +350,7 @@
     padding-block: 40px 32px;
   }
 
-  .benben-actions .site-action,
-  .benben-actions .site-action-secondary,
-  .benben-btn {
+  .benben-actions .site-action, .benben-actions .site-action-secondary, .benben-btn {
     width: 100%;
   }
 }

@@ -242,6 +242,57 @@ export default function ProtocolNode() {
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
+  // Scroll progress — one signal hairline under the topbar.
+  useEffect(() => {
+    const bar = document.querySelector<HTMLElement>(".pn-progress");
+    if (!bar) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.transform = `scaleX(${max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0})`;
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  // Choreographed entrance: each block rises in as it reaches the
+  // viewport, staggered by its position in the view. Re-runs on every
+  // view change because the active view remounts fresh DOM.
+  useEffect(() => {
+    const root = document.querySelector<HTMLElement>(".pn-view.is-active");
+    if (!root) return;
+    const els = Array.from(root.querySelectorAll<HTMLElement>("[data-reveal]"));
+    if (els.length === 0) return;
+    if (prefersReducedMotion()) {
+      els.forEach((el) => el.classList.add("in"));
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const el = entry.target as HTMLElement;
+          el.classList.add("in");
+          io.unobserve(el);
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -6% 0px" }
+    );
+    els.forEach((el, i) => {
+      el.style.setProperty("--r", String(Math.min(i, 5)));
+      io.observe(el);
+    });
+    return () => io.disconnect();
+  }, [view]);
+
   // Local-first: nothing leaves this device, so "export" is the honest verb.
   // The control writes a JSON snapshot of the surface to this machine.
   const exportView = useCallback(() => {
@@ -282,7 +333,10 @@ export default function ProtocolNode() {
           <div className="pn-node">
             <small>Protocol node</small>
             <strong>Kirinyaga / 01</strong>
-            <div className="pn-live">Local node interface</div>
+            <div className="pn-live">
+              <span>Local node interface</span>
+              <span className="pn-clock">Prototype</span>
+            </div>
           </div>
 
           <div className="pn-navlabel" id="pn-grp-control">Control plane</div>
@@ -338,8 +392,14 @@ export default function ProtocolNode() {
         {/* ── Record column ── */}
         <main className="pn-main">
           <div className="pn-top">
+            <span className="pn-progress" aria-hidden="true" />
             <div className="pn-crumb">
               <i>APT-LABS</i> / <b>{VIEW_TITLES[view]}</b>
+            </div>
+            <div className="pn-nodeid" aria-hidden="true">
+              <span>Kirinyaga / 01</span>
+              <span className="pn-nodeid-dot" />
+              <span>Local</span>
             </div>
             <div className="pn-topactions">
               <span className="pn-status" role="status" aria-live="polite">
@@ -414,7 +474,7 @@ function OverviewView() {
         ]}
       />
 
-      <div className="pn-pulse" role="group" aria-label="Protocol state">
+      <div className="pn-pulse" data-reveal role="group" aria-label="Protocol state">
         <div className="pn-pulse-main">
           <div className="eyebrow">Protocol loop</div>
           <strong>{LOOP_LINE}</strong>
@@ -425,7 +485,7 @@ function OverviewView() {
         <div className="pn-pulse-cell"><small>Export</small><b>Local JSON</b></div>
       </div>
 
-      <div className="pn-section">
+        <div className="pn-section" data-reveal>
         <div className="pn-sectionhead">
           <h2>The loop, in order</h2>
           <span>Six transitions</span>
@@ -442,7 +502,7 @@ function OverviewView() {
         </div>
       </div>
 
-      <div className="pn-section">
+        <div className="pn-section" data-reveal>
         <div className="pn-sectionhead">
           <h2>Topology</h2>
           <span>Prototype</span>
@@ -453,6 +513,10 @@ function OverviewView() {
             role="img"
             aria-label="Node topology: the protocol node at the centre, with APT Fab, APT Studio, BenBen Builds and The Roll around it."
           >
+            <i className="pn-link pn-link--1" aria-hidden="true" />
+            <i className="pn-link pn-link--2" aria-hidden="true" />
+            <i className="pn-link pn-link--3" aria-hidden="true" />
+            <i className="pn-link pn-link--4" aria-hidden="true" />
             <div className="pn-core" />
             <div className="pn-core-label">Protocol<br />node</div>
             <div className="pn-mnode pn-mnode--1 pn-mnode--live"><small>01</small><b>APT Fab</b></div>
@@ -499,7 +563,7 @@ function IdentityView() {
           ["Influence", "Bounded"],
         ]}
       />
-      <div className="pn-section">
+        <div className="pn-section" data-reveal>
         <div className="pn-sectionhead">
           <h2>Credential objects</h2>
           <span>Prototype policy</span>
@@ -531,7 +595,7 @@ function ContributionsView() {
           ["Scoring", "None"],
         ]}
       />
-      <div className="pn-section">
+        <div className="pn-section" data-reveal>
         <div className="pn-sectionhead">
           <h2>Contribution events</h2>
           <span>Illustrative records</span>
@@ -564,7 +628,7 @@ function ProposalsView() {
           ["Reversal", "Appeal window"],
         ]}
       />
-      <div className="pn-section">
+        <div className="pn-section" data-reveal>
         <div className="pn-sectionhead">
           <h2>Open proposals</h2>
           <span>Explicit rules</span>
@@ -597,7 +661,7 @@ function JuriesView() {
           ["Appeal", "Always"],
         ]}
       />
-      <div className="pn-section">
+        <div className="pn-section" data-reveal>
         <div className="pn-sectionhead">
           <h2>Sortition panels</h2>
           <span>Illustrative</span>
@@ -643,7 +707,7 @@ function PoolsView() {
           ["Release", "Evidence-bound"],
         ]}
       />
-      <div className="pn-section">
+        <div className="pn-section" data-reveal>
         <div className="pn-sectionhead">
           <h2>Pool candidates</h2>
           <span>Prototype economics</span>
@@ -677,7 +741,7 @@ function WriteupView() {
         ]}
       />
 
-      <div className="pn-thesis">
+      <div className="pn-thesis" data-reveal>
         <div className="pn-thesis-index">01 / Thesis</div>
         <p>
           Institutions decide, spend and build — then lose the thread of who was
@@ -688,7 +752,7 @@ function WriteupView() {
         </p>
       </div>
 
-      <div className="pn-section">
+        <div className="pn-section" data-reveal>
         <div className="pn-sectionhead">
           <h2>The record</h2>
           <span>Every line carries a state</span>
@@ -721,7 +785,7 @@ function WriteupView() {
         </div>
       </div>
 
-      <div className="pn-section">
+        <div className="pn-section" data-reveal>
         <div className="pn-sectionhead">
           <h2>{BUILD.name}</h2>
           <span>{BUILD.role}</span>
@@ -799,7 +863,7 @@ function AssetsView() {
           ["Deployment", "None verified"],
         ]}
       />
-      <div className="pn-section">
+        <div className="pn-section" data-reveal>
         <div className="pn-sectionhead">
           <h2>Asset register</h2>
           <span>The Roll / asset side</span>
@@ -831,7 +895,7 @@ function RollView() {
           ["Server", "None"],
         ]}
       />
-      <div className="pn-section">
+        <div className="pn-section" data-reveal>
         <div className="pn-sectionhead">
           <h2>Recent transitions</h2>
           <span>Illustrative</span>
@@ -873,7 +937,7 @@ function AuditView() {
           ["Capture", "Alert, not slash"],
         ]}
       />
-      <div className="pn-section">
+        <div className="pn-section" data-reveal>
         <div className="pn-sectionhead">
           <h2>Transition trace</h2>
           <span>Illustrative</span>
@@ -921,7 +985,7 @@ function Command({
   specs: [string, string][];
 }) {
   return (
-    <div className="pn-command">
+    <div className="pn-command" data-reveal>
       <div>
         <div className="eyebrow">{eyebrow}</div>
         <h1>{title}</h1>
