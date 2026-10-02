@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Reveal } from "../../../components/site/Reveal";
-import "../home.css";
 import "./benben.css";
 
 type Comment = {

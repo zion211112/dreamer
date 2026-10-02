@@ -22,14 +22,17 @@ function read(file) {
   return fs.existsSync(file) ? fs.readFileSync(file, "utf8") : "";
 }
 
-// The company site: five indexed pages plus two local-first tracks.
-// Products live on BenBen Builds; the header never sells a prototype.
+// The Protocol Node is the product, at the root. Support routes — execution
+// (Work), record (Roll), doctrine (About), evidence (Evidence), engagement
+// (Contact) — hang off it. The Floor and the console are local-first tracks.
 const required = [
   "lib/company.ts",
   "docs/EVIDENCE-PACK.md",
+  "docs/protocol-node.md",
   "scripts/audit-company.js",
   "scripts/audit-classes.js",
   "app/(site)/page.tsx",
+  "app/(site)/protocol/layout.tsx",
   "app/(site)/work/page.tsx",
   "app/(site)/roll/page.tsx",
   "app/(site)/about/page.tsx",
@@ -45,29 +48,36 @@ for (const dead of ["app/(site)/deploy", "app/(site)/fab", "app/(site)/studio", 
   fs.existsSync(dead) ? fail(`retired route still present: ${dead}`) : pass(`retired route absent: ${dead}`);
 }
 
-// Three pillars, presented on Work (Fab, Studio) and Roll.
+// One product: the Protocol Node, at the root. Support routes carry the
+// execution surfaces, the record, doctrine, evidence and engagement.
 const robots = read("app/robots.ts");
 const sitemap = read("app/sitemap.ts");
-for (const [name, route] of [["APT Fab", "/work"], ["APT Studio", "/work"], ["The Roll", "/roll"]]) {
+for (const [name, route] of [["Protocol Node", "/"], ["APT Fab", "/work"], ["APT Studio", "/work"], ["The Roll", "/roll"]]) {
   robots.includes(`"${route}"`) ? pass(`${name} allowed by robots (${route})`) : fail(`${name} missing from robots (${route})`);
-  sitemap.includes(`\`\${base}${route}\``) ? pass(`${name} present in sitemap (${route})`) : fail(`${name} missing from sitemap (${route})`);
+  sitemap.includes(route === "/" ? "url: base" : `\`\${base}${route}\``) ? pass(`${name} present in sitemap (${route})`) : fail(`${name} missing from sitemap (${route})`);
 }
 for (const [name, file] of [["Work", "app/(site)/work/page.tsx"], ["The Roll", "app/(site)/roll/page.tsx"], ["BenBen / The Floor", "app/(site)/benben/layout.tsx"], ["Contact", "app/(site)/contact/page.tsx"]]) {
   fs.existsSync(file) && /export const metadata/.test(read(file)) ? pass(`${name} metadata exists`) : fail(`${name} metadata missing`);
 }
+// The node is a local-first surface: indexed for its root, but its
+// demonstration state is labelled — it is never a deployment claim.
+const nodeLayout = read("app/(site)/protocol/layout.tsx");
+if (nodeLayout.includes("redirect")) pass("legacy /protocol deep link redirects to the root");
+else fail("/protocol must redirect to the root (the node now lives at /)");
 // Tracks stay out of the index.
 for (const track of ["/benben", "/console"]) {
   robots.includes(track) && /disallow/.test(robots) ? pass(`track disallowed in robots: ${track}`) : fail(`track must be disallowed in robots: ${track}`);
 }
 sitemap.includes("benben") && /`\${base}\/benben`/.test(sitemap) ? fail("Floor must stay out of sitemap") : pass("Floor stays out of the sitemap");
 
+// The node's first product ships on the BenBen Builds track.
 const company = read("lib/company.ts");
-if (company.includes("BENBEN_BUILDS") && company.includes("isFace: false")) pass("BenBen Builds is a track, not a face");
+if (company.includes("BENBEN_BUILDS") && company.includes("isFace: false")) pass("BenBen Builds is the node's product track, not a face");
 else fail("BENBEN_BUILDS track with isFace: false must exist");
 if (/key: "deploy"|APT Deploy/.test(company)) fail("retired Deploy model remains in lib/company.ts");
 else pass("no Deploy face in lib/company.ts");
 
-// The header sells the company, never a prototype.
+// The header navigates the node's support routes, never the console.
 const nav = read("components/Nav.tsx");
 if (!nav.includes('"/console"') && !nav.includes("'/console'")) pass("header links no product console");
 else fail("header must not link /console (products live on /work)");
@@ -75,13 +85,19 @@ for (const item of ['"/work"', '"/roll"', '"/about"', '"/contact"']) {
   nav.includes(item) ? pass(`header links ${item}`) : fail(`header missing ${item}`);
 }
 
+// One product, one surface: the node is the only thing the root presents.
 const home = read("app/(site)/page.tsx");
-if (home.includes("BenBen Builds") && home.includes("BENBEN_BUILDS")) pass("homepage presents the build track separately");
-else fail("homepage must present BenBen Builds with the School Console as a track, not a pillar");
-if (home.includes("Systems your institutions can own") || /four faces|FOUR FACES/i.test(home)) fail("homepage still contains retired framing");
-else pass("homepage uses the pillar framing");
-if (/APT Deploy/.test(home)) fail("homepage references the retired Deploy face");
-else pass("homepage names no Deploy face");
+if (home.includes("protocol-node") && home.includes("ProtocolNode")) pass("root mounts the protocol node surface (the product)");
+else fail("root must mount the protocol node — the single product");
+if (/APT Deploy/.test(home)) fail("root references the retired Deploy face");
+else pass("root names no Deploy face");
+
+// The node component exists and carries an explicit evidence posture.
+const node = read("components/protocol-node.tsx");
+if (fs.existsSync("components/protocol-node.tsx") && /illustrative|prototype|proposed/i.test(node)) pass("protocol node labels its records (illustrative / proposed / prototype)");
+else fail("protocol node must label its records — nothing is a deployment claim");
+if (home.includes("BENBEN_BUILDS") || read("lib/company.ts").includes("BENBEN_BUILDS")) pass("BenBen Builds product track remains a first-class record in lib/company.ts");
+else fail("BenBen Builds track must remain documented in lib/company.ts");
 
 const publicFiles = [...walk("app"), ...walk("components")].filter((file) => /\.(ts|tsx|css)$/.test(file));
 const banned = ["sovereign", "covenant", "zion", "kemet", "atlantis", "rostau", "rosterau", "babylon", "genius fool"];
@@ -120,7 +136,7 @@ for (const name of dead) {
 }
 
 const work = read("app/(site)/work/page.tsx");
-if (work.includes("FACES.fab") && work.includes("FACES.studio") && work.includes("BENBEN_BUILDS") && work.includes("product.route") && work.includes("product.floorRoute")) pass("Work presents pillars plus the track with its product and intake");
+if (work.includes("FACES.fab") && work.includes("FACES.studio") && work.includes("BENBEN_BUILDS") && work.includes("product.route") && work.includes("product.floorRoute")) pass("Work presents the execution surfaces plus the product track with its intake");
 else fail("Work must present Fab, Studio, BenBen Builds, the School Console, and links to /console and /benben");
 
 const ledgerSource = read("lib/ledger.ts");

@@ -6,9 +6,9 @@ import { useEffect, useId, useState } from "react";
 
 type NavItem = { href: string; label: string };
 
-// The company site is five pages: Work, Roll, About, Contact. Products live
-// on the BenBen Builds track (/work → /console) and never in this header —
-// the header sells the company, not a prototype.
+// One product: the protocol node at the root. The support routes — execution,
+// record, doctrine and engagement — hang off it. Products ship on the BenBen
+// Builds track (/work → /console) and never in this header.
 const NAV_ITEMS: NavItem[] = [
   { href: "/work", label: "Work" },
   { href: "/roll", label: "Roll" },

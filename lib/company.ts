@@ -49,35 +49,34 @@ export type AssetState = (typeof ASSET_STATES)[number];
 
 /** Wording that is allowed to describe APT-LABS in public. */
 export const VOCABULARY_ALLOWLIST: string[] = [
-  "local ownership",
-  "offline resilience",
-  "repairability",
-  "open documentation",
-  "local technical capacity",
-  "reduced recurring technology cost",
-  "community-owned infrastructure",
-  "local economic participation",
-  "technology independence",
-  "reproducible infrastructure",
+  "local-first control plane",
+  "opt-in civic infrastructure",
+  "auditable allocation",
+  "explicit eligibility rules",
+  "bounded influence",
+  "verifiable evidence",
+  "local execution surfaces",
+  "reproducible records",
+  "contribution before claim",
+  "records that survive handover",
 ];
 
 /** The central problem — one framing, never a generic "schools lack tech". */
 export const PROBLEM =
-  "Institutions increasingly depend on technology they cannot fully own, repair, reproduce or afford to maintain.";
+  "Institutions make collective decisions, move shared resources and build durable assets — yet the records that show who was eligible, which rule applied, where the resources went, and what evidence supports the outcome are usually missing, locked away, or unverifiable.";
 
 /** The answer to the problem, in one sentence. */
 export const RESPONSE =
-  "APT-LABS converts locally available technical capacity into institutional systems that can be deployed, operated, repaired and reproduced locally.";
+  "APT-LABS runs a local-first protocol node that closes the loop — person, contribution, proposal, allocation, execution, and evidence — so an independent observer can reconstruct what happened without asking anyone involved.";
 
 /** The scale loop. Every submission walks it in this order. */
 export const OPERATING_LOOP: string[] = [
-  "imported / subscription-dependent",
-  "APT-LABS architecture",
-  "bounded pilot",
-  "measured cost / performance / adoption",
-  "documented local production",
-  "replication kit",
-  "institutional scale",
+  "contribution recorded",
+  "proposal under explicit rule",
+  "allocation by formula",
+  "physical execution",
+  "evidence appended",
+  "the record survives",
 ];
 
 export interface Face {
@@ -96,10 +95,10 @@ export const COMPANY = {
   name: "APT-LABS",
   /** One sentence. Used as the site description and the first line of any proposal. */
   oneSentence:
-    "APT-LABS builds locally owned institutional infrastructure — physical systems, creative-computing capacity, and the documentation layer that lets communities operate, repair, reproduce and improve them locally.",
+    "APT-LABS builds a local-first protocol node — a control plane that connects contribution, collective decisions, resource allocation, physical execution and verifiable evidence, so that what a community decides, builds and learns is inspectable by anyone who comes after.",
   /** Must match the first paragraph of docs/EVIDENCE-PACK.md §1, word for word. */
   description:
-    "APT-LABS is a Kenyan technology and infrastructure company building locally owned institutional infrastructure. It works across physical infrastructure, creative-computing capacity and the systems that document, maintain and reproduce them locally.",
+    "APT-LABS is a Kenyan technology company building local-first civic infrastructure. It operates a protocol node that connects contributions, collective decisions, allocation, physical execution and verifiable evidence across its execution surfaces.",
   problem: PROBLEM,
   response: RESPONSE,
   externalVocabulary: VOCABULARY_ALLOWLIST,
@@ -171,10 +170,11 @@ export const SUSTAINABILITY_RECORD = [
 
 export const EVIDENCE_SNAPSHOT = [
   { label: "Sealing and rolling hashes", value: "SHA-256 canonical records and master seals", state: "VERIFIED" as EvidenceState },
+  { label: "Protocol Node", value: "Local-first control plane, nine views, in-browser demonstration", state: "PROTOTYPE" as EvidenceState },
   { label: "BenBen Builds · School Console", value: `${CONSOLE_MODULES.length} modules and ${CONSOLE_TOOLS.length} tools in a local prototype`, state: "PROTOTYPE" as EvidenceState },
-  { label: "APT Fab", value: "Architecture defined; no fabrication record", state: "PLANNED" as EvidenceState },
-  { label: "APT Studio", value: "Architecture defined; no installation record", state: "PLANNED" as EvidenceState },
-  { label: "The Roll", value: "People and asset registers using the same trust model", state: "PROTOTYPE" as EvidenceState },
+  { label: "APT Fab", value: "Execution surface defined; no fabrication record", state: "PLANNED" as EvidenceState },
+  { label: "APT Studio", value: "Execution surface defined; no installation record", state: "PLANNED" as EvidenceState },
+  { label: "The Roll", value: "Substrate: people and asset registers, same seal", state: "PROTOTYPE" as EvidenceState },
 ] as const;
 
 export const FACE_SURFACE_CLASS: Record<Face["key"], string> = {
@@ -184,8 +184,11 @@ export const FACE_SURFACE_CLASS: Record<Face["key"], string> = {
 };
 
 /**
- * One company, three pillars. `status` must equal the row in the status ledger
- * in docs/EVIDENCE-PACK.md §4 — audit-company.js compares them literally.
+ * One company, one product, three levels. The Protocol Node is the product;
+ * APT Fab and APT Studio are execution surfaces; The Roll is the substrate.
+ *
+ * `status` must equal the row in the status ledger in docs/EVIDENCE-PACK.md §4
+ * — audit-company.js compares them literally.
  *
  * There is deliberately no Deploy face. Products are built on the BenBen
  * Builds track (see BENBEN_BUILDS); the company site never presents a
@@ -195,9 +198,9 @@ export const FACES: Record<Face["key"], Face> = {
   fab: {
     key: "fab",
     name: "APT Fab",
-    oneLine: "Locally fabricated institutional equipment.",
+    oneLine: "The node's physical execution surface.",
     description:
-      "Design, bill of materials, sourcing, fabrication, installation, repair and documentation — equipment an institution can maintain itself. Local where practical. Import where necessary. Document the difference.",
+      "Where a matched allocation becomes procurement, BOM, fabrication, installation, acceptance test, maintenance and appended evidence. The chain a proposal opens, Fab closes.",
     status: "PLANNED",
     route: "/work",
     evidenceRefs: ["EVIDENCE-PACK.md §6"],
@@ -205,9 +208,9 @@ export const FACES: Record<Face["key"], Face> = {
   studio: {
     key: "studio",
     name: "APT Studio",
-    oneLine: "Local creative-computing infrastructure.",
+    oneLine: "The node's local compute surface.",
     description:
-      "Workstations, media production, animation, AI-assisted production where applicable, and the technical skills work that keeps them running — productive compute located in the community it serves.",
+      "Credential issuance and verification, ZK proofs, local model workloads, node operations, training runs and recovery paths — the node keeping its own house in order, on the hardware it serves.",
     status: "PLANNED",
     route: "/work",
     evidenceRefs: ["EVIDENCE-PACK.md §7"],
@@ -215,9 +218,9 @@ export const FACES: Record<Face["key"], Face> = {
   roll: {
     key: "roll",
     name: "The Roll",
-    oneLine: "One ledger. Two registers. Same evidence machinery.",
+    oneLine: "The node's substrate — one ledger, two registers.",
     description:
-      "The people and asset interfaces share one seal, one hash model and one trust model. The current prototype is local-first; neither register is presented as a shared institutional database.",
+      "The record the node runs on: people, assets, evidence and audit, sealed with the same trust model. A node is a first-class record in this register — its operators, its evidence, its provenance.",
     status: "PROTOTYPE",
     route: "/roll",
     evidenceRefs: ["EVIDENCE-PACK.md §8"],
@@ -242,19 +245,19 @@ export const REGISTERS = [
   },
 ];
 
-/** BenBen Builds is NOT a company face. It is the build / product track. */
+/** BenBen Builds is the track where the node's products ship. */
 export const BENBEN_BUILDS = {
   name: "BenBen Builds",
-  role: "Build / product track",
+  role: "Product build track",
   isFace: false,
   route: "/work",
   summary:
-    "The track where practical ideas become working products. Its current product is the School Console: teacher and school operations that work where connectivity doesn't — a local prototype, not a deployment.",
+    "Where the protocol node's products are built, on the node's own evidence rules. Its current product is the School Console: a local-first operating console, a local prototype — not a deployment.",
   status: "PROTOTYPE" as EvidenceState,
   products: [
     {
       name: "School Console",
-      oneLine: "Teacher and school operations that work where connectivity doesn't.",
+      oneLine: "A local-first operating console for teacher and school work, built on the node's evidence discipline.",
       route: "/console",
       floorRoute: "/benben",
       status: "PROTOTYPE" as EvidenceState,
@@ -264,14 +267,14 @@ export const BENBEN_BUILDS = {
   ],
 } as const;
 
-/** The Floor is NOT a company face. It is where capability enters the system. */
+/** The Floor is NOT a company face. It is where capability enters the node. */
 export const INTAKE = {
   name: "BenBen / The Floor",
   role: "Intake layer",
   isFace: false,
   route: "/benben",
   summary:
-    "Local capability, work, makers and ideas enter here, are reviewed on the device, then can move into BenBen Builds products before evidence is recorded in The Roll.",
+    "Local capability, work, makers and ideas enter here, are reviewed on the device, then move into BenBen Builds products before evidence is recorded in The Roll.",
   status: "PROTOTYPE" as EvidenceState,
 };
 
@@ -307,5 +310,5 @@ export const EVIDENCE_LINKS = [
 export const STATUS_LEDGER = [
   { face: "APT Fab", status: "PLANNED", route: "/work", appRoute: "—" },
   { face: "APT Studio", status: "PLANNED", route: "/work", appRoute: "—" },
-  { face: "The Roll", status: "PROTOTYPE", route: "/roll", appRoute: "—" },
+  { face: "The Roll", status: "PROTOTYPE", route: "/roll", appRoute: "/" },
 ];

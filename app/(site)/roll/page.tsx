@@ -100,8 +100,8 @@ export default function RollPage() {
               <strong>Lifecycle + evidence</strong>
             </div>
             <div className="rg-aside-row">
-              <span>State</span>
-              <strong>Only what evidence supports</strong>
+              <span>Node</span>
+              <strong>A first-class record</strong>
             </div>
           </aside>
         </div>
@@ -124,10 +124,12 @@ export default function RollPage() {
             </h2>
 
             <p className="rl-thesis-sub">
-              The Roll is the evidence layer around APT-LABS work. It connects
-              the people involved to the assets produced, and the assets to the
-              records that support their current state — so another institution
-              can inspect what happened rather than inherit a narrative.
+              The Roll is the evidence layer under the protocol node — its
+              substrate. It connects the people who contributed to the assets
+              produced, and each asset to the records that support its state. A
+              node itself is a first-class object in this register: its
+              operators, its evidence, its provenance. So another observer can
+              inspect what happened rather than inherit a narrative.
             </p>
 
             <div className="rl-rule" />
@@ -317,12 +319,12 @@ export default function RollPage() {
 
               <div className="rg-tiles">
                 <Link className="rg-tile" href="/work">
-                  <small>Work</small>
-                  <strong>See what we build ↗</strong>
+                  <small>Execution</small>
+                  <strong>Where the node builds ↗</strong>
                 </Link>
                 <Link className="rg-tile" href="/contact">
                   <small>Engagement</small>
-                  <strong>Start a project →</strong>
+                  <strong>Work with APT-LABS →</strong>
                 </Link>
                 <Link className="rg-tile" href="/evidence">
                   <small>Evidence</small>

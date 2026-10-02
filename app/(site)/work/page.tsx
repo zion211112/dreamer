@@ -8,7 +8,7 @@ import "./work.css";
 export const metadata = faceMetadata({
   title: "Work",
   description:
-    "APT Fab, APT Studio, and the BenBen Builds track — what APT-LABS builds, and where products get built.",
+    "APT Fab, APT Studio, and the BenBen Builds track — where the APT-LABS protocol node executes, maintains itself, and ships its first product.",
   path: "/work",
 });
 
@@ -21,62 +21,62 @@ const STUDIO_CHAIN = ["Compute", "Create", "Render", "Output"];
 const stateWord = (state: string) => state.charAt(0) + state.slice(1).toLowerCase();
 const stateKey = (state: string) => state.toLowerCase();
 
-/** The three build surfaces. The registry and the hero aside both read this. */
+/** The three execution surfaces. The registry and the hero aside both read this. */
 const SURFACES = [
   {
     key: "fab",
     index: "01",
-    role: "Core",
-    type: "Physical infrastructure",
+    role: "Execution",
+    type: "Physical execution surface",
     name: FACES.fab.name,
     status: FACES.fab.status,
-    copy: "Requirement → design → BOM → source → fabricate → install → repair.",
+    copy: "Requirement → design → BOM → source → fabricate → install → repair. Fab execution closes the loop that a proposal opens.",
     href: "#fab",
   },
   {
     key: "studio",
     index: "02",
-    role: "Core",
-    type: "Creative computing",
+    role: "Execution",
+    type: "Local compute surface",
     name: FACES.studio.name,
     status: FACES.studio.status,
-    copy: "Compute → create → render → output, alongside the skills that keep it running.",
+    copy: "Credential issuance and verification, local model workloads, node operations, training and recovery. Studio is where the node keeps its own house in order.",
     href: "#studio",
   },
   {
     key: "benben",
     index: "03",
-    role: "Track",
-    type: "Build / product track",
+    role: "Product",
+    type: "Product build track",
     name: BENBEN_BUILDS.name,
     status: BENBEN_BUILDS.status,
-    copy: `Practical ideas become products. Current product: ${product.name}.`,
+    copy: `The node's first product: ${product.name}. A local-first operating console, built on the same evidence rules as everything else.`,
     href: "#benben",
   },
 ];
 
-/** The map nodes. Fab and Studio are core; BenBen is the product track. */
+/** The map nodes. Fab and Studio are execution surfaces; BenBen is the product. */
 const MAP_NODES = [
   {
     code: "01 / APT FAB",
-    kind: "core",
+    kind: "execution",
     status: FACES.fab.status,
-    title: "Physical infrastructure.",
-    copy: "Institutional equipment designed around local operating reality, maintainability and documented build paths.",
+    title: "Where the node gets things built.",
+    copy: "The physical execution surface — proposals become procurement, BOMs become parts, parts become installations with an acceptance test attached.",
   },
   {
     code: "02 / APT STUDIO",
-    kind: "core",
+    kind: "execution",
     status: FACES.studio.status,
-    title: "Productive computing.",
-    copy: "Compute, media production and technical capability located closer to the people using it.",
+    title: "Where the node keeps itself honest.",
+    copy: "Local compute, credential operations, ZK proofs, training runs and recovery paths — the node's own maintenance, run on the hardware it serves.",
   },
   {
     code: "03 / BENBEN BUILDS",
     kind: "product",
     status: BENBEN_BUILDS.status,
-    title: "Product development track.",
-    copy: "Practical ideas become working products — separate from the APT-LABS core.",
+    title: "The node's first product.",
+    copy: "Practical ideas become working products, built on the node's own rules and evidence discipline.",
   },
 ];
 
@@ -91,12 +91,12 @@ export default function WorkPage() {
           <div>
             <p className="rg-eyebrow">Work · APT-LABS</p>
             <h1 className="rg-title">
-              What we <em>build.</em>
+              Where the node <em>executes.</em>
             </h1>
             <p className="rg-lead">
-              Physical infrastructure, creative-computing capacity, and the
-              products of a separate build track — each named with its actual
-              state.
+              Two execution surfaces keep the protocol grounded — one builds
+              what a decision orders, the other keeps the node itself running.
+              BenBen Builds is where the first product ships.
             </p>
           </div>
 
@@ -118,7 +118,7 @@ export default function WorkPage() {
 
         <div className="rg-frame rg-base">
           <span>Kirinyaga · Kenya</span>
-          <span>Three build surfaces · one evidence layer</span>
+          <span>Two execution surfaces · one evidence layer</span>
         </div>
       </section>
 
@@ -144,12 +144,12 @@ export default function WorkPage() {
           <div className="rg-head" data-reveal>
             <p className="rg-mark">01 / System</p>
             <div>
-              <h2 className="rg-h2">Distinct build surfaces. One coherent system.</h2>
+              <h2 className="rg-h2">Decision becomes execution.</h2>
               <p className="rg-copy">
-                APT-LABS builds physical infrastructure and productive computing
-                capacity. BenBen Builds is a separate track for developing
-                practical products. The Roll records what the system can
-                substantiate.
+                A proposal, once matched and allocated, needs a physical
+                execution surface — and the node itself needs a local one. Fab
+                closes what a decision opens; Studio keeps the node running.
+                BenBen Builds is where the first product ships.
               </p>
             </div>
           </div>
@@ -221,7 +221,7 @@ export default function WorkPage() {
               <h2 className="rg-h2">The work, at a glance.</h2>
               <p className="rg-copy">
                 A compact operating view. No inflated portfolio language, and no
-                state claims beyond what the system currently supports.
+                state claims beyond what the node currently supports.
               </p>
             </div>
           </div>
@@ -275,7 +275,7 @@ export default function WorkPage() {
                   {stateWord(FACES.fab.status)}
                 </span>
               </div>
-              <h3>Physical infrastructure, built for local life.</h3>
+              <h3>Where the node gets things built.</h3>
               <p>{FACES.fab.description}</p>
               <div className="rg-pipeline">
                 {FAB_CHAIN.map((step, i) => (
@@ -286,8 +286,8 @@ export default function WorkPage() {
                 ))}
               </div>
               <p className="rg-note">
-                <strong>{stateWord(FACES.fab.status)}</strong> — architecture
-                defined; no fabrication record is published yet.
+                <strong>{stateWord(FACES.fab.status)}</strong> — execution
+                surface defined; no fabrication record is published yet.
               </p>
             </article>
 
@@ -298,7 +298,7 @@ export default function WorkPage() {
                   {stateWord(FACES.studio.status)}
                 </span>
               </div>
-              <h3>Productive computing, closer to the people using it.</h3>
+              <h3>Where the node keeps itself honest.</h3>
               <p>{FACES.studio.description}</p>
               <div className="rg-pipeline" data-steps="4">
                 {STUDIO_CHAIN.map((step, i) => (
@@ -419,7 +419,7 @@ export default function WorkPage() {
                 </Link>
                 <Link className="rg-tile" href="/contact">
                   <small>Engagement</small>
-                  <strong>Start a project →</strong>
+                  <strong>Work with APT-LABS →</strong>
                 </Link>
               </div>
             </div>

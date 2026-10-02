@@ -46,7 +46,7 @@ export default function SiteLayout({
             <Link href="/contact" className="site-footer-link">Contact</Link>
           </nav>
           <p className="site-footer-copy">
-            Build locally. Keep capability local.
+            The node is the product. Records are the substrate.
           </p>
         </div>
       </footer>

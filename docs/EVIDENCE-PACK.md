@@ -23,7 +23,7 @@ Every entry carries one of seven states:
 
 ## 1. Company
 
-APT-LABS is a Kenyan technology and infrastructure company building locally owned institutional infrastructure. It works across physical infrastructure, creative-computing capacity and the systems that document, maintain and reproduce them locally.
+APT-LABS is a Kenyan technology company building local-first civic infrastructure. It operates a protocol node that connects contributions, collective decisions, allocation, physical execution and verifiable evidence across its execution surfaces.
 
 - **Operating geography:** Kirinyaga, Kenya — `DECLARED` (stated by the organisation; not an independently verified field presence).
 - **Organisation legal status:** `UNKNOWN` — not published until documented. Do not invent registration numbers, PBO/company numbers or founding dates.
@@ -37,13 +37,17 @@ may appear on public routes until they are recorded here with evidence.
 
 ## 3. Problem
 
-> Institutions increasingly depend on technology they cannot fully own, repair,
-> reproduce or afford to maintain.
+> Institutions make collective decisions, move shared resources and build durable
+> assets — yet the records that show who was eligible, which rule applied, where
+> the resources went, and what evidence supports the outcome are usually missing,
+> locked away, or unverifiable.
 
 Response:
 
-> APT-LABS converts locally available technical capacity into institutional systems
-> that can be deployed, operated, repaired and reproduced locally.
+> APT-LABS runs a local-first protocol node that closes the loop — person,
+> contribution, proposal, allocation, execution, and evidence — so an
+> independent observer can reconstruct what happened without asking anyone
+> involved.
 
 State: `VERIFIED` as the organisation's stated problem framing — it is a framing,
 not a measured statistic. No market size, no enrolment figures and no
@@ -51,42 +55,36 @@ cost-of-failure numbers are claimed anywhere, because none are yet sourced.
 
 ## 4. APT-LABS Architecture
 
-One infrastructure company, three pillars, one build track, one evidence model.
-APT-LABS is the environment that can produce and support products; BenBen
-Builds is the track where products get built. The School Console is a BenBen
-Builds product — never a company face and never the company's proof.
+One product: the Protocol Node. Three levels — control plane, execution,
+substrate. The node is the only thing the company presents; APT Fab and APT
+Studio are where its decisions get built and run; The Roll is the record it
+runs on. BenBen Builds is the track where the node's first product ships.
 
 ```text
                      APT-LABS
-            infrastructure company / lab
+                the Protocol Node
+         (local-first control plane)
                          │
-           ┌─────────────┼─────────────┐
-           │             │             │
-        APT FAB      APT STUDIO     THE ROLL
-        physical      creative      evidence /
-     infrastructure   compute       provenance
-           │             │             │
-           └─────────────┼─────────────┘
+        ┌────────────────┼────────────────┐
+        │                │                │
+   APT FAB           APT STUDIO         THE ROLL
+   physical         local compute     substrate /
+   execution       execution surface  evidence layer
+        │                │                │
+        └────────────────┼────────────────┘
                          │
-                 LOCAL CAPABILITY
+                  BENBEN BUILDS
+                   product track
                          │
-                  selected builds
-                         │
-                   BENBEN BUILDS
-                   build track
-                         │
-              ┌──────────┴──────────┐
-              │                     │
-        school console        other products
-        teacher tools         / experiments
+                   school console
+                   (first product)
 ```
 
 Operating loop:
 
 ```text
-imported / subscription-dependent → APT-LABS architecture → bounded pilot
-→ measured cost / performance / adoption → documented local production
-→ replication kit → institutional scale
+contribution recorded → proposal under explicit rule → allocation by formula
+→ physical execution → evidence appended → the record survives
 ```
 
 Status ledger — this table is machine-checked against `lib/company.ts`:
@@ -95,13 +93,13 @@ Status ledger — this table is machine-checked against `lib/company.ts`:
 | --- | --- | --- | --- |
 | APT Fab | PLANNED | /work | — |
 | APT Studio | PLANNED | /work | — |
-| The Roll | PROTOTYPE | /roll | — |
+| The Roll | PROTOTYPE | /roll | / |
 
-BenBen Builds is the build / product track, not a face: `PROTOTYPE`,
+BenBen Builds is the product track, not a face: `PROTOTYPE`,
 presented at `/work`, with the School Console product at `/console`
 (local-first prototype, no verified deployment) and the Floor intake at
-`/benben` (local-only, starts empty). The retired Deploy face is gone on
-purpose: a product prototype must never stand as a company pillar.
+`/benben` (local-only, starts empty). A product prototype must never stand
+as a company face.
 
 ## 5. BenBen Builds
 
@@ -184,7 +182,7 @@ State: `PROTOTYPE`. The Floor starts with empty slots. Build posts are organised
 `VERIFIED` — reproducible from a clean checkout:
 
 - `npm run build` succeeds; all routes compile.
-- `npm test` — 41 tests pass.
+- `npm test` — 44 tests pass.
 - `node scripts/audit-classes.js` — zero undefined class names.
 - `node scripts/audit-funder.js` — route metadata, empty registers, no fake gates, legacy demo constants, and grant lenses are coherent.
 - Public routes: `/`, `/work`, `/roll`, `/about`, `/evidence`, `/contact`, with the Floor

@@ -1,7 +1,8 @@
 /* home.css — the "minimal sublime" front.
    The public site is a calm, cloaked prototype: one hero, one CTA, one
    whisper. No faces, no loops, no registers. The console is the product.
-   Scoped to the home route; the shared site primitives (.site-frame,
+   The root now mounts the protocol node; the sublime register survives on
+   the support routes (benben). The shared site primitives (.site-frame,
    .site-action, .page-title) come from site.css + globals.css. */
 
 .sublime {

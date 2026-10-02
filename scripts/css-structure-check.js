@@ -144,7 +144,7 @@ for (const file of files) {
 const dead = [...declared.entries()].filter(([name]) => !used.has(name));
 if (dead.length) {
   console.log("\nDEAD CSS SELECTORS (" + dead.length + "):");
-  for (const [name, where] of dead.slice(0, 60)) {
+  for (const [name, where] of dead) {
     console.log("  ." + name + "  <- " + [...where].join(", "));
   }
 } else {

@@ -37,3 +37,4 @@ tmp-shot/node_modules/
 /tmp-shot/install.done
 /tmp-shot/tmp-shot-run.sh
 
+.dead-css-map.json

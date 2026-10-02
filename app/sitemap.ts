@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "../lib/site";
 
-// The company site: home, work, roll, posture, proof, contact. The Floor
+// The site: node (root), support routes and tracks. The Floor
 // (/benben) is a local-first intake layer and the console is a BenBen Builds
 // local-first product — both stay out of the index by design.
 export default function sitemap(): MetadataRoute.Sitemap {

@@ -99,8 +99,9 @@ rows.forEach(([, face, status, route]) => {
   else fail(`status ledger row missing from evidence pack §4: ${cell}`);
 });
 
-// Faces: name + status must be documented in the pack. Three pillars —
-// products live on the BenBen Builds track, never as faces.
+// Faces: execution surface + substrate. Fab and Studio execute the node's
+// decisions; The Roll is the record the node runs on. All three are
+// documented in the evidence pack.
 const faceBlock = grab(/export const FACES: Record<Face\["key"\], Face> = \{([\s\S]*?)\n\};/, "FACES");
 const faces = [...faceBlock.matchAll(/key: "(\w+)",\s*\n\s*name: "([^"]+)",[\s\S]*?status: "([A-Z]+)",\s*\n\s*route: "([^"]+)"/g)];
 if (faces.length !== 3) fail(`FACES has ${faces.length} entries, expected 3`);
@@ -122,13 +123,13 @@ if (/key: "deploy"|face: "APT Deploy"|"\/deploy"|appRoute: "\/console"/.test(src
   fail("retired Deploy model leaks in lib/company.ts (deploy key, /deploy route, or console appRoute)");
 } else pass("no Deploy face, /deploy route, or console appRoute in lib/company.ts");
 
-console.log("\n== 3. The company site is five pages plus local tracks ==");
-// The company is three pillars (Fab, Studio, Roll) presented across five
-// indexed pages. Products live on the BenBen Builds track and the Floor is
-// a local-only intake layer: linked from /work, with metadata, disallowed
-// in robots, absent from the sitemap. Each indexed page must export metadata.
+console.log("\n== 3. The site is one node plus support routes ==");
+// The Protocol Node is the product at the root. Support routes — execution,
+// record, doctrine, evidence and engagement — hang off it. The Floor is a
+// local-only intake layer: linked from /work, with metadata, disallowed in
+// robots, absent from the sitemap. Each indexed route must export metadata.
 const PUBLIC_ROUTES = [
-  { rel: "page.tsx", name: "Home" },
+  { rel: "page.tsx", name: "Node (root)" },
   { rel: "work/page.tsx", name: "Work" },
   { rel: "roll/page.tsx", name: "Roll" },
   { rel: "about/page.tsx", name: "About" },
@@ -143,6 +144,14 @@ PUBLIC_ROUTES.forEach(({ rel, name }) => {
     pass(`${name} route exports metadata`);
   } else fail(`${name} route exports no metadata`);
 });
+
+// The node lives at the root: the root page mounts the protocol surface.
+const rootNode = fs.readFileSync(path.join("app", "(site)", "page.tsx"), "utf8");
+if (rootNode.includes("protocol-node")) pass("root page mounts the protocol node surface");
+else fail("root page must mount the protocol node (components/protocol-node)");
+if (fs.existsSync(path.join("app", "(site)", "protocol", "page.tsx"))) {
+  pass("legacy /protocol deep link redirects to the root");
+} else fail("legacy /protocol redirect page is missing");
 
 // Local-only intake: metadata yes, robots disallow yes, sitemap no.
 const benbenPage = path.join("app", "(site)", "benben", "page.tsx");
