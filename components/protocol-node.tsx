@@ -243,6 +243,35 @@ const LADDER: {
 const BUILD = BENBEN_BUILDS;
 const EXAMPLE = BENBEN_BUILDS.products[0];
 
+/**
+ * The economic loop — the system's conceptual spine, in the order a
+ * decision actually travels. Each stage asks the one question that stage
+ * must answer. This is architecture, not a record: every stage below is
+ * carried by illustrative records, and the band says so.
+ */
+const ECONOMIC_LOOP = [
+  { n: "01", k: "Signal", q: "What needs doing?", note: "Needs, procurement, market and institutional signals." },
+  { n: "02", k: "People", q: "Who can do it?", note: "Builders, makers, operators and documented contribution." },
+  { n: "03", k: "Allocation", q: "What gets resourced?", note: "Priority, selection and explicit decision rules." },
+  { n: "04", k: "Build", q: "What gets made?", note: "Design, BOM, sourcing, fabrication, installation." },
+  { n: "05", k: "Asset", q: "What is on record?", note: "A thing that acquires a history of state." },
+  { n: "06", k: "Proof", q: "What can be shown?", note: "Evidence, provenance, and the seal that survives handover." },
+];
+
+/**
+ * The asset lifecycle, in the order an asset earns state. Each step names
+ * the state it promotes to — and promotion requires the evidence named in
+ * that step, never a declaration.
+ */
+const ASSET_CHAIN = [
+  { n: "01", event: "Requirement recorded", state: "PLANNED" },
+  { n: "02", event: "Design, BOM and source recorded", state: "PROTOTYPE" },
+  { n: "03", event: "Fabrication event recorded", state: "FABRICATED" },
+  { n: "04", event: "Installation and handover recorded", state: "INSTALLED" },
+  { n: "05", event: "Test and acceptance recorded", state: "ACCEPTED" },
+  { n: "06", event: "Evidence sealed into the master hash", state: "VERIFIED" },
+];
+
 /** Compose a class list from static literals. Assembling class names with
     template interpolation hides them from scripts/css-structure-check.js, so
     every name here must be a literal the audit can read. */
@@ -687,7 +716,7 @@ const INSPECT_TONE: Record<Tone, string> = {
 };
 
 const RING_R = { cx: 600, cy: 352, rx: 432, ry: 246 };
-const SPINE = { x: 96, y0: 46, step: 100 };
+const SPINE_GEO = { x: 96, y0: 46, step: 100 };
 
 const pos = {
   ring: (i: number) => {
@@ -697,7 +726,7 @@ const pos = {
       y: RING_R.cy + RING_R.ry * Math.sin(a),
     };
   },
-  spine: (i: number) => ({ x: SPINE.x, y: SPINE.y0 + SPINE.step * i }),
+  spine: (i: number) => ({ x: SPINE_GEO.x, y: SPINE_GEO.y0 + SPINE_GEO.step * i }),
 };
 
 const ctrl = {
@@ -710,8 +739,8 @@ const ctrl = {
   },
   spine: (i: number) =>
     i === NODES.length - 1
-      ? { x: 26, y: SPINE.y0 + (SPINE.step * (NODES.length - 1)) / 2 }
-      : { x: SPINE.x + (i % 2 === 0 ? -18 : 18), y: SPINE.y0 + SPINE.step * i + SPINE.step / 2 },
+      ? { x: 26, y: SPINE_GEO.y0 + (SPINE_GEO.step * (NODES.length - 1)) / 2 }
+      : { x: SPINE_GEO.x + (i % 2 === 0 ? -18 : 18), y: SPINE_GEO.y0 + SPINE_GEO.step * i + SPINE_GEO.step / 2 },
 };
 
 /** Point on a quadratic at t — used to split a broken edge at its gap. */
@@ -813,8 +842,8 @@ function LoopConsole() {
         ))}
 
         <div className="pn-core">
-          <b>KIRINYAGA / 01</b>
-          <span>local node</span>
+          <b>APT-LABS</b>
+          <span>Coordination layer</span>
         </div>
 
         {NODES.map((n, i) => (
@@ -953,15 +982,38 @@ function LoopConsole() {
   );
 }
 
+/** The conceptual spine, stated once. Architecture above, records below. */
+function SpineBand() {
+  return (
+    <div className="pn-spine" data-reveal>
+      <div className="pn-spine-intro">
+        <div className="eyebrow">The economic loop</div>
+        <b>One loop.</b>
+        <small>Concept architecture · no live data</small>
+      </div>
+      <div className="pn-spine-steps" role="list">
+        {ECONOMIC_LOOP.map((s) => (
+          <div className="pn-spine-step" role="listitem" key={s.n}>
+            <small aria-hidden="true">{s.n}</small>
+            <strong>{s.k}</strong>
+            <em>{s.q}</em>
+            <span>{s.note}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function OverviewView() {
   return (
     <>
       <Command
-        eyebrow="01 / Overview"
-        title="The node is the record."
-        copy="One control plane closes the loop from a person's contribution to the evidence that survives it. Everything on this surface is a prototype, and every record says so."
+        eyebrow="01 / Coordination layer"
+        title="From contribution to infrastructure."
+        copy="One loop connects local capability, allocation, physical execution and evidence into a system anyone can inspect later. Everything on this surface is a prototype, and every record says so."
         specs={[
-          ["Mode", "Prototype"],
+          ["Mode", "Concept / prototype"],
           ["Records", "Illustrative"],
           ["Storage", "This browser"],
           ["Export", "Local JSON"],
@@ -976,12 +1028,14 @@ function OverviewView() {
         <div className="pn-pulse-cell"><small>Mode</small><b>Prototype</b></div>
         <div className="pn-pulse-cell"><small>Records</small><b>Illustrative</b></div>
         <div className="pn-pulse-cell"><small>Storage</small><b>This browser</b></div>
-        <div className="pn-pulse-cell"><small>Export</small><b>Local JSON</b></div>
+        <div className="pn-pulse-cell"><small>State</small><b>Discipline on</b></div>
       </div>
 
-        <div className="pn-section" data-reveal>
+      <SpineBand />
+
+      <div className="pn-section" data-reveal>
         <div className="pn-sectionhead">
-          <h2>The loop closes</h2>
+          <h2>The system remembers what happened</h2>
           <span>Six stages · chain breaks where evidence stops</span>
         </div>
         <LoopConsole />
@@ -1231,7 +1285,7 @@ function WriteupView() {
     <>
       <Command
         eyebrow="07 / The write-up"
-        title="What is built, and what is not."
+        title="Build the capability. Keep the memory."
         copy="A short account of the system, its evidence, and the claims it deliberately does not make. The console is a build inside this track — it opens from here."
         specs={[
           ["Track", BUILD.name],
@@ -1354,7 +1408,7 @@ function AssetsView() {
     <>
       <Command
         eyebrow="08 / Assets"
-        title="Every asset carries its own state."
+        title="Decisions become things."
         copy="An asset is planned, fabricated, installed, tested or accepted — and each step has a record behind it. A missing step is shown as a missing step, never smoothed over."
         specs={[
           ["Register", "The Roll / assets"],
@@ -1395,6 +1449,25 @@ function RollView() {
           ["Server", "None"],
         ]}
       />
+        <div className="pn-section" data-reveal>
+        <div className="pn-sectionhead">
+          <h2>The system remembers what happened</h2>
+          <span>An asset acquires a history</span>
+        </div>
+        <div className="pn-chainlist" role="list">
+          {ASSET_CHAIN.map((c) => (
+            <div className="pn-chainrow" role="listitem" key={c.n}>
+              <span className="pn-chainrow-n" aria-hidden="true">{c.n}</span>
+              <b>{c.event}</b>
+              <small>{c.state}</small>
+            </div>
+          ))}
+        </div>
+        <p className="pn-footnote">
+          State is earned by evidence. A record cannot promote itself.
+        </p>
+      </div>
+
         <div className="pn-section" data-reveal>
         <div className="pn-sectionhead">
           <h2>Recent transitions</h2>

@@ -745,6 +745,120 @@
   gap: 56px;
 }
 
+/* ── Asset chain — an asset acquires a history ── */
+.pn-chainlist { border-top: 1px solid var(--pn-rule-2); }
+.pn-chainrow {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) 108px;
+  align-items: center;
+  gap: 20px;
+  min-height: 54px;
+  border-bottom: 1px solid var(--pn-rule);
+  transition: background-color var(--pn-fast) var(--pn-ease);
+}
+.pn-chainrow:hover { background: var(--pn-wash); }
+.pn-chainrow-n {
+  font-family: var(--pn-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--pn-quiet);
+  font-variant-numeric: tabular-nums;
+}
+.pn-chainrow b {
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--pn-ink);
+}
+.pn-chainrow small {
+  justify-self: end;
+  font-family: var(--pn-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--pn-signal-2);
+  white-space: nowrap;
+}
+
+/* ============================================================
+   ECONOMIC SPINE — the conceptual loop, stated once. Architecture
+   above, records below. Each stage asks the one question it must
+   answer, so the abstraction is never just a list of nouns.
+   ============================================================ */
+.pn-spine {
+  display: grid;
+  grid-template-columns: 216px minmax(0, 1fr);
+  border-top: 1px solid var(--pn-rule-2);
+  border-bottom: 1px solid var(--pn-rule-2);
+  margin-top: 40px;
+}
+.pn-spine-intro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+  padding: 22px 22px 22px 0;
+}
+.pn-spine-intro b {
+  font-family: var(--pn-display);
+  font-weight: 600;
+  font-size: 21px;
+  letter-spacing: -0.035em;
+  color: var(--pn-ink);
+}
+.pn-spine-intro small {
+  font-family: var(--pn-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--pn-quiet);
+}
+.pn-spine-steps {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+.pn-spine-step {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 22px 16px;
+  border-left: 1px solid var(--pn-rule);
+  transition: background-color var(--pn-fast) var(--pn-ease);
+}
+.pn-spine-step:hover { background: var(--pn-wash); }
+.pn-spine-step > small {
+  font-family: var(--pn-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--pn-quiet);
+  font-variant-numeric: tabular-nums;
+}
+.pn-spine-step > strong {
+  font-family: var(--pn-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--pn-ink);
+}
+/* The question is the point of each stage. */
+.pn-spine-step > em {
+  font-style: italic;
+  font-family: var(--pn-display);
+  font-size: 13px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--pn-signal-2);
+}
+.pn-spine-step > span {
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--pn-muted);
+}
+
 /* ============================================================
    LOOP CONSOLE — the graph is the interface.
    Nodes are points, not cards. The line carries the evidence:
@@ -1779,6 +1893,11 @@
   .pn-cnode-body b { font-size: 11.5px; }
   .pn-tick em { display: none; }
   .pn-ladder-row { grid-template-columns: 130px minmax(0, 1fr); gap: 14px; }
+  /* Tablet: the spine keeps its order but pairs up, so the loop stays
+     readable left-to-right rather than stacking six deep. */
+  .pn-spine { grid-template-columns: 180px minmax(0, 1fr); }
+  .pn-spine-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .pn-spine-step:nth-child(4) { border-left: 0; }
   .pn-ladder-state { grid-column: 2; justify-self: start; }
   .pn-ladder-stages { gap: 2px; }
   .pn-ladder-stage { padding: 5px 9px; font-size: 9.5px; }
@@ -1811,6 +1930,14 @@
     padding: 7px 8px 7px 0;
   }
   .pn-cnode-body b { white-space: normal; font-size: 12px; }
+  /* Mobile: the spine becomes a vertical ladder — order preserved, one
+     stage per row, the question doing the work of the description. */
+  .pn-spine { grid-template-columns: 1fr; }
+  .pn-spine-intro { padding: 18px 0 14px; }
+  .pn-spine-steps { grid-template-columns: 1fr; }
+  .pn-spine-step { border-left: 0; border-top: 1px solid var(--pn-rule); padding: 14px 0; }
+  .pn-spine-step:nth-child(4) { border-left: 0; }
+  .pn-spine-step > span { display: none; }
   .pn-split { grid-template-columns: 1fr; gap: 28px; }
   .pn-inspector { padding: 18px 16px 20px; }
   .pn-ticks { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 2px; }

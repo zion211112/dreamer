@@ -9,22 +9,30 @@ import "./fonts.css";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "APT-LABS — Locally owned institutional infrastructure.",
+    default: "APT-LABS — Network Console. A coordination layer.",
     template: "%s — APT-LABS",
   },
-  description: COMPANY.description,
-  keywords: ["institutional infrastructure", "offline-first software", "local ownership", "reproducible infrastructure"],
+  description:
+    "APT-LABS is a coordination layer connecting local capability, allocation, physical execution and verifiable evidence.",
+  keywords: [
+    "coordination layer",
+    "institutional infrastructure",
+    "offline-first software",
+    "local ownership",
+    "reproducible infrastructure",
+    "verifiable evidence",
+  ],
   openGraph: {
     type: "website",
     siteName: COMPANY.name,
     locale: "en_KE",
-    title: "APT-LABS — Locally owned institutional infrastructure.",
+    title: "APT-LABS — Network Console. A coordination layer.",
     description: COMPANY.oneSentence,
     url: "/",
   },
   twitter: {
     card: "summary_large_image",
-    title: "APT-LABS — Locally owned institutional infrastructure.",
+    title: "APT-LABS — Network Console. A coordination layer.",
     description: COMPANY.oneSentence,
   },
   robots: { index: true, follow: true },
