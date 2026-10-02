@@ -19,51 +19,60 @@
    ============================================================ */
 
 :root {
-  /* Ground — warm paper. The surface is a document, not a cockpit. */
-  --pn-void:   #f6f6f4;
-  --pn-deep:   #ffffff;
-  --pn-panel:  #ffffff;
-  --pn-raise:  #ffffff;
-  --pn-float:  rgba(246, 246, 244, 0.88);
-  --pn-glass:  rgba(255, 255, 255, 0.94);
+  /* ═══════════════════════════════════════════════════════════
+     The console speaks the site's tokens. Not a private palette.
+
+     Every colour below is an alias into the :root block in
+     app/globals.css. No value is redefined here, so the console
+     and the public site cannot drift into separate dialects —
+     change --void once and both move. Only layout and motion are
+     genuinely local to this surface.
+     ═══════════════════════════════════════════════════════════ */
+
+  /* Ground */
+  --pn-void:   var(--void);
+  --pn-deep:   var(--panel);
+  --pn-panel:  var(--panel);
+  --pn-raise:  var(--panel);
+  --pn-float:  var(--float);
+  --pn-glass:  var(--glass);
 
   /* Rules — ink at low alpha. The only material on this surface. */
-  --pn-rule:    rgba(22, 26, 30, 0.09);
-  --pn-rule-2:  rgba(22, 26, 30, 0.16);
-  --pn-rule-3:  rgba(22, 26, 30, 0.30);
+  --pn-rule:   var(--rule);
+  --pn-rule-2: var(--rule-2);
+  --pn-rule-3: var(--rule-3);
 
-  /* Ink — AA or better on --pn-void. quiet carries 9-10px instrument
-     labels, so it is held to 4.5:1, not 3:1; hierarchy is carried by size
-     and tracking rather than by dropping it below AA. */
-  --pn-ink:     #14181c;
-  --pn-ink-2:   #39414a;
-  --pn-muted:   #626b74;
-  --pn-quiet:   #646c77;
+  /* Ink. quiet carries 9-10px instrument labels, so the canonical
+     value is held to 4.5:1 there, not 3:1. */
+  --pn-ink:   var(--ink);
+  --pn-ink-2: var(--dust);
+  --pn-muted: var(--ash);
+  --pn-quiet: var(--quiet);
 
-  /* Signal — the one accent. Darkened so it holds AA on paper. */
-  --pn-signal:      #0e8f5e;
-  --pn-signal-2:    #0a6e48;
-  --pn-signal-soft: rgba(14, 143, 94, 0.08);
-  --pn-signal-line: rgba(14, 143, 94, 0.38);
+  /* Signal — the one accent. */
+  --pn-signal:      var(--signal);
+  --pn-signal-2:    var(--signal-dim);
+  --pn-signal-soft: var(--signal-soft);
+  --pn-signal-line: var(--signal-a30);
 
   /* States — colour that communicates, never colour that decorates. */
-  --pn-warn:       #9a6b12;
-  --pn-warn-2:     #7e5610;
-  --pn-warn-soft:  rgba(154, 107, 18, 0.10);
-  --pn-warn-line:  rgba(154, 107, 18, 0.36);
-  --pn-stop:       #b23a2e;
-  --pn-stop-2:     #962e24;
+  --pn-warn:      var(--amber);
+  --pn-warn-2:    var(--amber-2);
+  --pn-warn-soft: var(--amber-soft);
+  --pn-warn-line: var(--amber-line);
+  --pn-stop:      var(--danger);
+  --pn-stop-2:    var(--danger-2);
 
-  /* Washes — named so no rule hardcodes an alpha again. */
-  --pn-wash:   rgba(20, 24, 28, 0.020);
-  --pn-wash-2: rgba(20, 24, 28, 0.040);
-  --pn-tint:   rgba(14, 143, 94, 0.055);
-  --pn-tint-2: rgba(14, 143, 94, 0.11);
+  /* Washes */
+  --pn-wash:   var(--wash);
+  --pn-wash-2: var(--wash-2);
+  --pn-tint:   var(--tint);
+  --pn-tint-2: var(--tint-2);
 
   /* Type registers. */
-  --pn-mono:    "DM Mono", ui-monospace, monospace;
-  --pn-sans:    "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
-  --pn-display: "Space Grotesk", -apple-system, "Segoe UI", system-ui, sans-serif;
+  --pn-mono:    var(--font-dm);
+  --pn-sans:    var(--font-sans);
+  --pn-display: var(--font-display);
 
   /* Layout. */
   --pn-side:    268px;

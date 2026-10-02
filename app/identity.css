@@ -261,9 +261,9 @@
 
 
 
-.face-surface--fab { background: linear-gradient(135deg, #181510, var(--surface-panel) 72%); }
-.face-surface--studio { background: linear-gradient(135deg, #14120E, var(--surface-panel) 72%); }
-.face-surface--roll { background: linear-gradient(135deg, #12100C, var(--surface-panel) 72%); }
+.face-surface--fab { background: linear-gradient(135deg, var(--wash-2), var(--surface-panel) 72%); }
+.face-surface--studio { background: linear-gradient(135deg, var(--wash-2), var(--surface-panel) 72%); }
+.face-surface--roll { background: linear-gradient(135deg, var(--wash-2), var(--surface-panel) 72%); }
 
 
 

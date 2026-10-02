@@ -6,63 +6,59 @@ const config = {
   ],
   theme: {
     extend: {
+      // ═══════════════════════════════════════════════════════════════
+      // These must stay identical to the :root block in app/globals.css.
+      // Tailwind and the stylesheets are one system with two entry
+      // points; if these drift, the console and the public site become
+      // different products. Ground is warm paper, not a cockpit.
+      // ═══════════════════════════════════════════════════════════════
       colors: {
-        // ── Surfaces — deepest to raised.
-        //    Never use these for text. Text uses --ink / --dust.
-        void:   "#060708",
-        panel:  "#0C0D0F",
-        edge:   "#141416",
-        rule:   "#1F1F22",
+        // ── Surfaces — deepest to raised. Never use for text.
+        void:   "#f6f6f4",
+        panel:  "#ffffff",
+        edge:   "#f0f0ed",
+        rule:   "#e6e6e2",
 
-        // ── Text — primary and secondary.
-        //    --ink on --void: 17.6:1 · --dust: 5.52:1 · --ash: 5.10:1 — all AAA/AA.
-        //    Measured via the contrast harness in DESIGN-AUDIT.md §10.
-        ink:    "#F2EFE9",
-        dust:   "#8A8580",
-        ash:    "#857F7A",
-        // ── Accent — ONE interactive color.
-        //    Reserved strictly for high-intent triggers: primary buttons, links,
-        //    focus rings, active nav. Not decorative. Not passive text.
-        signal:      "#14B8A6",
-        signalDim:   "#0D9488",
-        signalStrong:"#0F766E",
+        // ── Text — primary to tertiary.
+        //    On --void #f6f6f4: ink 16.5:1 · dust 9.6:1 · ash 5.0:1 ·
+        //    quiet 4.9:1 — every tier clears AA for its size, and the
+        //    9-10px instrument tiers are held to 4.5:1, not 3:1.
+        ink:    "#14181c",
+        dust:   "#39414a",
+        ash:    "#626b74",
+        quiet:  "#646c77",
+
+        // ── Accent — ONE interactive colour, matching --signal.
+        //    Reserved for high-intent triggers: primary buttons, links,
+        //    focus rings, active nav. Never decorative, never passive.
+        signal:       "#0e8f5e",
+        signalDim:    "#0a6e48",
+        signalStrong: "#085537", // filled buttons: white ink clears 8.9:1
 
         // ── Informational — never interactive.
-        amber:  "#D97706",
-        danger: "#EF4444",
-
-        // ── Legacy aliases (console components predate this system).
-        //    Each maps to its new-token value so existing class names keep
-        //    rendering. Migrate components to the canonical names above.
-        obsidian: "#060708",      // → void
-        ivory:    "#F2EFE9",      // → ink
-        muted:    "#8A8580",      // → dust
-        dim:      "#857F7A",      // → ash
-        teal:     "#14B8A6",      // → signal
-        panelHi:  "#141416",      // → edge
-        edgeHi:   "#1F1F22",      // → rule
+        amber:  "#9a6b12",
+        danger: "#b23a2e",
       },
       fontFamily: {
-        // Google Fonts with system fallbacks — Mirror.xyz editorial + Linear instrument.
+        // Only self-hosted families (see app/fonts.css). Playfair Display
+        // and JetBrains Mono were named here but never shipped, so every
+        // rule that used them was silently falling back to something else.
         sans: [
-          "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto",
+          "Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto",
           "Helvetica Neue", "Arial", "Noto Sans", "system-ui", "sans-serif"
-        ],
-        serif: [
-          "Playfair Display", "Iowan Old Style", "Apple Garamond", "Baskerville",
-          "Palatino Linotype", "Times New Roman", "Georgia", "serif"
-        ],
-        mono: [
-          "JetBrains Mono", "ui-monospace", "SF Mono", "Cascadia Code", "Roboto Mono",
-          "Menlo", "Consolas", "Liberation Mono", "monospace"
-        ],
-        display: [
-          "Playfair Display", "Iowan Old Style", "Apple Garamond", "Baskerville",
-          "Palatino Linotype", "Times New Roman", "Georgia", "serif"
         ],
         body: [
-          "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto",
+          "Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto",
           "Helvetica Neue", "Arial", "Noto Sans", "system-ui", "sans-serif"
+        ],
+        display: ["Space Grotesk", "Inter", "system-ui", "sans-serif"],
+        mono: [
+          "DM Mono", "ui-monospace", "SF Mono", "Cascadia Code", "Menlo",
+          "Consolas", "Liberation Mono", "monospace"
+        ],
+        serif: [
+          "Iowan Old Style", "Apple Garamond", "Baskerville",
+          "Palatino Linotype", "Georgia", "serif"
         ],
       },
       // ── Type scale. The only sizes that exist.
@@ -82,12 +78,13 @@ const config = {
       },
       // ── 8px grid. No Fibonacci. Predictable.
       spacing: {
-        "4.5":  "18px",   // occasional micro-need
+        "4.5": "18px", // occasional micro-need
       },
       borderRadius: {
-        "sm":  "4px",
-        "md":  "6px",
-        "lg":  "8px",
+        sm: "2px",
+        md: "4px",
+        lg: "6px",
+        DEFAULT: "2px",
       },
     },
   },
@@ -95,4 +92,3 @@ const config = {
 };
 
 export default config;
-

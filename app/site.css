@@ -3,21 +3,9 @@
    Site chrome: nav, footer, page rhythm.
    ============================================================ */
 
-/* ─── Public accent channel ───
-   The public site speaks one accent: green. The console keeps
-   --signal green for live product states. Inside the public route
-   group (nav, content, footer) the generic interactive-accent
-   aliases re-resolve to the green accent, so shared chrome and page
-   registers read one hue. The console, outside these elements, is
-   untouched. */
-.site-nav, .site-content, .site-footer {
-  --signal: var(--brass);
-  --signal-dim: var(--brass2);
-  --signal-strong: #059669;
-  --signal-a30: rgba(52, 211, 153, 0.30);
-  --signal-a08: rgba(52, 211, 153, 0.08);
-  --focus: var(--brass);
-}
+/* The public site and the console share one accent (--signal) and one
+   ground (--void). No per-chrome re-mapping: a second accent channel
+   is how a design system forks into dialects. */
 
 /* ─── Site nav ─── */
 
@@ -25,7 +13,7 @@
   position: sticky;
   top: 0;
   z-index: 80;
-  background: rgba(6, 8, 7, 0.8);
+  background: var(--float);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--rule);
@@ -33,8 +21,8 @@
 }
 
 .site-nav.scrolled {
-  background: rgba(6, 8, 7, 0.95);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  background: var(--glass);
+  box-shadow: var(--shadow-deep);
 }
 
 .nav-inner {
@@ -107,7 +95,7 @@
 }
 
 .site-nav .nav-brand:hover .nav-brand-mark::after {
-  color: #08120D;
+  color: #ffffff;
 }
 
 .site-nav .nav-brand-text {
@@ -541,9 +529,9 @@
 }
 
 .site-action {
-  background: var(--brass);
-  border-color: var(--brass);
-  color: #101010;
+  background: var(--signal-strong);
+  border-color: var(--signal-strong);
+  color: #ffffff;
 }
 
 .site-action:hover {
@@ -597,8 +585,8 @@
   margin-left: 12px;
   padding: 0 15px;
   border: 1px solid var(--brass);
-  background: var(--brass);
-  color: #101010;
+  background: var(--signal-strong);
+  color: #ffffff;
   font-family: var(--font-dm);
   font-size: 10px;
   font-weight: 500;

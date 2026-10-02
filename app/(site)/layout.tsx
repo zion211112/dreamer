@@ -1,6 +1,5 @@
 import { SiteFrame } from "../../components/SiteFrame";
 import "../site.css";
-import "./sublime.css";
 
 // The site chrome lives in a client frame so the one route that is a product
 // rather than a page — the protocol node at "/" — can opt out of it.

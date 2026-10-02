@@ -10,37 +10,116 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Design Tokens (Atomic) ─── */
-
 :root {
-  /* Surfaces — Technical Void */
-  --void:   #040405;        /* Deepest black-slate */
-  --panel:  #08080A;        /* Component frame */
-  --edge:   #0E0E10;        /* Hover, active */
-  --surface: #121214;
+  /* ═══════════════════════════════════════════════════════════
+     APT-LABS — the single design system.
 
-  /* Borders */
-  --rule:   #1A1A1D;        /* Subtle divider */
-  --strong: #2A2A2F;        /* Active element */
-  --focus:  #58585C;        /* Focus ring */
+     One block. One ground. One accent. Every other token below is
+     an alias kept only because a stylesheet still references the
+     older name; retire the alias, not the file.
 
-  /* Typography */
-  --text:   #FAFAFA;        /* Primary */
-  --dim:    #9BA39C;        /* Secondary */
-  --mute:   #555F58;        /* Tertiary */
-  --block:  #333338;        /* Timed/defunct */
+     Ground is warm paper. Rules are ink at low alpha. The single
+     accent speaks only where something is actionable or evidenced.
+     ═══════════════════════════════════════════════════════════ */
 
-  /* Signal — Technical Accent (Tailwind green-400) */
-  --sig:    #34D399;        /* Primary interactive */
-  --sig-dim: #10B981;       /* Hover */
-  --sig-sub: #065F46;       /* Darker */
-  --sig-soft: rgba(52, 211, 153, 0.10);     /* Subtle tint */
+  /* Surfaces */
+  --void:           #f6f6f4;
+  --panel:          #ffffff;
+  --edge:           #f0f0ed;
+  --surface:        #ffffff;
+  --surface-void:   var(--void);
+  --surface-panel:  var(--panel);
+  --surface-raised: #ffffff;
+  --surface-hover:  var(--edge);
+  --float:          rgba(246, 246, 244, 0.88);
+  --glass:          rgba(255, 255, 255, 0.94);
 
-  /* Status */
-  --tag-verified: #10B981;
-  --tag-planned:  #96A6BE;
-  --tag-unknown:  #52525B;
+  /* Rules — the only material on this surface */
+  --rule:           rgba(22, 26, 30, 0.09);
+  --border-subtle:  var(--rule);
+  --rule-2:         rgba(22, 26, 30, 0.16);
+  --border-strong:  rgba(22, 26, 30, 0.30);
+  --strong:         rgba(22, 26, 30, 0.30);
+  --rule-3:         var(--border-strong);
+  --focus:          #0e8f5e;
+
+  /* Ink — AA or better on --void. quiet tiers are held to 4.5:1
+     because they carry 9-10px instrument labels. */
+  --ink:            #14181c;
+  --dust:           #39414a;
+  --ash:            #626b74;
+  --quiet:          #646c77;
+  --text-primary:   var(--ink);
+  --text-secondary: var(--dust);
+  --text-tertiary:  var(--ash);
+
+  /* Signal — the one accent, darkened to hold AA on paper */
+  --signal:         #0e8f5e;
+  --signal-dim:     #0a6e48;
+  --signal-strong:  #085537;
+  --signal-a30:     rgba(14, 143, 94, 0.30);
+  --signal-a08:     rgba(14, 143, 94, 0.08);
+  --signal-soft:    rgba(14, 143, 94, 0.08);
+  --sig:            var(--signal);
+  --sig-dim:        var(--signal-dim);
+  --sig-sub:        var(--signal-strong);
+  --sig-soft:       var(--signal-soft);
+
+  /* Semantic states */
+  --amber:          #9a6b12;
+  --amber-2:        #7e5610;
+  --amber-line:     rgba(154, 107, 18, 0.36);
+  --danger:         #b23a2e;
+  --danger-2:       #962e24;
+  --verified:       var(--signal);
+  --planned:        var(--amber);
+  --unknown:        var(--quiet);
+  --tag-verified:   var(--signal);
+  --tag-planned:    var(--amber);
+  --tag-unknown:    var(--quiet);
+
+  /* Washes — named so no rule hardcodes an alpha again */
+  --wash:           rgba(20, 24, 28, 0.020);
+  --wash-2:         rgba(20, 24, 28, 0.040);
+  --tint:           rgba(14, 143, 94, 0.055);
+  --tint-2:         rgba(14, 143, 94, 0.11);
+
+  /* Depth — a light surface has no drop shadow; edges only */
+  --top-light:      none;
+  --shadow-soft:    0 1px 2px rgba(20, 24, 28, 0.05);
+  --shadow-deep:    0 12px 34px rgba(20, 24, 28, 0.10);
+
+  /* Type — only self-hosted families. Playfair and JetBrains were
+     referenced but never loaded, so every use silently fell back. */
+  --font-inter:   "Inter";
+  --font-grotesk: "Space Grotesk";
+  --font-dmmono:  "DM Mono";
+  --font-sans:    var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                  "Helvetica Neue", Arial, "Noto Sans", system-ui, sans-serif;
+  --font-display: var(--font-grotesk), "Space Grotesk", system-ui, sans-serif;
+  --font-dm:      var(--font-dmmono), "DM Mono", ui-monospace, Menlo, Consolas, monospace;
+  /* Legacy names still referenced by older stylesheets. Aliased to the
+     loaded families only — Playfair Display and JetBrains Mono were named
+     but never shipped, so every use was already falling back silently. */
+  --font-mono:    var(--font-dm);
+  --font-serif:   "Iowan Old Style", "Apple Garamond", Baskerville, "Palatino Linotype", Georgia, serif;
+
+  /* ─── Legacy aliases ───
+     Kept only because a stylesheet still uses the older name. Each one
+     resolves to the canonical token above; none introduces a new value.
+     Retire the alias at the call site, never by redefining it here. */
+  --brass:     var(--signal);
+  --brass2:    var(--signal-dim);
+  --text:      var(--ink);
+
+  /* Layout */
+  --max:    1480px;
+  --pad:    clamp(16px, 2.8vw, 42px);
+  --radius: 2px;
+  --ease:   cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+/* ─── Design Tokens (Atomic) ─── */
 
 /* ─── Base Reset ─── */
 
@@ -52,7 +131,7 @@ html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
@@ -126,84 +205,6 @@ body {
 
 
 
-:root {
-  /* Surfaces — warm graphite, deepest to raised.
-     R≈G>B by a hair: the site is lit warm, never a cold black.
-     This ramp also feeds the console; its live green (--signal)
-     still carries product state on top. */
-  --void:   #060807;
-  --panel:  #0B0E0C;
-  --edge:   #111513;
-  --rule:   #26241E;
-
-  /* Semantic surface aliases — components should consume meaning, not hex. */
-  --surface-void:   var(--void);
-  --surface-panel:  var(--panel);
-  --surface-raised: #101413;
-  --surface-hover:  var(--edge);
-  --text-primary:   var(--ink);
-  --text-secondary: var(--dust);
-  --text-tertiary:  var(--ash);
-  --border-subtle:  var(--rule);
-  --border-strong:  #333B35;
-  --strong:         #2E352F;
-  --verified:       #34D399;
-  --planned:       #96A6BE;
-  --unknown:        #9EA79F;
-  --focus:          var(--signal);
-
-  /* Text — brighter, cleaner warm ramp. The old warm-gray-on-cold-black
-     read muddy; on warm graphite it is quiet but crisp.
-     Contrast on --void / --panel / --edge:
-     --ink ≈ 17.4 / 16.4 / 15.2  ·  --dust ≈ 7.4 / 7.0 / 6.5  ·  --ash ≈ 5.6 / 5.3 / 4.9
-     All three clear WCAG AA (4.5:1) for body text on every surface. */
-  --ink:    #F2F5F2;
-  --dust:   #A9B2AB;
-  --ash:    #8A928B;
-
-  /* Accent — one interactive color: the console's live green.
-     Public chrome re-resolves these aliases to the green accent inside
-     .site-nav / .site-content / .site-footer (see site.css). */
-  --signal:      #34D399;
-  --signal-dim:  #10B981;
-  --signal-strong:#059669;
-  /* Signal at low alpha — tinted surfaces (beacon, chip, focus ring).
-     Undefined here they collapse the whole declaration, leaving
-     transparent backgrounds/borders on controls that use them. */
-  --signal-a30:  rgba(52, 211, 153, 0.30);
-  --signal-a08:  rgba(52, 211, 153, 0.08);
-
-  /* Informational — never interactive */
-  --amber:  #D97706;
-  --danger: #EF4444;
-
-  /* Site accent — green. The public accent is the green the site ran
-     on before the brass experiment (Technical Void teal-400): one
-     interactive hue across public chrome, hero and console. --ice
-     stays the quiet cool counter, used by aura light only. */
-  --brass:  #34D399;
-  --brass2: #6EE7B7;
-  --green:  #41A873;
-  --ice:    #7FA0C2;
-
-  /* Sublime depth — light comes from above: a warm top-light hairline
-     over layered dark falloff. Consume the pair, not the raw values. */
-  --top-light:   inset 0 1px 0 rgba(214, 232, 219, 0.05);
-  --shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.42),
-                 inset 0 1px 0 rgba(214, 232, 219, 0.045);
-  --shadow-deep: 0 28px 70px rgba(0, 0, 0, 0.55),
-                 0 6px 18px rgba(0, 0, 0, 0.35),
-                 inset 0 1px 0 rgba(214, 232, 219, 0.055);
-
-  /* Semantic aliases */
-  --bg:       var(--void);
-  --fg:       var(--ink);
-  --muted:    var(--dust);
-  --border:   var(--rule);
-  --accent:   var(--signal);
-  --accent-hover: var(--signal-dim);
-}
-
 /* ─── Base ─── */
 
 html {
@@ -214,11 +215,20 @@ html {
   scroll-padding-top: 88px;
   /* Dark-only by design. Without this the UA paints native selects, date
      pickers and number spinners light-on-dark inside black panels. */
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 input, select, textarea {
-  color-scheme: dark;
+  color-scheme: light;
+}
+
+/* Tailwind's preflight sets ::placeholder to gray-400 (#9ca3af), which is
+   legible on a dark ground and only ~2.3:1 on paper. Placeholder is text,
+   so it is held to the same 4.5:1 as every other quiet tier. */
+input::placeholder,
+textarea::placeholder {
+  color: var(--quiet);
+  opacity: 1;
 }
 
 body {
@@ -233,26 +243,6 @@ body {
 }
 
 /* ─── Type families — self-hosted (fonts/font-face.css) with system fallbacks ─── */
-
-:root {
-  /* Base family hooks. These were previously set by next/font/google on
-     <html>; now they resolve to the self-hosted families loaded via
-     /fonts/font-face.css, so there is zero build-time font fetching. */
-  --font-inter: "Inter";
-  --font-grotesk: "Space Grotesk";
-  --font-dmmono: "DM Mono";
-  --font-playfair: "Playfair Display";
-  --font-jetbrains: "JetBrains Mono";
-
-  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-               "Helvetica Neue", Arial, "Noto Sans", system-ui, sans-serif;
-  --font-display: var(--font-grotesk), "Space Grotesk", system-ui, sans-serif;
-  --font-dm: var(--font-dmmono), "DM Mono", ui-monospace, Menlo, Consolas, monospace;
-  --font-serif: var(--font-playfair), "Iowan Old Style", "Apple Garamond", Baskerville,
-                "Palatino Linotype", "Times New Roman", Georgia, serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono",
-               Menlo, Consolas, "Liberation Mono", monospace;
-}
 
 /* ─── Focus ring — single source, all interactive ─── */
 
