@@ -19,36 +19,46 @@
    ============================================================ */
 
 :root {
-  /* Ground — near-black, lit only from above and right. */
-  --pn-void:   #05070a;
-  --pn-deep:   #080b10;
-  --pn-panel:  #0c1015;
-  --pn-raise:  #12171f;
-  --pn-float:  rgba(6, 9, 13, 0.86);
+  /* Ground — warm paper. The surface is a document, not a cockpit. */
+  --pn-void:   #f6f6f4;
+  --pn-deep:   #ffffff;
+  --pn-panel:  #ffffff;
+  --pn-raise:  #ffffff;
+  --pn-float:  rgba(246, 246, 244, 0.88);
+  --pn-glass:  rgba(255, 255, 255, 0.94);
 
-  /* Rules — the primary material of this surface. */
-  --pn-rule:    rgba(226, 236, 244, 0.055);
-  --pn-rule-2:  rgba(226, 236, 244, 0.11);
-  --pn-rule-3:  rgba(226, 236, 244, 0.22);
+  /* Rules — ink at low alpha. The only material on this surface. */
+  --pn-rule:    rgba(22, 26, 30, 0.09);
+  --pn-rule-2:  rgba(22, 26, 30, 0.16);
+  --pn-rule-3:  rgba(22, 26, 30, 0.30);
 
-  /* Ink — AA or better on --pn-void. */
-  --pn-ink:     #edf1ee;
-  --pn-ink-2:   #c2cac4;
-  --pn-muted:   #90988f;
-  --pn-quiet:   #717c75;
+  /* Ink — AA or better on --pn-void. quiet carries 9-10px instrument
+     labels, so it is held to 4.5:1, not 3:1; hierarchy is carried by size
+     and tracking rather than by dropping it below AA. */
+  --pn-ink:     #14181c;
+  --pn-ink-2:   #39414a;
+  --pn-muted:   #626b74;
+  --pn-quiet:   #646c77;
 
-  /* Signal — the one interactive accent. */
-  --pn-signal:      #34e39c;
-  --pn-signal-2:    #7ff0c4;
-  --pn-signal-soft: rgba(52, 227, 156, 0.07);
-  --pn-signal-line: rgba(52, 227, 156, 0.34);
+  /* Signal — the one accent. Darkened so it holds AA on paper. */
+  --pn-signal:      #0e8f5e;
+  --pn-signal-2:    #0a6e48;
+  --pn-signal-soft: rgba(14, 143, 94, 0.08);
+  --pn-signal-line: rgba(14, 143, 94, 0.38);
 
   /* States — colour that communicates, never colour that decorates. */
-  --pn-warn:      #d9a755;
-  --pn-warn-2:    #ecc27e;
-  --pn-warn-soft: rgba(217, 167, 85, 0.09);
-  --pn-stop:      #f0564f;
-  --pn-stop-2:    #f58a85;
+  --pn-warn:       #9a6b12;
+  --pn-warn-2:     #7e5610;
+  --pn-warn-soft:  rgba(154, 107, 18, 0.10);
+  --pn-warn-line:  rgba(154, 107, 18, 0.36);
+  --pn-stop:       #b23a2e;
+  --pn-stop-2:     #962e24;
+
+  /* Washes — named so no rule hardcodes an alpha again. */
+  --pn-wash:   rgba(20, 24, 28, 0.020);
+  --pn-wash-2: rgba(20, 24, 28, 0.040);
+  --pn-tint:   rgba(14, 143, 94, 0.055);
+  --pn-tint-2: rgba(14, 143, 94, 0.11);
 
   /* Type registers. */
   --pn-mono:    "DM Mono", ui-monospace, monospace;
@@ -72,9 +82,9 @@
   /* Layered ground: one whisper of green key light up-right,
      one cool counter-light at the left, a top fade. No glow. */
   background:
-    radial-gradient(1100px 600px at 82% -12%, rgba(52, 227, 156, 0.05), transparent 62%),
-    radial-gradient(900px 520px at -10% 28%, rgba(124, 158, 197, 0.05), transparent 62%),
-    linear-gradient(180deg, rgba(237, 241, 238, 0.022), transparent 300px),
+    radial-gradient(1100px 600px at 82% -12%, rgba(14, 143, 94, 0.05), transparent 62%),
+    radial-gradient(900px 520px at -10% 28%, rgba(96, 124, 160, 0.055), transparent 62%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.7), transparent 320px),
     var(--pn-void);
   color: var(--pn-ink);
   font-family: var(--pn-sans);
@@ -82,14 +92,14 @@
   line-height: 1.6;
   letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
-  color-scheme: dark;
+  color-scheme: light;
 }
 .protocol-node *, .protocol-node *::before, .protocol-node *::after { box-sizing: border-box; }
-.protocol-node input, .protocol-node select, .protocol-node textarea, .protocol-node button { color-scheme: dark; font: inherit; }
+.protocol-node input, .protocol-node select, .protocol-node textarea, .protocol-node button { color-scheme: light; font: inherit; }
 
 .protocol-node ::selection {
-  background: rgba(52, 227, 156, 0.3);
-  color: #04120b;
+  background: var(--pn-signal-line);
+  color: #ffffff;
 }
 
 /* Figures compare, words read: tabular numerals on instrument fields. */
@@ -127,7 +137,7 @@
   padding: 26px 20px 22px;
   border-right: 1px solid var(--pn-rule);
   background:
-    linear-gradient(180deg, rgba(12, 16, 21, 0.92), rgba(6, 9, 13, 0.86)),
+    linear-gradient(180deg, var(--pn-glass), var(--pn-float)),
     var(--pn-float);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -637,7 +647,7 @@
   transition: background-color var(--pn-fast) var(--pn-ease);
 }
 .pn-record:hover {
-  background: linear-gradient(90deg, rgba(237, 241, 238, 0.018), transparent 65%);
+  background: linear-gradient(90deg, var(--pn-wash), transparent 65%);
 }
 .pn-rowid {
   font-family: var(--pn-mono);
@@ -708,7 +718,7 @@
   margin: 0 0 22px;
   padding: 18px 20px 20px;
   border-left: 2px solid var(--pn-signal-line);
-  background: rgba(237, 241, 238, 0.015);
+  background: var(--pn-wash);
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px 32px;
@@ -736,45 +746,54 @@
 }
 
 /* ============================================================
-   LOOP GRAPH — the node's central claim, drawn as the thing it
-   claims to be. Deterministic authored geometry, never physics.
-   Hairline edges, node cards as real records, one inspector.
+   LOOP CONSOLE — the graph is the interface.
+   Nodes are points, not cards. The line carries the evidence:
+   solid evidenced · dashed proposed · dotted illustrative ·
+   broken where the chain stops. Nothing is a card until the
+   operator asks for it.
    ============================================================ */
-.pn-graphwrap { margin-top: 8px; }
+.pn-console { margin-top: 6px; }
 
-.pn-graph {
+.pn-stage {
   position: relative;
   width: 100%;
   aspect-ratio: 12 / 7;
-  min-height: 420px;
-  border: 1px solid var(--pn-rule);
+  min-height: 440px;
   background:
-    linear-gradient(var(--pn-rule) 1px, transparent 1px) 0 0 / 100% 46px,
-    linear-gradient(90deg, var(--pn-rule) 1px, transparent 1px) 0 0 / 46px 100%;
+    radial-gradient(circle at 50% 50%, rgba(14, 143, 94, 0.045), transparent 62%);
+  border-block: 1px solid var(--pn-rule);
   overflow: hidden;
 }
 
-.pn-graph-edges {
+.pn-edges {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
-.pn-graph-edges path {
+.pn-edges-spine { display: none; }
+
+.pn-edge {
   fill: none;
   stroke: var(--pn-rule-3);
   stroke-width: 1.25;
-  transition: stroke var(--pn-mid) var(--pn-ease);
+  transition: stroke var(--pn-mid) var(--pn-ease), opacity var(--pn-mid) var(--pn-ease);
 }
-.pn-graph-edges path.is-lit {
-  stroke: var(--pn-signal-line);
-  stroke-width: 1.75;
-}
-#pn-arrow path { fill: var(--pn-rule-3); }
-#pn-arrow-lit path { fill: var(--pn-signal); }
+/* The line language. */
+.pn-edge.is-k-evidenced   { stroke: var(--pn-rule-3); }
+.pn-edge.is-k-proposed    { stroke: var(--pn-rule-3); stroke-dasharray: 7 5; }
+.pn-edge.is-k-illustrative{ stroke: var(--pn-rule-2); stroke-dasharray: 2 5; }
+.pn-edge.is-k-broken      { stroke: var(--pn-stop); stroke-width: 1.5; }
+.pn-edge.is-lit           { stroke: var(--pn-signal); stroke-width: 2; }
+.pn-edge.is-lit.is-k-proposed { stroke-dasharray: 7 5; }
+.pn-edge.is-lit.is-k-illustrative { stroke-dasharray: 2 5; }
+/* Unrelated edges recede; focus is a fade, never a removal. */
+.pn-stage:has(.pn-cnode.is-sel) .pn-edge:not(.is-lit) { opacity: 0.34; }
 
-/* Centre — the node identity. Small, quiet, never competing. */
-.pn-graph-core {
+.pn-gap { fill: var(--pn-void); stroke: var(--pn-stop); stroke-width: 1.4; }
+
+/* Centre — the node identity. Quiet, always present, never competing. */
+.pn-core {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -782,133 +801,359 @@
   text-align: center;
   pointer-events: none;
 }
-.pn-graph-core b {
+.pn-core b {
   display: block;
   font-family: var(--pn-mono);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--pn-ink-2);
-}
-.pn-graph-core span {
-  display: block;
-  margin-top: 6px;
-  font-family: var(--pn-mono);
-  font-size: 9.5px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.14em;
+  color: var(--pn-ink-2);
+}
+.pn-core span {
+  display: block;
+  margin-top: 5px;
+  font-family: var(--pn-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--pn-quiet);
 }
 
-/* Node — a record card, not a bubble. Reads at a glance, opens on demand. */
-.pn-gnode {
+/* Node — a point with a label. Nothing is a card until asked. */
+.pn-cnode {
   position: absolute;
+  left: var(--rx);
+  top: var(--ry);
   transform: translate(-50%, -50%);
-  width: 168px;
-  padding: 9px 11px 10px;
-  border: 1px solid var(--pn-rule-2);
-  border-left: 2px solid var(--pn-rule-3);
-  background: linear-gradient(180deg, rgba(237, 241, 238, 0.03), transparent 55%), var(--pn-void);
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  text-align: left;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px 6px 8px;
+  border: 1px solid transparent;
+  background: none;
   cursor: pointer;
-  transition: border-color var(--pn-fast) var(--pn-ease),
-              background-color var(--pn-fast) var(--pn-ease),
-              transform var(--pn-fast) var(--pn-ease);
+  text-align: left;
+  transition: opacity var(--pn-mid) var(--pn-ease),
+              border-color var(--pn-fast) var(--pn-ease),
+              background-color var(--pn-fast) var(--pn-ease);
 }
-.pn-gnode:hover { border-color: var(--pn-rule-3); }
-.pn-gnode.is-sel {
-  border-color: var(--pn-signal-line);
-  border-left-color: var(--pn-signal);
-  background: linear-gradient(180deg, rgba(52, 227, 156, 0.05), transparent 60%), var(--pn-void);
+.pn-cnode:hover { border-color: var(--pn-rule-2); background: var(--pn-wash); }
+.pn-cnode.is-sel {
+  border-color: var(--pn-rule-2);
+  background: var(--pn-panel);
+  box-shadow: 0 1px 2px rgba(20, 24, 28, 0.05);
 }
-.pn-gnode > i {
+.pn-cnode.is-dim { opacity: 0.32; }
+
+/* Node scale carries importance. The verified seal is the heaviest point. */
+.pn-cnode-mark {
+  flex: none;
+  width: calc(9px * var(--w, 1));
+  height: calc(9px * var(--w, 1));
+  background: var(--pn-ink-2);
+  transform: rotate(45deg);
+  transition: background-color var(--pn-fast) var(--pn-ease),
+              box-shadow var(--pn-fast) var(--pn-ease);
+}
+.pn-cnode.is-sel .pn-cnode-mark {
+  background: var(--pn-signal);
+  box-shadow: 0 0 0 3px var(--pn-signal-soft);
+}
+.pn-cnode-body i {
+  display: block;
   font-style: normal;
-  font-family: var(--pn-mono);
-  font-size: 9.5px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  color: var(--pn-signal-2);
-}
-.pn-gnode > b {
-  font-family: var(--pn-display);
-  font-weight: 600;
-  font-size: 13px;
-  line-height: 1.3;
-  letter-spacing: -0.01em;
-  color: var(--pn-ink);
-}
-.pn-gstate {
-  align-self: start;
-  margin-top: 2px;
-  padding: 3px 7px;
-  border: 1px solid var(--pn-rule-2);
   font-family: var(--pn-mono);
   font-size: 9px;
   font-weight: 500;
   letter-spacing: 0.1em;
-  text-transform: uppercase;
+  color: var(--pn-quiet);
+}
+.pn-cnode-body b {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--pn-display);
+  font-weight: 600;
+  font-size: 12.5px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--pn-ink);
   white-space: nowrap;
 }
-.pn-gstate.pn-ladder-state--recorded  { color: var(--pn-ink-2);  border-color: var(--pn-rule-3); }
-.pn-gstate.pn-ladder-state--planned   { color: var(--pn-warn-2); border-color: rgba(217, 167, 85, 0.34); }
-.pn-gstate.pn-ladder-state--verified  { color: var(--pn-signal-2); border-color: var(--pn-signal-line); }
+.pn-cnode.is-sel .pn-cnode-body b { color: var(--pn-signal-2); }
 
-/* Inspector — selection detail below the canvas. */
-.pn-inspect {
-  margin-top: 1px;
-  padding: 16px 18px;
-  border: 1px solid var(--pn-rule);
-  border-top: 0;
-  background: rgba(237, 241, 238, 0.014);
+/* Legend — the line language, stated once, in words. */
+.pn-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 26px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
 }
-.pn-inspect-head {
+.pn-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--pn-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pn-muted);
+}
+.pn-legend li::before {
+  content: "";
+  width: 26px;
+  height: 0;
+  flex: none;
+  border-top: 1.5px solid var(--pn-rule-3);
+}
+.pn-legend li.is-k-proposed::before { border-top-style: dashed; }
+.pn-legend li.is-k-illustrative::before { border-top-style: dotted; border-top-width: 2px; }
+.pn-legend li.is-k-broken::before { border-top-color: var(--pn-stop); border-top-style: solid; }
+
+/* Timeline — the trace, scrubbable. */
+.pn-timeline {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid var(--pn-rule);
+}
+.pn-timeline-cap {
+  font-family: var(--pn-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--pn-quiet);
+}
+.pn-ticks {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2px;
+}
+.pn-tick {
+  position: relative;
+  display: block;
+  padding: 14px 8px 0 0;
+  border: 0;
+  border-top: 1px solid var(--pn-rule-2);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--pn-fast) var(--pn-ease);
+}
+.pn-tick:hover { border-top-color: var(--pn-rule-3); }
+.pn-tick.is-on { border-top-color: var(--pn-signal); }
+.pn-tick-dot {
+  position: absolute;
+  left: 0;
+  top: -3.5px;
+  width: 6px;
+  height: 6px;
+  background: var(--pn-rule-3);
+  transform: rotate(45deg);
+  transition: background-color var(--pn-fast) var(--pn-ease);
+}
+.pn-tick.is-on .pn-tick-dot { background: var(--pn-signal); }
+.pn-tick i {
+  display: block;
+  font-style: normal;
+  font-family: var(--pn-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--pn-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.pn-tick em {
+  display: block;
+  margin-top: 3px;
+  font-style: normal;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--pn-quiet);
+}
+.pn-tick.is-on em { color: var(--pn-muted); }
+
+/* Inspector — chain + contract. The audit surface. */
+.pn-inspector {
+  margin-top: 26px;
+  padding: 22px 24px 24px;
+  border: 1px solid var(--pn-rule);
+  background: var(--pn-panel);
+}
+.pn-inspector-head {
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
   gap: 12px;
 }
-.pn-inspect-head b {
+.pn-inspector-head b {
   font-family: var(--pn-mono);
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.1em;
   color: var(--pn-signal-2);
 }
-.pn-inspect-head > span {
+.pn-inspector-head > span {
   font-family: var(--pn-display);
   font-weight: 600;
-  font-size: 14px;
-  letter-spacing: -0.01em;
+  font-size: 16px;
+  letter-spacing: -0.015em;
   color: var(--pn-ink);
 }
 .pn-inspect-state {
-  padding: 3px 8px;
+  padding: 3px 9px;
   border: 1px solid var(--pn-rule-2);
   font-family: var(--pn-mono);
   font-size: 9.5px;
   font-weight: 500;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   white-space: nowrap;
 }
-.pn-inspect-state.pn-ladder-state--recorded  { color: var(--pn-ink-2);  border-color: var(--pn-rule-3); }
-.pn-inspect-state.pn-ladder-state--planned   { color: var(--pn-warn-2); border-color: rgba(217, 167, 85, 0.34); }
-.pn-inspect-state.pn-ladder-state--verified  { color: var(--pn-signal-2); border-color: var(--pn-signal-line); }
-.pn-inspect p {
-  margin: 11px 0 0;
+.pn-inspect-state.is-t-recorded   { color: var(--pn-ink-2);    border-color: var(--pn-rule-3); }
+.pn-inspect-state.is-t-planned    { color: var(--pn-warn-2);   border-color: var(--pn-warn-line); }
+.pn-inspect-state.is-t-verified   { color: var(--pn-signal-2); border-color: var(--pn-signal-line); }
+.pn-inspect-state.is-t-illustrative { color: var(--pn-quiet);  border-color: var(--pn-rule-2); }
+.pn-inspector-detail {
+  margin: 12px 0 0;
   max-width: var(--pn-measure);
   font-size: 13px;
   line-height: 1.65;
   color: var(--pn-muted);
 }
 
-.pn-ladder-state--recorded { color: var(--pn-ink-2); border-color: var(--pn-rule-3); }
-.pn-ladder-state--verified { color: var(--pn-signal-2); border-color: var(--pn-signal-line); }
+.pn-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 40px;
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid var(--pn-rule);
+}
+.pn-chain, .pn-contract { margin: 0; padding: 0; list-style: none; }
+.pn-chain li {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--pn-rule);
+  font-family: var(--pn-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--pn-ink-2);
+}
+.pn-chain li span {
+  font-size: 9px;
+  color: var(--pn-quiet);
+  font-variant-numeric: tabular-nums;
+}
+.pn-contract li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--pn-rule);
+  font-family: var(--pn-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.pn-contract li span { width: 12px; flex: none; text-align: center; }
+.pn-ok { color: var(--pn-ink-2); }
+.pn-ok span { color: var(--pn-signal); }
+.pn-no { color: var(--pn-quiet); }
+.pn-no span { color: var(--pn-stop); }
+
+.pn-replay {
+  margin-top: 16px;
+  min-height: 30px;
+  padding: 0 13px;
+  border: 1px solid var(--pn-rule-2);
+  background: none;
+  color: var(--pn-muted);
+  font-family: var(--pn-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--pn-fast) var(--pn-ease), border-color var(--pn-fast) var(--pn-ease);
+}
+.pn-replay:hover { color: var(--pn-ink); border-color: var(--pn-rule-3); }
+
+/* Command — the keyboard layer. */
+.pn-cmd {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  padding: 0 14px;
+  border: 1px solid var(--pn-rule-2);
+  background: var(--pn-panel);
+}
+.pn-cmd:focus-within { border-color: var(--pn-signal-line); }
+.pn-cmd-sigil {
+  font-family: var(--pn-mono);
+  font-size: 12px;
+  color: var(--pn-signal);
+}
+.pn-cmd-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  border: 0;
+  background: none;
+  font-family: var(--pn-mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--pn-ink);
+}
+.pn-cmd-input::placeholder { color: var(--pn-quiet); }
+.pn-cmd-input:focus { outline: none; }
+
+.pn-cmd-hits {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 1px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--pn-rule-2);
+  background: var(--pn-panel);
+  box-shadow: 0 6px 20px rgba(20, 24, 28, 0.08);
+}
+.pn-cmd-hits button {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  width: 100%;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 0;
+  background: none;
+  text-align: left;
+  font-family: var(--pn-display);
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--pn-ink);
+  cursor: pointer;
+}
+.pn-cmd-hits button:hover { background: var(--pn-wash); }
+.pn-cmd-hits i {
+  font-style: normal;
+  font-family: var(--pn-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--pn-signal-2);
+}
 
 /* ============================================================
    SURFACE LADDER — each surface as the stages it runs and the
@@ -934,7 +1179,7 @@
   transition: background-color var(--pn-fast) var(--pn-ease);
 }
 .pn-ladder-row:hover {
-  background: linear-gradient(90deg, rgba(237, 241, 238, 0.018), transparent 65%);
+  background: linear-gradient(90deg, var(--pn-wash), transparent 65%);
 }
 .pn-ladder-id b {
   display: block;
@@ -973,7 +1218,7 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--pn-ink-2);
-  background: rgba(237, 241, 238, 0.012);
+  background: var(--pn-wash);
 }
 .pn-ladder-stage i {
   font-style: normal;
@@ -995,7 +1240,7 @@
 /* State speaks in ink and border. Green marks a surface that runs;
    amber marks one whose sequence is defined but not yet reached. */
 .pn-ladder-state--live      { color: var(--pn-signal-2); border-color: var(--pn-signal-line); }
-.pn-ladder-state--planned   { color: var(--pn-warn-2);   border-color: rgba(217, 167, 85, 0.34); }
+.pn-ladder-state--planned   { color: var(--pn-warn-2);   border-color: var(--pn-warn-line); }
 .pn-ladder-state--prototype { color: var(--pn-ink-2);    border-color: var(--pn-rule-3); }
 
 .pn-footnote {
@@ -1259,7 +1504,7 @@
 }
 .pn-action:hover {
   border-color: var(--pn-rule-3);
-  background: rgba(237, 241, 238, 0.02);
+  background: var(--pn-wash);
   transform: translateY(-1px);
 }
 .pn-action--primary {
@@ -1269,7 +1514,7 @@
 }
 .pn-action--primary:hover {
   border-color: var(--pn-signal);
-  background: rgba(52, 227, 156, 0.13);
+  background: var(--pn-tint-2);
 }
 
 /* ============================================================
@@ -1300,7 +1545,7 @@
 }
 .pn-card--gold::before { background: var(--pn-warn); }
 .pn-card:hover {
-  background: linear-gradient(180deg, rgba(237, 241, 238, 0.016), transparent 55%);
+  background: linear-gradient(180deg, var(--pn-wash), transparent 55%);
   border-top-color: var(--pn-rule-3);
   transform: translateY(-2px);
 }
@@ -1365,7 +1610,7 @@
   transition: background-color var(--pn-fast) var(--pn-ease);
 }
 .pn-juryrow:hover {
-  background: linear-gradient(90deg, rgba(237, 241, 238, 0.014), transparent 60%);
+  background: linear-gradient(90deg, var(--pn-wash), transparent 60%);
 }
 .pn-jid {
   font-family: var(--pn-mono);
@@ -1529,9 +1774,10 @@
   .pn-jstate { grid-column: 2; }
   /* Tablet: the ring survives, tightened. Nodes and stage cells compress;
      the loop list below remains the full-detail reading. */
-  .pn-graph { min-height: 360px; }
-  .pn-gnode { width: 138px; padding: 7px 9px 8px; }
-  .pn-gnode > b { font-size: 11.5px; }
+  /* Tablet: the ring survives, tightened. */
+  .pn-stage { min-height: 360px; }
+  .pn-cnode-body b { font-size: 11.5px; }
+  .pn-tick em { display: none; }
   .pn-ladder-row { grid-template-columns: 130px minmax(0, 1fr); gap: 14px; }
   .pn-ladder-state { grid-column: 2; justify-self: start; }
   .pn-ladder-stages { gap: 2px; }
@@ -1549,11 +1795,27 @@
   .pn-build-top { grid-template-columns: 40px minmax(0, 1fr); gap: 4px 14px; }
   .pn-build-state { grid-column: 2; justify-self: start; }
   .pn-example-head { flex-wrap: wrap; }
-  /* The ring cannot hold six readable records at 360px. Rather than
-     shrink it into illegibility, the loop becomes the ordered list it
-     already is below the canvas — the graph is the desktop reading. */
-  .pn-graph { display: none; }
-  .pn-graphwrap .pn-inspect { display: none; }
+  /* Mobile is a re-composition, not a collapse. The ring cannot hold six
+     labelled records at 360px, so the loop becomes the evidence spine:
+     a vertical chain read top to bottom, with the return traced up the
+     left gutter. Same data, same line language, different composition. */
+  .pn-stage { aspect-ratio: 400 / 640; min-height: 0; }
+  .pn-edges { display: none; }
+  .pn-edges-spine { display: block; }
+  .pn-core { display: none; }
+  .pn-cnode {
+    left: var(--sx);
+    top: var(--sy);
+    transform: translate(-12.5px, -50%);
+    max-width: calc(100% - var(--sx) - 10px);
+    padding: 7px 8px 7px 0;
+  }
+  .pn-cnode-body b { white-space: normal; font-size: 12px; }
+  .pn-split { grid-template-columns: 1fr; gap: 28px; }
+  .pn-inspector { padding: 18px 16px 20px; }
+  .pn-ticks { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 2px; }
+  .pn-legend { gap: 6px 16px; }
+  .pn-timeline { grid-template-columns: 54px minmax(0, 1fr); gap: 12px; }
   .pn-row {
     grid-template-columns: 40px minmax(0, 1fr);
     grid-template-rows: auto auto auto;
