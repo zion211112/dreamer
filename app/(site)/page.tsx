@@ -7,7 +7,7 @@ import { Tally } from "@/components/site/Tally";
 import { EmptyState } from "@/components/site/EmptyState";
 import { StateTag } from "@/components/site/StateTag";
 import {
-  BUILDS,
+  BUILD_RULE,
   COMPANY,
   CONSOLE,
   MEASURES,
@@ -68,11 +68,27 @@ export default function FieldPage() {
             fact, it preserves the uncertainty instead of resolving it in its
             own favour.
           </p>
+          <p>
+            And it is not a brochure. You can put your name on the roll, post
+            work that needs doing, take a seat on a build, and vote on what
+            happens next. All of it runs on your own device and none of it is
+            sent to us, because there is no us to send it to — which means
+            every number below belongs to you alone until a way to count
+            across devices exists.
+          </p>
         </div>
 
+        {/* The offer, in the order a visitor can actually take it up:
+            sign, then post, then read. The console is deliberately not
+            the first thing offered — it is one build of six, and leading
+            with it is how this site came to describe a product instead
+            of offering the work. */}
         <div className="action-row" style={{ marginTop: "var(--s-4)" }}>
-          <Link href={CONSOLE.href} className="btn">
-            Open the console
+          <Link href="/builds" className="btn">
+            Take a seat on a build
+          </Link>
+          <Link href="/roll" className="btn-ghost">
+            Sign the roll
           </Link>
           <Link href="/register" className="btn-ghost">
             Read the register
@@ -336,36 +352,49 @@ export default function FieldPage() {
           The console is the last thing this page mentions on purpose —
           it is the most impressive thing here and the least
           representative of it. */}
-      <section className="section" aria-labelledby="state-heading">
+{/* ── WHAT YOU CAN DO ─────────────────────────────────
+          The closing move is an offer, not a count. Everything above
+          this line is the system described; this is the system you
+          can put your hands on. The console gets one row here and
+          nowhere else on the page, because it is one build of six
+          and it was quietly acting as the product. */}
+      <section className="section" aria-labelledby="act-heading">
         <div className="section-head">
-          <h2 className="section-title" id="state-heading">
-            Where this stands
+          <h2 className="section-title" id="act-heading">
+            What you can do here
           </h2>
-          <p className="section-kicker">
-            <span className="figure">{BUILDS.length}</span> builds ·{" "}
-            <span className="figure">1</span> built
-          </p>
+          <p className="section-kicker">On this device · nothing transmitted</p>
         </div>
 
-        <div className="register" role="table" aria-labelledby="state-heading">
+        <div className="register" role="table" aria-labelledby="act-heading">
           <div className="register-row register--std" role="row">
             <div className="register-cell register-cell--id" role="cell">
               <div className="register-id">01</div>
               <div className="register-name" style={{ marginTop: 4 }}>
-                {CONSOLE.name}
+                <Link href="/builds" className="link">
+                  Take a seat on a build
+                </Link>
               </div>
             </div>
-            <div className="register-cell" role="cell" data-field="Records">
-              <div>{CONSOLE.oneLine}</div>
+            <div className="register-cell" role="cell" data-field="Does">
+              <div>
+                Read open work, raise a hand for the builder or reviewer
+                seat with a line of why, record progress against the build
+                you hold, attest to what is finished, or post work of your
+                own with a written definition of done.
+              </div>
               <div className="register-provenance" style={{ marginTop: 8 }}>
-                {CONSOLE.provenance}
+                A vote recorded here counts on this device only. It is a
+                signal, not a mandate — there is no server and no way yet to
+                count across devices, so no tally on this site describes
+                anybody but you.
               </div>
             </div>
-            <div className="register-cell" role="cell" data-field="Runs">
-              <div className="register-date">On device</div>
+            <div className="register-cell" role="cell" data-field="Needs">
+              <div className="register-date">A name on the roll</div>
             </div>
             <div className="register-cell" role="cell" data-field="State">
-              <StateTag state={CONSOLE.state} />
+              <StateTag state="PROTOTYPE" />
             </div>
           </div>
 
@@ -373,28 +402,71 @@ export default function FieldPage() {
             <div className="register-cell register-cell--id" role="cell">
               <div className="register-id">02</div>
               <div className="register-name" style={{ marginTop: 4 }}>
-                Every other build
+                <Link href="/roll" className="link">
+                  Sign the roll
+                </Link>
               </div>
             </div>
-            <div className="register-cell" role="cell" data-field="Records">
-              <div className="register-provenance" style={{ maxWidth: "62ch" }}>
-                Designed against the same chain and the same custody boundary,
-                and not built. No code, no schema and no data for any of them
-                exists in this repository, so no figure appears beside their
-                names anywhere on this site.
+            <div className="register-cell" role="cell" data-field="Does">
+              <div>
+                Put a handle, an occupation and a location to the register,
+                answer eight questions, and read the tier your answers give
+                you. Then export the roll as CSV or JSON, with its master
+                hash.
+              </div>
+              <div className="register-provenance" style={{ marginTop: 8 }}>
+                The seal is a hash of your own record on your own device. It
+                says the record has not changed since you sealed it. It is
+                not an identity, not a credential, and not a token of
+                anything.
               </div>
             </div>
-            <div className="register-cell" role="cell" data-field="Runs">
-              <div className="register-date">Nowhere</div>
+            <div className="register-cell" role="cell" data-field="Needs">
+              <div className="register-date">Nothing</div>
             </div>
             <div className="register-cell" role="cell" data-field="State">
-              <StateTag state="PLANNED" />
+              <StateTag state="PROTOTYPE" />
+            </div>
+          </div>
+
+          <div className="register-row register--std" role="row">
+            <div className="register-cell register-cell--id" role="cell">
+              <div className="register-id">03</div>
+              <div className="register-name" style={{ marginTop: 4 }}>
+                <Link href={CONSOLE.href} className="link">
+                  {CONSOLE.name}
+                </Link>
+              </div>
+            </div>
+            <div className="register-cell" role="cell" data-field="Does">
+              <div>{CONSOLE.oneLine}</div>
+              <div className="register-provenance" style={{ marginTop: 8 }}>
+                {CONSOLE.provenance}
+              </div>
+            </div>
+            <div className="register-cell" role="cell" data-field="Needs">
+              <div className="register-date">On device</div>
+            </div>
+            <div className="register-cell" role="cell" data-field="State">
+              <StateTag state={CONSOLE.state} />
             </div>
           </div>
         </div>
 
-        <div style={{ marginTop: "var(--s-4)" }}>
-          <Tally records={BUILDS} caption="builds" />
+        <p className="local-note" style={{ marginTop: "var(--s-4)" }}>
+          <strong>{BUILD_RULE}</strong> {CONSOLE.name} is the one build with a
+          surface behind it, and it is nearly finished. Finishing it is not
+          what makes it yours: the grammar it runs is the same one every
+          other row above runs, and it stays open to whoever continues.
+        </p>
+
+        <div className="action-row" style={{ marginTop: "var(--s-4)" }}>
+          <Link href="/builds" className="btn">
+            Open the build floor
+          </Link>
+          <Link href="/roll" className="btn-ghost">
+            Sign the roll
+          </Link>
         </div>
       </section>
     </>
