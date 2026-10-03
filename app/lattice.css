@@ -1,0 +1,573 @@
+/* ============================================================
+   APT-LABS — THE LATTICE
+
+   The canvas surface. Its own stylesheet, for the same reason
+   floor.css is: this is the one place on the site whose job is to
+   let a person *do* something to the topology rather than read
+   about it, and that is worth being able to read on its own.
+
+   Nothing here introduces a new constant. Every colour is a token
+   from app/globals.css, every size is a step on the ladder, and
+   every space is --s-*. The only literal lengths are card widths,
+   which the ring radii in lib/lattice.ts are written against.
+   ============================================================ */
+
+/* ── The frame ─────────────────────────────────────────────── */
+
+.lattice { margin-top: var(--s-4); }
+
+.lattice-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-bottom: var(--s-3);
+}
+
+/* The reading order. Five stations, one line, always in the same
+   place — the same argument as the site's own compact spine, and
+   the reason a reader never has to go looking for where they are. */
+.lattice-order-group { min-width: 0; }
+.lattice-order-group .index-group-key { margin: 0 0 6px; }
+
+.lattice-order {
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 0;
+  border-top: 1px solid var(--rule-2);
+  border-bottom: 1px solid var(--rule-2);
+  background: rgba(10, 14, 21, 0.4);
+}
+
+.lattice-order-cell {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 10px var(--s-3);
+  border: 0;
+  border-left: 1px solid var(--rule);
+  background: transparent;
+  font: inherit;
+  color: var(--ash);
+  cursor: pointer;
+  transition: color 140ms ease, background-color 140ms ease;
+}
+.lattice-order-cell:first-child { border-left: 0; }
+.lattice-order-cell:hover { color: var(--ink); background: var(--wash); }
+
+.lattice-order-ord {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  color: var(--quiet);
+}
+.lattice-order-name {
+  font-family: var(--font-display);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: var(--ls-label);
+}
+
+.lattice-order-cell .port { position: absolute; left: var(--s-3); bottom: -4px; }
+.lattice-order-cell[data-selected] { color: var(--ink); background: var(--wash); }
+.lattice-order-cell[data-selected] .lattice-order-ord { color: var(--signal); }
+
+.lattice-tools { display: flex; align-items: center; gap: var(--s-2); }
+
+/* ── Stage: canvas beside record ────────────────────────────── */
+
+.lattice-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 336px;
+  gap: var(--s-3);
+  align-items: stretch;
+}
+
+/* The height is declared, not inherited. The engine sizes itself to
+   100% of its parent and reports a zero-height pane otherwise, which
+   renders as a blank surface with no error anywhere. */
+.lattice-canvas {
+  height: 896px;
+  border: 1px solid var(--rule-2);
+  border-radius: 2px;
+  background:
+    radial-gradient(70% 50% at 50% 44%, var(--signal-a08), transparent 70%),
+    var(--panel);
+  overflow: hidden;
+}
+
+.lattice-record {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--s-3) var(--s-3) var(--s-4);
+  border: 1px solid var(--rule-2);
+  border-radius: 2px;
+  background:
+    linear-gradient(180deg, var(--lift), rgba(10, 14, 21, 0) 38%),
+    rgba(10, 14, 21, 0.55);
+  overflow-y: auto;
+}
+.lattice-record .prose { max-width: none; font-size: var(--fs-label); }
+.lattice-record .action-row { margin-top: var(--s-4); }
+.lattice-record .index-group-key { margin: var(--s-3) 0 var(--s-2); }
+
+/* One short status line for the selection. A live region wrapping the
+   whole panel announces ~90 words on every selection, on top of the
+   button's own name and state — three channels for one fact. */
+.lattice-status {
+  margin: 0 0 var(--s-3);
+  padding-bottom: var(--s-2);
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  line-height: 1.7;
+  letter-spacing: var(--ls-micro);
+  color: var(--quiet);
+}
+
+.record-missing { max-width: none; }
+
+/* An absence in the rail. P4, in the rail's own register — the rail is
+   the most persistent surface on the site and "no node" is not a node. */
+.record-absent {
+  margin: 0 0 6px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+/* A register cell with no figure is not a zero. The state tag carries
+   the state, so the cell beside it shows an em dash and the reason. */
+.register-figure--unknown { min-width: 4ch; color: var(--quiet); }
+
+/* A sub-section of a surface: still a section title, one step down the
+   ladder. At --fs-h2 it outweighed the selected node's record name
+   directly above it, which inverts the hierarchy of the thing the
+   reader just chose. */
+.section-title--minor { font-size: var(--fs-h3); }
+.section-head--tight { margin-top: var(--s-5); }
+
+/* ── The card ─────────────────────────────────────────────────
+   A bounded object with an identity, not a floating card: hairline
+   border, no radius beyond the system's 2px, depth from one pixel
+   of light along the top edge.
+
+   Emission follows the evidence state, and only two states exist
+   here. PROTOTYPE is present and built, so it gets the lit edge.
+   PLANNED is designed, so it gets a dashed border and no light at
+   all — the same hollow-port idiom the site's node index already
+   uses, so "cannot open" looks the same everywhere. */
+
+.lattice-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 208px;
+  padding: 12px 14px 12px 16px;
+  border: 1px solid var(--rule-2);
+  border-radius: 2px;
+  background:
+    linear-gradient(180deg, var(--lift), rgba(10, 14, 21, 0) 34%),
+    rgba(10, 14, 21, 0.86);
+  font: inherit;
+  text-align: left;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+.lattice-card[data-kind="plane"] { width: 224px; }
+.lattice-card[data-kind="stage"] { width: 200px; }
+.lattice-card[data-kind="build"] { width: 232px; }
+
+.lattice-card:hover { border-color: var(--rule-3); }
+
+.lattice-card[data-state="PROTOTYPE"] {
+  border-top-color: var(--signal-a30);
+  box-shadow: inset 0 1px 0 var(--signal-a15);
+}
+.lattice-card[data-state="PLANNED"] { border-style: dashed; }
+.lattice-card[data-state="TARGET"] { border-top-color: var(--amber-line); }
+
+.lattice-card[data-selected] {
+  border-color: var(--signal-a30);
+  border-style: solid;
+  box-shadow:
+    inset 0 1px 0 rgba(53, 217, 164, 0.35),
+    0 40px 90px -70px rgba(53, 217, 164, 0.55);
+}
+
+/* The port. Filled when the node resolves to a route, hollow and
+   dashed when it does not — redundant with the href's presence, so
+   it survives colour, and legible at 7px. */
+.lattice-card-port {
+  position: absolute;
+  left: -4px;
+  top: 16px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1px dashed var(--rule-3);
+  background: var(--void);
+}
+.lattice-card-port[data-live="true"] { border-style: solid; border-color: var(--signal); }
+.lattice-card[data-selected] .lattice-card-port {
+  background: var(--signal);
+  box-shadow: 0 0 0 4px var(--signal-a15), 0 0 16px rgba(53, 217, 164, 0.65);
+}
+
+.lattice-card-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.lattice-card-ord {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  color: var(--quiet);
+}
+.lattice-card[data-selected] .lattice-card-ord { color: var(--signal); }
+
+.lattice-card-name {
+  margin-top: 6px;
+  font-family: var(--font-display);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: var(--ls-label);
+  color: var(--ink);
+}
+
+.lattice-card-role {
+  margin-top: 6px;
+  font-size: var(--fs-micro);
+  line-height: 1.7;
+  letter-spacing: var(--ls-micro);
+  color: var(--ash);
+  /* Three lines, hard. The full clause is in the record panel, and a
+     ring of cards that breathe differently is a ring that reads as a
+     mistake rather than as a hierarchy. */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.lattice-card-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--rule);
+}
+/* Custody, one line. A card that states who holds a record in two
+   lines is a card whose height depends on the length of a partner's
+   name, and a column whose pitch depends on its content is a column
+   that eventually overlaps. The named, full custody line is in the
+   record panel and in a register column below; this is the P1 cut. */
+.lattice-card-custody {
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  line-height: 1.6;
+  color: var(--quiet);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lattice-open {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--signal);
+  text-decoration: none;
+  border-bottom: 1px solid var(--signal-a30);
+  padding-bottom: 2px;
+  align-self: flex-start;
+}
+.lattice-open:hover { color: var(--signal-lit); border-bottom-color: var(--signal-lit); }
+
+/* Handles exist only so an edge can name a boundary. They are
+   1px, invisible, and outside the card's hit area. */
+.lattice-handle {
+  width: 1px;
+  height: 1px;
+  min-width: 0;
+  min-height: 0;
+  border: 0;
+  background: transparent;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── The edges ──────────────────────────────────────────────────
+   Distinguishable with the colour removed, because a diagram that
+   only works in colour is a diagram that stops working on a
+   projector, in a screenshot, and to anyone colourblind — dash
+   pattern first, luminance second.
+
+   Every stroke here is measured by npm run check:contrast, which
+   composites the real canvas ground. The first pass of this
+   stylesheet used --rule-3 for the loop and --rule-2 for the
+   crossings and measured 2.13:1 and 1.49:1 against that script's
+   own 3:1 threshold for a border that carries meaning — which
+   makes the route's only structural claim the dimmest thing on it.
+   The tokens below clear 4.5:1 and the order is intentional: the
+   loop is the loudest stroke because the loop is the claim. */
+
+.lattice-edge { stroke-linecap: round; fill: none; stroke-width: 1; }
+
+.lattice-edge[data-kind="loop"] { stroke: var(--ash); stroke-width: 2; }
+.lattice-edge[data-kind="loop"][data-lit] {
+  stroke: var(--signal);
+  filter: drop-shadow(0 0 6px rgba(53, 217, 164, 0.55));
+}
+
+.lattice-edge[data-kind="chain"] { stroke: var(--quiet); stroke-dasharray: 3 5; }
+.lattice-edge[data-kind="custody"] { stroke: var(--quiet); stroke-dasharray: 6 4; }
+.lattice-edge[data-kind="instance"] { stroke: var(--quiet); stroke-dasharray: 2 4; }
+
+/* ── The tally ─────────────────────────────────────────────────
+   Computed from the nodes on the canvas, not typed in. A state with
+   no node still prints, because "none of these on this surface" is
+   a different statement from "not applicable". */
+
+.lattice-tally {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin: var(--s-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.lattice-tally li { display: flex; align-items: center; gap: 6px; }
+.lattice-tally-n {
+  font-size: var(--fs-micro);
+  color: var(--quiet);
+}
+
+/* ── The register rows the canvas produced ───────────────────── */
+
+.register--lattice {
+  --cols: 48px minmax(0, 1.7fr) 128px 108px minmax(0, 1fr);
+}
+.register-head.register--lattice,
+.register-row.register--lattice { grid-template-columns: var(--cols); }
+
+/* State · count · what the state permits · what it forbids. Both halves of
+   the contract are printed, because the half that forbids is the half that
+   stops a reader treating a 0 as a measurement. */
+.register--quad { --cols: 128px 128px minmax(0, 1fr) minmax(0, 1fr); }
+.register-head.register--quad,
+.register-row.register--quad { grid-template-columns: var(--cols); }
+
+.register-band {
+  padding: var(--s-3) 0 6px;
+  border-bottom: 1px solid var(--rule-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+.register-row[data-selected] {
+  background: linear-gradient(90deg, var(--signal-a15), transparent 56%);
+}
+
+.lattice-row-button {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+}
+.lattice-row-button:hover { text-decoration-color: var(--signal-a30); color: var(--signal-lit); }
+.lattice-row-button[aria-pressed="true"] { text-decoration-color: var(--signal); color: var(--signal-lit); }
+
+/* ── The legend ─────────────────────────────────────────────── */
+
+/* The swatch is the stroke itself, drawn as the same SVG path the canvas
+   draws, in the same token. A CSS border cannot express a dasharray, so
+   chain and custody used to render identically here — in the one place
+   the surface promises the four kinds can be told apart. */
+.lattice-legend {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  border-top: 1px solid var(--rule-2);
+}
+.lattice-legend-row {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: var(--s-3);
+  align-items: baseline;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.lattice-legend-row dt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--ash);
+}
+.lattice-legend-row dd {
+  margin: 0;
+  font-size: var(--fs-micro);
+  line-height: 1.7;
+  color: var(--dust);
+}
+.lattice-legend-svg { flex: none; overflow: visible; }
+.lattice-legend-svg path[data-kind="loop"] { stroke: var(--ash); }
+.lattice-legend-svg path[data-kind="chain"] { stroke: var(--quiet); }
+.lattice-legend-svg path[data-kind="custody"] { stroke: var(--quiet); }
+.lattice-legend-svg path[data-kind="instance"] { stroke: var(--quiet); }
+
+/* ── The return sentence ─────────────────────────────────────── */
+
+.lattice-returns {
+  margin-top: var(--s-3);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  line-height: 1.75;
+  color: var(--quiet);
+}
+.lattice-returns-key {
+  display: block;
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  /* --quiet rather than --rule-3: measured at 1.99:1 as a label on the
+     page ground, which is a hairline doing a text job. */
+  color: var(--quiet);
+}
+
+/* ── Engine surfaces, restated in this system's tokens ─────────
+   The default attribution is a light-theme pill and the default
+   attribution link is 11px blue. Left alone it is the one object on
+   this canvas that does not belong to the product. */
+
+.lattice-canvas .react-flow__attribution {
+  background: transparent;
+  border: 0;
+  padding: 2px 6px;
+}
+.lattice-canvas .react-flow__attribution a {
+  color: var(--quiet);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-decoration: none;
+}
+.lattice-canvas .react-flow__attribution a:hover { color: var(--ash); }
+
+.lattice-canvas .react-flow__node { cursor: default; }
+
+.lattice-canvas .react-flow__selection,
+.lattice-canvas .react-flow__nodesselection-rect { display: none; }
+
+/* The zoom control is restated in this system's tokens: the default is a
+   white pill with a black glyph, and it is the one surface on this route
+   that would read as a foreign object in a screenshot. */
+.lattice-canvas .react-flow__controls {
+  overflow: hidden;
+  border: 1px solid var(--rule-2);
+  border-radius: 2px;
+  box-shadow: none;
+}
+.lattice-canvas .react-flow__controls-button {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--rule-2);
+  background: rgba(10, 14, 21, 0.86);
+  color: var(--ash);
+  fill: var(--ash);
+}
+.lattice-canvas .react-flow__controls-button:last-child { border-bottom: 0; }
+.lattice-canvas .react-flow__controls-button:hover {
+  background: var(--wash);
+  color: var(--signal-lit);
+  fill: var(--signal-lit);
+}
+.lattice-canvas .react-flow__controls-button svg { max-width: 10px; max-height: 10px; }
+
+/* ── Recomposition ─────────────────────────────────────────────
+   Below 1199 the record stops being a column: the stage is one
+   track and the record moves under it at its natural height,
+   because a 336px rail beside a canvas that has already lost
+   336px is how a topology ends up narrower than the card on it.
+
+   The register recomposes at 860px, which is the width globals.css
+   recomposes its own registers at. Two tables on one page must
+   recompose on the same line or one of them is a five-column table
+   squeezed into a pane the other one has already given up.
+
+   Below that width the row's own field labels come in, the same
+   `data-field` mechanism the site's registers already use, and the
+   column that goes is Kind — it is a verbatim restatement of the
+   band header printed directly above it. Custody stays: it is a P1
+   fact declared on the card and it is the one column here that the
+   band header does not already say. */
+
+@media (max-width: 1199px) {
+  .lattice-stage { grid-template-columns: minmax(0, 1fr); }
+  .lattice-record { overflow: visible; }
+}
+
+@media (max-width: 860px) {
+  .lattice-canvas { height: 640px; }
+  .lattice-order { width: 100%; }
+  .lattice-order-cell { flex: 1 1 40%; }
+  .lattice-tools { width: 100%; }
+
+  .register--lattice { --cols: 40px minmax(0, 1fr); }
+  .register-head.register--lattice,
+  .register-row.register--lattice { grid-template-columns: var(--cols); }
+
+  /* The field name replaces the column header, in the register's own
+     micro register, exactly as the site's own registers do it. */
+  .register-row.register--lattice .register-cell::before {
+    content: attr(data-field);
+    display: block;
+    margin-bottom: 2px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--ls-caps);
+    text-transform: uppercase;
+    color: var(--quiet);
+  }
+  .register-row.register--lattice .register-cell[data-field="Ord"]::before { content: none; }
+  .register-head.register--lattice span:nth-child(n + 3) { display: none; }
+  .register-row.register--lattice .register-cell[data-field="Kind"] { display: none; }
+
+  .lattice-legend-row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+}
+
+/* ── Motion ───────────────────────────────────────────────────
+   The card's own transition is 160ms and the only motion on this
+   surface. If the reader has asked for less, it goes. */
+
+@media (prefers-reduced-motion: reduce) {
+  .lattice-card,
+  .lattice-order-cell,
+  .lattice-row-button { transition: none; }
+}

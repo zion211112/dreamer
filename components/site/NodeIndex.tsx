@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BUILDS, PLANE } from "@/lib/system";
+import { PLANE } from "@/lib/system";
 
 /**
  * The node index — this system's palette.
@@ -11,24 +11,21 @@ import { BUILDS, PLANE } from "@/lib/system";
  * can offer before you connect anything. This is that list, and it is
  * the site's entire navigation.
  *
- * Two groups, because there are two kinds of thing here and conflating
- * them is what turns a workspace into a menu:
+ * Two groups, and the split is the most important thing on this page:
  *
  *   CONTROL PLANE  the five stages every record passes through, in
  *                  system order rather than menu order. All five are
- *                  live routes.
- *   FIELD BUILDS   the same seven-stage chain instantiated in six
- *                  domains. One of them is built; five are stated
- *                  architectures.
+ *                  live routes. This is the system, described.
+ *   WHERE YOU CAN   the build floor and the roll. These are not
+ *     ACT           descriptions — they are the two things a visitor
+ *                  can actually DO, which is why they are in the
+ *                  navigation at all.
  *
- * The build list is the honest part. The School Console is an example
- * of the grammar, not the product: it is listed first only because it
- * is the only one with a surface to open. The five planned builds
- * render as *not links* — a hollow mark rather than a filled one — and
- * they are never styled as something you can click, because they are
- * not. That distinction is the whole reason this system's grammar
- * exists, and it is cheaper to keep it honest in the navigation than to
- * apologise for it later.
+ * An earlier pass listed the six field builds here. That was a mistake
+ * of category: they are not places to navigate to, they are instances
+ * of the chain, and each one belongs to a field rather than to the
+ * menu. They now live on the build floor, where a person can claim a
+ * seat on one instead of merely reading its name.
  */
 export function NodeIndex() {
   const pathname = usePathname();
@@ -66,42 +63,55 @@ export function NodeIndex() {
         </ul>
       </div>
 
-      <div className="index-group">
-        <p className="index-group-key">
-          Field builds · {BUILDS.filter((b) => b.href).length} live ·{" "}
-          {BUILDS.filter((b) => !b.href).length} planned
-        </p>
+<div className="index-group">
+        <p className="index-group-key">One view of it</p>
         <ul className="index-list">
-          {BUILDS.map((build) =>
-            build.href ? (
-              <li key={build.name}>
-                <Link href={build.href} className="index-node">
-                  <span className="index-node-ord" aria-hidden="true">
-                    <span className="port port--live" />
-                  </span>
-                  <span className="index-node-name">{build.name}</span>
-                </Link>
-              </li>
-            ) : (
-              /* Not a link. There is no route, so there is nothing to
-                 promise — and a planned build that looks clickable is
-                 the exact failure this system is built to prevent. */
-              <li key={build.name}>
-                <span className="index-node index-node--planned">
-                  <span className="index-node-ord" aria-hidden="true">
-                    <span className="port port--planned" />
-                  </span>
-                  <span className="index-node-name">{build.name}</span>
-                </span>
-              </li>
-            )
-          )}
+          <li>
+            <Link
+              href="/lattice"
+              className="index-node"
+              aria-current={pathname === "/lattice" ? "page" : undefined}
+            >
+              {/* A mark, not an ordinal: this column otherwise holds a
+                  sequence and this link is not one. `.glyph` exists
+                  because the mono face does not carry the symbol, and the
+                  mark is hidden because the name beside it says what the
+                  link is. */}
+              <span className="index-node-ord" aria-hidden="true">
+                <span className="glyph">◆</span>
+              </span>
+              <span className="index-node-name">Lattice topology</span>
+            </Link>
+          </li>
         </ul>
       </div>
 
-<p className="index-foot">
-        A build is the same chain in a different domain. The console is
-        an example of the grammar, not the grammar itself.
+      <div className="index-group">
+        <p className="index-group-key">Where you can act</p>
+        <ul className="index-list">
+          <li>
+            <Link href="/builds" className="index-node">
+              <span className="index-node-ord" aria-hidden="true">
+                <span className="port port--live" />
+              </span>
+              <span className="index-node-name">Build floor</span>
+            </Link>
+          </li>
+          <li>
+            <Link href="/roll" className="index-node">
+              <span className="index-node-ord" aria-hidden="true">
+                <span className="port port--live" />
+              </span>
+              <span className="index-node-name">Sign the roll</span>
+            </Link>
+          </li>
+        </ul>
+      </div>
+
+      <p className="index-foot">
+        The five above are the system, and the view above them is the same
+        system drawn. The two at the bottom are where you can do something
+        about it.
       </p>
     </nav>
   );

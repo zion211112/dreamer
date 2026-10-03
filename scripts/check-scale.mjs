@@ -22,8 +22,10 @@
  *      (16px label, 24px body) actually do.
  *   6. DRIFT — no hard-coded letter-spacing anywhere, and every
  *      hard-coded px length at 2px resolution (and on the 8px grid
- *      above 32px). This is the check that keeps 1–5 true over time;
- *      without it they are only true until the next edit.
+ *      above 32px), read from the token stylesheet AND from every
+ *      route stylesheet layered on top of it. This is the check that
+ *      keeps 1–5 true over time; without it they are only true until
+ *      the next edit.
  *
  * Run: npm run check:scale  (also part of `npm run check`)
  * Exits non-zero on any violation: fix the token, not the test.
@@ -297,20 +299,42 @@ pass("baseline · label", `16px line box at ${px("fs-label")}px = 2×8`);
      of three;
    · a spacing value that is neither 8px, nor the declared 4px
      half-unit, nor a token reference.
+
+   It reads the token stylesheet AND the route stylesheets. The
+   tokens are the theory; the route stylesheets are where a hand
+   measures something by eye — a 5px nudge to centre a port on a
+   hairline, a 3px optical offset on a label — and that is precisely
+   how a hard-coded value gets in. Auditing only the token file left
+   "no stray tracking, no stray spacing" true for exactly as long as
+   nobody touched a file the check had never opened, which is a claim
+   about the author's restraint rather than about the stylesheet.
    */
-const strayTracking = [
-  ...css.matchAll(/letter-spacing:\s*(-?[\d.]+)em\s*;/g),
-].map((m) => m[1]);
+const DRIFT_SHEETS = ["app/globals.css", "app/lattice.css"];
+const drift = DRIFT_SHEETS.map((file) => ({
+  file,
+  text: readFileSync(fileURLToPath(new URL(`../${file}`, import.meta.url)), "utf8"),
+}));
+
+/** 1-based line of a match, so a failure names a place and not a value. */
+const lineOf = (text, index) => text.slice(0, index).split("\n").length;
+
+const strayTracking = drift.flatMap(({ file, text }) =>
+  [...text.matchAll(/letter-spacing:\s*(-?[\d.]+)em\s*;/g)].map((m) => `${file}: ${m[1]}em`)
+);
 strayTracking.length === 0
-  ? pass("no stray tracking", "every letter-spacing resolves to a declared constant")
+  ? pass(
+      "no stray tracking",
+      `every letter-spacing across ${DRIFT_SHEETS.length} stylesheets resolves to a declared constant`
+    )
   : fail(
       "no stray tracking",
-      `hard-coded letter-spacing: ${strayTracking.join(", ")}em — use --ls-caps or a ladder step`
+      `hard-coded letter-spacing: ${strayTracking.join(", ")} — use --ls-caps or a ladder step`
     );
 
-const straySpacing = [
-  ...css.matchAll(/(?:padding|margin|gap|top|left|right|bottom|inset)[a-z-]*:\s*(-?[\d.]+)px\s*;/g),
-].map((m) => Number(m[1]));
+const straySpacing = drift.flatMap(({ file, text }) =>
+  [...text.matchAll(/(?:padding|margin|gap|top|left|right|bottom|inset)[a-z-]*:\s*(-?[\d.]+)px\s*;/g)]
+    .map((m) => ({ file, at: m[0].trim(), px: Number(m[1]), line: lineOf(text, m.index) }))
+);
 /* Below 32px a hard-coded length is an optical offset inside a single
    component — the gap between a label and its value, the inset of a
    port — and 2px resolution is the correct instrument for that. From
@@ -327,18 +351,24 @@ const straySpacing = [
 const offGrid = [
   ...new Set(
     straySpacing
-      .map((v) => Math.abs(v))
-      .filter((v) => v !== 0 && v !== 1 && (v % 2 !== 0 || (v >= 32 && v % 8 !== 0)))
+      .filter((s) => {
+        const v = Math.abs(s.px);
+        return v !== 0 && v !== 1 && (v % 2 !== 0 || (v >= 32 && v % 8 !== 0));
+      })
+      /* Every site, not every distinct value: two 5px insets are two
+         decisions and need fixing twice, and a line number is what
+         turns a ratio into an edit. */
+      .map((s) => `${s.file}:${s.line}  ${s.at}`)
   ),
 ];
 offGrid.length === 0
   ? pass(
       "no stray spacing",
-      `all ${straySpacing.length} hard-coded px lengths are even, and on-grid above 32px`
+      `all ${straySpacing.length} hard-coded px lengths across ${DRIFT_SHEETS.length} stylesheets are even, and on-grid above 32px`
     )
   : fail(
       "no stray spacing",
-      `off-grid px lengths: ${offGrid.join(", ")}px — even below 32px, multiples of 8 above it`
+      `off-grid px lengths — even below 32px, multiples of 8 above it: ${offGrid.join("; ")}`
     );
 
 /* The caps register must exist and must open up. If someone deletes it,

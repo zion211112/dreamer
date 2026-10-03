@@ -28,12 +28,36 @@ import { StateTag } from "./StateTag";
  */
 export function NodeRecord() {
   const pathname = usePathname();
-  const node =
-    PLANE.find((n) =>
-      n.href === "/"
-        ? pathname === "/"
-        : pathname === n.href || pathname.startsWith(`${n.href}/`)
-    ) ?? PLANE[0];
+  const node = PLANE.find((n) =>
+    n.href === "/"
+      ? pathname === "/"
+      : pathname === n.href || pathname.startsWith(`${n.href}/`)
+  );
+
+  /* A route that is not one of the five has no node of its own, and
+     falling back to PLANE[0] would put "01 / 05 Field" in the rail on a
+     page about something else — which is the same category of error as
+     the dead link this system exists to prevent, in the other
+     direction. So the rail says what it does not know.
+
+     It says it at P4. "None" is not a node, and setting an absence in the
+     22.6px display register that the five real node names use would put a
+     missing fact at the top of the page's most persistent surface. The
+     evidence state is named rather than linked to a definition of one,
+     because there is no state on this route to define. */
+  if (!node) {
+    return (
+      <aside className="plane-record" aria-label="Selected node record">
+        <p className="index-group-key">Selected node</p>
+        <p className="record-absent">No node</p>
+        <p className="record-role">
+          This route is a view of the whole system rather than one of its
+          five stages, so it has no node of its own to describe. The record
+          for whatever is selected inside it is beside the canvas.
+        </p>
+      </aside>
+    );
+  }
 
   return (
     <aside className="plane-record" aria-label="Selected node record">

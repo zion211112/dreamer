@@ -1,6 +1,16 @@
 import type { Metadata, Viewport } from "next";
 import "./fonts.css";
 import "./globals.css";
+// The floor — controls, tickets, the roll. Split out because it is the
+// one stylesheet whose job is to make the site *do* things rather than
+// describe them, and that is worth being able to read on its own.
+import "./floor.css";
+// The lattice — the canvas surface. Split out for the same reason as the
+// floor, and because the engine's own stylesheet has to be imported from
+// somewhere that is processed on the client, which a Next.js CSS import
+// from the root layout is.
+import "@xyflow/react/dist/style.css";
+import "./lattice.css";
 import { COMPANY } from "@/lib/system";
 import { SITE_URL } from "@/lib/site";
 
