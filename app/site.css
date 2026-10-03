@@ -384,14 +384,14 @@
 }
 
 .record-intro h1 {
-  max-width: 12ch;
+  max-width: 14ch;
   margin: 16px 0 0;
   color: var(--ink);
-  font-family: var(--font-serif);
-  font-size: clamp(40px, 6vw, 56px);
-  font-weight: 400;
-  font-style: italic;
-  letter-spacing: -.02em;
+  font-family: var(--font-display);
+  font-size: clamp(40px, 6vw, 60px);
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: -.04em;
   line-height: 1.04;
 }
 

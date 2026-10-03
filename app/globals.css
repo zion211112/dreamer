@@ -98,11 +98,9 @@
                   "Helvetica Neue", Arial, "Noto Sans", system-ui, sans-serif;
   --font-display: var(--font-grotesk), "Space Grotesk", system-ui, sans-serif;
   --font-dm:      var(--font-dmmono), "DM Mono", ui-monospace, Menlo, Consolas, monospace;
-  /* Legacy names still referenced by older stylesheets. Aliased to the
-     loaded families only — Playfair Display and JetBrains Mono were named
-     but never shipped, so every use was already falling back silently. */
+  /* Legacy alias. The console predates the canonical mono token and still
+     asks for --font-mono; it resolves to the one loaded family. */
   --font-mono:    var(--font-dm);
-  --font-serif:   "Iowan Old Style", "Apple Garamond", Baskerville, "Palatino Linotype", Georgia, serif;
 
   /* ─── Legacy aliases ───
      Kept only because a stylesheet still uses the older name. Each one
@@ -366,12 +364,13 @@ body {
 
 .page-title {
   margin: 16px 0 0;
-  max-width: 20ch;
-  font-family: var(--font-serif);
-  font-size: clamp(36px, 5vw, 56px);
-  font-weight: 400;
-  font-style: italic;
-  letter-spacing: -0.02em;
+  max-width: 24ch;
+  font-family: var(--font-display);
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: -.045em;
+  line-height: 1.02;
   line-height: 1.05;
   color: var(--ink);
   text-wrap: balance;

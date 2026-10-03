@@ -165,7 +165,7 @@ export default function TermReports() {
             <div className="mt-6 grid gap-6 md:grid-cols-[1fr_220px]">
               <div className="print-sheet bg-white p-6 text-void">
                 <p className="font-mono text-micro uppercase tracking-[0.3em]">APT-LABS · {data.school || "School"}</p>
-                <h3 className="mt-2 font-serif text-2xl">REPORT CARD — {exam}</h3>
+                <h3 className="mt-2 font-display text-2xl">REPORT CARD — {exam}</h3>
                 <p className="mt-1 text-ui">{sel.name} · {sel.className}{sel.stream ? ` · ${sel.stream}` : ""} · Adm {sel.admNo || "—"}</p>
                 <table className="mt-4 w-full border-collapse text-ui">
                   <thead>

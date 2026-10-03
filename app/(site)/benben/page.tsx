@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Reveal } from "../../../components/site/Reveal";
 import "./benben.css";
+import "./floor.css";
 
 type Comment = {
   handle: string;

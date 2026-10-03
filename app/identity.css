@@ -20,7 +20,7 @@
   max-width: 56ch;
   margin: 24px 0 0;
   color: var(--ink);
-  font: 400 clamp(20px, 3vw, 28px)/1.35 var(--font-serif);
+  font: 600 clamp(20px, 3vw, 28px)/1.35 var(--font-display);
 }
 
 .identity-description {
@@ -244,15 +244,7 @@
 
 /* Face pages use a neutral display face; serif remains reserved for the
    conceptual lead and the homepage's principal statement. */
-.identity-page .page-title {
-  max-width: 24ch;
-  font-family: var(--font-sans);
-  font-size: clamp(40px, 5vw, 64px);
-  font-style: normal;
-  font-weight: 600;
-  letter-spacing: -.045em;
-  line-height: 1.02;
-}
+
 
 
 

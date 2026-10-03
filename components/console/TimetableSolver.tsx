@@ -122,7 +122,7 @@ export default function TimetableSolver() {
     <div className="min-w-0 max-w-full space-y-8">
       <div className="border-b border-ink/10 pb-6">
         <p className={monoLabel}>Timetable Solver · build · print · approve</p>
-        <h1 className="mt-3 font-serif text-4xl font-light tracking-tight md:text-5xl">The week, on one wall grid.</h1>
+        <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight md:text-5xl">The week, on one wall grid.</h1>
         <p className="mt-3 max-w-[62ch] text-sm leading-6 text-dust">
           Start from a real Kenyan wall grid, rewrite any cell, flip it to the calendar to read it on real dates,
           print for the wall, then approve once — <span className="text-ink">Today reads the approved week</span>.
@@ -150,7 +150,7 @@ export default function TimetableSolver() {
             }`}
           >
             <p className={monoLabel}>Demo {i + 1} · {d.className}</p>
-            <p className="mt-2 font-serif text-xl font-normal leading-snug">{d.name}</p>
+            <p className="mt-2 font-display text-xl font-normal leading-snug">{d.name}</p>
             <p className="mt-2 text-ui leading-5 text-dust">{subjectsInTimetable(d).slice(0, 5).join(" · ")}</p>
           </button>
         ))}
@@ -163,7 +163,7 @@ export default function TimetableSolver() {
           className="rounded-[21px] border border-dashed border-ink/10 bg-void p-[21px] text-left transition-colors hover:border-signal/60"
         >
           <p className={monoLabel}>Blank</p>
-          <p className="mt-2 font-serif text-xl font-normal">Start empty</p>
+          <p className="mt-2 font-display text-xl font-normal">Start empty</p>
         </button>
       </div>
 
@@ -173,7 +173,7 @@ export default function TimetableSolver() {
           <input
             value={active.className}
             onChange={(e) => setActive((p) => ({ ...p, className: e.target.value.slice(0, 24) }))}
-            className="mt-2 w-full rounded-full border border-ink/10 bg-void px-5 py-3 text-sm text-ink outline-none focus:border-signal"
+            className="mt-2 w-full rounded-sm border border-ink/10 bg-void px-5 py-3 text-sm text-ink outline-none focus:border-signal"
           />
         </label>
         <label className="min-w-[200px] flex-1">
@@ -181,7 +181,7 @@ export default function TimetableSolver() {
           <input
             value={active.name}
             onChange={(e) => setActive((p) => ({ ...p, name: e.target.value.slice(0, 60) }))}
-            className="mt-2 w-full rounded-full border border-ink/10 bg-void px-5 py-3 text-sm text-ink outline-none focus:border-signal"
+            className="mt-2 w-full rounded-sm border border-ink/10 bg-void px-5 py-3 text-sm text-ink outline-none focus:border-signal"
           />
         </label>
         <div className="flex items-center gap-1 self-end">
@@ -282,22 +282,22 @@ export default function TimetableSolver() {
         <div className="grid gap-[21px] xl:grid-cols-[minmax(0,1fr)_300px]">
           <div className={panel}>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="font-serif text-2xl font-light">
+              <p className="font-display text-2xl font-semibold">
                 {new Date(cal.y, cal.m, 1).toLocaleDateString("en-GB", { month: "long", year: "numeric" })}
               </p>
               <div className="flex items-center gap-2">
-                <button onClick={() => shiftMonth(-1)} className="min-h-9 rounded-full border border-ink/10 px-3 py-1.5 font-mono text-meta text-dust transition-colors hover:border-signal hover:text-signal" aria-label="Previous month">‹</button>
+                <button onClick={() => shiftMonth(-1)} className="min-h-9 rounded-sm border border-ink/10 px-3 py-1.5 font-mono text-meta text-dust transition-colors hover:border-signal hover:text-signal" aria-label="Previous month">‹</button>
                 <button
                   onClick={() => {
                     const d = new Date();
                     setCal({ y: d.getFullYear(), m: d.getMonth() });
                     setSelDay(d.toDateString());
                   }}
-                  className="min-h-9 rounded-full border border-ink/10 px-3 py-1.5 font-mono text-meta text-dust transition-colors hover:border-signal hover:text-signal"
+                  className="min-h-9 rounded-sm border border-ink/10 px-3 py-1.5 font-mono text-meta text-dust transition-colors hover:border-signal hover:text-signal"
                 >
                   Today
                 </button>
-                <button onClick={() => shiftMonth(1)} className="min-h-9 rounded-full border border-ink/10 px-3 py-1.5 font-mono text-meta text-dust transition-colors hover:border-signal hover:text-signal" aria-label="Next month">›</button>
+                <button onClick={() => shiftMonth(1)} className="min-h-9 rounded-sm border border-ink/10 px-3 py-1.5 font-mono text-meta text-dust transition-colors hover:border-signal hover:text-signal" aria-label="Next month">›</button>
               </div>
             </div>
             <div className="mt-5 grid grid-cols-7 border-b border-ink/10">
@@ -359,7 +359,7 @@ export default function TimetableSolver() {
 
           <aside className={panel + " self-start xl:sticky xl:top-6"}>
             <p className={monoLabel}>Selected day</p>
-            <h3 className="mt-2 font-serif text-2xl font-light">
+            <h3 className="mt-2 font-display text-2xl font-semibold">
               {selDate.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}
             </h3>
             <p className="mt-1 text-sm text-dust">
@@ -389,7 +389,7 @@ export default function TimetableSolver() {
           above is chrome; the paper gets rules and subject names only. */}
       <div aria-hidden="true" className="print-sheet bg-white p-8 text-void print:block print:w-full">
         <p className="font-mono text-micro uppercase tracking-[0.3em]">Timetable · {active.className}</p>
-        <h3 className="mt-2 font-serif text-2xl">{active.name}</h3>
+        <h3 className="mt-2 font-display text-2xl">{active.name}</h3>
         <table className="mt-4 w-full border-collapse text-meta">
           <thead>
             <tr>

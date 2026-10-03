@@ -96,7 +96,7 @@ export default function Student360({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className={monoLabel}>Student 360 / {classLabel(student)}</p>
-          <h2 className="mt-2 font-serif text-3xl font-light tracking-tight">{student.name}</h2>
+          <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight">{student.name}</h2>
           <p className="mt-1 font-mono text-meta text-ash">{student.admNo || "no adm no"}</p>
         </div>
         <div className="flex items-center gap-3">
@@ -114,7 +114,7 @@ export default function Student360({
             role="tab"
             aria-selected={tab === id}
             onClick={() => setTab(id)}
-            className={`rounded-full border px-5 py-2 text-sm transition-colors ${
+            className={`rounded-sm border px-5 py-2 text-sm transition-colors ${
               tab === id ? "border-signal bg-signal/5 text-signal" : "border-edge text-dust hover:border-rule hover:text-ink"
             }`}
           >

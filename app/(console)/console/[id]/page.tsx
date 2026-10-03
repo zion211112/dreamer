@@ -98,7 +98,7 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
               <p className="mb-2 font-mono text-label uppercase tracking-[0.2em] text-signal">
                 Console / {tool.module} / {tool.id.padStart(2, "0")}
               </p>
-              <h1 className="font-serif text-4xl font-light tracking-tight md:text-5xl">{tool.title}</h1>
+              <h1 className="font-display text-4xl font-semibold tracking-tight md:text-5xl">{tool.title}</h1>
               <p className="mt-3 max-w-[60ch] text-sm leading-6 text-dust">{tool.desc}</p>
             </div>
           </div>

@@ -158,7 +158,7 @@ export function MiniCalendar({ items, onAdd, onRemove }: Props) {
                 <button
                   key={k}
                   onClick={() => setFKind(k)}
-                  className={`rounded-full border px-2.5 py-1 font-mono text-micro uppercase tracking-[0.12em] ${fKind === k ? "border-signal bg-signal/15 text-signal" : "border-ink/10 text-ash"}`}
+                  className={`rounded-sm border px-2.5 py-1 font-mono text-micro uppercase tracking-[0.12em] ${fKind === k ? "border-signal bg-signal/15 text-signal" : "border-ink/10 text-ash"}`}
                 >
                   {k}
                 </button>

@@ -21,7 +21,7 @@ const SEV_WORD: Record<Sev, string> = { pass: "Clear", watch: "Watch", fail: "Op
 
 function SevChip({ sev }: { sev: Sev }) {
   return (
-    <span className={`shrink-0 rounded-full border px-2.5 py-0.5 font-mono text-micro uppercase tracking-[0.12em] ${SEV_CHIP[sev]}`}>
+    <span className={`shrink-0 rounded-sm border px-2.5 py-0.5 font-mono text-micro uppercase tracking-[0.12em] ${SEV_CHIP[sev]}`}>
       {SEV_WORD[sev]}
     </span>
   );
@@ -126,7 +126,7 @@ export default function Inspection() {
       {/* The dossier itself: white A4, the only thing that reaches paper. */}
       <div className="print-sheet bg-white p-6 text-void">
         <p className="font-mono text-micro uppercase tracking-[0.3em]">APT-LABS · {data.school || "School"}</p>
-        <h3 className="mt-2 font-serif text-2xl">INSPECTION DOSSIER</h3>
+        <h3 className="mt-2 font-display text-2xl">INSPECTION DOSSIER</h3>
         <p className="mt-1 text-ui">
           Generated {new Date().toISOString().slice(0, 10)} · {data.students.length} students · dossier score{" "}
           {score}/100

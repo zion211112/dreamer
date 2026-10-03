@@ -169,11 +169,11 @@ export default function FeeTracking() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span className={monoLabel}>The invoice</span>
           {active ? (
-            <span className="rounded-full border border-signal/25 bg-signal/15 px-3 py-1 font-mono text-micro uppercase tracking-[0.15em] text-signal">
+            <span className="rounded-sm border border-signal/25 bg-signal/15 px-3 py-1 font-mono text-micro uppercase tracking-[0.15em] text-signal">
               Invoiced · {kes(active.amount)} each
             </span>
           ) : (
-            <span className="rounded-full border border-ink/10 bg-ink/5 px-3 py-1 font-mono text-micro uppercase tracking-[0.15em] text-ash">
+            <span className="rounded-sm border border-ink/10 bg-ink/5 px-3 py-1 font-mono text-micro uppercase tracking-[0.15em] text-ash">
               Not invoiced yet
             </span>
           )}
@@ -251,7 +251,7 @@ export default function FeeTracking() {
                       <td className="px-3 py-2">
                         <span
                           title={st.riskNote}
-                          className={`inline-block rounded-full border px-2.5 py-0.5 font-mono text-micro uppercase tracking-[0.12em] ${RISK_CHIP[st.risk]}`}
+                          className={`inline-block rounded-sm border px-2.5 py-0.5 font-mono text-micro uppercase tracking-[0.12em] ${RISK_CHIP[st.risk]}`}
                         >
                           {RISK_LABEL[st.risk]}
                         </span>
@@ -334,7 +334,7 @@ export default function FeeTracking() {
       {rows.length > 0 && (
         <div className="print-sheet bg-white p-6 text-void">
           <p className="font-mono text-micro uppercase tracking-[0.3em]">APT-LABS · {data.school || "School"}</p>
-          <h3 className="mt-2 font-serif text-2xl">FEE SHEET — {termKey} · {classOf}</h3>
+          <h3 className="mt-2 font-display text-2xl">FEE SHEET — {termKey} · {classOf}</h3>
           <p className="mt-1 text-ui">
             Generated {new Date().toISOString().slice(0, 10)} · {active ? `${kes(active.amount)} per student` : "not yet invoiced"}
           </p>

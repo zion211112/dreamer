@@ -66,31 +66,6 @@
 }
 
 /* JetBrains Mono — micro-labels / data. Weights 400, 500, 600. */
-@font-face {
-  font-family: "JetBrains Mono";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/fonts/jetbrains-mono-latin-400.woff2") format("woff2");
-  unicode-range: U+0000-00FF;
-}
-@font-face {
-  font-family: "JetBrains Mono";
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url("/fonts/jetbrains-mono-latin-500.woff2") format("woff2");
-  unicode-range: U+0000-00FF;
-}
-@font-face {
-  font-family: "JetBrains Mono";
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url("/fonts/jetbrains-mono-latin-600.woff2") format("woff2");
-  unicode-range: U+0000-00FF;
-}
-
 /* DM Mono — data / figures. Weights 400, 500. */
 @font-face {
   font-family: "DM Mono";
@@ -110,19 +85,3 @@
 }
 
 /* Playfair Display — serif display. Weights 400, 600. */
-@font-face {
-  font-family: "Playfair Display";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/fonts/playfair-display-latin-400.woff2") format("woff2");
-  unicode-range: U+0000-00FF;
-}
-@font-face {
-  font-family: "Playfair Display";
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url("/fonts/playfair-display-latin-600.woff2") format("woff2");
-  unicode-range: U+0000-00FF;
-}

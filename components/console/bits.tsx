@@ -1,7 +1,7 @@
 "use client";
 
 // Shared chrome for the console workspaces. Same language as the grid:
-// obsidian, panel, gold, mono labels. The gate is the Notion move — a tool
+// void, panel, signal, mono labels. The gate is the Notion move — a tool
 // with no data yet tells you the one action that unblocks it, not "soon".
 
 import Link from "next/link";
@@ -41,7 +41,7 @@ export function Gate({
           <span className="h-1.5 w-1.5 rounded-full bg-signal/80" aria-hidden="true" />
           Waiting
         </span>
-        <h2 className="mt-4 font-serif text-2xl font-light">{title}</h2>
+        <h2 className="mt-4 font-display text-2xl font-semibold">{title}</h2>
         <p className="mt-2 max-w-[52ch] text-sm leading-6 text-dust">{body}</p>
       </div>
       <div>
@@ -61,7 +61,7 @@ export function PrintButton({ label = "Print", onClick }: { label?: string; onCl
       type="button"
       onClick={onClick ?? (() => window.print())}
       title="Print this sheet — or save it as PDF"
-      className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-ink/10 px-3 py-1.5 font-mono text-label uppercase tracking-wider text-dust transition-colors hover:border-signal hover:text-signal focus-visible:outline focus-visible:outline-2 focus-visible:outline-signal print:hidden"
+      className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-ink/10 px-3 py-1.5 font-mono text-label uppercase tracking-wider text-dust transition-colors hover:border-signal hover:text-signal focus-visible:outline focus-visible:outline-2 focus-visible:outline-signal print:hidden"
     >
       ⎙ {label}
     </button>

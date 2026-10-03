@@ -59,7 +59,7 @@ import { btn, btnGhost, field, Gate, Loading, monoLabel, PrintButton } from "./b
 
 // A class filter pill for the My Students finder. Quiet when idle, gold when active.
 const pill = (active: boolean) =>
-  `rounded-full border px-4 py-2 font-mono text-label uppercase tracking-[0.15em] transition-all ${
+  `rounded-sm border px-4 py-2 font-mono text-label uppercase tracking-[0.15em] transition-all ${
     active ? "border-signal text-signal" : "border-ink/10 text-dust hover:border-ink/30 hover:text-ink"
   }`;
 
@@ -473,7 +473,7 @@ export default function MyDay({
         <div className="grid grid-cols-[55px_1fr_21px] items-start gap-3 md:grid-cols-[89px_1fr_21px] md:gap-[21px]">
           <span className={`pt-1 font-mono tabular-nums text-ui ${past ? "text-ash" : "text-dust"}`}>{lesson.time || "—"}</span>
           <div className="min-w-0">
-            <h3 className="font-serif text-h2 font-normal leading-tight text-ink">{title}</h3>
+            <h3 className="font-display text-h2 font-normal leading-tight text-ink">{title}</h3>
             <p className="mt-1 text-ui text-dust">{detail}</p>
             <div className="mt-3 flex flex-wrap items-center gap-x-[21px] gap-y-1">
               {hasRoster && action(lesson, "att", past)}
@@ -536,7 +536,7 @@ export default function MyDay({
                             <button
                               key={s.id}
                               onClick={() => setMarks((prev) => ({ ...prev, [s.id]: "present" }))}
-                              className="rounded-full border border-signal/60 px-3 py-1 text-ui text-signal transition-colors hover:bg-signal/10"
+                              className="rounded-sm border border-signal/60 px-3 py-1 text-ui text-signal transition-colors hover:bg-signal/10"
                             >
                               {s.name} · make present
                             </button>
@@ -682,7 +682,7 @@ export default function MyDay({
             <button
               onClick={() => setFindOpen(true)}
               title="Find a learner — name, adm no, guardian phone"
-              className="rounded-full border border-ink/10 px-3 py-1.5 font-mono text-label uppercase tracking-[0.15em] text-ash transition-colors hover:border-signal hover:text-signal"
+              className="rounded-sm border border-ink/10 px-3 py-1.5 font-mono text-label uppercase tracking-[0.15em] text-ash transition-colors hover:border-signal hover:text-signal"
             >
               ⌘F · Find
             </button>
@@ -764,7 +764,7 @@ export default function MyDay({
           more unmarked past lessons — flags itself in the same block. */}
       {!findOpen && tab === "today" && (
         <div>
-          <h1 className="font-serif text-4xl font-light tracking-tight">
+          <h1 className="font-display text-4xl font-semibold tracking-tight">
             {ordered.length === 0
               ? isWeekendDay
                 ? "No lessons."
@@ -879,7 +879,7 @@ export default function MyDay({
             {approvedWeek ? (
               <div className="mt-3">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h2 className="font-serif text-h2 font-light tracking-tight">{approvedWeek.className} · Today&apos;s column</h2>
+                  <h2 className="font-display text-h2 font-semibold tracking-tight">{approvedWeek.className} · Today&apos;s column</h2>
                   <div className="flex flex-wrap gap-2">
                     <button onClick={() => setAdding((v) => !v)} className={btnGhost + " px-3 py-1.5"}>
                       {adding ? "Close" : "+ Add one period"}
@@ -907,7 +907,7 @@ export default function MyDay({
               </div>
             ) : (
               <div>
-                <h2 className="mt-2 font-serif text-h2 font-light tracking-tight">No approved week yet</h2>
+                <h2 className="mt-2 font-display text-h2 font-semibold tracking-tight">No approved week yet</h2>
                 <p className="mt-1 max-w-[52ch] text-ui leading-6 text-dust">
                   The week is built in the Timetable Solver — pick a CBC demo grid, print it for the wall, approve once. Today then fills itself.
                 </p>

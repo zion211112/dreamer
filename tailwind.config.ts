@@ -40,9 +40,10 @@ const config = {
         danger: "#b23a2e",
       },
       fontFamily: {
-        // Only self-hosted families (see app/fonts.css). Playfair Display
-        // and JetBrains Mono were named here but never shipped, so every
-        // rule that used them was silently falling back to something else.
+        // Only the three self-hosted families in app/fonts.css. A serif and a
+        // second mono were declared here for years and shipped as real files,
+        // but no rule referenced them, so they were retired with the serif
+        // register rather than left declared and unused.
         sans: [
           "Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto",
           "Helvetica Neue", "Arial", "Noto Sans", "system-ui", "sans-serif"
@@ -55,10 +56,6 @@ const config = {
         mono: [
           "DM Mono", "ui-monospace", "SF Mono", "Cascadia Code", "Menlo",
           "Consolas", "Liberation Mono", "monospace"
-        ],
-        serif: [
-          "Iowan Old Style", "Apple Garamond", "Baskerville",
-          "Palatino Linotype", "Georgia", "serif"
         ],
       },
       // ── Type scale. The only sizes that exist.
@@ -80,11 +77,19 @@ const config = {
       spacing: {
         "4.5": "18px", // occasional micro-need
       },
+      // One radius register. The public stylesheets use 2px everywhere;
+      // a four-step scale is how a console ends up reading rounder than
+      // the site that contains it. Circles are explicit: rounded-full.
       borderRadius: {
+        none: "0",
         sm: "2px",
-        md: "4px",
-        lg: "6px",
         DEFAULT: "2px",
+        md: "2px",
+        lg: "2px",
+        xl: "2px",
+        "2xl": "2px",
+        "3xl": "2px",
+        full: "9999px",
       },
     },
   },

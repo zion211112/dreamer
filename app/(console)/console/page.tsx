@@ -146,7 +146,7 @@ function ConsoleLogin({
         <div className="relative overflow-hidden border border-ink/10 bg-panel p-5 sm:p-8 md:p-10">
           <div className="relative">
             <p className="font-mono text-label uppercase tracking-[0.35em] text-signal">Build capacity · Console</p>
-            <h1 className="mt-4 font-serif text-4xl font-light tracking-tight">Who are you?</h1>
+            <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight">Who are you?</h1>
             <p className="mt-3 text-sm leading-6 text-dust">
               This is a local prototype surface, not an authentication system. No account or credential is required; anything you type stays in this browser unless you export it.
             </p>
@@ -263,14 +263,14 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
           <span>APT-LABS · Console</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="hidden items-center gap-2 rounded-full border border-ink/10 bg-ink/5 py-1.5 pl-3.5 pr-4 font-mono text-label text-dust sm:flex">
+          <span className="hidden items-center gap-2 rounded-sm border border-ink/10 bg-ink/5 py-1.5 pl-3.5 pr-4 font-mono text-label text-dust sm:flex">
             <span className="h-1.5 w-1.5 rounded-full bg-signal" aria-hidden="true" />
             {session.name} · {session.role}
           </span>
           <button
             type="button"
             onClick={onSignOut}
-            className="min-h-11 rounded-full border border-ink/10 px-4 py-1.5 text-meta font-semibold text-dust transition-colors hover:border-ink/25 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+            className="min-h-11 rounded-sm border border-ink/10 px-4 py-1.5 text-meta font-semibold text-dust transition-colors hover:border-ink/25 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
             aria-label="Sign out of the console"
           >
             Sign out
@@ -279,12 +279,12 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
       </header>
 
       <div className="flex min-h-0 flex-1">
-        <aside className="flex w-[58px] shrink-0 flex-col justify-between border-r border-ink/10 bg-gradient-to-b from-void via-panel to-edge lg:w-[220px]">
+        <aside className="flex w-[58px] shrink-0 flex-col justify-between border-r border-ink/10 bg-panel lg:w-[220px]">
           <div>
             <div className="flex h-[89px] items-center justify-center gap-3 border-b border-ink/10 px-[13px] lg:justify-between lg:px-[21px]">
               <Diamond filled size={30} className="shrink-0 text-ink" />
               <div className="hidden flex-col lg:flex">
-                <span className="font-serif text-base font-medium text-ink">APT-LABS</span>
+                <span className="font-display text-base font-medium text-ink">APT-LABS</span>
                 <span className="font-mono text-micro uppercase tracking-[0.2em] text-ink/45">Console</span>
               </div>
             </div>
@@ -295,7 +295,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
                 onClick={() => setMod("all")}
                 aria-pressed={activeKey === "all"}
                 className={`flex min-h-11 items-center justify-center gap-2.5 rounded-lg px-3 text-ui transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void lg:justify-start ${
-                  activeKey === "all" ? "bg-ink/15 font-medium text-ink shadow-[inset_0_0_0_1px_rgba(245,240,230,0.08)]" : "text-ink/50 hover:bg-ink/5 hover:text-ink"
+                  activeKey === "all" ? "bg-ink/15 font-medium text-ink shadow-[inset_0_0_0_1px_rgba(22,26,30,0.14)]" : "text-ink/50 hover:bg-ink/5 hover:text-ink"
                 }`}
               >
                 <ModuleGlyph module="all" size={15} className={activeKey === "all" ? "text-signal" : undefined} />
@@ -309,7 +309,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
                   aria-pressed={activeKey === m}
                   title={m}
                   className={`flex min-h-11 items-center justify-center gap-2.5 rounded-lg px-3 text-ui transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void lg:justify-start ${
-                    activeKey === m ? "bg-ink/15 font-medium text-ink shadow-[inset_0_0_0_1px_rgba(245,240,230,0.08)]" : "text-ink/50 hover:bg-ink/5 hover:text-ink"
+                    activeKey === m ? "bg-ink/15 font-medium text-ink shadow-[inset_0_0_0_1px_rgba(22,26,30,0.14)]" : "text-ink/50 hover:bg-ink/5 hover:text-ink"
                   }`}
                 >
                   <ModuleGlyph module={m} size={15} className={activeKey === m ? "text-signal" : undefined} />
@@ -328,10 +328,10 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
         <main className="min-w-0 flex-1 overflow-y-auto p-4 sm:p-7 lg:p-[34px]">
           <div className="mb-[21px] flex flex-col gap-3 border-b border-ink/10 pb-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h1 className="font-serif text-h1 font-light leading-tight sm:text-h1">
+              <h1 className="font-display text-h1 font-semibold leading-tight sm:text-h1">
                 {mod === "all" ? "The console" : mod}
               </h1>
-              <span className="inline-flex items-center gap-2 rounded-full border border-signal/20 bg-signal/10 px-3 py-1.5 font-mono text-micro uppercase tracking-[0.12em] text-signal">
+              <span className="inline-flex items-center gap-2 rounded-sm border border-signal/20 bg-signal/10 px-3 py-1.5 font-mono text-micro uppercase tracking-[0.12em] text-signal">
                 <span className="h-2 w-2 rounded-full bg-signal" aria-hidden="true" />
                 {visible.length} tools
               </span>
@@ -357,7 +357,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={`Search ${mod === "all" ? "tools" : mod} — press / or ⌘K to focus…`}
-              className="h-[46px] w-full rounded-full border border-ink/10 bg-panel px-6 text-ui text-ink outline-none transition-all duration-150 placeholder:text-ash focus-visible:border-signal focus-visible:ring-2 focus-visible:ring-signal/40"
+              className="h-[46px] w-full rounded-sm border border-ink/10 bg-panel px-6 text-ui text-ink outline-none transition-all duration-150 placeholder:text-ash focus-visible:border-signal focus-visible:ring-2 focus-visible:ring-signal/40"
               aria-label="Search tools within the console"
             />
           </div>
@@ -370,7 +370,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
             </div>
           ) : visible.length === 0 ? (
             <div className="rounded-[24px] border border-dashed border-ink/15 bg-panel/60 px-5 py-12 text-center" aria-live="polite">
-              <p className="font-serif text-h2 text-ink">No tool matches that search.</p>
+              <p className="font-display text-h2 text-ink">No tool matches that search.</p>
               <p className="mt-2 text-sm text-dust">Try another term, or switch back to the full console view.</p>
             </div>
           ) : (
@@ -397,12 +397,12 @@ function ModuleCard({ module, onOpen }: { module: string; onOpen: () => void }) 
     >
       <div className="flex items-start justify-between gap-3">
         <ModuleTile module={module} tint={menu.tint} />
-        <span className="rounded-full border border-ink/10 bg-ink/5 px-3 py-1 font-mono text-micro uppercase tracking-[0.14em] text-dust transition-colors group-hover:border-ink/25 group-hover:text-ink">
+        <span className="rounded-sm border border-ink/10 bg-ink/5 px-3 py-1 font-mono text-micro uppercase tracking-[0.14em] text-dust transition-colors group-hover:border-ink/25 group-hover:text-ink">
           {tools.length} {tools.length === 1 ? "tool" : "tools"} →
         </span>
       </div>
       <div>
-        <h3 className="font-serif text-h3 font-normal leading-tight text-ink">{module}</h3>
+        <h3 className="font-display text-h3 font-normal leading-tight text-ink">{module}</h3>
         <p className="mt-1.5 text-ui leading-relaxed text-dust">{menu.desc}</p>
       </div>
     </button>
@@ -452,7 +452,7 @@ function ToolCard({
             </svg>
           </button>
         </div>
-        <h3 className="font-serif text-h3 font-normal leading-tight text-ink">{tool.title}</h3>
+        <h3 className="font-display text-h3 font-normal leading-tight text-ink">{tool.title}</h3>
         <p className="mt-1.5 text-ui leading-relaxed text-dust">{tool.desc}</p>
       </div>
       <div className="flex items-center justify-between gap-3">

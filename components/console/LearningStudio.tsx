@@ -79,7 +79,7 @@ export default function LearningStudio({ initialKind = "lesson" }: { initialKind
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)]">
       <section className={panel}>
         <p className={monoLabel}>01 / Start with one good idea</p>
-        <h2 className="mt-3 font-serif text-2xl">Less admin. More teaching.</h2>
+        <h2 className="mt-3 font-display text-2xl">Less admin. More teaching.</h2>
         <p className="my-4 text-sm leading-6 text-dust">Try the fractions example or use your own video notes. This local prototype uses templates, not AI or automatic video transcription.</p>
         <div className="space-y-4">
           <label className="block text-sm text-dust">Topic<input className={`${field} mt-2`} value={brief.title} onChange={e => setBrief({ ...brief, title: e.target.value })} /></label>
@@ -96,7 +96,7 @@ export default function LearningStudio({ initialKind = "lesson" }: { initialKind
           <div className="my-5 flex flex-wrap gap-2"><button onClick={copy} className={btnGhost}>Copy draft</button><button onClick={download} className={btnGhost}>Download .txt</button></div>
           <label className="block text-sm text-dust">Editable draft<textarea rows={24} value={draft} onChange={e => setDraft(e.target.value)} className="mt-2 w-full rounded-2xl border border-ink/10 bg-void p-5 text-sm leading-7 text-ink outline-none focus:border-signal" /></label>
           {key && <details className="mt-4 text-sm"><summary className="cursor-pointer text-signal">Answer guide · included in download only</summary><p className="mt-3 text-xs leading-6 text-dust">If you change a question, update its answer here before downloading.</p><textarea aria-label="Editable answer guide" rows={12} value={key} onChange={e => setKey(e.target.value)} className="mt-4 w-full rounded-2xl border border-ink/10 bg-void p-4 text-sm leading-7 text-ink outline-none focus:border-signal" /></details>}
-        </> : <><h2 className="mt-8 font-serif text-3xl">One source. A lesson.<br />A term. A way to know.</h2><p className="mt-5 max-w-md text-sm leading-7 text-dust">Turn the same concepts into something you can teach and something you can check. The example is ready—create your first draft on the left.</p><p className="mt-12 text-sm text-signal">Source → plan → practise → understand</p></>}
+        </> : <><h2 className="mt-8 font-display text-3xl">One source. A lesson.<br />A term. A way to know.</h2><p className="mt-5 max-w-md text-sm leading-7 text-dust">Turn the same concepts into something you can teach and something you can check. The example is ready—create your first draft on the left.</p><p className="mt-12 text-sm text-signal">Source → plan → practise → understand</p></>}
       </section>
     </div>
     <section className={panel}>
@@ -157,7 +157,7 @@ export default function LearningStudio({ initialKind = "lesson" }: { initialKind
           </ul>
           {bankCurrent && (
             <div>
-              <h3 className="font-serif text-2xl">{bankCurrent.title}</h3>
+              <h3 className="font-display text-2xl">{bankCurrent.title}</h3>
               <p className="mt-1 font-mono text-micro uppercase tracking-[0.15em] text-ash">
                 {bankCurrent.subject} · {bankCurrent.gradeBand} · {bankCurrent.durationMin} min
               </p>
