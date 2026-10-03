@@ -1,0 +1,6 @@
+2026/10/01-13:55:33.723 ee8 Reusing MANIFEST C:\Users\PC\Documents\dreamer\tmp-shot\edge-profile\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
+2026/10/01-13:55:33.724 ee8 Recovering log #19
+2026/10/01-13:55:33.725 ee8 Reusing old log C:\Users\PC\Documents\dreamer\tmp-shot\edge-profile\Default\EdgeCoupons/coupons_data.db/000019.log 
+2026/10/01-13:56:00.691 344c Level-0 table #24: started
+2026/10/01-13:56:00.760 344c Level-0 table #24: 683376 bytes OK
+2026/10/01-13:56:00.826 344c Delete type=0 #19

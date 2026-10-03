@@ -1,0 +1,84 @@
+/* Self-hosted @font-face declarations for APT-LABS.
+
+   Three families, three jobs — the contract's type register:
+     Inter         — prose only, never in caps
+     Space Grotesk — statements, record names, node names
+     DM Mono       — every id, path, state, label and figure
+
+   Static files under /fonts/ so there is zero build-time fetching and
+   they load from the edge cache with the rest of the static assets. */
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/inter-latin-400.woff2") format("woff2");
+  unicode-range: U+0000-00FF;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/inter-latin-500.woff2") format("woff2");
+  unicode-range: U+0000-00FF;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/inter-latin-600.woff2") format("woff2");
+  unicode-range: U+0000-00FF;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/inter-latin-700.woff2") format("woff2");
+  unicode-range: U+0000-00FF;
+}
+
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/space-grotesk-latin-500.woff2") format("woff2");
+  unicode-range: U+0000-00FF;
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/space-grotesk-latin-600.woff2") format("woff2");
+  unicode-range: U+0000-00FF;
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/space-grotesk-latin-700.woff2") format("woff2");
+  unicode-range: U+0000-00FF;
+}
+
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/dm-mono-latin-400.woff2") format("woff2");
+  unicode-range: U+0000-00FF;
+}
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/dm-mono-latin-500.woff2") format("woff2");
+  unicode-range: U+0000-00FF;
+}

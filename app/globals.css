@@ -1,0 +1,832 @@
+/* ============================================================
+   APT-LABS — Design System
+
+   The contract assigns three grammars to one ground:
+
+     CONTROL PLANE  → navigation  (the site skeleton)
+     REGISTER       → evidence    (ruled rows, provenance, ids)
+     FIELD STATION  → uncertainty (bands, tallies, empty states)
+     VALUE CHAIN    → transformation (OBSERVE → MEASURE)
+
+   Rules of the system, all structural rather than decorative:
+
+     · Light ground. Warm paper, not a cockpit. Archives are not
+       dark-mode, and a site about inspectability cannot hide behind
+       the visual language of a developer tool.
+     · One accent. It marks location and evidence. Nothing else.
+     · Hairlines only. No shadows, no cards, no radii beyond 2px.
+     · Every state is text plus hairline, never colour alone.
+     · Absence is content: an empty register says what it would hold
+       and why it is legitimately empty.
+   ============================================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ═══════════════════════════════════════════════════════════
+     Tokens below are mirrored in tailwind.config.ts. The two are
+     one system with two entry points; if they drift, the console
+     and the site become different products.
+     ═══════════════════════════════════════════════════════════ */
+
+  /* Surfaces — deepest to raised */
+  --void:           #f6f6f4;
+  --panel:          #ffffff;
+  --edge:           #f0f0ed;
+
+  /* Rules — the only material on this surface */
+  --rule:           rgba(22, 26, 30, 0.09);
+  --rule-2:         rgba(22, 26, 30, 0.16);
+  --rule-3:         rgba(22, 26, 30, 0.30);
+
+  /* Ink — AA or better on --void */
+  --ink:            #14181c;
+  --dust:           #39414a;
+  --ash:            #626b74;
+  --quiet:          #646c77;
+
+  /* Signal — the one accent, darkened to hold AA on paper */
+  --signal:         #0e8f5e;
+  --signal-dim:     #0a6e48;
+  --signal-strong:  #085537;
+  --signal-a30:     rgba(14, 143, 94, 0.30);
+  --signal-a08:     rgba(14, 143, 94, 0.08);
+
+  /* Informational — never interactive */
+  --amber:          #9a6b12;
+  --amber-line:     rgba(154, 107, 18, 0.36);
+  --danger:         #b23a2e;
+
+  /* Washes */
+  --wash:           rgba(20, 24, 28, 0.020);
+  --wash-2:         rgba(20, 24, 28, 0.040);
+
+  /* Type — only self-hosted families */
+  --font-sans:    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                  "Helvetica Neue", Arial, "Noto Sans", system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --font-mono:    "DM Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  background: var(--void);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--signal-a30); color: var(--ink); }
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: 8px; left: 16px;
+  z-index: 100;
+  transform: translateY(-160%);
+  background: var(--signal);
+  color: #fff;
+  padding: 8px 14px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.skip-link:focus { transform: translateY(0); }
+
+/* ═══════════════════════════════════════════════════════════
+   SHARED INSTRUMENT REGISTER
+
+   Three type registers, each with exactly one job:
+     mono      — every id, path, state, label and figure
+     display   — statements, record names, node names
+     sans      — explanatory prose only, never in caps
+   ═══════════════════════════════════════════════════════════ */
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dust);
+  margin: 0;
+}
+
+.figure {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.prose { max-width: 66ch; color: var(--dust); }
+.prose p { margin: 0 0 14px; }
+
+/* Page title — one treatment on every route */
+.page-title {
+  margin: 14px 0 0;
+  max-width: 22ch;
+  font-family: var(--font-display);
+  font-size: clamp(34px, 5.2vw, 56px);
+  font-weight: 600;
+/* ═══════════════════════════════════════════════════════════
+   GRAMMAR 1 — CONTROL PLANE (navigation)
+
+   The site skeleton. A persistent left rail on desktop listing the
+   nodes of the system in the order reality moves through them; the
+   main column is the plane itself. Every node in this rail is a
+   live route — a node that resolves to nothing is not a node.
+   ═══════════════════════════════════════════════════════════ */
+
+.plane {
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  gap: 48px;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.plane-rail {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  padding: 28px 0 32px;
+  border-right: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.plane-wordmark {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.plane-nav { display: flex; flex-direction: column; }
+
+.plane-node {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 10px;
+  padding: 9px 10px 9px 0;
+  border-top: 1px solid var(--rule);
+  text-decoration: none;
+  color: var(--ash);
+  transition: color 120ms ease;
+}
+.plane-node:last-child { border-bottom: 1px solid var(--rule); }
+.plane-node:hover { color: var(--ink); }
+
+.plane-node[aria-current="page"] { color: var(--ink); }
+.plane-node[aria-current="page"] .plane-node-name { font-weight: 500; }
+
+/* The ordinal carries the position in the system. It is mono, so it
+   reads as an instrument reading rather than a bullet. */
+.plane-node-ord {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--quiet);
+}
+.plane-node[aria-current="page"] .plane-node-ord { color: var(--signal); }
+
+.plane-node-name {
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: -0.005em;
+}
+
+.plane-node-role {
+  grid-column: 2;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--quiet);
+}
+
+.plane-foot { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
+
+.plane-main { min-width: 0; padding: 40px 0 96px; }
+
+/* The node map. Five system stages, drawn as a strip of ruled
+   stations with the transition between them marked — not a diagram
+   of an idea, a table of contents that happens to be a loop. */
+.plane-map {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border-top: 1px solid var(--rule-2);
+  border-bottom: 1px solid var(--rule-2);
+}
+.plane-map-cell {
+  padding: 16px 18px 18px;
+  border-left: 1px solid var(--rule);
+  text-decoration: none;
+  color: var(--ink);
+  transition: background-color 120ms ease;
+}
+.plane-map-cell:first-child { border-left: 0; }
+.plane-map-cell:hover { background: var(--panel); }
+.plane-map-cell[aria-current="page"] { background: var(--panel); }
+
+.plane-map-ord {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--quiet);
+}
+.plane-map-name {
+  margin-top: 6px;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.plane-map-desc {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ash);
+}
+
+/* Tablet: the rail becomes a horizontal band above the plane. The
+   node order is preserved — it is the order of the system, not a
+   menu. */
+@media (max-width: 900px) {
+  .plane { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 0 20px; }
+  .plane-rail {
+    position: static;
+    height: auto;
+    padding: 16px 0 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--rule);
+    gap: 14px;
+  }
+  .plane-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  .plane-node { border-top: 1px solid var(--rule); }
+  .plane-node-role { display: none; }
+  .plane-foot { margin-top: 12px; flex-direction: row; flex-wrap: wrap; gap: 16px; }
+  .plane-main { padding: 28px 0 72px; }
+  .plane-map { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .plane-map-cell:nth-child(2n + 1) { border-left: 0; }
+  .plane-map-cell:nth-child(n + 3) { border-top: 1px solid var(--rule); }
+}
+
+@media (max-width: 560px) {
+  .plane-map { grid-template-columns: minmax(0, 1fr); }
+  .plane-map-cell { border-left: 0; }
+  .plane-map-cell:nth-child(n + 2) { border-top: 1px solid var(--rule); }
+}
+  letter-spacing: -0.04em;
+  line-height: 1.03;
+  text-wrap: balance;
+}
+/* ═══════════════════════════════════════════════════════════
+   GRAMMAR 2 — REGISTER (evidence)
+
+   The visual language for a claim. Ruled rows, identifiers, dates,
+   figures, provenance, and a state tag that is text before it is
+   anything else. Full-width rules are the primary layout primitive;
+   there are no cards and no shadows.
+   ═══════════════════════════════════════════════════════════ */
+
+.register { border-top: 1px solid var(--rule-2); }
+
+.register-head {
+  display: grid;
+  gap: 16px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule-2);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+.register-row {
+  display: grid;
+  gap: 16px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: start;
+  transition: background-color 120ms ease;
+}
+.register-row:hover { background: rgba(255, 255, 255, 0.6); }
+
+/* The identifier column: monospace, tabular, never wrapped away. */
+.register-id {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+.register-name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.register-figure {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+/* Provenance is the sentence that says why this row is allowed to
+   exist. It is small, it never competes with the claim, and it is
+   never omitted. */
+.register-provenance {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--quiet);
+  max-width: 48ch;
+}
+
+.register-source {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ash);
+}
+.register-source a { color: var(--signal-dim); text-underline-offset: 3px; }
+
+.register-date {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  color: var(--ash);
+  white-space: nowrap;
+}
+
+/* The standard register: what it is, what it says, when, what state,
+   and why. */
+.register--std { --cols: minmax(0, 1.5fr) minmax(0, 2fr) 104px 130px; }
+.register-head.register--std,
+.register-row.register--std { grid-template-columns: var(--cols); }
+
+/* Mobile re-composition, not a stack of desktop rows: a register row
+   becomes a definition list, because a four-column table at 360px is
+   unreadable and pretending otherwise is the failure. */
+@media (max-width: 720px) {
+  .register--std { --cols: minmax(0, 1fr); gap: 8px; }
+  .register-head { display: none; }
+  .register-row { padding: 14px 0; }
+  .register-row.register--std .register-cell {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 12px;
+  }
+  .register-row.register--std .register-cell::before {
+    content: attr(data-field);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--quiet);
+    padding-top: 2px;
+  }
+  .register-row.register--std .register-cell--id::before,
+  .register-row.register--std .register-cell--prov::before { display: none; }
+}
+/* ═══════════════════════════════════════════════════════════
+   GRAMMAR 3 — FIELD STATION (uncertainty)
+
+   Used wherever evidence quality is the subject. A status band
+   declares the truths the system always holds; an inspection tally
+   counts evidence states; an empty state names what the system has
+   not observed instead of apologising for it.
+   ═══════════════════════════════════════════════════════════ */
+
+.status-band {
+  display: flex;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--rule-2);
+  border-bottom: 1px solid var(--rule-2);
+  background: var(--panel);
+}
+.status-band-item {
+  flex: 1 1 auto;
+  padding: 12px 18px 13px;
+  border-left: 1px solid var(--rule);
+  min-width: 0;
+}
+.status-band-item:first-child { border-left: 0; padding-left: 0; }
+
+.status-band-key {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+.status-band-val {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--dust);
+}
+
+@media (max-width: 720px) {
+  .status-band { display: grid; grid-template-columns: 1fr; }
+  .status-band-item { border-left: 0; border-top: 1px solid var(--rule); padding: 10px 0; }
+  .status-band-item:first-child { border-top: 0; }
+}
+
+/* The tally: evidence distribution for one surface, counted from the
+   records actually rendered on it. Never hard-coded, never rounded,
+   never summing to a friendlier number than the data. */
+.tally {
+  display: flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--rule-2);
+  background: var(--panel);
+}
+.tally-cell {
+  flex: 1 1 96px;
+  padding: 11px 14px 12px;
+  border-left: 1px solid var(--rule);
+}
+.tally-cell:first-child { border-left: 0; }
+.tally-count {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.tally-key {
+  margin-top: 3px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+/* Absence is content. An empty register tells the operator what the
+   system has not observed and what would legitimately appear here —
+   that is a reading of the world, not an error state. */
+.empty {
+  border: 1px solid var(--rule-2);
+  border-left: 2px solid var(--rule-3);
+  background: var(--panel);
+  padding: 26px 26px 28px;
+}
+.empty-title {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.empty-body {
+  margin: 12px 0 0;
+  max-width: 58ch;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--dust);
+}
+.empty-meta {
+  margin: 18px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  display: grid;
+  gap: 7px;
+}
+.empty-meta-row {
+  display: grid;
+  grid-template-columns: 116px minmax(0, 1fr);
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.55;
+}
+.empty-meta-key { color: var(--quiet); letter-spacing: 0.1em; text-transform: uppercase; }
+.empty-meta-val { color: var(--ash); }
+
+/* ═══════════════════════════════════════════════════════════
+   EVIDENCE STATES
+
+   Structural, not decorative. Five states, each a text label inside
+   a hairline box. Colour is a redundant channel, never the only one:
+   VERIFIED earns the accent because it is the only state backed by a
+   citable evidence path. UNKNOWN is deliberately the quietest — an
+   unknown that shouts is a hidden zero.
+   ═══════════════════════════════════════════════════════════ */
+
+.state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 7px 3px;
+  border: 1px solid var(--rule-2);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ash);
+}
+.state::before {
+  content: "";
+  width: 5px; height: 5px;
+  border-radius: 1px;
+  background: var(--rule-3);
+  flex: none;
+}
+
+.state[data-state="VERIFIED"] {
+  color: var(--signal-strong);
+  border-color: var(--signal-a30);
+}
+.state[data-state="VERIFIED"]::before { background: var(--signal); }
+
+.state[data-state="PROTOTYPE"] { color: var(--ink); border-color: var(--rule-3); }
+.state[data-state="PROTOTYPE"]::before {
+  background: transparent;
+  border: 1px solid var(--rule-3);
+}
+
+.state[data-state="TARGET"] { color: var(--amber); border-color: var(--amber-line); }
+.state[data-state="TARGET"]::before { background: transparent; border: 1px solid var(--amber); }
+
+.state[data-state="PLANNED"] { color: var(--ash); border-color: var(--rule-2); }
+.state[data-state="PLANNED"]::before { background: transparent; border: 1px dashed var(--rule-3); }
+
+/* UNKNOWN ≠ zero. It is rendered dashed and quiet, never omitted and
+   never as an empty cell. */
+.state[data-state="UNKNOWN"] { color: var(--quiet); border-style: dashed; }
+.state[data-state="UNKNOWN"]::before { background: transparent; border: 1px dotted var(--rule-3); }
+/* ═══════════════════════════════════════════════════════════
+   GRAMMAR 4 — VALUE CHAIN (transformation)
+
+   The primary navigation primitive:
+
+     OBSERVE → RECORD → STRUCTURE → INTERPRET → DECIDE
+            → EXECUTE → MEASURE ↺
+
+   It answers five questions at once: where am I, what transformation
+   is happening, what evidence supports it, what happens next, and
+   who controls the transition. Desktop runs it as a horizontal
+   spine; mobile runs it as a vertical spine — same seven stations,
+   recomposed, never a shrunken strip.
+   ═══════════════════════════════════════════════════════════ */
+
+.chain { border-top: 1px solid var(--rule-2); }
+
+.chain-track {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.chain-step {
+  padding: 16px 14px 18px;
+  border-left: 1px solid var(--rule);
+  min-width: 0;
+}
+.chain-step:first-child { border-left: 0; padding-left: 0; }
+
+.chain-ord {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--quiet);
+}
+
+/* The connector: a hairline crossing the station with a single
+   chevron. It is the only ornament in the system and it is load-
+   bearing — it is what makes seven separate steps read as one
+   transformation rather than seven features. */
+.chain-link {
+  position: relative;
+  height: 1px;
+  background: var(--rule-2);
+  margin: 14px 0 12px;
+}
+.chain-link::after {
+  content: "";
+  position: absolute;
+  right: 0; top: -2px;
+  width: 5px; height: 5px;
+  border-top: 1px solid var(--rule-3);
+  border-right: 1px solid var(--rule-3);
+  transform: rotate(45deg);
+}
+
+.chain-name {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+.chain-what {
+  margin-top: 6px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ash);
+}
+
+/* Who controls the transition. The chain is local-first, and this is
+   where that stops being a slogan: each stage names its custodian. */
+.chain-owner {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--quiet);
+}
+
+/* The return stroke — MEASURE feeds OBSERVE. The loop is the product. */
+.chain-close {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0 14px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+.chain-close-mark {
+  flex: 1;
+  height: 1px;
+  background: repeating-linear-gradient(
+    to right,
+    var(--rule-3) 0 6px,
+    transparent 6px 11px
+  );
+}
+
+@media (max-width: 900px) {
+  .chain-track { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .chain-step:nth-child(2n + 1) { border-left: 0; padding-left: 0; }
+  .chain-step:nth-child(n + 3) { border-top: 1px solid var(--rule); }
+  .chain-link { display: none; }
+}
+
+@media (max-width: 560px) {
+  .chain-track { grid-template-columns: minmax(0, 1fr); }
+  .chain-step { border-left: 0; padding-left: 0; }
+  .chain-step:nth-child(n + 2) { border-top: 1px solid var(--rule); }
+}
+/* ═══════════════════════════════════════════════════════════
+   SHARED SURFACES — section rhythm and figure blocks
+   ═══════════════════════════════════════════════════════════ */
+
+.section { padding: 56px 0 0; }
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule-2);
+  margin-bottom: 22px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+/* Measures. A figure block states the number and, underneath it,
+   what the number is and what state carries it — so a bare figure
+   can never be lifted out of context and quoted as an achievement. */
+.measure-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border: 1px solid var(--rule-2);
+  background: var(--panel);
+}
+.measure-cell { padding: 18px 20px 20px; border-left: 1px solid var(--rule); }
+.measure-cell:first-child { border-left: 0; }
+.measure-figure {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(20px, 2.4vw, 28px);
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.measure-key {
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+.measure-note { margin-top: 10px; font-size: 12px; line-height: 1.5; color: var(--ash); }
+
+@media (max-width: 720px) {
+  .measure-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .measure-cell:nth-child(2n + 1) { border-left: 0; }
+  .measure-cell:nth-child(n + 3) { border-top: 1px solid var(--rule); }
+}
+
+.link {
+  color: var(--signal-dim);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+.link:hover { color: var(--signal); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 20px;
+  border: 1px solid var(--signal);
+  border-radius: 2px;
+  background: var(--signal);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 120ms ease;
+}
+.btn:hover { background: var(--signal-dim); }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 20px;
+  border: 1px solid var(--rule-3);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+.btn-ghost:hover { border-color: var(--signal); color: var(--signal-dim); }
+
+.action-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+/* Reduced motion: the chain chevron and hover transitions are the
+   only motion in the system. Both are decorative to understanding, so
+   the whole register drops. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  body { background: #fff; color: #000; font-size: 12pt; }
+  .plane-rail, .chain, .status-band, .btn { display: none; }
+  a { color: #000; text-decoration: underline; }
+}
