@@ -45,7 +45,7 @@ export default function RegisterPage() {
           <p className="label">{REGISTERS.length} registers</p>
         </div>
 
-        <div className="register">
+        <div className="register" role="table" aria-labelledby="classes-heading">
           <RegisterHead />
           {REGISTERS.map((r) => (
             <RegisterRow
@@ -108,7 +108,7 @@ export default function RegisterPage() {
           <p className="label">Six fields · no exceptions</p>
         </div>
 
-        <div className="register">
+        <div className="register" role="table" aria-labelledby="anatomy-heading">
           <RegisterRow
             id="ID"
             name="Identifier"

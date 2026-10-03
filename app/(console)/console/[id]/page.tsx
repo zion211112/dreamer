@@ -57,8 +57,8 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
   const menu = CONSOLE_MENU[tool.module];
 
   return (
-    <main className="console-ui flex min-h-dvh flex-col bg-void font-sans text-ink print:bg-white print:text-black">
-      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/8 px-4 sm:px-[21px] print:hidden">
+    <main id="main-content" className="console-ui flex min-h-dvh flex-col bg-void font-sans text-ink print:bg-white print:text-black">
+      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/10 px-4 sm:px-[21px] print:hidden">
         <div className="flex items-center gap-3 font-mono text-meta uppercase tracking-[0.14em] text-dust">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <polygon points="12 2 22 12 12 22 2 12" />
@@ -71,7 +71,7 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
       </header>
 
       {/* The module rail — one quiet tab strip, glyph per tool. */}
-      <nav aria-label="Console modules" className="flex items-center gap-1 overflow-x-auto border-b border-ink/8 bg-panel px-4 py-1.5 sm:px-5 print:hidden">
+      <nav aria-label="Console modules" className="flex items-center gap-1 overflow-x-auto border-b border-ink/10 bg-panel px-4 py-1.5 sm:px-5 print:hidden">
         {RAIL.map(([id, label]) => {
           const t = toolById(id);
           if (!t) return null;

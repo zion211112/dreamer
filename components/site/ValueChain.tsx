@@ -47,7 +47,7 @@ export function ValueChain() {
             );
 
             return href ? (
-              <Link className="chain-step" href={href} key={stage.ord}>
+              <Link className="chain-step chain-step--link" href={href} key={stage.ord}>
                 {inner}
               </Link>
             ) : (

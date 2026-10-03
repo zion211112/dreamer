@@ -47,20 +47,20 @@ export default function IntelligencePage() {
           <p className="label">{SIGNALS.length} readings · each with sources</p>
         </div>
 
-        <div className="register">
+        <div className="register" role="table" aria-labelledby="signals-heading">
           {SIGNALS.map((s) => (
             <div
-              className="register-row"
+              className="register-row" role="row"
               key={s.id}
               style={{ gridTemplateColumns: "minmax(0,250px) minmax(0,1fr) 132px" }}
             >
-              <div className="register-cell register-cell--id">
+              <div className="register-cell register-cell--id" role="cell">
                 <div className="register-id">{s.id}</div>
                 <div className="register-name" style={{ marginTop: 4 }}>
                   {s.name}
                 </div>
               </div>
-              <div className="register-cell" data-field="Reading">
+              <div className="register-cell" role="cell" data-field="Reading">
                 <p style={{ margin: "0 0 14px" }}>{s.reading}</p>
                 <div className="register-provenance" style={{ maxWidth: "62ch" }}>
                   <span style={{ color: "var(--dust)" }}>Method</span> — {s.method}
@@ -76,8 +76,8 @@ export default function IntelligencePage() {
                   {s.provenance}
                 </div>
               </div>
-              <div className="register-cell" data-field="State">
-                <StateTag state={s.state} title={s.provenance} />
+              <div className="register-cell" role="cell" data-field="State">
+                <StateTag state={s.state} />
               </div>
             </div>
           ))}

@@ -33,25 +33,25 @@ export function RegisterRow({
   provenance: string;
 }) {
   return (
-    <div className="register-row register--std">
-      <div className="register-cell register-cell--id">
+    <div className="register-row register--std" role="row">
+      <div className="register-cell register-cell--id" role="cell">
         <div className="register-id">{id}</div>
         <div className="register-name" style={{ marginTop: 4 }}>
           {name}
         </div>
       </div>
-      <div className="register-cell" data-field="Records">
+      <div className="register-cell" role="cell" data-field="Records">
         <div>{what}</div>
         <div className="register-provenance" style={{ marginTop: 8 }}>
           {provenance}
         </div>
       </div>
-      <div className="register-cell" data-field="Recorded">
+      <div className="register-cell" role="cell" data-field="Recorded">
         <div className="register-date">{recorded}</div>
       </div>
-      <div className="register-cell" data-field="State">
+      <div className="register-cell" role="cell" data-field="State">
         <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-start" }}>
-          <StateTag state={state} title={provenance} />
+          <StateTag state={state} />
           <div className="register-source">
             {source.href ? (
               <a href={source.href}>{source.label}</a>
@@ -68,11 +68,11 @@ export function RegisterRow({
 /** The column headers for a standard register. */
 export function RegisterHead() {
   return (
-    <div className="register-head register--std" aria-hidden="true">
-      <span>Record</span>
-      <span>What it holds</span>
-      <span>Recorded</span>
-      <span>State</span>
+    <div className="register-head register--std" role="row">
+      <span role="columnheader">Record</span>
+      <span role="columnheader">What it holds</span>
+      <span role="columnheader">Recorded</span>
+      <span role="columnheader">State</span>
     </div>
   );
 }

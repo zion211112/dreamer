@@ -44,7 +44,7 @@ export default function ControlPage() {
           <h2 className="section-title" id="console-heading">
             {CONSOLE.name}
           </h2>
-          <StateTag state={CONSOLE.state} title={CONSOLE.provenance} />
+          <StateTag state={CONSOLE.state} />
         </div>
 
         <div className="prose">
@@ -52,32 +52,32 @@ export default function ControlPage() {
           <p>{CONSOLE.localFirst}</p>
         </div>
 
-        <div className="register" style={{ marginTop: 20 }}>
-          <div className="register-head register--std" aria-hidden="true">
-            <span>Module</span>
-            <span>What it records</span>
-            <span>Runs</span>
-            <span>State</span>
+        <div className="register" role="table" aria-labelledby="console-heading" style={{ marginTop: 20 }}>
+          <div className="register-head register--std" role="row">
+            <span role="columnheader">Module</span>
+            <span role="columnheader">What it records</span>
+            <span role="columnheader">Runs</span>
+            <span role="columnheader">State</span>
           </div>
           {CONSOLE.modules.map((m, i) => (
-            <div className="register-row register--std" key={m}>
-              <div className="register-cell register-cell--id">
+            <div className="register-row register--std" role="row" key={m}>
+              <div className="register-cell register-cell--id" role="cell">
                 <div className="register-id">{String(i + 1).padStart(2, "0")}</div>
                 <div className="register-name" style={{ marginTop: 4 }}>
                   {m}
                 </div>
               </div>
-              <div className="register-cell" data-field="Records">
+              <div className="register-cell" role="cell" data-field="Records">
                 <div className="register-provenance" style={{ maxWidth: "54ch" }}>
                   Records written on this device stay in the browser until the
                   operator exports them. Nothing is transmitted.
                 </div>
               </div>
-              <div className="register-cell" data-field="Runs">
+              <div className="register-cell" role="cell" data-field="Runs">
                 <div className="register-date">On device</div>
               </div>
-              <div className="register-cell" data-field="State">
-                <StateTag state="PROTOTYPE" title={CONSOLE.provenance} />
+              <div className="register-cell" role="cell" data-field="State">
+                <StateTag state="PROTOTYPE" />
               </div>
             </div>
           ))}
@@ -106,21 +106,21 @@ export default function ControlPage() {
           </p>
         </div>
 
-        <div className="register">
+        <div className="register" role="table" aria-labelledby="stages-heading">
           {execution.map((stage) => (
             <div
-              className="register-row"
+              className="register-row" role="row"
               key={stage.ord}
               style={{ gridTemplateColumns: "72px minmax(0,1fr) 190px" }}
             >
-              <div className="register-cell">
+              <div className="register-cell" role="cell">
                 <div className="register-id">{stage.ord}</div>
               </div>
-              <div className="register-cell" data-field="Stage">
+              <div className="register-cell" role="cell" data-field="Stage">
                 <div className="register-name">{stage.name}</div>
                 <p style={{ margin: "6px 0 0", maxWidth: "58ch" }}>{stage.what}</p>
               </div>
-              <div className="register-cell" data-field="Custody">
+              <div className="register-cell" role="cell" data-field="Custody">
                 <div className="register-provenance">{stage.owner}</div>
               </div>
             </div>

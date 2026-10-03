@@ -128,8 +128,8 @@ function ConsoleLogin({
   }
 
   return (
-    <main className="console-ui flex h-dvh flex-col bg-void font-sans text-ink">
-      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/8 px-4 sm:px-[21px]">
+    <main id="main-content" className="console-ui flex h-dvh flex-col bg-void font-sans text-ink">
+      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/10 px-4 sm:px-[21px]">
         <div className="flex items-center gap-3 font-mono text-meta uppercase tracking-[0.14em] text-dust">
           <Diamond size={15} className="text-signal" />
           <span>APT-LABS · Console</span>
@@ -138,7 +138,7 @@ function ConsoleLogin({
           href="/"
           className="font-mono text-label uppercase tracking-[0.15em] text-ash transition-colors hover:text-ink"
         >
-          ← The ledger
+          ← The control plane
         </Link>
       </header>
 
@@ -257,7 +257,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
 
   return (
     <div className="console-ui flex h-dvh flex-col overflow-hidden bg-void font-sans text-ink">
-      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/8 px-4 sm:px-[21px]">
+      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/10 px-4 sm:px-[21px]">
         <div className="flex items-center gap-3 font-mono text-meta uppercase tracking-[0.14em] text-dust">
           <Diamond size={15} className="text-signal" />
           <span>APT-LABS · Console</span>
@@ -325,7 +325,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
           </div>
         </aside>
 
-        <main className="min-w-0 flex-1 overflow-y-auto p-4 sm:p-7 lg:p-[34px]">
+        <main id="main-content" className="min-w-0 flex-1 overflow-y-auto p-4 sm:p-7 lg:p-[34px]">
           <div className="mb-[21px] flex flex-col gap-3 border-b border-ink/10 pb-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h1 className="font-display text-h1 font-semibold leading-tight sm:text-h1">
@@ -369,7 +369,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
               ))}
             </div>
           ) : visible.length === 0 ? (
-            <div className="rounded-[24px] border border-dashed border-ink/15 bg-panel/60 px-5 py-12 text-center" aria-live="polite">
+            <div className="rounded-lg border border-dashed border-ink/15 bg-panel/60 px-5 py-12 text-center" aria-live="polite">
               <p className="font-display text-h2 text-ink">No tool matches that search.</p>
               <p className="mt-2 text-sm text-dust">Try another term, or switch back to the full console view.</p>
             </div>
@@ -393,7 +393,7 @@ function ModuleCard({ module, onOpen }: { module: string; onOpen: () => void }) 
     <button
       type="button"
       onClick={onOpen}
-      className="group flex min-h-[150px] flex-col justify-between gap-4 overflow-hidden rounded-2xl border border-ink/8 bg-panel p-5 text-left transition-all duration-150 hover:border-ink/25 hover:bg-edge focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+      className="group flex min-h-[150px] flex-col justify-between gap-4 overflow-hidden rounded-2xl border border-ink/10 bg-panel p-5 text-left transition-all duration-150 hover:border-ink/25 hover:bg-edge focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
     >
       <div className="flex items-start justify-between gap-3">
         <ModuleTile module={module} tint={menu.tint} />
@@ -424,7 +424,7 @@ function ToolCard({
     <Link
       href={`/console/${tool.id}`}
       aria-label={`Open ${tool.title}`}
-      className="group relative flex min-h-[140px] flex-col justify-between overflow-hidden rounded-2xl border border-ink/8 bg-panel p-5 transition-all duration-150 hover:border-ink/25 hover:bg-edge focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+      className="group relative flex min-h-[140px] flex-col justify-between overflow-hidden rounded-2xl border border-ink/10 bg-panel p-5 transition-all duration-150 hover:border-ink/25 hover:bg-edge focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
     >
       <div>
         <div className="mb-4 flex items-start justify-between gap-3">
@@ -435,8 +435,8 @@ function ToolCard({
             aria-pressed={fav}
             aria-label={fav ? `Remove ${tool.title} from favourites` : `Add ${tool.title} to favourites`}
             onClick={onFav}
-            className={`min-h-9 min-w-9 rounded-full border border-ink/8 p-1.5 transition-all md:opacity-0 md:group-hover:opacity-100 ${
-              fav ? "border-signal/20 bg-signal/10 text-signal" : "border-ink/8 bg-panel text-ash hover:border-ink/20 hover:text-ink"
+            className={`min-h-9 min-w-9 rounded-full border border-ink/10 p-1.5 transition-all md:opacity-0 md:group-hover:opacity-100 ${
+              fav ? "border-signal/20 bg-signal/10 text-signal" : "border-ink/10 bg-panel text-ash hover:border-ink/20 hover:text-ink"
             } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal`}
           >
             <svg

@@ -41,12 +41,16 @@ const config: Config = {
         // ── Accent — ONE interactive colour, matching --signal.
         //    Reserved for high-intent triggers and evidence states that
         //    have earned it. Never decorative, never passive.
-        signal: "#0e8f5e",
+        //    #0a7549 holds >=4.5:1 as TEXT on paper and on its own 10%
+        //    wash (5.0:1), so console labels may use it.
+        //    Ratios: scripts/check-contrast.mjs.
+        signal: "#0a7549",
         signalDim: "#0a6e48",
-        signalStrong: "#085537", // filled buttons: white ink clears 8.9:1
+        signalStrong: "#085537", // strongest green: white ink clears 8.9:1
 
-        // ── Informational — never interactive.
-        amber: "#9a6b12",
+        // ── Informational — never interactive. Amber is text on
+        //    TARGET tags; it clears AA at 10px on both surfaces.
+        amber: "#8a5f10",
         danger: "#b23a2e",
       },
       fontFamily: {

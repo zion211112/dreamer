@@ -50,20 +50,20 @@ export default function EvidencePage() {
           <p className="label">{EVIDENCE_STATES.length} states · enforced in code</p>
         </div>
 
-        <div className="register">
+        <div className="register" role="table" aria-labelledby="states-heading">
           {EVIDENCE_STATES.map((state) => (
             <div
-              className="register-row"
+              className="register-row" role="row"
               key={state}
               style={{ gridTemplateColumns: "132px minmax(0,1fr) minmax(0,1fr)" }}
             >
-              <div className="register-cell register-cell--id">
+              <div className="register-cell register-cell--id" role="cell">
                 <StateTag state={state} />
               </div>
-              <div className="register-cell" data-field="Permits">
+              <div className="register-cell" role="cell" data-field="Permits">
                 <p style={{ margin: 0 }}>{STATE_RULES[state].permits}</p>
               </div>
-              <div className="register-cell" data-field="Forbids">
+              <div className="register-cell" role="cell" data-field="Forbids">
                 <p style={{ margin: 0 }} className="register-provenance">
                   {STATE_RULES[state].forbids}
                 </p>
@@ -84,30 +84,30 @@ export default function EvidencePage() {
           <p className="label">{CONTRACT_RULES.length} rules</p>
         </div>
 
-        <div className="register">
-          <div className="register-head register--std" aria-hidden="true">
-            <span>Rule</span>
-            <span>Equals</span>
-            <span>Never</span>
-            <span>State</span>
+        <div className="register" role="table" aria-labelledby="rules-heading">
+          <div className="register-head register--std" role="row">
+            <span role="columnheader">Rule</span>
+            <span role="columnheader">Equals</span>
+            <span role="columnheader">Never</span>
+            <span role="columnheader">State</span>
           </div>
           {CONTRACT_RULES.map((r) => (
-            <div className="register-row register--std" key={r.id}>
-              <div className="register-cell register-cell--id">
+            <div className="register-row register--std" role="row" key={r.id}>
+              <div className="register-cell register-cell--id" role="cell">
                 <div className="register-id">{r.id}</div>
                 <div className="register-name" style={{ marginTop: 4 }}>
                   {r.subject}
                 </div>
               </div>
-              <div className="register-cell" data-field="Equals">
+              <div className="register-cell" role="cell" data-field="Equals">
                 <div>{r.equals}</div>
               </div>
-              <div className="register-cell" data-field="Never">
+              <div className="register-cell" role="cell" data-field="Never">
                 <div className="register-provenance" style={{ maxWidth: "46ch" }}>
                   {r.doesNotEqual}
                 </div>
               </div>
-              <div className="register-cell" data-field="State">
+              <div className="register-cell" role="cell" data-field="State">
                 <StateTag state={r.subject} />
               </div>
             </div>
@@ -126,31 +126,31 @@ export default function EvidencePage() {
           <p className="label">{UNKNOWN_FACTS.length} open questions</p>
         </div>
 
-        <div className="register">
-          <div className="register-head register--std" aria-hidden="true">
-            <span>Unknown</span>
-            <span>Why it is not established</span>
-            <span>Open since</span>
-            <span>State</span>
+        <div className="register" role="table" aria-labelledby="unknowns-heading">
+          <div className="register-head register--std" role="row">
+            <span role="columnheader">Unknown</span>
+            <span role="columnheader">Why it is not established</span>
+            <span role="columnheader">Open since</span>
+            <span role="columnheader">State</span>
           </div>
           {UNKNOWN_FACTS.map((u) => (
-            <div className="register-row register--std" key={u.id}>
-              <div className="register-cell register-cell--id">
+            <div className="register-row register--std" role="row" key={u.id}>
+              <div className="register-cell register-cell--id" role="cell">
                 <div className="register-id">{u.id}</div>
                 <div className="register-name" style={{ marginTop: 4 }}>
                   {u.what}
                 </div>
               </div>
-              <div className="register-cell" data-field="Why unknown">
+              <div className="register-cell" role="cell" data-field="Why unknown">
                 <div className="register-provenance" style={{ maxWidth: "54ch" }}>
                   {u.why}
                 </div>
               </div>
-              <div className="register-cell" data-field="Open since">
+              <div className="register-cell" role="cell" data-field="Open since">
                 <div className="register-date">{u.since}</div>
               </div>
-              <div className="register-cell" data-field="State">
-                <StateTag state="UNKNOWN" title={u.why} />
+              <div className="register-cell" role="cell" data-field="State">
+                <StateTag state="UNKNOWN" />
               </div>
             </div>
           ))}
@@ -171,7 +171,7 @@ export default function EvidencePage() {
           <h2 className="section-title" id="geo-heading">
             Declared geography
           </h2>
-          <StateTag state={COMPANY.geography.state} title={COMPANY.geography.provenance} />
+          <StateTag state={COMPANY.geography.state} />
         </div>
 
         <div className="measure-grid" style={{ gridTemplateColumns: "minmax(0,1fr) minmax(0,1.6fr)" }}>

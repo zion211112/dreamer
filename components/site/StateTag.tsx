@@ -12,6 +12,12 @@ import type { EvidenceState } from "@/lib/system";
  *      VERIFIED, outlined for PROTOTYPE, dashed for PLANNED, dotted for
  *      UNKNOWN. Distinguishable in monochrome.
  *   3. UNKNOWN is the quietest state in the system, never an omission.
+ *
+ * The provenance sentence is a `title` for pointer users and a
+ * visually-hidden span for everyone else — assistive tech cannot hover,
+ * so a tooltip-only explanation is an explanation some users never get.
+ * Callers that already render the provenance next to the tag (register
+ * rows) pass no `title`, so the sentence is never announced twice.
  */
 export function StateTag({
   state,
@@ -24,6 +30,7 @@ export function StateTag({
   return (
     <span className="state" data-state={state} title={title}>
       {state}
+      {title ? <span className="sr-only"> — {title}</span> : null}
     </span>
   );
 }

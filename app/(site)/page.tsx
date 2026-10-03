@@ -37,7 +37,7 @@ export default function FieldPage() {
         <p className="label">
           Node 01 · Field — reality before interpretation
         </p>
-        <h1 className="page-title" id="claim" style={{ maxWidth: "24ch" }}>
+        <h1 className="page-title" id="claim">
           {COMPANY.primary}
         </h1>
         <p className="prose" style={{ marginTop: 18, fontSize: 17 }}>
@@ -115,21 +115,21 @@ export default function FieldPage() {
           <h2 className="section-title" id="console-heading">
             The first field implementation
           </h2>
-          <StateTag state={CONSOLE.state} title={CONSOLE.provenance} />
+          <StateTag state={CONSOLE.state} />
         </div>
 
         <div className="prose">
           <p>{CONSOLE.oneLine}</p>
         </div>
 
-        <div className="register" style={{ marginTop: 20 }}>
+        <div className="register" role="table" aria-labelledby="console-heading" style={{ marginTop: 20 }}>
           {CONSOLE.modules.map((m, i) => (
             <div
-              className="register-row"
+              className="register-row" role="row"
               key={m}
               style={{ gridTemplateColumns: "minmax(0,220px) minmax(0,1fr)" }}
             >
-              <div className="register-cell">
+              <div className="register-cell" role="cell">
                 <div className="register-id">
                   {String(i + 1).padStart(2, "0")}
                 </div>
@@ -137,7 +137,7 @@ export default function FieldPage() {
                   {m}
                 </div>
               </div>
-              <div className="register-cell" data-field="Module">
+              <div className="register-cell" role="cell" data-field="Module">
                 <div className="register-provenance" style={{ maxWidth: "60ch" }}>
                   Runs on this device. Records it writes stay in the browser
                   until the operator exports them.
@@ -167,19 +167,19 @@ export default function FieldPage() {
           <h2 className="section-title" id="records-heading">
             What the system records
           </h2>
-          <p className="label">Six record classes</p>
+          <p className="label">{REGISTERS.length} record classes</p>
         </div>
 
-        <div className="register">
-          <div className="register-head register--std" aria-hidden="true">
-            <span>Register</span>
-            <span>What one row holds</span>
-            <span>Unit</span>
-            <span>State</span>
+        <div className="register" role="table" aria-labelledby="records-heading">
+          <div className="register-head register--std" role="row">
+            <span role="columnheader">Register</span>
+            <span role="columnheader">What one row holds</span>
+            <span role="columnheader">Unit</span>
+            <span role="columnheader">State</span>
           </div>
           {REGISTERS.map((r) => (
-            <div className="register-row register--std" key={r.ord}>
-              <div className="register-cell register-cell--id">
+            <div className="register-row register--std" role="row" key={r.ord}>
+              <div className="register-cell register-cell--id" role="cell">
                 <div className="register-id">{r.ord}</div>
                 <div className="register-name" style={{ marginTop: 4 }}>
                   <Link href={r.href} className="link">
@@ -187,17 +187,17 @@ export default function FieldPage() {
                   </Link>
                 </div>
               </div>
-              <div className="register-cell" data-field="Holds">
+              <div className="register-cell" role="cell" data-field="Holds">
                 <div>{r.what}</div>
                 <div className="register-provenance" style={{ marginTop: 8 }}>
                   {r.provenance}
                 </div>
               </div>
-              <div className="register-cell" data-field="Unit">
+              <div className="register-cell" role="cell" data-field="Unit">
                 <div className="register-figure">{r.unit}</div>
               </div>
-              <div className="register-cell" data-field="State">
-                <StateTag state={r.state} title={r.provenance} />
+              <div className="register-cell" role="cell" data-field="State">
+                <StateTag state={r.state} />
               </div>
             </div>
           ))}
@@ -235,37 +235,37 @@ export default function FieldPage() {
           state="UNKNOWN — not zero. The count is unestablished, not measured as none."
         />
 
-        <div className="register" style={{ marginTop: 22 }}>
-          <div className="register-head register--std" aria-hidden="true">
-            <span>Unknown</span>
-            <span>Why it is not established</span>
-            <span>Since</span>
-            <span>State</span>
+        <div className="register" role="table" aria-labelledby="unknown-heading" style={{ marginTop: 22 }}>
+          <div className="register-head register--std" role="row">
+            <span role="columnheader">Unknown</span>
+            <span role="columnheader">Why it is not established</span>
+            <span role="columnheader">Since</span>
+            <span role="columnheader">State</span>
           </div>
           {UNKNOWN_FACTS.map((u) => (
-            <div className="register-row register--std" key={u.id}>
-              <div className="register-cell register-cell--id">
+            <div className="register-row register--std" role="row" key={u.id}>
+              <div className="register-cell register-cell--id" role="cell">
                 <div className="register-id">{u.id}</div>
                 <div className="register-name" style={{ marginTop: 4 }}>
                   {u.what}
                 </div>
               </div>
-              <div className="register-cell" data-field="Why unknown">
+              <div className="register-cell" role="cell" data-field="Why unknown">
                 <div className="register-provenance" style={{ maxWidth: "56ch" }}>
                   {u.why}
                 </div>
               </div>
-              <div className="register-cell" data-field="Since">
+              <div className="register-cell" role="cell" data-field="Since">
                 <div className="register-date">{u.since}</div>
               </div>
-              <div className="register-cell" data-field="State">
-                <StateTag state="UNKNOWN" title={u.why} />
+              <div className="register-cell" role="cell" data-field="State">
+                <StateTag state="UNKNOWN" />
               </div>
             </div>
           ))}
         </div>
       </section>
-{/* ── DERIVED SIGNALS ─────────────────────────────────
+      {/* ── DERIVED SIGNALS ─────────────────────────────────
           Intelligence that shows its work. Each reading names the
           records it was derived from and the method that derived
           it, so a claim of insight can be walked back to its
@@ -278,23 +278,23 @@ export default function FieldPage() {
           <p className="label">Intelligence · traceable to source records</p>
         </div>
 
-        <div className="register">
+        <div className="register" role="table" aria-labelledby="signals-heading">
           {SIGNALS.map((s) => (
             <div
-              className="register-row"
+              className="register-row" role="row"
               key={s.id}
               style={{ gridTemplateColumns: "minmax(0,260px) minmax(0,1fr)" }}
             >
-              <div className="register-cell register-cell--id">
+              <div className="register-cell register-cell--id" role="cell">
                 <div className="register-id">{s.id}</div>
                 <div className="register-name" style={{ marginTop: 4 }}>
                   {s.name}
                 </div>
                 <div style={{ marginTop: 10 }}>
-                  <StateTag state={s.state} title={s.provenance} />
+                  <StateTag state={s.state} />
                 </div>
               </div>
-              <div className="register-cell" data-field="Reading">
+              <div className="register-cell" role="cell" data-field="Reading">
                 <p style={{ margin: "0 0 12px" }}>{s.reading}</p>
                 <div className="register-provenance" style={{ maxWidth: "62ch" }}>
                   <strong style={{ color: "var(--dust)" }}>Method · </strong>
@@ -341,25 +341,25 @@ export default function FieldPage() {
           </p>
         </div>
 
-        <div className="register">
+        <div className="register" role="table" aria-labelledby="stations-heading">
           {FIELD_STATIONS.map((f, i) => (
             <div
-              className="register-row"
+              className="register-row" role="row"
               key={f.name}
               style={{ gridTemplateColumns: "minmax(0,200px) minmax(0,1fr) 116px" }}
             >
-              <div className="register-cell">
+              <div className="register-cell" role="cell">
                 <div className="register-id">{String(i + 1).padStart(2, "0")}</div>
                 <div className="register-name" style={{ marginTop: 4 }}>
                   {f.name}
                 </div>
               </div>
-              <div className="register-cell" data-field="Chain">
+              <div className="register-cell" role="cell" data-field="Chain">
                 <div className="register-provenance" style={{ maxWidth: "58ch" }}>
                   {f.chain}
                 </div>
               </div>
-              <div className="register-cell" data-field="State">
+              <div className="register-cell" role="cell" data-field="State">
                 <StateTag state={f.state} title="Designed, not built." />
               </div>
             </div>

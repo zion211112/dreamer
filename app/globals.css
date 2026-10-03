@@ -47,16 +47,20 @@
   --ash:            #626b74;
   --quiet:          #646c77;
 
-  /* Signal — the one accent, darkened to hold AA on paper */
-  --signal:         #0e8f5e;
+  /* Signal — the one accent, darkened until every text use clears
+     WCAG AA on paper: #0a7549 is 5.3:1 on --void and 5.8:1 on --panel,
+     so a 10px mono label may carry it, not only decoration. Ratios are
+     computed by scripts/check-contrast.mjs, never eyeballed. */
+  --signal:         #0a7549;
   --signal-dim:     #0a6e48;
   --signal-strong:  #085537;
-  --signal-a30:     rgba(14, 143, 94, 0.30);
-  --signal-a08:     rgba(14, 143, 94, 0.08);
+  --signal-a30:     rgba(10, 117, 73, 0.30);
+  --signal-a08:     rgba(10, 117, 73, 0.08);
 
-  /* Informational — never interactive */
-  --amber:          #9a6b12;
-  --amber-line:     rgba(154, 107, 18, 0.36);
+  /* Informational — never interactive. Amber carries TARGET tag text
+     at 10px, so it holds AA like every other text token. */
+  --amber:          #8a5f10;
+  --amber-line:     rgba(138, 95, 16, 0.36);
   --danger:         #b23a2e;
 
   /* Washes */
@@ -73,6 +77,11 @@
 * { box-sizing: border-box; }
 
 html, body { margin: 0; padding: 0; }
+
+/* Light-only by design. Declaring the scheme stops a dark-mode browser
+   from re-tinting form controls and scrollbars — which is how a paper
+   surface quietly turns into a cockpit. */
+html { color-scheme: light; }
 
 body {
   font-family: var(--font-sans);
@@ -141,7 +150,7 @@ body {
 }
 
 .prose { max-width: 66ch; color: var(--dust); }
-.prose p { margin: 0 0 14px; }
+.prose p { margin: 0 0 14px; text-wrap: pretty; }
 
 /* Page title — one treatment on every route */
 .page-title {
@@ -150,6 +159,10 @@ body {
   font-family: var(--font-display);
   font-size: clamp(34px, 5.2vw, 56px);
   font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.03;
+  text-wrap: balance;
+}
 /* ═══════════════════════════════════════════════════════════
    GRAMMAR 1 — CONTROL PLANE (navigation)
 
@@ -305,10 +318,6 @@ body {
   .plane-map { grid-template-columns: minmax(0, 1fr); }
   .plane-map-cell { border-left: 0; }
   .plane-map-cell:nth-child(n + 2) { border-top: 1px solid var(--rule); }
-}
-  letter-spacing: -0.04em;
-  line-height: 1.03;
-  text-wrap: balance;
 }
 /* ═══════════════════════════════════════════════════════════
    GRAMMAR 2 — REGISTER (evidence)
@@ -473,6 +482,9 @@ body {
 .tally {
   display: flex;
   flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
   border: 1px solid var(--rule-2);
   background: var(--panel);
 }
@@ -623,6 +635,11 @@ body {
   min-width: 0;
 }
 .chain-step:first-child { border-left: 0; padding-left: 0; }
+
+/* Only stages that resolve to a route are links; only they get the
+   hover wash, so the surface never promises a click it cannot take. */
+.chain-step--link { text-decoration: none; color: inherit; transition: background-color 120ms ease; }
+.chain-step--link:hover { background: var(--panel); }
 
 .chain-ord {
   font-family: var(--font-mono);
@@ -790,6 +807,7 @@ body {
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
+  cursor: pointer;
   transition: background-color 120ms ease;
 }
 .btn:hover { background: var(--signal-dim); }
@@ -807,6 +825,7 @@ body {
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
+  cursor: pointer;
   transition: border-color 120ms ease, color 120ms ease;
 }
 .btn-ghost:hover { border-color: var(--signal); color: var(--signal-dim); }
@@ -825,8 +844,41 @@ body {
   }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   LOADING — a register before its records arrive
+
+   A spinner would be a foreign object in this system. Loading is
+   rendered as the ruled rows the page is about to show, so the
+   skeleton and the content speak the same grammar.
+   ═══════════════════════════════════════════════════════════ */
+
+.load { border-top: 1px solid var(--rule-2); }
+.load-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 2fr) 104px 130px;
+  gap: 16px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.load-bar {
+  height: 11px;
+  background: var(--wash-2);
+  animation: load-pulse 1.4s ease-in-out infinite;
+}
+.load-bar--short { width: 42%; }
+@keyframes load-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+@media (max-width: 720px) {
+  .load-row { grid-template-columns: minmax(0, 1fr); gap: 9px; }
+  .load-row .load-bar:nth-child(3),
+  .load-row .load-bar:nth-child(4) { width: 42%; }
+}
+
 @media print {
   body { background: #fff; color: #000; font-size: 12pt; }
-  .plane-rail, .chain, .status-band, .btn { display: none; }
+  .plane-rail, .chain, .status-band, .btn, .skip-link { display: none; }
   a { color: #000; text-decoration: underline; }
 }
