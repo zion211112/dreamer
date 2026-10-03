@@ -26,15 +26,16 @@ NUL
 tmp-*.log
 
 # Screenshot tooling. The harness (capture.cjs) is worth keeping; its browser
-# profile, node_modules and captures are throwaway artifacts.
-/tmp-shot/edge-profile/
-/tmp-shot/edge-profile-*/
-tmp-shot/shots/
-tmp-shot/node_modules/
-/tmp-shot/package-lock.json
-/tmp-shot/capture.done
-/tmp-shot/cap2.sh
-/tmp-shot/install.done
-/tmp-shot/tmp-shot-run.sh
+# profile, node_modules, captures and logs are throwaway artifacts.
+#
+# These patterns must match the CURRENT location. The harness moved under
+# RESEARCH TRASH/, and the old root-anchored patterns silently stopped
+# matching - which is how a 135MB browser profile ended up staged and
+# deployable. Artifact paths move; ignore rules have to move with them.
+tmp-shot/
+**/tmp-shot/
+**/edge-profile/
+**/edge-profile-*/
+**/shots/
 
 .dead-css-map.json
