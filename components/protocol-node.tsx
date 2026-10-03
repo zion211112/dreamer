@@ -15,6 +15,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import NodeConsole from "./node-console";
 import {
   BENBEN_BUILDS,
   EVIDENCE_SNAPSHOT,
@@ -242,21 +243,6 @@ const LADDER: {
 /** The product track, and the build that demonstrates it. */
 const BUILD = BENBEN_BUILDS;
 const EXAMPLE = BENBEN_BUILDS.products[0];
-
-/**
- * The economic loop — the system's conceptual spine, in the order a
- * decision actually travels. Each stage asks the one question that stage
- * must answer. This is architecture, not a record: every stage below is
- * carried by illustrative records, and the band says so.
- */
-const ECONOMIC_LOOP = [
-  { n: "01", k: "Signal", q: "What needs doing?", note: "Needs, procurement, market and institutional signals." },
-  { n: "02", k: "People", q: "Who can do it?", note: "Builders, makers, operators and documented contribution." },
-  { n: "03", k: "Allocation", q: "What gets resourced?", note: "Priority, selection and explicit decision rules." },
-  { n: "04", k: "Build", q: "What gets made?", note: "Design, BOM, sourcing, fabrication, installation." },
-  { n: "05", k: "Asset", q: "What is on record?", note: "A thing that acquires a history of state." },
-  { n: "06", k: "Proof", q: "What can be shown?", note: "Evidence, provenance, and the seal that survives handover." },
-];
 
 /**
  * The asset lifecycle, in the order an asset earns state. Each step names
@@ -557,454 +543,6 @@ function ViewShell({ active }: { active: PnView }) {
 
 type Tone = "recorded" | "planned" | "verified" | "illustrative";
 
-/**
- * Edge semantics are carried by the line itself, the way a circuit trace
- * carries its signal. This is the console's one original idea:
- *
- *   solid   the link is evidenced — both ends hold records
- *   dashed  the rule is published, the execution has not happened
- *   dotted  illustrative — the link exists in the model, not yet on record
- *   broken  the chain stops here, and the console says so
- *
- * The loop breaks between allocation and execution, because nothing has been
- * disbursed and no fabrication has occurred. The graph does not paper over it.
- */
-type EdgeKind = "evidenced" | "proposed" | "illustrative" | "broken";
-
-type CNode = {
-  id: string;
-  rec: string;
-  stage: string;
-  state: string;
-  tone: Tone;
-  detail: string;
-  chain: string[];
-  contract: { label: string; ok: boolean }[];
-  weight: number;
-};
-
-const NODES: CNode[] = [
-  {
-    id: "c109",
-    rec: "C-109",
-    stage: "Contribution recorded",
-    state: "Recorded",
-    tone: "recorded",
-    detail:
-      "Water node maintenance · APT Fab / field work. Issuer or witness signature, the contributing person, the linked asset and the event timestamp.",
-    chain: ["C-109", "AF-014", "EVIDENCE-PACK §6"],
-    contract: [
-      { label: "Attribution", ok: true },
-      { label: "Witness signature", ok: true },
-      { label: "Linked asset", ok: true },
-      { label: "Future leak", ok: true },
-    ],
-    weight: 1,
-  },
-  {
-    id: "pr014",
-    rec: "PR-014",
-    stage: "Proposal under an explicit rule",
-    state: "Open",
-    tone: "planned",
-    detail:
-      "Where should the next service node go? Scope, eligibility, allocation pool, implementation constraints and the evidence checklist published together.",
-    chain: ["C-109", "PR-014", "POOL-014"],
-    contract: [
-      { label: "Rule published", ok: true },
-      { label: "Scope declared", ok: true },
-      { label: "Evidence checklist", ok: true },
-      { label: "Allocation run", ok: false },
-    ],
-    weight: 1,
-  },
-  {
-    id: "pool014",
-    rec: "POOL-014",
-    stage: "Allocation by formula",
-    state: "Pending",
-    tone: "planned",
-    detail:
-      "Solar service node. Deployment candidate with explicit release conditions. KSh 420K illustrative, KSh 0 disbursed.",
-    chain: ["PR-014", "POOL-014", "AF-014"],
-    contract: [
-      { label: "Sources declared", ok: true },
-      { label: "Threshold published", ok: true },
-      { label: "Disbursement", ok: false },
-      { label: "Release condition", ok: false },
-    ],
-    weight: 1,
-  },
-  {
-    id: "af014",
-    rec: "AF-014",
-    stage: "Physical execution",
-    state: "Planned",
-    tone: "planned",
-    detail:
-      "Solar service node. BOM, sourcing record, installer record and acceptance checklist linked to the record.",
-    chain: ["POOL-014", "AF-014", "EVIDENCE-PACK §6"],
-    contract: [
-      { label: "BOM", ok: false },
-      { label: "Sourcing record", ok: false },
-      { label: "Installer record", ok: false },
-      { label: "Acceptance test", ok: false },
-    ],
-    weight: 1,
-  },
-  {
-    id: "evpack",
-    rec: "EVIDENCE-PACK §6",
-    stage: "Evidence appended",
-    state: "Recorded",
-    tone: "recorded",
-    detail:
-      "Evidence bundle appended to the asset record: build record, source note, handover record and the acceptance checklist.",
-    chain: ["AF-014", "EVIDENCE-PACK §6", "SHA-256"],
-    contract: [
-      { label: "Bundle linked", ok: true },
-      { label: "Build record", ok: false },
-      { label: "Handover record", ok: false },
-      { label: "Provenance", ok: true },
-    ],
-    weight: 1,
-  },
-  {
-    id: "seal",
-    rec: "SHA-256",
-    stage: "The record survives",
-    state: "Verified",
-    tone: "verified",
-    detail:
-      "Sealing and rolling hashes. SHA-256 canonical records and master seals — the one verified property this surface claims.",
-    chain: ["EVIDENCE-PACK §6", "SHA-256"],
-    contract: [
-      { label: "Canonical record", ok: true },
-      { label: "Master seal", ok: true },
-      { label: "Rolling hash", ok: true },
-      { label: "Future leak", ok: true },
-    ],
-    weight: 1.35,
-  },
-];
-
-/* The transition between each consecutive pair, and the nature of it. */
-const EDGE_KIND: EdgeKind[] = [
-  "evidenced",
-  "proposed",
-  "broken",
-  "proposed",
-  "evidenced",
-  "illustrative",
-];
-
-/** The trace, for the timeline. Each mark points at a node on the loop. */
-const TRACE = [
-  { at: "23:44", node: "af014", msg: "Asset evidence bundle appended" },
-  { at: "23:51", node: "pool014", msg: "Pool threshold recalculated" },
-  { at: "00:09", node: "pr014", msg: "Selection proof published" },
-  { at: "00:12", node: "c109", msg: "Contribution linked to asset" },
-];
-
-/** Inspector tone → its state class. Explicit for the same reason as
-    TRACE_TONE: an assembled class name is invisible to the CSS audit. */
-const INSPECT_TONE: Record<Tone, string> = {
-  recorded: "is-t-recorded",
-  planned: "is-t-planned",
-  verified: "is-t-verified",
-  illustrative: "is-t-illustrative",
-};
-
-const RING_R = { cx: 600, cy: 352, rx: 432, ry: 246 };
-const SPINE_GEO = { x: 96, y0: 46, step: 100 };
-
-const pos = {
-  ring: (i: number) => {
-    const a = ((-90 + (360 / NODES.length) * i) * Math.PI) / 180;
-    return {
-      x: RING_R.cx + RING_R.rx * Math.cos(a),
-      y: RING_R.cy + RING_R.ry * Math.sin(a),
-    };
-  },
-  spine: (i: number) => ({ x: SPINE_GEO.x, y: SPINE_GEO.y0 + SPINE_GEO.step * i }),
-};
-
-const ctrl = {
-  ring: (i: number) => {
-    const a = ((-90 + (360 / NODES.length) * (i + 0.5)) * Math.PI) / 180;
-    return {
-      x: RING_R.cx + RING_R.rx * 1.34 * Math.cos(a),
-      y: RING_R.cy + RING_R.ry * 1.34 * Math.sin(a),
-    };
-  },
-  spine: (i: number) =>
-    i === NODES.length - 1
-      ? { x: 26, y: SPINE_GEO.y0 + (SPINE_GEO.step * (NODES.length - 1)) / 2 }
-      : { x: SPINE_GEO.x + (i % 2 === 0 ? -18 : 18), y: SPINE_GEO.y0 + SPINE_GEO.step * i + SPINE_GEO.step / 2 },
-};
-
-/** Point on a quadratic at t — used to split a broken edge at its gap. */
-function qAt(p0: number, p1: number, p2: number, t: number): number {
-  const u = 1 - t;
-  return u * u * p0 + 2 * u * t * p1 + t * t * p2;
-}
-
-function edgePath(i: number, layout: "ring" | "spine", t0: number, t1: number): string {
-  const from = i === NODES.length - 1 ? 0 : i;
-  const a = pos[layout](from);
-  const b = pos[layout]((i + 1) % NODES.length);
-  const c = ctrl[layout](i);
-  const at = (t: number) => ({
-    x: qAt(a.x, c.x, b.x, t),
-    y: qAt(a.y, c.y, b.y, t),
-  });
-  const s = at(t0);
-  const e = at(t1);
-  const k = at((t0 + t1) / 2);
-  return `M ${s.x.toFixed(1)} ${s.y.toFixed(1)} Q ${k.x.toFixed(1)} ${k.y.toFixed(1)} ${e.x.toFixed(1)} ${e.y.toFixed(1)}`;
-}
-
-const EDGE_IDS = NODES.map((_, i) => ({
-  from: NODES[i].id,
-  to: NODES[(i + 1) % NODES.length].id,
-  kind: EDGE_KIND[i],
-}));
-
-function LoopConsole() {
-  const [sel, setSel] = useState("c109");
-  const [cmd, setCmd] = useState("");
-  const [mark, setMark] = useState(TRACE.length - 1);
-
-  const node = NODES.find((n) => n.id === sel) ?? NODES[0];
-  const near = new Set<string>([node.id]);
-  EDGE_IDS.forEach((e) => {
-    if (e.from === node.id) near.add(e.to);
-    if (e.to === node.id) near.add(e.from);
-  });
-
-  const q = cmd.trim().toLowerCase();
-  const hits = q
-    ? NODES.filter((n) => `${n.rec} ${n.stage} ${n.id}`.toLowerCase().includes(q))
-    : [];
-
-  const select = (id: string) => {
-    setSel(id);
-    setCmd("");
-  };
-
-  return (
-    <div className="pn-console">
-      {/* ── Stage: one graph, two compositions ─────────────────────── */}
-      <div className="pn-stage">
-        {(["ring", "spine"] as const).map((layout) => (
-          <svg
-            key={layout}
-            className={cx("pn-edges", layout === "spine" && "pn-edges-spine")}
-            viewBox={layout === "ring" ? "0 0 1200 700" : "0 0 400 640"}
-            preserveAspectRatio="xMidYMid meet"
-            aria-hidden="true"
-          >
-            {EDGE_IDS.map((e, i) => {
-              const lit = e.from === node.id || e.to === node.id;
-              const broken = e.kind === "broken";
-              const cls = cx("pn-edge", `is-k-${e.kind}`, lit && "is-lit");
-              if (broken) {
-                const c = ctrl[layout](i);
-                const mx = qAt(
-                  pos[layout](i === NODES.length - 1 ? 0 : i).x,
-                  c.x,
-                  pos[layout]((i + 1) % NODES.length).x,
-                  0.5
-                );
-                const my = qAt(
-                  pos[layout](i === NODES.length - 1 ? 0 : i).y,
-                  c.y,
-                  pos[layout]((i + 1) % NODES.length).y,
-                  0.5
-                );
-                return (
-                  <g key={`${e.from}-${e.to}`} className={cls}>
-                    <path d={edgePath(i, layout, 0, 0.44)} />
-                    <path d={edgePath(i, layout, 0.56, 1)} />
-                    <circle cx={mx} cy={my} r="3.4" className="pn-gap" />
-                  </g>
-                );
-              }
-              return (
-                <path
-                  key={`${e.from}-${e.to}`}
-                  className={cls}
-                  d={edgePath(i, layout, 0, 1)}
-                />
-              );
-            })}
-          </svg>
-        ))}
-
-        <div className="pn-core">
-          <b>APT-LABS</b>
-          <span>Coordination layer</span>
-        </div>
-
-        {NODES.map((n, i) => (
-          <button
-            key={n.id}
-            type="button"
-            className={cx(
-              "pn-cnode",
-              n.id === node.id && "is-sel",
-              !near.has(n.id) && "is-dim"
-            )}
-            style={
-              {
-                "--w": n.weight,
-                "--rx": `${(pos.ring(i).x / 1200) * 100}%`,
-                "--ry": `${(pos.ring(i).y / 700) * 100}%`,
-                "--sx": `${(pos.spine(i).x / 400) * 100}%`,
-                "--sy": `${(pos.spine(i).y / 640) * 100}%`,
-              } as React.CSSProperties
-            }
-            aria-pressed={n.id === node.id}
-            onClick={() => select(n.id)}
-          >
-            <span className="pn-cnode-mark" aria-hidden="true" />
-            <span className="pn-cnode-body">
-              <i>{n.rec}</i>
-              <b>{n.stage}</b>
-            </span>
-          </button>
-        ))}
-      </div>
-
-      {/* ── Legend: the line language, stated once ─────────────────── */}
-      <ul className="pn-legend">
-        <li className="is-k-evidenced">Evidenced</li>
-        <li className="is-k-proposed">Proposed</li>
-        <li className="is-k-illustrative">Illustrative</li>
-        <li className="is-k-broken">Chain broken</li>
-      </ul>
-
-      {/* ── Timeline: the trace, scrubbable ────────────────────────── */}
-      <div className="pn-timeline">
-        <span className="pn-timeline-cap">Trace</span>
-        <div className="pn-ticks">
-          {TRACE.map((t, i) => (
-            <button
-              key={t.at}
-              type="button"
-              className={cx("pn-tick", i === mark && "is-on")}
-              onClick={() => {
-                setMark(i);
-                select(t.node);
-              }}
-            >
-              <span className="pn-tick-dot" aria-hidden="true" />
-              <i>{t.at}</i>
-              <em>{t.msg}</em>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Inspector: chain + contract ─────────────────────────────── */}
-      <div className="pn-inspector">
-        <div className="pn-inspector-head">
-          <b>{node.rec}</b>
-          <span>{node.stage}</span>
-          <span className={cx("pn-inspect-state", INSPECT_TONE[node.tone])}>{node.state}</span>
-        </div>
-        <p className="pn-inspector-detail">{node.detail}</p>
-
-        <div className="pn-split">
-          <div>
-            <div className="eyebrow">Source chain</div>
-            <ol className="pn-chain">
-              {node.chain.map((c, i) => (
-                <li key={c}>
-                  <span aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
-                  {c}
-                </li>
-              ))}
-            </ol>
-            <button
-              type="button"
-              className="pn-replay"
-              onClick={() => select(NODES[0].id)}
-            >
-              Replay chain
-            </button>
-          </div>
-          <div>
-            <div className="eyebrow">Contract status</div>
-            <ul className="pn-contract">
-              {node.contract.map((c) => (
-                <li key={c.label} className={c.ok ? "pn-ok" : "pn-no"}>
-                  <span aria-hidden="true">{c.ok ? "✓" : "—"}</span>
-                  {c.label}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Command: the keyboard layer ────────────────────────────── */}
-      <div className="pn-cmd">
-        <span className="pn-cmd-sigil" aria-hidden="true">
-          &gt;
-        </span>
-        <input
-          className="pn-cmd-input"
-          type="text"
-          value={cmd}
-          placeholder="inspect a record — C-109, PR-014, SEAL"
-          aria-label="Inspect a record by identifier"
-          onChange={(e) => setCmd(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && hits[0]) select(hits[0].id);
-            if (e.key === "Escape") setCmd("");
-          }}
-        />
-        {hits.length > 0 && (
-          <ul className="pn-cmd-hits">
-            {hits.map((h) => (
-              <li key={h.id}>
-                <button type="button" onClick={() => select(h.id)}>
-                  <i>{h.rec}</i>
-                  {h.stage}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/** The conceptual spine, stated once. Architecture above, records below. */
-function SpineBand() {
-  return (
-    <div className="pn-spine" data-reveal>
-      <div className="pn-spine-intro">
-        <div className="eyebrow">The economic loop</div>
-        <b>One loop.</b>
-        <small>Concept architecture · no live data</small>
-      </div>
-      <div className="pn-spine-steps" role="list">
-        {ECONOMIC_LOOP.map((s) => (
-          <div className="pn-spine-step" role="listitem" key={s.n}>
-            <small aria-hidden="true">{s.n}</small>
-            <strong>{s.k}</strong>
-            <em>{s.q}</em>
-            <span>{s.note}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function OverviewView() {
   return (
     <>
@@ -1016,32 +554,15 @@ function OverviewView() {
           ["Mode", "Concept / prototype"],
           ["Records", "Illustrative"],
           ["Storage", "This browser"],
-          ["Export", "Local JSON"],
+          ["State", "Discipline on"],
         ]}
       />
 
-      <div className="pn-pulse" data-reveal role="group" aria-label="Protocol state">
-        <div className="pn-pulse-main">
-          <div className="eyebrow">Protocol loop</div>
-          <strong>{LOOP_LINE}</strong>
-        </div>
-        <div className="pn-pulse-cell"><small>Mode</small><b>Prototype</b></div>
-        <div className="pn-pulse-cell"><small>Records</small><b>Illustrative</b></div>
-        <div className="pn-pulse-cell"><small>Storage</small><b>This browser</b></div>
-        <div className="pn-pulse-cell"><small>State</small><b>Discipline on</b></div>
-      </div>
-
-      <SpineBand />
+      {/* The console IS the interface. Five levels, traversed by question.
+          Nothing here is a card until it is asked to become one. */}
+      <NodeConsole />
 
       <div className="pn-section" data-reveal>
-        <div className="pn-sectionhead">
-          <h2>The system remembers what happened</h2>
-          <span>Six stages · chain breaks where evidence stops</span>
-        </div>
-        <LoopConsole />
-      </div>
-
-        <div className="pn-section" data-reveal>
         <div className="pn-sectionhead">
           <h2>The loop, in order</h2>
           <span>Six transitions</span>
@@ -1056,9 +577,14 @@ function OverviewView() {
             </div>
           ))}
         </div>
+        <p className="pn-footnote">
+          Stage sequences and every record state above are read from the runtime
+          source of truth (<code>lib/company.ts</code>); no surface has published
+          a verified fabrication, installation or deployment record.
+        </p>
       </div>
 
-        <div className="pn-section" data-reveal>
+      <div className="pn-section" data-reveal>
         <div className="pn-sectionhead">
           <h2>Execution surfaces</h2>
           <span>Stage and state</span>
@@ -1076,24 +602,19 @@ function OverviewView() {
                 <small>{s.role}</small>
               </div>
               <div className="pn-ladder-stages">
-                {s.stages.map((st, i) => (
+                {s.stages.map((st) => (
                   <span className="pn-ladder-stage" key={st.label}>
                     <i aria-hidden="true">{st.label}</i>
                     {st.value}
                   </span>
                 ))}
               </div>
-              <span className={`pn-ladder-state ${LADDER_TONE[s.tone]}`}>
+              <span className={cx("pn-ladder-state", LADDER_TONE[s.tone])}>
                 {STATE_WORD(s.state)}
               </span>
             </div>
           ))}
         </div>
-        <p className="pn-footnote">
-          Stage sequences are defined in the runtime source of truth
-          (<code>lib/company.ts</code>); no surface has published a verified
-          fabrication, installation or deployment record.
-        </p>
       </div>
     </>
   );

@@ -1,0 +1,604 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   APT-LABS — Node Console
+
+   The graph is the interface. Two rules:
+   nothing is a card until you ask it to become one; the line is the claim.
+
+   Nodes are marks and labels. There is no card in this file except the
+   inspector, which is the one place detail is allowed to accumulate.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.nc {
+  --nc-ground: var(--void);
+  --nc-panel: var(--panel);
+  --nc-rule: var(--rule);
+  --nc-rule-2: var(--rule-2);
+  --nc-rule-3: var(--border-strong);
+  --nc-ink: var(--ink);
+  --nc-ink-2: var(--dust);
+  --nc-muted: var(--ash);
+  --nc-quiet: var(--quiet);
+  --nc-signal: var(--signal);
+  --nc-signal-2: var(--signal-strong);
+  --nc-warn: var(--amber);
+  --nc-stop: var(--danger);
+  --nc-mono: var(--font-dm);
+  --nc-sans: var(--font-sans);
+  --nc-display: var(--font-display);
+  --nc-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  display: grid;
+  grid-template-columns: 152px minmax(0, 1fr);
+  gap: 40px;
+  margin-top: 34px;
+}
+
+/* ── Rail: the five levels, and where you are ───────────────────────────── */
+
+.nc-rail-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-self: start;
+  position: sticky;
+  top: 76px;
+}
+.nc-rail-item button {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  width: 100%;
+  min-height: 34px;
+  padding: 6px 8px 6px 10px;
+  border: 0;
+  border-left: 2px solid transparent;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 130ms var(--nc-ease), background-color 130ms var(--nc-ease);
+}
+.nc-rail-item button i {
+  font-style: normal;
+  font-family: var(--nc-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--nc-quiet);
+  font-variant-numeric: tabular-nums;
+}
+.nc-rail-item button span {
+  font-family: var(--nc-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--nc-muted);
+}
+.nc-rail-item button:hover { background: var(--wash); }
+.nc-rail-item button:hover span { color: var(--nc-ink); }
+.nc-rail-item.is-done button i { color: var(--nc-signal); }
+.nc-rail-item.is-on button {
+  border-left-color: var(--nc-signal);
+  background: var(--tint);
+}
+.nc-rail-item.is-on button span { color: var(--nc-ink); }
+.nc-rail-item.is-on button i { color: var(--nc-signal); }
+
+/* ── Stage head ─────────────────────────────────────────────────────────── */
+
+.nc-stagehead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr);
+  align-items: end;
+  gap: 36px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--nc-rule-2);
+}
+.nc-stagehead .eyebrow { color: var(--nc-signal-2); }
+.nc-question {
+  margin: 12px 0 0;
+  max-width: 18ch;
+  font-family: var(--nc-display);
+  font-weight: 600;
+  font-size: clamp(30px, 3.4vw, 52px);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  color: var(--nc-ink);
+  text-wrap: balance;
+}
+.nc-note {
+  margin: 0;
+  max-width: 46ch;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--nc-muted);
+}
+
+/* ── Stage: the canvas ──────────────────────────────────────────────────── */
+
+.nc-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 12 / 7;
+  min-height: 420px;
+  margin-top: 22px;
+  border-block: 1px solid var(--nc-rule);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(14, 143, 94, 0.05), transparent 64%);
+  overflow: hidden;
+}
+
+.nc-edges {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.nc-edges-spine { display: none; }
+
+/* ── The line language. This is the whole point. ────────────────────────── */
+
+.nc-edge-line {
+  fill: none;
+  stroke: var(--nc-rule-3);
+  stroke-width: 1.25;
+  transition: stroke 240ms var(--nc-ease), opacity 240ms var(--nc-ease);
+}
+.nc-edge.is-k-evidenced    .nc-edge-line { stroke: var(--nc-rule-3); }
+.nc-edge.is-k-proposed     .nc-edge-line { stroke: var(--nc-rule-3); stroke-dasharray: 7 5; }
+.nc-edge.is-k-illustrative .nc-edge-line { stroke: var(--nc-rule-2); stroke-dasharray: 2 5; }
+
+/* The chain stopped. The line is severed and the gap is marked. */
+.nc-edge.is-k-broken .nc-edge-line { stroke: var(--nc-stop); stroke-width: 1.6; }
+.nc-gap {
+  fill: var(--nc-ground);
+  stroke: var(--nc-stop);
+  stroke-width: 1.5;
+}
+
+.nc-edge.is-lit .nc-edge-line { stroke: var(--nc-signal); stroke-width: 2; }
+.nc-edge.is-lit.is-k-proposed     .nc-edge-line { stroke-dasharray: 7 5; }
+.nc-edge.is-lit.is-k-illustrative .nc-edge-line { stroke-dasharray: 2 5; }
+.nc-edge.is-lit.is-k-broken       .nc-edge-line { stroke: var(--nc-stop); stroke-width: 2; }
+
+/* Unrelated edges recede. Focus is a fade, never a removal. */
+.nc-edge:not(.is-lit) { opacity: 0.42; }
+
+/* Directional flow on an evidenced link. Dies under reduced motion. */
+.nc-trace {
+  fill: none;
+  stroke: var(--nc-signal);
+  stroke-width: 2;
+  stroke-dasharray: 3 15;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .nc-trace { animation: nc-flow 1.9s linear infinite; }
+}
+@keyframes nc-flow {
+  to { stroke-dashoffset: -36; }
+}
+.nc-reduced .nc-trace { animation: none; opacity: 0.5; }
+
+/* ── Node: a mark and a label. Never a card. ────────────────────────────── */
+
+.nc-node {
+  position: absolute;
+  left: var(--rx);
+  top: var(--ry);
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 7px 11px 7px 9px;
+  border: 1px solid transparent;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: opacity 240ms var(--nc-ease),
+              border-color 130ms var(--nc-ease),
+              background-color 130ms var(--nc-ease);
+}
+.nc-node:hover { border-color: var(--nc-rule-2); background: var(--wash); }
+.nc-node:focus-visible {
+  outline: 2px solid var(--nc-signal);
+  outline-offset: 2px;
+}
+.nc-node.is-sel {
+  border-color: var(--nc-rule-2);
+  background: var(--nc-panel);
+  box-shadow: 0 1px 2px rgba(20, 24, 28, 0.05);
+}
+.nc-node.is-dim { opacity: 0.34; }
+.nc-node.is-hub { padding: 11px 15px 11px 12px; }
+
+/* Node scale = importance. */
+.nc-mark {
+  flex: none;
+  width: calc(10px * var(--w, 1));
+  height: calc(10px * var(--w, 1));
+  background: var(--nc-ink-2);
+  transform: rotate(45deg);
+  transition: background-color 130ms var(--nc-ease), box-shadow 130ms var(--nc-ease);
+}
+.nc-mark.is-t-recorded    { background: var(--nc-ink-2); }
+.nc-mark.is-t-planned     { background: var(--nc-warn); }
+.nc-mark.is-t-prototype   { background: var(--nc-muted); }
+.nc-mark.is-t-illustrative{ background: var(--nc-rule-3); }
+.nc-mark.is-t-verified    { background: var(--nc-signal); }
+
+.nc-node.is-sel .nc-mark { box-shadow: 0 0 0 3px var(--tint); }
+.nc-node.is-hub .nc-mark { box-shadow: 0 0 0 4px var(--tint); }
+
+.nc-label i {
+  display: block;
+  font-style: normal;
+  font-family: var(--nc-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  color: var(--nc-quiet);
+  font-variant-numeric: tabular-nums;
+}
+.nc-label b {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--nc-display);
+  font-weight: 600;
+  font-size: 12.5px;
+  line-height: 1.24;
+  letter-spacing: -0.01em;
+  color: var(--nc-ink);
+  white-space: nowrap;
+}
+.nc-node.is-sel .nc-label b { color: var(--nc-signal-2); }
+.nc-label em {
+  display: block;
+  margin-top: 4px;
+  font-style: normal;
+  font-family: var(--nc-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--nc-signal);
+  opacity: 0;
+  transition: opacity 130ms var(--nc-ease);
+}
+.nc-node:hover .nc-label em,
+.nc-node.is-sel .nc-label em { opacity: 1; }
+
+/* ── Legend ─────────────────────────────────────────────────────────────── */
+
+.nc-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.nc-legend li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--nc-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--nc-muted);
+}
+.nc-legend li::before {
+  content: "";
+  width: 28px;
+  height: 0;
+  flex: none;
+  border-top: 1.5px solid var(--nc-rule-3);
+}
+.nc-legend li.is-k-proposed::before     { border-top-style: dashed; }
+.nc-legend li.is-k-illustrative::before { border-top-style: dotted; border-top-width: 2px; }
+.nc-legend li.is-k-broken::before {
+  border-top-color: var(--nc-stop);
+  border-top-style: solid;
+}
+
+/* ── Trace scrubber ─────────────────────────────────────────────────────── */
+
+.nc-trace-bar {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid var(--nc-rule);
+}
+.nc-trace-cap {
+  font-family: var(--nc-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--nc-quiet);
+}
+.nc-ticks {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2px;
+}
+.nc-tick {
+  position: relative;
+  display: block;
+  padding: 15px 10px 0 0;
+  border: 0;
+  border-top: 1px solid var(--nc-rule-2);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 130ms var(--nc-ease);
+}
+.nc-tick:hover { border-top-color: var(--nc-rule-3); }
+.nc-tick.is-on { border-top-color: var(--nc-signal); }
+.nc-tick-dot {
+  position: absolute;
+  left: 0;
+  top: -3.5px;
+  width: 6px;
+  height: 6px;
+  background: var(--nc-rule-3);
+  transform: rotate(45deg);
+  transition: background-color 130ms var(--nc-ease);
+}
+.nc-tick.is-on .nc-tick-dot { background: var(--nc-signal); }
+.nc-tick i {
+  display: block;
+  font-style: normal;
+  font-family: var(--nc-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--nc-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.nc-tick em {
+  display: block;
+  margin-top: 4px;
+  font-style: normal;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--nc-quiet);
+}
+.nc-tick.is-on em { color: var(--nc-muted); }
+
+/* ── Inspector: the one place detail accumulates ────────────────────────── */
+
+.nc-inspect {
+  margin-top: 28px;
+  padding: 22px 24px 24px;
+  border: 1px solid var(--nc-rule);
+  background: var(--nc-panel);
+}
+.nc-inspect-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 13px;
+}
+.nc-inspect-head b {
+  font-family: var(--nc-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--nc-signal-2);
+}
+.nc-inspect-head > span {
+  font-family: var(--nc-display);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  color: var(--nc-ink);
+}
+.nc-state {
+  padding: 3px 9px;
+  border: 1px solid var(--nc-rule-2);
+  font-family: var(--nc-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.nc-state.is-t-verified     { color: var(--nc-signal-2); border-color: var(--nc-signal-line); }
+.nc-state.is-t-planned      { color: var(--nc-warn);     border-color: var(--nc-warn-line); }
+.nc-state.is-t-recorded     { color: var(--nc-ink-2);    border-color: var(--nc-rule-3); }
+.nc-state.is-t-prototype    { color: var(--nc-muted);    border-color: var(--nc-rule-2); }
+.nc-state.is-t-illustrative { color: var(--nc-quiet);    border-color: var(--nc-rule-2); }
+
+.nc-inspect-detail {
+  margin: 13px 0 0;
+  max-width: var(--pn-measure, 62ch);
+  font-size: 13.5px;
+  line-height: 1.68;
+  color: var(--nc-muted);
+}
+
+.nc-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 42px;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--nc-rule);
+}
+.nc-chain, .nc-contract { margin: 0; padding: 0; list-style: none; }
+.nc-chain li {
+  display: flex;
+  align-items: baseline;
+  gap: 13px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--nc-rule);
+  font-family: var(--nc-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.03em;
+  color: var(--nc-ink-2);
+}
+.nc-chain li span {
+  font-size: 9px;
+  color: var(--nc-quiet);
+  font-variant-numeric: tabular-nums;
+}
+.nc-contract li {
+  display: flex;
+  align-items: baseline;
+  gap: 11px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--nc-rule);
+  font-family: var(--nc-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.03em;
+}
+.nc-contract li span { width: 13px; flex: none; text-align: center; }
+.nc-ok { color: var(--nc-ink-2); }
+.nc-ok span { color: var(--nc-signal); }
+.nc-no { color: var(--nc-quiet); }
+.nc-no span { color: var(--nc-stop); }
+
+.nc-replay {
+  margin-top: 18px;
+  min-height: 32px;
+  padding: 0 14px;
+  border: 1px solid var(--nc-rule-2);
+  background: none;
+  color: var(--nc-muted);
+  font-family: var(--nc-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 130ms var(--nc-ease), border-color 130ms var(--nc-ease);
+}
+.nc-replay:hover { color: var(--nc-ink); border-color: var(--nc-rule-3); }
+
+/* ── Command: the keyboard layer ────────────────────────────────────────── */
+
+.nc-cmd {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-top: 20px;
+  padding: 0 15px;
+  border: 1px solid var(--nc-rule-2);
+  background: var(--nc-panel);
+}
+.nc-cmd:focus-within { border-color: var(--nc-signal-line); }
+.nc-cmd-sigil {
+  font-family: var(--nc-mono);
+  font-size: 12.5px;
+  color: var(--nc-signal);
+}
+.nc-cmd-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 46px;
+  border: 0;
+  background: none;
+  font-family: var(--nc-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  color: var(--nc-ink);
+}
+.nc-cmd-input::placeholder { color: var(--nc-quiet); }
+.nc-cmd-input:focus { outline: none; }
+
+.nc-cmd-hits {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 1px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--nc-rule-2);
+  background: var(--nc-panel);
+  box-shadow: var(--shadow-deep);
+}
+.nc-cmd-hits button {
+  display: flex;
+  align-items: baseline;
+  gap: 13px;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 15px;
+  border: 0;
+  background: none;
+  text-align: left;
+  font-family: var(--nc-display);
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--nc-ink);
+  cursor: pointer;
+}
+.nc-cmd-hits button:hover { background: var(--wash); }
+.nc-cmd-hits i {
+  font-style: normal;
+  font-family: var(--nc-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--nc-signal-2);
+}
+
+/* ── Responsive: recomposition, never collapse ──────────────────────────── */
+
+@media (max-width: 1080px) {
+  .nc { grid-template-columns: 1fr; gap: 26px; }
+  .nc-rail-list {
+    position: static;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-bottom: 1px solid var(--nc-rule);
+    padding-bottom: 10px;
+  }
+  .nc-rail-list::-webkit-scrollbar { display: none; }
+  .nc-rail-item { flex: none; }
+  .nc-rail-item button {
+    border-left: 0;
+    border-bottom: 2px solid transparent;
+    padding: 6px 10px;
+  }
+  .nc-rail-item.is-on button { border-bottom-color: var(--nc-signal); }
+  .nc-stagehead { grid-template-columns: 1fr; gap: 14px; align-items: start; }
+  .nc-stage { min-height: 360px; }
+  .nc-tick em { display: none; }
+}
+
+@media (max-width: 680px) {
+  /* The ring cannot hold six labelled records at 360px, so the console
+     becomes the evidence spine: a vertical chain, return traced up the
+     gutter. Same data, same line language, different composition. */
+  .nc-stage { aspect-ratio: 420 / 660; min-height: 0; }
+  .nc-edges { display: none; }
+  .nc-edges-spine { display: block; }
+  .nc-node {
+    left: var(--sx);
+    top: var(--sy);
+    transform: translate(-13px, -50%);
+    max-width: calc(100% - var(--sx) - 12px);
+    padding: 7px 8px 7px 0;
+  }
+  .nc-node.is-hub { padding: 10px 8px 10px 0; }
+  .nc-label b { white-space: normal; font-size: 12px; }
+  .nc-split { grid-template-columns: 1fr; gap: 26px; }
+  .nc-inspect { padding: 18px 16px 20px; }
+  .nc-ticks { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 2px; }
+  .nc-legend { gap: 6px 18px; }
+  .nc-trace-bar { grid-template-columns: 52px minmax(0, 1fr); gap: 12px; }
+  .nc-question { font-size: clamp(28px, 8vw, 40px); }
+}
