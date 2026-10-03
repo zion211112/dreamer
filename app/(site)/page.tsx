@@ -28,7 +28,7 @@ export default function FieldPage() {
           The contract asks six things of this screen, in this
           order: reality is observed, records are evidence-bound,
           intelligence is derived, decisions are traceable, the
-          current console is real, and unknown remains unknown.
+          built surface is openable, and unknown remains unknown.
 
           The hierarchy is three tiers and no more. The mantra is the
           only display type on the site and reaches 181px; the full
@@ -70,15 +70,19 @@ export default function FieldPage() {
           </p>
         </div>
 
+        {/* Ordered by the contract, not by size. The register and the unknowns
+            come before the built surface because they are the claims; the
+            surface is the least representative thing on the site and the
+            one most likely to be mistaken for a product demonstration. */}
         <div className="action-row" style={{ marginTop: "var(--s-4)" }}>
-          <Link href={CONSOLE.href} className="btn">
-            Open the console
-          </Link>
-          <Link href="/register" className="btn-ghost">
+          <Link href="/register" className="btn">
             Read the register
           </Link>
           <Link href="/evidence" className="btn-ghost">
             What is not yet known
+          </Link>
+          <Link href={CONSOLE.href} className="btn-ghost">
+            Open the built surface
           </Link>
         </div>
       </section>
@@ -137,18 +141,20 @@ export default function FieldPage() {
       </section>
 
       {/* ── THE BUILDS ────────────────────────────────────────
-          The reframe: one grammar, six domains, one built. The
-          School Console is an example of what this system is, not
-          the system itself — so it is listed first because it is
-          the only row with a surface, and never because it is the
-          product. */}
+          The reframe: one grammar, six domains, one built. The one
+          build with a surface is an example of what this system is,
+          not the system itself — so it is listed first because it is
+          the only row that resolves, and never because it is the
+          product. Its domain is stated as field operations rather
+          than as a school's, because an example that names a sector
+          makes the reader infer the product is that sector's system. */}
       <section className="section" aria-labelledby="builds-heading">
         <div className="section-head">
           <h2 className="section-title" id="builds-heading">
             One grammar, six domains
           </h2>
           <p className="section-kicker">
-            The console is an example · not the product
+            The built surface is an example · not the product
           </p>
         </div>
 
@@ -166,109 +172,77 @@ export default function FieldPage() {
         <BuildGrid />
       </section>
 
-      {/* ── WHAT THE SYSTEM RECORDS ───────────────────────────
-          The registers, as a register: each row states what it
-          holds, what state its evidence is in, and the provenance
-          sentence that makes the state inspectable. The tally is
-          counted from these rows — it cannot drift from them. */}
-      <section className="section" aria-labelledby="records-heading">
+      {/* ── WHERE THE REST OF IT IS WRITTEN ───────────────────
+          This page is the argument. These three registers are the
+          evidence for it, and each one was previously rendered here in
+          full — the record classes as a table plus an inspection tally,
+          the derived readings as a table plus a second tally, the
+          published unknowns as a third table. Six hundred words of
+          register repeated three times on the route that exists to
+          summarise them, and every reader who wanted a row had to
+          scroll past two copies of the others to reach it.
+
+          So each is one row here: what it holds, how many, and a link
+          to where it is maintained. The detail is not behind a toggle
+          and is not summarised badly — it is on the route that owns it,
+          which is the only place it can stay current without this page
+          becoming a second source of truth that nothing keeps in step. */}
+      <section className="section" aria-labelledby="registers-heading">
         <div className="section-head">
-          <h2 className="section-title" id="records-heading">
-            What the system records
+          <h2 className="section-title" id="registers-heading">
+            The registers behind this
           </h2>
-          <p className="section-kicker">
-            {REGISTERS.length} record classes
-          </p>
+          <p className="section-kicker">Each on the node that owns it</p>
         </div>
 
-        <div className="register" role="table" aria-labelledby="records-heading">
-          <div className="register-head register--std" role="row">
-            <span role="columnheader">Register</span>
-            <span role="columnheader">What one row holds</span>
-            <span role="columnheader">Unit</span>
-            <span role="columnheader">State</span>
-          </div>
-          {REGISTERS.map((r) => (
-            <div className="register-row register--std" role="row" key={r.ord}>
+        <div className="register" role="table" aria-labelledby="registers-heading">
+          {[
+            {
+              ord: "02",
+              name: "Register",
+              href: "/register",
+              holds: "The record classes the chain requires, and the empty sets where an institution would write them.",
+              count: REGISTERS.length,
+              unit: "record classes",
+            },
+            {
+              ord: "03",
+              name: "Intelligence",
+              href: "/intelligence",
+              holds: "The readings derived from those records, each naming the method that produced it and the records it rests on.",
+              count: SIGNALS.length,
+              unit: "readings",
+            },
+            {
+              ord: "05",
+              name: "Evidence",
+              href: "/evidence",
+              holds: "What each evidence state permits and forbids, and the questions this system has not answered.",
+              count: UNKNOWN_FACTS.length,
+              unit: "published unknowns",
+            },
+          ].map((row) => (
+            <div className="register-row register--std" role="row" key={row.href}>
               <div className="register-cell register-cell--id" role="cell">
-                <div className="register-id">{r.ord}</div>
+                <div className="register-id">{row.ord}</div>
                 <div className="register-name" style={{ marginTop: 4 }}>
-                  <Link href={r.href} className="link">
-                    {r.name}
+                  <Link href={row.href} className="link">
+                    {row.name}
                   </Link>
                 </div>
               </div>
               <div className="register-cell" role="cell" data-field="Holds">
-                <div>{r.what}</div>
-                <div className="register-provenance" style={{ marginTop: 8 }}>
-                  {r.provenance}
-                </div>
+                <div className="register-provenance">{row.holds}</div>
               </div>
-              <div className="register-cell" role="cell" data-field="Unit">
-                <div className="register-figure">{r.unit}</div>
+              <div className="register-cell" role="cell" data-field="Count">
+                <div className="register-figure figure">{row.count}</div>
+                <div className="register-provenance">{row.unit}</div>
               </div>
               <div className="register-cell" role="cell" data-field="State">
-                <StateTag state={r.state} />
+                <StateTag state="PROTOTYPE" />
               </div>
             </div>
           ))}
-        </div>
-
-        <div style={{ marginTop: "var(--s-4)" }}>
-          <Tally records={REGISTERS} caption="record classes" />
-        </div>
-      </section>
-
-      {/* ── DERIVED SIGNALS ─────────────────────────────────
-          Intelligence that shows its work. Each reading names the
-          records it was derived from and the method that derived
-          it, so a claim of insight can be walked back to its
-          inputs rather than taken on trust. */}
-      <section className="section" aria-labelledby="signals-heading">
-        <div className="section-head">
-          <h2 className="section-title" id="signals-heading">
-            Derived signals
-          </h2>
-          <p className="section-kicker">
-            Intelligence · traceable to source records
-          </p>
-        </div>
-
-        <div className="register" role="table" aria-labelledby="signals-heading">
-          {SIGNALS.map((s) => (
-            <div
-              className="register-row" role="row"
-              key={s.id}
-              style={{ gridTemplateColumns: "minmax(0,260px) minmax(0,1fr)" }}
-            >
-              <div className="register-cell register-cell--id" role="cell">
-                <div className="register-id">{s.id}</div>
-                <div className="register-name" style={{ marginTop: 4 }}>
-                  {s.name}
-                </div>
-                <div style={{ marginTop: 10 }}>
-                  <StateTag state={s.state} />
-                </div>
-              </div>
-              <div className="register-cell" role="cell" data-field="Reading">
-                <p style={{ margin: "0 0 12px" }}>{s.reading}</p>
-                <div className="register-provenance" style={{ maxWidth: "62ch" }}>
-                  <strong style={{ color: "var(--dust)" }}>Method · </strong>
-                  {s.method}
-                  <br />
-                  <strong style={{ color: "var(--dust)" }}>Sources · </strong>
-                  {s.sources.join("  ·  ")}
-                  <br />
-                  <strong style={{ color: "var(--dust)" }}>Provenance · </strong>
-                  {s.provenance}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div style={{ marginTop: "var(--s-4)" }}>
-          <Tally records={SIGNALS} caption="derived signals" />
         </div>
       </section>
 
@@ -281,13 +255,22 @@ export default function FieldPage() {
           A site that shows this before it shows its achievements is
           making a structural argument, not a decorative one — the
           absence of evidence is rendered as carefully as the
-          evidence. */}
+          evidence.
+
+          The five rows behind it used to be repeated here in full. They
+          are on /evidence, which is the node whose subject they are, and
+          they are linked rather than re-rendered: this page stating them
+          a second time is a second copy with no way to notice the first
+          going stale. */}
       <section className="section" aria-labelledby="unknown-heading">
         <div className="section-head">
           <h2 className="section-title" id="unknown-heading">
             What this system does not know
           </h2>
-          <p className="section-kicker">Published unknowns</p>
+          <p className="section-kicker">
+            <span className="figure">{UNKNOWN_FACTS.length}</span> published
+            unknowns
+          </p>
         </div>
 
         <EmptyState
@@ -299,41 +282,20 @@ export default function FieldPage() {
           state="UNKNOWN — not zero. The count is unestablished, not measured as none."
         />
 
-        <div className="register" role="table" aria-labelledby="unknown-heading" style={{ marginTop: "var(--s-4)" }}>
-          <div className="register-head register--std" role="row">
-            <span role="columnheader">Unknown</span>
-            <span role="columnheader">Why it is not established</span>
-            <span role="columnheader">Since</span>
-            <span role="columnheader">State</span>
-          </div>
-          {UNKNOWN_FACTS.map((u) => (
-            <div className="register-row register--std" role="row" key={u.id}>
-              <div className="register-cell register-cell--id" role="cell">
-                <div className="register-id">{u.id}</div>
-                <div className="register-name" style={{ marginTop: 4 }}>
-                  {u.what}
-                </div>
-              </div>
-              <div className="register-cell" role="cell" data-field="Why unknown">
-                <div className="register-provenance" style={{ maxWidth: "56ch" }}>
-                  {u.why}
-                </div>
-              </div>
-              <div className="register-cell" role="cell" data-field="Since">
-                <div className="register-date">{u.since}</div>
-              </div>
-              <div className="register-cell" role="cell" data-field="State">
-                <StateTag state="UNKNOWN" />
-              </div>
-            </div>
-          ))}
+        <div className="action-row">
+          <Link href="/evidence" className="btn">
+            Read all {UNKNOWN_FACTS.length} open questions
+          </Link>
+          <span className="register-provenance">
+            Each names what is missing and what would establish it.
+          </span>
         </div>
       </section>
 
       {/* ── WHERE THE BUILDS END ─────────────────────────────
           Closing on the count rather than the achievement: one build
           exists out of six, and the other five are named as designs.
-          The console is the last thing this page mentions on purpose —
+          The built surface is the last thing this page mentions on purpose —
           it is the most impressive thing here and the least
           representative of it. */}
       <section className="section" aria-labelledby="state-heading">

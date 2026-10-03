@@ -76,10 +76,10 @@ export default function RegisterPage() {
 
         <EmptyState
           title="Nothing registered yet"
-          body="No institutional record has been entered. Records appear here when an operator enters them on their own device in the console — a roster, an attendance register, a set of marks, an invoice. Nothing is entered on your behalf, and nothing arrives from a server."
+          body="No institutional record has been entered. The record classes are listed above and every one of them is empty. Records appear here when an operator enters them on their own device in the console. Nothing is entered on your behalf, and nothing arrives from a server."
           unit="record"
           why="No institution has run this system. There is no shared database for records to arrive from, by design: custody of the record stays with the institution that holds it."
-          unblocks="Opening the console and entering one day's attendance. That single row is enough to make this register non-empty and inspectable."
+          unblocks="Opening the console and entering one row of any record class. That single row is enough to make this register non-empty and inspectable."
           state="UNKNOWN — the contents are unestablished, not zero. The count of records in this repository is not a count of records in the world."
         />
 
@@ -117,7 +117,7 @@ export default function RegisterPage() {
           <RegisterRow
             id="TIMESTAMP"
             name="Timestamp"
-            what="When the record was made, not when it was reported. The distinction is what keeps a late-entered attendance register honest."
+            what="When the record was made, not when it was reported. The distinction is what keeps a late-entered register honest."
             recorded="Required"
             state="VERIFIED"
             source={{ label: "Every row" }}

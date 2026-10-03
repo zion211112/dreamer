@@ -38,6 +38,69 @@ export const EVIDENCE_STATES: readonly EvidenceState[] = [
   "UNKNOWN",
 ] as const;
 
+/* ---------------------------------------------------------------- */
+/* THE CONSOLE BOUNDARY                                              */
+/* ---------------------------------------------------------------- */
+
+/**
+ * Vocabulary that belongs to a console surface and to nothing above it.
+ *
+ * The console is a working local-first demo, and its subject matter —
+ * fees, attendance, marking, learners, a school timetable — is legitimate
+ * inside it. The failure this list exists to prevent is that same
+ * vocabulary migrating *upward*, into the architecture's own register and
+ * then into public copy, where it reads as a claim about fee collection or
+ * about detecting irregular attendance in named children.
+ *
+ * That is not a hypothetical. Every one of those phrases reached the public
+ * site through this file, and none of it is imported by the console: the
+ * dependency runs the wrong way, so nothing kept it honest. The console
+ * has its own vocabulary in lib/console.ts and never reads this one.
+ *
+ * It is exported rather than written into the checker so that the
+ * contract and the machine check read the same list. A banned word list
+ * kept in two places is a fifth thing to keep in step, which is how a
+ * vocabulary of twenty-eight terms became seven copies of a module count.
+ * scripts/check-lexicon.mjs asserts against this.
+ *
+ * Terms are console nouns only. Words the architecture borrows in its own
+ * sense are deliberately absent — "absence" means a missing record in this
+ * file and a missing register row on the site, and a checker that banned it
+ * would have to be taught the difference, which is a ban that stops being
+ * read and starts being worked around.
+ */
+export const CONSOLE_VOCABULARY: readonly string[] = [
+  "fee",
+  "fees",
+  "collection rate",
+  "invoice",
+  "invoices",
+  "payment",
+  "payments",
+  "pay statement",
+  "admission number",
+  "balance outstanding",
+  "attendance",
+  "roll call",
+  "learner",
+  "learners",
+  "pupil",
+  "pupils",
+  "student",
+  "students",
+  "roster",
+  "marking key",
+  "weakness map",
+  "submission",
+  "submissions",
+  "cohort",
+  "staff",
+  "teacher",
+  "teachers",
+  "timetable",
+  "term report",
+] as const;
+
 /**
  * What each state legally permits a route to say. This is the enforcement
  * point: `permits` is a constraint on language, not a description of it.
@@ -143,10 +206,10 @@ export const PLANE: readonly PlaneNode[] = [
     ord: "01",
     key: "field",
     name: "Field",
-    role: "Reality occurs — events, people, assets, attendance, payments and decisions exist before the system interprets them.",
+    role: "Reality occurs — events, people, assets and decisions exist before the system interprets them.",
     href: "/",
     state: "PROTOTYPE",
-    holds: "Events, people, assets, attendance, payments and decisions, recorded at the moment they occur.",
+    holds: "Events, people, assets and decisions, recorded at the moment they occur.",
     custody: "The institution",
     provenance:
       "Field entry runs on the operator's own device. No institution has entered anything, so this node describes a stage rather than holding a record set.",
@@ -259,7 +322,7 @@ export const VALUE_CHAIN: readonly ChainStage[] = [
   {
     ord: "06",
     name: "Execute",
-    what: "The decision becomes work in the field: a lesson, a mark, a payment, a repair.",
+    what: "The decision becomes work in the field: the change itself, in the place the decision was about, under the rule it was recorded against.",
     owner: "The institution",
     node: "control",
   },
@@ -322,33 +385,33 @@ export const REGISTERS: readonly RegisterSpec[] = [
   },
   {
     ord: "04",
-    name: "Attendance Record",
-    unit: "day",
-    what: "Daily presence per learner per class, with the register it was taken in.",
-    href: "/console",
+    name: "Observation Record",
+    unit: "period",
+    what: "One observation of a party's state at a stated interval, with the register it was taken in and the interval it belongs to.",
+    href: "/register",
     state: "PROTOTYPE",
     provenance:
-      "Attendance is recorded and bulk-registered on-device in the console. Records live in the browser until exported; nothing is transmitted.",
+      "The record grammar and the interval key are defined. No observational register is published, because no institution has taken one: a device-local one is a reading about that device, not about a population.",
   },
   {
     ord: "05",
-    name: "Assessment Record",
-    unit: "submission",
-    what: "Marks, the marking key, the weakness map derived from them, and the source paper.",
-    href: "/console",
+    name: "Derived Measure Record",
+    unit: "measurement",
+    what: "One measure taken against a stated criterion, the criterion itself, the derivation from it, and the artefact it was taken from.",
+    href: "/intelligence",
     state: "PROTOTYPE",
     provenance:
-      "The marking engine and weakness-map derivation run locally. No learner performance figure is published because no assessment has been recorded in this repository.",
+      "The criterion-and-derivation grammar is defined and one derivation is implemented locally. No derived measure is published, because none has been measured against anything.",
   },
   {
     ord: "06",
-    name: "Fee Record",
-    unit: "invoice",
-    what: "Invoices raised, payments reconciled against the pay statement, and balances outstanding.",
-    href: "/console",
+    name: "Reconciliation Record",
+    unit: "reconciliation",
+    what: "Two independently sourced statements of one period, joined, with every unmatched entry recorded in both directions.",
+    href: "/intelligence",
     state: "PROTOTYPE",
     provenance:
-      "Invoice and reconciliation logic exist locally. No payment data is held in this repository, so no collection rate is claimed.",
+      "The join and its unmatched-entry report are specified. No reconciliation is published, because no second statement of any period exists to reconcile against the first.",
   },
 ] as const;
 /* ---------------------------------------------------------------- */
@@ -376,39 +439,46 @@ export interface Signal {
 export const SIGNALS: readonly Signal[] = [
   {
     id: "SIG-01",
-    name: "Assessment weakness map",
+    name: "Criterion attribution",
     reading:
-      "Where a submission lost marks, grouped by the objective it was testing — not a score, but the shape of what is not yet learned.",
+      "Which criterion a record failed, grouped by the criterion rather than by the subject — not a score, but the shape of what has not been met.",
     method:
-      "Derived per submission from the marking key: every lost mark is attributed to the objective it belongs to, then aggregated across the submissions in a class.",
-    sources: ["ASSESSMENT-01", "MARK-KEY-01"],
+      "Every lost unit is attributed to the criterion it belongs to, then aggregated across the records in one population.",
+    /* Empty, and that is a correction rather than a gap. These rows used
+       to cite source ids — ASSESSMENT-01, MARK-KEY-01, ATTENDANCE-01,
+       FEE-01 — that exist nowhere in this repository, and were rendered on
+       /intelligence as citation chips. RULE-05 makes an unsourced VERIFIED
+       row a bug; this is the same failure wearing the other hat, a
+       PROTOTYPE row asserting evidence that was never recorded. A row with
+       no sources has to say so. */
+    sources: [],
     state: "PROTOTYPE",
     provenance:
-      "The derivation runs in the console against locally entered data. It has never been run against a real school cohort, so its output demonstrates the method rather than a finding about learners.",
+      "Specified and implemented locally against entered data. It has never run against a population the reader did not enter, so its output demonstrates a method rather than a finding about anyone.",
   },
   {
     id: "SIG-02",
-    name: "Attendance irregularity",
+    name: "Baseline departure",
     reading:
-      "Learners whose absence clusters on particular weekdays or particular classes, rather than dispersing at random.",
+      "Records whose values depart from their own established baseline rather than from a population average — self-referenced, so they require a history before they mean anything.",
     method:
-      "Derived from the attendance register by grouping absence days by weekday and class over a term, then ranking by deviation from each learner's own baseline.",
-    sources: ["ATTENDANCE-01"],
+      "Derived by comparing each period against that subject's own prior periods over a stated window, then ranking by departure.",
+    sources: [],
     state: "PROTOTYPE",
     provenance:
-      "The grouping exists locally. With no multi-week register recorded, no learner-level finding can be stated — the signal is a method awaiting records.",
+      "Specified and implemented locally against entered data. It needs a multi-period register before it can say anything, and none has been recorded.",
   },
   {
     id: "SIG-03",
-    name: "Fee reconciliation drift",
+    name: "Unmatched-record drift",
     reading:
-      "Payments that appear in a pay statement but match no invoice raised for that admission number.",
+      "Entries one statement carries that the register has no record of, and records the register holds that no statement carries — reported in both directions, so neither side can hide in the gap.",
     method:
-      "Derived by joining reconciled statement lines against the fee register on admission number and amount, reporting unmatched lines in both directions.",
-    sources: ["FEE-01"],
+      "Derived by joining two independently sourced statements of the same period on the fields both carry, then reporting every unmatched entry in both directions.",
+    sources: [],
     state: "PLANNED",
     provenance:
-      "The join is specified. It has not been implemented against a real statement, and no drift count is published.",
+      "Specified only. Not implemented, and no two-source join has been performed, so no drift count is published.",
   },
 ] as const;
 
@@ -417,26 +487,21 @@ export const SIGNALS: readonly Signal[] = [
 /* ---------------------------------------------------------------- */
 
 export const CONSOLE = {
-  name: "School Console",
+  /* Named for what it is on this site rather than for what it does for a
+     user. The console's own name, its module list and its capabilities
+     belong to lib/console.ts, which the console reads and which this file
+     never imports — see CONSOLE_VOCABULARY above for why. What the
+     architecture needs to say about it is three sentences: that it runs,
+     that it holds its own record, and that nobody has been given it. */
+  name: "The built surface",
   href: "/console",
   oneLine:
-    "A local-first operating console for teacher and school work — the first concrete field implementation of this architecture.",
+    "A local-first surface that runs this architecture end to end on one device, openable by anyone.",
   state: "PROTOTYPE" as EvidenceState,
   localFirst:
-    "The session, favourites and records live on this device. Nothing entered in the console leaves the browser.",
-  modules: [
-    "Content Studio",
-    "Auto-Marking",
-    "My Day",
-    "Timetable",
-    "Roster",
-    "Reports",
-    "Fees",
-    "Inspection",
-    "Comms",
-  ] as const,
+    "Records written on a surface like this stay on the device that wrote them until the institution exports them. Nothing is transmitted.",
   provenance:
-    "Nine modules and ten tools, running in this repository and inspectable by opening the route. No institution is running it: there is no deployment, adoption or outcome record.",
+    "Openable at /console. No institution runs it: there is no deployment, adoption or outcome record.",
 } as const;
 /* ---------------------------------------------------------------- */
 /* THE BUILDS — the grammar, instantiated in a domain               */
@@ -488,14 +553,19 @@ export interface Build {
 
 export const BUILDS: readonly Build[] = [
   {
-    name: "School Console",
-    domain: "School operations",
+    /* The one build that has a surface. Its domain is stated as field
+       operations rather than as a school's, because a build is an
+       *example* of the chain and an example that names a sector makes the
+       reader infer the product is that sector's system. The console is
+       where it happens to be exercised; the architecture is not about it. */
+    name: "The built surface",
+    domain: "Field operations",
     node: "field",
-    chain: "attendance → records → patterns → decisions",
+    chain: "observation → records → patterns → decisions",
     state: "PROTOTYPE",
     href: "/console",
     provenance:
-      "Nine modules and ten tools, running in this repository and openable by anyone. No institution runs it: there is no deployment, adoption or outcome record.",
+      "Built and openable in this repository. No institution runs it: there is no deployment, adoption or outcome record.",
   },
   {
     name: "Hospital Management",
@@ -561,15 +631,20 @@ export interface Measure {
 
 export const MEASURES: readonly Measure[] = [
   {
-    figure: "9",
-    key: "console modules",
-    note: "Ten tools, running locally. No institution is running them.",
+    /* Counted, not typed. These two figures used to be a hand-kept census
+       of the console's module list — the largest number on the first
+       viewport, of a demo's own grid, restated in six places that nothing
+       kept in step. Deriving them from the arrays below makes them true by
+       construction: change a register row and the figure follows. */
+    figure: String(LIVE_BUILDS.length),
+    key: "builds with a surface",
+    note: "Built and openable in this repository. No institution runs one.",
     state: "PROTOTYPE",
   },
   {
-    figure: "6",
+    figure: String(REGISTERS.length),
     key: "record classes",
-    note: "People, assets, decisions, attendance, assessment, fees.",
+    note: "People, assets, decisions and any further class the chain requires. The grammar is fixed; the classes are not.",
     state: "PROTOTYPE",
   },
   {
@@ -639,6 +714,16 @@ export const CONTRACT_RULES: readonly {
  *
  * `since` is when the question became established as a question, not a
  * measurement date — there is no measurement.
+ *
+ * Five rows, not six, and none of them names a sector. Three of the six
+ * this file used to carry were written as operational caveats — a fee
+ * collection rate with no denominator, a cohort that had never been
+ * assessed, a count of learners and staff — and each one named a metric
+ * the reader had not thought to ask about, in a register whose stated
+ * subject is what this system cannot yet say. Naming the class of measure
+ * instead of the instance publishes the same absence and invites nothing.
+ * The class-level rows also stop three copies of the same sentence
+ * appearing on /, /evidence and /lattice.
  */
 export const UNKNOWN_FACTS: readonly {
   id: string;
@@ -649,35 +734,29 @@ export const UNKNOWN_FACTS: readonly {
   {
     id: "UNK-01",
     what: "Institutions running this system",
-    why: "No deployment has taken place. The console is a local prototype and no school record is documented.",
+    why: "No deployment has taken place. The one built surface runs in this repository and is openable by anyone.",
     since: "2026-09",
   },
   {
     id: "UNK-02",
-    what: "Learner and staff counts",
-    why: "No institution register is held in this repository. A device-local count is a runtime reading, not a population figure.",
+    what: "Population sizes",
+    why: "No institution's register is held in this repository. A count held on one device is a reading about that device, not about a population.",
     since: "2026-09",
   },
   {
     id: "UNK-03",
-    what: "Learning outcomes",
-    why: "No cohort has been assessed through the console. The weakness map has never run against real submissions, so no outcome can be stated.",
+    what: "Performance of any kind",
+    why: "No population has passed through the chain, so no measure derived from one can be published, and no denominator or statement exists for any rate. Either would be a guess presented as a figure.",
     since: "2026-09",
   },
   {
     id: "UNK-04",
-    what: "Fee collection performance",
-    why: "No payment data is held here. A collection rate without a denominator and a statement would be a guess presented as a figure.",
-    since: "2026-09",
-  },
-  {
-    id: "UNK-05",
     what: "Partnerships and procurement relationships",
     why: "No contract, tender record or partner agreement is documented in this repository.",
     since: "2026-09",
   },
   {
-    id: "UNK-06",
+    id: "UNK-05",
     what: "Organisation registration and team",
     why: "Legal status and team members are not documented. Names, titles and registration numbers are not published until recorded with evidence.",
     since: "2026-09",
@@ -693,13 +772,18 @@ export const UNKNOWN_FACTS: readonly {
  * surface — never hard-coded, never rounded toward a friendlier number.
  * States with a count of zero are still returned: a zero here means "none
  * on this surface", which is a different statement from "not applicable".
+ *
+ * Takes records rather than bare states so the caller does not have to
+ * re-derive the mapping at every call site — which is what happened when
+ * this loop was written out inline in two other files, giving the site
+ * three copies of one tally and a docstring claiming there was one.
  */
-export function tally(states: readonly EvidenceState[]): {
+export function tally(records: readonly { state: EvidenceState }[]): {
   state: EvidenceState;
   count: number;
 }[] {
   return EVIDENCE_STATES.map((state) => ({
     state,
-    count: states.filter((s) => s === state).length,
+    count: records.filter((r) => r.state === state).length,
   }));
 }

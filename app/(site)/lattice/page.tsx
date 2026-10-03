@@ -74,10 +74,11 @@ export default function LatticePage() {
           <p>
             The figures a topology of this shape normally leads with are
             absent, and each is absent for the same reason: there is no
-            evidence path for it. No institution is running the console, so
-            there is no uptime. No cohort has been assessed, so there is no
-            measured outcome. No payment data is held here, so there is no
-            collection rate.
+            evidence path for it. No institution runs the built surface, so
+            there is no uptime or availability figure. No population has
+            passed through the chain, so there is no measured outcome of any
+            kind. No two independently sourced statements exist for the same
+            period, so there is no reconciliation count.
           </p>
           <p>
             What is here is narrower and checkable —{" "}

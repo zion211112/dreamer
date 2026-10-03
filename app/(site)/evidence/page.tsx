@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { StatusBand } from "@/components/site/StatusBand";
-import { Tally } from "@/components/site/Tally";
 import { StateTag } from "@/components/site/StateTag";
 import {
   COMPANY,
@@ -112,8 +111,10 @@ export default function EvidencePage() {
       </section>
 
       {/* Everything the system is commonly asked for and does not
-          have. The geography claim sits here in its own right: named,
-          stated, and explicitly not evidenced. */}
+          have. No inspection tally under this table: every row is
+          UNKNOWN by construction, so a distribution here would only
+          restate the count already in the kicker and the state tag
+          on each row. */}
       <section className="section" aria-labelledby="unknowns-heading">
         <div className="section-head">
           <h2 className="section-title" id="unknowns-heading">
@@ -151,10 +152,6 @@ export default function EvidencePage() {
             </div>
           ))}
         </div>
-
-        <div style={{ marginTop: "var(--s-4)" }}>
-          <Tally records={UNKNOWN_FACTS.map((u) => ({ state: "UNKNOWN" as const }))} caption="open questions" />
-        </div>
       </section>
 
       {/* The geography, in its true form: named as operating context,
@@ -185,13 +182,15 @@ export default function EvidencePage() {
         </div>
       </section>
 
+      {/* The next action is the control plane, not a capability. A bare
+          link to /console at the foot of this route would let a reader
+          reach the built surface without reading the evidence state that
+          governs it, which is the one thing this route exists to prevent.
+          The built surface's own provenance is published on its route. */}
       <section className="section">
         <div className="action-row">
           <Link href="/" className="btn">
             Back to the control plane
-          </Link>
-          <Link href="/console" className="btn-ghost">
-            Open the console
           </Link>
         </div>
       </section>

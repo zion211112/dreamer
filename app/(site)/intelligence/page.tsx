@@ -13,6 +13,8 @@ export const metadata: Metadata = {
 };
 
 export default function IntelligencePage() {
+  const unsourced = SIGNALS.filter((s) => s.sources.length === 0);
+
   return (
     <>
       <p className="label">Node 03 · Intelligence — records become structure</p>
@@ -22,11 +24,12 @@ export default function IntelligencePage() {
 
       <p className="lede" style={{ marginTop: "var(--s-4)" }}>A derived signal that will not show its sources is an assertion with
           extra steps. Every reading on this page carries three things: the
-          records it was derived from, the method that derived it, and the
-          state that says how far it has been exercised. That combination is
-          what separates intelligence from a report — a report tells you what
-          happened; intelligence tells you what the records support, and what
-          they still do not.</p>
+          method that derived it, the state that says how far it has been
+          exercised, and the records it rests on — which, in every case here,
+          are none, and are stated as none. That combination is what separates
+          intelligence from a report — a report tells you what happened;
+          intelligence tells you what the records support, and what they
+          still do not.</p>
 
       <div style={{ marginTop: "var(--s-4)" }}>
         <StatusBand />
@@ -34,13 +37,17 @@ export default function IntelligencePage() {
 
       {/* The signals, in register form. Sources are rendered as ids
           because they are citations, and a citation that looks like
-          prose is not a citation. */}
+          prose is not a citation. An empty source list is not rendered
+          as an empty line: it states that no source is recorded,
+          because a row that cannot cite anything has to say so. */}
       <section className="section" aria-labelledby="signals-heading">
         <div className="section-head">
           <h2 className="section-title" id="signals-heading">
             Derived signals
           </h2>
-          <p className="section-kicker">{SIGNALS.length} readings · each with sources</p>
+          <p className="section-kicker">
+            {SIGNALS.length} readings · {unsourced.length} with no source recorded
+          </p>
         </div>
 
         <div className="register" role="table" aria-labelledby="signals-heading">
@@ -62,11 +69,17 @@ export default function IntelligencePage() {
                   <span style={{ color: "var(--dust)" }}>Method</span> — {s.method}
                   <br />
                   <span style={{ color: "var(--dust)" }}>Sources</span> —{" "}
-                  {s.sources.map((src) => (
-                    <span key={src} style={{ marginRight: 10 }}>
-                      {src}
-                    </span>
-                  ))}
+                  {s.sources.length > 0 ? (
+                    s.sources.map((src) => (
+                      <span key={src} style={{ marginRight: 10 }}>
+                        {src}
+                      </span>
+                    ))
+                  ) : (
+                    <span>No source recorded. Nothing has been derived from a
+                      population the reader did not enter, so there is no
+                      record to cite.</span>
+                  )}
                   <br />
                   <span style={{ color: "var(--dust)" }}>Provenance</span> —{" "}
                   {s.provenance}
@@ -96,11 +109,11 @@ export default function IntelligencePage() {
         </div>
 
         <EmptyState
-          title="Nothing derived from a real cohort"
-          body="No signal on this page has been produced from a real institution's records. The derivations run against locally entered data and demonstrate method. Nothing here describes learners, teachers, schools or outcomes."
+          title="Nothing derived from a real population"
+          body="No signal on this page has been produced from a real institution's records. The derivations run against locally entered data and demonstrate method. Nothing here describes any person, any institution, or any outcome."
           unit="derived reading"
           why="A derived signal requires a recorded population to derive from. No institution has run this system, so there is no population to derive from."
-          unblocks="One term of attendance and assessment records entered on a school's own device, then derived locally and read by someone who did not enter them."
+          unblocks="Records entered on an operator's own device, then derived locally and read by someone who did not enter them."
           state="UNKNOWN — the absence of readings is unestablished as a fact about the world, not a measurement of it."
         />
 
@@ -108,11 +121,12 @@ export default function IntelligencePage() {
           <p>
             The distinction between <em>a method that works</em> and{" "}
             <em>a finding about people</em> is the whole reason this node is
-            published empty. Intelligence derived from a school&rsquo;s own records
-            and read by its own staff is a legitimate and useful thing. The
-            moment it is presented as an assessment of learners it is neither
-            evidenced nor owned by the institution, and it stops being
-            intelligence — it becomes surveillance with a provenance field.
+            published empty. Intelligence derived from an institution&rsquo;s own records
+            and read by its own people is a legitimate and useful thing. The
+            moment it is presented as an assessment of the people inside those
+            records it is neither evidenced nor owned by the institution, and
+            it stops being intelligence — it becomes surveillance with a
+            provenance field.
           </p>
         </div>
       </section>

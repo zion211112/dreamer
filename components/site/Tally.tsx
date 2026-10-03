@@ -1,5 +1,5 @@
 import type { EvidenceState } from "@/lib/system";
-import { EVIDENCE_STATES } from "@/lib/system";
+import { EVIDENCE_STATES, tally } from "@/lib/system";
 
 /**
  * The inspection tally — the FIELD STATION's count of what a surface
@@ -34,10 +34,12 @@ export function Tally({
   /** What is being counted — names the unit, never implies more. */
   caption: string;
 }) {
-  const rows = EVIDENCE_STATES.map((state) => ({
-    state,
-    count: records.filter((r) => r.state === state).length,
-  }));
+  /* One implementation of this count, in the source of truth. The loop was
+     written out inline here and again in lib/lattice.ts, while this file's
+     own docstring claims every tally in the site is minted in
+     lib/system.ts. Three copies of one loop is how a tally starts
+     disagreeing with the rows it is counting. */
+  const rows = tally(records);
   const total = records.length;
   const largest = Math.max(...rows.map((r) => r.count));
 

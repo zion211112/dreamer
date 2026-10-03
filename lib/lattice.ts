@@ -33,9 +33,9 @@
 import {
   BUILDS,
   CHAIN_RETURN,
-  EVIDENCE_STATES,
   PLANE,
   VALUE_CHAIN,
+  tally,
   type EvidenceState,
 } from "@/lib/system";
 
@@ -310,8 +310,5 @@ export function latticeTally(nodes: readonly LatticeNode[]): {
   state: EvidenceState;
   count: number;
 }[] {
-  return EVIDENCE_STATES.map((state) => ({
-    state,
-    count: nodes.filter((n) => n.state === state).length,
-  }));
+  return tally(nodes);
 }

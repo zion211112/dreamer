@@ -5,12 +5,12 @@ import { StatusBand } from "@/components/site/StatusBand";
 import { EmptyState } from "@/components/site/EmptyState";
 import { StateTag } from "@/components/site/StateTag";
 import { ValueChain } from "@/components/site/Graph";
-import { CONSOLE, VALUE_CHAIN } from "@/lib/system";
+import { CONSOLE, LIVE_BUILDS, VALUE_CHAIN } from "@/lib/system";
 
 export const metadata: Metadata = {
   title: "Control",
   description:
-    "Knowledge becomes action: the school console, the first field implementation of the APT-LABS architecture.",
+    "Knowledge becomes action: one build of the APT-LABS architecture, built and openable, deployed to no one.",
 };
 
 export default function ControlPage() {
@@ -20,13 +20,18 @@ export default function ControlPage() {
     <>
       <p className="label">Node 04 · Control — knowledge becomes action</p>
       <h1 className="page-title">
-        The console. Real, openable, and not deployed to anyone.
+        A surface that runs this architecture. Openable, and deployed to no one.
       </h1>
 
+      {/* "Real" is not one of the five states, and on an h1 it reads as a
+          promotion from PROTOTYPE to VERIFIED by other means — which is the
+          thing STATE_RULES.PROTOTYPE.forbids. "Openable" is its `permits`
+          clause verbatim. The module census that used to end this sentence
+          was a seventh hand-kept copy of the console's own grid. */}
       <p className="lede" style={{ marginTop: "var(--s-4)" }}>Control is where intelligence becomes work: a decision taken against
           a derived reading, under an explicit rule, by an institution that
-          keeps its own record. The first implementation is the School Console
-          — nine modules and ten tools, running on the device it is used from.</p>
+          keeps its own record. One build of that chain exists, and it runs
+          on the device it is opened from.</p>
 
       <div style={{ marginTop: "var(--s-4)" }}>
         <StatusBand />
@@ -49,32 +54,36 @@ export default function ControlPage() {
           <p>{CONSOLE.localFirst}</p>
         </div>
 
+        {/* The module list is deliberately absent. This table used to
+            enumerate the console's nine modules under a column headed
+            "What it records", which re-imported three of this system's own
+            register classes by the back door and gave the reader less
+            information than opening the console does. A console's modules
+            are the console's business; the architecture's record classes
+            are on /register. What this route owes the reader is the state,
+            which the two prose lines and the entry link below carry. */}
         <div className="register" role="table" aria-labelledby="console-heading" style={{ marginTop: 20 }}>
           <div className="register-head register--std" role="row">
-            <span role="columnheader">Module</span>
-            <span role="columnheader">What it records</span>
+            <span role="columnheader">Build</span>
+            <span role="columnheader">Chain</span>
             <span role="columnheader">Runs</span>
             <span role="columnheader">State</span>
           </div>
-          {CONSOLE.modules.map((m, i) => (
-            <div className="register-row register--std" role="row" key={m}>
+          {LIVE_BUILDS.map((build) => (
+            <div className="register-row register--std" role="row" key={build.name}>
               <div className="register-cell register-cell--id" role="cell">
-                <div className="register-id">{String(i + 1).padStart(2, "0")}</div>
-                <div className="register-name" style={{ marginTop: 4 }}>
-                  {m}
-                </div>
+                <div className="register-name">{build.name}</div>
               </div>
-              <div className="register-cell" role="cell" data-field="Records">
+              <div className="register-cell" role="cell" data-field="Chain">
                 <div className="register-provenance" style={{ maxWidth: "54ch" }}>
-                  Records written on this device stay in the browser until the
-                  operator exports them. Nothing is transmitted.
+                  {build.chain}
                 </div>
               </div>
               <div className="register-cell" role="cell" data-field="Runs">
                 <div className="register-date">On device</div>
               </div>
               <div className="register-cell" role="cell" data-field="State">
-                <StateTag state="PROTOTYPE" />
+                <StateTag state={build.state} />
               </div>
             </div>
           ))}
@@ -82,7 +91,7 @@ export default function ControlPage() {
 
         <div className="action-row" style={{ marginTop: "var(--s-4)" }}>
           <Link href={CONSOLE.href} className="btn">
-            Open the console
+            Open the built surface
           </Link>
           <span className="register-provenance" style={{ maxWidth: "54ch" }}>
             {CONSOLE.provenance}
@@ -174,7 +183,7 @@ export default function ControlPage() {
           body="No collective decision has been taken, recorded or executed through this system. The decision record is empty, and it is empty because the system has not governed anything."
           unit="decision"
           why="A decision record requires a named decision body, the rule it was taken under, and the records that were in front of it. No such record exists."
-          unblocks="One decision taken in a school, recorded with the attendance and assessment records it relied on, and readable afterwards by someone who was not in the room."
+          unblocks="One decision taken by a named body, recorded with the records it relied on, and readable afterwards by someone who was not in the room."
           state="UNKNOWN — not zero. The absence of decision records is unestablished, not measured."
         />
 

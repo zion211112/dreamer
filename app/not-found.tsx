@@ -32,10 +32,10 @@ export default function NotFound() {
 
       <div className="prose" style={{ marginTop: 18 }}>
         <p>
-          The system publishes five public nodes and no others. A URL that
-          resolves to nothing is not a hidden surface — it is a surface that
-          does not exist, and saying so plainly is the same rule the register
-          applies to every other absence.
+          The system publishes five public nodes and one view of them. A URL
+          that resolves to nothing is not a hidden surface — it is a surface
+          that does not exist, and saying so plainly is the same rule the
+          register applies to every other absence.
         </p>
       </div>
 
