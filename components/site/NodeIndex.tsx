@@ -86,32 +86,16 @@ export function NodeIndex() {
         </ul>
       </div>
 
-      <div className="index-group">
-        <p className="index-group-key">Where you can act</p>
-        <ul className="index-list">
-          <li>
-            <Link href="/builds" className="index-node">
-              <span className="index-node-ord" aria-hidden="true">
-                <span className="port port--live" />
-              </span>
-              <span className="index-node-name">Build floor</span>
-            </Link>
-          </li>
-          <li>
-            <Link href="/roll" className="index-node">
-              <span className="index-node-ord" aria-hidden="true">
-                <span className="port port--live" />
-              </span>
-              <span className="index-node-name">Sign the roll</span>
-            </Link>
-          </li>
-        </ul>
-      </div>
-
+      {/* There is no second group here any more. It held two links into the
+          build floor and the roll, and both of those routes were discarded:
+          a filled port on a link that resolves to nothing is the one failure
+          this index's grammar exists to prevent, so the group went rather
+          than the links. When there is somewhere a reader can act, it is
+          listed here — and until then this is the site's whole navigation. */}
       <p className="index-foot">
         The five above are the system, and the view above them is the same
-        system drawn. The two at the bottom are where you can do something
-        about it.
+        system drawn. Nothing here is somewhere you can act yet: every
+        route on this site describes the system rather than running it.
       </p>
     </nav>
   );

@@ -469,7 +469,12 @@ export interface Build {
    * A build is not a sixth node and it does not belong in the menu: it
    * is an instance of the chain, so it hangs off the field that carries
    * its heaviest stage. Six builds map onto the five fields, and the
-   * floor uses this to say which part of the system a build exercises.
+   * lattice uses this to say which part of the system a build exercises.
+   *
+   * It was introduced for the build floor and briefly removed with it.
+   * The fact belongs to the register rather than to either route: which
+   * stage a build exercises is a property of the build, and a route is
+   * not a place for facts to live.
    */
   node: PlaneNode["key"];
   /** reality → evidence-bound record → structure → decision */
@@ -480,20 +485,6 @@ export interface Build {
   /** Why this build's state is what it is. */
   provenance: string;
 }
-
-/**
- * The rule that governs every build below, and the reason a build is
- * not a prize.
- *
- * Contribution is open before, during and after a build ships. If one
- * build is worked on first, that is a sequencing decision and not a
- * title to it: the grammar, the chain and the evidence states are
- * identical for whoever continues. So nothing on this site describes a
- * build as won, owned or finished while other hands are still needed,
- * and no build carries a figure once it ships.
- */
-export const BUILD_RULE =
-  "A build is a sequencing decision, not a title. Contribution stays open before, during and after it ships — the chain, the custody boundary and the evidence states are identical for whoever continues.";
 
 export const BUILDS: readonly Build[] = [
   {
