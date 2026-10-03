@@ -59,13 +59,13 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
   return (
     <main id="main-content" className="console-ui flex min-h-dvh flex-col bg-void font-sans text-ink print:bg-white print:text-black">
       <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/10 px-4 sm:px-[21px] print:hidden">
-        <div className="flex items-center gap-3 font-mono text-meta uppercase tracking-[0.14em] text-dust">
+        <div className="flex items-center gap-3 font-mono text-meta uppercase tracking-caps text-dust">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <polygon points="12 2 22 12 12 22 2 12" />
           </svg>
           <span>APT-LABS · Console</span>
         </div>
-        <Link href="/console" className="min-h-11 py-3 font-mono text-label uppercase tracking-[0.15em] text-ash transition-colors hover:text-ink focus-visible:text-signal">
+        <Link href="/console" className="min-h-11 py-3 font-mono text-label uppercase tracking-caps text-ash transition-colors hover:text-ink focus-visible:text-signal">
           ← Console
         </Link>
       </header>
@@ -86,7 +86,7 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
               }`}
             >
               <ModuleGlyph module={t.module} size={14} className={isActive ? "text-signal" : "text-ash"} />
-              <span className="whitespace-nowrap font-mono text-label uppercase tracking-[0.14em]">{label}</span>
+              <span className="whitespace-nowrap font-mono text-label uppercase tracking-caps">{label}</span>
             </Link>
           );
         })}
@@ -95,7 +95,7 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
           <div className="mb-8 flex min-w-0 flex-wrap items-start gap-4 border-b border-ink/10 pb-6 print:hidden">
             <ModuleTile module={tool.module} tint={menu?.tint} size={52} />
             <div>
-              <p className="mb-2 font-mono text-label uppercase tracking-[0.2em] text-signal">
+              <p className="mb-2 font-mono text-label uppercase tracking-caps text-signal">
                 Console / {tool.module} / {tool.id.padStart(2, "0")}
               </p>
               <h1 className="font-display text-4xl font-semibold tracking-tight md:text-5xl">{tool.title}</h1>

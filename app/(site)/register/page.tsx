@@ -20,17 +20,13 @@ export default function RegisterPage() {
         This is what the system believes happened, and this is why.
       </h1>
 
-      <div className="prose" style={{ marginTop: 18 }}>
-        <p>
-          A record earns its place by carrying six things: an identifier, a
+      <p className="lede" style={{ marginTop: "var(--s-4)" }}>A record earns its place by carrying six things: an identifier, a
           timestamp, a source, an evidence state, its provenance, and the route
           where the evidence can be inspected. A row missing any of them is not
           published — the register would rather hold six honest rows than seven
-          where the seventh cannot be checked by anyone.
-        </p>
-      </div>
+          where the seventh cannot be checked by anyone.</p>
 
-      <div style={{ marginTop: 28 }}>
+      <div style={{ marginTop: "var(--s-4)" }}>
         <StatusBand />
       </div>
 
@@ -42,7 +38,7 @@ export default function RegisterPage() {
           <h2 className="section-title" id="classes-heading">
             Record classes
           </h2>
-          <p className="label">{REGISTERS.length} registers</p>
+          <p className="section-kicker">{REGISTERS.length} registers</p>
         </div>
 
         <div className="register" role="table" aria-labelledby="classes-heading">
@@ -61,7 +57,7 @@ export default function RegisterPage() {
           ))}
         </div>
 
-        <div style={{ marginTop: 24 }}>
+        <div style={{ marginTop: "var(--s-4)" }}>
           <Tally records={REGISTERS} caption="record classes" />
         </div>
       </section>
@@ -75,7 +71,7 @@ export default function RegisterPage() {
           <h2 className="section-title" id="held-heading">
             Records held
           </h2>
-          <p className="label">Instance records · device-local</p>
+          <p className="section-kicker">Instance records · device-local</p>
         </div>
 
         <EmptyState
@@ -87,7 +83,7 @@ export default function RegisterPage() {
           state="UNKNOWN — the contents are unestablished, not zero. The count of records in this repository is not a count of records in the world."
         />
 
-        <div className="prose" style={{ marginTop: 22 }}>
+        <div className="prose" style={{ marginTop: "var(--s-3)" }}>
           <p>
             The distinction matters more than it looks. A device-local count is
             a reading about one browser, and publishing it as an institutional
@@ -105,7 +101,7 @@ export default function RegisterPage() {
           <h2 className="section-title" id="anatomy-heading">
             Anatomy of a row
           </h2>
-          <p className="label">Six fields · no exceptions</p>
+          <p className="section-kicker">Six fields · no exceptions</p>
         </div>
 
         <div className="register" role="table" aria-labelledby="anatomy-heading">
@@ -165,7 +161,7 @@ export default function RegisterPage() {
           />
         </div>
 
-        <div className="action-row" style={{ marginTop: 28 }}>
+        <div className="action-row" style={{ marginTop: "var(--s-4)" }}>
           <Link href="/intelligence" className="btn">
             Next — what records become
           </Link>

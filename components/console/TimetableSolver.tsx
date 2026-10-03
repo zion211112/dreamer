@@ -131,7 +131,7 @@ export default function TimetableSolver() {
           <Link href="/console/17" className={btnGhost + " px-4 py-2"}>→ Open My Day</Link>
           <PrintButton label="Print wall grid" />
           {approvedName !== "" && (
-            <span className="font-mono text-label uppercase tracking-[0.15em] text-signal">Approved · {approvedName}</span>
+            <span className="font-mono text-label uppercase tracking-caps text-signal">Approved · {approvedName}</span>
           )}
         </div>
       </div>
@@ -189,7 +189,7 @@ export default function TimetableSolver() {
             <button
               key={v}
               onClick={() => setView(v)}
-              className={`min-h-11 px-4 font-mono text-label uppercase tracking-[0.15em] transition-colors ${
+              className={`min-h-11 px-4 font-mono text-label uppercase tracking-caps transition-colors ${
                 view === v ? "border-b-2 border-signal text-ink" : "border-b-2 border-transparent text-dust hover:text-ink"
               }`}
             >
@@ -197,7 +197,7 @@ export default function TimetableSolver() {
             </button>
           ))}
         </div>
-        <p className="w-full font-mono text-label uppercase tracking-[0.15em] text-ash">
+        <p className="w-full font-mono text-label uppercase tracking-caps text-ash">
           {teachingCount} teaching periods / week · {subjects.length} subjects · today is {todayKey}
         </p>
       </div>
@@ -207,9 +207,9 @@ export default function TimetableSolver() {
           <table className="w-full min-w-[720px] border-collapse">
             <thead>
               <tr className="border-b border-ink/10">
-                <th className="w-[160px] px-4 py-3 text-left font-mono text-micro uppercase tracking-[0.2em] text-ash">Time</th>
+                <th className="w-[160px] px-4 py-3 text-left font-mono text-micro uppercase tracking-caps text-ash">Time</th>
                 {WEEKDAYS.map((d) => (
-                  <th key={d} className={`px-3 py-3 text-left font-mono text-micro uppercase tracking-[0.2em] ${d === todayKey ? "text-signal" : "text-ash"}`}>
+                  <th key={d} className={`px-3 py-3 text-left font-mono text-micro uppercase tracking-caps ${d === todayKey ? "text-signal" : "text-ash"}`}>
                     {d}
                     {d === todayKey && <span className="ml-2 font-mono text-micro text-signal/70">· today</span>}
                   </th>
@@ -237,7 +237,7 @@ export default function TimetableSolver() {
                         className="w-[80px] rounded-lg border border-transparent bg-transparent px-1 py-1 font-mono text-meta tabular-nums text-ink outline-none focus:border-signal"
                       />
                     </div>
-                    <p className="mt-0.5 font-mono text-micro uppercase tracking-[0.2em] text-ash/70">
+                    <p className="mt-0.5 font-mono text-micro uppercase tracking-caps text-ash/70">
                       {slot.kind === "break" ? "health break" : slot.kind === "lunch" ? "lunch" : slot.kind === "roll" ? "roll call" : prettyRange(slot)}
                     </p>
                   </td>
@@ -259,7 +259,7 @@ export default function TimetableSolver() {
                 </tr>
               ))}
               <tr>
-                <td className="px-4 py-2 font-mono text-micro uppercase tracking-[0.2em] text-ash/70">Periods / day</td>
+                <td className="px-4 py-2 font-mono text-micro uppercase tracking-caps text-ash/70">Periods / day</td>
                 {WEEKDAYS.map((d) => {
                   const row = active.cells[d] ?? [];
                   let n = 0;
@@ -302,7 +302,7 @@ export default function TimetableSolver() {
             </div>
             <div className="mt-5 grid grid-cols-7 border-b border-ink/10">
               {CALENDAR_HEAD.map((h, i) => (
-                <div key={h} className={`px-2 py-2 font-mono text-micro uppercase tracking-[0.2em] ${i < 5 ? "text-ash" : "text-ash/50"}`}>
+                <div key={h} className={`px-2 py-2 font-mono text-micro uppercase tracking-caps ${i < 5 ? "text-ash" : "text-ash/50"}`}>
                   {h}
                 </div>
               ))}
@@ -352,7 +352,7 @@ export default function TimetableSolver() {
                 })}
               </div>
             ))}
-            <p className="mt-3 font-mono text-micro uppercase tracking-[0.15em] text-ash/70">
+            <p className="mt-3 font-mono text-micro uppercase tracking-caps text-ash/70">
               The week repeats on through the month — holidays are not in this store yet.
             </p>
           </div>
@@ -388,16 +388,16 @@ export default function TimetableSolver() {
       {/* The print path: a clean wall grid on white paper. The screen UI
           above is chrome; the paper gets rules and subject names only. */}
       <div aria-hidden="true" className="print-sheet bg-white p-8 text-void print:block print:w-full">
-        <p className="font-mono text-micro uppercase tracking-[0.3em]">Timetable · {active.className}</p>
+        <p className="font-mono text-micro uppercase tracking-caps">Timetable · {active.className}</p>
         <h3 className="mt-2 font-display text-2xl">{active.name}</h3>
         <table className="mt-4 w-full border-collapse text-meta">
           <thead>
             <tr>
-              <th className="w-[120px] border-b border-ink/30 px-2 py-1.5 text-left font-mono text-micro uppercase tracking-[0.15em] text-void/70">
+              <th className="w-[120px] border-b border-ink/30 px-2 py-1.5 text-left font-mono text-micro uppercase tracking-caps text-void/70">
                 Time
               </th>
               {WEEKDAYS.map((d) => (
-                <th key={d} className="border-b border-ink/30 px-2 py-1.5 text-left font-mono text-micro uppercase tracking-[0.15em] text-void/70">
+                <th key={d} className="border-b border-ink/30 px-2 py-1.5 text-left font-mono text-micro uppercase tracking-caps text-void/70">
                   {d}
                 </th>
               ))}
@@ -426,7 +426,7 @@ export default function TimetableSolver() {
             ))}
           </tbody>
         </table>
-        <p className="mt-4 font-mono text-micro uppercase tracking-[0.15em] text-void/70">
+        <p className="mt-4 font-mono text-micro uppercase tracking-caps text-void/70">
           {teachingCount} teaching periods / week · approved in the Timetable Solver
         </p>
       </div>

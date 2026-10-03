@@ -252,7 +252,7 @@ export default function AutoMarking() {
               <thead>
                 <tr>
                   {["Q", "Topic", "Correct", "Keywords", "Marks", ""].map((h) => (
-                    <th key={h} className="border-b border-ink/10 px-2 py-2 text-left font-mono text-micro uppercase tracking-[0.15em] text-ash">{h}</th>
+                    <th key={h} className="border-b border-ink/10 px-2 py-2 text-left font-mono text-micro uppercase tracking-caps text-ash">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -288,7 +288,7 @@ export default function AutoMarking() {
             </table>
           </div>
           <button
-            className="mt-4 font-mono text-label uppercase tracking-[0.15em] text-ash hover:text-signal"
+            className="mt-4 font-mono text-label uppercase tracking-caps text-ash hover:text-signal"
             onClick={() => setQuestions([...questions, { id: `Q${Date.now().toString(36)}`, topic: "", answer: "", marks: 1 }])}
           >
             + Add question
@@ -353,7 +353,7 @@ export default function AutoMarking() {
             </label>
             {papers.length > 0 && (
               <div className="mt-3 flex items-center gap-3">
-                <p className="font-mono text-micro uppercase tracking-[0.15em] text-ash">{papers.length} in the stack</p>
+                <p className="font-mono text-micro uppercase tracking-caps text-ash">{papers.length} in the stack</p>
                 <button className={btn + " flex-1"} onClick={() => void runBatch()} disabled={scanning || questions.length === 0}>
                   {scanning ? "Marking the stack…" : `Mark ${papers.length} papers`}
                 </button>
@@ -365,7 +365,7 @@ export default function AutoMarking() {
                   <thead>
                     <tr>
                       {["Student", "Score", "%", ""].map((h) => (
-                        <th key={h} className="border-b border-ink/10 px-2 py-2 text-left font-mono text-micro uppercase tracking-[0.15em] text-ash">{h}</th>
+                        <th key={h} className="border-b border-ink/10 px-2 py-2 text-left font-mono text-micro uppercase tracking-caps text-ash">{h}</th>
                       ))}
                     </tr>
                   </thead>

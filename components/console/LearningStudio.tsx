@@ -132,7 +132,7 @@ export default function LearningStudio({ initialKind = "lesson" }: { initialKind
             ))}
           </select>
         </label>
-        <p className="ml-auto font-mono text-micro uppercase tracking-[0.15em] text-ash">{bankShown.length} lessons</p>
+        <p className="ml-auto font-mono text-micro uppercase tracking-caps text-ash">{bankShown.length} lessons</p>
       </div>
       {bankLessons.length === 0 ? (
         <p className="mt-4 text-sm leading-6 text-dust">The bank is empty on this device — seed the exemplar school first.</p>
@@ -150,7 +150,7 @@ export default function LearningStudio({ initialKind = "lesson" }: { initialKind
                   }`}
                 >
                   <span className="block truncate text-sm text-ink">{l.title}</span>
-                  <span className="font-mono text-micro uppercase tracking-[0.15em] text-ash">{l.subject} · {l.gradeBand}</span>
+                  <span className="font-mono text-micro uppercase tracking-caps text-ash">{l.subject} · {l.gradeBand}</span>
                 </button>
               </li>
             ))}
@@ -158,12 +158,12 @@ export default function LearningStudio({ initialKind = "lesson" }: { initialKind
           {bankCurrent && (
             <div>
               <h3 className="font-display text-2xl">{bankCurrent.title}</h3>
-              <p className="mt-1 font-mono text-micro uppercase tracking-[0.15em] text-ash">
+              <p className="mt-1 font-mono text-micro uppercase tracking-caps text-ash">
                 {bankCurrent.subject} · {bankCurrent.gradeBand} · {bankCurrent.durationMin} min
               </p>
               {bankCurrent.misconception !== "" && (
                 <p className="mt-3 rounded-xl border border-signal/30 bg-signal/5 px-4 py-3 text-sm leading-6 text-ink">
-                  <span className="font-mono text-micro uppercase tracking-[0.15em] text-signal">Watch for · </span>
+                  <span className="font-mono text-micro uppercase tracking-caps text-signal">Watch for · </span>
                   {bankCurrent.misconception}
                 </p>
               )}
@@ -173,7 +173,7 @@ export default function LearningStudio({ initialKind = "lesson" }: { initialKind
                 ))}
               </div>
               {bankCurrent.kras.length > 0 && (
-                <p className="mt-3 font-mono text-micro uppercase tracking-[0.15em] text-ash">Traces {bankCurrent.kras.join(" · ")}</p>
+                <p className="mt-3 font-mono text-micro uppercase tracking-caps text-ash">Traces {bankCurrent.kras.join(" · ")}</p>
               )}
             </div>
           )}

@@ -21,7 +21,7 @@ const SEV_WORD: Record<Sev, string> = { pass: "Clear", watch: "Watch", fail: "Op
 
 function SevChip({ sev }: { sev: Sev }) {
   return (
-    <span className={`shrink-0 rounded-sm border px-2.5 py-0.5 font-mono text-micro uppercase tracking-[0.12em] ${SEV_CHIP[sev]}`}>
+    <span className={`shrink-0 rounded-sm border px-2.5 py-0.5 font-mono text-micro uppercase tracking-caps ${SEV_CHIP[sev]}`}>
       {SEV_WORD[sev]}
     </span>
   );
@@ -64,7 +64,7 @@ export default function Inspection() {
       <div className={panel + " mb-[21px]"}>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
           <div>
-            <p className="font-mono text-micro uppercase tracking-[0.2em] text-ash">Dossier score</p>
+            <p className="font-mono text-micro uppercase tracking-caps text-ash">Dossier score</p>
             <p className="font-mono text-3xl text-ink">
               {score}
               <span className="text-base text-ash">/100</span>
@@ -102,7 +102,7 @@ export default function Inspection() {
                 <p className="text-ui text-ink">{c.title}</p>
                 <p className="mt-0.5 text-meta leading-5 text-dust">{c.detail}</p>
                 {c.fix && (
-                  <p className="mt-1 font-mono text-micro uppercase tracking-[0.12em] text-signal">Fix · {c.fix}</p>
+                  <p className="mt-1 font-mono text-micro uppercase tracking-caps text-signal">Fix · {c.fix}</p>
                 )}
               </div>
             </li>
@@ -125,19 +125,19 @@ export default function Inspection() {
       </div>
       {/* The dossier itself: white A4, the only thing that reaches paper. */}
       <div className="print-sheet bg-white p-6 text-void">
-        <p className="font-mono text-micro uppercase tracking-[0.3em]">APT-LABS · {data.school || "School"}</p>
+        <p className="font-mono text-micro uppercase tracking-caps">APT-LABS · {data.school || "School"}</p>
         <h3 className="mt-2 font-display text-2xl">INSPECTION DOSSIER</h3>
         <p className="mt-1 text-ui">
           Generated {new Date().toISOString().slice(0, 10)} · {data.students.length} students · dossier score{" "}
           {score}/100
         </p>
 
-        <p className="mt-4 font-mono text-micro uppercase tracking-[0.15em] text-void/70">The roll</p>
+        <p className="mt-4 font-mono text-micro uppercase tracking-caps text-void/70">The roll</p>
         <table className="mt-1 w-full border-collapse text-ui">
           <thead>
             <tr>
               {["Class", "Students", "Boys", "Girls"].map((h) => (
-                <th key={h} className="border-b border-ink/30 px-2 py-1.5 text-left font-mono text-micro uppercase tracking-[0.15em]">
+                <th key={h} className="border-b border-ink/30 px-2 py-1.5 text-left font-mono text-micro uppercase tracking-caps">
                   {h}
                 </th>
               ))}
@@ -155,13 +155,13 @@ export default function Inspection() {
           </tbody>
         </table>
 
-        <p className="mt-5 font-mono text-micro uppercase tracking-[0.15em] text-void/70">
+        <p className="mt-5 font-mono text-micro uppercase tracking-caps text-void/70">
           Findings · {counts.pass} clear · {counts.watch} watch · {counts.fail} open
         </p>
         <ul className="mt-2 space-y-2">
           {checks.map((c) => (
             <li key={c.id} className="text-ui leading-5">
-              <span className="font-mono text-micro uppercase tracking-[0.12em] text-void/70">[{SEV_WORD[c.sev]}]</span>{" "}
+              <span className="font-mono text-micro uppercase tracking-caps text-void/70">[{SEV_WORD[c.sev]}]</span>{" "}
               <strong>{c.title}</strong> — {c.detail}
               {c.fix && <span className="text-void/50"> Fix: {c.fix}</span>}
             </li>

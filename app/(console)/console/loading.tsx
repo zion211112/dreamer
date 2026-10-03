@@ -15,7 +15,7 @@ export default function ConsoleLoading() {
       </p>
       <div
         aria-hidden="true"
-        className="flex h-[55px] shrink-0 items-center gap-3 border-b border-ink/10 px-4 font-mono text-meta uppercase tracking-[0.14em] text-dust sm:px-[21px]"
+        className="flex h-[55px] shrink-0 items-center gap-3 border-b border-ink/10 px-4 font-mono text-meta uppercase tracking-caps text-dust sm:px-[21px]"
       >
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
           <polygon points="12 2 22 12 12 22 2 12" />
@@ -23,7 +23,7 @@ export default function ConsoleLoading() {
         <span>APT-LABS · Console</span>
       </div>
       <div className="flex flex-1 items-center justify-center" aria-hidden="true">
-        <p className="font-mono text-micro uppercase tracking-[0.2em] text-ash">
+        <p className="font-mono text-micro uppercase tracking-caps text-ash">
           Reading local session · Nothing leaves this device
         </p>
       </div>

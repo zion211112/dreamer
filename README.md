@@ -43,12 +43,17 @@ context and is rendered at the state it actually carries: `UNKNOWN`.
 
 | Route | Node | What it is |
 | --- | --- | --- |
-| `/` | 01 Field | The first viewport: the sentence, the five states, the measures |
+| `/` | 01 Field | The first viewport: the mantra, the measures, the five-node graph, and a closing count of one build of six |
 | `/register` | 02 Register | What the system records, the anatomy of a row, the empty register |
 | `/intelligence` | 03 Intelligence | Derived signals, each bound to the records it came from |
-| `/control` | 04 Control | The School Console (ten workspaces, runs on-device) |
+| `/control` | 04 Control | Contribution, decision, allocation, execution — with the School Console presented as the first implementation |
 | `/evidence` | 05 Evidence | The five states, the contract rules, the published unknowns |
-| `/console` | — | The product surface: local session, nine modules, ten tools |
+| `/console` | — | One built example of the grammar: local session, nine modules, ten tools |
+
+Every node on that list resolves to a real route. The five planned builds in
+`BUILDS` do not appear in it, because they have no surface: the School Console
+is an example of the grammar rather than the product, and the site closes on
+the count rather than the achievement.
 
 The console is `noindex` and disallowed in `robots.txt`: it is a device-local
 prototype, and a search result implying an institution runs it would be the
@@ -74,14 +79,31 @@ npm run dev          # http://localhost:3000
 | `npm start` | Serve the production build |
 | `npm run lint` | ESLint (`next/core-web-vitals`) |
 | `npm run typecheck` | `tsc --noEmit` |
-| `npm run check:contrast` | Computes every WCAG ratio from the token file |
-| `npm run check` | typecheck + lint + contrast + build — run before every commit |
+| `npm run check:scale` | Verifies the type ladder, both tracking registers and the space grid, then guards them against drift |
+| `npm run check:contrast` | Computes every WCAG ratio from the token file and asserts the state temperature order |
+| `npm run check` | typecheck + lint + check:scale + check:contrast + build — run before every commit |
 
-The contrast audit is not cosmetic. It parses `app/globals.css` and computes
-the real ratio of every foreground/background pair the interface renders —
-including accent text on the accent's own translucent washes, the pair that
-usually fails silently. It exits non-zero on any pair below threshold, so the
-tokens cannot drift into a WCAG failure without the build telling you.
+Neither audit is cosmetic, and both parse `app/globals.css` instead of
+trusting the stylesheet that uses it. `check:scale` recomputes the type ladder
+as 48 invariants: every step against the geometric ratio 2^(1/4) from a 16px
+base, every `letter-spacing` against k·ln(size/16) at k = −0.0125em, the caps
+register that no value of that curve can produce, the fluid hero's four
+tracking bands against their derived 600 / 949 / 1443px breakpoints, and the
+8px space grid with its single declared 4px half-unit. It then fails the build
+if a hard-coded `letter-spacing` or an off-grid px length has crept back in,
+because without that drift guard the constants are only true until the next
+edit.
+
+`check:contrast` computes 59 real pairs on the dark palette — every text token
+on all three surfaces, filled-control ink on each jade register, accent text on
+the accent's own translucent washes, the row wash, and focus rings at 3:1. It
+also asserts something a ratio cannot express alone: that the five evidence
+states hold a strict luminance order, `UNKNOWN` darkest and `PROTOTYPE`
+brightest, with `TARGET` the warm outlier by R/B ratio. That ordering is the
+contract — an unknown that shouts is a hidden zero — and it is a statement
+about relative luminance, so it can only be enforced as one. The lowest text
+ratio anywhere in the system is `--quiet` on `--edge` at 5.07:1. Both scripts
+exit non-zero on any failure.
 
 
 ---
@@ -95,11 +117,22 @@ tokens cannot drift into a WCAG failure without the build telling you.
   why it is empty, and what would fill it. "Nothing here" alone is a bug.
 - **One design system, two surfaces.** Tokens live in `app/globals.css` and
   are mirrored in `tailwind.config.ts`; the console and the site must not
-  drift into two products.
-- **The register grammar.** Ruled rows are the primary layout primitive —
-  hairlines only, one accent (`--signal`, #0a7549, text-safe at 5.3:1 on the
-  paper ground), no shadows, radii capped at 2px. Every state is text plus
-  hairline, never colour alone.
+  drift into two products. The console is the flat one — no aura field,
+  because an instrument panel with an aurora behind it is a dashboard.
+- **The register grammar.** The ground is dark and light is what a claim has to
+  earn, so depth is made with luminance rather than with a drop shadow — a
+  raised surface is separated by one pixel of light at its top edge. Ruled
+  rows are the primary layout primitive, hairline only, radii capped at 2px.
+  One interactive colour, `--signal` #35d9a4, and informational amber that is
+  never interactive. Every state is text plus mark, never colour alone.
+- **The workspace is a workspace.** The site is two columns: a 336px sticky
+  rail holding the node index and the node record, and the plane. Every node
+  in the index is a live route except the five planned builds, which render as
+  text with a hollow port rather than as links that resolve to nothing.
+- **The scale is checked, not asserted.** One size constant, two tracking
+  registers, one space constant, all re-derived from `app/globals.css` on
+  every build by `npm run check:scale`. A number this file quotes has to be
+  one a script can confirm.
 - **Accessibility is verified, not asserted.** Registers expose real table
   semantics (`role="table"` with labelled rows and column headers), the tally
   is a real list, tooltip-only provenance is duplicated into visually-hidden
@@ -126,25 +159,32 @@ app/
   not-found.tsx    register-grammar 404
   error.tsx        route error boundary
   global-error.tsx shell error boundary
+  icon.svg         dark-surface mark
+  apple-icon.tsx   dark-surface mark
+  opengraph-image.tsx  share card: the mantra at 112px, PROTOTYPE declared
   robots.ts        crawl policy (console excluded)
   sitemap.ts       derived from the same PLANE array as the nav
-  opengraph-image.tsx  link preview with the PROTOTYPE declaration on it
 components/
-  site/            register, tally, state tag, empty state, rail, node map
-  console/         ten workspaces + shared bits
+  site/            NodeIndex, NodeRecord, Graph, BuildGrid, register, tally,
+                   state tag, empty state
+  console/         the nine console modules + shared bits
 lib/
   system.ts        THE runtime source of truth for every public claim
   site.ts          canonical origin resolution
   domain modules   marking, fees, timetable, inspection, …
 scripts/
-  check-contrast.mjs   WCAG audit with a non-zero exit code
+  check-scale.mjs      ladder, tracking and space audit, plus the drift guard
+  check-contrast.mjs   WCAG audit and state ordering; non-zero exit on failure
 RESEARCH TRASH/    archived previous passes — excluded from build and deploy
 ```
 
 `RESEARCH TRASH/` is intentionally kept in the repository and intentionally
 excluded from the deployment (`.vercelignore`) and from TypeScript
 (`tsconfig.json`). It is the evidence record of how the current design was
-reached, not source.
+reached, not source: it still holds the light warm-paper register that DESIGN
+01 describes and that this build superseded, at roughly 163MB including a
+nested `node_modules`. `DESIGNS.md` is the companion record, and it is marked
+superseded rather than deleted for the same reason.
 
 ---
 

@@ -81,7 +81,7 @@ export default function GradeForecast() {
             <thead>
               <tr>
                 {["Student", "Mean / 400", "Band", "To next band", "Weakest", "Trend"].map((h) => (
-                  <th key={h} className="border-b border-ink/10 px-3 py-2.5 text-left font-mono text-micro uppercase tracking-[0.15em] text-ash">
+                  <th key={h} className="border-b border-ink/10 px-3 py-2.5 text-left font-mono text-micro uppercase tracking-caps text-ash">
                     {h}
                   </th>
                 ))}

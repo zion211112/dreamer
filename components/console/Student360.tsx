@@ -101,7 +101,7 @@ export default function Student360({
         </div>
         <div className="flex items-center gap-3">
           <PrintButton label="Print summary" />
-          <button onClick={onBack} className="font-mono text-label uppercase tracking-[0.15em] text-ash transition-colors hover:text-ink">
+          <button onClick={onBack} className="font-mono text-label uppercase tracking-caps text-ash transition-colors hover:text-ink">
             ← Back
           </button>
         </div>
@@ -184,7 +184,7 @@ export default function Student360({
             <ul className="mt-6 space-y-3">
               {notes.map((e) => (
                 <li key={e.id} className="border-b border-edge/50 pb-3 text-sm">
-                  <span className="font-mono text-label uppercase tracking-[0.15em] text-ash">
+                  <span className="font-mono text-label uppercase tracking-caps text-ash">
                     {new Date(e.ts).toLocaleDateString("en-GB")} · {e.type === "note" ? "Note" : "Message"} · {e.teacher}
                   </span>
                   <p className="mt-1 leading-6 text-ink">{e.text}</p>

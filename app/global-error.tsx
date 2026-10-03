@@ -19,12 +19,13 @@ export default function GlobalError({
       <body
         style={{
           margin: 0,
-          background: "#f6f6f4",
-          color: "#14181c",
+          background: "#04060a",
+          color: "#edf1f6",
           fontFamily:
             "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif",
-          fontSize: 15,
-          lineHeight: 1.6,
+          fontSize: 16,
+          lineHeight: 1.5,
+          colorScheme: "dark",
         }}
       >
         <main style={{ maxWidth: 720, margin: "0 auto", padding: "96px 24px" }}>
@@ -32,11 +33,11 @@ export default function GlobalError({
             style={{
               margin: 0,
               fontFamily: "'DM Mono', ui-monospace, Menlo, Consolas, monospace",
-              fontSize: 11,
+              fontSize: 11.31,
               fontWeight: 500,
-              letterSpacing: "0.2em",
+              letterSpacing: "0.00433em",
               textTransform: "uppercase",
-              color: "#39414a",
+              color: "#8795a6",
             }}
           >
             Shell error · Layout not rendered
@@ -44,14 +45,16 @@ export default function GlobalError({
           <h1
             style={{
               margin: "14px 0 0",
-              fontSize: 40,
-              lineHeight: 1.05,
-              letterSpacing: "-0.04em",
+              fontFamily: "'Space Grotesk', Inter, system-ui, sans-serif",
+              fontSize: 45.25,
+              fontWeight: 500,
+              lineHeight: 1.02,
+              letterSpacing: "-0.013em",
             }}
           >
             The shell failed to render.
           </h1>
-          <p style={{ margin: "18px 0 0", maxWidth: "58ch", color: "#39414a" }}>
+          <p style={{ margin: "18px 0 0", maxWidth: "58ch", color: "#b4c1d0" }}>
             The failure is in the outermost frame, before any page could be
             built. Records on this device are stored in the browser and are not
             affected. Reloading restores the shell; if it fails again, the
@@ -61,8 +64,8 @@ export default function GlobalError({
             style={{
               margin: "26px 0 0",
               fontFamily: "'DM Mono', ui-monospace, Menlo, Consolas, monospace",
-              fontSize: 11,
-              color: "#646c77",
+              fontSize: 11.31,
+              color: "#7a8899",
             }}
           >
             {error.digest
@@ -76,12 +79,12 @@ export default function GlobalError({
               marginTop: 28,
               minHeight: 44,
               padding: "0 20px",
-              border: "1px solid #0a7549",
+              border: "1px solid #35d9a4",
               borderRadius: 2,
-              background: "#0a7549",
-              color: "#ffffff",
+              background: "#35d9a4",
+              color: "#04060a",
               font: "inherit",
-              fontSize: 13,
+              fontSize: 13.45,
               fontWeight: 600,
               cursor: "pointer",
             }}

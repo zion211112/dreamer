@@ -1,23 +1,54 @@
 /* ============================================================
-   APT-LABS — Design System
+   APT-LABS — AURA
 
-   The contract assigns three grammars to one ground:
+   A register that emits its own light.
 
-     CONTROL PLANE  → navigation  (the site skeleton)
-     REGISTER       → evidence    (ruled rows, provenance, ids)
-     FIELD STATION  → uncertainty (bands, tallies, empty states)
-     VALUE CHAIN    → transformation (OBSERVE → MEASURE)
+   ── GROUNDING ──────────────────────────────────────────────────
+   Subject    auditable registers held by institutions that refuse to
+              publish a figure they cannot cite — a school in
+              Kirinyaga keeping its own attendance, marks, fees and
+              decisions on its own device.
+   Tradition  the long-exposure plate. An astronomical or forensic
+              plate is a dark substrate on which the only light present
+              is the light the record itself emitted. Everything the
+              register cannot prove stays dark.
+   Never      that anything here is deployed, and that an unknown is
+              a zero.
 
-   Rules of the system, all structural rather than decorative:
+   ── THE SYSTEM IS MATHEMATICAL, AND THE MATH IS CHECKED ─────────
+   · ONE size constant. The ladder is geometric: every step is the
+     previous step × 2^(1/4) = 1.1892071… from a 16px base. Not 1.25,
+     not an 8pt type grid — an interval tuned for 16px body is wrong
+     at 181px display. scripts/check-scale.mjs recomputes every ratio
+     from these values and fails the build if one drifts by >1e-6.
+   · ONE tracking constant. Tracking follows k·ln(size/base) with
+     k = −0.0125em, because tracking is added once per glyph: a
+     constant em value cannot hold across a 19× size range. The same
+     script recomputes every tracking value from this equation.
+   · ONE space constant. 8px, plus one declared half-unit of 4px for
+     hairline adjacency. Verified by the same script.
+   · TWO tone temperatures. Jade is settled and cold; amber is
+     intended and hot. Colour encodes epistemic temperature, never
+     decoration. Verified by scripts/check-contrast.mjs.
 
-     · Light ground. Warm paper, not a cockpit. Archives are not
-       dark-mode, and a site about inspectability cannot hide behind
-       the visual language of a developer tool.
-     · One accent. It marks location and evidence. Nothing else.
-     · Hairlines only. No shadows, no cards, no radii beyond 2px.
-     · Every state is text plus hairline, never colour alone.
-     · Absence is content: an empty register says what it would hold
-       and why it is legitimately empty.
+   ── WHY DARK, WHEN THE LAST BUILD REFUSED IT ────────────────────
+   The previous contract rejected darkness because darkness reads as
+   developer tooling. This build makes darkness do work instead. On a
+   dark substrate, light is the only thing that can be earned — so the
+   one property the system insists on, that a claim carries an
+   evidence state, stops being a label in a column and becomes a
+   property of the surface. Verified rows emit light. Unverified rows
+   are dark. You can read the light before you read the words.
+
+   ── RULES OF THE SYSTEM ────────────────────────────────────────
+   · The ground is dark; the ink is light. Depth is made with
+     luminance, never with a drop shadow.
+   · Hairlines are the only material. A boundary that must be felt is
+     lit, never thickened.
+   · One interactive accent (jade). Amber is informational.
+   · Every state is text plus mark — never colour alone.
+   · Absence is content: an empty register says what it would hold and
+     why it is legitimately empty.
    ============================================================ */
 
 @tailwind base;
@@ -26,77 +57,257 @@
 
 :root {
   /* ═══════════════════════════════════════════════════════════
-     Tokens below are mirrored in tailwind.config.ts. The two are
-     one system with two entry points; if they drift, the console
-     and the site become different products.
+     TOKENS
+
+     Mirrored in tailwind.config.ts. The two are one system with two
+     entry points; if they drift, the console and the site become
+     different products. Contrast for every pair below is computed by
+     scripts/check-contrast.mjs, never eyeballed.
      ═══════════════════════════════════════════════════════════ */
 
-  /* Surfaces — deepest to raised */
-  --void:           #f6f6f4;
-  --panel:          #ffffff;
-  --edge:           #f0f0ed;
+  /* ── Surfaces — deepest to raised. Never use for text. ──────── */
+  --void:           #04060a;
+  --panel:          #0a0e15;
+  --edge:           #0f151d;
 
-  /* Rules — the only material on this surface */
-  --rule:           rgba(22, 26, 30, 0.09);
-  --rule-2:         rgba(22, 26, 30, 0.16);
-  --rule-3:         rgba(22, 26, 30, 0.30);
+  /* ── Rules — the only material on this surface. Cool-tinted, so a
+        hairline reads as light falling on a plane rather than as ink
+        printed on paper. ───────────────────────────────────────── */
+  --rule:           rgba(178, 206, 240, 0.10);
+  --rule-2:         rgba(178, 206, 240, 0.17);
+  --rule-3:         rgba(178, 206, 240, 0.30);
+  --rule-lit:       rgba(53, 217, 164, 0.34);
+  --rule-lit-dim:   rgba(53, 217, 164, 0.17);
 
-  /* Ink — AA or better on --void */
-  --ink:            #14181c;
-  --dust:           #39414a;
-  --ash:            #626b74;
-  --quiet:          #646c77;
+  /* ── Ink — AA or better on --void, --panel and --edge. Measured:
+        ink 17.9 / 17.0 / 16.2 · dust 11.1 / 10.6 / 10.0
+        ash 6.6 / 6.3 / 6.0 · quiet 5.6 / 5.4 / 5.1 ────────────── */
+  --ink:            #edf1f6;
+  --dust:           #b4c1d0;
+  --ash:            #8795a6;
+  --quiet:          #7a8899;
 
-  /* Signal — the one accent, darkened until every text use clears
-     WCAG AA on paper: #0a7549 is 5.3:1 on --void and 5.8:1 on --panel,
-     so a 10px mono label may carry it, not only decoration. Ratios are
-     computed by scripts/check-contrast.mjs, never eyeballed. */
-  --signal:         #0a7549;
-  --signal-dim:     #0a6e48;
-  --signal-strong:  #085537;
-  --signal-a30:     rgba(10, 117, 73, 0.30);
-  --signal-a08:     rgba(10, 117, 73, 0.08);
+  /* ── Signal — the one interactive colour. Jade: a mineral aqua,
+        not a neon. 11.2:1 on void, so a 9.5px mono label may carry it
+        and not only decoration. `--signal-dim` is the pressed state,
+        `--signal-lit` the brightest tier for glows and emphasis. ── */
+  --signal:         #35d9a4;
+  --signal-dim:     #1f9d74;
+  --signal-lit:     #7bf0c6;
+  --signal-a30:     rgba(53, 217, 164, 0.30);
+  --signal-a15:     rgba(53, 217, 164, 0.15);
+  --signal-a08:     rgba(53, 217, 164, 0.08);
 
-  /* Informational — never interactive. Amber carries TARGET tag text
-     at 10px, so it holds AA like every other text token. */
-  --amber:          #8a5f10;
-  --amber-line:     rgba(138, 95, 16, 0.36);
-  --danger:         #b23a2e;
+  /* ── Informational — never interactive. Amber is the TARGET tag:
+        the warm end of the temperature scale, meaning "intended". ─ */
+  --amber:          #efb429;
+  --amber-line:     rgba(239, 180, 41, 0.42);
+  --danger:         #ff6f5e;
 
-  /* Washes */
-  --wash:           rgba(20, 24, 28, 0.020);
-  --wash-2:         rgba(20, 24, 28, 0.040);
+  /* ── The five states as colours ─────────────────────────────────
+        One token per state, so the temperature scale has a single
+        definition shared by the tags, the tally bars and the measure
+        cells. The ordering asserted by scripts/check-contrast.mjs is
+        the design: an unknown is the darkest thing on the page, and
+        a prototype — present, built, inspectable — is the brightest.
+        That is the contract ("an unknown that shouts is a hidden
+        zero") expressed as a luminance inequality. ──────────────── */
+  --state-verified:  #7bf0c6;   /* cold jade · settled by a source */
+  --state-prototype: #edf1f6;   /* bone    · present, neutral      */
+  --state-target:    #efb429;   /* amber   · hot, intended          */
+  --state-planned:   #8795a6;   /* ash     · cold, absent          */
+  --state-unknown:   #7a8899;   /* quiet   · darkest               */
 
-  /* Type — only self-hosted families */
+  /* ── Washes and the lift ─────────────────────────────────────
+        A raised surface on a dark ground is separated by one pixel
+        of light at its top edge, not by a shadow underneath. That is
+        how real materials read; this is the whole depth system. ── */
+  --wash:           rgba(178, 206, 240, 0.030);
+  --wash-2:         rgba(178, 206, 240, 0.060);
+  --lift:           rgba(255, 255, 255, 0.055);
+
+  /* ── The aura field ────────────────────────────────────────────
+        Three blooms, none of them a UI surface. Focal points are
+        golden reciprocals: 1/φ² = 38.2%, 1/φ = 61.8%, 1/φ³ = 23.6%.
+        Albedos stay under 0.18 because the ground must still measure
+        as near-black for the contrast figures above to be true. ──── */
+  --aura-jade:      rgba(53, 217, 164, 0.17);
+  --aura-cool:      rgba(66, 150, 210, 0.11);
+  --aura-ember:     rgba(216, 124, 58, 0.10);
+  --aura-veil:      rgba(2, 3, 5, 0.58);
+  --grid:           rgba(178, 206, 240, 0.030);
+
+  /* ── Type ladder — one constant, machine-checked ─────────────── */
+  --r-size:         1.189207115002721;   /* 2^(1/4) */
+  --r-track:        -0.0125;             /* em, per natural-log unit of size */
+
+  --fs-micro:       9.51px;   --ls-micro:      0.0065em;
+  --fs-label:       11.31px;  --ls-label:      0.00433em;
+  --fs-ui:          13.45px;  --ls-ui:         0.00217em;
+  --fs-body:        16px;     --ls-body:       0em;
+  --fs-lead:        19.03px;  --ls-lead:      -0.00217em;
+  --fs-h3:          22.63px;  --ls-h3:        -0.00433em;
+  --fs-h2:          26.91px;  --ls-h2:        -0.0065em;
+  --fs-h1:          32px;     --ls-h1:        -0.00866em;
+  --fs-figure:      38.05px;  --ls-figure:    -0.01083em;
+  --fs-display:     45.25px;  --ls-display:   -0.013em;
+
+  /* A second tracking register, because one curve cannot do both jobs.
+
+     The curve above tracks *sentence and display* setting, where
+     tracking compensates for sidebearings lost as glyphs get larger.
+     Small uppercase is a different problem: capitals have no
+     ascenders or descenders to interleave, so they need tracking
+     opened up regardless of size, and no value of k·ln(size) will
+     produce that — at 9.5px the curve yields +0.0065em, which is
+     zero, and set at zero, a 9.5px uppercase mono label is cramped.
+
+     So the caps register carries its own declared value, 0.08em, and
+     every uppercase mono label on every surface uses it. This is the
+     third and last tracking constant, and scripts/check-scale.mjs
+     asserts that it exists and is positive rather than pretending the
+     logarithmic curve covers this case. */
+  --ls-caps:        0.08em;
+
+  /* The hero is the one fluid size on the system. Its clamp bounds are
+     ladder steps 6 and 14 — 45.25px and 181.02px — not round numbers,
+     and its slope is derived from the width of the mantra's longer
+     designed line rather than chosen. Tracking cannot be fluid (an `em`
+     value cannot track a size it is part of), so it steps across four
+     bands whose boundaries are the √2 ladder itself: 64px, 90.51px,
+     128px mapped through the clamp's affine term. Each band's value is
+     the curve evaluated at that band's geometric midpoint, so the
+     worst-case error is exactly one quarter-step of tracking
+     (0.00217em ≈ 0.39px at the top band). scripts/check-scale.mjs
+     recomputes the bounds, the slope's origin and every band. */
+  --fs-hero:        clamp(2.8284rem, 1.15rem + 7.6vw, 11.3137rem);
+  --ls-hero-0:       -0.01516em;
+  --ls-hero-1:       -0.01949em;
+  --ls-hero-2:       -0.02383em;
+  --ls-hero-3:       -0.02816em;
+--ls-hero:         var(--ls-hero-0);
+
+  /* ── Space — 8px, one declared half-unit ─────────────────────── */
+  --s-1:            4px;
+  --s-2:            8px;
+  --s-3:            16px;
+  --s-4:            24px;
+  --s-5:            32px;
+  --s-6:            48px;
+  --s-7:            64px;
+  --s-8:            96px;
+  --s-9:            128px;
+  --s-10:           192px;
+
+  /* ── Measure ───────────────────────────────────────────────────
+        66 characters is the classical ideal for continuous prose. The
+        display measure is set in ch too, so both measures change when
+        the type size changes rather than when the viewport does. ── */
+  --measure:        66ch;
+  --measure-tight:  22ch;
+  --measure-hero:   15ch;
+
+  /* ── Type — only self-hosted families ───────────────────────── */
   --font-sans:    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
                   "Helvetica Neue", Arial, "Noto Sans", system-ui, sans-serif;
   --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
   --font-mono:    "DM Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* DM Mono carries Latin, Greek and Cyrillic. It has no U+2192 RIGHTWARDS
+     ARROW, and this system says "records → structure" constantly — so an
+     arrow set in the mono register renders as a tofu box. Rather than
+     adding a fourth webfont to fix one glyph, arrows are wrapped in
+     `.glyph`, which resolves the symbol against the sans stack and
+     nothing else. The alternative, appending Inter to the mono stack, is
+     worse: it silently substitutes a proportional face into a run that is
+     supposed to be monospaced, and the substitution is invisible in review. */
 }
+
+.glyph { font-family: var(--font-sans); }
 
 * { box-sizing: border-box; }
 
+/* ═══════════════════════════════════════════════════════════
+   THE HERO'S FOUR TRACKING BANDS
+
+   The hero is fluid; its tracking is not, and it cannot be. A
+   tracking value in `em` is relative to the very font-size it is
+   supposed to track, so there is no way to express "tighten as you
+   grow" in one CSS declaration — every attempt either ignores the
+   clamp or loops back on itself.
+
+   So the tracking steps, and the steps are the √2 ladder itself:
+   64px, 90.51px and 128px mapped through the clamp's affine term and
+   rounded up to 600 / 949 / 1443 px of viewport. Each band takes the
+   curve evaluated at that band's geometric midpoint (53.82, 76.11,
+   107.63 and 152.22px), so the worst-case error inside a band is one
+   quarter-step of tracking — 0.00217em, which is 0.39px at the top of
+   the top band and nothing anyone can see.
+
+   These three numbers are the only place a breakpoint is chosen by
+   hand, and scripts/check-scale.mjs recomputes all of it from the
+   ladder and fails the build on any disagreement. It earned its keep
+   immediately: 577 was written by hand for an earlier slope and the
+   ladder said 578, and then said 600 when the slope changed. A
+   previous pass had these blocks nested inside :root, where they
+   parsed and did nothing at all; the script now also asserts that each
+   band is top level, so a silently-dead media query cannot come back.
+   ═══════════════════════════════════════════════════════════ */
+
+@media (min-width: 600px)  { :root { --ls-hero: var(--ls-hero-1); } }
+@media (min-width: 949px)  { :root { --ls-hero: var(--ls-hero-2); } }
+@media (min-width: 1443px) { :root { --ls-hero: var(--ls-hero-3); } }
+
 html, body { margin: 0; padding: 0; }
 
-/* Light-only by design. Declaring the scheme stops a dark-mode browser
-   from re-tinting form controls and scrollbars — which is how a paper
-   surface quietly turns into a cockpit. */
-html { color-scheme: light; }
+/* Dark by declaration, not by accident. The UA is told the scheme
+   before first paint so form controls, scrollbars and mobile browser
+   chrome are built for a dark substrate instead of being re-tinted
+   into one after the fact. */
+html {
+  color-scheme: dark;
+  scrollbar-color: var(--rule-3) var(--void);
+}
 
 body {
+  position: relative;
   font-family: var(--font-sans);
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: var(--fs-body);
+  line-height: 1.5;               /* 16 × 1.5 = 24px: the baseline unit */
+  letter-spacing: var(--ls-body);
   background: var(--void);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
 }
+
+/* Content rides above the field; the field never intercepts. */
+.plane { position: relative; z-index: 1; }
+
+/* ── Scrollbars ──────────────────────────────────────────────────
+   Thin, and the thumb warms toward jade only on hover. A default
+   15px light-mode scrollbar on a dark ground is the single loudest
+   tell of a dark theme that was not designed. */
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-track { background: var(--void); }
+::-webkit-scrollbar-thumb {
+  background: var(--rule-2);
+  border: 3px solid var(--void);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--signal-a30); }
+::-webkit-scrollbar-corner { background: var(--void); }
 
 ::selection { background: var(--signal-a30); color: var(--ink); }
 
+/* The ring is drawn twice: a jade core and a dark offset. On a dark
+   ground a single bright ring bleeds into the aura; the offset keeps
+   the shape readable wherever it lands. */
 :focus-visible {
   outline: 2px solid var(--signal);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  border-radius: 1px;
 }
 
 .sr-only {
@@ -111,18 +322,94 @@ body {
 
 .skip-link {
   position: fixed;
-  top: 8px; left: 16px;
+  top: var(--s-2); left: var(--s-3);
   z-index: 100;
-  transform: translateY(-160%);
+  transform: translateY(-200%);
   background: var(--signal);
-  color: #fff;
-  padding: 8px 14px;
+  color: var(--void);
+  padding: 10px 16px;
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: var(--fs-ui);
   font-weight: 600;
   text-decoration: none;
 }
 .skip-link:focus { transform: translateY(0); }
+
+/* ═══════════════════════════════════════════════════════════
+   THE AURA FIELD
+
+   The ground is not a colour, it is a light field. Three layered
+   radial blooms positioned on the golden reciprocals, one photographic
+   vignette to hold the centre, and a grain plate over everything.
+
+   Cost: two composited transforms and no filters. `blur()` on a
+   viewport-sized layer is the usual way this effect is built and it
+   costs a full-page raster on every frame; radial gradients are
+   already soft, so the softness is free. No layout, no paint after
+   first frame.
+
+   The grain is not decoration. A near-black ground with a large
+   low-alpha gradient bands visibly on 8-bit panels; 3% of fractal
+   noise is what stops it, and it is why the field reads as a
+   photographed surface rather than as a `#000` fill.
+   ═══════════════════════════════════════════════════════════ */
+
+.aura {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  /* The falloff. Focus is above the optical centre, because the eye
+     reads the golden section and not the midpoint. */
+  background:
+    radial-gradient(140% 110% at 50% 38.2%, transparent 34%, var(--aura-veil) 100%);
+}
+
+.aura::before,
+.aura::after {
+  content: "";
+  position: absolute;
+  inset: -30%;                 /* headroom so the drift never reveals an edge */
+}
+
+/* Two blooms of one hue family at 1/φ² and 1/φ³ — the primary field. */
+.aura::before {
+  background:
+    radial-gradient(46vw 42vw at 61.8% 38.2%, var(--aura-jade), transparent 62%),
+    radial-gradient(52vw 46vw at 23.6% 61.8%, var(--aura-cool), transparent 66%);
+  animation: aura-drift 96s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* One warm bloom, low and dim. Without it the field reads as clinical;
+   with it, it reads as a room with a light source in it. */
+.aura::after {
+  background: radial-gradient(44vw 32vw at 50% 104%, var(--aura-ember), transparent 64%);
+  animation: aura-drift-b 132s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* The plate. 140px tile so the pattern does not read as a texture. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.032;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+}
+
+@keyframes aura-drift {
+  from { transform: translate3d(-2.2%, 1.4%, 0) scale(1); }
+  to   { transform: translate3d(2.6%, -1.8%, 0) scale(1.06); }
+}
+@keyframes aura-drift-b {
+  from { transform: translate3d(1.8%, -1.2%, 0) scale(1.04); }
+  to   { transform: translate3d(-2.4%, 1.6%, 0) scale(1); }
+}
 
 /* ═══════════════════════════════════════════════════════════
    SHARED INSTRUMENT REGISTER
@@ -135,11 +422,12 @@ body {
 
 .label {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   font-weight: 500;
-  letter-spacing: 0.2em;
+  letter-spacing: var(--ls-caps);
+  line-height: 16px;            /* 16/11.31 = 1.415 — on the baseline grid */
   text-transform: uppercase;
-  color: var(--dust);
+  color: var(--ash);
   margin: 0;
 }
 
@@ -147,232 +435,897 @@ body {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
+  /* Figures take their tracking from the step they are set at, so a
+     count and a label in the same register are tracked alike. */
+  letter-spacing: var(--ls-figure);
 }
 
-.prose { max-width: 66ch; color: var(--dust); }
-.prose p { margin: 0 0 14px; text-wrap: pretty; }
+.prose { max-width: var(--measure); color: var(--dust); }
+.prose p { margin: 0 0 var(--s-3); text-wrap: pretty; }
+.prose strong { color: var(--ink); font-weight: 600; }
+.prose em { color: var(--ink); font-style: italic; }
 
-/* Page title — one treatment on every route */
-.page-title {
-  margin: 14px 0 0;
-  max-width: 22ch;
+/* ── The hero ──────────────────────────────────────────────────
+   The one place where the display range is spent. Everything else on
+   the site is deliberately below it, which is the only way a 181px
+   statement can still read as the largest thing on the page. ────── */
+
+/* The hero. The one fluid size on the system, and the one fluid size
+   whose clamp slope is *derived*: 7.6vw is the largest slope at which
+   the designed break of the mantra ("Records, not" — twelve glyphs,
+   the wider of the two lines) still fits inside the plate at every
+   viewport in the two-column range. Widen the slope and the hero
+   outgrows its own lockup and breaks into an orphan; narrow it and the
+   top of the ladder, 181px, is never reached on a real screen.
+
+   Both clamp bounds are ladder steps — step +4 and step +14 — not
+   round numbers, and the tracking bands below are the same ladder
+   mapped back through this clamp's own affine term. */
+.hero {
+  margin: 0;
+  max-width: var(--measure-hero);
   font-family: var(--font-display);
-  font-size: clamp(34px, 5.2vw, 56px);
-  font-weight: 600;
-  letter-spacing: -0.04em;
-  line-height: 1.03;
+  font-weight: 500;
+  font-size: var(--fs-hero);
+  line-height: 0.92;
+  letter-spacing: var(--ls-hero);
   text-wrap: balance;
+  color: var(--ink);
+  /* One bloom, two radii. Text glow only ever at display size — at
+     16px a text-shadow is a smudge. */
+  text-shadow:
+    0 0 64px rgba(53, 217, 164, 0.15),
+    0 0 150px rgba(53, 217, 164, 0.07);
 }
-/* ═══════════════════════════════════════════════════════════
-   GRAMMAR 1 — CONTROL PLANE (navigation)
 
-   The site skeleton. A persistent left rail on desktop listing the
-   nodes of the system in the order reality moves through them; the
-   main column is the plane itself. Every node in this rail is a
-   live route — a node that resolves to nothing is not a node.
+/* The lockup. One line per stored line, so the break is the same on a
+   360px phone and a 2560px display. `text-wrap: balance` still runs
+   inside a line, which is what rescues a viewport too narrow to hold
+   the whole phrase. */
+.hero-line { display: block; }
+
+/* Page title — the sub-route statement, exactly one ladder step
+   below the hero. 45.25px against 181.02px: the gap is the drama. */
+.page-title {
+  margin: var(--s-2) 0 0;
+  max-width: var(--measure-tight);
+  font-family: var(--font-display);
+  font-size: var(--fs-display);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: var(--ls-display);
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+.lede {
+  max-width: 54ch;
+  font-size: var(--fs-lead);
+  line-height: 1.55;
+  letter-spacing: var(--ls-lead);
+  color: var(--dust);
+  text-wrap: pretty;
+}
+
+/* ── The plate ────────────────────────────────────────────────
+   One per page, and only around the hero. A plate is the substrate
+   the light lands on — not a card, and not repeated: repetition is
+   exactly how this turns into card soup. Two cues carry it: a lit
+   top edge (the emitted-light signature) and a single very wide,
+   very soft bloom underneath. ─────────────────────────────────── */
+
+.plate {
+  position: relative;
+  padding: var(--s-4) var(--s-4) var(--s-5);
+  border: 1px solid var(--rule);
+  background:
+    linear-gradient(180deg, var(--lift), rgba(10, 14, 21, 0) 38%),
+    rgba(10, 14, 21, 0.42);
+  box-shadow: 0 56px 130px -80px rgba(53, 217, 164, 0.42);
+}
+
+.plate::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: -1px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--rule-lit) 16%,
+    var(--signal) 50%,
+    var(--rule-lit) 84%,
+    transparent
+  );
+}
+
+/* The index row across the top of the plate: coordinates, in mono,
+   ruled from the statement below. */
+.plate-index {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-3);
+  padding-bottom: var(--s-3);
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+.plate-index-lit { color: var(--signal); }
+
+/* The mount sequence. `backwards` fill only, so if the animation never
+   runs — reduced motion, print, an old engine — the element is at its
+   own natural state rather than stranded at opacity 0. */
+.plate > * {
+  animation: aura-rise 820ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+.plate > *:nth-child(2) { animation-delay: 80ms; }
+.plate > *:nth-child(3) { animation-delay: 160ms; }
+.plate > *:nth-child(4) { animation-delay: 240ms; }
+.plate > *:nth-child(5) { animation-delay: 320ms; }
+
+@keyframes aura-rise {
+  from { opacity: 0; transform: translate3d(0, 14px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   GRAMMAR 1 — THE WORKSPACE (navigation and selection)
+
+   The site is laid out the way an inspection tool is laid out, because
+   the system's entire claim is inspectability:
+
+     NODE INDEX   every node published here, grouped by kind
+     THE PLANE    the route, above a compact spine marking position
+     NODE RECORD  what the selected node is, holds, and why its state
+
+   Three columns, and the order is the reading order. The node record
+   is last because it is supplementary to the route — but it is never
+   scrolled away, because it is the only place on screen that answers
+   "what am I actually looking at?"
+
+   The canvas grid behind the plane is 32px — four units of the 8px
+   space constant — and it fades out radially, because a grid that runs
+   to the edges of a document is wallpaper and a grid that stops is a
+   workspace.
    ═══════════════════════════════════════════════════════════ */
 
+/* Two columns, and the split is set by arithmetic rather than by
+   taste.
+
+   A third column was tried and removed. The site has two demands on
+   width that cannot both be met in three columns: five node cards on a
+   spine need about 205px each to hold a role clause without turning
+   into a wall of words, and the mantra at its derived size needs its
+   longer designed line — "Records, not", twelve glyphs — to fit inside
+   the plate. Measured at 1600px: five cards plus four edges is 1153px,
+   and the hero lockup wants 904px of a plate. Three columns leave
+   840px, which is not enough of either.
+
+   So the index and the record share one rail. That is also the more
+   honest arrangement: both are statements *about* the system rather
+   than *of* it, and the plane is the only thing on this site that is
+   actually the argument. Below 1200px the rail becomes a horizontal
+   strip you scroll sideways, which is a different composition rather
+   than the same one squeezed. */
 .plane {
+  position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-columns: 232px minmax(0, 1fr);
-  gap: 48px;
-  max-width: 1240px;
+  grid-template-columns: 336px minmax(0, 1fr);
+  gap: var(--s-6);
+  max-width: 1680px;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 var(--s-5);
 }
 
+/* The rail. Sticky as a whole, so the index is always in reach and the
+   record is never scrolled away — which is the entire premise of the
+   layout. */
 .plane-rail {
   position: sticky;
   top: 0;
   align-self: start;
-  height: 100vh;
-  padding: 28px 0 32px;
+  max-height: 100vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--s-4) var(--s-4) var(--s-5) 0;
   border-right: 1px solid var(--rule);
+  scrollbar-width: thin;
+}
+
+.plane-main {
+  min-width: 0;
+  padding: var(--s-6) 0 var(--s-9);
+  /* The canvas grid is drawn with a negative inset so it reaches the
+     gutter, which means it also reaches past the page box and adds 8px
+     of horizontal scroll at some widths. Clip rather than pad: clip
+     does not create a scroll container, so nothing inside is made
+     scrollable and focus rings are not cut off vertically. */
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+/* ── The canvas grid ─────────────────────────────────────────── */
+.canvas {
+  position: relative;
+}
+.canvas::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--s-5) * -1) calc(var(--s-4) * -1) 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+  -webkit-mask-image: radial-gradient(130% 78% at 50% 0%, #000 0%, transparent 76%);
+  mask-image: radial-gradient(130% 78% at 50% 0%, #000 0%, transparent 76%);
+}
+
+/* ── The node index ──────────────────────────────────────────── */
+.plane-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-ui);
+  font-weight: 500;
+  letter-spacing: var(--ls-caps);
+  color: var(--ink);
+  text-decoration: none;
+}
+/* The mark. A diamond that emits — the smallest complete statement of
+   the grammar, and the only lit object in the index header. */
+.plane-mark {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border: 1px solid var(--signal);
+  transform: rotate(45deg);
+  box-shadow: 0 0 12px rgba(53, 217, 164, 0.55);
+}
+.plane-wordmark:hover .plane-mark { background: var(--signal); }
+
+.index-group { margin-top: var(--s-5); }
+
+.index-group-key {
+  margin: 0 0 var(--s-2);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+.index-list { margin: 0; padding: 0; list-style: none; }
+
+.index-node {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 8px var(--s-2) 8px 0;
+  text-decoration: none;
+  color: var(--ash);
+  transition: color 140ms ease, background-color 140ms ease;
+}
+.index-node:hover { color: var(--ink); background: var(--wash); }
+
+.index-node-ord { display: flex; align-items: center; }
+.index-node-ord.figure {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  color: var(--quiet);
+}
+
+.index-node-name {
+  font-family: var(--font-display);
+  font-size: var(--fs-label);
+  letter-spacing: var(--ls-ui);
+}
+
+/* The current node lights. This is the one place the accent marks
+   location rather than evidence, and it is doing the same job the
+   register gives it — which is what keeps the two grammars from
+   reading as two products. */
+.index-node[aria-current="page"] {
+  color: var(--ink);
+  background: linear-gradient(90deg, var(--signal-a15), transparent 76%);
+  padding-left: var(--s-2);
+}
+.index-node[aria-current="page"] .index-node-name { font-weight: 600; }
+.index-node[aria-current="page"] .index-node-ord.figure { color: var(--signal); }
+
+/* A build with no surface is set as text, not as a control. The hollow
+   port is the redundant channel: filled means you can open it, hollow
+   means you cannot, and neither depends on colour. */
+.index-node--planned {
+  color: var(--quiet);
+  cursor: default;
+}
+.index-node--planned:hover { background: none; color: var(--ash); }
+
+/* ── Ports ─────────────────────────────────────────────────────
+   The one element taken straight from the node-workspace idiom, and
+   the reason it earns its place: a port tells you at a glance whether
+   a node is connected to anything you can reach. Filled and lit for a
+   node with a surface, hollow for one without, and the current node's
+   port is the only one that blooms. ───────────────────────────── */
+
+.port {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1px solid var(--rule-3);
+  background: var(--void);
+  flex: none;
+}
+.port--live {
+  border-color: var(--signal);
+  background: var(--signal);
+}
+.port--planned { border-style: dashed; }
+
+.node-port {
+  position: absolute;
+  left: -6px;
+  top: 20px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--rule-3);
+  background: var(--void);
+}
+.node[aria-current="page"] .node-port {
+  border-color: var(--signal);
+  background: var(--signal);
+  box-shadow:
+    0 0 0 4px var(--signal-a15),
+    0 0 16px rgba(53, 217, 164, 0.65);
+}
+.build-node .node-port { border-color: var(--signal); background: var(--signal); }
+
+.index-foot {
+  margin: var(--s-5) 0 0;
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  line-height: 1.75;
+  color: var(--quiet);
+}
+
+/* ── The node record ───────────────────────────────────────────
+   Four named facts, so it is a definition list and a screen reader
+   can ask for them one at a time. It sits below the index in the rail
+   rather than in a column of its own: it is the same kind of object as
+   the index — a statement about the system rather than of it — and the
+   plane needs the width more than the record does. ─────────── */
+
+.record-ord {
+  margin: var(--s-4) 0 0;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  color: var(--signal);
+}
+.record-ord span { color: var(--quiet); }
+
+.record-name {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: var(--ls-h3);
+  color: var(--ink);
+}
+.record-role {
+  margin: var(--s-2) 0 0;
+  font-size: var(--fs-label);
+  line-height: 1.7;
+  color: var(--dust);
+}
+
+.plane-record {
+  margin-top: var(--s-5);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--rule-2);
+}
+.plane-record .index-group-key { border-bottom: 0; padding-bottom: 0; margin-bottom: 0; }
+.record-fields { margin: var(--s-3) 0 0; }
+.record-field {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  gap: var(--s-2);
+  padding: 8px 0;
+  border-top: 1px solid var(--rule);
+}
+.record-field dt {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+.record-field dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  line-height: 1.75;
+  color: var(--ash);
+}
+
+.record-state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+  margin-top: var(--s-4);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--rule-2);
+}
+.record-link {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  color: var(--signal);
+  text-underline-offset: 3px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   GRAMMAR 1b — THE GRAPH (the loop, drawn)
+
+   Five cards on a spine, connected by edges. The edge is drawn by the
+   node it arrives at, because a node knows who it is downstream of;
+   it lights exactly when the flow is leaving the node you are
+   standing on. There are no unlinked nodes on this spine — an edge
+   that goes nowhere would be a promise the site cannot keep.
+   ═══════════════════════════════════════════════════════════ */
+
+.graph { position: relative; }
+
+.graph-track,
+.graph-spine-track,
+.builds {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.graph-track {
+  --edge-gap: 32px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--edge-gap);
+}
+
+.graph-cell { position: relative; min-width: 0; }
+
+/* The edge. Drawn in the gap, arriving at the port of the node it
+   enters, with a single chevron at the head so the direction is
+   unambiguous without an arrow label.
+
+   Two pixels rather than one, and the reason is arithmetic rather than
+   taste: the port is 10px tall at top:20px, so its centre is y=25, and
+   a 1px rule centred on 25 would sit on an odd pixel and straddle two
+   rows. A 2px rule at top:24 shares that centre exactly and stays on
+   even pixel boundaries everywhere. */
+.graph-edge {
+  position: absolute;
+  left: calc(-1 * var(--edge-gap));
+  top: 24px;
+  width: var(--edge-gap);
+  height: 2px;
+  background: var(--rule-2);
+}
+.graph-edge::after {
+  content: "";
+  position: absolute;
+  right: 0; top: -2px;
+  width: 6px; height: 6px;
+  border-top: 1px solid var(--rule-3);
+  border-right: 1px solid var(--rule-3);
+  transform: rotate(45deg);
+}
+/* The edge you are standing on. */
+.graph-edge[data-lit] {
+  background: linear-gradient(90deg, var(--signal-dim), var(--signal-lit));
+  box-shadow: 0 0 10px rgba(53, 217, 164, 0.45);
+}
+.graph-edge[data-lit]::after {
+  border-color: var(--signal);
+  box-shadow: 2px -2px 10px rgba(53, 217, 164, 0.5);
+}
+
+/* ── The node card ────────────────────────────────────────────
+   The layout primitive of the canvas. Hairline border, no radius
+   beyond 2px, no drop shadow: a node is a bounded object with an
+   identity, not a floating card. Depth comes from one pixel of
+   light along its top edge. ─────────────────────────────────── */
+
+.node {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-}
-
-.plane-wordmark {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.22em;
+  height: 100%;
+  padding: 16px 18px 18px 20px;
+  border: 1px solid var(--rule-2);
+  border-radius: 2px;
+  background:
+    linear-gradient(180deg, var(--lift), rgba(10, 14, 21, 0) 34%),
+    rgba(10, 14, 21, 0.55);
+  text-decoration: none;
   color: var(--ink);
-  text-decoration: none;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+.node:hover { border-color: var(--rule-3); background-color: var(--wash); }
+
+.node[aria-current="page"] {
+  border-color: var(--signal-a30);
+  box-shadow:
+    inset 0 1px 0 rgba(53, 217, 164, 0.35),
+    0 40px 90px -70px rgba(53, 217, 164, 0.55);
 }
 
-.plane-nav { display: flex; flex-direction: column; }
-
-.plane-node {
-  display: grid;
-  grid-template-columns: 22px minmax(0, 1fr);
-  align-items: baseline;
-  gap: 10px;
-  padding: 9px 10px 9px 0;
-  border-top: 1px solid var(--rule);
-  text-decoration: none;
-  color: var(--ash);
-  transition: color 120ms ease;
-}
-.plane-node:last-child { border-bottom: 1px solid var(--rule); }
-.plane-node:hover { color: var(--ink); }
-
-.plane-node[aria-current="page"] { color: var(--ink); }
-.plane-node[aria-current="page"] .plane-node-name { font-weight: 500; }
-
-/* The ordinal carries the position in the system. It is mono, so it
-   reads as an instrument reading rather than a bullet. */
-.plane-node-ord {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
+.node-ord {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
   color: var(--quiet);
 }
-.plane-node[aria-current="page"] .plane-node-ord { color: var(--signal); }
+.node[aria-current="page"] .node-ord { color: var(--signal); }
 
-.plane-node-name {
+.node-name {
+  margin-top: 8px;
   font-family: var(--font-display);
-  font-size: 14px;
-  letter-spacing: -0.005em;
+  font-size: var(--fs-ui);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: var(--ls-ui);
+  color: var(--ink);
 }
 
-.plane-node-role {
-  grid-column: 2;
-  font-size: 11px;
-  line-height: 1.45;
+.node-role {
+  margin-top: 8px;
+  font-size: var(--fs-micro);
+  line-height: 1.75;
+  color: var(--ash);
+}
+
+.node-custody {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  line-height: 1.7;
   color: var(--quiet);
 }
+.node-custody-key {
+  display: block;
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--rule-3);
+}
 
-.plane-foot { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
+.node-state { margin-top: 12px; }
 
-.plane-main { min-width: 0; padding: 40px 0 96px; }
+/* The return stroke. Five nodes in a row is a queue; this is the line
+   that makes it a loop. */
+.graph-close {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-top: var(--s-3);
+  padding: 10px 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+.graph-close-mark {
+  flex: 1;
+  height: 1px;
+  background: repeating-linear-gradient(
+    to right,
+    var(--rule-3) 0 6px,
+    transparent 6px 11px
+  );
+}
 
-/* The node map. Five system stages, drawn as a strip of ruled
-   stations with the transition between them marked — not a diagram
-   of an idea, a table of contents that happens to be a loop. */
-.plane-map {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+/* ── The compact spine ─────────────────────────────────────────
+   Orientation, not content: five cells on one line, always in the
+   same place, above every route but the homepage. It renders on every
+   page so that position in the loop is a constant rather than
+   something you have to go and find. ────────────────────────── */
+
+.graph-spine { margin-bottom: var(--s-5); }
+
+.graph-spine-track {
+  display: flex;
+  gap: 0;
   border-top: 1px solid var(--rule-2);
   border-bottom: 1px solid var(--rule-2);
+  background: rgba(10, 14, 21, 0.4);
 }
-.plane-map-cell {
-  padding: 16px 18px 18px;
+
+.graph-spine-cell {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 10px var(--s-3) 10px;
   border-left: 1px solid var(--rule);
   text-decoration: none;
-  color: var(--ink);
-  transition: background-color 120ms ease;
+  color: var(--ash);
+  transition: color 140ms ease, background-color 140ms ease;
 }
-.plane-map-cell:first-child { border-left: 0; }
-.plane-map-cell:hover { background: var(--panel); }
-.plane-map-cell[aria-current="page"] { background: var(--panel); }
+.graph-spine-cell:first-child { border-left: 0; }
+.graph-spine-cell:hover { color: var(--ink); background: var(--wash); }
 
-.plane-map-ord {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
+.graph-spine-ord {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
   color: var(--quiet);
 }
-.plane-map-name {
-  margin-top: 6px;
+.graph-spine-name {
   font-family: var(--font-display);
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: var(--ls-label);
 }
-.plane-map-desc {
-  margin-top: 6px;
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--ash);
+.graph-spine-cell .port {
+  position: absolute;
+  left: var(--s-3);
+  bottom: -4px;
+}
+.graph-spine-cell[aria-current="page"] {
+  color: var(--ink);
+  background: var(--wash);
+}
+.graph-spine-cell[aria-current="page"] .graph-spine-ord { color: var(--signal); }
+.graph-spine-cell[aria-current="page"] .port {
+  border-color: var(--signal);
+  background: var(--signal);
+  box-shadow: 0 0 10px rgba(53, 217, 164, 0.6);
 }
 
-/* Tablet: the rail becomes a horizontal band above the plane. The
-   node order is preserved — it is the order of the system, not a
-   menu. */
-@media (max-width: 900px) {
-  .plane { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 0 20px; }
+/* ── The build annex ───────────────────────────────────────────
+   Six nodes, no edges. The console is wired to the loop; the other
+   five are not wired to anything, and an edge implies a running flow,
+   so the connection is stated once in the caption instead of being
+   drawn five times in a way that would overclaim. ───────────── */
+
+.builds {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--edge-gap);
+}
+
+.build-node { padding-top: 16px; }
+
+.build-domain {
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+.build-chain {
+  margin-top: 10px;
+  font-family: var(--font-sans);
+  font-size: var(--fs-micro);
+  line-height: 1.8;
+  letter-spacing: var(--ls-micro);
+  color: var(--dust);
+}
+.build-prov {
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  line-height: 1.75;
+  color: var(--quiet);
+}
+.build-open {
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
+.builds-caption {
+  margin: var(--s-4) 0 0;
+  max-width: 72ch;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  line-height: 1.75;
+  color: var(--quiet);
+}
+
+/* ── Responsive recompositions, not stacks ───────────────────── */
+
+/* Below this the rail stops being a column and becomes a strip you
+   scroll sideways, and the spine turns from horizontal to vertical.
+   Both happen at the same point, and 1199 is where the arithmetic says
+   it must: at 1199px the plane is 1199 - 32 - 336 - 48 = 783px, and five
+   cards plus four edges need 1153. Recomposing both at once is what
+   keeps the graph and the navigation in agreement about how many
+   things are across — one of them going to two columns while the other
+   stayed at five would read as a bug. */
+@media (max-width: 1199px) {
+  .plane {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding: 0 var(--s-3);
+  }
   .plane-rail {
     position: static;
-    height: auto;
-    padding: 16px 0 0;
+    max-height: none;
+    overflow: visible;
+    padding: var(--s-3) 0 0;
     border-right: 0;
-    border-bottom: 1px solid var(--rule);
-    gap: 14px;
+    border-bottom: 1px solid var(--rule-2);
   }
-  .plane-nav {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+
+  /* The index goes horizontal. Same information, same order, a
+     different shape — and the builds stay visible rather than being
+     hidden behind a menu, because "which of these can I open" is the
+     first question this navigation exists to answer. */
+  .index-group { margin-top: var(--s-3); }
+  .index-list {
+    display: flex;
+    gap: var(--s-2);
+    width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding-bottom: var(--s-2);
+    scrollbar-width: thin;
   }
-  .plane-node { border-top: 1px solid var(--rule); }
-  .plane-node-role { display: none; }
-  .plane-foot { margin-top: 12px; flex-direction: row; flex-wrap: wrap; gap: 16px; }
-  .plane-main { padding: 28px 0 72px; }
-  .plane-map { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .plane-map-cell:nth-child(2n + 1) { border-left: 0; }
-  .plane-map-cell:nth-child(n + 3) { border-top: 1px solid var(--rule); }
+  .index-list li { flex: none; }
+  .index-group { min-width: 0; }
+  .plane-index { min-width: 0; }
+  .index-node {
+    grid-template-columns: auto auto;
+    padding: 8px var(--s-3);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+  }
+  .index-node--planned { border-style: dashed; }
+  .index-node[aria-current="page"] { padding-left: var(--s-3); }
+  .index-foot { display: none; }
+
+  .plane-record { margin-top: var(--s-3); padding-top: var(--s-2); }
+  .record-fields { margin-top: var(--s-2); }
+  .plane-main { padding: var(--s-4) 0 var(--s-7); }
+
+  /* The spine turns, and the edges turn with it. A vertical connector
+     in the same gap is still a connector — it is the only relationship
+     in the graph that has to survive every breakpoint. */
+  .graph-track {
+    --edge-gap: 24px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .graph-track .graph-cell:nth-child(2n) .graph-edge { display: none; }
+  .graph-edge {
+    left: 4px;
+    top: calc(-1 * var(--edge-gap) - 1px);
+    width: 2px;
+    height: var(--edge-gap);
+  }
+  .graph-edge::after {
+    right: -2px; bottom: 0; top: auto;
+    border-top: 0;
+    border-right: 1px solid var(--rule-3);
+    border-bottom: 1px solid var(--rule-3);
+    transform: none;
+  }
+  .graph-edge[data-lit]::after {
+    border-color: var(--signal);
+    box-shadow: 0 2px 10px rgba(53, 217, 164, 0.5);
+  }
+  .builds { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-@media (max-width: 560px) {
-  .plane-map { grid-template-columns: minmax(0, 1fr); }
-  .plane-map-cell { border-left: 0; }
-  .plane-map-cell:nth-child(n + 2) { border-top: 1px solid var(--rule); }
+@media (max-width: 720px) {
+  .graph-track,
+  .builds { grid-template-columns: minmax(0, 1fr); }
+  .graph-edge { display: none; }
+  .node-custody { margin-top: 12px; }
+  .plate { padding: var(--s-3) var(--s-3) var(--s-4); }
+
+  /* The record compresses to its identification and its state.
+     A recomposition, not a deletion: all four facts are still on every
+     viewport above this one, and the part that has to precede the
+     claim — the evidence state — is the part that stays. What goes is
+     the prose, because on a 390px phone the full record pushes the
+     route's own statement below a full screen of rail, and a caveat
+     that costs the reader the point of the page is not a caveat, it is
+     an obstacle. */
+  .record-role,
+  .record-fields { display: none; }
+  .record-name { font-size: var(--fs-h2); }
+  .record-ord { margin-top: 0; }
+  .plane-record { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-2); }
+  .plane-record .index-group-key { width: 100%; }
+  .record-state { margin-top: 0; padding-top: 0; border-top: 0; }
 }
+
 /* ═══════════════════════════════════════════════════════════
    GRAMMAR 2 — REGISTER (evidence)
 
-   The visual language for a claim. Ruled rows, identifiers, dates,
-   figures, provenance, and a state tag that is text before it is
-   anything else. Full-width rules are the primary layout primitive;
-   there are no cards and no shadows.
+   Ruled rows, identifiers, dates, figures, provenance, and a state
+   tag that is text before it is anything else. Full-width rules are
+   the primary layout primitive; there are no cards and no shadows.
    ═══════════════════════════════════════════════════════════ */
 
-.register { border-top: 1px solid var(--rule-2); }
+.register {
+  position: relative;
+  border-top: 1px solid var(--rule-2);
+}
+/* A dimmed version of the lit edge. Registers get it too, at half the
+   intensity — the section head announces, the register confirms. */
+.register::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--rule-lit-dim), transparent 42%);
+}
 
 .register-head {
   display: grid;
-  gap: 16px;
-  padding: 9px 0;
+  gap: var(--s-3);
+  padding: 8px 0;
   border-bottom: 1px solid var(--rule-2);
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.16em;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
   text-transform: uppercase;
   color: var(--quiet);
 }
 
 .register-row {
   display: grid;
-  gap: 16px;
+  gap: var(--s-3);
   padding: 15px 0;
   border-bottom: 1px solid var(--rule);
   align-items: start;
-  transition: background-color 120ms ease;
+  transition: background-color 140ms ease;
 }
-.register-row:hover { background: rgba(255, 255, 255, 0.6); }
+/* A record under inspection lights its own row. The wash is anchored
+   to the left edge and falls off, so the light has a source. */
+.register-row:hover { background: linear-gradient(90deg, var(--signal-a08), transparent 56%); }
 
-/* The identifier column: monospace, tabular, never wrapped away. */
 .register-id {
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.02em;
+  font-size: var(--fs-label);
+  letter-spacing: var(--ls-caps);
   color: var(--ink);
   word-break: break-word;
 }
 
 .register-name {
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: var(--fs-ui);
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: var(--ls-ui);
   color: var(--ink);
 }
 
 .register-figure {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 13px;
+  font-size: var(--fs-ui);
   color: var(--ink);
 }
 
@@ -381,29 +1334,29 @@ body {
    never omitted. */
 .register-provenance {
   font-family: var(--font-mono);
-  font-size: 11px;
-  line-height: 1.55;
+  font-size: var(--fs-micro);
+  line-height: 1.75;
   color: var(--quiet);
-  max-width: 48ch;
+  max-width: 52ch;
 }
 
 .register-source {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-micro);
+  line-height: 1.75;
   color: var(--ash);
 }
-.register-source a { color: var(--signal-dim); text-underline-offset: 3px; }
+.register-source a { color: var(--signal); text-underline-offset: 3px; }
 
 .register-date {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 12px;
+  font-size: var(--fs-label);
   color: var(--ash);
   white-space: nowrap;
 }
 
-/* The standard register: what it is, what it says, when, what state,
-   and why. */
+/* The standard register: what it is, what it says, when, what state. */
 .register--std { --cols: minmax(0, 1.5fr) minmax(0, 2fr) 104px 130px; }
 .register-head.register--std,
 .register-row.register--std { grid-template-columns: var(--cols); }
@@ -411,20 +1364,20 @@ body {
 /* Mobile re-composition, not a stack of desktop rows: a register row
    becomes a definition list, because a four-column table at 360px is
    unreadable and pretending otherwise is the failure. */
-@media (max-width: 720px) {
-  .register--std { --cols: minmax(0, 1fr); gap: 8px; }
+@media (max-width: 860px) {
+  .register--std { --cols: minmax(0, 1fr); gap: var(--s-2); }
   .register-head { display: none; }
   .register-row { padding: 14px 0; }
   .register-row.register--std .register-cell {
     display: grid;
     grid-template-columns: 76px minmax(0, 1fr);
-    gap: 12px;
+    gap: var(--s-3);
   }
   .register-row.register--std .register-cell::before {
     content: attr(data-field);
     font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.12em;
+    font-size: var(--fs-micro);
+    letter-spacing: var(--ls-caps);
     text-transform: uppercase;
     color: var(--quiet);
     padding-top: 2px;
@@ -432,13 +1385,13 @@ body {
   .register-row.register--std .register-cell--id::before,
   .register-row.register--std .register-cell--prov::before { display: none; }
 }
+
 /* ═══════════════════════════════════════════════════════════
    GRAMMAR 3 — FIELD STATION (uncertainty)
 
-   Used wherever evidence quality is the subject. A status band
-   declares the truths the system always holds; an inspection tally
-   counts evidence states; an empty state names what the system has
-   not observed instead of apologising for it.
+   A status band declares the truths the system always holds; an
+   inspection tally counts evidence states; an empty state names what
+   the system has not observed instead of apologising for it.
    ═══════════════════════════════════════════════════════════ */
 
 .status-band {
@@ -446,11 +1399,11 @@ body {
   flex-wrap: wrap;
   border-top: 1px solid var(--rule-2);
   border-bottom: 1px solid var(--rule-2);
-  background: var(--panel);
+  background: rgba(10, 14, 21, 0.55);
 }
 .status-band-item {
   flex: 1 1 auto;
-  padding: 12px 18px 13px;
+  padding: 12px var(--s-3) 13px;
   border-left: 1px solid var(--rule);
   min-width: 0;
 }
@@ -458,22 +1411,16 @@ body {
 
 .status-band-key {
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.16em;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
   text-transform: uppercase;
   color: var(--quiet);
 }
 .status-band-val {
-  margin-top: 4px;
-  font-size: 12px;
-  line-height: 1.45;
+  margin-top: 6px;
+  font-size: var(--fs-label);
+  line-height: 1.7;
   color: var(--dust);
-}
-
-@media (max-width: 720px) {
-  .status-band { display: grid; grid-template-columns: 1fr; }
-  .status-band-item { border-left: 0; border-top: 1px solid var(--rule); padding: 10px 0; }
-  .status-band-item:first-child { border-top: 0; }
 }
 
 /* The tally: evidence distribution for one surface, counted from the
@@ -486,29 +1433,55 @@ body {
   padding: 0;
   list-style: none;
   border: 1px solid var(--rule-2);
-  background: var(--panel);
+  background: rgba(10, 14, 21, 0.55);
 }
 .tally-cell {
+  position: relative;
   flex: 1 1 96px;
-  padding: 11px 14px 12px;
+  padding: 11px 14px 14px;
   border-left: 1px solid var(--rule);
 }
 .tally-cell:first-child { border-left: 0; }
+
 .tally-count {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 20px;
-  letter-spacing: -0.02em;
+  font-size: var(--fs-figure);
+  line-height: 1.1;
+  letter-spacing: var(--ls-figure);
   color: var(--ink);
 }
 .tally-key {
-  margin-top: 3px;
+  margin-top: 4px;
   font-family: var(--font-mono);
-  font-size: 9.5px;
-  letter-spacing: 0.14em;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
   text-transform: uppercase;
   color: var(--quiet);
 }
+/* The share bar. Length is the count as a fraction of the largest
+   count on this surface, so the shape of the distribution is legible
+   before the digits are read. A zero still draws its 1px stub —
+   a missing bar would read as "not applicable", which is a different
+   statement from "none". */
+.tally-bar {
+  position: absolute;
+  left: 14px; right: 14px; bottom: 0;
+  height: 2px;
+  background: var(--rule);
+}
+.tally-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: max(1px, var(--share, 0%));
+  background: var(--tint, var(--rule-3));
+}
+.tally-cell[data-state="VERIFIED"]  { --tint: var(--state-verified); }
+.tally-cell[data-state="PROTOTYPE"] { --tint: var(--state-prototype); }
+.tally-cell[data-state="TARGET"]    { --tint: var(--state-target); }
+.tally-cell[data-state="PLANNED"]   { --tint: var(--state-planned); }
+.tally-cell[data-state="UNKNOWN"]   { --tint: var(--state-unknown); }
 
 /* Absence is content. An empty register tells the operator what the
    system has not observed and what would legitimately appear here —
@@ -516,40 +1489,42 @@ body {
 .empty {
   border: 1px solid var(--rule-2);
   border-left: 2px solid var(--rule-3);
-  background: var(--panel);
-  padding: 26px 26px 28px;
+  background:
+    linear-gradient(180deg, var(--lift), rgba(10, 14, 21, 0) 32%),
+    rgba(10, 14, 21, 0.5);
+  padding: var(--s-5) var(--s-5) var(--s-5);
 }
 .empty-title {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-label);
   font-weight: 500;
-  letter-spacing: 0.16em;
+  letter-spacing: var(--ls-caps);
   text-transform: uppercase;
   color: var(--ink);
 }
 .empty-body {
-  margin: 12px 0 0;
-  max-width: 58ch;
-  font-size: 14px;
-  line-height: 1.65;
+  margin: var(--s-3) 0 0;
+  max-width: 60ch;
+  font-size: var(--fs-ui);
+  line-height: 1.7;
   color: var(--dust);
 }
 .empty-meta {
-  margin: 18px 0 0;
+  margin: var(--s-4) 0 0;
   padding-top: 14px;
   border-top: 1px solid var(--rule);
   display: grid;
-  gap: 7px;
+  gap: 8px;
 }
 .empty-meta-row {
   display: grid;
   grid-template-columns: 116px minmax(0, 1fr);
-  gap: 12px;
+  gap: var(--s-3);
   font-family: var(--font-mono);
-  font-size: 11px;
-  line-height: 1.55;
+  font-size: var(--fs-micro);
+  line-height: 1.75;
 }
-.empty-meta-key { color: var(--quiet); letter-spacing: 0.1em; text-transform: uppercase; }
+.empty-meta-key { color: var(--quiet); letter-spacing: var(--ls-caps); text-transform: uppercase; }
 .empty-meta-val { color: var(--ash); }
 
 /* ═══════════════════════════════════════════════════════════
@@ -560,6 +1535,12 @@ body {
    VERIFIED earns the accent because it is the only state backed by a
    citable evidence path. UNKNOWN is deliberately the quietest — an
    unknown that shouts is a hidden zero.
+
+   The five states are also a temperature scale, and that is checkable:
+   jade (settled, cold) → bone (present, neutral) → ash (cold, absent)
+   → quiet (dark, unestablished), with amber (hot, intended) held
+   apart as the only future-tense colour. scripts/check-contrast.mjs
+   asserts the ordering, so the scale cannot quietly dissolve.
    ═══════════════════════════════════════════════════════════ */
 
 .state {
@@ -570,12 +1551,13 @@ body {
   border: 1px solid var(--rule-2);
   border-radius: 2px;
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  font-size: var(--fs-micro);
   font-weight: 500;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--ls-caps);
   text-transform: uppercase;
   white-space: nowrap;
   color: var(--ash);
+  line-height: 16px;
 }
 .state::before {
   content: "";
@@ -586,40 +1568,39 @@ body {
 }
 
 .state[data-state="VERIFIED"] {
-  color: var(--signal-strong);
+  color: var(--state-verified);
   border-color: var(--signal-a30);
 }
-.state[data-state="VERIFIED"]::before { background: var(--signal); }
+.state[data-state="VERIFIED"]::before {
+  background: var(--signal);
+  box-shadow: 0 0 8px rgba(53, 217, 164, 0.7);
+}
 
-.state[data-state="PROTOTYPE"] { color: var(--ink); border-color: var(--rule-3); }
+.state[data-state="PROTOTYPE"] { color: var(--state-prototype); border-color: var(--rule-3); }
 .state[data-state="PROTOTYPE"]::before {
   background: transparent;
   border: 1px solid var(--rule-3);
 }
 
-.state[data-state="TARGET"] { color: var(--amber); border-color: var(--amber-line); }
+.state[data-state="TARGET"] { color: var(--state-target); border-color: var(--amber-line); }
 .state[data-state="TARGET"]::before { background: transparent; border: 1px solid var(--amber); }
 
-.state[data-state="PLANNED"] { color: var(--ash); border-color: var(--rule-2); }
+.state[data-state="PLANNED"] { color: var(--state-planned); border-color: var(--rule-2); }
 .state[data-state="PLANNED"]::before { background: transparent; border: 1px dashed var(--rule-3); }
 
 /* UNKNOWN ≠ zero. It is rendered dashed and quiet, never omitted and
    never as an empty cell. */
-.state[data-state="UNKNOWN"] { color: var(--quiet); border-style: dashed; }
+.state[data-state="UNKNOWN"] { color: var(--state-unknown); border-style: dashed; }
 .state[data-state="UNKNOWN"]::before { background: transparent; border: 1px dotted var(--rule-3); }
+
 /* ═══════════════════════════════════════════════════════════
    GRAMMAR 4 — VALUE CHAIN (transformation)
 
-   The primary navigation primitive:
-
      OBSERVE → RECORD → STRUCTURE → INTERPRET → DECIDE
-            → EXECUTE → MEASURE ↺
+             → EXECUTE → MEASURE ↺
 
-   It answers five questions at once: where am I, what transformation
-   is happening, what evidence supports it, what happens next, and
-   who controls the transition. Desktop runs it as a horizontal
-   spine; mobile runs it as a vertical spine — same seven stations,
-   recomposed, never a shrunken strip.
+   Desktop runs it as a horizontal spine; mobile runs it as a vertical
+   spine — same seven stages, recomposed, never a shrunken strip.
    ═══════════════════════════════════════════════════════════ */
 
 .chain { border-top: 1px solid var(--rule-2); }
@@ -630,7 +1611,8 @@ body {
 }
 
 .chain-step {
-  padding: 16px 14px 18px;
+  position: relative;
+  padding: var(--s-3) 14px var(--s-3);
   border-left: 1px solid var(--rule);
   min-width: 0;
 }
@@ -638,60 +1620,65 @@ body {
 
 /* Only stages that resolve to a route are links; only they get the
    hover wash, so the surface never promises a click it cannot take. */
-.chain-step--link { text-decoration: none; color: inherit; transition: background-color 120ms ease; }
-.chain-step--link:hover { background: var(--panel); }
+.chain-step--link { text-decoration: none; color: inherit; transition: background-color 140ms ease; }
+.chain-step--link:hover { background: var(--wash); }
 
 .chain-ord {
+  display: block;
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
   color: var(--quiet);
 }
 
-/* The connector: a hairline crossing the station with a single
-   chevron. It is the only ornament in the system and it is load-
-   bearing — it is what makes seven separate steps read as one
-   transformation rather than seven features. */
+/* The connector. A hairline crossing the station that carries light
+   from one stage into the next, brightest at its head. It is the only
+   ornament in the system and it is load-bearing — it is what makes
+   seven separate steps read as one transformation. */
 .chain-link {
+  display: block;
   position: relative;
   height: 1px;
-  background: var(--rule-2);
-  margin: 14px 0 12px;
+  background: linear-gradient(90deg, var(--rule), var(--rule-lit));
+  margin: var(--s-3) 0 12px;
 }
 .chain-link::after {
   content: "";
   position: absolute;
   right: 0; top: -2px;
   width: 5px; height: 5px;
-  border-top: 1px solid var(--rule-3);
-  border-right: 1px solid var(--rule-3);
+  border-top: 1px solid var(--signal);
+  border-right: 1px solid var(--signal);
   transform: rotate(45deg);
 }
 
 .chain-name {
+  display: block;
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: var(--fs-ui);
   font-weight: 600;
-  letter-spacing: 0.01em;
+  letter-spacing: var(--ls-ui);
   color: var(--ink);
 }
 
 .chain-what {
+  display: block;
   margin-top: 6px;
-  font-size: 11.5px;
-  line-height: 1.5;
+  font-size: var(--fs-micro);
+  line-height: 1.75;
   color: var(--ash);
 }
 
 /* Who controls the transition. The chain is local-first, and this is
    where that stops being a slogan: each stage names its custodian. */
 .chain-owner {
+  display: block;
   margin-top: 10px;
   padding-top: 8px;
   border-top: 1px solid var(--rule);
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
   color: var(--quiet);
 }
 
@@ -699,12 +1686,12 @@ body {
 .chain-close {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--s-3);
   padding: 10px 0 14px;
   border-top: 1px solid var(--rule);
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.14em;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
   text-transform: uppercase;
   color: var(--quiet);
 }
@@ -718,123 +1705,195 @@ body {
   );
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .chain-track { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .chain-step:nth-child(2n + 1) { border-left: 0; padding-left: 0; }
   .chain-step:nth-child(n + 3) { border-top: 1px solid var(--rule); }
   .chain-link { display: none; }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 620px) {
   .chain-track { grid-template-columns: minmax(0, 1fr); }
   .chain-step { border-left: 0; padding-left: 0; }
   .chain-step:nth-child(n + 2) { border-top: 1px solid var(--rule); }
 }
+
 /* ═══════════════════════════════════════════════════════════
    SHARED SURFACES — section rhythm and figure blocks
    ═══════════════════════════════════════════════════════════ */
 
-.section { padding: 56px 0 0; }
+/* Section rhythm on the 8px grid. The internal padding is one step,
+   the gap before a section is three. Nothing here is a round number
+   by habit. */
+.section { padding: var(--s-7) 0 0; }
+
 .section-head {
+  position: relative;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 24px;
+  gap: var(--s-4);
   padding-bottom: 12px;
   border-bottom: 1px solid var(--rule-2);
-  margin-bottom: 22px;
+  margin-bottom: var(--s-4);
 }
-.section-title {
-  font-family: var(--font-display);
-  font-size: 21px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  margin: 0;
+/* The lit edge. One per section, at full intensity — the register's
+   dimmed variant is the only other place this appears. */
+.section-head::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--rule-lit), transparent 46%);
 }
 
-/* Measures. A figure block states the number and, underneath it,
-   what the number is and what state carries it — so a bare figure
-   can never be lifted out of context and quoted as an achievement. */
+.section-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: var(--ls-h2);
+  margin: 0;
+  color: var(--ink);
+}
+
+.section-kicker {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+/* Measures. A figure block states the number and, underneath it, what
+   the number is and what state carries it — so a bare figure can never
+   be lifted out of context and quoted as an achievement. */
 .measure-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   border: 1px solid var(--rule-2);
-  background: var(--panel);
+  background: rgba(10, 14, 21, 0.5);
 }
-.measure-cell { padding: 18px 20px 20px; border-left: 1px solid var(--rule); }
+.measure-cell {
+  position: relative;
+  padding: var(--s-3) var(--s-3) var(--s-4);
+  border-left: 1px solid var(--rule);
+}
 .measure-cell:first-child { border-left: 0; }
+/* Each cell carries the temperature of its own evidence state as a
+   single lit pixel along the top. Five cells, five states, and the
+   block's honesty is legible before any figure is read. */
+.measure-cell::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: -1px;
+  height: 1px;
+  background: var(--tint, var(--rule-2));
+  opacity: 0.7;
+}
+.measure-cell[data-state="VERIFIED"]  { --tint: var(--state-verified); }
+.measure-cell[data-state="PROTOTYPE"] { --tint: var(--state-prototype); }
+.measure-cell[data-state="TARGET"]    { --tint: var(--state-target); }
+.measure-cell[data-state="PLANNED"]   { --tint: var(--state-planned); }
+.measure-cell[data-state="UNKNOWN"]   { --tint: var(--state-unknown); }
+
 .measure-figure {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: clamp(20px, 2.4vw, 28px);
-  letter-spacing: -0.03em;
+  font-size: var(--fs-figure);
+  line-height: 1.1;
+  letter-spacing: var(--ls-figure);
   color: var(--ink);
 }
 .measure-key {
-  margin-top: 8px;
+  margin-top: var(--s-2);
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.14em;
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
   text-transform: uppercase;
   color: var(--quiet);
 }
-.measure-note { margin-top: 10px; font-size: 12px; line-height: 1.5; color: var(--ash); }
+.measure-note { margin-top: 10px; font-size: var(--fs-label); line-height: 1.65; color: var(--ash); }
 
-@media (max-width: 720px) {
+@media (max-width: 860px) {
   .measure-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .measure-cell:nth-child(2n + 1) { border-left: 0; }
   .measure-cell:nth-child(n + 3) { border-top: 1px solid var(--rule); }
 }
 
 .link {
-  color: var(--signal-dim);
+  color: var(--signal);
   text-decoration: underline;
-  text-underline-offset: 3px;
+  text-underline-offset: 4px;
   text-decoration-thickness: 1px;
+  text-decoration-color: var(--signal-a30);
 }
-.link:hover { color: var(--signal); }
+.link:hover { color: var(--signal-lit); text-decoration-color: var(--signal); }
 
+/* Surfaces that render outside the workspace — the 404 and the route
+   error boundary. Centred, one measure, no third column. */
+.sheet {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: var(--s-7) var(--s-4) var(--s-9);
+}
+
+/* A primary action is a light source: a filled jade slab with one
+   wide, very soft bloom. The bloom is what stops a flat button from
+   reading as a rectangle of colour on a dark ground. */
 .btn {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  padding: 0 20px;
+  padding: 0 var(--s-4);
   border: 1px solid var(--signal);
   border-radius: 2px;
   background: var(--signal);
-  color: #fff;
+  color: var(--void);
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: var(--fs-ui);
   font-weight: 600;
+  letter-spacing: var(--ls-ui);
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 120ms ease;
+  box-shadow: 0 10px 34px -14px rgba(53, 217, 164, 0.55);
+  transition: background-color 140ms ease, box-shadow 140ms ease;
 }
-.btn:hover { background: var(--signal-dim); }
+.btn:hover {
+  background: var(--signal-lit);
+  border-color: var(--signal-lit);
+  box-shadow: 0 12px 40px -12px rgba(53, 217, 164, 0.7);
+}
 
 .btn-ghost {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  padding: 0 20px;
+  padding: 0 var(--s-4);
   border: 1px solid var(--rule-3);
   border-radius: 2px;
   background: transparent;
   color: var(--ink);
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: var(--fs-ui);
   font-weight: 600;
+  letter-spacing: var(--ls-ui);
   text-decoration: none;
   cursor: pointer;
-  transition: border-color 120ms ease, color 120ms ease;
+  transition: border-color 140ms ease, color 140ms ease, background-color 140ms ease;
 }
-.btn-ghost:hover { border-color: var(--signal); color: var(--signal-dim); }
+.btn-ghost:hover {
+  border-color: var(--signal);
+  color: var(--signal-lit);
+  background: var(--signal-a08);
+}
 
-.action-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.action-row { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: center; }
 
-/* Reduced motion: the chain chevron and hover transitions are the
-   only motion in the system. Both are decorative to understanding, so
-   the whole register drops. */
+/* Reduced motion. Every animation on this system is atmospheric or
+   positional — none of it carries meaning that the text does not also
+   carry — so the whole register drops and each element lands in its
+   final state immediately. */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
@@ -856,7 +1915,7 @@ body {
 .load-row {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(0, 2fr) 104px 130px;
-  gap: 16px;
+  gap: var(--s-3);
   padding: 15px 0;
   border-bottom: 1px solid var(--rule);
 }
@@ -867,18 +1926,84 @@ body {
 }
 .load-bar--short { width: 42%; }
 @keyframes load-pulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.85; }
 }
 
-@media (max-width: 720px) {
-  .load-row { grid-template-columns: minmax(0, 1fr); gap: 9px; }
+@media (max-width: 860px) {
+  .load-row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
   .load-row .load-bar:nth-child(3),
   .load-row .load-bar:nth-child(4) { width: 42%; }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   THE CONSOLE
+
+   A separate surface on the same tokens. It gets no aura field and no
+   plate: the console is an instrument panel, and an instrument panel
+   with an aurora behind it is a dashboard. What it does get is the
+   tokens, the ladder and the grid — so it reads as the same company
+   at a different altitude.
+   ═══════════════════════════════════════════════════════════ */
+
+.console-ui {
+  position: relative;
+  z-index: 1;
+  background: var(--void);
+  color: var(--ink);
+}
+
+/* The console's print sheets. These are paper: white ground, dark
+   ink, and off the screen entirely — the class existed in six
+   components with no rule behind it, so on screen they rendered as
+   white blocks of unreadable near-white text. Print token overrides
+   below make `text-void` resolve to ink, so a sheet is correct in
+   both media without either one carrying a hard-coded colour. */
+.print-sheet { display: none; }
+
 @media print {
-  body { background: #fff; color: #000; font-size: 12pt; }
-  .plane-rail, .chain, .status-band, .btn, .skip-link { display: none; }
+  /* Paper. Every token is re-declared for the printed surface, so
+     `text-void` on `bg-white` becomes dark on light and the console
+     stylesheets do not need a second colour system. */
+  :root {
+    --void:          #ffffff;
+    --panel:         #ffffff;
+    --edge:          #f4f4f2;
+    --rule:          rgba(22, 26, 30, 0.12);
+    --rule-2:        rgba(22, 26, 30, 0.22);
+    --rule-3:        rgba(22, 26, 30, 0.40);
+    --rule-lit:      rgba(10, 117, 73, 0.55);
+    --rule-lit-dim:  rgba(10, 117, 73, 0.30);
+    --ink:           #000000;
+    --dust:          #2b3138;
+    --ash:           #4d555e;
+    --quiet:         #5c646d;
+    --signal:        #0a7549;
+    --signal-dim:    #085537;
+    --signal-lit:    #0a7549;
+    --signal-a30:    rgba(10, 117, 73, 0.30);
+    --signal-a15:    rgba(10, 117, 73, 0.15);
+    --signal-a08:    rgba(10, 117, 73, 0.08);
+    --amber:         #8a5f10;
+    --amber-line:    rgba(138, 95, 16, 0.45);
+    --danger:        #b23a2e;
+    --wash:          rgba(22, 26, 30, 0.03);
+    --wash-2:        rgba(22, 26, 30, 0.06);
+    --lift:          rgba(22, 26, 30, 0.03);
+  }
+
+  html { color-scheme: light; }
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 12pt;
+  }
+  /* Neither the field nor the grain exists on paper. */
+  .aura,
+  body::after { display: none !important; }
+  .plane-index, .plane-record, .plate, .chain, .status-band,
+  .btn, .btn-ghost, .skip-link, .graph-spine, .builds { display: none; }
+  .print-sheet { display: block; }
+  .register-row, .measure-cell, .tally-cell { break-inside: avoid; }
   a { color: #000; text-decoration: underline; }
 }

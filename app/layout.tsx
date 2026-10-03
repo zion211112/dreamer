@@ -45,14 +45,16 @@ export const metadata: Metadata = {
   },
 };
 
-// Light-only, declared in metadata as well as CSS: the UA is told the
-// scheme before first paint, so mobile browser chrome matches the paper
-// ground instead of guessing.
+// Dark by declaration, in metadata as well as CSS: the UA is told the
+// scheme before first paint, so mobile browser chrome and form controls
+// are built for a dark substrate instead of being re-tinted into one
+// after the fact. The theme colour is the void token, not a hand-picked
+// approximation of it.
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  colorScheme: "light",
-  themeColor: "#f6f6f4",
+  colorScheme: "dark",
+  themeColor: "#04060a",
 };
 
 export default function RootLayout({
@@ -107,6 +109,13 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
+        {/* The aura field. The ground is a light field, not a colour:
+            three blooms on the golden reciprocals, a photographic
+            falloff, and the grain plate that keeps a near-black
+            gradient from banding on an 8-bit panel. Pure CSS and
+            aria-hidden — it carries no information a screen reader
+            should read, and it never intercepts a pointer. */}
+        <div className="aura" aria-hidden="true" />
         {children}
       </body>
     </html>

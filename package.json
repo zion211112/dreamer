@@ -9,7 +9,8 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "check:contrast": "node scripts/check-contrast.mjs",
-    "check": "npm run typecheck && npm run lint && npm run check:contrast && npm run build"
+    "check:scale": "node scripts/check-scale.mjs",
+    "check": "npm run typecheck && npm run lint && npm run check:scale && npm run check:contrast && npm run build"
   },
   "dependencies": {
     "next": "14.2.35",

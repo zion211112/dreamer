@@ -14,7 +14,7 @@ export default function MyDayWorkspace() {
   if (!session) {
     return (
       <div className="rounded-[21px] border border-ink/10 bg-panel p-[21px]">
-        <span className="inline-flex items-center gap-1.5 rounded-sm bg-signal/10 px-3 py-1 font-mono text-micro uppercase tracking-[0.14em] text-signal/90 ring-1 ring-inset ring-signal/25">
+        <span className="inline-flex items-center gap-1.5 rounded-sm bg-signal/10 px-3 py-1 font-mono text-micro uppercase tracking-caps text-signal/90 ring-1 ring-inset ring-signal/25">
           <span className="h-1.5 w-1.5 rounded-full bg-signal/80" aria-hidden="true" />
           Waiting
         </span>

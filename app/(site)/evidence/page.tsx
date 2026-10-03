@@ -25,17 +25,13 @@ export default function EvidencePage() {
         What this system knows, what it can do, and what it has not established.
       </h1>
 
-      <div className="prose" style={{ marginTop: 18 }}>
-        <p>
-          This is the route where the system is most likely to lie, so it is
+      <p className="lede" style={{ marginTop: "var(--s-4)" }}>This is the route where the system is most likely to lie, so it is
           written as a register of limits rather than a page of claims. Five
           states, each with what it permits and what it forbids. A claim
           without a state is not publishable, and a state without a source is
-          not a state at all.
-        </p>
-      </div>
+          not a state at all.</p>
 
-      <div style={{ marginTop: 28 }}>
+      <div style={{ marginTop: "var(--s-4)" }}>
         <StatusBand />
       </div>
 
@@ -47,7 +43,7 @@ export default function EvidencePage() {
           <h2 className="section-title" id="states-heading">
             The evidence states
           </h2>
-          <p className="label">{EVIDENCE_STATES.length} states · enforced in code</p>
+          <p className="section-kicker">{EVIDENCE_STATES.length} states · enforced in code</p>
         </div>
 
         <div className="register" role="table" aria-labelledby="states-heading">
@@ -81,7 +77,7 @@ export default function EvidencePage() {
           <h2 className="section-title" id="rules-heading">
             The epistemic contract
           </h2>
-          <p className="label">{CONTRACT_RULES.length} rules</p>
+          <p className="section-kicker">{CONTRACT_RULES.length} rules</p>
         </div>
 
         <div className="register" role="table" aria-labelledby="rules-heading">
@@ -123,7 +119,7 @@ export default function EvidencePage() {
           <h2 className="section-title" id="unknowns-heading">
             Published unknowns
           </h2>
-          <p className="label">{UNKNOWN_FACTS.length} open questions</p>
+          <p className="section-kicker">{UNKNOWN_FACTS.length} open questions</p>
         </div>
 
         <div className="register" role="table" aria-labelledby="unknowns-heading">
@@ -156,7 +152,7 @@ export default function EvidencePage() {
           ))}
         </div>
 
-        <div style={{ marginTop: 24 }}>
+        <div style={{ marginTop: "var(--s-4)" }}>
           <Tally records={UNKNOWN_FACTS.map((u) => ({ state: "UNKNOWN" as const }))} caption="open questions" />
         </div>
       </section>

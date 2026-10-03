@@ -6,7 +6,7 @@
 
 import Link from "next/link";
 
-export const monoLabel = "font-mono text-label uppercase tracking-[0.25em] text-ash";
+export const monoLabel = "font-mono text-label uppercase tracking-caps text-ash";
 export const panel = "min-w-0 border border-ink/10 bg-panel p-[21px]";
 export const moduleField = "mt-2 block min-h-11 w-full min-w-0 border border-ink/10 bg-void px-3 py-2.5 text-sm leading-6 text-ink outline-none focus:border-signal";
 export const quietAction = "min-h-11 px-3 py-2 text-sm text-dust transition-colors hover:bg-edge hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-signal disabled:opacity-40";
@@ -37,7 +37,7 @@ export function Gate({
   return (
     <div className={`${panel} flex min-h-[220px] flex-col justify-between`}>
       <div>
-        <span className="inline-flex items-center gap-1.5 border border-signal/30 bg-signal/10 px-3 py-1 font-mono text-micro uppercase tracking-[0.14em] text-signal">
+        <span className="inline-flex items-center gap-1.5 border border-signal/30 bg-signal/10 px-3 py-1 font-mono text-micro uppercase tracking-caps text-signal">
           <span className="h-1.5 w-1.5 rounded-full bg-signal/80" aria-hidden="true" />
           Waiting
         </span>

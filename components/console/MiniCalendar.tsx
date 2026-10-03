@@ -91,7 +91,7 @@ export function MiniCalendar({ items, onAdd, onRemove }: Props) {
 
       <div className="mt-2 grid grid-cols-7 gap-y-1 text-center">
         {WEEK.map((d, i) => (
-          <span key={i} className="font-mono text-micro uppercase tracking-[0.15em] text-ash">
+          <span key={i} className="font-mono text-micro uppercase tracking-caps text-ash">
             {d}
           </span>
         ))}
@@ -138,7 +138,7 @@ export function MiniCalendar({ items, onAdd, onRemove }: Props) {
                   {i.kind === "class" && i.className ? <span className="text-ash"> · {i.className}</span> : null}
                 </span>
                 {dayCollisions.has(i.id) && <span title="Overlaps another timed item" className="text-micro text-signal">⚠</span>}
-                {i.kind === "personal" && <span className="font-mono text-micro uppercase tracking-[0.15em] text-ash">personal</span>}
+                {i.kind === "personal" && <span className="font-mono text-micro uppercase tracking-caps text-ash">personal</span>}
                 <button onClick={() => onRemove(i.id)} aria-label="Remove" className="text-label text-ash hover:text-signal">
                   ✕
                 </button>
@@ -158,7 +158,7 @@ export function MiniCalendar({ items, onAdd, onRemove }: Props) {
                 <button
                   key={k}
                   onClick={() => setFKind(k)}
-                  className={`rounded-sm border px-2.5 py-1 font-mono text-micro uppercase tracking-[0.12em] ${fKind === k ? "border-signal bg-signal/15 text-signal" : "border-ink/10 text-ash"}`}
+                  className={`rounded-sm border px-2.5 py-1 font-mono text-micro uppercase tracking-caps ${fKind === k ? "border-signal bg-signal/15 text-signal" : "border-ink/10 text-ash"}`}
                 >
                   {k}
                 </button>

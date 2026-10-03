@@ -169,11 +169,11 @@ export default function FeeTracking() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span className={monoLabel}>The invoice</span>
           {active ? (
-            <span className="rounded-sm border border-signal/25 bg-signal/15 px-3 py-1 font-mono text-micro uppercase tracking-[0.15em] text-signal">
+            <span className="rounded-sm border border-signal/25 bg-signal/15 px-3 py-1 font-mono text-micro uppercase tracking-caps text-signal">
               Invoiced · {kes(active.amount)} each
             </span>
           ) : (
-            <span className="rounded-sm border border-ink/10 bg-ink/5 px-3 py-1 font-mono text-micro uppercase tracking-[0.15em] text-ash">
+            <span className="rounded-sm border border-ink/10 bg-ink/5 px-3 py-1 font-mono text-micro uppercase tracking-caps text-ash">
               Not invoiced yet
             </span>
           )}
@@ -200,7 +200,7 @@ export default function FeeTracking() {
             { k: "Balance in", v: pctIn === null ? "—" : `${pctIn}%` }
           ].map((s) => (
             <div key={s.k} className="bg-panel px-4 py-3">
-              <p className="font-mono text-micro uppercase tracking-[0.2em] text-ash">{s.k}</p>
+              <p className="font-mono text-micro uppercase tracking-caps text-ash">{s.k}</p>
               <p className="mt-1 font-mono text-lg text-ink">{s.v}</p>
             </div>
           ))}
@@ -227,7 +227,7 @@ export default function FeeTracking() {
               <thead>
                 <tr>
                   {["Student", "Billed", "Paid", "Balance", "Last payment", "Risk"].map((h) => (
-                    <th key={h} className="border-b border-ink/10 px-3 py-2 text-left font-mono text-micro uppercase tracking-[0.15em] text-ash">
+                    <th key={h} className="border-b border-ink/10 px-3 py-2 text-left font-mono text-micro uppercase tracking-caps text-ash">
                       {h}
                     </th>
                   ))}
@@ -251,7 +251,7 @@ export default function FeeTracking() {
                       <td className="px-3 py-2">
                         <span
                           title={st.riskNote}
-                          className={`inline-block rounded-sm border px-2.5 py-0.5 font-mono text-micro uppercase tracking-[0.12em] ${RISK_CHIP[st.risk]}`}
+                          className={`inline-block rounded-sm border px-2.5 py-0.5 font-mono text-micro uppercase tracking-caps ${RISK_CHIP[st.risk]}`}
                         >
                           {RISK_LABEL[st.risk]}
                         </span>
@@ -333,7 +333,7 @@ export default function FeeTracking() {
       {/* The fee sheet: white A4, the only thing that reaches paper. */}
       {rows.length > 0 && (
         <div className="print-sheet bg-white p-6 text-void">
-          <p className="font-mono text-micro uppercase tracking-[0.3em]">APT-LABS · {data.school || "School"}</p>
+          <p className="font-mono text-micro uppercase tracking-caps">APT-LABS · {data.school || "School"}</p>
           <h3 className="mt-2 font-display text-2xl">FEE SHEET — {termKey} · {classOf}</h3>
           <p className="mt-1 text-ui">
             Generated {new Date().toISOString().slice(0, 10)} · {active ? `${kes(active.amount)} per student` : "not yet invoiced"}
@@ -342,7 +342,7 @@ export default function FeeTracking() {
             <thead>
               <tr>
                 {["Student", "Adm", "Billed", "Paid", "Balance", "Last payment", "Risk"].map((h) => (
-                  <th key={h} className="border-b border-ink/30 px-2 py-1.5 text-left font-mono text-micro uppercase tracking-[0.15em] text-void/70">
+                  <th key={h} className="border-b border-ink/30 px-2 py-1.5 text-left font-mono text-micro uppercase tracking-caps text-void/70">
                     {h}
                   </th>
                 ))}
@@ -366,7 +366,7 @@ export default function FeeTracking() {
             </tbody>
             <tfoot>
               <tr>
-                <td colSpan={2} className="px-2 py-1.5 font-mono text-micro uppercase tracking-[0.15em]">
+                <td colSpan={2} className="px-2 py-1.5 font-mono text-micro uppercase tracking-caps">
                   Class totals
                 </td>
                 <td className="px-2 py-1.5 font-mono text-meta">{active ? kes(active.amount * rows.length) : "—"}</td>

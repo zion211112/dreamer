@@ -33,18 +33,36 @@ export default function OpengraphImage() {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          background: "#f6f6f4",
-          color: "#14181c",
+          background: "#04060a",
+          color: "#edf1f6",
           padding: "64px 72px",
           fontFamily: "sans-serif",
         }}
       >
+        {/* The aura, cropped. A share card is the one surface this
+            system is read out of context on, so it carries the same
+            ground as the site — a dark plate with the field's light
+            on it, placed on the same golden focal point. */}
+        <div
+          style={{
+            display: "flex",
+            position: "absolute",
+            top: -260,
+            right: -180,
+            width: 900,
+            height: 900,
+            borderRadius: 9999,
+            background:
+              "radial-gradient(circle, rgba(53,217,164,0.20) 0%, rgba(53,217,164,0) 62%)",
+          }}
+        />
+
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            borderBottom: "1px solid rgba(22,26,30,0.30)",
+            borderBottom: "1px solid rgba(178,206,240,0.22)",
             paddingBottom: 22,
           }}
         >
@@ -58,8 +76,8 @@ export default function OpengraphImage() {
               gap: 12,
               fontSize: 20,
               letterSpacing: 3,
-              color: "#39414a",
-              border: "1px solid rgba(22,26,30,0.30)",
+              color: "#b4c1d0",
+              border: "1px solid rgba(178,206,240,0.30)",
               padding: "8px 16px",
             }}
           >
@@ -67,7 +85,7 @@ export default function OpengraphImage() {
               style={{
                 width: 10,
                 height: 10,
-                border: "1.5px solid #0a7549",
+                border: "1.5px solid #35d9a4",
                 transform: "rotate(45deg)",
               }}
             />
@@ -84,30 +102,43 @@ export default function OpengraphImage() {
             maxWidth: 980,
           }}
         >
-          <div style={{ display: "flex", fontSize: 54, lineHeight: 1.12 }}>
-            {COMPANY.primary}
+          {/* The mantra at display size, carrying the compression, with
+              the full product sentence directly beneath it so the card
+              is never read out of context as something it does not
+              claim. Tracking is the ladder's own value at this size. */}
+          <div
+            style={{
+              display: "flex",
+              fontSize: 112,
+              lineHeight: 0.94,
+              letterSpacing: -3.2,
+              color: "#edf1f6",
+            }}
+          >
+            {COMPANY.mantra}
           </div>
           <div
             style={{
               display: "flex",
-              marginTop: 26,
+              marginTop: 30,
               fontSize: 26,
               lineHeight: 1.45,
-              color: "#39414a",
+              color: "#b4c1d0",
+              maxWidth: 900,
             }}
           >
-            {COMPANY.supporting}
+            {COMPANY.primary}
           </div>
         </div>
 
         <div
           style={{
             display: "flex",
-            borderTop: "1px solid rgba(22,26,30,0.30)",
+            borderTop: "1px solid rgba(178,206,240,0.22)",
             paddingTop: 22,
             fontSize: 19,
             letterSpacing: 2,
-            color: "#39414a",
+            color: "#8795a6",
           }}
         >
           {NODES.map((node, i) => (
@@ -117,7 +148,7 @@ export default function OpengraphImage() {
                 display: "flex",
                 flexGrow: 1,
                 justifyContent: i === 0 ? "flex-start" : "center",
-                borderLeft: i === 0 ? "none" : "1px solid rgba(22,26,30,0.16)",
+                borderLeft: i === 0 ? "none" : "1px solid rgba(178,206,240,0.14)",
               }}
             >
               {node}

@@ -137,7 +137,7 @@ export default function Comms() {
           className="mt-4 w-full rounded-[21px] border border-ink/10 bg-void p-4 text-body leading-7 text-ink outline-none transition-colors placeholder:text-ash focus:border-signal"
           placeholder="Write the message once…"
         />
-        <p className="mt-3 font-mono text-micro uppercase tracking-[0.15em] text-ash">
+        <p className="mt-3 font-mono text-micro uppercase tracking-caps text-ash">
           {`{parent}`} fills the parent · {`{students}`} the children · {`{class}`} their class
         </p>
       </div>

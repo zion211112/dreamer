@@ -20,19 +20,15 @@ export default function IntelligencePage() {
         Intelligence you can walk back to the record it came from.
       </h1>
 
-      <div className="prose" style={{ marginTop: 18 }}>
-        <p>
-          A derived signal that will not show its sources is an assertion with
+      <p className="lede" style={{ marginTop: "var(--s-4)" }}>A derived signal that will not show its sources is an assertion with
           extra steps. Every reading on this page carries three things: the
           records it was derived from, the method that derived it, and the
           state that says how far it has been exercised. That combination is
           what separates intelligence from a report — a report tells you what
           happened; intelligence tells you what the records support, and what
-          they still do not.
-        </p>
-      </div>
+          they still do not.</p>
 
-      <div style={{ marginTop: 28 }}>
+      <div style={{ marginTop: "var(--s-4)" }}>
         <StatusBand />
       </div>
 
@@ -44,7 +40,7 @@ export default function IntelligencePage() {
           <h2 className="section-title" id="signals-heading">
             Derived signals
           </h2>
-          <p className="label">{SIGNALS.length} readings · each with sources</p>
+          <p className="section-kicker">{SIGNALS.length} readings · each with sources</p>
         </div>
 
         <div className="register" role="table" aria-labelledby="signals-heading">
@@ -83,7 +79,7 @@ export default function IntelligencePage() {
           ))}
         </div>
 
-        <div style={{ marginTop: 24 }}>
+        <div style={{ marginTop: "var(--s-4)" }}>
           <Tally records={SIGNALS} caption="derived signals" />
         </div>
       </section>
@@ -96,7 +92,7 @@ export default function IntelligencePage() {
           <h2 className="section-title" id="limit-heading">
             What has not been derived
           </h2>
-          <p className="label">No reading published</p>
+          <p className="section-kicker">No reading published</p>
         </div>
 
         <EmptyState
@@ -108,7 +104,7 @@ export default function IntelligencePage() {
           state="UNKNOWN — the absence of readings is unestablished as a fact about the world, not a measurement of it."
         />
 
-        <div className="prose" style={{ marginTop: 24 }}>
+        <div className="prose" style={{ marginTop: "var(--s-4)" }}>
           <p>
             The distinction between <em>a method that works</em> and{" "}
             <em>a finding about people</em> is the whole reason this node is

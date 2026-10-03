@@ -22,7 +22,7 @@ export default function ConsoleSession({ children }: { children: ReactNode }) {
   if (!ok) {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-void">
-        <span className="font-mono text-label uppercase tracking-[0.2em] text-ash">Opening local prototype…</span>
+        <span className="font-mono text-label uppercase tracking-caps text-ash">Opening local prototype…</span>
       </div>
     );
   }

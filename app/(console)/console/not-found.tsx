@@ -13,7 +13,7 @@ export default function ConsoleNotFound() {
       id="main-content"
       className="console-ui flex min-h-dvh flex-col items-center justify-center bg-void px-6 text-ink"
     >
-      <p className="font-mono text-label uppercase tracking-[0.2em] text-ash">
+      <p className="font-mono text-label uppercase tracking-caps text-ash">
         Console · Seat not found
       </p>
       <h1 className="mt-4 max-w-[22ch] text-center font-display text-4xl font-semibold tracking-tight">

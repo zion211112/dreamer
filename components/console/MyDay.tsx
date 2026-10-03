@@ -59,7 +59,7 @@ import { btn, btnGhost, field, Gate, Loading, monoLabel, PrintButton } from "./b
 
 // A class filter pill for the My Students finder. Quiet when idle, gold when active.
 const pill = (active: boolean) =>
-  `rounded-sm border px-4 py-2 font-mono text-label uppercase tracking-[0.15em] transition-all ${
+  `rounded-sm border px-4 py-2 font-mono text-label uppercase tracking-caps transition-all ${
     active ? "border-signal text-signal" : "border-ink/10 text-dust hover:border-ink/30 hover:text-ink"
   }`;
 
@@ -630,7 +630,7 @@ export default function MyDay({
         <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-ink/10 pb-3">
           <button
             onClick={closePanel}
-            className="font-mono text-meta uppercase tracking-[0.15em] text-ash transition-colors hover:text-signal"
+            className="font-mono text-meta uppercase tracking-caps text-ash transition-colors hover:text-signal"
           >
             ← My Day
           </button>
@@ -682,11 +682,11 @@ export default function MyDay({
             <button
               onClick={() => setFindOpen(true)}
               title="Find a learner — name, adm no, guardian phone"
-              className="rounded-sm border border-ink/10 px-3 py-1.5 font-mono text-label uppercase tracking-[0.15em] text-ash transition-colors hover:border-signal hover:text-signal"
+              className="rounded-sm border border-ink/10 px-3 py-1.5 font-mono text-label uppercase tracking-caps text-ash transition-colors hover:border-signal hover:text-signal"
             >
               ⌘F · Find
             </button>
-            <p className="font-mono text-label uppercase tracking-[0.15em] text-ash">
+            <p className="font-mono text-label uppercase tracking-caps text-ash">
               {examCount > 0 ? `Exam week · ${examCount} paper${examCount === 1 ? "" : "s"} today · ` : ""}
               {todayLabel()}
             </p>
@@ -713,7 +713,7 @@ export default function MyDay({
           <div className="mb-[21px] flex flex-wrap items-center justify-between gap-2 border-b border-ink/10 pb-3">
             <button
               onClick={() => setFindOpen(false)}
-              className="font-mono text-meta uppercase tracking-[0.15em] text-ash transition-colors hover:text-signal"
+              className="font-mono text-meta uppercase tracking-caps text-ash transition-colors hover:text-signal"
             >
               ← My Day
             </button>
@@ -751,7 +751,7 @@ export default function MyDay({
                 ))}
               </ul>
               {results.length > 8 && (
-                <p className="mt-3 font-mono text-label uppercase tracking-[0.2em] text-ash">{results.length - 8} more — type to narrow</p>
+                <p className="mt-3 font-mono text-label uppercase tracking-caps text-ash">{results.length - 8} more — type to narrow</p>
               )}
             </>
           )}
@@ -802,7 +802,7 @@ export default function MyDay({
 
       {!findOpen && tab === "today" && owed.length > 0 && (
         <div className="border-l-2 border-signal pl-[21px]">
-          <p className={`font-mono text-label uppercase tracking-[0.15em] ${crisis ? "text-signal" : "text-ash"}`}>Needs attention</p>
+          <p className={`font-mono text-label uppercase tracking-caps ${crisis ? "text-signal" : "text-ash"}`}>Needs attention</p>
           {crisis && (
             <p className="mt-2 text-ui text-dust">{unmarkedCount} lessons not marked.</p>
           )}
@@ -822,7 +822,7 @@ export default function MyDay({
             {owed.length > 3 && (
               <button
                 onClick={() => jumpTo(pastRows[0].id)}
-                className="block font-mono text-label uppercase tracking-[0.15em] text-ash transition-colors hover:text-signal"
+                className="block font-mono text-label uppercase tracking-caps text-ash transition-colors hover:text-signal"
               >
                 {owed.length - 3} more below
               </button>
@@ -841,7 +841,7 @@ export default function MyDay({
             <li aria-hidden="true" className="border-b border-ink/10/40 pb-[21px]">
               <div className="relative flex items-center">
                 <span className="absolute inset-x-0 top-1/2 h-px bg-signal/40" />
-                <span className="relative z-10 bg-void px-3 font-mono text-label uppercase tracking-[0.2em] text-signal">
+                <span className="relative z-10 bg-void px-3 font-mono text-label uppercase tracking-caps text-signal">
                   Now · {new Date(nowMs).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
                 </span>
               </div>
@@ -865,7 +865,7 @@ export default function MyDay({
       {/* 6 · SYNC — the honest network line; nothing more. */}
       {!findOpen && tab === "today" && (
         <div className="border-t border-ink/10 pt-3">
-          <p className="font-mono text-label uppercase tracking-[0.15em] text-ash">
+          <p className="font-mono text-label uppercase tracking-caps text-ash">
             {online ? "Online" : "Offline"} · {todayEvents.length} record{todayEvents.length === 1 ? "" : "s"} today
             {!online && " · awaiting connection"}
           </p>
@@ -1013,7 +1013,7 @@ function MiniWeekGrid({ week, today }: { week: WeeklyTimetable; today: string })
               {WEEKDAYS.map((d) => (
                 <th
                   key={d}
-                  className={`p-1.5 text-left font-mono text-micro uppercase tracking-[0.18em] ${d === today ? "text-signal" : "text-ash"}`}
+                  className={`p-1.5 text-left font-mono text-micro uppercase tracking-caps ${d === today ? "text-signal" : "text-ash"}`}
                 >
                   {d}
                 </th>
@@ -1029,7 +1029,7 @@ function MiniWeekGrid({ week, today }: { week: WeeklyTimetable; today: string })
                     <span className="text-ash/50">–{slot.end}</span>
                   </p>
                   {slot.kind !== "lesson" && slot.kind !== "roll" && (
-                    <p className="mt-0.5 font-mono text-micro uppercase tracking-[0.15em] text-ash/60">
+                    <p className="mt-0.5 font-mono text-micro uppercase tracking-caps text-ash/60">
                       {slot.kind === "break" ? "break" : "lunch"}
                     </p>
                   )}
@@ -1059,7 +1059,7 @@ function MiniWeekGrid({ week, today }: { week: WeeklyTimetable; today: string })
           </tbody>
         </table>
       </div>
-      <p className="mt-2 font-mono text-micro uppercase tracking-[0.15em] text-ash">
+      <p className="mt-2 font-mono text-micro uppercase tracking-caps text-ash">
         {week.className} · signal column is {today} — its periods are on Today
       </p>
     </div>

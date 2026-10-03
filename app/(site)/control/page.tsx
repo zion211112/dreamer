@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BuildGrid } from "@/components/site/BuildGrid";
 import { StatusBand } from "@/components/site/StatusBand";
 import { EmptyState } from "@/components/site/EmptyState";
 import { StateTag } from "@/components/site/StateTag";
-import { ValueChain } from "@/components/site/ValueChain";
+import { ValueChain } from "@/components/site/Graph";
 import { CONSOLE, VALUE_CHAIN } from "@/lib/system";
 
 export const metadata: Metadata = {
@@ -22,16 +23,12 @@ export default function ControlPage() {
         The console. Real, openable, and not deployed to anyone.
       </h1>
 
-      <div className="prose" style={{ marginTop: 18 }}>
-        <p>
-          Control is where intelligence becomes work: a decision taken against
+      <p className="lede" style={{ marginTop: "var(--s-4)" }}>Control is where intelligence becomes work: a decision taken against
           a derived reading, under an explicit rule, by an institution that
           keeps its own record. The first implementation is the School Console
-          — nine modules and ten tools, running on the device it is used from.
-        </p>
-      </div>
+          — nine modules and ten tools, running on the device it is used from.</p>
 
-      <div style={{ marginTop: 28 }}>
+      <div style={{ marginTop: "var(--s-4)" }}>
         <StatusBand />
       </div>
 
@@ -83,7 +80,7 @@ export default function ControlPage() {
           ))}
         </div>
 
-        <div className="action-row" style={{ marginTop: 24 }}>
+        <div className="action-row" style={{ marginTop: "var(--s-4)" }}>
           <Link href={CONSOLE.href} className="btn">
             Open the console
           </Link>
@@ -101,7 +98,7 @@ export default function ControlPage() {
           <h2 className="section-title" id="stages-heading">
             Decide. Execute.
           </h2>
-          <p className="label">
+          <p className="section-kicker">
             Stages {execution.map((s) => s.ord).join(" · ")}
           </p>
         </div>
@@ -132,6 +129,36 @@ export default function ControlPage() {
         <ValueChain />
       </div>
 
+      {/* ── WHERE CONTROL IS INSTANTIATED ─────────────────────
+          This node is not one product. It is the point in a chain at
+          which a decision is taken and executed, and every build
+          below reaches that point with its own records and its own
+          institution holding custody. The console appears here
+          first because it is the only one with a surface — which is
+          the whole reason the site leads with the grammar rather
+          than with the demo. */}
+      <section className="section" aria-labelledby="builds-heading">
+        <div className="section-head">
+          <h2 className="section-title" id="builds-heading">
+            Where control is instantiated
+          </h2>
+          <p className="section-kicker">
+            One grammar · one built
+          </p>
+        </div>
+
+        <div className="prose" style={{ marginBottom: "var(--s-4)" }}>
+          <p>
+            Decide and execute is the same two stages whatever the domain.
+            What changes between these rows is the record arriving at them and
+            the institution holding custody of it — nothing about the chain,
+            and nothing about the evidence state that governs the row.
+          </p>
+        </div>
+
+        <BuildGrid />
+      </section>
+
       {/* The decision record is empty, and that is the honest state of
           a system that has not governed anything yet. */}
       <section className="section" aria-labelledby="decisions-heading">
@@ -139,7 +166,7 @@ export default function ControlPage() {
           <h2 className="section-title" id="decisions-heading">
             Decisions taken through this system
           </h2>
-          <p className="label">Decision record</p>
+          <p className="section-kicker">Decision record</p>
         </div>
 
         <EmptyState
@@ -151,7 +178,7 @@ export default function ControlPage() {
           state="UNKNOWN — not zero. The absence of decision records is unestablished, not measured."
         />
 
-        <div className="action-row" style={{ marginTop: 28 }}>
+        <div className="action-row" style={{ marginTop: "var(--s-4)" }}>
           <Link href="/evidence" className="btn">
             Next — the loop closes
           </Link>

@@ -100,7 +100,7 @@ export default function RosterImport() {
             the columns come in as Adm No, Name, Sex, Class, Stream, DOB, Parent, Phone.
           </p>
           <button
-            className="font-mono text-label uppercase tracking-[0.15em] text-ash transition hover:text-signal"
+            className="font-mono text-label uppercase tracking-caps text-ash transition hover:text-signal"
             onClick={() => {
               setText(SAMPLE_ROSTER);
               refreshParse(SAMPLE_ROSTER);
@@ -135,7 +135,7 @@ export default function RosterImport() {
                 <thead className="sticky top-0 bg-panel">
                   <tr>
                     {["Adm No", "Name", "Sex", "Class", "Stream", "Parent", "Phone", ""].map((h) => (
-                      <th key={h} className={`border-b border-ink/10 px-3 py-2 font-mono text-micro uppercase tracking-[0.15em] ${h === "" ? "w-16" : "text-ash"}`}>
+                      <th key={h} className={`border-b border-ink/10 px-3 py-2 font-mono text-micro uppercase tracking-caps ${h === "" ? "w-16" : "text-ash"}`}>
                         {h}
                       </th>
                     ))}
@@ -153,7 +153,7 @@ export default function RosterImport() {
                       <td className="px-3 py-2 font-mono text-meta text-dust">{r.student.parentPhone || "—"}</td>
                       <td className="px-3 py-2">
                         {r.dupe && (
-                          <span className="font-mono text-micro uppercase tracking-[0.15em] text-signal">On roll</span>
+                          <span className="font-mono text-micro uppercase tracking-caps text-signal">On roll</span>
                         )}
                       </td>
                     </tr>

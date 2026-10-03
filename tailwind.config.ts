@@ -1,13 +1,16 @@
 import type { Config } from "tailwindcss";
 
-// APT-LABS — one design system, two grammars.
+// APT-LABS — AURA. One design system, two surfaces.
 //
-// Tokens below must stay identical to the :root block in app/globals.css.
-// The console and the public site are the same product on different
-// surfaces; if the two drift, the console reads as a different company.
+// Every value below is a `var()` reference into the :root block of
+// app/globals.css. That file is the single source of truth; this one
+// decides nothing. If a number needs to change it changes there, once,
+// and both the console and the public site move together — which is the
+// whole point, because a console that drifts from the site containing it
+// reads as a different company.
 //
-// The contract assigns three grammars on top of one ground:
-//   CONTROL PLANE — navigation (site skeleton)
+// The contract assigns four grammars on one dark ground:
+//   CONTROL PLANE — navigation (the site skeleton)
 //   REGISTER      — evidence (ruled rows, provenance, ids)
 //   FIELD STATION — uncertainty (status bands, tallies, empty states)
 //   VALUE CHAIN   — transformation (the OBSERVE→MEASURE primitive)
@@ -19,39 +22,42 @@ const config: Config = {
   theme: {
     extend: {
       // ═══════════════════════════════════════════════════════════
-      // Ground is warm paper, not a cockpit. One block, one ground,
-      // one accent. The accent speaks only where something is
-      // actionable or evidenced.
+      // THE GROUND IS DARK, and light is what a claim has to earn.
+      //
+      // Surfaces are near-black and slightly blue, so they read as
+      // depth rather than as an off state. Never use a surface for
+      // text.
       // ═══════════════════════════════════════════════════════════
       colors: {
-        // ── Surfaces — deepest to raised. Never use for text.
-        void: "#f6f6f4",
-        panel: "#ffffff",
-        edge: "#f0f0ed",
-        rule: "#e6e6e2",
+        // ── Surfaces — deepest to raised.
+        void: "var(--void)", // #04060a
+        panel: "var(--panel)", // #0a0e15
+        edge: "var(--edge)", // #0f151d
 
         // ── Text — primary to tertiary.
-        //    On --void #f6f6f4: ink 16.5:1 · dust 9.6:1 · ash 5.0:1 ·
-        //    quiet 4.9:1 — every tier clears AA for its size.
-        ink: "#14181c",
-        dust: "#39414a",
-        ash: "#626b74",
-        quiet: "#646c77",
+        //    Measured on --void: ink 17.9 · dust 11.1 · ash 6.6
+        //    quiet 5.6. Every tier clears AA at its own size, so a
+        //    9.5px mono tag can carry --quiet without a caveat.
+        //    Ratios: scripts/check-contrast.mjs.
+        ink: "var(--ink)",
+        dust: "var(--dust)",
+        ash: "var(--ash)",
+        quiet: "var(--quiet)",
 
         // ── Accent — ONE interactive colour, matching --signal.
-        //    Reserved for high-intent triggers and evidence states that
-        //    have earned it. Never decorative, never passive.
-        //    #0a7549 holds >=4.5:1 as TEXT on paper and on its own 10%
-        //    wash (5.0:1), so console labels may use it.
-        //    Ratios: scripts/check-contrast.mjs.
-        signal: "#0a7549",
-        signalDim: "#0a6e48",
-        signalStrong: "#085537", // strongest green: white ink clears 8.9:1
+        //    Reserved for high-intent triggers and evidence states
+        //    that have earned it. Never decorative, never passive.
+        signal: "var(--signal)",
+        signalDim: "var(--signal-dim)",
+        signalLit: "var(--signal-lit)",
 
-        // ── Informational — never interactive. Amber is text on
-        //    TARGET tags; it clears AA at 10px on both surfaces.
-        amber: "#8a5f10",
-        danger: "#b23a2e",
+        // ── Informational — never interactive. Amber is the warm end
+        //    of the temperature scale and carries TARGET only.
+        amber: "var(--amber)",
+        danger: "var(--danger)",
+
+        // ── Hairline — the only material on this surface.
+        rule: "var(--rule)",
       },
       fontFamily: {
         // Only the three self-hosted families in app/fonts.css.
@@ -69,23 +75,73 @@ const config: Config = {
           "Consolas", "Liberation Mono", "monospace",
         ],
       },
-      // ── Type scale. The only sizes that exist.
-      //    micro/label/meta/ui carry the instrument register (mono,
-      //    tracked); body carries prose. Nothing arbitrary.
+      // ═══════════════════════════════════════════════════════════
+      // THE SIZE LADDER — one constant, checked by a script.
+      //
+      // Every step is the previous step × 2^(1/4) from a 16px base.
+      // Sizes and tracking are both read from :root, so the ladder
+      // cannot be edited here into something that contradicts
+      // app/globals.css or scripts/check-scale.mjs.
+      //
+      // Tracking is not a stylistic preference per step: it is
+      // k·ln(size/16) with k = −0.0125em, because tracking is added
+      // once per glyph and a constant em value cannot hold across a
+      // 19× size range. micro/label/ui therefore carry positive
+      // tracking and display carries negative tracking, from one rule.
+      //
+      // Line heights are set optically per step, not derived — leading
+      // is a function of a size's ascender/descender relationship, not
+      // of its distance from the next step. The two that must land on
+      // the grid do: 16 × 1.5 = 24px body, and the 16px label line
+      // box. Everything else is allowed to sit between grid lines,
+      // which is what keeps a heading from opening a hole in the
+      // rhythm it sits in.
+      // ═══════════════════════════════════════════════════════════
       fontSize: {
-        micro: ["10px", { lineHeight: "1.5", letterSpacing: "0.08em" }],
-        label: ["11px", { lineHeight: "1.5", letterSpacing: "0.18em" }],
-        meta: ["12px", { lineHeight: "1.5" }],
-        ui: ["13px", { lineHeight: "1.55" }],
-        body: ["15px", { lineHeight: "1.6" }],
-        lead: ["17px", { lineHeight: "1.6" }],
-        h3: ["20px", { lineHeight: "1.25" }],
-        h2: ["26px", { lineHeight: "1.2", letterSpacing: "-0.01em" }],
-        h1: ["34px", { lineHeight: "1.1", letterSpacing: "-0.02em" }],
+        micro: ["var(--fs-micro)", { lineHeight: "16px", letterSpacing: "var(--ls-micro)" }],
+        label: ["var(--fs-label)", { lineHeight: "16px", letterSpacing: "var(--ls-label)" }],
+        ui: ["var(--fs-ui)", { lineHeight: "21px", letterSpacing: "var(--ls-ui)" }],
+        meta: ["var(--fs-ui)", { lineHeight: "21px", letterSpacing: "var(--ls-ui)" }],
+        body: ["var(--fs-body)", { lineHeight: "1.5", letterSpacing: "var(--ls-body)" }],
+        lead: ["var(--fs-lead)", { lineHeight: "1.55", letterSpacing: "var(--ls-lead)" }],
+        h3: ["var(--fs-h3)", { lineHeight: "1.2", letterSpacing: "var(--ls-h3)" }],
+        h2: ["var(--fs-h2)", { lineHeight: "1.2", letterSpacing: "var(--ls-h2)" }],
+        h1: ["var(--fs-h1)", { lineHeight: "1.15", letterSpacing: "var(--ls-h1)" }],
+        figure: ["var(--fs-figure)", { lineHeight: "1.1", letterSpacing: "var(--ls-figure)" }],
+        display: ["var(--fs-display)", { lineHeight: "1.02", letterSpacing: "var(--ls-display)" }],
+        hero: ["var(--fs-hero)", { lineHeight: "0.92", letterSpacing: "var(--ls-hero)" }],
       },
-      // ── 8px grid. No Fibonacci. Predictable.
+      // Two tracking registers, because one curve cannot do both jobs.
+      //
+      // `caps` is the small-uppercase register: capitals have no
+      // ascenders or descenders to interleave, so they need tracking
+      // opened regardless of size — a job no value of k·ln(size) can
+      // do. The console had accumulated its own hand-picked tracking
+      // values for this single job, spread across ~90 class attributes
+      // between 0.1em and 0.35em, which is that many ways for the two
+      // surfaces to stop agreeing. They now share this one value; the
+      // exact former count is not recorded because it cannot be
+      // recovered from the tree afterwards, and a number written down
+      // here would be an unverifiable claim.
+      //
+      // scripts/check-scale.mjs fails the build if a hard-coded
+      // letter-spacing re-enters app/globals.css.
+      letterSpacing: {
+        caps: "var(--ls-caps)",
+        micro: "var(--ls-micro)",
+        label: "var(--ls-label)",
+        ui: "var(--ls-ui)",
+        body: "var(--ls-body)",
+      },
+      // ── Space: 8px, plus one declared half-unit of 4px for hairline
+      //    adjacency. Verified by scripts/check-scale.mjs.
       spacing: {
         "4.5": "18px", // occasional micro-need
+        13: "52px",
+        18: "72px",
+        22: "88px",
+        30: "120px",
+        38: "152px",
       },
       // One radius register. 2px everywhere; a four-step scale is how a
       // console ends up reading rounder than the site containing it.
@@ -99,6 +155,14 @@ const config: Config = {
         "2xl": "2px",
         "3xl": "2px",
         full: "9999px",
+      },
+      boxShadow: {
+        // Two shadows exist in this system and both are light, not
+        // dark: the lit top edge of a raised surface, and the bloom
+        // under a light source.
+        lift: "inset 0 1px 0 var(--lift)",
+        bloom: "0 56px 130px -80px rgba(53, 217, 164, 0.42)",
+        "bloom-sm": "0 10px 34px -14px rgba(53, 217, 164, 0.55)",
       },
     },
   },

@@ -130,13 +130,13 @@ function ConsoleLogin({
   return (
     <main id="main-content" className="console-ui flex h-dvh flex-col bg-void font-sans text-ink">
       <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/10 px-4 sm:px-[21px]">
-        <div className="flex items-center gap-3 font-mono text-meta uppercase tracking-[0.14em] text-dust">
+        <div className="flex items-center gap-3 font-mono text-meta uppercase tracking-caps text-dust">
           <Diamond size={15} className="text-signal" />
           <span>APT-LABS · Console</span>
         </div>
         <Link
           href="/"
-          className="font-mono text-label uppercase tracking-[0.15em] text-ash transition-colors hover:text-ink"
+          className="font-mono text-label uppercase tracking-caps text-ash transition-colors hover:text-ink"
         >
           ← The control plane
         </Link>
@@ -145,7 +145,7 @@ function ConsoleLogin({
       <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center overflow-y-auto px-4 py-8 sm:px-6 sm:py-12">
         <div className="relative overflow-hidden border border-ink/10 bg-panel p-5 sm:p-8 md:p-10">
           <div className="relative">
-            <p className="font-mono text-label uppercase tracking-[0.35em] text-signal">Build capacity · Console</p>
+            <p className="font-mono text-label uppercase tracking-caps text-signal">Build capacity · Console</p>
             <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight">Who are you?</h1>
             <p className="mt-3 text-sm leading-6 text-dust">
               This is a local prototype surface, not an authentication system. No account or credential is required; anything you type stays in this browser unless you export it.
@@ -196,7 +196,7 @@ function ConsoleLogin({
               >
                 Enter the {ROLE_META[role].label.toLowerCase()} console →
               </button>
-              <p className="text-center font-mono text-micro uppercase tracking-[0.2em] text-ash">
+              <p className="text-center font-mono text-micro uppercase tracking-caps text-ash">
                 Local session · Stored on this device only · No account · No server sync
               </p>
             </form>
@@ -258,7 +258,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
   return (
     <div className="console-ui flex h-dvh flex-col overflow-hidden bg-void font-sans text-ink">
       <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/10 px-4 sm:px-[21px]">
-        <div className="flex items-center gap-3 font-mono text-meta uppercase tracking-[0.14em] text-dust">
+        <div className="flex items-center gap-3 font-mono text-meta uppercase tracking-caps text-dust">
           <Diamond size={15} className="text-signal" />
           <span>APT-LABS · Console</span>
         </div>
@@ -285,7 +285,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
               <Diamond filled size={30} className="shrink-0 text-ink" />
               <div className="hidden flex-col lg:flex">
                 <span className="font-display text-base font-medium text-ink">APT-LABS</span>
-                <span className="font-mono text-micro uppercase tracking-[0.2em] text-ink/45">Console</span>
+                <span className="font-mono text-micro uppercase tracking-caps text-ink/45">Console</span>
               </div>
             </div>
 
@@ -319,7 +319,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
             </nav>
           </div>
 
-          <div className="space-y-1 border-t border-ink/10 p-[13px] font-mono text-micro uppercase tracking-[0.16em] text-ink/35 lg:px-[21px]">
+          <div className="space-y-1 border-t border-ink/10 p-[13px] font-mono text-micro uppercase tracking-caps text-ink/35 lg:px-[21px]">
             <p>Local session</p>
             <p>Local prototype · No account · No server sync</p>
           </div>
@@ -331,7 +331,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
               <h1 className="font-display text-h1 font-semibold leading-tight sm:text-h1">
                 {mod === "all" ? "The console" : mod}
               </h1>
-              <span className="inline-flex items-center gap-2 rounded-sm border border-signal/20 bg-signal/10 px-3 py-1.5 font-mono text-micro uppercase tracking-[0.12em] text-signal">
+              <span className="inline-flex items-center gap-2 rounded-sm border border-signal/20 bg-signal/10 px-3 py-1.5 font-mono text-micro uppercase tracking-caps text-signal">
                 <span className="h-2 w-2 rounded-full bg-signal" aria-hidden="true" />
                 {visible.length} tools
               </span>
@@ -341,7 +341,7 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
                 ? "Nine modules. The material first, the mark of it second, the week around them."
                 : CONSOLE_MENU[mod].desc}
             </p>
-            <p className="font-mono text-label uppercase tracking-[0.15em] text-ash">
+            <p className="font-mono text-label uppercase tracking-caps text-ash">
               {readiness(school.students, school.assessments).next}
             </p>
           </div>
@@ -397,7 +397,7 @@ function ModuleCard({ module, onOpen }: { module: string; onOpen: () => void }) 
     >
       <div className="flex items-start justify-between gap-3">
         <ModuleTile module={module} tint={menu.tint} />
-        <span className="rounded-sm border border-ink/10 bg-ink/5 px-3 py-1 font-mono text-micro uppercase tracking-[0.14em] text-dust transition-colors group-hover:border-ink/25 group-hover:text-ink">
+        <span className="rounded-sm border border-ink/10 bg-ink/5 px-3 py-1 font-mono text-micro uppercase tracking-caps text-dust transition-colors group-hover:border-ink/25 group-hover:text-ink">
           {tools.length} {tools.length === 1 ? "tool" : "tools"} →
         </span>
       </div>
@@ -456,7 +456,7 @@ function ToolCard({
         <p className="mt-1.5 text-ui leading-relaxed text-dust">{tool.desc}</p>
       </div>
       <div className="flex items-center justify-between gap-3">
-        <span className="font-mono text-micro uppercase tracking-[0.18em] text-ash">
+        <span className="font-mono text-micro uppercase tracking-caps text-ash">
           {tool.id.padStart(2, "0")} · {tool.module}
         </span>
       </div>

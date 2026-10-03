@@ -1,7 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="APT-LABS">
-  <rect width="32" height="32" fill="#f6f6f4"/>
-  <rect x="4" y="5.5" width="24" height="1" fill="#14181c"/>
-  <rect x="4" y="25.5" width="24" height="1" fill="#14181c"/>
-  <polygon points="16,9.5 22.5,16 16,22.5 9.5,16" fill="none" stroke="#0a7549" stroke-width="1.6"/>
-  <rect x="14.4" y="14.4" width="3.2" height="3.2" fill="#0a7549"/>
+  <rect width="32" height="32" fill="#04060a"/>
+  <defs>
+    <radialGradient id="a" cx="62%" cy="38%" r="72%">
+      <stop offset="0" stop-color="#35d9a4" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#35d9a4" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="32" height="32" fill="url(#a)"/>
+  <rect x="4" y="5.5" width="24" height="1" fill="#b2cef0" fill-opacity="0.34"/>
+  <rect x="4" y="25.5" width="24" height="1" fill="#b2cef0" fill-opacity="0.34"/>
+  <polygon points="16,9.5 22.5,16 16,22.5 9.5,16" fill="none" stroke="#35d9a4" stroke-width="1.6"/>
+  <rect x="14.4" y="14.4" width="3.2" height="3.2" fill="#35d9a4"/>
 </svg>

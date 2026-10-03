@@ -75,6 +75,31 @@ export const COMPANY = {
   /** The sentence that must survive the first viewport. */
   primary: "APT-LABS records reality — and builds intelligence from it.",
 
+  /**
+   * The same claim, compressed to a size a display setting can carry,
+   * and pre-broken.
+   *
+   * This is a restatement of `primary` and of STATE_RULES, not a new
+   * claim: the register refuses to publish a figure that has no source
+   * (RULE-05), so what it publishes is assertions it can cite. It
+   * exists because `primary` is a 62-character sentence and the hero is
+   * a 15ch measure at 181px — a sentence that cannot be set at display
+   * size is a sentence that was never designed to be the largest thing
+   * on the page. The full sentence stays on the page immediately below
+   * it, so the compression never replaces the claim, only introduces it.
+   *
+   * The break is stored rather than left to the browser. `text-wrap:
+   * balance` will happily produce "Records, / not / assertions." with
+   * one word orphaned on its own line, which is the ugliest thing a
+   * display setting can do. Storing the two lines makes the lockup
+   * identical on every viewport, and the hero's size clamp in
+   * globals.css is then derived from the width of "Records, not" — the
+   * wider of the two — so the designed break is always the one that
+   * fits.
+   */
+  mantra: "Records, not assertions.",
+  mantraLines: ["Records, not", "assertions."],
+
   /** The line that scopes what kind of system it is. */
   supporting:
     "Local-first systems for evidence-bound records, operational decisions, and inspectable intelligence.",
@@ -105,6 +130,12 @@ export interface PlaneNode {
   /** The live route. There are no dead nodes in this file by design. */
   href: string;
   state: EvidenceState;
+  /** What one record in this node is. The inspector's primary line. */
+  holds: string;
+  /** Who holds custody of the record at this stage. */
+  custody: string;
+  /** Why this node's evidence state is what it is. */
+  provenance: string;
 }
 
 export const PLANE: readonly PlaneNode[] = [
@@ -115,6 +146,10 @@ export const PLANE: readonly PlaneNode[] = [
     role: "Reality occurs — events, people, assets, attendance, payments and decisions exist before the system interprets them.",
     href: "/",
     state: "PROTOTYPE",
+    holds: "Events, people, assets, attendance, payments and decisions, recorded at the moment they occur.",
+    custody: "The institution",
+    provenance:
+      "Field entry runs on the operator's own device. No institution has entered anything, so this node describes a stage rather than holding a record set.",
   },
   {
     ord: "02",
@@ -123,6 +158,10 @@ export const PLANE: readonly PlaneNode[] = [
     role: "Reality is recorded — every material claim carries an id, a timestamp, a source and an evidence state.",
     href: "/register",
     state: "PROTOTYPE",
+    holds: "One row per material claim: identifier, timestamp, source, evidence state, provenance, and the route it can be inspected on.",
+    custody: "The local record",
+    provenance:
+      "The row grammar is implemented and enforced. Every record set is intentionally empty: no institutional row is published until its evidence is recorded.",
   },
   {
     ord: "03",
@@ -131,6 +170,10 @@ export const PLANE: readonly PlaneNode[] = [
     role: "Records become structure — patterns and derived signals, each traceable to the records it came from.",
     href: "/intelligence",
     state: "PROTOTYPE",
+    holds: "Derived readings, each bound to the records it came from and the method that derived it.",
+    custody: "The local record",
+    provenance:
+      "Three derivations are specified and two are implemented locally against entered data. None has been run against a real cohort, so no reading describes any person.",
   },
   {
     ord: "04",
@@ -139,6 +182,10 @@ export const PLANE: readonly PlaneNode[] = [
     role: "Knowledge becomes action — contribution, decision, allocation, execution.",
     href: "/control",
     state: "PROTOTYPE",
+    holds: "Decisions, the rule each was taken under, the records in front of it, and the execution that followed.",
+    custody: "The institution",
+    provenance:
+      "The decision schema and its eligibility rules are defined in code. No institutional decision archive exists, so the record set starts empty.",
   },
   {
     ord: "05",
@@ -147,6 +194,10 @@ export const PLANE: readonly PlaneNode[] = [
     role: "Action generates new records, and the loop closes back into the field.",
     href: "/evidence",
     state: "PROTOTYPE",
+    holds: "The evidence state of every published claim, and the register of what is not established.",
+    custody: "The institution",
+    provenance:
+      "This is the route being read: it is the only part of this system that is real in the strict sense, because its content is only claims about the system's own state.",
   },
 ] as const;
 
@@ -388,43 +439,94 @@ export const CONSOLE = {
     "Nine modules and ten tools, running in this repository and inspectable by opening the route. No institution is running it: there is no deployment, adoption or outcome record.",
 } as const;
 /* ---------------------------------------------------------------- */
-/* FUTURE FIELD STATIONS — same grammar, other domains              */
+/* THE BUILDS — the grammar, instantiated in a domain               */
 /* ---------------------------------------------------------------- */
 
 /**
- * These are architectures, not products. Each is stated as a chain over
- * the same transformation, so extending the system changes the domain and
- * nothing else. No stage below is built; all are PLANNED.
+ * A build is one instantiation of the same chain over one domain.
+ *
+ * This is the load-bearing reframe of the whole system: the School
+ * Console is not the product, it is *an example of the product*. It is
+ * the only build that exists, and it is listed first because it is the
+ * only one with a route — not because it is the most important domain.
+ *
+ * `href` is present only where a build actually resolves to a surface.
+ * A build without one is rendered in the planned annex, never as a
+ * link: a node that looks like a link and resolves to nothing is the
+ * one failure this system's grammar exists to prevent.
+ *
+ * `state` is the whole story of each row. PROTOTYPE means built and
+ * openable; PLANNED means designed, and carries no figure, no count and
+ * no date, because a planned surface has none.
  */
-export interface FieldStation {
+export interface Build {
   name: string;
-  /** reality → evidence-bound record → intelligence → decision */
+  /** The domain this build runs in. One noun. */
+  domain: string;
+  /** reality → evidence-bound record → structure → decision */
   chain: string;
   state: EvidenceState;
+  /** Present only when the build resolves to a real surface. */
+  href?: string;
+  /** Why this build's state is what it is. */
+  provenance: string;
 }
 
-export const FIELD_STATIONS: readonly FieldStation[] = [
+export const BUILDS: readonly Build[] = [
+  {
+    name: "School Console",
+    domain: "School operations",
+    chain: "attendance → records → patterns → decisions",
+    state: "PROTOTYPE",
+    href: "/console",
+    provenance:
+      "Nine modules and ten tools, running in this repository and openable by anyone. No institution runs it: there is no deployment, adoption or outcome record.",
+  },
+  {
+    name: "Hospital Management",
+    domain: "Clinical administration",
+    chain: "encounters → records → outcomes → protocols",
+    state: "PLANNED",
+    provenance:
+      "Designed against the same seven stages and the same custody boundary. Not built: there is no code, no schema and no clinical data in this repository, so this row carries no figure of any kind.",
+  },
   {
     name: "Procurement",
+    domain: "Public and institutional buying",
     chain: "tenders → records → buyer patterns → opportunity intelligence",
     state: "PLANNED",
+    provenance:
+      "The join from tender register to buyer pattern is specified. Nothing is implemented and no tender data is held here.",
   },
   {
     name: "Agriculture",
+    domain: "Farm operations",
     chain: "farm events → records → patterns → operational recommendations",
     state: "PLANNED",
+    provenance:
+      "Designed to run on events already recorded at the farm. No farm, no season and no dataset is documented.",
   },
   {
     name: "Language",
+    domain: "Speech and text",
     chain: "speech → governed dataset → linguistic structure → model → service",
     state: "PLANNED",
+    provenance:
+      "The governance step is the load-bearing one and is specified before the model step. No dataset exists and no model has been trained.",
   },
   {
     name: "Commerce",
+    domain: "Local trade",
     chain: "transactions → records → market structure → decision intelligence",
     state: "PLANNED",
+    provenance:
+      "Specified only. No transaction data is held in this repository, so no market structure can be claimed.",
   },
 ] as const;
+
+/** The builds that resolve to a surface. The rest are architectures. */
+export const LIVE_BUILDS: readonly Build[] = BUILDS.filter((b) => b.href);
+export const PLANNED_BUILDS: readonly Build[] = BUILDS.filter((b) => !b.href);
 
 /* ---------------------------------------------------------------- */
 /* MEASURES — figures that appear in the first viewport              */

@@ -19,16 +19,13 @@ export const metadata: Metadata = {
  */
 export default function NotFound() {
   return (
-    <main
-      id="main-content"
-      className="plane-main"
-      style={{ maxWidth: 820, margin: "0 auto", padding: "56px 24px 96px" }}
-    >
+    <main id="main-content" className="sheet">
       <Link href="/" className="plane-wordmark">
+        <span className="plane-mark" aria-hidden="true" />
         APT-LABS
       </Link>
 
-      <p className="label" style={{ marginTop: 44 }}>
+      <p className="label" style={{ marginTop: "var(--s-5)" }}>
         404 · Not registered
       </p>
       <h1 className="page-title">This route is not in the register.</h1>
@@ -47,7 +44,7 @@ export default function NotFound() {
           title="Nothing registered at this address"
           body="No surface, record or node answers to the address you opened. Nothing was withheld and nothing failed — the address simply is not part of this system."
           unit="route"
-          why="The published routes are enumerated in lib/system.ts and rendered in the control plane rail; an address outside that set was never minted."
+          why="The published routes are enumerated in lib/system.ts and rendered as the five live nodes in the control plane index; an address outside that set was never minted."
           unblocks="Opening one of the five node routes below. Each one is a live surface with its evidence state on it."
           state="UNKNOWN — not an error state. The route's non-existence is a fact about the system, not a failure of it."
         />

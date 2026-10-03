@@ -28,16 +28,13 @@ export default function Error({
   }, [error]);
 
   return (
-    <main
-      id="main-content"
-      className="plane-main"
-      style={{ maxWidth: 820, margin: "0 auto", padding: "56px 24px 96px" }}
-    >
+    <main id="main-content" className="sheet">
       <Link href="/" className="plane-wordmark">
+        <span className="plane-mark" aria-hidden="true" />
         APT-LABS
       </Link>
 
-      <p className="label" style={{ marginTop: 44 }}>
+      <p className="label" style={{ marginTop: "var(--s-5)" }}>
         Runtime error · Surface not rendered
       </p>
       <h1 className="page-title">This surface failed to render.</h1>
