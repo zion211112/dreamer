@@ -19,7 +19,14 @@ import { AttackList } from "@/components/epistem/AttackList";
 import { GuardList } from "@/components/epistem/GuardList";
 import { HealthVector } from "@/components/epistem/HealthVector";
 import { reviewerAgreement } from "@/lib/epistemic/adversarial";
-import { REVIEWER_PROFILES, REVIEWER_TYPES, type ReviewerType } from "@/lib/epistemic/taxonomy";
+import {
+  GUARD_EVENTS,
+  REVIEWER_PROFILES,
+  REVIEWER_TYPES,
+  guardEventsDeclaredOnly,
+  guardEventsImplemented,
+  type ReviewerType,
+} from "@/lib/epistemic/taxonomy";
 import type { GuardEvent } from "@/lib/epistemic/taxonomy";
 
 export function ControlSurface() {
@@ -372,18 +379,54 @@ export function ControlSurface() {
             The guard vocabulary
           </h2>
           <p className="section-kicker">
-            <span className="figure">{summary.events.length}</span> raised ·{" "}
-            <span className="figure">18</span> declared
+            <span className="figure">{GUARD_EVENTS.length}</span> declared ·{" "}
+            <span className="figure">{guardEventsImplemented().length}</span>{" "}
+            detected
           </p>
         </div>
         <GuardList guards={guards} />
+
+        {/* The honest coverage statement.
+
+            The previous version hardcoded "18 declared" — the number was
+            wrong, GUARD_EVENTS has 16 members — and then told the reader
+            "the rest are checked and did not fire on this project". Four of
+            them had no detector at all, so that sentence was a fabricated
+            coverage claim sitting on the one panel whose entire job is
+            honest coverage.
+
+            It now names what is declared, what is detected, and which of the
+            declared events have nothing watching them yet. */}
         <p className="section-lede" style={{ marginTop: "var(--s-3)" }}>
-          Events currently raised:{" "}
+          <span className="figure">{GUARD_EVENTS.length}</span> events are
+          declared. <span className="figure">{guardEventsImplemented().length}</span>{" "}
+          have a detector and were run:{" "}
           {summary.events.length > 0
-            ? summary.events.map((e: GuardEvent) => e.replace(/_/g, " ").toLowerCase()).join(", ")
-            : "none"}
-          . The rest are checked and did not fire on this project.
+            ? summary.events
+                .map((e: GuardEvent) => e.replace(/_/g, " ").toLowerCase())
+                .join(", ")
+            : "none fired on this project"}
+          .
         </p>
+
+        {guardEventsDeclaredOnly().length > 0 ? (
+          <p className="ep-conf-warn" style={{ marginTop: "var(--s-2)" }}>
+            <strong>
+              {guardEventsDeclaredOnly().length} declared event
+              {guardEventsDeclaredOnly().length === 1 ? " is" : "s are"} not
+              detected yet
+            </strong>
+            :{" "}
+            {guardEventsDeclaredOnly()
+              .map((e) => e.replace(/_/g, " ").toLowerCase())
+              .join(", ")}
+            . Nothing checks for {guardEventsDeclaredOnly().length === 1 ? "it" : "them"}, so
+            the absence of a finding below is not evidence of anything.
+            {GUARD_EVENTS.length !== guardEventsImplemented().length + guardEventsDeclaredOnly().length
+              ? " The counts do not reconcile, which is a bug in the vocabulary."
+              : ""}
+          </p>
+        ) : null}
       </section>
     </>
   );

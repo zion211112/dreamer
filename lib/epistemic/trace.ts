@@ -233,14 +233,53 @@ export function diffTraces(parent: Trace, child: Trace): TraceDiff {
   };
 }
 
+/**
+ * Event equality for the fork-prefix check.
+ *
+ * The first version compared only `kind`, `summary`, `stage` and `refs`.
+ * Those are the cosmetic fields. A fork that rewrote `actor` from MODEL to
+ * HUMAN, dropped a `guards` array containing a CRITICAL finding, and
+ * rewrote a metric diffed as a byte-identical prefix with
+ * `prefixHonest: true`.
+ *
+ * That defeats the entire purpose of `prefixHonest`. The field exists to
+ * prove a fork changed only what it claimed to change, and a child that
+ * erases a finding and steals authorship is precisely the case it has to
+ * catch. Comparing the fields that carry the epistemics is not a stricter
+ * policy; it is the only version of the comparison that means anything.
+ */
 function eventsEqual(a: TraceEvent, b: TraceEvent): boolean {
   return (
     a.kind === b.kind &&
     a.summary === b.summary &&
     a.stage === b.stage &&
+    a.actor.type === b.actor.type &&
+    /* Authorship is compared by value, not just by type: two events both
+       typed MODEL but credited to different actors are not the same event. */
+    actorKey(a.actor) === actorKey(b.actor) &&
+    a.guards.length === b.guards.length &&
+    a.guards.every((g, i) => g === b.guards[i]) &&
+    /* `metrics` is a Record, so it has no `.length` — comparing it that way
+       silently returns undefined === 0, i.e. false, for EVERY event pair
+       including two references to the same object. */
+    Object.keys(a.metrics).length === Object.keys(b.metrics).length &&
+    Object.entries(a.metrics).every(([k, v]) => b.metrics[k] === v) &&
     a.refs.length === b.refs.length &&
     a.refs.every((r, i) => r === b.refs[i])
   );
+}
+
+function actorKey(a: Actor): string {
+  switch (a.type) {
+    case "MODEL":
+      return `MODEL:${a.capability}:${a.provider ?? "unset"}`;
+    case "HUMAN":
+      return `HUMAN:${a.actorId}`;
+    case "TOOL":
+      return `TOOL:${a.toolId}`;
+    case "SYSTEM":
+      return `SYSTEM:${a.component}`;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════

@@ -284,6 +284,13 @@ export type GuardEvent = (typeof GUARD_EVENTS)[number];
 export const GUARD_SEVERITIES = ["ADVISORY", "MATERIAL", "CRITICAL"] as const;
 export type GuardSeverity = (typeof GUARD_SEVERITIES)[number];
 
+/**
+ * The six ASIANCODER.MD names explicitly.
+ *
+ * Declared first and marked `contract: true` below, because those exact six
+ * are what the contract requires by name — which is why the one without a
+ * detector is a finding and not a detail (see FLUENCY_EVIDENCE_GAP below).
+ */
 export const GUARD_CONTRACT_EVENTS: readonly GuardEvent[] = [
   "CAUSALITY_OVERREACH",
   "CONSENSUS_CLAIM_UNSUPPORTED",
@@ -292,6 +299,57 @@ export const GUARD_CONTRACT_EVENTS: readonly GuardEvent[] = [
   "CONSENSUS_AMPLIFICATION",
   "FLUENCY_EVIDENCE_GAP",
 ];
+
+/**
+ * Whether a declared event has a detector behind it.
+ *
+ * This exists because the UI previously claimed "the rest are checked and
+ * did not fire on this project" about a set of events where four had no
+ * detector at all. A coverage claim on the panel whose job is honest
+ * coverage is the single most expensive place on the site to be wrong, and
+ * it was wrong in the direction of sounding thorough.
+ *
+ * Declared here rather than inferred, because inference would have to
+ * introspect the detector set, and a typo in that introspection would
+ * report coverage that does not exist. A hand-maintained flag can also be
+ * wrong, but it is wrong VISIBLY, which an inferred flag is not.
+ *
+ * scripts/check-epistemic.mjs asserts that every event declared here as
+ * detected really is reachable from guardStatement, and that every event
+ * NOT so declared is one the contract named — so adding a vocabulary member
+ * without a detector is a build failure, not a silent gap.
+ */
+export const GUARD_IMPLEMENTED: Record<GuardEvent, boolean> = {
+  CAUSALITY_OVERREACH: true,
+  CONSENSUS_CLAIM_UNSUPPORTED: true,
+  SOURCE_CLAIM_FACT_COLLAPSE: true,
+  ASSUMPTION_LEAKAGE: true,
+  CONSENSUS_AMPLIFICATION: true,
+  /* Declared by ASIANCODER.MD and NOT yet detected. It is a cross-document
+     measurement — it needs the prose and the evidence together, which is
+     what measureGap does for one artefact and what nothing yet does across
+     a project. Declared unimplemented rather than quietly omitted. */
+  FLUENCY_EVIDENCE_GAP: false,
+  UNSUPPORTED_SPECIFICITY: true,
+  CITATION_INFLATION: true,
+  CATEGORY_DRIFT: true,
+  /* Stage- and set-level conditions, not per-statement detectors. */
+  PREMATURE_CONVERGENCE: false,
+  FALSE_CONSENSUS: false,
+  SCOPE_CREEP: true,
+  UNKNOWN_SUPPRESSION: true,
+  ANALOGY_SUBSTITUTION: true,
+  CONFIDENCE_INFLATION: true,
+  MEDIAN_ANSWER_COLLAPSE: false,
+};
+
+export function guardEventsImplemented(): GuardEvent[] {
+  return GUARD_EVENTS.filter((e) => GUARD_IMPLEMENTED[e]);
+}
+
+export function guardEventsDeclaredOnly(): GuardEvent[] {
+  return GUARD_EVENTS.filter((e) => !GUARD_IMPLEMENTED[e]);
+}
 
 /**
  * What each event means, what triggers it, and what the system is required

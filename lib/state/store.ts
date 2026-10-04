@@ -34,7 +34,6 @@ import {
   type Attack,
   type Branch,
   type BranchId,
-  type CategoryTransition,
   type GuardRecord,
   type HumanVerdict,
   type MemoryItem,
@@ -47,7 +46,7 @@ import {
   type GuardEvent,
   type StatementCategory,
 } from "@/lib/epistemic/taxonomy";
-import { guardAll, guardStatement, gatePromotion } from "@/lib/epistemic/guard";
+import { applyCategoryTransition, guardAll, gatePromotion } from "@/lib/epistemic/guard";
 import { buildDifferential, healthVector, measureGap, type AxisReading, type Differential, type GapReading } from "@/lib/epistemic/health";
 import {
   appendVerdict,
@@ -124,8 +123,12 @@ export const useEpistem = create<StoreShape>()((set, get) => ({
   traces: [...SEED.traces],
 
   runGuards: () => {
-    const { statements, sources } = get();
-    const next = guardAll(statements, sources, SEED_EVALUATED_AT);
+    const { statements, sources, guards } = get();
+    /* The previous set is passed so acknowledgements survive. Ids are
+       content-derived, so this is a lookup and not a guess — and without it
+       the button labelled "re-run against current state" would silently
+       discard every acknowledgement a human has made. */
+    const next = guardAll(statements, sources, SEED_EVALUATED_AT, guards);
     set({ guards: next });
     return next;
   },
@@ -160,28 +163,36 @@ export const useEpistem = create<StoreShape>()((set, get) => ({
     const from = statement.category;
     const promotion = CATEGORY_RANK[to] < CATEGORY_RANK[from];
 
-    const transition: CategoryTransition = {
-      id: `tr-${statementId}-${statement.transitions.length + 1}`,
-      at: new Date().toISOString(),
-      actor: { type: "HUMAN", actorId },
-      from,
-      to,
-      reason,
-      promotion,
-      guard: promotion ? "CATEGORY_DRIFT" : undefined,
-    };
+    /* Routed through the domain, which re-parses the result. The previous
+       version spread the statement and cast it to Statement, which produced
+       objects that Statement.parse and Project.parse both reject — a
+       HYPOTHESIS carrying category FACT — while the type system reported
+       success. The cast was the escape hatch model.ts says must not exist. */
+    let updated: Statement;
+    try {
+      updated = applyCategoryTransition(
+        statement,
+        to,
+        reason,
+        { type: "HUMAN", actorId },
+        promotion ? "CATEGORY_DRIFT" : undefined
+      );
+    } catch {
+      return {
+        ok: false,
+        blockers: [],
+        unblockBy: `${from} is not a legal category for a ${statement.kind}. The transition was refused and nothing was written.`,
+      };
+    }
 
-    const updated = statements.map((s) =>
-      s.id === statementId
-        ? ({ ...s, category: to, transitions: [...s.transitions, transition] } as Statement)
-        : s
-    );
+    const next = statements.map((s) => (s.id === statementId ? updated : s));
 
-    set({ statements: updated });
+    set({ statements: next });
     /* Guards are recomputed because a promotion can create or clear a
        finding, and leaving the old guard set in place would mean the UI
-       shows a verdict about the old category. */
-    set({ guards: guardAll(updated, get().sources, SEED_EVALUATED_AT) });
+       shows a verdict about the old category. Previous guards are passed so
+       acknowledgements survive. */
+    set({ guards: guardAll(next, get().sources, SEED_EVALUATED_AT, get().guards) });
 
     return { ok: true, blockers: [], unblockBy: null };
   },
@@ -310,6 +321,7 @@ export function selectHealth(input: {
     traceEventCount: input.traceEventCount,
     memory: input.memory,
     humanVerdicts: input.branches.reduce((n, b) => n + b.verdicts.length, 0),
+    diversity: measureDiversity(input.branches),
   });
 }
 

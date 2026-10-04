@@ -39,6 +39,7 @@
  * changes one function and nothing else.
  */
 
+import type { DiversityReading } from "./branches";
 import type {
   Artifact,
   Evaluation,
@@ -281,8 +282,16 @@ export function healthVector(input: {
   traceEventCount?: number;
   memory?: readonly MemoryItem[];
   humanVerdicts?: number;
+  /**
+   * The DIVERSITY reading, measured. Required for that axis to be anything
+   * but null — the axis must come from measureDiversity(), because the
+   * branch count is not a diversity measurement.
+   */
+  diversity?: DiversityReading;
 }): AxisReading[] {
   const { statements, guards } = input;
+  const diversityScore = input.diversity?.score;
+  const diversityFinding = input.diversity?.finding;
 
   const consequential = statements.filter((s) =>
     ["FACT", "OBSERVATION", "INFERENCE", "SOURCE_CLAIM"].includes(s.category)
@@ -362,10 +371,22 @@ export function healthVector(input: {
     },
     {
       axis: "DIVERSITY",
-      value: (input.branches ?? 0) >= 2 ? clamp01(1 / Math.max(2, input.branches!)) * 2 * 0.5 + 0.0 : null,
+      /* Measured by measureDiversity, NOT by counting branches.
+         The first version was `1 / max(2, branchCount)`, which is not a
+         diversity measure at all — it says five branches score 0.20 and two
+         identical branches score 0.50, so generating MORE distinct
+         branches made the axis read WORSE. It also ignored
+         measureDiversity(), which already computes exactly the right thing
+         including collapse detection and per-strategy compliance. */
+      value: (input.branches ?? 0) >= 2 ? (diversityScore ?? null) : null,
       basis:
         (input.branches ?? 0) >= 2
-          ? [`${input.branches} branch(es) recorded`]
+          ? [
+              diversityScore === undefined
+                ? "diversity not measured"
+                : `mean mechanism distance ${diversityScore.toFixed(2)}`,
+              diversityFinding ?? "diversity not measured",
+            ]
           : ["Fewer than two branches, so there is nothing to be diverse from."],
       question: HEALTH_AXIS_RULES.DIVERSITY.question,
       raise: "Generate genuinely different branches, not lexical variants of one.",

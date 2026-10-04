@@ -37,6 +37,8 @@
  */
 
 import type {
+  Actor,
+  CategoryTransition,
   ClaimT,
   GuardRecord,
   MemoryItem,
@@ -44,6 +46,8 @@ import type {
   Statement,
   StatementId,
 } from "./model";
+import { Statement as StatementSchema } from "./model";
+import type { StatementCategory } from "./taxonomy";
 import {
   CATEGORY_RANK,
   GUARD_CONTRACT_EVENTS,
@@ -120,7 +124,38 @@ const SPECIFICITY_PATTERN =
 
 /* ── Construction ───────────────────────────────────────────────── */
 
-let counter = 0;
+/**
+ * A guard id derived from what the guard is ABOUT, not from a counter.
+ *
+ * The first version was `guard-${counter}`, a module-global increment. That
+ * looks harmless and is not: guards are recomputed wholesale whenever
+ * anything changes, so every recomputation minted fresh ids carrying
+ * `acknowledged: false`. A human who acknowledged three CRITICAL findings
+ * and then re-ran the guard found every acknowledgement silently discarded,
+ * the promotion gate re-blocked, and `acknowledgeGuard` matching zero
+ * records.
+ *
+ * Worse than a nuisance, because the button still appeared to work. An
+ * operator concludes that acknowledging a guard accomplishes nothing, and an
+ * affordance that teaches its own futility is worse than no affordance.
+ *
+ * So the id is derived from the finding itself: statement, event, severity
+ * and the quoted span. Recomputing yields the same ids, and an
+ * acknowledgement survives every later evaluation until the finding it
+ * acknowledges actually changes — which is exactly when it should stop
+ * applying.
+ */
+function guardId(
+  event: GuardEvent,
+  severity: GuardSeverity,
+  statementId: string | undefined,
+  observed: string
+): string {
+  return `g:${event}:${severity}:${statementId ?? "-"}:${observed
+    .slice(0, 48)
+    .replace(/\s+/g, " ")}`;
+}
+
 function rec(
   event: GuardEvent,
   severity: GuardSeverity | undefined,
@@ -133,15 +168,15 @@ function rec(
    * once: the server and the browser disagree about the timestamp, which
    * breaks hydration, and — the worse problem — the finding's timestamp
    * records when the module happened to load rather than when the claim
-   * was evaluated. Both are worse than an extra parameter.
+   * was evaluated. Both are worse than one extra parameter.
    */
   at: string
 ): GuardRecord {
-  counter += 1;
+  const resolved = severity ?? GUARD_RULES[event].severityDefault;
   return {
-    id: `guard-${counter}`,
+    id: guardId(event, resolved, statementId, observed),
     event,
-    severity: severity ?? GUARD_RULES[event].severityDefault,
+    severity: resolved,
     statementId,
     observed,
     evidence,
@@ -223,8 +258,7 @@ export function detectCausalityOverreach(s: Statement,
       causal.trim(),
       evidence,
       s.id,
-
-    at
+      at
     ),
   ];
 }
@@ -395,6 +429,29 @@ export function detectAssumptionLeakage(
  * ASIANCODER.MD asks "can agents converge on the same mediocre idea?"
  * This is where that becomes a measurable finding rather than a worry.
  */
+/**
+ * A stable identity for whoever produced a statement.
+ *
+ * Exists because `Actor.type` cannot do this job. Every agent in this
+ * domain is a MODEL, so counting types makes two independent agents agreeing
+ * indistinguishable from one agent repeating itself — and the guard then
+ * stays silent on exactly the case ASIANCODER.MD names.
+ */
+function producerId(s: Statement): string {
+  const first = s.provenance.entries[0]?.actor;
+  if (!first) return "unknown";
+  switch (first.type) {
+    case "MODEL":
+      return `model:${first.capability}:${first.provider ?? "unset"}`;
+    case "HUMAN":
+      return `human:${first.actorId}`;
+    case "TOOL":
+      return `tool:${first.toolId}`;
+    case "SYSTEM":
+      return `system:${first.component}`;
+  }
+}
+
 export function detectConsensusAmplification(
   s: Statement,
   siblings: readonly Statement[],
@@ -407,11 +464,13 @@ export function detectConsensusAmplification(
   );
   if (sameText.length < 2) return [];
 
-  const producers = new Set(
-    sameText.map((x) => x.provenance.entries[0]?.actor.type ?? "UNKNOWN")
-  );
-  /* Two or more distinct producers is where it stops being one agent
-     repeating itself and becomes apparent agreement between parties. */
+  /* Distinct PRODUCERS, not distinct actor types.
+
+     Counting `actor.type` meant two different agents restating one claim
+     looked like ONE producer, so the guard stayed silent on exactly the
+     case it exists for. It only ever fired when a model, a tool, a human
+     and a system all emitted the byte-identical sentence. */
+  const producers = new Set(sameText.map(producerId));
   if (producers.size < 2) return [];
 
   const conf = deriveConfidence(s.confidence);
@@ -423,8 +482,8 @@ export function detectConsensusAmplification(
     rec(
       "CONSENSUS_AMPLIFICATION",
       undefined,
-      `${sameText.length} statements share this text, from ${producers.size} distinct producer types`,
-      `The claim reads as widely held because ${sameText.length} agents stated it, but its confidence carries no INDEPENDENT_CORROBORATION factor. Repetition across agents is not corroboration.`,
+      `${sameText.length} statements share this text, from ${producers.size} distinct producers`,
+      `The claim reads as widely held because ${sameText.length} separately produced statements say it, but its confidence carries no INDEPENDENT_CORROBORATION factor. Distinct agents repeating one claim is not corroboration.`,
       s.id,
 
     at
@@ -687,10 +746,34 @@ export function guardStatement(input: GuardInput): GuardRecord[] {
 export function guardAll(
   statements: readonly Statement[],
   sources: readonly Source[],
-  at: string = new Date().toISOString()
+  at: string = new Date().toISOString(),
+  /**
+   * Guards from a previous evaluation, whose acknowledgements are carried
+   * forward onto the matching findings of this one.
+   *
+   * Without this, recomputing the guards silently discards every
+   * acknowledgement a human has made, and the promotion gate re-blocks with
+   * no way to unblock it. Ids are stable (see guardId), so matching is a
+   * lookup rather than a heuristic.
+   */
+  previous: readonly GuardRecord[] = []
 ): GuardRecord[] {
+  const prior = new Map(previous.map((g) => [g.id, g]));
+
   return statements.flatMap((s) =>
-    guardStatement({ statement: s, all: statements, sources, at })
+    guardStatement({ statement: s, all: statements, sources, at }).map((fresh) => {
+      const old = prior.get(fresh.id);
+      if (!old || !old.acknowledged) return fresh;
+      return {
+        ...fresh,
+        acknowledged: true,
+        acknowledgedBy: old.acknowledgedBy,
+        /* The timestamp stays the evaluation time, not the acknowledgement
+           time. The GuardRecord carries no field for when it was
+           acknowledged, and inventing one here would put a second, better
+           timestamp on the finding than the finding actually has. */
+      };
+    })
   );
 }
 
@@ -805,3 +888,55 @@ export const GUARD_CALIBRATION = {
 /** The six the contract requires by name, for the UI to assert coverage of. */
 export { GUARD_CONTRACT_EVENTS };
 export type { GuardSeverity };
+/* ═══════════════════════════════════════════════════════════════════
+   APPLYING A CATEGORY TRANSITION
+
+   This lives beside the guard rather than in the state layer because the
+   state layer got it wrong first.
+
+   `store.attemptPromotion` built the new statement by spreading the old
+   one and casting the result to `Statement`. That produced objects the
+   domain's own validator rejects — a HYPOTHESIS carrying category FACT, for
+   instance, which `Statement.parse` refuses and `Project.parse` refuses —
+   so the state layer and the domain diverged while the type system reported
+   success. The cast is what made that possible: it is the exact escape
+   hatch model.ts says must not exist.
+
+   Here the result is re-parsed. If a category is illegal for a kind, this
+   THROWS instead of writing invalid state, and the store catches it. That
+   is the whole point of routing through the domain: the illegal pair is
+   rejected where the rule lives, not where it is convenient.
+
+   `guardEvent` is taken from the caller rather than assumed, because
+   hardcoding it recorded every promotion as having raised a guard without
+   running any detector — which made `detectCategoryDrift`'s MATERIAL
+   branch unreachable for store-origin transitions.
+   ═══════════════════════════════════════════════════════════════════ */
+
+export function applyCategoryTransition(
+  statement: Statement,
+  to: StatementCategory,
+  reason: string,
+  actor: Actor,
+  guardEvent?: GuardEvent
+): Statement {
+  const from = statement.category;
+  const promotion = CATEGORY_RANK[to] < CATEGORY_RANK[from];
+
+  const transition: CategoryTransition = {
+    id: `tr-${statement.transitions.length + 1}`,
+    at: new Date().toISOString(),
+    actor,
+    from,
+    to,
+    reason,
+    promotion,
+    guard: guardEvent ?? (promotion ? "CATEGORY_DRIFT" : undefined),
+  };
+
+  /* Re-parsed, not cast. A category that is illegal for this kind throws
+     here, which is the only place the rule can be enforced without the
+     caller reaching past the domain. */
+  const next = { ...statement, category: to, transitions: [...statement.transitions, transition] };
+  return StatementSchema.parse(next);
+}

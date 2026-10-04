@@ -761,7 +761,202 @@ record(
   []
 );
 
+
+/* ═══════════════════════════════════════════════════════════════════
+   15. REGRESSIONS FOUND BY THE HOSTILE SELF-REVIEW
+
+   Every assertion below corresponds to a bug that was live in the
+   codebase and green across all four check suites while it was live.
+
+   That is the finding worth recording: 28 assertions, 48 scale
+   invariants, 107 contrast ratios, clean typecheck, clean build — and
+   none of them imported health.ts, memory.ts, runLoop, or the store.
+   The checking apparatus reported on the parts that already worked and
+   was silent on the parts that did not, which is the same failure the
+   project exists to catch, one level up.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const NOW = "2026-10-04T00:00:00.000Z";
+
+/* 15a. Guard ids must be stable, or acknowledgement cannot survive a
+       recomputation and the promotion gate re-blocks forever. */
+const ackGuards = guard.guardAll([fx.demandClaim], [fx.populationSource], NOW);
+const ackAgain = guard.guardAll([fx.demandClaim], [fx.populationSource], NOW, ackGuards.map((g) => ({ ...g, acknowledged: true, acknowledgedBy: "human:t" })));
+
+record(
+  "guard ids are stable across recomputation",
+  ackGuards.length > 0 &&
+    ackGuards.every((g, i) => ackAgain[i]?.id === g.id),
+  `${ackGuards.length} guard(s); ids ${ackGuards.map((g) => g.id).join(", ")} are identical on the second pass`,
+  []
+);
+
+const ackCarried = ackAgain.find((g) => g.id === ackGuards[0]?.id);
+record(
+  "an acknowledgement survives recomputation",
+  ackCarried?.acknowledged === true && ackCarried?.acknowledgedBy === "human:t",
+  ackCarried?.acknowledged
+    ? `acknowledgement by ${ackCarried.acknowledgedBy} survived a full recomputation`
+    : "ACKNOWLEDGEMENT WAS LOST on recomputation, so the promotion gate re-blocks with no way to unblock it",
+  ackCarried?.acknowledged
+    ? []
+    : [{ at: "guard.ts", detail: "The previous guard ids came from a module-global counter, so every recomputation minted new ids carrying acknowledged: false." }]
+);
+
+/* 15b. Two independent agents restating one claim MUST raise
+       CONSENSUS_AMPLIFICATION. Every agent here is Actor.type MODEL, so
+       counting actor types made this undetectable. */
+const mkClaim = (id, text, capability, provider) =>
+  model.Claim.parse({
+    kind: "CLAIM",
+    id: model.StatementId.parse(id),
+    text,
+    category: "INFERENCE",
+    chainStage: "INFERRED",
+    support: "CONTESTED",
+    provenance: {
+      entries: [{ at: NOW, actor: { type: "MODEL", capability, provider }, action: "GENERATED" }],
+    },
+    confidence: { factors: [{ factor: "INDIRECT_EVIDENCE", basis: "derived", because: id }] },
+    transitions: [],
+    guards: [],
+    unknowns: [],
+    parentIds: [],
+    evidenceIds: [],
+    sourceIds: [],
+    independentSupports: 0,
+    contradicting: [],
+    createdAt: NOW,
+  });
+
+const twoAgents = [
+  mkClaim("amp-1", "The programme is working.", "DEEP_REASONING", "adapter:a"),
+  mkClaim("amp-2", "The programme is working.", "FAST", "adapter:b"),
+];
+const ampGuards = guard.guardAll(twoAgents, []);
+record(
+  "CONSENSUS_AMPLIFICATION fires on two distinct agents",
+  ampGuards.some((g) => g.event === "CONSENSUS_AMPLIFICATION"),
+  ampGuards.some((g) => g.event === "CONSENSUS_AMPLIFICATION")
+    ? "two agents, identical text -> raised"
+    : "two distinct agents restating one claim produced NO finding. Counting Actor.type meant every agent looked like the same producer.",
+  ampGuards.some((g) => g.event === "CONSENSUS_AMPLIFICATION")
+    ? []
+    : [{ at: "guard.ts", detail: "ASIANCODER.MD names this case explicitly: 'When multiple agents repeat the same unsupported claim.' It must be detectable." }]
+);
+
+const oneAgentTwice = [
+  mkClaim("same-1", "Identical output.", "DEEP_REASONING", "adapter:a"),
+  mkClaim("same-2", "Identical output.", "DEEP_REASONING", "adapter:a"),
+];
+record(
+  "one agent repeating itself is NOT amplification",
+  !guard.guardAll(oneAgentTwice, []).some((g) => g.event === "CONSENSUS_AMPLIFICATION"),
+  "the same agent saying the same thing twice is a retry, not agreement",
+  []
+);
+
+/* 15c. An illegal category pair must be REFUSED, not cast through. */
+const illegalCategory = (() => {
+  try {
+    guard.applyCategoryTransition(fx.solarHypothesis, "FACT", "because", { type: "HUMAN", actorId: "u" });
+    return null;
+  } catch (e) {
+    return e.message.slice(0, 80);
+  }
+})();
+record(
+  "an illegal category pair is refused",
+  illegalCategory !== null,
+  illegalCategory
+    ? `HYPOTHESIS -> FACT threw through the domain validator: "${illegalCategory}..."`
+    : "HYPOTHESIS -> FACT was accepted, producing a state that Statement.parse and Project.parse both reject",
+  illegalCategory
+    ? []
+    : [{ at: "guard.ts", detail: "The store used to do this by spreading and casting to Statement, which the type system reported as success." }]
+);
+
+/* 15d. DIVERSITY must be measured, and must not fall as branches are added. */
+const diverse5 = br.measureDiversity([
+  radical, conservative, mkBranchLike("b5", "OUTSIDER_MODEL", "an outsider would explain it as a pricing artefact", "charge per delivered unit so there is no subscription to cancel", "metered access", ["buyers accept it"]),
+  mkBranchLike("b6", "INVERSION", "the array is not degrading, the window is short", "the 30-day window straddles a cloudy season, so the comparison baseline is seasonally wrong", "seasonal baseline", ["the window is unrepresentative"]),
+  mkBranchLike("b7", "CONSTRAINT_BREAKING", "stop measuring at the inverter", "measure irradiance at panel level and stop trusting the inverter's own conversion estimate", "panel-level irradiance", ["panel sensors exist"]),
+]);
+const twoIdentical = br.measureDiversity([radical, { ...radical, id: "dup" }]);
+
+record(
+  "DIVERSITY axis is measured, not counted",
+  diverse5.score > twoIdentical.score,
+  `five genuinely different branches score ${diverse5.score.toFixed(2)}; two identical ones score ${twoIdentical.score.toFixed(2)}. The axis used to be 1/branchCount, which fell as branches were added.`,
+  diverse5.score > twoIdentical.score
+    ? []
+    : [{ at: "health.ts", detail: "The DIVERSITY axis ignored measureDiversity entirely and scored 0.20 for five distinct branches and 0.50 for two identical ones." }]
+);
+
+/* 15e. eventsEqual must see the fields that carry the epistemics. */
+const tampered = {
+  ...forked.trace,
+  events: [
+    { ...forked.trace.events[0], actor: { type: "HUMAN", actorId: "mallory" }, guards: ["CAUSALITY_OVERREACH"], metrics: { confidence: 0.1 } },
+    ...forked.trace.events.slice(1),
+  ],
+};
+const tamperedDiff = tr.diffTraces(parentTrace, tampered);
+record(
+  "a fork that steals authorship and erases a guard is detected",
+  tamperedDiff.commonPrefix === 0,
+  `an event rewritten to HUMAN/${"mallory"} with a CRITICAL guard dropped diffs at commonPrefix=${tamperedDiff.commonPrefix}. eventsEqual used to compare kind/summary/stage/refs only, so this fork read as an identical prefix.`,
+  tamperedDiff.commonPrefix === 0
+    ? []
+    : [{ at: "trace.ts", detail: "prefixHonest exists to prove a fork changed only what it claimed to. Comparing cosmetic fields defeats it." }]
+);
+
+/* 15f. The guard vocabulary must reconcile, and the unimplemented set must
+       be visible rather than described as "checked". */
+const declared = tax.GUARD_EVENTS.length;
+const detected = tax.guardEventsImplemented().length;
+const declaredOnly = tax.guardEventsDeclaredOnly();
+record(
+  "guard vocabulary reconciles",
+  detected + declaredOnly.length === declared,
+  `${declared} declared = ${detected} detected + ${declaredOnly.length} declared-only`,
+  []
+);
+record(
+  "unimplemented guard events are declared, not hidden",
+  declaredOnly.every((e) => typeof tax.GUARD_IMPLEMENTED[e] === "boolean") &&
+    declaredOnly.length > 0,
+  `${declaredOnly.length} event(s) declared without a detector: ${declaredOnly.join(", ")}. The UI now says so rather than claiming they were checked.`,
+  []
+);
+record(
+  "every declared-but-undetected contract event is visible as such",
+  tax.GUARD_CONTRACT_EVENTS.every((e) => tax.GUARD_IMPLEMENTED[e] === true) ||
+    declaredOnly.some((e) => tax.GUARD_CONTRACT_EVENTS.includes(e)),
+  "the contract names six guards; the unimplemented set is checked against that list rather than being discovered by a reader",
+  []
+);
+
+function mkBranchLike(id, strategy, thesis, mechanism, contribution, assumptions) {
+  return br.appendVerdict(
+    model.Branch.parse({
+      id: model.BranchId.parse(id),
+      strategy,
+      thesis,
+      assumptions,
+      mechanism,
+      failureMode: "fails if the mechanism is wrong",
+      novelContribution: contribution,
+      differsBecause: contribution,
+      verdicts: [],
+      protectedFromOptimization: false,
+    }),
+    { id: "v-" + id, verdict: "KEEP", actorId: "u", at: NOW, rationale: "seed" }
+  );
+}
+
 /* ── Report ──────────────────────────────────────────────────────── */
+
 
 const failed = results.filter((r) => !r.ok);
 const width = Math.max(...results.map((r) => r.name.length));
