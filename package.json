@@ -11,13 +11,16 @@
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:scale": "node scripts/check-scale.mjs",
     "check:lexicon": "node scripts/check-lexicon.mjs",
-    "check": "npm run typecheck && npm run lint && npm run check:scale && npm run check:contrast && npm run check:lexicon && npm run build"
+    "check:epistemic": "node --experimental-transform-types --no-warnings scripts/check-epistemic.mjs",
+    "check": "npm run typecheck && npm run lint && npm run check:scale && npm run check:contrast && npm run check:lexicon && npm run check:epistemic && npm run build"
   },
   "dependencies": {
     "@xyflow/react": "^12.12.0",
     "next": "14.2.35",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "zod": "^4.6.5",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@types/node": "20.14.12",
