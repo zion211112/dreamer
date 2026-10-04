@@ -126,7 +126,16 @@ function rec(
   severity: GuardSeverity | undefined,
   observed: string,
   evidence: string,
-  statementId?: StatementId,
+  statementId: StatementId | undefined,
+  /**
+   * When this evaluation happened. Threaded in rather than read from the
+   * clock, because a wall-clock read here means two things are wrong at
+   * once: the server and the browser disagree about the timestamp, which
+   * breaks hydration, and — the worse problem — the finding's timestamp
+   * records when the module happened to load rather than when the claim
+   * was evaluated. Both are worse than an extra parameter.
+   */
+  at: string
 ): GuardRecord {
   counter += 1;
   return {
@@ -136,7 +145,7 @@ function rec(
     statementId,
     observed,
     evidence,
-    raisedAt: new Date().toISOString(),
+    raisedAt: at,
     acknowledged: false,
   };
 }
@@ -184,7 +193,9 @@ function firstMatch(text: string, phrases: readonly string[]): string | null {
  * system, and a guard that fires on correct behaviour trains people to
  * ignore it.
  */
-export function detectCausalityOverreach(s: Statement): GuardRecord[] {
+export function detectCausalityOverreach(s: Statement,
+  at: string
+): GuardRecord[] {
   const causal = firstMatch(s.text, CAUSAL_VERBS);
   if (!causal) return [];
 
@@ -211,7 +222,9 @@ export function detectCausalityOverreach(s: Statement): GuardRecord[] {
       undefined,
       causal.trim(),
       evidence,
-      s.id
+      s.id,
+
+    at
     ),
   ];
 }
@@ -230,7 +243,8 @@ export function detectCausalityOverreach(s: Statement): GuardRecord[] {
  */
 export function detectConsensusClaimUnsupported(
   s: Statement,
-  sources: readonly Source[]
+  sources: readonly Source[],
+  at: string
 ): GuardRecord[] {
   const match = firstMatch(s.text, CONSENSUS_LANGUAGE);
   if (!match) return [];
@@ -255,7 +269,9 @@ export function detectConsensusClaimUnsupported(
       ? `Consensus language with ${sourceIds.length} citation(s) resolving to 0 distinct independence groups.`
       : `Consensus language with ${independent} distinct independence group(s); the claim asserts agreement, which needs at least 2.`;
 
-  return [rec("CONSENSUS_CLAIM_UNSUPPORTED", undefined, match.trim(), evidence, s.id)];
+  return [
+    rec("CONSENSUS_CLAIM_UNSUPPORTED", undefined, match.trim(), evidence, s.id, at),
+  ];
 }
 
 /**
@@ -275,7 +291,8 @@ export function detectConsensusClaimUnsupported(
  */
 export function detectSourceClaimFactCollapse(
   s: Statement,
-  sources: readonly Source[]
+  sources: readonly Source[],
+  at: string
 ): GuardRecord[] {
   if (s.category !== "FACT" && s.category !== "OBSERVATION") return [];
 
@@ -294,7 +311,9 @@ export function detectSourceClaimFactCollapse(
         undefined,
         `${s.category} resting on ${unopened.length} unopened source(s)`,
         `Source ids ${unopened.join(", ")} are recorded as FACT support but have not been opened by anyone in this system.`,
-        s.id
+        s.id,
+
+      at
       )
     );
   }
@@ -308,7 +327,9 @@ export function detectSourceClaimFactCollapse(
         undefined,
         `${s.category} with no capture of its own, derived from ${s.parentIds.length} parent(s)`,
         `A relayed statement cannot be a FACT: this system did not observe it. It is SOURCE_CLAIM at best. Parents: ${s.parentIds.join(", ")}.`,
-        s.id
+        s.id,
+
+      at
       )
     );
   }
@@ -329,7 +350,8 @@ export function detectSourceClaimFactCollapse(
  */
 export function detectAssumptionLeakage(
   s: Statement,
-  byId: ReadonlyMap<string, Statement>
+  byId: ReadonlyMap<string, Statement>,
+  at: string
 ): GuardRecord[] {
   if (s.kind !== "INFERENCE" && s.kind !== "CLAIM") return [];
 
@@ -354,7 +376,9 @@ export function detectAssumptionLeakage(
       undefined,
       `${uncarried.length} unverified assumption(s) inside the premises`,
       `Premises include ${uncarried.map((a) => `"${a.text}"`).join("; ")}, and none is carried into this statement's unknowns. The conclusion holds only if these do, and the reader cannot see that.`,
-      s.id
+      s.id,
+
+    at
     ),
   ];
 }
@@ -373,7 +397,8 @@ export function detectAssumptionLeakage(
  */
 export function detectConsensusAmplification(
   s: Statement,
-  siblings: readonly Statement[]
+  siblings: readonly Statement[],
+  at: string
 ): GuardRecord[] {
   if (s.category === "FACT") return [];
 
@@ -400,7 +425,9 @@ export function detectConsensusAmplification(
       undefined,
       `${sameText.length} statements share this text, from ${producers.size} distinct producer types`,
       `The claim reads as widely held because ${sameText.length} agents stated it, but its confidence carries no INDEPENDENT_CORROBORATION factor. Repetition across agents is not corroboration.`,
-      s.id
+      s.id,
+
+    at
     ),
   ];
 }
@@ -412,7 +439,8 @@ export function detectConsensusAmplification(
 /** A digit with a unit and no source is unsupported specificity. */
 export function detectUnsupportedSpecificity(
   s: Statement,
-  sources: readonly Source[]
+  sources: readonly Source[],
+  at: string
 ): GuardRecord[] {
   const m = SPECIFICITY_PATTERN.exec(s.text);
   if (!m) return [];
@@ -431,7 +459,9 @@ export function detectUnsupportedSpecificity(
       undefined,
       m[0].trim(),
       `The text carries the quantity "${m[0].trim()}" with no source attached and no method behind it. A number with no origin is the most persuasive kind of wrong.`,
-      s.id
+      s.id,
+
+    at
     ),
   ];
 }
@@ -439,7 +469,8 @@ export function detectUnsupportedSpecificity(
 /** More citations than distinct origins, or citations nobody opened. */
 export function detectCitationInflation(
   s: Statement,
-  sources: readonly Source[]
+  sources: readonly Source[],
+  at: string
 ): GuardRecord[] {
   const sourceIds = asClaim(s)?.sourceIds ?? [];
   if (sourceIds.length === 0) return [];
@@ -463,7 +494,9 @@ export function detectCitationInflation(
           .filter((x) => !x.opened)
           .map((x) => x.id)
           .join(", ")} were never read. An unopened citation is decoration.`,
-        s.id
+        s.id,
+
+      at
       )
     );
   }
@@ -474,7 +507,9 @@ export function detectCitationInflation(
         undefined,
         `${resolved.length} citations across ${groups.size} independence group(s)`,
         `Distinct sources share an independence group. Presenting one origin as several sources is the arithmetic of false consensus.`,
-        s.id
+        s.id,
+
+      at
       )
     );
   }
@@ -482,7 +517,9 @@ export function detectCitationInflation(
 }
 
 /** A recorded category transition that promoted without raising a guard. */
-export function detectCategoryDrift(s: Statement): GuardRecord[] {
+export function detectCategoryDrift(s: Statement,
+  at: string
+): GuardRecord[] {
   const promotions = s.transitions.filter((t) => t.promotion);
   const unguarded = promotions.filter((t) => !t.guard);
 
@@ -496,7 +533,9 @@ export function detectCategoryDrift(s: Statement): GuardRecord[] {
       unguarded.includes(t)
         ? `A promotion from ${t.from} to ${t.to} was recorded without raising a guard. Reason given: "${t.reason}". If the promotion is legitimate the guard should still have fired and been acknowledged.`
         : `Promotion ${t.from} → ${t.to} raised ${t.guard}, which is the correct behaviour. Recorded for the audit trail.`,
-      s.id
+      s.id,
+
+    at
     )
   );
 }
@@ -504,7 +543,8 @@ export function detectCategoryDrift(s: Statement): GuardRecord[] {
 /** An unknown that exists somewhere in the premises but not in the claim. */
 export function detectUnknownSuppression(
   s: Statement,
-  byId: ReadonlyMap<string, Statement>
+  byId: ReadonlyMap<string, Statement>,
+  at: string
 ): GuardRecord[] {
   const premiseUnknowns = s.parentIds.flatMap((id) => byId.get(id)?.unknowns ?? []);
   if (premiseUnknowns.length === 0) return [];
@@ -520,13 +560,17 @@ export function detectUnknownSuppression(
       "MATERIAL",
       `${dropped.length} unknown(s) dropped on the way up`,
       `These were recorded as unknown in a premise and do not appear in this statement's unknowns: ${dropped.join("; ")}. Omitting an unknown as the reasoning gets more confident is the failure mode this whole system exists to catch.`,
-      s.id
+      s.id,
+
+    at
     ),
   ];
 }
 
 /** An analogy standing in for an argument. */
-export function detectAnalogySubstitution(s: Statement): GuardRecord[] {
+export function detectAnalogySubstitution(s: Statement,
+  at: string
+): GuardRecord[] {
   const match = firstMatch(s.text, ANALOGY_MARKERS);
   if (!match) return [];
 
@@ -543,13 +587,17 @@ export function detectAnalogySubstitution(s: Statement): GuardRecord[] {
       undefined,
       match.trim(),
       "The statement argues by analogy and supplies no mechanism. A resemblance is being asked to do the work of a derivation.",
-      s.id
+      s.id,
+
+    at
     ),
   ];
 }
 
 /** Stated confidence higher than the factors justify. */
-export function detectConfidenceInflation(s: Statement): GuardRecord[] {
+export function detectConfidenceInflation(s: Statement,
+  at: string
+): GuardRecord[] {
   const derived = deriveConfidence(s.confidence);
   if (derived.duplicated.length === 0) return [];
 
@@ -559,13 +607,17 @@ export function detectConfidenceInflation(s: Statement): GuardRecord[] {
       "MATERIAL",
       `${derived.duplicated.length} factor(s) supplied twice`,
       `Factors ${derived.duplicated.join(", ")} appear more than once in the confidence basis and were counted once. If they had been counted twice the confidence would have read higher than the evidence supports.`,
-      s.id
+      s.id,
+
+    at
     ),
   ];
 }
 
 /** Scope in the text exceeds the scope the evidence covers. */
-export function detectScopeCreep(s: Statement): GuardRecord[] {
+export function detectScopeCreep(s: Statement,
+  at: string
+): GuardRecord[] {
   const universal = /\b(all|every|always|never|no one|nobody|everyone|any)\b/i.exec(
     s.text
   );
@@ -581,7 +633,9 @@ export function detectScopeCreep(s: Statement): GuardRecord[] {
       undefined,
       universal[0].toLowerCase(),
       `The claim is universal ("${universal[0]}") while its basis carries INCOMPLETE_SAMPLE. A claim about all of something cannot rest on part of it.`,
-      s.id
+      s.id,
+
+    at
     ),
   ];
 }
@@ -594,6 +648,12 @@ export interface GuardInput {
   statement: Statement;
   all: readonly Statement[];
   sources: readonly Source[];
+  /**
+   * When this evaluation happened. Supplied by the caller rather than read
+   * from the clock, so a stored finding's timestamp means something and a
+   * server render and a browser hydration agree on it.
+   */
+  at: string;
 }
 
 /**
@@ -606,30 +666,31 @@ export interface GuardInput {
  */
 export function guardStatement(input: GuardInput): GuardRecord[] {
   const byId = new Map(input.all.map((s) => [s.id as string, s]));
-  const { statement: s, all, sources } = input;
+  const { statement: s, all, sources, at } = input;
 
   return [
-    ...detectCausalityOverreach(s),
-    ...detectConsensusClaimUnsupported(s, sources),
-    ...detectSourceClaimFactCollapse(s, sources),
-    ...detectAssumptionLeakage(s, byId),
-    ...detectConsensusAmplification(s, all),
-    ...detectUnsupportedSpecificity(s, sources),
-    ...detectCitationInflation(s, sources),
-    ...detectCategoryDrift(s),
-    ...detectUnknownSuppression(s, byId),
-    ...detectAnalogySubstitution(s),
-    ...detectConfidenceInflation(s),
-    ...detectScopeCreep(s),
+    ...detectCausalityOverreach(s, at),
+    ...detectConsensusClaimUnsupported(s, sources, at),
+    ...detectSourceClaimFactCollapse(s, sources, at),
+    ...detectAssumptionLeakage(s, byId, at),
+    ...detectConsensusAmplification(s, all, at),
+    ...detectUnsupportedSpecificity(s, sources, at),
+    ...detectCitationInflation(s, sources, at),
+    ...detectCategoryDrift(s, at),
+    ...detectUnknownSuppression(s, byId, at),
+    ...detectAnalogySubstitution(s, at),
+    ...detectConfidenceInflation(s, at),
+    ...detectScopeCreep(s, at),
   ];
 }
 
 export function guardAll(
   statements: readonly Statement[],
-  sources: readonly Source[]
+  sources: readonly Source[],
+  at: string = new Date().toISOString()
 ): GuardRecord[] {
   return statements.flatMap((s) =>
-    guardStatement({ statement: s, all: statements, sources })
+    guardStatement({ statement: s, all: statements, sources, at })
   );
 }
 

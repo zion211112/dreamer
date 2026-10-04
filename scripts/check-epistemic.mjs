@@ -135,7 +135,8 @@ const leakGuards = guard.guardStatement({
   statement: leaky,
   all: [assumption, leaky],
   sources: [],
-});
+  at: "2026-10-04T00:00:00.000Z",
+  });
 const leak = leakGuards.find((g) => g.event === "ASSUMPTION_LEAKAGE");
 
 record(
@@ -193,7 +194,8 @@ const cleanGuards = guard.guardStatement({
   statement: cleanClaim,
   all: [cleanClaim],
   sources: [cleanSource],
-});
+  at: "2026-10-04T00:00:00.000Z",
+  });
 
 record(
   "negative case · clean claim is quiet",
@@ -212,7 +214,8 @@ const hypGuards = guard.guardStatement({
   statement: fx.solarHypothesis,
   all: [fx.solarHypothesis],
   sources: [],
-});
+  at: "2026-10-04T00:00:00.000Z",
+  });
 const hypCausal = hypGuards.find((g) => g.event === "CAUSALITY_OVERREACH");
 
 record(

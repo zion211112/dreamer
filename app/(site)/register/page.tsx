@@ -3,6 +3,7 @@ import Link from "next/link";
 import { StatusBand } from "@/components/site/StatusBand";
 import { Tally } from "@/components/site/Tally";
 import { EmptyState } from "@/components/site/EmptyState";
+import { RegisterSurface } from "@/components/epistem/RegisterSurface";
 import { RegisterHead, RegisterRow } from "@/components/site/RegisterTable";
 import { REGISTERS } from "@/lib/system";
 
@@ -179,6 +180,26 @@ export default function RegisterPage() {
             The evidence states
           </Link>
         </div>
+      </section>
+
+      {/* ── THE INSTRUMENT ─────────────────────────────────────────────
+          Everything above is the register AS PUBLISHED. What follows is
+          the register AS INSTRUMENTED: the live firewall, the guards
+          raised against these very claims, the confidence ledger behind
+          every figure, and the derived health vector.
+
+          Both halves belong on one page, because ASIANCODER.MD's failing
+          is a reader who cannot inspect the evidence at the moment of
+          judgement. A separate page for the apparatus is a separate
+          moment, and by then the reader has already believed something. */}
+      <section className="section closing" aria-labelledby="register-instrument">
+        <div className="section-head">
+          <h2 className="section-title" id="register-instrument">
+            The instrument
+          </h2>
+          <p className="section-kicker">live · derived from current state</p>
+        </div>
+        <RegisterSurface />
       </section>
     </>
   );

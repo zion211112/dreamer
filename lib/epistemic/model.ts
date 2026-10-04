@@ -222,6 +222,22 @@ export const Source = z.object({
   /** Independence group. Two sources sharing a group are not independent. */
   independenceGroup: z.string().min(1),
   retrievedAt: Instant.optional(),
+  /**
+   * When a human last checked that this source says what it is cited for.
+   *
+   * Distinct from `retrievedAt` on purpose. Retrieval is the fetch;
+   * verification is somebody reading the relevant part and confirming it
+   * says the thing. ASIANCODER.MD lists both "timestamp" and "last verified"
+   * in the evidence ledger, and conflating them would let a fetch count as
+   * a read — which is how a system ends up with `opened: true` on a PDF
+   * nobody opened and a ledger that says everything is verified.
+   *
+   * Null means "never verified", which is a real and common state and must
+   * render as such rather than as a fresh date.
+   */
+  lastVerifiedAt: Instant.nullable().default(null),
+  /** Who verified it. Required whenever lastVerifiedAt is set. */
+  verifiedBy: z.string().optional(),
 });
 export type Source = z.infer<typeof Source>;
 export type SourceQuality = z.infer<typeof SourceQuality>;

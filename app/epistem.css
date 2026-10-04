@@ -529,50 +529,133 @@
 
 .ep-hv { display: grid; gap: 0; }
 
+/* The component emits seven children per axis: name, value, track, the
+   axis question, its basis, what a high reading means, how to raise it, and
+   how it cannot be raised. That last one is the most valuable sentence on
+   the row and the easiest to skip.
+
+   The first draft of this rule declared three columns for eight children,
+   so everything from the fourth wrapped into implicit rows and the axis
+   rendered as a column of unrelated fragments. Placed by area rather than
+   by flow, which is also why the reading order stays name -> value ->
+   track -> explanation: the grid areas follow DOM order, so a screen
+   reader and the eye see the same thing. */
 .ep-hv-axis {
   display: grid;
-  grid-template-columns: 172px 132px minmax(0, 1fr);
-  gap: var(--s-3);
+  grid-template-columns: 168px 136px minmax(0, 1fr);
+  grid-template-areas:
+    "name  value  track"
+    "name  .      question"
+    "name  .      basis"
+    "name  .      means"
+    "name  .      raise"
+    "name  .      cannot";
+  gap: 6px var(--s-3);
   align-items: start;
   padding: var(--s-3) 0;
   border-bottom: 1px solid var(--rule);
 }
 .ep-hv-axis:last-child { border-bottom: 0; }
 
+.ep-hv-axis > :nth-child(1) { grid-area: name; }
+.ep-hv-axis > :nth-child(2) { grid-area: value; }
+.ep-hv-axis > :nth-child(3) { grid-area: track; }
+.ep-hv-axis > :nth-child(4) { grid-area: question; }
+.ep-hv-axis > :nth-child(5) { grid-area: basis; }
+.ep-hv-axis > :nth-child(6) { grid-area: means; }
+.ep-hv-axis > :nth-child(7) { grid-area: raise; }
+.ep-hv-axis > :nth-child(8) { grid-area: cannot; }
+
+.ep-hv-axis > :nth-child(1) {
+  font-family: var(--font-display);
+  font-size: var(--fs-ui);
+  letter-spacing: var(--ls-ui);
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0;
+}
+
+/* The value, and the null case beside it. */
+.ep-hv-axis > :nth-child(2) {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-label);
+  color: var(--ink);
+}
+
+.ep-hv-axis > p {
+  margin: 0;
+  font-size: var(--fs-ui);
+  line-height: 19px;
+  color: var(--quiet);
+  max-width: 74ch;
+}
+
+/* The question is the axis's own sentence, so it gets ink the
+   explanations below do not — a reader should be able to tell what is
+   being measured from what is merely noting that measurement is easy. */
+.ep-hv-axis > :nth-child(4) {
+  color: var(--ash);
+}
+
 .ep-hv-track {
   position: relative;
   height: var(--ep-track-h);
-  margin-top: 5px;
+  margin-top: 7px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--rule);
   border-radius: 1px;
 }
+
+/* Width comes from the `--v` custom property the component sets on BOTH
+   the track and the fill. The first version positioned the fill with
+   `inset: 0 auto 0 0` and no width at all, so every axis rendered an
+   empty track and the whole vector looked like it had measured nothing. */
 .ep-hv-fill {
   position: absolute;
   inset: 0 auto 0 0;
+  width: var(--v, 0%);
   background: var(--ep-data);
 }
 
 /* A NULL axis is the important case. It is dashed and empty and says
    "not measured" — never a zero-width bar, which would read as a
    measurement of nothing rather than an absence of measurement. That
-   distinction is the entire difference between this system and a
-   progress bar. */
+   distinction is the entire difference between this and a progress bar. */
 .ep-hv-null {
   border-style: dashed;
   border-color: var(--rule-2);
   background: transparent;
+  color: var(--quiet) !important;
+  font-size: var(--fs-micro) !important;
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+}
+
+.ep-hv-track[data-measured="false"] {
+  border-style: dashed;
+  border-color: var(--rule-2);
 }
 
 .ep-hv-basis {
-  margin: 4px 0 0;
+  display: grid;
+  gap: 3px;
   font-size: var(--fs-ui);
   line-height: 19px;
-  color: var(--quiet);
-  max-width: 72ch;
+  color: var(--ash);
 }
+.ep-hv-basis > * { margin: 0; }
+.ep-hv-basis ul { margin: 0; padding: 0; }
 .ep-hv-basis li { list-style: none; }
-.ep-hv-basis li::before { content: "— "; color: var(--rule-3); }
+.ep-hv-basis li::before { content: "\2014\00a0"; color: var(--rule-3); }
+
+@media (max-width: 900px) {
+  .ep-hv-axis {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "name" "value" "track" "question" "basis" "means" "raise" "cannot";
+  }
+}
 
 /* ═══════════════════════════════════════════════════════════════════
    RADAR
@@ -666,6 +749,11 @@
 /* ═══════════════════════════════════════════════════════════════════
    ATTACKS
    ═══════════════════════════════════════════════════════════════════ */
+
+.ep-atk {
+  display: grid;
+  gap: var(--s-2);
+}
 
 .ep-atk-item {
   padding: var(--s-3) 0;
@@ -785,6 +873,48 @@
 .ep-branch-dist { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-2); margin-top: var(--s-2); }
 .ep-branch-dist > div { display: grid; gap: 3px; }
 .ep-branch-dist .ep-key { font-size: var(--fs-micro); }
+
+/* The four distances are measurements, so they are set in tabular mono
+   like every other figure on this system. Four numbers that do not share a
+   baseline cannot be compared at a glance, and comparing them is the only
+   reason they are on the card. */
+.ep-branch-dist .ep-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-ui);
+  color: var(--ink);
+}
+
+/* The rationale field is the only free-text input in the epistem layer, and
+   it needs the same ground as every other field: a visible border, a
+   visible focus ring, and a width that matches the buttons above it. Without
+   a class it fell back to the browser default, which on a dark ground is a
+   white box — a light artefact in an instrument panel, which is the kind of
+   thing that makes a whole surface look unfinished. */
+.ep-gate-rationale {
+  width: 100%;
+  margin-top: var(--s-2);
+  padding: var(--s-2);
+  border: 1px solid var(--rule-2);
+  border-radius: 2px;
+  background: var(--void);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--fs-ui);
+  line-height: 20px;
+  resize: vertical;
+}
+.ep-gate-rationale::placeholder { color: var(--dust); }
+.ep-gate-rationale:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 1px;
+  border-color: var(--rule-3);
+}
+
+/* A stage the loop was never evaluated at. Deliberately identical to the
+   base stage rather than styled as "pending": absence of a check must not
+   be dressed as a check that passed. */
+.ep-loop-stage[data-state="not-run"] { background: transparent; }
 
 /* ═══════════════════════════════════════════════════════════════════
    CREATIVITY GATE

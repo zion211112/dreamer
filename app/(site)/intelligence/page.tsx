@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { IntelligenceSurface } from "@/components/epistem/IntelligenceSurface";
 import Link from "next/link";
 import { StatusBand } from "@/components/site/StatusBand";
 import { Tally } from "@/components/site/Tally";
@@ -158,6 +159,26 @@ export default function IntelligencePage() {
             Back to the register
           </Link>
         </div>
+      </section>
+
+      {/* ── THE INSTRUMENT ─────────────────────────────────────────────
+          Everything above is the register AS PUBLISHED. What follows is
+          the register AS INSTRUMENTED: the live firewall, the guards
+          raised against these very claims, the confidence ledger behind
+          every figure, and the derived health vector.
+
+          Both halves belong on one page, because ASIANCODER.MD's failing
+          is a reader who cannot inspect the evidence at the moment of
+          judgement. A separate page for the apparatus is a separate
+          moment, and by then the reader has already believed something. */}
+      <section className="section closing" aria-labelledby="intelligence-instrument">
+        <div className="section-head">
+          <h2 className="section-title" id="intelligence-instrument">
+            The instrument
+          </h2>
+          <p className="section-kicker">live · derived from current state</p>
+        </div>
+        <IntelligenceSurface />
       </section>
     </>
   );

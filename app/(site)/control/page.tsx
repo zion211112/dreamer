@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ControlSurface } from "@/components/epistem/ControlSurface";
 import Link from "next/link";
 import { BuildGrid } from "@/components/site/BuildGrid";
 import { StatusBand } from "@/components/site/StatusBand";
@@ -209,6 +210,26 @@ export default function ControlPage() {
             Open the console
           </Link>
         </div>
+      </section>
+
+      {/* ── THE INSTRUMENT ─────────────────────────────────────────────
+          Everything above is the register AS PUBLISHED. What follows is
+          the register AS INSTRUMENTED: the live firewall, the guards
+          raised against these very claims, the confidence ledger behind
+          every figure, and the derived health vector.
+
+          Both halves belong on one page, because ASIANCODER.MD's failing
+          is a reader who cannot inspect the evidence at the moment of
+          judgement. A separate page for the apparatus is a separate
+          moment, and by then the reader has already believed something. */}
+      <section className="section closing" aria-labelledby="control-instrument">
+        <div className="section-head">
+          <h2 className="section-title" id="control-instrument">
+            The instrument
+          </h2>
+          <p className="section-kicker">live · derived from current state</p>
+        </div>
+        <ControlSurface />
       </section>
     </>
   );
