@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { StatusBand } from "@/components/site/StatusBand";
 import { BuildGrid } from "@/components/site/BuildGrid";
+import { StackStrata } from "@/components/site/StackStrata";
 import { Stack } from "@/components/site/Stack";
 import { StateTag } from "@/components/site/StateTag";
 import {
@@ -46,14 +47,21 @@ export const metadata = {
  * thing on the page and it should not have been.
  */
 export default function HomePage() {
-  const hasProduct = PRODUCTS.some((p) => p.href);
-
   return (
     <>
-      {/* ── 1. What this is ────────────────────────────────────── */}
-      <p className="label">
-        {COMPANY.kind} · {COMPANY.geography.value}
-      </p>
+      {/* ── 1. THE THESIS, stated at display size ─────────────────
+          ASIANCODER.MD opens with six separations that the whole product
+          exists to operationalise:
+
+            fluency != truth   confidence != evidence   coherence != causality
+            citation != verification   novelty != creativity   consensus != correctness
+
+          A reader who does not understand this company by the end of the
+          first viewport does not understand it at all, so it is rendered
+          as the first thing on the page rather than as a principles
+          section further down. It is the argument, and every screen below
+          it is a demonstration. */}
+      <p className="label">{COMPANY.kind}</p>
 
       <h1 className="hero">
         {COMPANY.mantraLines.map((line, i) => (
@@ -72,52 +80,37 @@ export default function HomePage() {
       </p>
 
       <div className="action-row" style={{ marginTop: "var(--s-5)" }}>
-        {hasProduct ? (
-          <Link href="/product" className="btn">
-            Open {CONSOLE.name} <span className="glyph">→</span>
-          </Link>
-        ) : null}
-        <Link href="/stack" className="btn-ghost">
-          Read the stack
+        <Link href="/stack" className="btn">
+          Read the stack <span className="glyph">→</span>
+        </Link>
+        <Link href={CONSOLE.href} className="btn-ghost">
+          Open the built layer
         </Link>
       </div>
 
-      {/* ── 2. The stack ────────────────────────────────────────
-          The ontology, immediately after the identity statement. This
-          section was missing from every previous version of the homepage,
-          and its absence was the site's most expensive omission: without
-          it, the architecture routes below read as the internals of one
-          school product rather than the lower half of a stack. The compact
-          setting shows the shape — one lit layer of five, four hairlines —
-          and the detail lives on /stack, one click away. */}
+      {/* ── 2. THE STACK, drawn ───────────────────────────────────
+          The stack is the argument, so it is drawn rather than listed.
+
+          It was five rows of identical weight, which made the one thing on
+          the page that is a PICTURE read like a table of contents — and it
+          meant the whole document had no focal point, because every section
+          was padding, a hairline, a mono label and two sentences.
+
+          StackStrata cuts it as a section instead: one lit stratum, four
+          designed ones, altitudes set by what each layer has to say. The
+          honest sentence about its own completeness lives in the margin
+          beside it rather than being asked of the diagram. */}
       <section className="section" aria-labelledby="stack-heading">
         <div className="section-head">
           <h2 className="section-title" id="stack-heading">
             The stack
           </h2>
           <p className="section-kicker">
-            {BUILT_LAYERS.length} of {STACK.length} built · states are structural
+            {BUILT_LAYERS.length} of {STACK.length} built
           </p>
         </div>
 
-        <p className="section-lede">
-          This company does not build one product; it builds five layers,
-          and each one runs on the record the layer below it holds — the
-          register an institution keeps, then identity, builds,
-          infrastructure and allocation above it. One layer has a surface
-          today. Read the left edge first: a lit bar is a layer that exists,
-          a hairline is a layer that is designed.
-        </p>
-
-        <Stack variant="compact" />
-
-        <p className="measures-caption">
-          The states on this page are structural, and the same six run
-          through every register here. A layer may not be rendered without
-          one, and none may be upgraded implicitly —{" "}
-          <Link href="/stack">the whole stack is published layer by layer</Link>
-          , with the evidence each unbuilt layer needs named beside it.
-        </p>
+        <StackStrata />
       </section>
 
       {/* ── 3. What we sell ───────────────────────────────────── */}
@@ -350,11 +343,9 @@ export default function HomePage() {
         </div>
 
         <div className="action-row" style={{ marginTop: "var(--s-5)" }}>
-          {hasProduct ? (
-            <Link href={CONSOLE.href} className="btn">
-              Open {CONSOLE.name} <span className="glyph">→</span>
-            </Link>
-          ) : null}
+          <Link href={CONSOLE.href} className="btn">
+            Open {CONSOLE.name} <span className="glyph">→</span>
+          </Link>
           <a href={`mailto:${COMPANY.contact.email}`} className="btn-ghost">
             {COMPANY.contact.email}
           </a>

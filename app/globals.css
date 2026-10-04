@@ -2775,3 +2775,167 @@ body::after {
   .register-row, .measure-cell, .tally-cell { break-inside: avoid; }
   a { color: #000; text-decoration: underline; }
 }
+/* ═══════════════════════════════════════════════════════════════════
+   THE STACK, DRAWN AS A SECTION
+
+   Replaces five same-weight rows. The page had no focal point because
+   every section was padding, a hairline, a mono label and two sentences
+   — and a stack is the one thing on it that is a PICTURE, not a list.
+
+   A stack is physical: a floor, layers bearing the weight of what is on
+   top of them, one lit because it exists. So it is cut like a section
+   rather than tabulated like a spec.
+
+   The altitude differences are REAL. Each stratum's height comes from the
+   length of the role it carries, so the diagram is measurement rather
+   than ornament — a layer with more to say is physically taller, and the
+   eye is led to the shape before it reads any of it.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.strata {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: var(--s-6);
+  align-items: start;
+  margin-top: var(--s-5);
+}
+
+.strata-col {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 2px;
+}
+
+/* Each stratum is a slab. The gap between them is the one place on this
+   page that reads as depth, and it is 2px on purpose: the strata should
+   look cut from one block, not stacked as five separate cards. */
+.stratum {
+  position: relative;
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) 3px;
+  gap: var(--s-3);
+  align-items: start;
+  padding: var(--s-4) var(--s-4) var(--s-4) 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.022),
+    rgba(255, 255, 255, 0)
+  );
+}
+
+.stratum-ord {
+  padding-top: 4px;
+  font-size: var(--fs-micro);
+  color: var(--dust);
+  letter-spacing: var(--ls-caps);
+}
+
+/* The lit edge. This single border is the read: a built layer carries a
+   live rule, a designed one carries a hairline and nothing behind it. */
+.stratum-edge { border-radius: 1px; background: var(--rule); }
+.stratum[data-built="true"] .stratum-edge {
+  background: var(--signal);
+  box-shadow: 0 0 14px rgba(53, 217, 164, 0.4);
+}
+
+.stratum-head {
+  display: flex;
+  gap: var(--s-2);
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.stratum-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  line-height: 30px;
+  letter-spacing: var(--ls-h2);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.stratum-alias {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+.stratum-role {
+  margin: 6px 0 0;
+  max-width: 60ch;
+  font-size: var(--fs-body);
+  line-height: 24px;
+  color: var(--ash);
+}
+
+/* The commercial half of the same sentence, set one step quieter. A layer
+   nobody needs is not a roadmap item, it is a diagram, and saying what it
+   settles is what separates the two. */
+.stratum-settles {
+  margin: 8px 0 0;
+  max-width: 62ch;
+  font-size: var(--fs-ui);
+  line-height: 20px;
+  color: var(--quiet);
+}
+
+.stratum-key {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--rule-3);
+}
+
+/* The margin carries the count and the honest sentence about it, so the
+   diagram is not asked to speak for its own completeness. */
+.strata-margin {
+  position: sticky;
+  top: var(--s-5);
+  padding: var(--s-4);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+}
+
+.strata-count {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-figure);
+  line-height: 1;
+  letter-spacing: var(--ls-figure);
+  color: var(--ink);
+}
+
+.strata-caption {
+  margin: var(--s-2) 0 0;
+  font-size: var(--fs-ui);
+  line-height: 20px;
+  color: var(--quiet);
+}
+
+.strata-link {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: var(--s-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--signal);
+  text-decoration: none;
+}
+.strata-link:hover { text-decoration: underline; }
+.strata-link .glyph { color: inherit; }
+
+/* The margin is a legend, not a column of equal weight, so it drops below
+   the section on narrow screens and the diagram keeps the full width. */
+@media (max-width: 900px) {
+  .strata { grid-template-columns: minmax(0, 1fr); gap: var(--s-4); }
+  .strata-margin { position: static; }
+}

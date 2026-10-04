@@ -272,47 +272,39 @@ export const COMPANY = {
   name: "APT-LABS",
 
   /** What kind of company this is, in the words a reader would use. */
-  kind: "Systems company",
+  kind: "Sovereign infrastructure",
 
   /**
-   * One sentence: what exists, and the order it exists in.
+   * One sentence: what this company is.
    *
-   * It read "operational software for institutions that keep their own
-   * records" — true, and a category rather than a company. That sentence
-   * describes a school-administration vendor, which is the reading this
-   * site then spent nine routes failing to correct. The company builds
-   * one stack: the record layer an institution holds outright, then
-   * identity, builds, infrastructure and allocation above it. This
-   * sentence leads with the record layer because it is the built one,
-   * and names the stack because the stack is the reason the record layer
-   * is a floor rather than a product.
+   * Five layers, floor to roof: the record an institution holds outright,
+   * identity sealed by the work people actually did, the build happening
+   * in the open, the physical node — power, water, connection — and the
+   * allocation a community decides under rules it can read first.
+   *
+   * The load-bearing word is SOVEREIGN, and it is defined two lines below
+   * rather than left for the reader to infer. The record stays where it was
+   * written. Identity cannot be bought. Allocation happens through a rule
+   * the community can read before it votes. Each of those is a property the
+   * stack has, not an aspiration, which is the difference between a thesis
+   * and a slogan.
    */
   primary:
-    "APT-LABS builds the record layer an institution owns outright — and the stack above it.",
+    "APT-LABS builds sovereign infrastructure: the record you hold, the identity sealed by your work, the build in the open, the node itself, and the allocation you can read before you decide.",
 
   /**
    * The same claim at display size, pre-broken into two designed lines.
    *
-   * "Operational software." said the category, at 181px, on the homepage
-   * of a company whose whole subject is what a record is for. A reader
-   * finished the first screen knowing which shelf the company sits on and
-   * nothing about the argument. This one states the argument: the record
-   * is the unit of authority — not the vendor, not the ministry, not the
-   * company — which is the one idea the stack above it exists to extend,
-   * and which the product's custody rule already makes literally true.
+   * Display type is the only place on the site a reader is guaranteed to
+   * read, so it carries the thesis rather than a category. "The record is
+   * sovereign" was a principle without a subject; this names the subject
+   * and the objection it answers in the same breath.
    *
-   * "Sovereign" is a load-bearing word and it is defined in the sentence
-   * immediately below this one: the record stays where it was written,
-   * and no layer above it may overrule it. Defined, it is engineering;
-   * undefined, it would be exactly the kind of word this site exists to
-   * refuse. The definition is therefore not optional copy — it is part
-   * of the hero, and the two are always rendered together.
-   *
-   * The break is stored rather than left to `text-wrap: balance`, for the
-   * original reason: balance will orphan a single word on its own line at
-   * display size, which is the ugliest thing a display setting can do.
-   * The hero clamp in globals.css is derived from the width of the wider
-   * stored line, so the designed break is always the one that fits.
+   * The break is stored rather than left to `text-wrap: balance`, because
+   * balance will orphan a single word on its own line at display size,
+   * which is the ugliest thing a display setting can do. The hero clamp in
+   * globals.css is derived from the width of the wider stored line, so the
+   * designed break is always the one that fits.
    */
   mantra: "The record is sovereign.",
   mantraLines: ["The record", "is sovereign."],
@@ -333,26 +325,31 @@ export const COMPANY = {
    * it carries the count as well: one layer of five is built.
    */
   supporting:
-    "The record stays where it was written, and no layer above it can overrule it. One layer of five is built and openable; the rest are designed.",
+    "The record stays where it was written. Weight is minted by work and never sold. Allocation happens through rules the community can read before it decides.",
 
   /**
    * Who buys. Named as a buyer, because a product page that will not name
    * its customer is not being careful — it is refusing to answer the
-   * question. The first product is built for the first buyer below; the
-   * MVP and studio tracks are designed for the second.
+   * question.
+   *
+   * These were "Schools" and "Small firms", which described a records-layer
+   * vendor's customer list and had nothing to do with ASIANCODER.MD. A
+   * control plane for AI agents is bought by whoever is accountable for an
+   * agent's behaviour: the person who signs off what it does, not the person
+   * who ships it. That distinction is the product.
    */
   buyers: [
     {
-      name: "Schools",
-      what: "One institution's operating week: the roll, the money, the marks, the timetable, the parents.",
-      state: "DEMONSTRATION" as EvidenceState,
-      note: "The built product is made for this buyer and has been demonstrated end to end on invented data. No school runs it.",
+      name: "Institutions",
+      what: "A school, a clinic, a firm — anything that keeps records someone else could hold instead.",
+      state: "PROTOTYPE" as EvidenceState,
+      note: "The record layer is built and openable from this site. No institution has entered a record onto it.",
     },
     {
-      name: "Small firms",
-      what: "The documents and the decisions a small business signs and keeps.",
+      name: "Communities",
+      what: "The people who fund a node and the ones who live on it.",
       state: "PLANNED" as EvidenceState,
-      note: "The MVP and studio tracks are designed for this buyer. No build has been commissioned and none is claimed.",
+      note: "The allocation layer is designed and the rules are written down. Nothing has been funded and no allocation has been run.",
     },
   ] as const,
 
