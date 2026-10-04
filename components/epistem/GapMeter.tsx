@@ -49,6 +49,8 @@ const STATUS_GLOSS: Record<GapReading["status"], string> = {
     "The two measures are close. Balance is not accuracy: two low measures still agree with each other, and a document that states nothing measures close to nothing.",
   FLUENCY_BELOW_SUPPORT:
     "The prose is doing less work than the evidence is. A smaller gap is not a safer artifact; it is also what a document that asserts nothing looks like.",
+  NOT_MEASURED:
+    "There is nothing on the other side of the scale yet. An unmeasured axis is not a zero, and a document with no evidence behind it does not read as a document with a fluency problem.",
 };
 
 export function GapMeter({
@@ -60,7 +62,8 @@ export function GapMeter({
   fluency: FluencyReading;
 }) {
   const danger = reading.status === "FLUENCY_ABOVE_SUPPORT";
-  const gap = signed(reading.gap);
+  const unmeasured = reading.status === "NOT_MEASURED";
+  const gap = reading.gap === null ? "not established" : signed(reading.gap);
 
   return (
     <div className="ep-gap" data-status={reading.status}>
@@ -76,7 +79,7 @@ export function GapMeter({
       {/* Status and distance in one line, before the bars, because the
           bars are the evidence for this sentence rather than the headline. */}
       <p className="ep-gap-status">
-        STATUS {reading.status} | GAP {gap} | fluency sits {relation(reading.gap)}{" "}
+        STATUS {reading.status} | GAP {gap} | fluency sits {relation(reading.gap ?? 0)}{" "}
         support on one shared 0.00 to 1.00 scale. A distance between two
         measures, not a score, and neither good nor bad on its own.
       </p>
@@ -94,10 +97,17 @@ export function GapMeter({
         <div
           className="ep-gap-bar"
           data-bar="SUPPORT"
-          style={{ "--v": pct(reading.support) } as CSSProperties}
+          style={
+            { "--v": reading.support === null ? "0%" : pct(reading.support) } as CSSProperties
+          }
+          data-measured={reading.support === null ? "false" : "true"}
         >
           <span>EVIDENCE SUPPORT</span>
-          <span>{reading.support.toFixed(2)}</span>
+          {/* An unmeasured support is an EMPTY bar with a word, never a
+              zero-width bar with a number. A bar at zero reads as a
+              measurement of nothing; a bar with nothing in it reads as
+              nobody having looked. */}
+          <span>{reading.support === null ? "not measured" : reading.support.toFixed(2)}</span>
         </div>
       </div>
 
@@ -120,7 +130,8 @@ export function GapMeter({
         <dt>WHERE SUPPORT CAME FROM</dt>
         {reading.supportBasis.map((b) => (
           <dd key={b.axis}>
-            {b.axis} - {b.value.toFixed(2)} - {b.why}
+            {b.axis} - {b.value === null ? "not measured" : b.value.toFixed(2)} -{" "}
+            {b.why}
           </dd>
         ))}
       </dl>

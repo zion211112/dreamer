@@ -17,10 +17,37 @@
 
 import { existsSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { dirname, resolve as resolvePath } from "node:path";
+import { fileURLToPath as toPath } from "node:url";
 
+const ROOT = dirname(dirname(toPath(import.meta.url)));
 const CANDIDATE_SUFFIXES = ["", ".ts", ".tsx", "/index.ts", "/index.tsx"];
 
 export async function resolve(specifier, context, next) {
+  /* The `@/` path alias, which tsconfig.json declares and Next.js resolves.
+     Without this the store cannot be imported outside the bundler at all —
+     which is precisely why scripts/check-epistemic.mjs had no test that
+     touched lib/state/. The module was unreachable rather than untested,
+     and the gap looked identical from either side.
+
+     Mapped from the repository root because that is what the alias means. */
+  if (specifier.startsWith("@/")) {
+    const base = resolvePath(ROOT, specifier.slice(2));
+    for (const suffix of CANDIDATE_SUFFIXES) {
+      const candidate = base + suffix;
+      if (existsSync(candidate)) {
+        return {
+          url: pathToFileURL(candidate).href,
+          format: candidate.endsWith(".ts") || candidate.endsWith(".tsx") ? "module-typescript" : "module",
+          shortCircuit: true,
+        };
+      }
+    }
+    throw new Error(
+      `check-epistemic.mjs could not resolve "${specifier}". Tried ${base} and its .ts/.tsx/index forms.`
+    );
+  }
+
   /* Bare specifiers and absolute URLs are not our business. */
   if (!specifier.startsWith(".") && !specifier.startsWith("/")) {
     return next(specifier, context);

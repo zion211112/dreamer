@@ -12,6 +12,7 @@ import { useMemo, useState } from "react";
 import {
   useEpistem,
   selectHealth,
+  selectContamination,
   selectMemorySurface,
   selectOpenGuardSummary,
 } from "@/lib/state/store";
@@ -19,6 +20,7 @@ import { AttackList } from "@/components/epistem/AttackList";
 import { GuardList } from "@/components/epistem/GuardList";
 import { HealthVector } from "@/components/epistem/HealthVector";
 import { reviewerAgreement } from "@/lib/epistemic/adversarial";
+import { MEMORY_NOW } from "@/lib/state/seed";
 import {
   GUARD_EVENTS,
   REVIEWER_PROFILES,
@@ -58,7 +60,8 @@ export function ControlSurface() {
     [statements, guards, branches, memory, traces]
   );
   const summary = useMemo(() => selectOpenGuardSummary(guards), [guards]);
-  const mem = useMemo(() => selectMemorySurface(memory, new Date()), [memory]);
+  const contamination = useMemo(() => selectContamination(memory, guards), [memory, guards]);
+  const mem = useMemo(() => selectMemorySurface(memory, guards, new Date(MEMORY_NOW)), [memory, guards]);
   const agreement = useMemo(() => reviewerAgreement(attacks), [attacks]);
 
   const open = attacks.filter((a) => a.status === "OPEN");
@@ -262,9 +265,41 @@ export function ControlSurface() {
           </h2>
           <p className="section-kicker">
             {mem.groups.length} kinds · <span className="figure">{mem.totals.stale}</span>{" "}
-            stale · <span className="figure">{mem.totals.neverExpires}</span> never expire
+            stale · <span className="figure">{mem.totals.contaminated}</span>{" "}
+            contaminated
           </p>
         </div>
+
+        {/* Contamination is reported BEFORE the item list, because a clean
+            bill of health that was computed from nothing is the failure
+            this panel had: `totals.contaminated` was structurally pinned at
+            zero because nothing recomputed it, so a memory whose origin
+            statement carried a CRITICAL finding still reported "all inside
+            their windows". */}
+        {contamination.length > 0 ? (
+          <div className="ep-conf-warn" style={{ marginBottom: "var(--s-3)" }}>
+            <strong>
+              {contamination.length} memory item
+              {contamination.length === 1 ? " is" : "s are"} contaminated
+            </strong>
+            :{" "}
+            {contamination.map((c) => (
+              <span key={c.itemId}>
+                {c.itemId} (from {c.originStatementId})
+              </span>
+            ))}
+            . {contamination.length === 1 ? "It has" : "They have"} been marked
+            and kept. Deleting a contradiction is on the forbidden-authority
+            list, so nothing is removed — the conflict is preserved and made
+            visible instead.
+          </div>
+        ) : (
+          <p className="section-lede" style={{ marginBottom: "var(--s-3)" }}>
+            No memory item is contaminated. This is recomputed from the
+            current guard findings on every render, so it is a measurement
+            rather than a default.
+          </p>
+        )}
         <div className="ep-ledger">
           {mem.groups.map((g) => (
             <div key={g.kind}>

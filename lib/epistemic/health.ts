@@ -150,14 +150,27 @@ export function measureFluency(text: string): FluencyReading {
 
 export interface GapReading {
   fluency: number;
-  /** The best available measure of epistemic support, 0..1. */
-  support: number;
-  /** fluency minus support. Positive is the danger case. */
-  gap: number;
+  /**
+   * The best available measure of epistemic support, or NULL when there is
+   * nothing to measure.
+   *
+   * Nullable because the previous version returned 0 for an empty project,
+   * and the meter rendered that as maximum danger — "fluency 0.23 against
+   * support 0.00" reads as catastrophic when the truth is that nobody has
+   * measured anything. Zero is a measurement; nothing is not, and this
+   * system has a whole state for the difference.
+   */
+  support: number | null;
+  /** fluency minus support. Positive is the danger case. Null when support is. */
+  gap: number | null;
   /** The contract's own name for the condition. */
-  status: "FLUENCY_BELOW_SUPPORT" | "BALANCED" | "FLUENCY_ABOVE_SUPPORT";
+  status:
+    | "FLUENCY_BELOW_SUPPORT"
+    | "BALANCED"
+    | "FLUENCY_ABOVE_SUPPORT"
+    | "NOT_MEASURED";
   /** Why support has the value it has, axis by axis. Never a bare number. */
-  supportBasis: { axis: HealthAxis; value: number; why: string }[];
+  supportBasis: { axis: HealthAxis; value: number | null; why: string }[];
 }
 
 export interface GapInput {
@@ -174,6 +187,15 @@ export interface GapInput {
  * Averaging nine axes in would dilute the signal this instrument exists to
  * raise, and would reintroduce exactly the commensurability the module
  * note refuses.
+ *
+ * NOTE WHAT SUPPORT DOES NOT DEPEND ON. It is computed from the STATEMENTS
+ * and GUARDS, never from `text`. The meter therefore measures the project's
+ * standing support and the draft's fluency — which is the honest pairing,
+ * and worth saying plainly because a reader is entitled to know that
+ * editing the box does not move the support bar. It moves because the
+ * draft becomes a guarded statement, which FieldSurface now does on every
+ * keystroke; before that it moved for no reason at all, and the instrument
+ * was a fluency meter with a constant.
  */
 export function measureGap(input: GapInput): GapReading {
   const fluency = measureFluency(input.text).value;
@@ -181,15 +203,24 @@ export function measureGap(input: GapInput): GapReading {
   const evidence = evidenceSupport(input.statements);
   const calibration = calibrationSupport(input.statements, input.guards);
 
-  const support = clamp01(Math.min(evidence, calibration));
+  /* Both must be a measurement. If either is unknown the composite is
+     unknown, because averaging a measurement with an absence produces a
+     number that describes neither. */
+  const support =
+    evidence === null || calibration === null
+      ? null
+      : clamp01(Math.min(evidence, calibration));
 
-  const gap = fluency - support;
-  const status =
-    gap > 0.18
-      ? "FLUENCY_ABOVE_SUPPORT"
-      : gap < -0.18
-        ? "FLUENCY_BELOW_SUPPORT"
-        : "BALANCED";
+  const gap = support === null ? null : fluency - support;
+
+  const status: GapReading["status"] =
+    gap === null
+      ? "NOT_MEASURED"
+      : gap > 0.18
+        ? "FLUENCY_ABOVE_SUPPORT"
+        : gap < -0.18
+          ? "FLUENCY_BELOW_SUPPORT"
+          : "BALANCED";
 
   return {
     fluency,
@@ -200,32 +231,40 @@ export function measureGap(input: GapInput): GapReading {
       {
         axis: "EVIDENCE",
         value: evidence,
-        why: `${input.statements.length} statement(s); support is the mean derived confidence of the consequential ones.`,
+        why:
+          evidence === null
+            ? "no consequential statement carries an evidence path yet"
+            : `${input.statements.length} statement(s); support is the mean derived confidence of the consequential ones.`,
       },
       {
         axis: "CALIBRATION",
         value: calibration,
-        why: `${input.guards.length} guard record(s); inflated confidence and suppressed unknowns pull this down.`,
+        why:
+          calibration === null
+            ? "nothing to calibrate against: no statements have been guarded"
+            : `${input.guards.length} guard record(s); inflated confidence and suppressed unknowns pull this down.`,
       },
     ],
   };
 }
 
-function evidenceSupport(statements: readonly Statement[]): number {
+/** Null when there is nothing to measure. Never 0 for "nothing". */
+function evidenceSupport(statements: readonly Statement[]): number | null {
   const consequential = statements.filter((s) =>
     ["FACT", "OBSERVATION", "INFERENCE", "SOURCE_CLAIM"].includes(s.category)
   );
-  if (consequential.length === 0) return 0;
+  if (consequential.length === 0) return null;
 
   const scores = consequential.map((s) => statementConfidence(s).score);
   return scores.reduce((a, b) => a + b, 0) / scores.length;
 }
 
+/** Null when there is nothing to calibrate against. */
 function calibrationSupport(
   statements: readonly Statement[],
   guards: readonly GuardRecord[]
-): number {
-  if (statements.length === 0) return 0;
+): number | null {
+  if (statements.length === 0) return null;
 
   /* Confidence inflation and unknown suppression are the two calibration
      failures that make a document read as more certain than it is, so they
@@ -306,15 +345,17 @@ export function healthVector(input: {
     {
       axis: "EVIDENCE",
       value:
-        consequential.length === 0
+        consequential.length === 0 || evidenceSupport(statements) === null
           ? null
           : clamp01(
-              sourced.length / Math.max(1, consequential.length) * 0.6 +
-                (evidenceSupport(statements) * 0.4)
+              (sourced.length / Math.max(1, consequential.length)) * 0.6 +
+                (evidenceSupport(statements) as number) * 0.4
             ),
       basis: [
         `${sourced.length} of ${consequential.length} consequential statement(s) carry at least one source`,
-        `mean derived confidence ${evidenceSupport(statements).toFixed(2)}`,
+        evidenceSupport(statements) === null
+          ? "no consequential statement carries an evidence path yet, so this axis is not measured"
+          : `mean derived confidence ${(evidenceSupport(statements) as number).toFixed(2)}`,
       ],
       question: HEALTH_AXIS_RULES.EVIDENCE.question,
       raise: "Attach an evidence path, or lower the category to match what the evidence supports.",

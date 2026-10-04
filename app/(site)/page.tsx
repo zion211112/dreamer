@@ -1,21 +1,24 @@
 import Link from "next/link";
 import { StatusBand } from "@/components/site/StatusBand";
 import { BuildGrid } from "@/components/site/BuildGrid";
+import { Stack } from "@/components/site/Stack";
 import { StateTag } from "@/components/site/StateTag";
 import {
+  BUILT_LAYERS,
   COMPANY,
   CONSOLE,
   MEASURES,
   PLANE as PLANE_NODES,
   PRODUCTS,
+  STACK,
   TARGETS,
   UNKNOWN_FACTS as UNKNOWN_ROWS,
 } from "@/lib/system";
 
 export const metadata = {
-  title: "APT-LABS — operational software for institutions",
+  title: "APT-LABS — the record layer, and the stack above it",
   description:
-    "APT-LABS builds and sells operational software for institutions that keep their own records. One management system is built and openable; there are no customers yet, and the site says so.",
+    "APT-LABS builds the record layer an institution owns outright, and the stack above it: identity, builds, infrastructure and allocation. One layer is built and openable; the rest are designs, held at the state they actually carry.",
 };
 
 /**
@@ -49,7 +52,7 @@ export default function HomePage() {
     <>
       {/* ── 1. What this is ────────────────────────────────────── */}
       <p className="label">
-        {COMPANY.kind} · {COMPANY.geography.scope}
+        {COMPANY.kind} · {COMPANY.geography.value}
       </p>
 
       <h1 className="hero">
@@ -71,15 +74,53 @@ export default function HomePage() {
       <div className="action-row" style={{ marginTop: "var(--s-5)" }}>
         {hasProduct ? (
           <Link href="/product" className="btn">
-            See the product <span className="glyph">→</span>
+            Open {CONSOLE.name} <span className="glyph">→</span>
           </Link>
         ) : null}
-        <a href={`mailto:${COMPANY.contact.email}`} className="btn-ghost">
-          Get in touch
-        </a>
+        <Link href="/stack" className="btn-ghost">
+          Read the stack
+        </Link>
       </div>
 
-      {/* ── 2. What we sell ───────────────────────────────────── */}
+      {/* ── 2. The stack ────────────────────────────────────────
+          The ontology, immediately after the identity statement. This
+          section was missing from every previous version of the homepage,
+          and its absence was the site's most expensive omission: without
+          it, the architecture routes below read as the internals of one
+          school product rather than the lower half of a stack. The compact
+          setting shows the shape — one lit layer of five, four hairlines —
+          and the detail lives on /stack, one click away. */}
+      <section className="section" aria-labelledby="stack-heading">
+        <div className="section-head">
+          <h2 className="section-title" id="stack-heading">
+            The stack
+          </h2>
+          <p className="section-kicker">
+            {BUILT_LAYERS.length} of {STACK.length} built · states are structural
+          </p>
+        </div>
+
+        <p className="section-lede">
+          This company does not build one product; it builds five layers,
+          and each one runs on the record the layer below it holds — the
+          register an institution keeps, then identity, builds,
+          infrastructure and allocation above it. One layer has a surface
+          today. Read the left edge first: a lit bar is a layer that exists,
+          a hairline is a layer that is designed.
+        </p>
+
+        <Stack variant="compact" />
+
+        <p className="measures-caption">
+          The states on this page are structural, and the same six run
+          through every register here. A layer may not be rendered without
+          one, and none may be upgraded implicitly —{" "}
+          <Link href="/stack">the whole stack is published layer by layer</Link>
+          , with the evidence each unbuilt layer needs named beside it.
+        </p>
+      </section>
+
+      {/* ── 3. What we sell ───────────────────────────────────── */}
       <section className="section" aria-labelledby="products-heading">
         <div className="section-head">
           <h2 className="section-title" id="products-heading">
@@ -92,15 +133,16 @@ export default function HomePage() {
         </div>
 
         <p className="section-lede">
-          One management system with a surface you can open today, and two
-          tracks that are designed rather than built. The rows below say
-          which is which, and every one of them names who it is for.
+          One management system with a surface you can open today — the
+          record layer&rsquo;s first implementation — and two tracks that are
+          designed rather than built. The rows below say which is which, and
+          every one of them names who it is for.
         </p>
 
         <BuildGrid />
       </section>
 
-      {/* ── 3. The measures ─────────────────────────────────────
+      {/* ── 4. The measures ─────────────────────────────────────
           The band renders MEASURES and carries its own explanatory row.
           It was previously followed by a caption claiming "every figure
           above is typed by hand — the measures this system publishes are
@@ -132,7 +174,7 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* One plain sentence, because a band of four figures with no
+        {/* One plain sentence, because a band of five figures with no
             sentence is the layout a corporation uses to make four numbers
             look like a business, and that is the specific impression this
             site is not trying to make. */}
@@ -148,7 +190,7 @@ export default function HomePage() {
         <StatusBand />
       </div>
 
-      {/* ── 4. Where this is going ──────────────────────────────
+      {/* ── 5. Where this is going ──────────────────────────────
           TARGET, used. The site defined this state, coloured it, gave it
           a rule, asserted its warmth in the contrast checker — and used
           it nowhere. A raise with no destination described on it is not a
@@ -186,7 +228,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 5. What is not yet true ─────────────────────────────
+      {/* ── 6. What is not yet true ─────────────────────────────
           The section that used to be called "What this system does not
           know" and published three rows about populations and
           performance. It is now the diligence register, in the reader's
@@ -232,7 +274,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 6. How it is built ──────────────────────────────────
+      {/* ── 7. How it is built ──────────────────────────────────
           The five nodes, last, and briefly. This is the section the
           previous version opened with at 181px. It is the most genuinely
           interesting thing about this company and it is also the thing a
@@ -295,9 +337,12 @@ export default function HomePage() {
             believe the parts it claims.
           </p>
           <p>
-            The thing being built here is software a school owns outright: it
-            runs on the school&rsquo;s own device, the records never leave it,
-            and every claim on this site can be opened and checked by anyone.
+            The thing being built here starts with software a school owns
+            outright: it runs on the school&rsquo;s own device, the records
+            never leave it, and every claim on this site can be opened and
+            checked by anyone. That is{" "}
+            <Link href="/stack">layer one of five</Link> — the layer the rest
+            of the stack runs on.{" "}
             <StateTag state={CONSOLE.dataState} /> means the data you see is
             invented. <StateTag state={CONSOLE.state} /> means the product
             that holds it is real and you can open it now.

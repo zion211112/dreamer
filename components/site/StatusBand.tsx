@@ -32,7 +32,7 @@ export function StatusBand() {
       <div className="status-band-item">
         <div className="status-band-key">Built</div>
         <p className="status-band-val">
-          One management system is built and openable here.{" "}
+          One layer of the five-layer stack is built and openable here.{" "}
           <span className="figure">0 customers</span> — measured, not
           assumed.
         </p>

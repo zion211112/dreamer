@@ -40,6 +40,29 @@ const ORDER: StatementCategory[] = [
   "UNKNOWN",
 ];
 
+/**
+ * Categories a reader may promote a statement INTO.
+ *
+ * Deliberately excludes FACT. A reader cannot promote anything into FACT
+ * by pressing a button: FACT means this system verified the claim from a
+ * named evidence path, and offering the control would be offering that
+ * entitlement by assertion. Reaching FACT requires evidence, or a
+ * promotion the gate accepts once its blockers are acknowledged — which is
+ * the whole difference between a controlled transition and a checkbox.
+ */
+const PROMOTABLE: readonly StatementCategory[] = [
+  "OBSERVATION",
+  "SOURCE_CLAIM",
+  "INFERENCE",
+  "HYPOTHESIS",
+  "PREDICTION",
+  "ASSUMPTION",
+  "NORMATIVE_JUDGMENT",
+  "DESIGN_CHOICE",
+  "SPECULATION",
+  "UNKNOWN",
+];
+
 export function RegisterSurface() {
   const statements = useEpistem((s) => s.statements);
   const sources = useEpistem((s) => s.sources);
@@ -48,9 +71,11 @@ export function RegisterSurface() {
   const memory = useEpistem((s) => s.memory);
   const runGuards = useEpistem((s) => s.runGuards);
   const acknowledge = useEpistem((s) => s.acknowledgeGuard);
+  const attemptPromotion = useEpistem((s) => s.attemptPromotion);
 
   const [filter, setFilter] = useState<StatementCategory | "ALL">("ALL");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [promotionNotice, setPromotionNotice] = useState<string | null>(null);
 
   /* `useEpistem.getState` is a stable singleton, so it is a free dependency.
      Listing it keeps the memo honest under exhaustive-deps: the selectors
@@ -270,6 +295,9 @@ export function RegisterSurface() {
               {list.map((s) => {
                 const derived = statementConfidence(s);
                 const own = selectGuardsFor(guards, s.id);
+                const blocking = own.filter(
+                  (g) => g.severity === "CRITICAL" && !g.acknowledged
+                );
                 const open = expanded === s.id;
                 return (
                   <div key={s.id} style={{ marginBottom: "var(--s-2)" }}>
@@ -298,6 +326,73 @@ export function RegisterSurface() {
                             emptyNote="No guard was raised against this statement."
                           />
                         ) : null}
+
+                        {/* THE PROMOTION GATE.
+
+                            attemptPromotion existed with no UI at all, which
+                            meant the one mechanism ASIANCODER.MD calls
+                            "structurally expensive" had no button: a human
+                            could acknowledge findings but could never
+                            actually attempt the transition those
+                            acknowledgements unblock.
+
+                            The button reports the refusal rather than
+                            hiding it. A blocked promotion names the CRITICAL
+                            guards doing the blocking and what a human has to
+                            do about them, because a gate that fails
+                            silently reads as a broken system. */}
+                        <div style={{ marginTop: "var(--s-3)" }}>
+                          <div className="ep-key" style={{ marginBottom: 6 }}>
+                            Promote to
+                          </div>
+                          <div className="action-row">
+                            {PROMOTABLE.map((to) => (
+                              <button
+                                key={to}
+                                type="button"
+                                className="btn-ghost"
+                                onClick={() => {
+                                  const res = attemptPromotion(
+                                    s.id,
+                                    to,
+                                    `Promoted to ${to} by human:local-operator from the statement inspector.`,
+                                    "human:local-operator"
+                                  );
+                                  setPromotionNotice(
+                                    res.ok
+                                      ? `Promoted ${s.id} to ${to}.`
+                                      : `Blocked: ${res.unblockBy ?? "an unacknowledged CRITICAL guard."}`
+                                  );
+                                }}
+                              >
+                                {to.replace(/_/g, " ").toLowerCase()}
+                              </button>
+                            ))}
+                          </div>
+
+                          {promotionNotice ? (
+                            <p
+                              className="section-lede"
+                              style={{ marginTop: "var(--s-2)" }}
+                              role="status"
+                            >
+                              {promotionNotice}
+                            </p>
+                          ) : null}
+
+                          {blocking.length > 0 ? (
+                            <ul className="ep-loop-gate" style={{ marginTop: "var(--s-2)" }}>
+                              {blocking.map((b) => (
+                                <li key={b.id}>
+                                  {b.severity} {b.event.replace(/_/g, " ").toLowerCase()}
+                                  {b.acknowledgedBy
+                                    ? ` — acknowledged by ${b.acknowledgedBy}`
+                                    : " — not yet acknowledged"}
+                                </li>
+                              ))}
+                            </ul>
+                          ) : null}
+                        </div>
                       </div>
                     ) : null}
                   </div>

@@ -55,7 +55,7 @@ import {
   type DiversityReading,
 } from "@/lib/epistemic/branches";
 import { appendEvent, forkTrace, rollbackTrace } from "@/lib/epistemic/trace";
-import { memorySurface, type MemorySurface } from "@/lib/epistemic/memory";
+import { contaminate, memorySurface, type MemorySurface } from "@/lib/epistemic/memory";
 import { SEED, SEED_EVALUATED_AT, seedProject } from "@/lib/state/seed";
 
 export interface PromotionResult {
@@ -134,9 +134,28 @@ export const useEpistem = create<StoreShape>()((set, get) => ({
   },
 
   acknowledgeGuard: (id, actorId) => {
+    const finding = get().guards.find((g) => g.id === id);
     set((s) => ({
       guards: s.guards.map((g) =>
         g.id === id ? { ...g, acknowledged: true, acknowledgedBy: actorId } : g
+      ),
+    }));
+
+    const latest = get().traces[get().traces.length - 1];
+    if (!latest || !finding) return;
+    set((s) => ({
+      traces: s.traces.map((t) =>
+        t.id !== latest.id
+          ? t
+          : appendEvent(t, {
+              at: new Date().toISOString(),
+              kind: "HUMAN_INTERVENTION",
+              actor: { type: "HUMAN", actorId },
+              summary: `${actorId} acknowledged ${finding.severity} ${finding.event} on ${finding.statementId ?? "project"}. The finding stands; it is not removed.`,
+              refs: finding.statementId ? [finding.statementId] : [],
+              guards: [],
+              metrics: {},
+            })
       ),
     }));
   },
@@ -203,9 +222,40 @@ export const useEpistem = create<StoreShape>()((set, get) => ({
         b.id === branchId ? appendVerdict(b, verdict) : b
       ),
     }));
+    /* Every human action enters the trace.
+
+       ASIANCODER.MD: "Human actions become part of the trace." They did
+       not. A verdict, an acknowledgement and an attack resolution each
+       changed state and left nothing in the run's history, so the trace
+       could not answer "who changed this and when" — which is the one
+       question a trace exists for. `logHumanIntervention` existed with
+       zero callers.
+
+       Recorded against the most recent trace, because a verdict about the
+       current work belongs to the current run. If there is no run yet the
+       action still lands in state; it simply has nothing to be recorded
+       against, which is worth knowing rather than worth faking. */
+    const latest = get().traces[get().traces.length - 1];
+    if (!latest) return;
+    set((s) => ({
+      traces: s.traces.map((t) =>
+        t.id !== latest.id
+          ? t
+          : appendEvent(t, {
+              at: new Date().toISOString(),
+              kind: "HUMAN_INTERVENTION",
+              actor: { type: "HUMAN", actorId: verdict.actorId },
+              summary: `${verdict.actorId} recorded ${verdict.verdict} on branch ${branchId}: ${verdict.rationale}`,
+              refs: [branchId],
+              guards: [],
+              metrics: {},
+            })
+      ),
+    }));
   },
 
   resolveAttack: (id, status) => {
+    const attack = get().attacks.find((a) => a.id === id);
     set((s) => ({
       attacks: s.attacks.map((a) =>
         a.id === id
@@ -343,8 +393,37 @@ export function selectSynthesisInput(branches: readonly Branch[]) {
   return synthesisInput(branches);
 }
 
-export function selectMemorySurface(memory: readonly MemoryItem[], now: Date): MemorySurface {
-  return memorySurface(memory, now);
+/**
+ * The memory surface, WITH contamination applied.
+ *
+ * `memorySurface` alone cannot report contamination, and that was the bug:
+ * `contaminate()` and `detectMemoryContamination()` existed in the domain
+ * with zero callers, no store action ever wrote to memory, and
+ * `totals.contaminated` was therefore structurally pinned at 0 — so the
+ * Control panel reported "all items are inside their windows" permanently,
+ * including for a memory item whose origin statement carried a CRITICAL
+ * finding.
+ *
+ * A contamination reading that is always zero is worse than no reading,
+ * because it is a clean bill of health produced by nothing. So the
+ * recomputation happens here, on read, from the CURRENT guards. Nothing is
+ * cached, so the number cannot drift from the findings behind it.
+ */
+export function selectMemorySurface(
+  memory: readonly MemoryItem[],
+  guards: readonly GuardRecord[],
+  now: Date
+): MemorySurface {
+  const result = contaminate(memory, guards);
+  return memorySurface(result.memory, now);
+}
+
+/** Contaminated items, derived from current guards. Empty means clean. */
+export function selectContamination(
+  memory: readonly MemoryItem[],
+  guards: readonly GuardRecord[]
+) {
+  return contaminate(memory, guards).contaminated;
 }
 
 export function selectGuardsFor(

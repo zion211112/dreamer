@@ -47,6 +47,55 @@ export function NodeIndex() {
         APT-LABS
       </Link>
 
+      {/* The company group, first in the rail.
+
+          This is a deliberate reordering, and it is the third one this
+          index has had, each for the same reason: navigation that opens
+          with the architecture explains the company to a reader who has
+          not yet been told what the company is.
+
+          The first pass opened with "Control plane · the loop" — five
+          architecture routes before anything a buyer would want. The
+          second opened with "What we sell". This one opens with the two
+          things a reader actually has questions about, in the order they
+          are asked: what is being built (the stack, the one page that
+          answers it), and what can be opened today (the product). The
+          loop below them is the system those two run on. */}
+      <div className="index-group">
+        <p className="index-group-key">The company</p>
+        <ul className="index-list">
+          <li>
+            <Link
+              href="/stack"
+              className="index-node"
+              aria-current={isCurrent("/stack") ? "page" : undefined}
+            >
+              {/* The stack in twelve pixels: a dark stratum, the one built
+                  layer emitting, a dark stratum. It is the same statement
+                  the section makes at full width, and it is the only place
+                  in this rail where a mark is drawn rather than written. */}
+              <span className="index-node-ord" aria-hidden="true">
+                <span className="strata-mark" />
+              </span>
+              <span className="index-node-name">Sovereign stack</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/product"
+              className="index-node"
+              aria-current={isCurrent("/product") ? "page" : undefined}
+            >
+              <span className="index-node-ord figure">01</span>
+              <span className="index-node-name">School Console</span>
+              {/* A lit port: this route has a product behind it, and it is
+                  the one link in this rail that opens something you can buy. */}
+              <span className="port port--live" aria-hidden="true" />
+            </Link>
+          </li>
+        </ul>
+      </div>
+
       <div className="index-group">
         <p className="index-group-key">The system · the loop</p>
         <ul className="index-list">
@@ -65,33 +114,12 @@ export function NodeIndex() {
         </ul>
       </div>
 
-      {/* The products group, first in the rail.
-
-          This is a deliberate reordering. The index previously opened with
-          "Control plane · the loop" and listed five architecture routes
-          before the reader reached anything a buyer would want, so the
-          navigation described the company's internal structure rather than
-          its output. A pitch prototype has to offer the product before it
-          explains the system that produced it — and it has to link to the
-          product page at all, which it did not. */}
-      <div className="index-group">
-        <p className="index-group-key">What we sell</p>
-        <ul className="index-list">
-          <li>
-            <Link
-              href="/product"
-              className="index-node"
-              aria-current={isCurrent("/product") ? "page" : undefined}
-            >
-              <span className="index-node-ord figure">01</span>
-              <span className="index-node-name">School Console</span>
-              {/* A lit port: this route has a product behind it, and it is
-                  the one link in this rail that opens something you can buy. */}
-              <span className="port port--live" aria-hidden="true" />
-            </Link>
-          </li>
-        </ul>
-      </div>
+      {/* The products group used to sit here, between the loop and the
+          lattice, and it held one link. It is gone rather than moved: both
+          of its jobs are now done better above — the stack is the page that
+          explains what the company is, and the product link sits beside it
+          in "The company" where a reader asks for it. The catalogue of
+          what is sold keeps its own route, linked from the foot below. */}
 
       <div className="index-group">
         <p className="index-group-key">One view of it</p>
@@ -123,8 +151,8 @@ export function NodeIndex() {
           than the links. When there is somewhere a reader can act, it is
           listed here — and until then this is the site's whole navigation. */}
       <p className="index-foot">
-        The five above are the system, and the view above them is the same
-        system drawn. {PRODUCTS.length} products and tracks are listed on{" "}
+        One system, five layers — and the loop below is how a record becomes a
+        decision. {PRODUCTS.length} products and tracks are listed on{" "}
         <Link href="/control">Control</Link>; exactly{" "}
         <span className="figure">{LIVE_BUILDS.length}</span> of them has a
         surface you can open today.

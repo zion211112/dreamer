@@ -733,6 +733,30 @@ body::after {
   color: var(--quiet);
 }
 
+/* The stack in twelve pixels, for the rail: the built layer at the top,
+   then four dark strata. Five bars of 2px and four gaps of 0.5px, drawn
+   with a gradient rather than set in a glyph — no mono face in this
+   system carries a stack, and adding a font dependency for a navigation
+   mark would be the tail wagging the dog. The lit bar is the same
+   signal the full-width section uses, so the rail and the section are
+   recognisably the same object at two densities. */
+.strata-mark {
+  width: 12px;
+  height: 12px;
+  background-image: linear-gradient(
+    to bottom,
+    var(--signal) 0 2px,
+    transparent 2px 2.5px,
+    var(--rule-2) 2.5px 4.5px,
+    transparent 4.5px 5px,
+    var(--rule-2) 5px 7px,
+    transparent 7px 7.5px,
+    var(--rule-2) 7.5px 9.5px,
+    transparent 9.5px 10px,
+    var(--rule-2) 10px 12px
+  );
+}
+
 .index-node-name {
   font-family: var(--font-display);
   font-size: var(--fs-label);
@@ -1746,6 +1770,15 @@ body::after {
   .plane-record { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-2); }
   .plane-record .index-group-key { width: 100%; }
   .record-state { margin-top: 0; padding-top: 0; border-top: 0; }
+
+  /* On a phone the rail is above the page, so everything in it is
+     above the thesis. An email address is not navigation: leaving the
+     contact card at the top means the first screen a phone shows is a
+     list of links with the company's one sentence some 600px below
+     them. Both corners reappear in "The ask", which is where a reader
+     has decided they want them. */
+  .index-cta,
+  .index-identity { display: none; }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -2297,12 +2330,203 @@ body::after {
   color: var(--quiet);
 }
 
+/* ═══════════════════════════════════════════════════════════
+   THE STACK — five layers of sovereignty, one built
+
+   The ontology rendered in the register's own grammar. Each layer is a
+   row, and the row's left edge is a 2px core sample: lit jade for the
+   layer that exists, a hairline for the layers that are designed. The
+   bar carries the section — a reader gets the argument from the left
+   margin before reading a word, which is what lets the compact setting
+   drop the prose and stay honest.
+
+   No cards, no shadows, no radii: the same rule as the register. A layer
+   is separated from the layer below it by one hairline, because strata
+   are contiguous and a stack with gaps in it is a list.
+   ═══════════════════════════════════════════════════════════ */
+
+.stack {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--rule-2);
+}
+
+.stack-layer {
+  position: relative;
+  padding: var(--s-4) 0 var(--s-4) var(--s-4);
+  border-bottom: 1px solid var(--rule);
+}
+
+/* The core sample. */
+.stack-layer::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--rule-2);
+}
+
+/* The built layer, and the only emphasis in the section: a wash that
+   fades within the first half of the row, so the light looks like it is
+   coming off the lit edge rather than filling a box. */
+.stack-layer[data-built="true"] {
+  background: linear-gradient(90deg, var(--signal-a08), transparent 46%);
+  border-bottom-color: var(--rule-2);
+}
+.stack-layer[data-built="true"]::before {
+  background: var(--signal);
+  box-shadow: 0 0 14px var(--signal-a30);
+}
+
+.stack-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--s-1) var(--s-3);
+}
+
+.stack-ord {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  color: var(--quiet);
+}
+.stack-layer[data-built="true"] .stack-ord { color: var(--signal); }
+
+.stack-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: var(--ls-h3);
+  color: var(--ink);
+}
+
+/* The instrument's own name, in the mono register: a proper noun beside
+   a common one reads as a label on a machine rather than as branding. */
+.stack-alias {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--ls-label);
+  color: var(--ash);
+}
+
+.stack-layer .state { margin-left: auto; }
+
+.stack-role {
+  margin: var(--s-2) 0 0;
+  max-width: 62ch;
+  font-size: var(--fs-ui);
+  line-height: 22px;
+  color: var(--dust);
+}
+
+.stack-built {
+  margin: var(--s-3) 0 0;
+  max-width: 62ch;
+  font-size: var(--fs-label);
+  line-height: 1.7;
+  color: var(--ash);
+}
+
+.stack-facts { margin: var(--s-3) 0 0; }
+
+.stack-fact {
+  display: grid;
+  grid-template-columns: 116px minmax(0, 1fr);
+  gap: var(--s-3);
+  padding: 8px 0;
+  border-top: 1px solid var(--rule);
+}
+.stack-fact dt {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+.stack-fact dd {
+  margin: 0;
+  max-width: 68ch;
+  font-size: var(--fs-label);
+  line-height: 1.7;
+  color: var(--ash);
+}
+/* The one fact that is a present-tense capability carries ink, so the
+   built layer's row is visibly more resolved than the designs above and
+   below it — and only that fact does. */
+.stack-layer[data-built="true"] .stack-fact:first-child dd { color: var(--dust); }
+
+/* The four contribution rules, in the same register as the stack. */
+.contribution {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule-2);
+}
+.contribution-rule {
+  display: grid;
+  gap: var(--s-2);
+  padding: var(--s-4) 0;
+  border-bottom: 1px solid var(--rule);
+}
+.contribution-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-3);
+}
+.contribution-rule-id {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  color: var(--quiet);
+}
+.contribution-rule-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-ui);
+  font-weight: 500;
+  letter-spacing: var(--ls-ui);
+  color: var(--ink);
+}
+.contribution-means {
+  margin: 0;
+  max-width: 68ch;
+  font-size: var(--fs-ui);
+  line-height: 22px;
+  color: var(--dust);
+}
+.contribution-never {
+  margin: 0;
+  max-width: 68ch;
+  font-size: var(--fs-label);
+  line-height: 1.7;
+  color: var(--ash);
+}
+.contribution-never::before {
+  content: "Never · ";
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--danger);
+}
+
+@media (max-width: 720px) {
+  .stack-layer { padding-left: var(--s-3); }
+  .stack-layer .state { margin-left: 0; }
+  .stack-fact { grid-template-columns: minmax(0, 1fr); gap: var(--s-1); }
+}
+
 /* Measures. A figure block states the number and, underneath it, what
    the number is and what state carries it — so a bare figure can never
    be lifted out of context and quoted as an achievement. */
 .measure-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   border: 1px solid var(--rule-2);
   background: rgba(10, 14, 21, 0.5);
 }
@@ -2347,6 +2571,17 @@ body::after {
   color: var(--quiet);
 }
 .measure-note { margin-top: 10px; font-size: var(--fs-label); line-height: 1.65; color: var(--ash); }
+
+/* Five cells need two intermediate steps, not one: at 5 columns a cell
+   is about 190px wide on a laptop, which is under the measure the key
+   line wants. Three columns above the two-column phone setting keeps
+   every figure on one row of its own cell. The cell rules follow the
+   column count, so a wrapped row never grows a leading hairline. */
+@media (max-width: 1180px) {
+  .measure-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .measure-cell:nth-child(3n + 1) { border-left: 0; }
+  .measure-cell:nth-child(n + 4) { border-top: 1px solid var(--rule); }
+}
 
 @media (max-width: 860px) {
   .measure-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }

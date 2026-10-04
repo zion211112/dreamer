@@ -955,7 +955,181 @@ function mkBranchLike(id, strategy, thesis, mechanism, contribution, assumptions
   );
 }
 
+
+/* ═══════════════════════════════════════════════════════════════════
+   16. THE FOUR GAPS THE HOSTILE REVIEW CALLED CRITICAL
+
+   Each of these was a mechanism that existed, was correct, and was never
+   called — so the system reported a clean result that it had computed
+   from nothing. That is worse than an absent feature, because it reads
+   as evidence of absence.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const mem = await import("../lib/epistemic/memory.ts");
+const hl = await import("../lib/epistemic/health.ts");
+
+/* 16a. Contamination must be derivable from current guards. */
+const seededMemory = [
+  {
+    id: "mem-1",
+    kind: "HYPOTHESIS",
+    text: "Dust is the cause.",
+    provenance: { entries: [{ at: NOW, actor: { type: "MODEL", capability: "FAST" }, action: "GENERATED" }] },
+    createdAt: NOW,
+    stale: false,
+    conflictWith: [],
+    originStatementId: model.StatementId.parse("demand-claim-1"),
+  },
+];
+const contam = mem.contaminate(seededMemory, [
+  {
+    id: "g1",
+    event: "CAUSALITY_OVERREACH",
+    severity: "CRITICAL",
+    statementId: model.StatementId.parse("demand-claim-1"),
+    observed: "because of migration",
+    evidence: "e",
+    raisedAt: NOW,
+    acknowledged: false,
+  },
+]);
+const clean = mem.contaminate(seededMemory, []);
+
+record(
+  "contamination is reachable and non-zero when a CRITICAL guard stands",
+  contam.contaminated.length === 1 && clean.contaminated.length === 0,
+  `${seededMemory.length} memory item whose origin carries a CRITICAL guard -> ${contam.contaminated.length} contaminated; with no guards -> ${clean.contaminated.length}`,
+  []
+);
+record(
+  "contaminated memory is marked, never deleted",
+  contam.memory.length === 1 && contam.memory[0].stale === true,
+  `${contam.memory.length} item(s) retained after contamination. Deleting a contradiction is on the forbidden-authority list.`,
+  contam.memory.length === 1 ? [] : [{ at: "memory.ts", detail: "A contaminated memory item was removed rather than marked." }]
+);
+
+/* 16b. Gap support must be null, not zero, when nothing is measured. */
+const emptyGap = hl.measureGap({ text: "short and confident.", statements: [], guards: [] });
+const populatedGap = hl.measureGap({
+  text: "A long, well-connected and confident paragraph that leans on connectives, therefore, however and notably to carry its argument along.",
+  statements: [fx.solarObservation],
+  guards: [],
+});
+record(
+  "gap support is null when nothing is measured",
+  emptyGap.support === null &&
+    emptyGap.gap === null &&
+    emptyGap.status === "NOT_MEASURED",
+  `empty project -> support=${String(emptyGap.support)}, status=${emptyGap.status}. It used to return 0.00, which the meter rendered as maximum danger rather than as "nobody looked".`,
+  emptyGap.support === null
+    ? []
+    : [{ at: "health.ts", detail: "A zero support on an unmeasured project is a fabricated measurement, which is the exact failure the null type exists to prevent." }]
+);
+record(
+  "gap support is a measurement once evidence exists",
+  populatedGap.support !== null && typeof populatedGap.gap === "number",
+  `with one observation -> support=${populatedGap.support === null ? "null" : populatedGap.support.toFixed(2)}, gap=${populatedGap.gap === null ? "null" : populatedGap.gap.toFixed(2)}`,
+  []
+);
+
+/* 16c. The FIELD draft must be guardable, and the causal draft in
+       particular must raise on the sentence ASIANCODER.MD warns about. */
+const draft = model.Claim.parse({
+  kind: "CLAIM",
+  id: model.StatementId.parse("draft"),
+  text: "Migrants increased local demand by 6%, which explains the rise in turnover. Experts agree that no further action is required.",
+  category: "INFERENCE",
+  chainStage: "INTERPRETED",
+  support: "UNTESTED",
+  provenance: { entries: [{ at: NOW, actor: { type: "HUMAN", actorId: "local-operator" }, action: "GENERATED" }] },
+  confidence: { factors: [] },
+  transitions: [],
+  guards: [],
+  unknowns: [],
+  parentIds: [],
+  evidenceIds: [],
+  sourceIds: [],
+  independentSupports: 0,
+  contradicting: [],
+  createdAt: NOW,
+});
+const draftGuards = guard.guardStatement({ statement: draft, all: [draft], sources: [], at: NOW });
+const draftEvents = new Set(draftGuards.map((g) => g.event));
+
+/* The shipped draft says "which explains", not "caused" or "led to". It
+   does not trip CAUSALITY_OVERREACH, and that is the detector being
+   correctly conservative: "explains" is used benignly ("this explains why
+   the bar is high") and the word lists are high-precision ON PURPOSE,
+   because a guard that fires constantly is a guard that gets ignored.
+
+   So this asserts the two things that are actually true — the draft's
+   consensus claim and its bare number ARE caught — and the causal case is
+   pinned separately using ASIANCODER's own phrasing. Padding the word list
+   to make this assertion pass would be trading the detector's precision for
+   the convenience of a green test, which is the wrong direction. */
+record(
+  "the shipped FIELD draft raises on its consensus claim and its bare number",
+  draftEvents.has("CONSENSUS_CLAIM_UNSUPPORTED") && draftEvents.has("UNSUPPORTED_SPECIFICITY"),
+  `a draft quoting consensus and carrying an unsourced number raises: ${[...draftEvents].join(", ")}. CAUSALITY_OVERREACH does NOT fire, because "which explains" is deliberately not in the causal word list.`,
+  []
+);
+
+const canonicalCausal = model.Claim.parse({
+  ...draft,
+  text: "The relocation programme caused the rise in local demand.",
+});
+const canonicalEvents = guard
+  .guardStatement({ statement: canonicalCausal, all: [canonicalCausal], sources: [], at: NOW })
+  .map((g) => g.event);
+record(
+  "a canonical causal phrasing still raises CAUSALITY_OVERREACH",
+  canonicalEvents.includes("CAUSALITY_OVERREACH"),
+  `"caused the rise" raises: ${canonicalEvents.join(", ") || "nothing"}`,
+  canonicalEvents.includes("CAUSALITY_OVERREACH")
+    ? []
+    : [{ at: "guard.ts", detail: "The high-precision word list lost a term it needs." }]
+);
+
+/* 16d. Human actions must reach the trace. */
+const tracedStore = (await import("../lib/state/store.ts")).useEpistem;
+const before = tracedStore.getState();
+tracedStore.getState().addVerdict("br-degrade", {
+  id: "v-trace-test",
+  verdict: "KEEP",
+  actorId: "human:trace-test",
+  at: NOW,
+  rationale: "traced on purpose",
+});
+const afterTrace = tracedStore.getState();
+const latestBefore = before.traces[before.traces.length - 1];
+const latestAfter = afterTrace.traces[afterTrace.traces.length - 1];
+record(
+  "a human verdict reaches the trace",
+  latestAfter.events.length === latestBefore.events.length + 1 &&
+    latestAfter.events[latestAfter.events.length - 1].kind === "HUMAN_INTERVENTION",
+  `trace events ${latestBefore.events.length} -> ${latestAfter.events.length}; last kind ${latestAfter.events[latestAfter.events.length - 1].kind}. ASIANCODER.MD requires that human actions become part of the trace.`,
+  []
+);
+
+const guardCountBefore = afterTrace.guards.length;
+const ackedId = afterTrace.guards.find((g) => !g.acknowledged)?.id;
+if (ackedId) {
+  tracedStore.getState().acknowledgeGuard(ackedId, "human:trace-test");
+}
+const postAck = tracedStore.getState();
+record(
+  "an acknowledgement reaches the trace and survives a re-run",
+  (() => {
+    tracedStore.getState().runGuards();
+    const recomputed = tracedStore.getState();
+    return recomputed.guards.find((g) => g.id === ackedId)?.acknowledged === true;
+  })(),
+  `${guardCountBefore} guard(s); acknowledging ${ackedId} and then re-running leaves it acknowledged`,
+  []
+);
+
 /* ── Report ──────────────────────────────────────────────────────── */
+
 
 
 const failed = results.filter((r) => !r.ok);

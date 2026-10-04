@@ -48,6 +48,23 @@ export default function ProductPage() {
 
       <p className="lede" style={{ marginTop: "var(--s-4)" }}>{CONSOLE.oneLine}</p>
 
+      {/* Where the product sits. Without this line the page is a product
+          sheet for one school system, which is a smaller and less
+          accurate thing than what the company is: this product is layer
+          one of five, and the layers above it are why a school would buy
+          it from someone who is still building them. */}
+      <p className="lede lede--quiet" style={{ marginTop: "var(--s-3)" }}>
+        This is the first layer of the stack — the record, held by the
+        institution itself.{" "}
+        <Link href="/stack">
+          What sits above it{" "}
+          <span className="glyph" aria-hidden="true">
+            →
+          </span>
+          <span className="sr-only">The stack</span>
+        </Link>
+      </p>
+
       {/* The two states, side by side, above the fold.
           This pairing is the page's central design decision. A product page
           that shows capability without provenance is advertising; one that
@@ -108,7 +125,7 @@ export default function ProductPage() {
       <section className="section" aria-labelledby="modules-heading">
         <div className="section-head">
           <h2 className="section-title" id="modules-heading">
-            What is in it
+            What the nine modules do
           </h2>
           <p className="section-kicker">
             {CONSOLE_MODULES.length} modules · {CONSOLE_TOOLS.length} tools ·{" "}

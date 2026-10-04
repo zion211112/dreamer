@@ -1,19 +1,29 @@
 import { ImageResponse } from "next/og";
-import { COMPANY } from "@/lib/system";
+import { BUILT_LAYERS, COMPANY, STACK } from "@/lib/system";
 
 /**
  * The link preview — the one surface read out of context.
  *
  * A share card is where a claim travels furthest from its evidence
- * state, so this one carries the product sentence and the PROTOTYPE
- * declaration side by side. No metrics, no logos of things that do not
+ * state, so this one carries the mantra, the product sentence, and the
+ * stack's own count side by side. The strip along the bottom is the five
+ * layers of the stack, in dependency order, because the card is the only
+ * place a reader meets the company's ontology before the site has a
+ * chance to explain it. No metrics, no logos of things that do not
  * exist, no imagery that implies a deployment: the same rule the site
  * applies, applied where it matters most.
  *
  * Rendered by Satori (default bundled font — zero network at build or
  * request time, in keeping with the self-hosted type register).
  */
-export const alt = `${COMPANY.name} — ${COMPANY.primary} (prototype)`;
+/**
+ * The alt text describes the card's own content and nothing more. It does
+ * not append "(prototype)" to the company name: only one of the five layers
+ * is a prototype, and a single qualifier on the whole card would say the
+ * other four are too — which is the exact category error this site exists
+ * to avoid, repeated on the one surface read out of context.
+ */
+export const alt = `${COMPANY.name} — ${COMPANY.mantra} ${COMPANY.primary} ${BUILT_LAYERS.length} of ${STACK.length} layers built: ${STACK.map((l) => l.name).join(", ")}.`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 // Satori runs on the edge runtime here: it is the deployment target's
@@ -22,7 +32,7 @@ export const contentType = "image/png";
 export const runtime = "edge";
 
 
-const NODES = ["01 Field", "02 Register", "03 Intelligence", "04 Control", "05 Evidence"];
+const LAYERS = STACK.map((layer) => `${layer.ord} ${layer.name}`);
 
 export default function OpengraphImage() {
   return new ImageResponse(
@@ -83,13 +93,23 @@ export default function OpengraphImage() {
           >
             <div
               style={{
-                width: 10,
-                height: 10,
-                border: "1.5px solid #35d9a4",
-                transform: "rotate(45deg)",
+                display: "flex",
+                flexDirection: "column",
+                gap: 3,
               }}
-            />
-            PROTOTYPE — NOT DEPLOYED
+            >
+              {[0, 1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  style={{
+                    width: 14,
+                    height: 2,
+                    background: i === 0 ? "#35d9a4" : "rgba(178,206,240,0.34)",
+                  }}
+                />
+              ))}
+            </div>
+            {BUILT_LAYERS.length} OF {STACK.length} LAYERS BUILT
           </div>
         </div>
 
@@ -141,9 +161,9 @@ export default function OpengraphImage() {
             color: "#8795a6",
           }}
         >
-          {NODES.map((node, i) => (
+          {LAYERS.map((layer, i) => (
             <div
-              key={node}
+              key={layer}
               style={{
                 display: "flex",
                 flexGrow: 1,
@@ -151,7 +171,7 @@ export default function OpengraphImage() {
                 borderLeft: i === 0 ? "none" : "1px solid rgba(178,206,240,0.14)",
               }}
             >
-              {node}
+              {layer}
             </div>
           ))}
         </div>

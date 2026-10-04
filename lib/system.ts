@@ -272,26 +272,41 @@ export const COMPANY = {
   name: "APT-LABS",
 
   /** What kind of company this is, in the words a reader would use. */
-  kind: "Software company",
+  kind: "Systems company",
 
-  /** One sentence, in the commercial register. This is the lede. */
+  /**
+   * One sentence: what exists, and the order it exists in.
+   *
+   * It read "operational software for institutions that keep their own
+   * records" — true, and a category rather than a company. That sentence
+   * describes a school-administration vendor, which is the reading this
+   * site then spent nine routes failing to correct. The company builds
+   * one stack: the record layer an institution holds outright, then
+   * identity, builds, infrastructure and allocation above it. This
+   * sentence leads with the record layer because it is the built one,
+   * and names the stack because the stack is the reason the record layer
+   * is a floor rather than a product.
+   */
   primary:
-    "APT-LABS builds and sells operational software for institutions that keep their own records.",
+    "APT-LABS builds the record layer an institution owns outright — and the stack above it.",
 
   /**
    * The same claim at display size, pre-broken into two designed lines.
    *
-   * "Records, not assertions." was the previous mantra, and it was
-   * structurally wrong for a company selling software: it is a statement
-   * about a house style, it names no product, and it invites the reader to
-   * admire a discipline rather than consider a purchase. At 181px it was
-   * the largest text on the site and the least commercial sentence on it.
+   * "Operational software." said the category, at 181px, on the homepage
+   * of a company whose whole subject is what a record is for. A reader
+   * finished the first screen knowing which shelf the company sits on and
+   * nothing about the argument. This one states the argument: the record
+   * is the unit of authority — not the vendor, not the ministry, not the
+   * company — which is the one idea the stack above it exists to extend,
+   * and which the product's custody rule already makes literally true.
    *
-   * This one says what the company is, in two words, and holds at display
-   * size. The discipline it implies — we will show you the register — is
-   * carried by the rest of the site rather than by the hero, which is the
-   * right place for it: the differentiator is how this product behaves
-   * under inspection, not a claim made at the largest available size.
+   * "Sovereign" is a load-bearing word and it is defined in the sentence
+   * immediately below this one: the record stays where it was written,
+   * and no layer above it may overrule it. Defined, it is engineering;
+   * undefined, it would be exactly the kind of word this site exists to
+   * refuse. The definition is therefore not optional copy — it is part
+   * of the hero, and the two are always rendered together.
    *
    * The break is stored rather than left to `text-wrap: balance`, for the
    * original reason: balance will orphan a single word on its own line at
@@ -299,21 +314,26 @@ export const COMPANY = {
    * The hero clamp in globals.css is derived from the width of the wider
    * stored line, so the designed break is always the one that fits.
    */
-  mantra: "Operational software.",
-  mantraLines: ["Operational", "software."],
+  mantra: "The record is sovereign.",
+  mantraLines: ["The record", "is sovereign."],
 
   /**
-   * What it sells, and in what shape. Three product kinds, named as
-   * products.
+   * What that means, cashed immediately. One sentence, two clauses: the
+   * definition of the word the hero uses, then the state of the stack.
    *
-   * This replaced a description of the system's internals — "evidence-
-   * bound records, operational decisions, and inspectable intelligence" —
-   * which no buyer has ever asked for. It is also the honest answer: all
-   * three kinds exist as work, and exactly one of them has a route today,
-   * which the product register below says out loud.
+   * It previously listed the three product kinds — management systems,
+   * MVPs, studios — which is the catalogue, and the catalogue has its own
+   * route. This line has a harder job: a word as large as "sovereign"
+   * must be defined before it can be believed, and the definition has to
+   * be a property the product actually has. It is: the record does not
+   * leave the device, so nothing above it can overrule it. That is the
+   * whole definition, and it fits in a sentence.
+   *
+   * This string is also the meta description and the share-card line, so
+   * it carries the count as well: one layer of five is built.
    */
   supporting:
-    "Management systems for institutions, MVPs commissioned against a named problem, and studios where a build happens in the open.",
+    "The record stays where it was written, and no layer above it can overrule it. One layer of five is built and openable; the rest are designed.",
 
   /**
    * Who buys. Named as a buyer, because a product page that will not name
@@ -904,6 +924,219 @@ export const LIVE_BUILDS: readonly Product[] = PRODUCTS.filter((p) => p.href);
 export const PLANNED_BUILDS: readonly Product[] = PRODUCTS.filter((p) => !p.href);
 
 /* ---------------------------------------------------------------- */
+/* THE STACK — the layers above the record                           */
+/* ---------------------------------------------------------------- */
+
+/**
+ * Five layers on one axis: how far a community's control over its own
+ * record has been extended.
+ *
+ * This is the company's ontology, and its absence was the largest single
+ * failure of the previous version of this site. That site described a
+ * record grammar and one product built on it, so a reader concluded —
+ * reasonably, from the only evidence on offer — that APT-LABS was a
+ * school-software vendor with an unusual auditing habit. The company is
+ * not that. It builds one stack, and the layers are ordered by
+ * dependency rather than by ambition, because each layer runs on the
+ * record the layer below it holds:
+ *
+ *   01 Record          what happened, entered where it happened
+ *   02 Identity        who was there, and what they did — The Roll
+ *   03 Build           the work done in the open — the Studio
+ *   04 Infrastructure  power, water and connection — the Fab
+ *   05 Allocation      what a community funds, by rules it can read
+ *
+ * The School Console is the first implementation of the first layer, and
+ * the only layer with a surface. Presenting the console as the whole
+ * company is how the site undersold itself; presenting the stack without
+ * the console would be how it oversold — so the two are always shown
+ * together, and each layer carries its own evidence state in the same
+ * grammar as every other register here.
+ *
+ * Every field is a claim with a state:
+ *
+ *   holds       what lives in the layer
+ *   built       what actually exists today, exactly
+ *   settles     the evidence that would move the layer up the scale
+ *   provenance  where it stands, and why
+ *
+ * A layer with nothing built carries no figure and no date anywhere:
+ * `settles` names the evidence, never a schedule, because a date on an
+ * unbuilt layer is a target wearing a deadline's clothes. The dates live
+ * in TARGETS, at TARGET, where they can be read as intentions.
+ */
+export interface StackLayer {
+  ord: string;
+  key: "record" | "identity" | "build" | "infrastructure" | "allocation";
+  name: string;
+  /** The instrument's own name, where it has one. Empty where it does not. */
+  alias: string;
+  /** One clause: what the layer does for the layer below it. */
+  role: string;
+  holds: string;
+  state: EvidenceState;
+  built: string;
+  settles: string;
+  provenance: string;
+}
+
+export const STACK: readonly StackLayer[] = [
+  {
+    /* The floor, and the only layer with a surface. Its provenance is the
+       strictest on the site because it is the one a reader can check:
+       open the product and the claim is in front of you. */
+    ord: "01",
+    key: "record",
+    name: "Record",
+    alias: "",
+    role: "What actually happened, entered where it happened, and held there.",
+    holds:
+      "Events, rows, seals, and the evidence state of every claim the institution makes from them.",
+    state: "PROTOTYPE",
+    built:
+      "The register grammar is implemented and enforced, and the first product built on it is openable from this site now. No institution has entered a record.",
+    settles: "One institution running the built product on its own records.",
+    provenance:
+      "Built and openable. Not deployed, not sold: there is no customer, no outcome record, and the data inside the product is invented and labelled DEMONSTRATION.",
+  },
+  {
+    /* The Roll. Held at PLANNED for one reason, and the reason is the
+       whole discipline of this file: parts of it exist as code in this
+       repository, and nothing about it is in use. A register the site
+       cannot open is a design, and a design is not a capability. */
+    ord: "02",
+    key: "identity",
+    name: "Identity",
+    alias: "The Roll",
+    role: "Who was here, and what they have done — weight minted by work, never bought.",
+    holds:
+      "A local register of people, each row sealed by hash, and contribution weight earned through recorded work that never transfers and is never for sale.",
+    state: "PLANNED",
+    built:
+      "Designed, with parts written: the register of people and its sealing are implemented in this repository and have no surface. No contribution record is in use and no selection has been run.",
+    settles:
+      "A first named group sealed in person, with contributions entered by the people who did the work.",
+    provenance:
+      "Held at PLANNED. The sealing is not the claim, being used is: until a group is on the roll with records behind them, this layer is a design.",
+  },
+  {
+    /* The studio track, named as an instrument. It is the layer that
+       makes the rest legible: a build performed with its register open. */
+    ord: "03",
+    key: "build",
+    name: "Build",
+    alias: "The Studio",
+    role: "The work happening in the open, with its register published while it happens.",
+    holds:
+      "Builds: the brief, the decisions taken, the records they produced, and what each build actually did.",
+    state: "PLANNED",
+    built:
+      "Designed as a track in the catalogue: builds worked on with the register public from brief to result. No build has been run in one.",
+    settles: "One build carried from brief to result with its register public throughout.",
+    provenance:
+      "Held at PLANNED. A studio that has not published a build is a room — designed, and not yet a claim.",
+  },
+  {
+    /* The kinetic layer. It is the one most likely to be claimed early
+       and evidenced late, which is exactly why it carries no figure. */
+    ord: "04",
+    key: "infrastructure",
+    name: "Infrastructure",
+    alias: "The Fab",
+    role: "Power, water and connection at the node — the layer software alone cannot reach.",
+    holds:
+      "Deployments and their meters: what was built, what it produced, what it consumed and what it cost.",
+    state: "PLANNED",
+    built: "Designed, not built. There is no site, no deployment and no meter record.",
+    settles:
+      "One site operating, with its output published as a register rather than as a press note.",
+    provenance:
+      "Held at PLANNED, and it carries no figure here for that reason: this is the layer every infrastructure company in the world describes in the future tense.",
+  },
+  {
+    /* Allocation, by rule. The mechanism is the part that must not be
+       rushed: an allocation rule that has not run is a hypothesis, and
+       this site does not publish hypotheses as machinery. */
+    ord: "05",
+    key: "allocation",
+    name: "Allocation",
+    alias: "BenBen",
+    role: "Where a community decides what to fund, under rules it can read before it decides.",
+    holds:
+      "Proposals, the thresholds that govern them, the decisions taken, and the work that followed each decision.",
+    state: "PLANNED",
+    built:
+      "Designed as a board where proposals are posted, needs are stated, and decisions are taken under published rules. No pool, no round and no allocation has been run through it.",
+    settles: "One funding round run end to end, with its rules, decisions and results published.",
+    provenance:
+      "Held at PLANNED. Nothing about this layer is claimed here — the contribution rules below are the design it will have to satisfy, not a description of it running.",
+  },
+] as const;
+
+/** The layers with a surface. The figure the stack section leads with. */
+export const BUILT_LAYERS: readonly StackLayer[] = STACK.filter(
+  (layer) => layer.state === "PROTOTYPE"
+);
+
+/* ---------------------------------------------------------------- */
+/* CONTRIBUTION — the four rules the identity layer must satisfy     */
+/* ---------------------------------------------------------------- */
+
+/**
+ * The design rules for weight on The Roll, stated as constraints rather
+ * than as features.
+ *
+ * Each row is written as `rule / means / never`, because a governance
+ * mechanism is only as trustworthy as the thing it forbids. The fourth
+ * row is the load-bearing one: every system of this shape publishes a
+ * concentration threshold and a corrective action, and not one this
+ * company has seen can be checked by a reader. The threshold is
+ * deliberately NOT printed here — the rule that would give it meaning is
+ * not running, so a number would be a slogan with a decimal point. The
+ * register's own contract (PLANNED carries no figures) is what makes
+ * that a principle rather than an omission.
+ */
+export const CONTRIBUTION: readonly {
+  id: string;
+  rule: string;
+  means: string;
+  never: string;
+}[] = [
+  {
+    id: "C-01",
+    rule: "Earned, not bought",
+    means:
+      "Weight is minted by recorded work — physical, digital or institutional — and every unit of it cites the record it came from.",
+    never:
+      "A vote that can be purchased. A purchasable vote is the mechanism this exists to replace.",
+  },
+  {
+    id: "C-02",
+    rule: "Bound, not traded",
+    means:
+      "A contribution mark is held by the person who did the work, seals to that person, and does not transfer, split or appreciate.",
+    never:
+      "A position. Anything that can be sold can be accumulated, and anything accumulated becomes a class.",
+  },
+  {
+    id: "C-03",
+    rule: "Drawn, not elected",
+    means:
+      "Where a decision needs a body, the body is drawn from contributors for that one decision and dissolves when it is taken.",
+    never:
+      "A standing committee. Ephemeral juries are the defence against a permanent governance class.",
+  },
+  {
+    id: "C-04",
+    rule: "Captured, then corrected",
+    means:
+      "Concentration is measured and published, and past a stated line a corrective rule fires — weights flatten until balance returns.",
+    never:
+      "A published threshold with nothing behind it. This site does not print one, because the rule that would give it meaning is not running yet.",
+  },
+] as const;
+
+/* ---------------------------------------------------------------- */
 /* MEASURES — figures that appear in the first viewport              */
 /* ---------------------------------------------------------------- */
 
@@ -934,6 +1167,17 @@ export interface Measure {
 export const MEASURED_MODULE_COUNT = "9";
 
 export const MEASURES: readonly Measure[] = [
+  {
+    /* The stack figure leads the band, and it is the one number that
+       states what the company is rather than what it has sold: how much
+       of its own architecture exists. Counted from STACK, so it is true
+       by construction — add a layer with a surface and the figure
+       follows. */
+    figure: `${BUILT_LAYERS.length} / ${STACK.length}`,
+    key: "layers of the stack built",
+    note: "The record layer is built and openable; identity, builds, infrastructure and allocation are designed, not built.",
+    state: "PROTOTYPE",
+  },
   {
     /* Counted, not typed. Deriving these from the arrays above makes them
        true by construction: add a product row and the figure follows.
@@ -1153,7 +1397,19 @@ export const TARGETS: readonly {
     by: "2027-Q2",
   },
   {
+    /* The stack's own target, and it is placed before the commercial
+       count on purpose: three paying schools is a business milestone,
+       and a layer above the record made real is the thing the business
+       exists to reach. Both are TARGET — intentions, with a named
+       measure and a date, never results. */
     id: "TGT-03",
+    what: "The first layer above the record made real and published.",
+    measure:
+      "One named group on the roll with contributions entered by the people who did the work, or one build carried from brief to result with its register public — evidenced by the records themselves rather than by an announcement.",
+    by: "2027-Q3",
+  },
+  {
+    id: "TGT-04",
     what: "Three paying schools, which is the number at which this stops being one pilot.",
     measure:
       "Three distinct paying institutions, counted from contracts rather than from installations.",

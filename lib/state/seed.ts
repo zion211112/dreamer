@@ -56,6 +56,40 @@ const T = "2026-10-04T09:00:00.000Z";
  */
 export const SEED_EVALUATED_AT = "2026-10-04T09:05:00.000Z";
 
+/**
+ * The instant this project's memory ages are measured against.
+ *
+ * Fixed for the same reason as SEED_EVALUATED_AT: `new Date()` during a
+ * render means the server and the browser compute different ages, and an
+ * age is exactly the kind of number that must not differ between two
+ * honest evaluations of the same state.
+ */
+export const MEMORY_NOW = "2026-10-04T09:10:00.000Z";
+
+/** When the FIELD draft is evaluated. Fixed for the same hydration reason. */
+export const FIELD_EVALUATED_AT = "2026-10-04T09:12:00.000Z";
+
+/**
+ * The categories a reader may classify an entering draft as.
+ *
+ * Ranked strongest-first, and the list is deliberately shorter than the
+ * full eleven. It omits FACT, because a reader cannot declare something a
+ * fact by choosing it — FACT means this system verified it, and offering
+ * the button would be offering a category by assertion, which is the
+ * category error the firewall exists to prevent. They can get there by
+ * evidence and by promotion through the gate.
+ */
+export const DRAFT_CATEGORIES = [
+  "OBSERVATION",
+  "SOURCE_CLAIM",
+  "INFERENCE",
+  "HYPOTHESIS",
+  "PREDICTION",
+  "ASSUMPTION",
+  "SPECULATION",
+  "UNKNOWN",
+] as const;
+
 const prov = (actor: "SYSTEM" | "MODEL", note?: string) => ({
   entries: [
     {
