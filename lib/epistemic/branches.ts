@@ -294,14 +294,22 @@ export function measureDiversity(branches: readonly Branch[]): DiversityReading 
    ═══════════════════════════════════════════════════════════════════ */
 
 export function appendVerdict(branch: Branch, verdict: HumanVerdict): Branch {
+  /* Compute over the list INCLUDING the new verdict. Reading the old list
+     here is an off-by-one that makes PROTECT_FROM_OPTIMIZATION a no-op on
+     the call that sets it — the protection silently never takes effect,
+     which is the single worst failure this module could have, because
+     the UI would show the branch as protected while synthesis was still
+     consuming it.
+
+     Recomputed rather than set, so a model cannot clear the flag by
+     appending anything: the only input is the list of human verdicts and
+     there is no code path that writes this field to false. */
+  const verdicts = [...branch.verdicts, verdict];
+
   return {
     ...branch,
-    verdicts: [...branch.verdicts, verdict],
-    /* Recomputed, never set directly. A branch becomes protected the
-       moment a human protects it and can never be un-set by a model,
-       because there is no code path that writes this field except this
-       function and this function only ever sets it to true. */
-    protectedFromOptimization: branch.verdicts.some(
+    verdicts,
+    protectedFromOptimization: verdicts.some(
       (v) => v.verdict === "PROTECT_FROM_OPTIMIZATION"
     ),
   };
