@@ -3197,7 +3197,7 @@ body::after {
    Nine characters removes the question. */
 .identity-trigger {
   display: inline-flex;
-  gap: 7px;
+  gap: 8px;
   align-items: center;
   width: auto;
   height: 32px;
