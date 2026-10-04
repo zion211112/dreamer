@@ -228,6 +228,28 @@ if (VOCABULARY.length === 0) {
   );
 }
 
+/* The scope, read from the declaration rather than restated here.
+ *
+   The ban binds every public route except the ones named as exempt, and
+   /product is the only exemption: its subject IS the product, and a page
+   about a product that refuses to name what the product does is refusing
+   to answer the buyer's question. A second copy of this list would be a
+   second answer to one question, which is the exact failure the export
+   exists to prevent — so this script reads the declaration. */
+const EXEMPT_ROUTES = [
+  ...blockOf(SYSTEM, "CONSOLE_VOCABULARY_SCOPED", "lib/system.ts").matchAll(/"([^"]*)"/g),
+]
+  .map((m) => m[1])
+  .filter((t) => t.startsWith("/"));
+
+if (EXEMPT_ROUTES.length === 0) {
+  throw new Error(
+    "CONSOLE_VOCABULARY_SCOPED declares no exempt route. The ban is therefore " +
+      "absolute, which is the opposite of what lib/system.ts says about it — " +
+      "either the scope declaration was emptied or the product page was removed."
+  );
+}
+
 /* Whole words, case-insensitively. Substring matching is how a ban list
    gets worked around within a week of being written: `class` inside
    `classification`, `mark` inside `marker`, and then somebody starts
@@ -313,9 +335,24 @@ const SPECIFIER = /(?:^|[^\w$])(?:from|import|require)\s*(?:\(\s*)?$/;
 const PATH_LIKE = /^[@~]|^[.\/]/;
 
 let audited = 0;
+let exemptFiles = 0;
 const leaks = [];
 
+/* A file is exempt when it lives under a declared exempt route. The
+   comparison is on the route prefix, so app/(site)/product/page.tsx is
+   covered by the declaration "/product". An exempt file is still read and
+   still counted — it is reported as exempt rather than skipped silently,
+   because a ban nobody can see is a ban nobody maintains. */
+const isExempt = (file) =>
+  EXEMPT_ROUTES.some((route) =>
+    file.includes(`/${route.replace(/^\//, "")}/`)
+  );
+
 for (const file of ROUTE_FILES) {
+  if (isExempt(file)) {
+    exemptFiles++;
+    continue;
+  }
   const text = stripComments(read(file));
   for (const lit of literals(text)) {
     const before = text.slice(Math.max(0, lit.start - 240), lit.start);
@@ -337,7 +374,7 @@ record(
   "route lexicon",
   leaks.length === 0,
   `${VOCABULARY.length} terms banned · ${leaks.length} of ${audited} rendered ` +
-    `strings in ${ROUTE_FILES.length} files`,
+    `strings in ${ROUTE_FILES.length} files · ${exemptFiles} exempt (${EXEMPT_ROUTES.join(", ")})`,
   leaks
 );
 
@@ -362,14 +399,32 @@ record(
 const CONSOLE_MODULES = ["@/lib/console", "@/lib/school"];
 const reachings = [];
 let siteFiles = 0;
+let importingFiles = 0;
 
+/* The product page is exempt from the direction rule too, and for the same
+   reason it is exempt from the vocabulary ban: its subject is the product.
+
+   This is the one place on the site where importing lib/console.ts is the
+   correct behaviour rather than a leak, because the product page's whole
+   job is to show what the product contains — and a hand-copied module list
+   is precisely the seven-copies-of-a-count failure this file exists to
+   prevent. Reading CONSOLE_MODULES directly makes the list correct by
+   construction: add a module to the console and the product page shows it.
+
+   The exemption is read from CONSOLE_VOCABULARY_SCOPED, so there is one
+   declaration of which route may touch the console's own vocabulary and
+   not two. */
 for (const dir of SITE_ROOTS) {
   for (const file of walk(dir)) {
     siteFiles++;
+    if (EXEMPT_ROUTES.some((route) => file.includes(`/${route.replace(/^\//, "")}/`))) {
+      continue;
+    }
     const text = stripComments(read(file));
     for (const m of text.matchAll(
       /(?:from|import|require)\s*\(?\s*["'](@\/lib\/(?:console|school))["']/g
     )) {
+      importingFiles++;
       reachings.push({
         at: `${file}:${lineOf(text, m.index)}`,
         detail: `${m[1]}  —  the console's vocabulary, imported into the public surface`,
@@ -381,7 +436,8 @@ for (const dir of SITE_ROOTS) {
 record(
   "import direction",
   reachings.length === 0,
-  `${siteFiles} site files · ${reachings.length} import ${CONSOLE_MODULES.join(" or ")}`,
+  `${siteFiles} site files · ${reachings.length} import ${CONSOLE_MODULES.join(" or ")} · ` +
+    `${importingFiles} reachings`,
   reachings
 );
 
@@ -500,6 +556,61 @@ record(
 );
 
 /* ═══════════════════════════════════════════════════════════════════
+   5. THE PUBLISHED MODULE COUNT MATCHES THE CONSOLE
+
+   MEASURES renders the console's module count in the first viewport, and
+   it is the only figure on the site that comes from the console's own
+   source of truth rather than from lib/system.ts. That is deliberate and
+   it is also the largest drift risk on the site: lib/system.ts cannot
+   import lib/console.ts without inverting the one-way dependency this
+   script exists to keep, so the number has to be typed on one side and
+   verified from the other.
+
+   It was typed in six places with nothing keeping any of them in step. It
+   is now typed once, in MEASURED_MODULE_COUNT, and asserted here against
+   CONSOLE_MODULES.length — which is what makes it the one figure on the
+   site that is a claim with a verification path, and therefore the only
+   one that satisfies RULE-05.
+
+   If this fails, the fix is to update MEASURED_MODULE_COUNT. Adding or
+   cutting a console module should break the build here, and this is that
+   break.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const declaredCount =
+  /export\s+const\s+MEASURED_MODULE_COUNT\s*=\s*"(\d+)"/.exec(SYSTEM)?.[1];
+
+if (declaredCount === undefined) {
+  throw new Error(
+    "MEASURED_MODULE_COUNT could not be read from lib/system.ts. The first " +
+      "viewport publishes this figure and nothing verifies it any more, which is " +
+      "the state this assertion was written to end — re-point " +
+      "scripts/check-lexicon.mjs at its declaration."
+  );
+}
+
+const actualCount = [
+  ...blockOf(CONSOLE, "CONSOLE_MODULES", "lib/console.ts").matchAll(/"([^"]*)"/g),
+].length;
+
+record(
+  "module count verified",
+  Number(declaredCount) === actualCount,
+  `MEASURED_MODULE_COUNT ${declaredCount} · CONSOLE_MODULES.length ${actualCount}` +
+    (Number(declaredCount) === actualCount
+      ? " · the published figure is the real one"
+      : " · the first viewport is publishing a number the console does not have"),
+  Number(declaredCount) === actualCount
+    ? []
+    : [
+        {
+          at: "lib/system.ts",
+          detail: `MEASURED_MODULE_COUNT is "${declaredCount}" but lib/console.ts declares ${actualCount} modules`,
+        },
+      ]
+);
+
+/* ═══════════════════════════════════════════════════════════════════
    Report
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -514,7 +625,7 @@ console.log(
 for (const { check, detail, ok, evidence } of results) {
   console.log(`${check.padEnd(pad)}  ${ok ? "PASS" : "FAIL"}  ${detail}`);
   /* The evidence sits under the invariant it breaks rather than beside it:
-     the table is four named invariants, and a file:line under the one that
+     the table is five named invariants, and a file:line under the one that
      failed is the difference between a finding and a number. */
   for (const e of evidence) {
     console.log(`${"".padEnd(pad)}      ${e.at}  ${e.detail}`);
@@ -531,6 +642,6 @@ if (failed.length > 0) {
   process.exit(1);
 }
 console.log(
-  `\nAll ${results.length} invariants hold: one banned list, one direction of import, ` +
-    `one name list, every citation resolvable.\n`
+  `\nAll ${results.length} invariants hold: one banned list with its scope declared, one ` +
+    `direction of import, one name list, every citation resolvable, one verified module count.\n`
 );

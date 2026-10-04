@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { PLANE } from "@/lib/system";
+import { COMPANY, LIVE_BUILDS, PLANE, PRODUCTS } from "@/lib/system";
+import { Identity } from "./Identity";
+import { StateTag } from "./StateTag";
 
 /**
  * The node index — this system's palette.
@@ -46,7 +48,7 @@ export function NodeIndex() {
       </Link>
 
       <div className="index-group">
-        <p className="index-group-key">Control plane · the loop</p>
+        <p className="index-group-key">The system · the loop</p>
         <ul className="index-list">
           {PLANE.map((node) => (
             <li key={node.key}>
@@ -63,7 +65,35 @@ export function NodeIndex() {
         </ul>
       </div>
 
-<div className="index-group">
+      {/* The products group, first in the rail.
+
+          This is a deliberate reordering. The index previously opened with
+          "Control plane · the loop" and listed five architecture routes
+          before the reader reached anything a buyer would want, so the
+          navigation described the company's internal structure rather than
+          its output. A pitch prototype has to offer the product before it
+          explains the system that produced it — and it has to link to the
+          product page at all, which it did not. */}
+      <div className="index-group">
+        <p className="index-group-key">What we sell</p>
+        <ul className="index-list">
+          <li>
+            <Link
+              href="/product"
+              className="index-node"
+              aria-current={isCurrent("/product") ? "page" : undefined}
+            >
+              <span className="index-node-ord figure">01</span>
+              <span className="index-node-name">School Console</span>
+              {/* A lit port: this route has a product behind it, and it is
+                  the one link in this rail that opens something you can buy. */}
+              <span className="port port--live" aria-hidden="true" />
+            </Link>
+          </li>
+        </ul>
+      </div>
+
+      <div className="index-group">
         <p className="index-group-key">One view of it</p>
         <ul className="index-list">
           <li>
@@ -94,8 +124,35 @@ export function NodeIndex() {
           listed here — and until then this is the site's whole navigation. */}
       <p className="index-foot">
         The five above are the system, and the view above them is the same
-        system drawn. Nothing here is somewhere you can act yet: every
-        route on this site describes the system rather than running it.
+        system drawn. {PRODUCTS.length} products and tracks are listed on{" "}
+        <Link href="/control">Control</Link>; exactly{" "}
+        <span className="figure">{LIVE_BUILDS.length}</span> of them has a
+        surface you can open today.
+      </p>
+
+      {/* The identity corner, and the one thing a reader can actually do.
+          Both are last in the rail on purpose: everything above is a
+          statement about the product, and these two are about the person
+          reading it. The previous version of this footer read "Nowhere —
+          the loop has no exit", which was a category error in nine
+          characters — it declined to offer an action while calling the
+          refusal a design. */}
+      <div className="index-identity">
+        <Identity />
+      </div>
+
+      <a className="index-cta" href={`mailto:${COMPANY.contact.email}`}>
+        <span className="index-cta-key">Get in touch</span>
+        <span className="index-cta-val">{COMPANY.contact.email}</span>
+        <span className="index-cta-note">
+          {COMPANY.contact.note} <StateTag state={COMPANY.contact.state} />
+        </span>
+      </a>
+
+      <p className="index-foot index-foot--quiet">
+        {COMPANY.kind}, {COMPANY.geography.scope.toLowerCase()} —{" "}
+        {COMPANY.geography.value}. No customer, no deployment, no outcome
+        record: <span className="figure">0 customers</span>, measured.
       </p>
     </nav>
   );

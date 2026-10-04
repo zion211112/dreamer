@@ -21,6 +21,18 @@ const VIEWS: readonly { path: string; priority: number }[] = [
   { path: "/lattice", priority: 0.7 },
 ];
 
+/**
+ * The product page.
+ *
+ * It carries the highest non-root priority on the site, above every
+ * architecture node but below the homepage itself. That is a reversal of
+ * the previous sitemap, which listed five architecture routes and no
+ * product page — because the product page did not exist.
+ */
+const PRODUCT: readonly { path: string; priority: number }[] = [
+  { path: "/product", priority: 0.9 },
+];
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
 
@@ -36,6 +48,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
       changeFrequency: "monthly" as const,
       priority: view.priority,
+    })),
+    ...PRODUCT.map((p) => ({
+      url: `${SITE_URL}${p.path}`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: p.priority,
     })),
   ];
 }

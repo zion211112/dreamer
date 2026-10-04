@@ -119,14 +119,32 @@ export default function IntelligencePage() {
 
         <div className="prose" style={{ marginTop: "var(--s-4)" }}>
           <p>
-            The distinction between <em>a method that works</em> and{" "}
-            <em>a finding about people</em> is the whole reason this node is
-            published empty. Intelligence derived from an institution&rsquo;s own records
-            and read by its own people is a legitimate and useful thing. The
-            moment it is presented as an assessment of the people inside those
-            records it is neither evidenced nor owned by the institution, and
-            it stops being intelligence — it becomes surveillance with a
-            provenance field.
+            This sentence used to say that intelligence derived from an
+            institution&rsquo;s own records and read by its own people{" "}
+            <em>stops being intelligence</em> and becomes{" "}
+            <em>surveillance with a provenance field</em>. That was not a
+            false claim — an institution reading its own results is exactly
+            the useful case — but it was the wrong register for the sentence,
+            and it cost the page its reader. A page whose explanatory note
+            warns you about what a category of customer is secretly doing
+            is telling you not to buy, and it was saying so about the only
+            buyer this product has.
+          </p>
+          <p>
+            The line the distinction actually turns on is custody, and it is
+            narrower than the warning implied. Intelligence derived from
+            records the institution holds, read by the people who entered
+            them, is the product working. Intelligence derived from records
+            it does not hold and read by someone who cannot be asked about
+            them is a different product with a different buyer, and this is
+            not it.
+          </p>
+          <p>
+            That is why the chain keeps custody on the institution&rsquo;s own
+            device from the first row to the last. It is a design constraint,
+            not a promise: the school&rsquo;s records are readable by the
+            school, and by nobody else, because there is nowhere else for them
+            to be.
           </p>
         </div>
       </section>

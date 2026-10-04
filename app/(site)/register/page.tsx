@@ -16,8 +16,8 @@ export default function RegisterPage() {
   return (
     <>
       <p className="label">Node 02 · Register — reality is recorded</p>
-      <h1 className="page-title">
-        This is what the system believes happened, and this is why.
+<h1 className="page-title">
+        Every claim here is a row you can open.
       </h1>
 
       <p className="lede" style={{ marginTop: "var(--s-4)" }}>A record earns its place by carrying six things: an identifier, a
@@ -38,7 +38,7 @@ export default function RegisterPage() {
           <h2 className="section-title" id="classes-heading">
             Record classes
           </h2>
-          <p className="section-kicker">{REGISTERS.length} registers</p>
+          <p className="section-kicker">{REGISTERS.length} record classes</p>
         </div>
 
         <div className="register" role="table" aria-labelledby="classes-heading">
@@ -75,12 +75,22 @@ export default function RegisterPage() {
         </div>
 
         <EmptyState
-          title="Nothing registered yet"
-          body="No institutional record has been entered. The record classes are listed above and every one of them is empty. Records appear here when an operator enters them on their own device in the console. Nothing is entered on your behalf, and nothing arrives from a server."
+          /* This said "no institutional record has been entered", which was
+             true of this register and false of the console ninety seconds
+             away — the console seeds ten invented schools and roughly 7,650
+             learners on first load. Both statements were on the same
+             website and a reader who opened both found the contradiction.
+
+             The correction states both facts in one place: this register
+             holds no institutional records, and the records the console
+             shows you are invented. DEMONSTRATION is the state that says
+             the second, which is why it exists. */
+          title="No institutional records here"
+          body="This register holds no records from any institution, and none can arrive: there is no server for them to come from, by design — custody of the record stays with the institution that holds it. The console, which you can open, fills itself with invented schools and invented people on first load so every module works. Those records are DEMONSTRATION, and they are not in this register."
           unit="record"
-          why="No institution has run this system. There is no shared database for records to arrive from, by design: custody of the record stays with the institution that holds it."
-          unblocks="Opening the console and entering one row of any record class. That single row is enough to make this register non-empty and inspectable."
-          state="UNKNOWN — the contents are unestablished, not zero. The count of records in this repository is not a count of records in the world."
+          why="No institution has run this product, and no school has entered anything. The console's own records are seeded demonstration data, which is why they are labelled rather than counted."
+          unblocks="One school running the product and entering its own records. That single row would make this register non-empty and inspectable."
+          state="UNKNOWN — the contents are unestablished, not zero. The count of records in this repository is not a count of records in the world, and the console's demonstration data is neither."
         />
 
         <div className="prose" style={{ marginTop: "var(--s-3)" }}>

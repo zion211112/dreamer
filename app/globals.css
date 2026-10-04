@@ -104,18 +104,26 @@
   --amber-line:     rgba(239, 180, 41, 0.42);
   --danger:         #ff6f5e;
 
-  /* ── The five states as colours ─────────────────────────────────
-        One token per state, so the temperature scale has a single
-        definition shared by the tags, the tally bars and the measure
-        cells. The ordering asserted by scripts/check-contrast.mjs is
-        the design: an unknown is the darkest thing on the page, and
-        a prototype — present, built, inspectable — is the brightest.
-        That is the contract ("an unknown that shouts is a hidden
-        zero") expressed as a luminance inequality. ──────────────── */
+/* ── The six states as colours ─────────────────────────────────
+         One token per state, so the temperature scale has a single
+         definition shared by the tags, the tally bars and the measure
+         cells. The ordering asserted by scripts/check-contrast.mjs is
+         the design: an unknown is the darkest thing on the page, and
+         a prototype — present, built, inspectable — is the brightest.
+         That is the contract ("an unknown that shouts is a hidden
+         zero") expressed as a luminance inequality.
+
+         DEMONSTRATION sits between PLANNED and TARGET on purpose. It
+         is brighter than PLANNED because the surface genuinely runs,
+         and cooler than TARGET because nothing in it is a record of
+         anything that happened. The script asserts both the ordering
+         and a 1.15:1 separation from each neighbour, because a state
+         that cannot be told from the one above it has no purpose. ── */
   --state-verified:  #7bf0c6;   /* cold jade · settled by a source */
   --state-prototype: #edf1f6;   /* bone    · present, neutral      */
   --state-target:    #efb429;   /* amber   · hot, intended          */
   --state-planned:   #8795a6;   /* ash     · cold, absent          */
+  --state-demonstration: #93abc2; /* steel · runs, data invented    */
   --state-unknown:   #7a8899;   /* quiet   · darkest               */
 
   /* ── Washes and the lift ─────────────────────────────────────
@@ -752,6 +760,444 @@ body::after {
 }
 .index-node--planned:hover { background: none; color: var(--ash); }
 
+/* ── The identity corner ────────────────────────────────────────
+   Fixed to the top-right of the viewport, outside the rail and
+   outside the content column.
+
+   It is deliberately not inside the navigation. Everything in the
+   rail is a statement about the product; this is the one control
+   that is about the person reading it, and mixing the two would make
+   "sign out" look like a node in a diagram.
+
+   The mark is the same emitting diamond as the wordmark, so the
+   signed-out state is the same object as the brand rather than a
+   new glyph. Once a session exists it carries that reader's own
+   initials instead, at 28px in a 28px ring — the only place on this
+   site where someone's own name is the largest type. ─────────── */
+.identity {
+  position: fixed;
+  top: var(--s-3);
+  right: var(--s-3);
+  z-index: 40;
+}
+
+.identity-trigger {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--rule-2);
+  border-radius: 50%;
+  background: rgba(10, 14, 21, 0.82);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+.identity-trigger:hover { border-color: var(--rule-3); background: var(--edge); }
+
+.identity-mark {
+  display: grid;
+  place-items: center;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--signal);
+  /* The rotation is the mark's own idiom, taken from the wordmark. */
+  transform: rotate(45deg);
+  box-shadow: 0 0 12px rgba(53, 217, 164, 0.55);
+}
+.identity-trigger[aria-expanded="true"] .identity-mark {
+  width: 5px;
+  height: 5px;
+  background: var(--signal);
+}
+
+/* A session exists: swap the diamond for the initials, at label size,
+   without the glow — a person's initials are not an evidence marker
+   and must not be made to look like one. The selector is the
+   data-attribute rather than :has(), because the attribute is also
+   what the server render and the client state agree on. */
+.identity-trigger[data-session="on"] .identity-mark {
+  width: auto;
+  height: auto;
+  border: 0;
+  transform: none;
+  box-shadow: none;
+  color: var(--ink);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+}
+
+.identity-panel {
+  position: absolute;
+  top: calc(36px + var(--s-2));
+  right: 0;
+  width: 296px;
+  padding: var(--s-4);
+  border: 1px solid var(--rule-2);
+  border-radius: 6px;
+  background: var(--panel);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
+}
+
+.identity-title {
+  margin: 0 0 var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+.identity-note {
+  margin: 0 0 var(--s-3);
+  font-size: var(--fs-ui);
+  line-height: 20px;
+  color: var(--ash);
+}
+.identity-note strong { color: var(--ink); font-weight: 500; }
+
+.identity-field { display: block; margin-bottom: var(--s-3); }
+.identity-label {
+  display: block;
+  margin-bottom: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+.identity-hint {
+  color: var(--dust);
+  text-transform: none;
+  letter-spacing: 0;
+}
+.identity-field input {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid var(--rule-2);
+  border-radius: 2px;
+  background: var(--void);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--fs-ui);
+}
+.identity-field input::placeholder { color: var(--dust); }
+.identity-field input:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 1px;
+}
+
+.identity-actions {
+  display: flex;
+  gap: var(--s-2);
+  align-items: center;
+  margin-top: var(--s-3);
+}
+.identity-actions .btn,
+.identity-actions .btn-ghost { min-height: 36px; }
+.identity-actions .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.identity-warn {
+  margin: var(--s-2) 0 0;
+  font-size: var(--fs-ui);
+  line-height: 20px;
+  color: var(--amber);
+}
+
+/* The profile: mark at full size beside the name. */
+.identity-profile {
+  display: flex;
+  gap: var(--s-3);
+  align-items: center;
+  padding-bottom: var(--s-3);
+  border-bottom: 1px solid var(--rule);
+}
+.identity-avatar {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border: 1px solid var(--signal-a30);
+  border-radius: 50%;
+  background: var(--signal-a08);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--ls-caps);
+}
+.identity-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-lead);
+  line-height: 24px;
+  color: var(--ink);
+}
+.identity-sub {
+  margin: 2px 0 0;
+  font-size: var(--fs-ui);
+  color: var(--quiet);
+}
+
+/* The session's own facts, as a register — because every other fact on
+   this site is a register row, and this one deserves the same grammar
+   rather than a paragraph describing it. */
+.identity-facts {
+  margin: var(--s-3) 0 0;
+  display: grid;
+  gap: 6px;
+}
+.identity-facts > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+.identity-facts dt {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+.identity-facts dd {
+  margin: 0;
+  font-size: var(--fs-ui);
+  color: var(--ash);
+  text-align: right;
+}
+
+/* ── The contact block, below the corner ────────────────────────
+   The one element in the rail that is a call to action. It was
+   absent from the previous version of this site entirely, which made
+   a prototype with a built product and no way to ask about it. ── */
+.index-identity {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--s-5);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--rule);
+}
+
+.index-cta {
+  display: grid;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+  padding: var(--s-3);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  text-decoration: none;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+.index-cta:hover {
+  border-color: var(--signal-a30);
+  background: var(--wash);
+}
+.index-cta-key {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--signal);
+}
+.index-cta-val {
+  font-family: var(--font-mono);
+  font-size: var(--fs-ui);
+  color: var(--ink);
+  word-break: break-all;
+}
+.index-cta-note {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: var(--fs-ui);
+  line-height: 18px;
+  color: var(--quiet);
+}
+
+.index-foot--quiet {
+  margin-top: var(--s-3);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--rule);
+  font-size: var(--fs-ui);
+  line-height: 20px;
+  color: var(--dust);
+}
+
+/* ── The module grid (/product) ──────────────────────────────────
+   A product page has to show what is inside the product, and the only
+   honest way to do that is to read the console's own module list rather
+   than copy it — so the numbers here are the console's, not ours. Each
+   module is a numbered row with its tools beneath it, ordered exactly as
+   the console's own menu orders them: the material first, then the mark
+   of it, then the week around them. ─────────────────────────────── */
+.modules {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.module {
+  display: grid;
+  /* The module name column is set by its widest case, "Auto-Marking", at
+     --fs-h3. 200px wrapped that into two lines and put the module name and
+     its tools on different visual baselines, which read as two separate
+     rows rather than one module with its contents. */
+  grid-template-columns: 248px minmax(0, 1fr);
+  gap: var(--s-5);
+  padding: var(--s-4) 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.module-head {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.module-name {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  line-height: 28px;
+  letter-spacing: var(--ls-h3);
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.module-count {
+  margin-left: auto;
+  color: var(--quiet);
+}
+
+.module-tools {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--s-3);
+}
+
+.module-tool {
+  display: grid;
+  grid-template-columns: minmax(0, 148px) minmax(0, 1fr);
+  gap: var(--s-3);
+  align-items: baseline;
+}
+
+.module-tool-title {
+  font-family: var(--font-mono);
+  font-size: var(--fs-ui);
+  color: var(--ink);
+}
+
+.module-tool-desc {
+  font-size: var(--fs-ui);
+  line-height: 20px;
+  color: var(--ash);
+  max-width: 58ch;
+}
+
+.module-foot {
+  margin-top: var(--s-3);
+  font-size: var(--fs-ui);
+  line-height: 20px;
+  color: var(--quiet);
+  max-width: 66ch;
+}
+.module-foot .state { vertical-align: baseline; }
+
+/* Below the two-column split, the module and its tools stack instead of
+   sitting side by side. The numbers stay in the left gutter rather than
+   moving, so the ordering still reads as a sequence. */
+@media (max-width: 720px) {
+  .module {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-3);
+  }
+  .module-tool {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+}
+
+/* ── Section furniture ─────────────────────────────────────────
+   `.section-lede` is the paragraph that opens a section: one step
+   quieter than a `.lede`, one step louder than a `.register-provenance`.
+   It exists because three sections on the homepage needed the same
+   shape and would otherwise each have written it inline.
+
+   `.closing` is the final section. It gets a top rule and more air
+   beneath it, because on the previous version of this site the last
+   thing a reader met was a dead end — so the end of the page is now
+   where the action is, and it is set apart on purpose. ─────────── */
+.section-lede {
+  margin: 0 0 var(--s-4);
+  max-width: 62ch;
+  font-size: var(--fs-ui);
+  line-height: 22px;
+  color: var(--ash);
+}
+
+.lede--quiet { color: var(--ash); }
+
+.closing {
+  margin-top: var(--s-7);
+  padding-top: var(--s-6);
+  border-top: 1px solid var(--rule-2);
+}
+
+/* The caption under the measure band. A band of figures with no
+   sentence is the layout a corporation uses to make four numbers look
+   like a business, so this one says the number that matters out loud
+   and points at what follows. */
+.measures-caption {
+  margin: var(--s-4) 0 0;
+  max-width: 68ch;
+  font-size: var(--fs-ui);
+  line-height: 22px;
+  color: var(--ash);
+}
+.measures-caption .figure { color: var(--ink); }
+
+/* ── The node strip ────────────────────────────────────────────
+   The five architecture nodes as one horizontal row of small links.
+   This was the hero of the previous version of the homepage, set at
+   181px; here it is a strip at label size, below the product and the
+   numbers, because it is the how and not the what. ─────────────── */
+.node-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+
+.node-strip-cell {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  padding: var(--s-3);
+  background: var(--panel);
+  text-decoration: none;
+  transition: background-color 140ms ease;
+}
+.node-strip-cell:hover { background: var(--edge); }
+
+.node-strip-ord { color: var(--quiet); }
+.node-strip-name {
+  font-family: var(--font-display);
+  font-size: var(--fs-ui);
+  letter-spacing: var(--ls-ui);
+  color: var(--ink);
+}
+.node-strip-cell .state { justify-self: start; margin-top: 2px; }
+
+@media (max-width: 900px) {
+  .node-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 /* ── Ports ─────────────────────────────────────────────────────
    The one element taken straight from the node-workspace idiom, and
    the reason it earns its place: a port tells you at a glance whether
@@ -1110,14 +1556,34 @@ body::after {
 
 .build-node { padding-top: 16px; }
 
-.build-domain {
+/* The commercial kind, as a chip rather than as a line of prose.
+   It replaces `.build-domain`, which was a bare uppercase line of sector
+   text. A chip reads as a category — recurring, per-build, per-studio —
+   which is the distinction an investor prices and a reader cannot infer
+   from a noun like "Clinical administration". */
+.build-kind {
+  /* `.node` is a flex column, so the chip is sized by align-self rather
+     than justify-self — without this it stretches the full width of the
+     card and reads as a divider rather than as a label. */
+  align-self: flex-start;
   margin-top: 8px;
+  padding: 3px 7px;
+  border: 1px solid var(--rule-2);
+  border-radius: 2px;
   font-family: var(--font-mono);
   font-size: var(--fs-micro);
   letter-spacing: var(--ls-caps);
   text-transform: uppercase;
   color: var(--quiet);
 }
+
+/* The one built thing gets the lit border, so the row that resolves to a
+   surface is findable without reading its state tag. */
+.build-kind[data-kind="management-system"] {
+  border-color: var(--signal-a30);
+  color: var(--signal);
+}
+
 .build-chain {
   margin-top: 10px;
   font-family: var(--font-sans);
@@ -1126,6 +1592,28 @@ body::after {
   letter-spacing: var(--ls-micro);
   color: var(--dust);
 }
+/* The buyer, in the one voice on the row that is a sentence rather than a
+   label. It sits between the chain and the provenance because that is the
+   reading order a commercial row wants: what it is → what it does → who it
+   is for → what is true about it.
+
+   `For` is a small-caps key in the quiet colour, so the buyer's own words
+   are the part that carries ink. */
+.build-buyer {
+  margin-top: 12px;
+  max-width: 46ch;
+  font-size: var(--fs-ui);
+  line-height: 22px;
+  color: var(--ash);
+}
+.build-buyer-key {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
 .build-prov {
   margin-top: 10px;
   font-family: var(--font-mono);
@@ -1361,6 +1849,20 @@ body::after {
 .register-head.register--std,
 .register-row.register--std { grid-template-columns: var(--cols); }
 
+/* Two- and three-column claim tables, used by /product.
+
+   These set their own columns rather than inheriting --cols, which is a
+   four-column template. Inheriting it on a three-cell row left the last
+   column with a 130px track — narrow enough that a provenance sentence
+   wrapped one word per line, which is what the first build of the product
+   page did. A register that cannot hold a sentence is a decoration. */
+.register--claim { --cols: minmax(0, 1.1fr) 148px minmax(0, 3fr); }
+.register--pair { --cols: minmax(0, 1fr) minmax(0, 2.2fr); }
+.register-head.register--claim,
+.register-row.register--claim { grid-template-columns: var(--cols); }
+.register-head.register--pair,
+.register-row.register--pair { grid-template-columns: var(--cols); }
+
 /* Mobile re-composition, not a stack of desktop rows: a register row
    becomes a definition list, because a four-column table at 360px is
    unreadable and pretending otherwise is the failure. */
@@ -1481,6 +1983,7 @@ body::after {
 .tally-cell[data-state="PROTOTYPE"] { --tint: var(--state-prototype); }
 .tally-cell[data-state="TARGET"]    { --tint: var(--state-target); }
 .tally-cell[data-state="PLANNED"]   { --tint: var(--state-planned); }
+.tally-cell[data-state="DEMONSTRATION"] { --tint: var(--state-demonstration); }
 .tally-cell[data-state="UNKNOWN"]   { --tint: var(--state-unknown); }
 
 /* Absence is content. An empty register tells the operator what the
@@ -1567,6 +2070,23 @@ body::after {
   flex: none;
 }
 
+/* Six marks, and the FORM is the redundant channel: the dot's shape
+   varies by state, not only its hue, so all six survive monochrome.
+
+     VERIFIED       filled, and the only one that emits
+     PROTOTYPE      ring — present, open, nothing filled in
+     TARGET         solid stroke, no fill
+     PLANNED        dashed ring — designed, not built
+     DEMONSTRATION  ring with a core — a surface with something inside it
+                    that is not real. It has to be visibly *occupied but
+                    hollow*, which is the whole meaning of the state: the
+                    product runs and the data in it is invented. Neither
+                    a plain ring (PROTOTYPE) nor a dashed one (PLANNED)
+                    says that.
+     UNKNOWN        dotted — nothing established
+
+   Verified, prototype, target, planned, demonstration and unknown are
+   therefore distinguishable with all colour removed. */
 .state[data-state="VERIFIED"] {
   color: var(--state-verified);
   border-color: var(--signal-a30);
@@ -1587,6 +2107,18 @@ body::after {
 
 .state[data-state="PLANNED"] { color: var(--state-planned); border-color: var(--rule-2); }
 .state[data-state="PLANNED"]::before { background: transparent; border: 1px dashed var(--rule-3); }
+
+.state[data-state="DEMONSTRATION"] {
+  color: var(--state-demonstration);
+  border-color: rgba(147, 171, 194, 0.32);
+}
+/* The core is drawn in the state's own colour, so the mark reads as
+   occupied-and-hollow rather than as a smaller version of VERIFIED. */
+.state[data-state="DEMONSTRATION"]::before {
+  background: transparent;
+  border: 1px solid var(--state-demonstration);
+  box-shadow: inset 0 0 0 1px var(--void), inset 0 0 0 2px var(--state-demonstration);
+}
 
 /* UNKNOWN ≠ zero. It is rendered dashed and quiet, never omitted and
    never as an empty cell. */
@@ -1795,6 +2327,7 @@ body::after {
 .measure-cell[data-state="PROTOTYPE"] { --tint: var(--state-prototype); }
 .measure-cell[data-state="TARGET"]    { --tint: var(--state-target); }
 .measure-cell[data-state="PLANNED"]   { --tint: var(--state-planned); }
+.measure-cell[data-state="DEMONSTRATION"] { --tint: var(--state-demonstration); }
 .measure-cell[data-state="UNKNOWN"]   { --tint: var(--state-unknown); }
 
 .measure-figure {

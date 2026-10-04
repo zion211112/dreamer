@@ -90,6 +90,7 @@ const T = {
   prototype: token("state-prototype"),
   target: token("state-target"),
   planned: token("state-planned"),
+  demonstration: token("state-demonstration"),
   unknown: token("state-unknown"),
 };
 
@@ -113,6 +114,7 @@ const textTokens = [
   ["state/PROTOTYPE", T.prototype],
   ["state/TARGET", T.target],
   ["state/PLANNED", T.planned],
+  ["state/DEMONSTRATION", T.demonstration],
   ["state/UNKNOWN", T.unknown],
 ];
 
@@ -546,6 +548,7 @@ console.log("\nEvidence-state temperature scale\n" + "-".repeat(pad + 22));
 const ORDER = [
   ["UNKNOWN", T.unknown, "darkest · unestablished"],
   ["PLANNED", T.planned, "cold · designed, not built"],
+  ["DEMONSTRATION", T.demonstration, "cool · runs, but the data is invented"],
   ["TARGET", T.target, "hot · intended, not measured"],
   ["VERIFIED", T.verified, "cold jade · settled by a source"],
   ["PROTOTYPE", T.prototype, "brightest · present and inspectable"],
@@ -577,6 +580,28 @@ spread >= 3
       );
     })();
 
+/* Every adjacent pair on the scale has to separate at 9.5px tag size.
+   A monotonic ladder is not enough on its own: two states can sit in the
+   right order and still be too close to tell apart, which is how a sixth
+   state gets added and quietly becomes indistinguishable from the one
+   above it. DEMONSTRATION is the case this guards — it exists to separate
+   "the product runs" from "the data is real", and if it renders the same
+   colour as PLANNED it has achieved nothing. */
+const MIN_ADJACENT = 1.15;
+let sepFailed = 0;
+for (let i = 0; i < ORDER.length - 1; i++) {
+  const [fromName, fromHex] = ORDER[i];
+  const [toName, toHex] = ORDER[i + 1];
+  const sep = ratio(toHex, fromHex);
+  const ok = sep >= MIN_ADJACENT;
+  if (!ok) sepFailed++;
+  console.log(
+    `${(fromName + " → " + toName).padEnd(pad)}  ${sep.toFixed(3)}:1  ${
+      ok ? "PASS" : "FAIL"
+    }  adjacent states separate at tag size`
+  );
+}
+
 /* TARGET must be the warm outlier: the only state whose hue pulls away
    from the neutral axis. Verified as R/B ratio, which is >1 for every
    state that is not the cool-to-neutral ramp. */
@@ -597,9 +622,9 @@ isWarm
       );
     })();
 
-if (failed > 0 || orderFailed > 0) {
+if (failed > 0 || orderFailed > 0 || sepFailed > 0) {
   console.error(
-    `\n${failed + orderFailed} violation(s). Fix the token, not the test.\n`
+    `\n${failed + orderFailed + sepFailed} violation(s). Fix the token, not the test.\n`
   );
   process.exit(1);
 }

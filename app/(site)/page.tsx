@@ -1,362 +1,318 @@
-import type { Metadata } from "next";
 import Link from "next/link";
-import { BuildGrid } from "@/components/site/BuildGrid";
-import { NodeGraph } from "@/components/site/Graph";
 import { StatusBand } from "@/components/site/StatusBand";
-import { Tally } from "@/components/site/Tally";
-import { EmptyState } from "@/components/site/EmptyState";
+import { BuildGrid } from "@/components/site/BuildGrid";
 import { StateTag } from "@/components/site/StateTag";
 import {
-  BUILDS,
   COMPANY,
   CONSOLE,
   MEASURES,
-  REGISTERS,
-  SIGNALS,
-  UNKNOWN_FACTS,
+  PLANE as PLANE_NODES,
+  PRODUCTS,
+  TARGETS,
+  UNKNOWN_FACTS as UNKNOWN_ROWS,
 } from "@/lib/system";
 
-export const metadata: Metadata = {
-  title: "APT-LABS",
-  description: COMPANY.supporting,
+export const metadata = {
+  title: "APT-LABS — operational software for institutions",
+  description:
+    "APT-LABS builds and sells operational software for institutions that keep their own records. One management system is built and openable; there are no customers yet, and the site says so.",
 };
 
-export default function FieldPage() {
+/**
+ * The homepage — what the company is, what it sells, and what is true.
+ *
+ * This page was previously organised around the five-node architecture,
+ * opening with the mantra "Records, not assertions." at 181px and closing
+ * with a section titled "What this system does not know" that published
+ * three rows of absent research findings. Read as a whole it described an
+ * organisation that publishes evidence about its own state rather than one
+ * that sells software.
+ *
+ * The order here is the commercial one, and it is the order a reader
+ * actually has questions in:
+ *
+ *   1. What is this?        the hero, in the words a buyer uses
+ *   2. What do you sell?     the product catalogue, with a named product
+ *   3. Is it real?           the measures, including the one that is zero
+ *   4. Where is it going?    the targets, held at TARGET
+ *   5. What is not yet true? the diligence register, phrased commercially
+ *   6. How is it built?      the system, last, because it is the
+ *                            differentiator rather than the pitch
+ *
+ * The architecture did not lose a section; it moved down. It was the first
+ * thing on the page and it should not have been.
+ */
+export default function HomePage() {
+  const hasProduct = PRODUCTS.some((p) => p.href);
+
   return (
     <>
-      {/* ── THE FIRST VIEWPORT ────────────────────────────────
-          The contract asks six things of this screen, in this
-          order: reality is observed, records are evidence-bound,
-          intelligence is derived, decisions are traceable, the
-          built surface is openable, and unknown remains unknown.
+      {/* ── 1. What this is ────────────────────────────────────── */}
+      <p className="label">
+        {COMPANY.kind} · {COMPANY.geography.scope}
+      </p>
 
-          The hierarchy is three tiers and no more. The mantra is the
-          only display type on the site and reaches 181px; the full
-          product sentence sits directly beneath it at lead size, so
-          the compression never replaces the claim it compresses; the
-          contract itself is prose. The measure block then carries
-          the last two requirements by putting a state under every
-          number, including the number that is not known. */}
-      <section className="plate" aria-labelledby="claim">
-        <div className="plate-index">
-          <span className="plate-index-lit">Node 01</span>
-          <span>Field</span>
-          <span>Reality before interpretation</span>
-          <span className="plate-index-rule" aria-hidden="true" />
-          <span>Local-first · Prototype · Not deployed</span>
-        </div>
+      <h1 className="hero">
+        {COMPANY.mantraLines.map((line, i) => (
+          <span className="hero-line" key={i}>
+            {line}
+          </span>
+        ))}
+      </h1>
 
-        <h1 className="hero" id="claim" style={{ marginTop: "var(--s-4)" }}>
-          {/* Two designed lines, not one string left to wrap. The break
-              is part of the lockup; `mantra` stays available as the
-              single string for anything that needs the phrase whole. */}
-          {COMPANY.mantraLines.map((line) => (
-            <span className="hero-line" key={line}>
-              {line}
-            </span>
-          ))}
-        </h1>
+      <p className="lede" style={{ marginTop: "var(--s-5)" }}>
+        {COMPANY.primary}
+      </p>
 
-        <p className="lede" style={{ marginTop: "var(--s-4)" }}>
-          {COMPANY.primary} {COMPANY.supporting}
-        </p>
+      <p className="lede lede--quiet" style={{ marginTop: "var(--s-3)" }}>
+        {COMPANY.supporting}
+      </p>
 
-        <div className="prose" style={{ marginTop: "var(--s-3)" }}>
-          <p>
-            Every material claim carries an identifier, a timestamp, a source
-            and an evidence state — and where the system cannot establish a
-            fact, it preserves the uncertainty instead of resolving it in its
-            own favour.
+      <div className="action-row" style={{ marginTop: "var(--s-5)" }}>
+        {hasProduct ? (
+          <Link href="/product" className="btn">
+            See the product <span className="glyph">→</span>
+          </Link>
+        ) : null}
+        <a href={`mailto:${COMPANY.contact.email}`} className="btn-ghost">
+          Get in touch
+        </a>
+      </div>
+
+      {/* ── 2. What we sell ───────────────────────────────────── */}
+      <section className="section" aria-labelledby="products-heading">
+        <div className="section-head">
+          <h2 className="section-title" id="products-heading">
+            What we sell
+          </h2>
+          <p className="section-kicker">
+            {PRODUCTS.length} products and tracks ·{" "}
+            <span className="figure">1</span> built
           </p>
         </div>
 
-        {/* Ordered by the contract, not by size. The register and the unknowns
-            come before the built surface because they are the claims; the
-            surface is the least representative thing on the site and the
-            one most likely to be mistaken for a product demonstration. */}
-        <div className="action-row" style={{ marginTop: "var(--s-4)" }}>
-          <Link href="/register" className="btn">
-            Read the register
-          </Link>
-          <Link href="/evidence" className="btn-ghost">
-            What is not yet known
-          </Link>
-          <Link href={CONSOLE.href} className="btn-ghost">
-            Open the built surface
-          </Link>
-        </div>
+        <p className="section-lede">
+          One management system with a surface you can open today, and two
+          tracks that are designed rather than built. The rows below say
+          which is which, and every one of them names who it is for.
+        </p>
+
+        <BuildGrid />
       </section>
 
-      <div style={{ marginTop: "var(--s-6)" }}>
+      {/* ── 3. The measures ─────────────────────────────────────
+          The band renders MEASURES and carries its own explanatory row.
+          It was previously followed by a caption claiming "every figure
+          above is typed by hand — the measures this system publishes are
+          the ones a reader can audit" while four of the five were derived
+          automatically from arrays, and a fifth ("1 evidence path per
+          claim") was a self-referential rule about the site's own grammar
+          presented as a metric about the product.
+
+          That last figure is the one worth naming: it was the only
+          VERIFIED number in the first viewport, and it verified nothing
+          about the product. It has been replaced by a count of customers,
+          which is zero, which is true, and which is the number a reader
+          was actually looking for. */}
+      <section className="section" aria-labelledby="measures-heading">
+        <h2 className="sr-only" id="measures-heading">
+          Where the company stands
+        </h2>
+
         <div className="measure-grid">
           {MEASURES.map((m) => (
             <div className="measure-cell" data-state={m.state} key={m.key}>
-              <div className="measure-figure">{m.figure}</div>
+              <div className="measure-figure figure">{m.figure}</div>
               <div className="measure-key">{m.key}</div>
-              <p className="measure-note">{m.note}</p>
-              <div style={{ marginTop: 10 }}>
+              <div className="measure-note">{m.note}</div>
+              <div className="measure-state">
                 <StateTag state={m.state} />
               </div>
             </div>
           ))}
         </div>
-      </div>
+
+        {/* One plain sentence, because a band of four figures with no
+            sentence is the layout a corporation uses to make four numbers
+            look like a business, and that is the specific impression this
+            site is not trying to make. */}
+        <p className="measures-caption">
+          <span className="figure">0 customers</span> is the shortest way to
+          describe this company, and it is stated here rather than in a
+          footnote because it is the first question a reader has. What
+          follows is the part of the claim that survives it.
+        </p>
+      </section>
 
       <div style={{ marginTop: "var(--s-5)" }}>
         <StatusBand />
       </div>
 
-      {/* ── THE GRAPH ─────────────────────────────────────────
-          The centre of the argument. Five nodes, five routes, and
-          the flow drawn between them: a system that says "the loop
-          closes" should let you walk it rather than describe it.
-
-          The spine is the site's navigation and its thesis at the
-          same time. Every node on it resolves; nothing on it is an
-          illustration. The seven-stage chain underneath is the same
-          transformation one order finer, and it is what the
-          inspector on the right is describing when it names a
-          custody. */}
-      <section className="section" aria-labelledby="graph-heading">
+      {/* ── 4. Where this is going ──────────────────────────────
+          TARGET, used. The site defined this state, coloured it, gave it
+          a rule, asserted its warmth in the contrast checker — and used
+          it nowhere. A raise with no destination described on it is not a
+          plan, it is an apology. Every row here is an intention, and each
+          one names the evidence that would settle it. */}
+      <section className="section" aria-labelledby="targets-heading">
         <div className="section-head">
-          <h2 className="section-title" id="graph-heading">
-            The control plane
+          <h2 className="section-title" id="targets-heading">
+            Where this is going
           </h2>
           <p className="section-kicker">
-            Five nodes · five routes · the loop closes
+            <StateTag state="TARGET" /> · intentions, not results
           </p>
         </div>
 
-        <NodeGraph variant="canvas" />
-
-        <div className="prose" style={{ marginTop: "var(--s-4)" }}>
-          <p>
-            These are not features. They are the five states every piece of
-            operational reality passes through, and each one is a route you can
-            open and inspect. Action at the fourth stage generates the evidence
-            that becomes the first stage of the next cycle — which is why the
-            graph is drawn with a return stroke rather than as a queue.
-          </p>
-        </div>
-      </section>
-
-      {/* ── THE BUILDS ────────────────────────────────────────
-          The reframe: one grammar, six domains, one built. The one
-          build with a surface is an example of what this system is,
-          not the system itself — so it is listed first because it is
-          the only row that resolves, and never because it is the
-          product. Its domain is stated as field operations rather
-          than as a school's, because an example that names a sector
-          makes the reader infer the product is that sector's system. */}
-      <section className="section" aria-labelledby="builds-heading">
-        <div className="section-head">
-          <h2 className="section-title" id="builds-heading">
-            One grammar, six domains
-          </h2>
-          <p className="section-kicker">
-            The built surface is an example · not the product
-          </p>
-        </div>
-
-        <div className="prose" style={{ marginBottom: "var(--s-4)" }}>
-          <p>
-            A build is the same seven stages running over one domain&rsquo;s own
-            records. Extending the system changes the domain and nothing else —
-            the chain, the custody boundary and the five evidence states are
-            identical in every row below. One of them is built and openable.
-            The other five are stated as designs, so they are shown here with
-            no route and no figure.
-          </p>
-        </div>
-
-        <BuildGrid />
-      </section>
-
-      {/* ── WHERE THE REST OF IT IS WRITTEN ───────────────────
-          This page is the argument. These three registers are the
-          evidence for it, and each one was previously rendered here in
-          full — the record classes as a table plus an inspection tally,
-          the derived readings as a table plus a second tally, the
-          published unknowns as a third table. Six hundred words of
-          register repeated three times on the route that exists to
-          summarise them, and every reader who wanted a row had to
-          scroll past two copies of the others to reach it.
-
-          So each is one row here: what it holds, how many, and a link
-          to where it is maintained. The detail is not behind a toggle
-          and is not summarised badly — it is on the route that owns it,
-          which is the only place it can stay current without this page
-          becoming a second source of truth that nothing keeps in step. */}
-      <section className="section" aria-labelledby="registers-heading">
-        <div className="section-head">
-          <h2 className="section-title" id="registers-heading">
-            The registers behind this
-          </h2>
-          <p className="section-kicker">Each on the node that owns it</p>
-        </div>
-
-        <div className="register" role="table" aria-labelledby="registers-heading">
-          {[
-            {
-              ord: "02",
-              name: "Register",
-              href: "/register",
-              holds: "The record classes the chain requires, and the empty sets where an institution would write them.",
-              count: REGISTERS.length,
-              unit: "record classes",
-            },
-            {
-              ord: "03",
-              name: "Intelligence",
-              href: "/intelligence",
-              holds: "The readings derived from those records, each naming the method that produced it and the records it rests on.",
-              count: SIGNALS.length,
-              unit: "readings",
-            },
-            {
-              ord: "05",
-              name: "Evidence",
-              href: "/evidence",
-              holds: "What each evidence state permits and forbids, and the questions this system has not answered.",
-              count: UNKNOWN_FACTS.length,
-              unit: "published unknowns",
-            },
-          ].map((row) => (
-            <div className="register-row register--std" role="row" key={row.href}>
-              <div className="register-cell register-cell--id" role="cell">
-                <div className="register-id">{row.ord}</div>
-                <div className="register-name" style={{ marginTop: 4 }}>
-                  <Link href={row.href} className="link">
-                    {row.name}
-                  </Link>
-                </div>
+        <div className="register" role="table" aria-labelledby="targets-heading">
+          {TARGETS.map((t) => (
+            <div
+              className="register-row"
+              role="row"
+              key={t.id}
+              style={{ gridTemplateColumns: "minmax(0,1fr) 190px" }}
+            >
+              <div className="register-cell" role="cell">
+                <div className="register-name">{t.what}</div>
+                <p className="register-provenance" style={{ maxWidth: "62ch", marginTop: 8 }}>
+                  Met when: {t.measure}
+                </p>
               </div>
-              <div className="register-cell" role="cell" data-field="Holds">
-                <div className="register-provenance">{row.holds}</div>
-              </div>
-              <div className="register-cell" role="cell" data-field="Count">
-                <div className="register-figure figure">{row.count}</div>
-                <div className="register-provenance">{row.unit}</div>
-              </div>
-              <div className="register-cell" role="cell" data-field="State">
-                <StateTag state="PROTOTYPE" />
+              <div className="register-cell" role="cell" data-field="By">
+                <div className="register-date">{t.by}</div>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ── UNKNOWN REMAINS UNKNOWN ───────────────────────────
-          The contract's sixth requirement for the first viewport,
-          given its own surface. This panel is the system's most
-          distinctive claim: it publishes what it has not observed,
-          in the same register language as what it has.
+      {/* ── 5. What is not yet true ─────────────────────────────
+          The section that used to be called "What this system does not
+          know" and published three rows about populations and
+          performance. It is now the diligence register, in the reader's
+          own vocabulary: no customer, no revenue, no outcome evidence, no
+          contracts, no registration number.
 
-          A site that shows this before it shows its achievements is
-          making a structural argument, not a decorative one — the
-          absence of evidence is rendered as carefully as the
-          evidence.
-
-          The five rows behind it used to be repeated here in full. They
-          are on /evidence, which is the node whose subject they are, and
-          they are linked rather than re-rendered: this page stating them
-          a second time is a second copy with no way to notice the first
-          going stale. */}
-      <section className="section" aria-labelledby="unknown-heading">
+          The register a company publishes about its own gaps is a normal
+          and useful thing. The register a *research programme* publishes
+          is what made the previous version of this page read as one. */}
+      <section className="section" aria-labelledby="gaps-heading">
         <div className="section-head">
-          <h2 className="section-title" id="unknown-heading">
-            What this system does not know
+          <h2 className="section-title" id="gaps-heading">
+            What is not established yet
           </h2>
-          <p className="section-kicker">
-            <span className="figure">{UNKNOWN_FACTS.length}</span> published
-            unknowns
-          </p>
+          <p className="section-kicker">Open questions, not missing data</p>
         </div>
 
-        <EmptyState
-          title="Nothing registered yet — and that is correct"
-          body="No institution has run this system, so there is no deployment record, no adoption figure, no outcome measurement and no partner register. Rather than fill this space with projection, the system states the absence and names what would legitimately appear here."
-          unit="deployment"
-          why="A deployment record requires a named institution, a start date and an operator signature. None is documented."
-          unblocks="One institution running one build for a full term, exporting its registers on its own device."
-          state="UNKNOWN — not zero. The count is unestablished, not measured as none."
-        />
+        <p className="section-lede">
+          Stated plainly, because a gap that is named is a question and a
+          gap that is omitted reads as a zero and gets quoted as one. None
+          of these is a measurement and none is a result.
+        </p>
 
-        <div className="action-row">
-          <Link href="/evidence" className="btn">
-            Read all {UNKNOWN_FACTS.length} open questions
-          </Link>
-          <span className="register-provenance">
-            Each names what is missing and what would establish it.
-          </span>
+        <div className="register" role="table" aria-labelledby="gaps-heading">
+          {UNKNOWN_ROWS.map((u) => (
+            <div
+              className="register-row"
+              role="row"
+              key={u.id}
+              style={{ gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)" }}
+            >
+              <div className="register-cell register-cell--id" role="cell">
+                <div className="register-id">{u.id}</div>
+                <div className="register-name" style={{ marginTop: 4 }}>
+                  {u.what}
+                </div>
+              </div>
+              <div className="register-cell" role="cell" data-field="Why">
+                <p style={{ margin: 0, maxWidth: "58ch" }}>{u.why}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* ── WHERE THE BUILDS END ─────────────────────────────
-          Closing on the count rather than the achievement: one build
-          exists out of six, and the other five are named as designs.
-          The built surface is the last thing this page mentions on purpose —
-          it is the most impressive thing here and the least
-          representative of it. */}
-      <section className="section" aria-labelledby="state-heading">
+      {/* ── 6. How it is built ──────────────────────────────────
+          The five nodes, last, and briefly. This is the section the
+          previous version opened with at 181px. It is the most genuinely
+          interesting thing about this company and it is also the thing a
+          buyer asks about last — and it is worth asking about at all,
+          because it is the reason the register exists and therefore the
+          reason a school can trust the records it holds. */}
+      <section className="section" aria-labelledby="system-heading">
         <div className="section-head">
-          <h2 className="section-title" id="state-heading">
-            Where this stands
+          <h2 className="section-title" id="system-heading">
+            How it is built
           </h2>
           <p className="section-kicker">
-            <span className="figure">{BUILDS.length}</span> builds ·{" "}
-            <span className="figure">1</span> built
+            <Link href="/lattice">See it as a topology →</Link>
           </p>
         </div>
 
-        <div className="register" role="table" aria-labelledby="state-heading">
-          <div className="register-row register--std" role="row">
-            <div className="register-cell register-cell--id" role="cell">
-              <div className="register-id">01</div>
-              <div className="register-name" style={{ marginTop: 4 }}>
-                {CONSOLE.name}
-              </div>
-            </div>
-            <div className="register-cell" role="cell" data-field="Records">
-              <div>{CONSOLE.oneLine}</div>
-              <div className="register-provenance" style={{ marginTop: 8 }}>
-                {CONSOLE.provenance}
-              </div>
-            </div>
-            <div className="register-cell" role="cell" data-field="Runs">
-              <div className="register-date">On device</div>
-            </div>
-            <div className="register-cell" role="cell" data-field="State">
-              <StateTag state={CONSOLE.state} />
-            </div>
-          </div>
+        <p className="section-lede">
+          Every product above is the same five stages, run on the
+          institution&rsquo;s own device: events are recorded, the records are
+          structured, the structure is read for patterns, a decision is taken
+          against a stated rule, and the decision becomes work. Each stage is
+          published as its own route, at the state it actually holds — so a
+          reader can check any claim here by opening the thing it describes.
+        </p>
 
-          <div className="register-row register--std" role="row">
-            <div className="register-cell register-cell--id" role="cell">
-              <div className="register-id">02</div>
-              <div className="register-name" style={{ marginTop: 4 }}>
-                Every other build
-              </div>
-            </div>
-            <div className="register-cell" role="cell" data-field="Records">
-              <div className="register-provenance" style={{ maxWidth: "62ch" }}>
-                Designed against the same chain and the same custody boundary,
-                and not built. No code, no schema and no data for any of them
-                exists in this repository, so no figure appears beside their
-                names anywhere on this site.
-              </div>
-            </div>
-            <div className="register-cell" role="cell" data-field="Runs">
-              <div className="register-date">Nowhere</div>
-            </div>
-            <div className="register-cell" role="cell" data-field="State">
-              <StateTag state="PLANNED" />
-            </div>
-          </div>
+        <div className="node-strip">
+          {PLANE_NODES.map((n) => (
+            <Link className="node-strip-cell" href={n.href} key={n.key}>
+              <span className="node-strip-ord figure">{n.ord}</span>
+              <span className="node-strip-name">{n.name}</span>
+              <StateTag state={n.state} />
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* ── The ask, and the one thing that is built ────────────
+          The previous closing section was titled "Nowhere to go" and read
+          "The loop has no exit. That is the design, not a gap." It
+          described the absence of an action as a design principle, which
+          is the single most expensive sentence the site carried: it told
+          every reader who got this far that there was nothing to do next.
+
+          There is something to do next, and it is the same thing on every
+          page: open the product, or write to us. */}
+      <section className="section closing" aria-labelledby="closing-heading">
+        <div className="section-head">
+          <h2 className="section-title" id="closing-heading">
+            The ask
+          </h2>
+          <p className="section-kicker">What this is for</p>
         </div>
 
-        <div style={{ marginTop: "var(--s-4)" }}>
-          <Tally records={BUILDS} caption="builds" />
+        <div className="prose">
+          <p>
+            APT-LABS has built one product and sold nothing. Both of those are
+            above in plain numbers rather than in a footnote, because the
+            honest version of this page is the one a reader can act on — and a
+            company that publishes its gaps plainly is the reason anyone should
+            believe the parts it claims.
+          </p>
+          <p>
+            The thing being built here is software a school owns outright: it
+            runs on the school&rsquo;s own device, the records never leave it,
+            and every claim on this site can be opened and checked by anyone.
+            <StateTag state={CONSOLE.dataState} /> means the data you see is
+            invented. <StateTag state={CONSOLE.state} /> means the product
+            that holds it is real and you can open it now.
+          </p>
+        </div>
+
+        <div className="action-row" style={{ marginTop: "var(--s-5)" }}>
+          {hasProduct ? (
+            <Link href={CONSOLE.href} className="btn">
+              Open {CONSOLE.name} <span className="glyph">→</span>
+            </Link>
+          ) : null}
+          <a href={`mailto:${COMPANY.contact.email}`} className="btn-ghost">
+            {COMPANY.contact.email}
+          </a>
         </div>
       </section>
     </>

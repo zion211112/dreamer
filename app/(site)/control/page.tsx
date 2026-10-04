@@ -5,12 +5,12 @@ import { StatusBand } from "@/components/site/StatusBand";
 import { EmptyState } from "@/components/site/EmptyState";
 import { StateTag } from "@/components/site/StateTag";
 import { ValueChain } from "@/components/site/Graph";
-import { CONSOLE, LIVE_BUILDS, VALUE_CHAIN } from "@/lib/system";
+import { CONSOLE, LIVE_BUILDS, PRODUCTS, VALUE_CHAIN } from "@/lib/system";
 
 export const metadata: Metadata = {
   title: "Control",
   description:
-    "Knowledge becomes action: one build of the APT-LABS architecture, built and openable, deployed to no one.",
+    "Knowledge becomes action: the School Console, built and openable, sold to no one yet.",
 };
 
 export default function ControlPage() {
@@ -20,27 +20,30 @@ export default function ControlPage() {
     <>
       <p className="label">Node 04 · Control — knowledge becomes action</p>
       <h1 className="page-title">
-        A surface that runs this architecture. Openable, and deployed to no one.
+        Where the decision is made, and where {CONSOLE.name} sits.
       </h1>
 
-      {/* "Real" is not one of the five states, and on an h1 it reads as a
+      {/* "Real" is not one of the six states, and on an h1 it read as a
           promotion from PROTOTYPE to VERIFIED by other means — which is the
-          thing STATE_RULES.PROTOTYPE.forbids. "Openable" is its `permits`
-          clause verbatim. The module census that used to end this sentence
-          was a seventh hand-kept copy of the console's own grid. */}
-      <p className="lede" style={{ marginTop: "var(--s-4)" }}>Control is where intelligence becomes work: a decision taken against
-          a derived reading, under an explicit rule, by an institution that
-          keeps its own record. One build of that chain exists, and it runs
-          on the device it is opened from.</p>
+          thing STATE_RULES.PROTOTYPE.forbids. The previous version of this
+          heading was "A surface that runs this architecture. Openable, and
+          deployed to no one." The first clause overclaimed (the console does
+          not run the whole chain — Execute and Measure are specified and not
+          implemented) and the second was doing the work of a state tag that
+          was already on the page. */}
+      <p className="lede" style={{ marginTop: "var(--s-4)" }}>Control is where intelligence becomes work: a decision taken
+          against a derived reading, under an explicit rule, by an institution
+          that keeps its own record. {CONSOLE.name} is where two of the three
+          products on this list exercise that stage, and it runs on the device
+          it is opened from.</p>
 
       <div style={{ marginTop: "var(--s-4)" }}>
         <StatusBand />
       </div>
 
-      {/* The console, presented as what it is: a working surface, in
-          the same register as everything else. The provenance sentence
-          sits beside the entry link so nobody can reach the capability
-          without the state. */}
+      {/* The console, presented as what it is: a product, in the same
+          register as everything else, with the state tag beside the entry
+          link so nobody can reach the capability without the state. */}
       <section className="section" aria-labelledby="console-heading">
         <div className="section-head">
           <h2 className="section-title" id="console-heading">
@@ -52,6 +55,12 @@ export default function ControlPage() {
         <div className="prose">
           <p>{CONSOLE.oneLine}</p>
           <p>{CONSOLE.localFirst}</p>
+          {/* The commercial fact, on the route where the product is
+              introduced. The previous version of this page had no price
+              shape, no buyer and no sales sentence anywhere — the product
+              was introduced as "the built surface", which is what you call
+              a thing when you would rather not say what it is. */}
+          <p>{CONSOLE.commercial}</p>
         </div>
 
         {/* The module list is deliberately absent. This table used to
@@ -138,30 +147,35 @@ export default function ControlPage() {
         <ValueChain />
       </div>
 
-      {/* ── WHERE CONTROL IS INSTANTIATED ─────────────────────
+      {/* ── WHAT IS SOLD ──────────────────────────────────────
           This node is not one product. It is the point in a chain at
-          which a decision is taken and executed, and every build
+          which a decision is taken and executed, and every product
           below reaches that point with its own records and its own
-          institution holding custody. The console appears here
-          first because it is the only one with a surface — which is
-          the whole reason the site leads with the grammar rather
-          than with the demo. */}
+          institution holding custody. The comment that used to sit here
+          said the console "appears here first because it is the only one
+          with a surface — which is the whole reason the site leads with
+          the grammar rather than with the demo". That was a defence of
+          the previous page's category error, written in a comment where
+          nobody would read it: the site led with the grammar because the
+          grammar was the only thing it had a name for. */}
       <section className="section" aria-labelledby="builds-heading">
         <div className="section-head">
           <h2 className="section-title" id="builds-heading">
-            Where control is instantiated
+            What is sold
           </h2>
           <p className="section-kicker">
-            One grammar · one built
+            {PRODUCTS.length} products and tracks ·{" "}
+            <span className="figure">{LIVE_BUILDS.length}</span> built
           </p>
         </div>
 
         <div className="prose" style={{ marginBottom: "var(--s-4)" }}>
           <p>
-            Decide and execute is the same two stages whatever the domain.
-            What changes between these rows is the record arriving at them and
-            the institution holding custody of it — nothing about the chain,
-            and nothing about the evidence state that governs the row.
+            Decide and execute is the same two stages whatever the buyer.
+            What changes between these rows is the record arriving at them,
+            the institution holding custody of it, and what the buyer pays
+            for — nothing about the chain, and nothing about the evidence
+            state that governs the row.
           </p>
         </div>
 
@@ -179,10 +193,10 @@ export default function ControlPage() {
         </div>
 
         <EmptyState
-          title="Nothing registered yet"
-          body="No collective decision has been taken, recorded or executed through this system. The decision record is empty, and it is empty because the system has not governed anything."
+          title="No decisions recorded through this product"
+          body="No decision has been taken, recorded or executed through this system by any customer. The decision record is empty because no customer is running the product, and the two facts are the same fact."
           unit="decision"
-          why="A decision record requires a named decision body, the rule it was taken under, and the records that were in front of it. No such record exists."
+          why="A decision record requires a named decision body, the rule it was taken under, and the records that were in front of it. No school has run the product long enough to produce one."
           unblocks="One decision taken by a named body, recorded with the records it relied on, and readable afterwards by someone who was not in the room."
           state="UNKNOWN — not zero. The absence of decision records is unestablished, not measured."
         />

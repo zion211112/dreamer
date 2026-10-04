@@ -9,8 +9,10 @@ import type { EvidenceState } from "@/lib/system";
  *      redundant channels; if colour fails or is filtered, the meaning
  *      survives.
  *   2. The dot's *form* varies with state, not only its hue: filled for
- *      VERIFIED, outlined for PROTOTYPE, dashed for PLANNED, dotted for
- *      UNKNOWN. Distinguishable in monochrome.
+ *      VERIFIED, a bare ring for PROTOTYPE, a solid stroke for TARGET, a
+ *      dashed ring for PLANNED, a ring with a core for DEMONSTRATION and a
+ *      dotted mark for UNKNOWN. All six are distinguishable in monochrome,
+ *      which is asserted by eye against globals.css rather than by script.
  *   3. UNKNOWN is the quietest state in the system, never an omission.
  *
  * The provenance sentence is a `title` for pointer users and a

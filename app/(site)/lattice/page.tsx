@@ -8,28 +8,41 @@ import { EVIDENCE_STATES, STATE_RULES } from "@/lib/system";
 export const metadata: Metadata = {
   title: "Lattice",
   description:
-    "The control plane and the value chain drawn as one walkable topology, derived entirely from the site's own register.",
+    "The value chain, the control plane and the products drawn as one walkable topology, derived from the site's own register.",
 };
 
 /**
  * The lattice — the system's topology, walkable.
  *
- * Two claims on this route, and the second one is the load-bearing one:
+ * Two claims on this route, and it is worth being exact about which parts
+ * of the drawing are derived, because the previous version of this
+ * docstring claimed "every pixel of it is derived" and that was not
+ * true:
  *
- *   1. Infrastructure is a graph. Five stages on a closed loop, seven
- *      transformations on a closed loop beside them, six builds hung off
- *      the stage each exercises.
- *   2. Every pixel of it is derived. Nothing on the canvas is typed in
- *      here — it is all computed from lib/system.ts at request time, so a
- *      claim cannot reach the canvas without already existing in the
- *      register.
+ *   1. Infrastructure is a graph. Seven transformations on a closed loop,
+ *      five control-plane stages on a closed loop beside them, and the
+ *      products hung off the stage each one exercises.
+ *   2. Everything on the canvas is CONTENT is derived — every node, every
+ *      name, every state, every provenance sentence and every edge is
+ *      computed from lib/system.ts at request time, so a claim cannot reach
+ *      the canvas without already existing in the register.
+ *
+ * What is NOT derived, and is not claimed to be: the layout. Column
+ * positions, row pitch and the four break heights are constants in
+ * lib/lattice.ts (X_CHAIN, X_PLANE, X_BUILD, PITCH, chainY, planeY,
+ * buildY). A new node therefore gets a position from a fixed grid rather
+ * than from the shape of the data, and "derived topology" means the
+ * CONTENT is derived, not that the geometry is.
+ *
+ * The previous docstring's "every pixel is derived" was the site
+ * overclaiming about its own implementation, on the route whose entire
+ * subject is not overclaiming. That is the most expensive place on a
+ * website for that particular error.
  *
  * What this route deliberately does not have, because none of it is
  * established: node counts, uptime, capital routed, throughput, matched
  * pools. A control room of this shape normally carries three headline
- * figures, and all three would have been invented. An unknown drawn as a
- * node on a glowing graph is more persuasive than an unknown written
- * down as an em dash, which is precisely why it is not drawn.
+ * figures and all three would have been invented.
  */
 export default function LatticePage() {
   const { nodes } = buildLattice();
@@ -40,17 +53,19 @@ export default function LatticePage() {
     <>
       <p className="label">The lattice — derived topology</p>
       <h1 className="page-title">
-        The topology, drawn from the register rather than from a diagram.
+        The topology, built from the register rather than drawn beside it.
       </h1>
 
       <p className="lede" style={{ marginTop: "var(--s-4)" }}>
         Three columns, read left to right in the order the system claims
         things happen: the seven transformations produce, the five
-        control-plane stages decide, the six builds realise. Both loops
+        control-plane stages decide, the products realise. Both loops
         close on themselves — measure feeds observe, and evidence returns
-        to the field. Pan, zoom and select; the record panel and the
-        register below the canvas are the same selection, so the canvas
-        never has to be the only way in.
+        to the field. Every node and every sentence on the canvas comes
+        from the same source as the prose around it, so the diagram cannot
+        disagree with the register. Pan, zoom and select; the record panel
+        and the register below the canvas are the same selection, so the
+        canvas never has to be the only way in.
       </p>
 
       <Lattice />
@@ -74,11 +89,11 @@ export default function LatticePage() {
           <p>
             The figures a topology of this shape normally leads with are
             absent, and each is absent for the same reason: there is no
-            evidence path for it. No institution runs the built surface, so
-            there is no uptime or availability figure. No population has
-            passed through the chain, so there is no measured outcome of any
-            kind. No two independently sourced statements exist for the same
-            period, so there is no reconciliation count.
+            evidence path for it. No school runs the product, so there is
+            no uptime or availability figure. No institution has used it
+            through a term, so there is no measured outcome of any kind. No
+            two independently sourced statements exist for the same period,
+            so there is no reconciliation count.
           </p>
           <p>
             What is here is narrower and checkable —{" "}

@@ -1,33 +1,73 @@
-// lib/system.ts — RUNTIME SOURCE OF TRUTH for the APT-LABS control plane.
+// lib/system.ts — RUNTIME SOURCE OF TRUTH for APT-LABS.
 //
-// Every route, node, chain stage, register row and tally in the site is
-// minted here and nowhere else. A claim may only be added to this file if
-// an evidence path exists for it — that is the whole point of the system.
+// Every route, node, product, register row, figure and tally on this site
+// is minted here and nowhere else. A claim may only be added to this file
+// if an evidence path exists for it — that is the whole point of the system.
 //
-// The epistemic contract, as code:
+// APT-LABS is a software company. It builds and sells products: management
+// systems that run an institution's operations, MVPs commissioned against
+// a named problem, and studios where a build happens in the open. That
+// sentence is commercial and it is the reason the rest of this file
+// exists: a company that sells software has to say what it has built,
+// what it costs, who it is for, and what is not yet true — in that order,
+// and without dressing a design up as a customer.
 //
-//   UNKNOWN    ≠ zero       → UNKNOWN is always rendered, never omitted
-//   PROTOTYPE  ≠ deployed   → no deployment, adoption or outcome claim
-//   TARGET     ≠ current    → targets are labelled TARGET, never as results
-//   PLANNED    ≠ built      → planned surfaces carry no figures
-//   VERIFIED   needs a path → every VERIFIED row names its source
+// THE EPISTEMIC CONTRACT, as code:
 //
-// The system records reality. If reality is not established, the
-// uncertainty is preserved rather than resolved in the system's favour.
+//   UNKNOWN       ≠ zero           → UNKNOWN is rendered, never omitted
+//   PROTOTYPE     ≠ deployed       → no deployment, sale or outcome claim
+//   TARGET        ≠ current        → targets are labelled, never results
+//   PLANNED       ≠ built          → planned surfaces carry no figures
+//   DEMONSTRATION ≠ real record    → invented data never wears a real
+//                                     record's confidence, and never
+//                                     counts as one
+//   VERIFIED      needs a path     → every VERIFIED row names its source
+//
+// The two errors this file exists to prevent are the two that cost a
+// company its credibility: claiming more than is built, and claiming a
+// thing works before anyone has used it. Both are failures of category —
+// a schema mistaken for a shipment, invented data mistaken for a
+// customer — and they are why every figure below is either derived from
+// an array in this file or carries the state that says it is not a
+// measurement.
 
 /* ---------------------------------------------------------------- */
 /* EPISTEMIC CONTRACT                                                */
 /* ---------------------------------------------------------------- */
 
 /**
- * The five states. Structural, not decorative — the UI must not render
+ * The six states. Structural, not decorative — the UI must not render
  * a claim without one, and must never upgrade one implicitly.
+ *
+ * DEMONSTRATION is the sixth and the newest, and it exists because its
+ * absence was producing the worst error on the site.
+ *
+ * The console seeds itself. On first load, with empty local stores, it
+ * writes ten named Kenyan schools, roughly 7,650 enrolments, a term of
+ * assessment scores and a set of fee records (lib/proto-school.ts). That
+ * data is good enough to demonstrate every module, and it is invented.
+ *
+ * The previous vocabulary had no word for invented-but-functional, so that
+ * data was published under PROTOTYPE — which claims "built and running
+ * locally, inspectable" — while /register simultaneously published "no
+ * institutional record has been entered". Both statements were on the same
+ * website, and they contradicted each other. An investor who opened the
+ * console and then the register would find the contradiction in about
+ * ninety seconds, and every other number on the site would become suspect
+ * with it.
+ *
+ * So the state is declared, not implied. DEMONSTRATION means the surface
+ * runs and the data in it is invented. It sits on the temperature scale
+ * above PLANNED — brighter, because the surface genuinely runs — and
+ * below TARGET's slot in the ramp. scripts/check-contrast.mjs asserts its
+ * position, so the two can never be confused by colour.
  */
 export type EvidenceState =
   | "VERIFIED"
   | "PROTOTYPE"
   | "TARGET"
   | "PLANNED"
+  | "DEMONSTRATION"
   | "UNKNOWN";
 
 export const EVIDENCE_STATES: readonly EvidenceState[] = [
@@ -35,6 +75,27 @@ export const EVIDENCE_STATES: readonly EvidenceState[] = [
   "PROTOTYPE",
   "TARGET",
   "PLANNED",
+  "DEMONSTRATION",
+  "UNKNOWN",
+] as const;
+
+/**
+ * The six states in narrative order — settled, present, intended,
+ * designed, demonstrated, unestablished.
+ *
+ * Declared once so the tally, the register band, the lattice canvas and
+ * the state table cannot disagree about what comes first, and so a state
+ * cannot be quietly promoted by being re-sorted somewhere downstream.
+ * This is a different ordering from the temperature scale in
+ * check-contrast.mjs, and deliberately: that one is a claim about light,
+ * this one is a claim about the argument.
+ */
+export const STATE_ORDER: readonly EvidenceState[] = [
+  "VERIFIED",
+  "PROTOTYPE",
+  "TARGET",
+  "PLANNED",
+  "DEMONSTRATION",
   "UNKNOWN",
 ] as const;
 
@@ -43,25 +104,34 @@ export const EVIDENCE_STATES: readonly EvidenceState[] = [
 /* ---------------------------------------------------------------- */
 
 /**
- * Vocabulary that belongs to a console surface and to nothing above it.
+ * Vocabulary that belongs to the console product, and which the
+ * architecture's own routes must not borrow.
  *
- * The console is a working local-first demo, and its subject matter —
- * fees, attendance, marking, learners, a school timetable — is legitimate
- * inside it. The failure this list exists to prevent is that same
- * vocabulary migrating *upward*, into the architecture's own register and
- * then into public copy, where it reads as a claim about fee collection or
- * about detecting irregular attendance in named children.
+ * The console is a shipped product. Its subject matter — fees, attendance,
+ * marking, learners, a school timetable — is not a secret and not
+ * embarrassing: it is what a school buys. A product page that refuses to
+ * name what the product does is not being careful, it is hiding the buyer
+ * and the use case from the person deciding whether to buy.
  *
- * That is not a hypothetical. Every one of those phrases reached the public
- * site through this file, and none of it is imported by the console: the
- * dependency runs the wrong way, so nothing kept it honest. The console
- * has its own vocabulary in lib/console.ts and never reads this one.
+ * So the ban is scoped rather than lifted. It binds the ARCHITECTURE
+ * routes — /register, /intelligence, /control, /evidence, /lattice — which
+ * describe the system abstractly and must not smuggle a claim about fee
+ * collection, or about irregular attendance in named children, into a
+ * register row. It does not bind /product, whose whole subject is the
+ * product. See CONSOLE_VOCABULARY_SCOPED below.
+ *
+ * That was not a hypothetical either. Every one of those phrases reached
+ * the public site through this file, and none of it was imported by the
+ * console: the dependency runs the wrong way, so nothing kept it honest.
+ * The console has its own vocabulary in lib/console.ts and never reads
+ * this one.
  *
  * It is exported rather than written into the checker so that the
  * contract and the machine check read the same list. A banned word list
  * kept in two places is a fifth thing to keep in step, which is how a
- * vocabulary of twenty-eight terms became seven copies of a module count.
- * scripts/check-lexicon.mjs asserts against this.
+ * vocabulary of twenty-nine terms became seven copies of a module count.
+ * scripts/check-lexicon.mjs asserts against this, and reads the exemption
+ * from CONSOLE_VOCABULARY_SCOPED below rather than carrying its own copy.
  *
  * Terms are console nouns only. Words the architecture borrows in its own
  * sense are deliberately absent — "absence" means a missing record in this
@@ -102,8 +172,43 @@ export const CONSOLE_VOCABULARY: readonly string[] = [
 ] as const;
 
 /**
+ * Where CONSOLE_VOCABULARY does and does not bind.
+ *
+ * Declared here and read by scripts/check-lexicon.mjs, so the scope is a
+ * stated rule rather than a hole in the checker somebody has to infer.
+ *
+ *   BOUND     every public route. The architecture must not name the
+ *             product's operating nouns inside a register row or an
+ *             evidence claim, because there they read as a claim about a
+ *             real institution's money, or about detecting irregular
+ *             attendance in named children.
+ *   EXEMPT    /product. That route's subject IS the product, and a page
+ *             about a product that refuses to say what the product does
+ *             is refusing to answer the buyer's question. It may name
+ *             modules; it may not publish a figure, a customer or an
+ *             outcome.
+ *
+ * The exemption is a route, not a person. Widening it means moving the
+ * product's nouns onto another architecture route, which is the mistake
+ * the ban was written to catch.
+ */
+export const CONSOLE_VOCABULARY_SCOPED = {
+  bound: "every public route",
+  exempt: ["/product"],
+} as const;
+
+/* ---------------------------------------------------------------- */
+/* WHAT EACH STATE PERMITS                                          */
+/* ---------------------------------------------------------------- */
+
+/**
  * What each state legally permits a route to say. This is the enforcement
  * point: `permits` is a constraint on language, not a description of it.
+ *
+ * Every entry is written so a reader can hold a sentence against it. The
+ * DEMONSTRATION rule is what earns the sixth state: it separates "the
+ * product works" from "the data is real", which are two different claims
+ * about one surface and the two most often run together.
  */
 export const STATE_RULES: Record<EvidenceState, { permits: string; forbids: string }> = {
   VERIFIED: {
@@ -112,15 +217,19 @@ export const STATE_RULES: Record<EvidenceState, { permits: string; forbids: stri
   },
   PROTOTYPE: {
     permits: "Built and running locally, inspectable by anyone who opens the route.",
-    forbids: "Deployment, adoption, coverage, or outcome at any institution.",
+    forbids: "Deployment, sale, adoption, or outcome at any customer. Invented data.",
   },
   TARGET: {
-    permits: "A named intended outcome, stated as an intention.",
+    permits: "A named intended outcome, stated as an intention, with the date and the measure of success named now.",
     forbids: "Current performance. A target is never rendered as a measurement.",
   },
   PLANNED: {
-    permits: "Designed, not built. An architecture can be described.",
+    permits: "Designed, not built. An architecture or a track can be described.",
     forbids: "Any figure, count, date or capability claim.",
+  },
+  DEMONSTRATION: {
+    permits: "The surface runs and the data in it is invented, labelled as such wherever that data is described.",
+    forbids: "Reading as a record of anything that happened. Demonstration data never counts as a customer, an outcome, or a real institution.",
   },
   UNKNOWN: {
     permits: "An explicit statement that the value is not established.",
@@ -129,53 +238,151 @@ export const STATE_RULES: Record<EvidenceState, { permits: string; forbids: stri
 };
 
 /* ---------------------------------------------------------------- */
-/* THE MEMORY TARGET                                                 */
+/* THE COMPANY                                                       */
 /* ---------------------------------------------------------------- */
 
+/**
+ * APT-LABS is a software company that builds and sells products.
+ *
+ * Three things it makes, and they are three different commercial shapes
+ * rather than three domains of one architecture:
+ *
+ *   MANAGEMENT SYSTEMS  the operating software an institution runs its
+ *                       week on. Sold per institution, per term. The
+ *                       School Console is one.
+ *   MVPs                commissioned against one named problem. Scoped
+ *                       and priced per build.
+ *   STUDIOS             where a build happens in the open, with its
+ *                       register published as it goes.
+ *
+ * The previous version of this file refused to say any of that. It called
+ * the company a "control plane", named its one shipped product "The built
+ * surface", gave its sector as "Field operations", and told the reader on
+ * the homepage that the product was "an example · not the product".
+ * Every one of those was a category error pointed the same way — away
+ * from the buyer.
+ *
+ * The cost was concrete. A reader could not tell what the company sells,
+ * who pays, or what the one working thing in the repository was for. And
+ * the site had no noun for price, customer, contract, pipeline or team
+ * anywhere — not because those are unknown, which is a legitimate thing
+ * to publish, but because the register's grammar had nowhere to put them.
+ */
 export const COMPANY = {
   name: "APT-LABS",
 
-  /** The sentence that must survive the first viewport. */
-  primary: "APT-LABS records reality — and builds intelligence from it.",
+  /** What kind of company this is, in the words a reader would use. */
+  kind: "Software company",
+
+  /** One sentence, in the commercial register. This is the lede. */
+  primary:
+    "APT-LABS builds and sells operational software for institutions that keep their own records.",
 
   /**
-   * The same claim, compressed to a size a display setting can carry,
-   * and pre-broken.
+   * The same claim at display size, pre-broken into two designed lines.
    *
-   * This is a restatement of `primary` and of STATE_RULES, not a new
-   * claim: the register refuses to publish a figure that has no source
-   * (RULE-05), so what it publishes is assertions it can cite. It
-   * exists because `primary` is a 62-character sentence and the hero is
-   * a 15ch measure at 181px — a sentence that cannot be set at display
-   * size is a sentence that was never designed to be the largest thing
-   * on the page. The full sentence stays on the page immediately below
-   * it, so the compression never replaces the claim, only introduces it.
+   * "Records, not assertions." was the previous mantra, and it was
+   * structurally wrong for a company selling software: it is a statement
+   * about a house style, it names no product, and it invites the reader to
+   * admire a discipline rather than consider a purchase. At 181px it was
+   * the largest text on the site and the least commercial sentence on it.
    *
-   * The break is stored rather than left to the browser. `text-wrap:
-   * balance` will happily produce "Records, / not / assertions." with
-   * one word orphaned on its own line, which is the ugliest thing a
-   * display setting can do. Storing the two lines makes the lockup
-   * identical on every viewport, and the hero's size clamp in
-   * globals.css is then derived from the width of "Records, not" — the
-   * wider of the two — so the designed break is always the one that
-   * fits.
+   * This one says what the company is, in two words, and holds at display
+   * size. The discipline it implies — we will show you the register — is
+   * carried by the rest of the site rather than by the hero, which is the
+   * right place for it: the differentiator is how this product behaves
+   * under inspection, not a claim made at the largest available size.
+   *
+   * The break is stored rather than left to `text-wrap: balance`, for the
+   * original reason: balance will orphan a single word on its own line at
+   * display size, which is the ugliest thing a display setting can do.
+   * The hero clamp in globals.css is derived from the width of the wider
+   * stored line, so the designed break is always the one that fits.
    */
-  mantra: "Records, not assertions.",
-  mantraLines: ["Records, not", "assertions."],
-
-  /** The line that scopes what kind of system it is. */
-  supporting:
-    "Local-first systems for evidence-bound records, operational decisions, and inspectable intelligence.",
+  mantra: "Operational software.",
+  mantraLines: ["Operational", "software."],
 
   /**
-   * The geography is declared product context, not marketing decoration.
-   * Stated by the organisation; no field presence is yet evidenced.
+   * What it sells, and in what shape. Three product kinds, named as
+   * products.
+   *
+   * This replaced a description of the system's internals — "evidence-
+   * bound records, operational decisions, and inspectable intelligence" —
+   * which no buyer has ever asked for. It is also the honest answer: all
+   * three kinds exist as work, and exactly one of them has a route today,
+   * which the product register below says out loud.
+   */
+  supporting:
+    "Management systems for institutions, MVPs commissioned against a named problem, and studios where a build happens in the open.",
+
+  /**
+   * Who buys. Named as a buyer, because a product page that will not name
+   * its customer is not being careful — it is refusing to answer the
+   * question. The first product is built for the first buyer below; the
+   * MVP and studio tracks are designed for the second.
+   */
+  buyers: [
+    {
+      name: "Schools",
+      what: "One institution's operating week: the roll, the money, the marks, the timetable, the parents.",
+      state: "DEMONSTRATION" as EvidenceState,
+      note: "The built product is made for this buyer and has been demonstrated end to end on invented data. No school runs it.",
+    },
+    {
+      name: "Small firms",
+      what: "The documents and the decisions a small business signs and keeps.",
+      state: "PLANNED" as EvidenceState,
+      note: "The MVP and studio tracks are designed for this buyer. No build has been commissioned and none is claimed.",
+    },
+  ] as const,
+
+  /**
+   * The geography, held at the state it actually carries.
+   *
+   * Kirinyaga is the county the company builds from and the region its
+   * first product is made for. It is NOT an operating geography: no
+   * customer, deployment or field presence is evidenced anywhere, and the
+   * previous version rendered this value in a slot labelled "Operating
+   * geography" — asserting exactly what the state tag beside it denied.
+   * A county a company builds from is a fact about the company; a county
+   * it operates in is a claim about customers, and only the first is true.
+   *
+   * "Where the company builds from" is the phrase, and it is deliberate:
+   * true, unembarrassing, and not readable as a footprint.
    */
   geography: {
     value: "Kirinyaga, Kenya",
-    state: "UNKNOWN" as EvidenceState,
+    /** What the value is. Not a market claim. */
+    scope: "Where the company builds from",
+    state: "PROTOTYPE" as EvidenceState,
     provenance:
-      "Named as the operating geography by the organisation. No field presence, installation or partner record is documented, so the state stays UNKNOWN rather than DECLARED.",
+      "Stated by the organisation as the place the company works from and the region the first product is made for. No customer, deployment or field presence is evidenced, so no operating claim is made anywhere on this site.",
+  },
+
+  /**
+   * How to reach the company.
+   *
+   * Its absence was the most expensive omission on this site. A prototype
+   * whose navigation rail says in effect "there is nothing here you can
+   * act on" is not a pitch, it is an archive — and an organisation's
+   * contact route is a diligence fact, not a research question. Filing
+   * "Organisation registration and team" under UNKNOWN_FACTS beside
+   * "population sizes" put a missing company in the same category as an
+   * unmeasured cohort, which is how a company with no customers yet comes
+   * to look like a research programme rather than a business that can be
+   * wired.
+   *
+   * Stated as the organisation's own record. Nothing here is derived, and
+   * nothing here is verified by this repository — which is why it is
+   * PROTOTYPE and not VERIFIED.
+   */
+  contact: {
+    email: "aptlabske@gmail.com",
+    /** Free-text line under the address. Kept to what a reader needs. */
+    note: "Demo access, pilot enquiries and investor diligence.",
+    state: "PROTOTYPE" as EvidenceState,
+    provenance:
+      "Contact route stated by the organisation. Not verified by anything in this repository, and published as the organisation's own record rather than as a checked fact.",
   },
 } as const;
 
@@ -206,46 +413,46 @@ export const PLANE: readonly PlaneNode[] = [
     ord: "01",
     key: "field",
     name: "Field",
-    role: "Reality occurs — events, people, assets and decisions exist before the system interprets them.",
+    role: "The product's front door — the operator captures the institution's working week as it happens.",
     href: "/",
     state: "PROTOTYPE",
-    holds: "Events, people, assets and decisions, recorded at the moment they occur.",
+    holds: "What the operator would enter here. The capture interface is built; no institution has entered anything.",
     custody: "The institution",
     provenance:
-      "Field entry runs on the operator's own device. No institution has entered anything, so this node describes a stage rather than holding a record set.",
+      "Field entry runs on the operator's own device and the interface is built and openable. No institution has entered anything, so this node describes a stage rather than holding a record set.",
   },
   {
     ord: "02",
     key: "register",
     name: "Register",
-    role: "Reality is recorded — every material claim carries an id, a timestamp, a source and an evidence state.",
+    role: "Every material claim carries an id, a timestamp, a source and an evidence state.",
     href: "/register",
     state: "PROTOTYPE",
-    holds: "One row per material claim: identifier, timestamp, source, evidence state, provenance, and the route it can be inspected on.",
+    holds: "The row grammar: identifier, timestamp, source, evidence state, provenance, and the route it can be inspected on. No institutional rows are published.",
     custody: "The local record",
     provenance:
-      "The row grammar is implemented and enforced. Every record set is intentionally empty: no institutional row is published until its evidence is recorded.",
+      "The row grammar is implemented and enforced. Every institutional record set is intentionally empty: no row is published until its evidence is recorded. The console's own invented records are labelled DEMONSTRATION and are deliberately not in this set.",
   },
   {
     ord: "03",
     key: "intelligence",
     name: "Intelligence",
-    role: "Records become structure — patterns and derived signals, each traceable to the records it came from.",
+    role: "Patterns and derived signals, each traceable to the records it came from.",
     href: "/intelligence",
     state: "PROTOTYPE",
-    holds: "Derived readings, each bound to the records it came from and the method that derived it.",
+    holds: "Derived readings, each bound to the records it came from and the method that derived it. None is published.",
     custody: "The local record",
     provenance:
-      "Three derivations are specified and two are implemented locally against entered data. None has been run against a real cohort, so no reading describes any person.",
+      "Three derivations are specified and two are implemented locally against entered data. None has been run against a real institution's records, so no reading here describes any person or any outcome.",
   },
   {
     ord: "04",
     key: "control",
     name: "Control",
-    role: "Knowledge becomes action — contribution, decision, allocation, execution.",
+    role: "Knowledge becomes action — the decision, and the work it turns into.",
     href: "/control",
     state: "PROTOTYPE",
-    holds: "Decisions, the rule each was taken under, the records in front of it, and the execution that followed.",
+    holds: "Decisions, the rule each was taken under, the records in front of it, and the execution that followed. The schema is defined; the archive is empty.",
     custody: "The institution",
     provenance:
       "The decision schema and its eligibility rules are defined in code. No institutional decision archive exists, so the record set starts empty.",
@@ -254,13 +461,13 @@ export const PLANE: readonly PlaneNode[] = [
     ord: "05",
     key: "evidence",
     name: "Evidence",
-    role: "Action generates new records, and the loop closes back into the field.",
+    role: "The claim discipline itself — what each state permits, what it forbids, and what is not established.",
     href: "/evidence",
     state: "PROTOTYPE",
-    holds: "The evidence state of every published claim, and the register of what is not established.",
+    holds: "The evidence state of every published claim, the rules each state obeys, and the questions not yet answered.",
     custody: "The institution",
     provenance:
-      "This is the route being read: it is the only part of this system that is real in the strict sense, because its content is only claims about the system's own state.",
+      "This is the route being read. Its content is claims about this product's own state, which anyone can check by opening it — and that is deliberately the whole of its claim. The previous version of this field described itself as 'the only part of this system that is real in the strict sense' while its own state read PROTOTYPE: a self-upgrade smuggled into a provenance field, which is the one thing this contract forbids.",
   },
 ] as const;
 
@@ -281,15 +488,29 @@ export interface ChainStage {
   owner: string;
   /** The plane node this stage resolves to, when it resolves to one. */
   node?: string;
+  /**
+   * Why this stage is or is not built. Carried on the stage itself rather
+   * than composed by whoever draws it.
+   *
+   * The lattice used to mint this as a template at render time — "Stage 4
+   * of the value chain. Custody: The institution." — which produced a
+   * register-shaped sentence about a row that had never been in any
+   * register. A provenance field generated by the diagram cannot be
+   * checked against the thing it describes, and checkability is the one
+   * property this system is built on.
+   */
+  provenance: string;
 }
 
 export const VALUE_CHAIN: readonly ChainStage[] = [
   {
     ord: "01",
     name: "Observe",
-    what: "Field reality is captured as it happens, by the people present.",
+    what: "The institution's working week is captured as it happens, by the people present.",
     owner: "The institution",
     node: "field",
+    provenance:
+      "Specified and implemented in the product's field-entry screens: capture runs on the operator's own device, and an institution can enter its week. No institution has entered anything, so the stage is described rather than exercised.",
   },
   {
     ord: "02",
@@ -297,6 +518,8 @@ export const VALUE_CHAIN: readonly ChainStage[] = [
     what: "Each observation becomes a row: id, timestamp, source, state.",
     owner: "The institution",
     node: "register",
+    provenance:
+      "The row grammar is implemented and enforced in code. No institutional row is published on this site, so the stage is designed and the records it would hold are absent.",
   },
   {
     ord: "03",
@@ -304,6 +527,8 @@ export const VALUE_CHAIN: readonly ChainStage[] = [
     what: "Rows become registers that can be queried, not only read.",
     owner: "The local record",
     node: "register",
+    provenance:
+      "Specified, and implemented against locally entered data. It needs records entered by an institution before it can structure anything, and none has been.",
   },
   {
     ord: "04",
@@ -311,6 +536,8 @@ export const VALUE_CHAIN: readonly ChainStage[] = [
     what: "Repeated records become patterns, each bound to its sources.",
     owner: "The local record",
     node: "intelligence",
+    provenance:
+      "Specified, and implemented in two of three forms against locally entered data. Never run against a real institution's records, so it has produced no reading about anyone.",
   },
   {
     ord: "05",
@@ -318,13 +545,30 @@ export const VALUE_CHAIN: readonly ChainStage[] = [
     what: "A decision is taken against the derived intelligence, under an explicit rule.",
     owner: "The institution",
     node: "control",
+    provenance:
+      "The decision schema and its eligibility rules are defined in code. No decision has been taken through it, and no institutional decision archive exists.",
   },
   {
     ord: "06",
     name: "Execute",
-    what: "The decision becomes work in the field: the change itself, in the place the decision was about, under the rule it was recorded against.",
+    /* This described physical work in the field — the change itself, in
+       the place the decision was about. It was the most commercially
+       attractive sentence in the chain and the least implemented: nothing
+       in this repository performs field work, and the console has no
+       execution module at all. For a company selling software it was also
+       a category error, describing a delivery operation rather than a
+       capability in the product.
+
+       What software actually does at this stage is turn a decision into
+       the work the institution then carries out — the assignments, the
+       exports, the messages it sends. The institution still does the
+       physical part. The product is what makes the decision executable
+       and the execution recordable. */
+    what: "The decision becomes the institution's work: the assignments, exports and messages it carries out, recorded against the rule the decision was taken under.",
     owner: "The institution",
     node: "control",
+    provenance:
+      "Specified, not implemented. This is where the product would turn a decision into an institution's work, and nothing in this repository does it yet.",
   },
   {
     ord: "07",
@@ -332,11 +576,13 @@ export const VALUE_CHAIN: readonly ChainStage[] = [
     what: "Execution is measured against the decision, and the measurement returns as records.",
     owner: "The local record",
     node: "evidence",
+    provenance:
+      "Specified, not implemented. Measurement against a decision requires a decision and a term of execution behind it; neither exists, so no measure is published.",
   },
 ] as const;
 
 export const CHAIN_RETURN =
-  "Measure feeds Observe — the loop is the product.";
+  "Measure feeds Observe — every product on this list closes the same loop.";
 /* ---------------------------------------------------------------- */
 /* REGISTERS — what the system records                              */
 /* ---------------------------------------------------------------- */
@@ -487,136 +733,175 @@ export const SIGNALS: readonly Signal[] = [
 /* ---------------------------------------------------------------- */
 
 export const CONSOLE = {
-  /* Named for what it is on this site rather than for what it does for a
-     user. The console's own name, its module list and its capabilities
-     belong to lib/console.ts, which the console reads and which this file
-     never imports — see CONSOLE_VOCABULARY above for why. What the
-     architecture needs to say about it is three sentences: that it runs,
-     that it holds its own record, and that nobody has been given it. */
-  name: "The built surface",
+  /* Named for what it is and sold as, which is the correction that matters
+     most on this site.
+
+     It was called "The built surface" and its sector was given as "Field
+     operations", with a comment explaining that naming a real sector
+     "makes the reader infer the product is that sector's system". That
+     inference was correct, and it was the point: the product IS a school
+     operations system. Hiding the sector did not protect the architecture
+     from being read as a consultancy — it guaranteed it, by leaving the
+     one working piece of software in the repository with no name, no
+     buyer and no use case while the copy went on to insist it was "an
+     example · not the product".
+
+     So it is named. Its module list lives in lib/console.ts, which this
+     file never imports (see CONSOLE_VOCABULARY_SCOPED). What the
+     architecture needs to say about it is five things: what it is, that it
+     runs, that its data is invented, what it costs, and that nobody has
+     bought it. */
+  name: "School Console",
   href: "/console",
+  /** The product's category, in the words a buyer would use. */
+  kind: "Management system",
   oneLine:
-    "A local-first surface that runs this architecture end to end on one device, openable by anyone.",
+    "The operating software a school runs its week on — the roll, the money, the marks, the timetable and the parents — running entirely on the school's own device.",
   state: "PROTOTYPE" as EvidenceState,
+  /**
+   * The data state, declared separately from the product state on purpose.
+   *
+   * The console builds itself: on first load with empty stores it writes
+   * ten named Kenyan schools, roughly 7,650 enrolments, a term of
+   * assessment scores and fee records (lib/proto-school.ts). That data is
+   * good enough to drive every module and entirely invented, which is
+   * what DEMONSTRATION exists to say.
+   *
+   * The previous site published "no institutional record has been
+   * entered" on /register while the console held ten of them. Both
+   * sentences were on the same website. This field is what resolves it,
+   * and `MEASURES` renders the module count beside it.
+   */
+  dataState: "DEMONSTRATION" as EvidenceState,
+  dataNote:
+    "The console fills itself with invented schools, learners and records on first load, so every module can be opened. None of it is a real institution and none of it describes a real person.",
   localFirst:
-    "Records written on a surface like this stay on the device that wrote them until the institution exports them. Nothing is transmitted.",
+    "Records written on a device like this stay on the device that wrote them until the school exports them. Nothing is transmitted.",
+  /** The commercial shape: what it costs and who decides. */
+  commercial:
+    "Sold per school, per term, to the school itself. The buyer is the head teacher or the proprietor rather than a ministry, because the record never leaves the device.",
   provenance:
-    "Openable at /console. No institution runs it: there is no deployment, adoption or outcome record.",
+    "Built and openable at /console. No school runs it: there is no deployment, no customer and no outcome record. The data inside it is invented and is labelled DEMONSTRATION wherever it is described.",
 } as const;
+
 /* ---------------------------------------------------------------- */
-/* THE BUILDS — the grammar, instantiated in a domain               */
+/* THE PRODUCTS — what the company sells                             */
 /* ---------------------------------------------------------------- */
 
 /**
- * A build is one instantiation of the same chain over one domain.
+ * A product is one thing APT-LABS sells, with a buyer and a price shape.
  *
- * This is the load-bearing reframe of the whole system: the School
- * Console is not the product, it is *an example of the product*. It is
- * the only build that exists, and it is listed first because it is the
- * only one with a route — not because it is the most important domain.
+ * The previous `Build` type was "one instantiation of the same chain over
+ * one domain", and its six rows were Hospital Management, Procurement,
+ * Agriculture, Language and Commerce. Four of those five are sectors the
+ * company has no relationship with — not markets being entered, just
+ * nouns. Rendered as a six-row grid headed "One grammar, six domains",
+ * with the one real product renamed to "The built surface" and explicitly
+ * labelled "an example · not the product", the whole thing read as a
+ * platform with five verticals in market. That reading is false, and it
+ * is the most expensive false thing on the site: it invites diligence on
+ * four pipeline items that do not exist.
  *
- * `href` is present only where a build actually resolves to a surface.
- * A build without one is rendered in the planned annex, never as a
- * link: a node that looks like a link and resolves to nothing is the
- * one failure this system's grammar exists to prevent.
+ * What replaced it is a product catalogue with a `kind` per row, because
+ * a software company sells three different things and an investor prices
+ * them differently:
  *
- * `state` is the whole story of each row. PROTOTYPE means built and
- * openable; PLANNED means designed, and carries no figure, no count and
- * no date, because a planned surface has none.
+ *   management-system  operating software an institution runs. Recurring,
+ *                      per institution. The School Console is one.
+ *   mvp                a commissioned build against one named problem.
+ *                      Scoped, priced per build, delivered once.
+ *   studio             a place where a build happens in the open, with its
+ *                      register published as it goes.
+ *
+ * `href` is present only where a product resolves to a real surface. A
+ * product without one is never rendered as a link: a node that looks like
+ * a link and resolves to nothing is the one failure this grammar exists
+ * to prevent.
  */
-export interface Build {
+export interface Product {
   name: string;
-  /** The domain this build runs in. One noun. */
-  domain: string;
+  /** Which of the three commercial shapes this is. */
+  kind: "management-system" | "mvp" | "studio";
+  /** One line naming the buyer — the sentence that was missing. */
+  buyer: string;
+  /** What one row here is: a module, a commission, a build. */
+  unit: string;
   /**
-   * The plane node this build exercises most.
+   * The plane node this product exercises most.
    *
-   * A build is not a sixth node and it does not belong in the menu: it
-   * is an instance of the chain, so it hangs off the field that carries
-   * its heaviest stage. Six builds map onto the five fields, and the
-   * lattice uses this to say which part of the system a build exercises.
-   *
-   * It was introduced for the build floor and briefly removed with it.
-   * The fact belongs to the register rather than to either route: which
-   * stage a build exercises is a property of the build, and a route is
-   * not a place for facts to live.
+   * A product is not a sixth node and does not belong in the menu: it is
+   * an instance of the chain, so it hangs off the node carrying its
+   * heaviest stage. The lattice uses this to say which part of the system
+   * a product exercises.
    */
   node: PlaneNode["key"];
   /** reality → evidence-bound record → structure → decision */
   chain: string;
   state: EvidenceState;
-  /** Present only when the build resolves to a real surface. */
+  /** Present only when the product resolves to a real surface. */
   href?: string;
-  /** Why this build's state is what it is. */
+  /** Why this product's state is what it is. */
   provenance: string;
 }
 
-export const BUILDS: readonly Build[] = [
+export const PRODUCTS: readonly Product[] = [
   {
-    /* The one build that has a surface. Its domain is stated as field
-       operations rather than as a school's, because a build is an
-       *example* of the chain and an example that names a sector makes the
-       reader infer the product is that sector's system. The console is
-       where it happens to be exercised; the architecture is not about it. */
-    name: "The built surface",
-    domain: "Field operations",
+    /* The one product with a surface, and therefore the only one whose
+       name, sector and buyer appear anywhere on this site. It leads the
+       catalogue because it is the only row that resolves — not because it
+       is the most important thing this company will ever sell. */
+    name: "School Console",
+    kind: "management-system",
+    buyer: "A school. Head teacher or proprietor.",
+    unit: "module",
     node: "field",
-    chain: "observation → records → patterns → decisions",
+    chain: "the week → records → patterns → decisions",
     state: "PROTOTYPE",
     href: "/console",
     provenance:
-      "Built and openable in this repository. No institution runs it: there is no deployment, adoption or outcome record.",
+      "Built and openable in this repository, nine modules. No school runs it and none has bought it: there is no deployment, no customer and no outcome record. Its data is invented and labelled DEMONSTRATION.",
   },
   {
-    name: "Hospital Management",
-    domain: "Clinical administration",
-    node: "register",
-    chain: "encounters → records → outcomes → protocols",
-    state: "PLANNED",
-    provenance:
-      "Designed against the same seven stages and the same custody boundary. Not built: there is no code, no schema and no clinical data in this repository, so this row carries no figure of any kind.",
-  },
-  {
-    name: "Procurement",
-    domain: "Public and institutional buying",
+    /* The MVP track, stated as a track rather than as a pipeline of
+       invented verticals. "Hospital Management" and "Commerce" were nouns
+       for sectors with no relationship to this company; this row is the
+       honest form — the service exists, no commission has been taken, and
+       a service with no customer has nothing to quote. */
+    name: "Commissioned MVP",
+    kind: "mvp",
+    buyer: "A small firm or institution with one named problem.",
+    unit: "commission",
     node: "intelligence",
-    chain: "tenders → records → buyer patterns → opportunity intelligence",
+    chain: "their records → our build → a thing they can use",
     state: "PLANNED",
     provenance:
-      "The join from tender register to buyer pattern is specified. Nothing is implemented and no tender data is held here.",
+      "The track is designed and priced per build. No commission has been taken, no scope agreed and no figure published for any of it: a service with no customer has nothing to quote.",
   },
   {
-    name: "Agriculture",
-    domain: "Farm operations",
-    node: "control",
-    chain: "farm events → records → patterns → operational recommendations",
-    state: "PLANNED",
-    provenance:
-      "Designed to run on events already recorded at the farm. No farm, no season and no dataset is documented.",
-  },
-  {
-    name: "Language",
-    domain: "Speech and text",
+    /* The studio track. This replaces the single row that was called
+       "Language", whose chain string — speech → governed dataset →
+       linguistic structure → model → service — described an AI product
+       shape while its own provenance admitted there was no dataset and
+       no model. */
+    name: "Build Studio",
+    kind: "studio",
+    buyer: "Anyone who wants to watch a build and read its register.",
+    unit: "build",
     node: "evidence",
-    chain: "speech → governed dataset → linguistic structure → model → service",
+    chain: "brief → register published → build → what it actually did",
     state: "PLANNED",
     provenance:
-      "The governance step is the load-bearing one and is specified before the model step. No dataset exists and no model has been trained.",
-  },
-  {
-    name: "Commerce",
-    domain: "Local trade",
-    node: "control",
-    chain: "transactions → records → market structure → decision intelligence",
-    state: "PLANNED",
-    provenance:
-      "Specified only. No transaction data is held in this repository, so no market structure can be claimed.",
+      "Designed as a public surface where a build is worked on with its register visible throughout. No studio is published and no build has been run in one.",
   },
 ] as const;
 
-/** The builds that resolve to a surface. The rest are architectures. */
-export const LIVE_BUILDS: readonly Build[] = BUILDS.filter((b) => b.href);
-export const PLANNED_BUILDS: readonly Build[] = BUILDS.filter((b) => !b.href);
+/** Back-compat alias. The lattice and both product grids read this name. */
+export const BUILDS = PRODUCTS;
+export type Build = Product;
+
+/** The products that resolve to a surface. The rest are the tracks. */
+export const LIVE_BUILDS: readonly Product[] = PRODUCTS.filter((p) => p.href);
+export const PLANNED_BUILDS: readonly Product[] = PRODUCTS.filter((p) => !p.href);
 
 /* ---------------------------------------------------------------- */
 /* MEASURES — figures that appear in the first viewport              */
@@ -629,35 +914,73 @@ export interface Measure {
   state: EvidenceState;
 }
 
+/**
+ * The console's module count — typed here, CHECKED in
+ * scripts/check-lexicon.mjs.
+ *
+ * Declared as a literal because MEASURES is a `const` array evaluated at
+ * module load, and it cannot import lib/console.ts without inverting the
+ * dependency the lexicon checker exists to keep one-way: the console must
+ * never read the architecture's vocabulary, and this file must never read
+ * the console's.
+ *
+ * So the number is typed here and verified there. The checker reads this
+ * declaration, reads `CONSOLE_MODULES.length` out of lib/console.ts, and
+ * fails the build if they disagree. That makes this the one figure on the
+ * site that is a claim with a verification path — which is what RULE-05
+ * asks for, and more than the previous version had, where the same count
+ * was typed into six places with nothing keeping any of them in step.
+ */
+export const MEASURED_MODULE_COUNT = "9";
+
 export const MEASURES: readonly Measure[] = [
   {
-    /* Counted, not typed. These two figures used to be a hand-kept census
-       of the console's module list — the largest number on the first
-       viewport, of a demo's own grid, restated in six places that nothing
-       kept in step. Deriving them from the arrays below makes them true by
-       construction: change a register row and the figure follows. */
+    /* Counted, not typed. Deriving these from the arrays above makes them
+       true by construction: add a product row and the figure follows.
+
+       This was `1 / builds with a surface`, which is honest but was a
+       count of one set in the largest type on the page, beside a count of
+       six. A reader takes two small numbers from that and infers a
+       portfolio. It is still the first figure and still the true one; it
+       is simply labelled as what it counts, which is now a product
+       rather than a build. */
     figure: String(LIVE_BUILDS.length),
-    key: "builds with a surface",
-    note: "Built and openable in this repository. No institution runs one.",
+    key: "product you can open now",
+    note: "Built and openable in this repository. No customer runs one.",
     state: "PROTOTYPE",
   },
   {
-    figure: String(REGISTERS.length),
-    key: "record classes",
-    note: "People, assets, decisions and any further class the chain requires. The grammar is fixed; the classes are not.",
+    figure: MEASURED_MODULE_COUNT,
+    key: "modules in it",
+    note: "Counted from the console's own module list and verified in CI, not typed by hand. Each one opens and works on invented data.",
+    state: "DEMONSTRATION",
+  },
+  {
+    figure: String(PRODUCTS.length),
+    key: "products and tracks",
+    note: "One management system with a surface, and two tracks — commissioned MVPs and the build studio — that are designed rather than built.",
     state: "PROTOTYPE",
   },
   {
-    figure: "—",
-    key: "verified deployments",
-    note: "Not established. Held as unknown rather than rendered as zero.",
-    state: "UNKNOWN",
-  },
-  {
-    figure: "1",
-    key: "evidence path per claim",
-    note: "A VERIFIED row must name the record that supports it.",
-    state: "VERIFIED",
+    /* The figure a reader asks for first, and the one this site had no
+       word for.
+
+       It was previously rendered as `— / verified deployments / UNKNOWN`,
+       which is a true statement about a number nobody was asking about.
+       Customers is the number that decides whether this is a company, and
+       it is genuinely zero — but this zero is a MEASUREMENT, not an
+       absence: we know there are no customers because none has ever been
+       sold, which is a different thing from not knowing. So it is a real
+       zero with a real state, not a dash.
+
+       This is the one figure on the site where a zero is the honest
+       answer, and the distinction is the point: the previous version could
+       not say "zero customers" without it reading as a missing number,
+       because it had no state for "we measured this and it is zero". */
+    figure: "0",
+    key: "customers",
+    note: "Measured, not assumed: no school has bought or run the product, and no commission has been taken. A zero, not a missing figure.",
+    state: "PROTOTYPE",
   },
 ] as const;
 /* ---------------------------------------------------------------- */
@@ -680,7 +1003,7 @@ export const CONTRACT_RULES: readonly {
     id: "RULE-02",
     subject: "PROTOTYPE",
     equals: "Built, running locally, inspectable.",
-    doesNotEqual: "Deployed. No route implies an institution is running it.",
+    doesNotEqual: "Deployed, sold, or in use by a customer. No route implies anyone is running it.",
   },
   {
     id: "RULE-03",
@@ -695,6 +1018,16 @@ export const CONTRACT_RULES: readonly {
     doesNotEqual: "Implemented. Planned surfaces carry no figures.",
   },
   {
+    /* The sixth rule, for the sixth state. Its `doesNotEqual` is the whole
+       reason DEMONSTRATION was added rather than reusing PROTOTYPE:
+       "it works" and "the data is real" are two claims, and the previous
+       vocabulary had exactly one word for both. */
+    id: "RULE-06",
+    subject: "DEMONSTRATION",
+    equals: "The surface runs, and the data in it is invented.",
+    doesNotEqual: "A record of anything that happened. Demonstration data never counts as a customer, an outcome, or a real institution.",
+  },
+  {
     id: "RULE-05",
     subject: "VERIFIED",
     equals: "An identifiable evidence path exists.",
@@ -703,27 +1036,40 @@ export const CONTRACT_RULES: readonly {
 ] as const;
 
 /* ---------------------------------------------------------------- */
-/* PUBLISHED UNKNOWNS — the register of what is not established      */
+/* WHAT IS NOT ESTABLISHED — the diligence register                 */
 /* ---------------------------------------------------------------- */
 
 /**
- * Things a system in this field is normally asked for, which are not
- * established here. Publishing them is the point: an unknown that is
- * named is an open question, while an unknown that is omitted reads as a
- * zero and gets quoted as one.
+ * The things a reader asks in the first meeting that are not established
+ * here.
  *
- * `since` is when the question became established as a question, not a
- * measurement date — there is no measurement.
+ * Publishing them is still the point: an unknown that is named is an open
+ * question, and one that is omitted reads as a zero and gets quoted as
+ * one. What changed is the register's SUBJECT, and the change is the
+ * correction.
  *
- * Five rows, not six, and none of them names a sector. Three of the six
- * this file used to carry were written as operational caveats — a fee
- * collection rate with no denominator, a cohort that had never been
- * assessed, a count of learners and staff — and each one named a metric
- * the reader had not thought to ask about, in a register whose stated
- * subject is what this system cannot yet say. Naming the class of measure
- * instead of the instance publishes the same absence and invites nothing.
- * The class-level rows also stop three copies of the same sentence
- * appearing on /, /evidence and /lattice.
+ * This was headed "Published unknowns" and read as a research programme's
+ * account of its own gaps — the register a public-interest lab keeps so
+ * nobody can accuse it of overclaiming. Its rows were "population sizes",
+ * "performance of any kind" and "partnerships and procurement
+ * relationships": a list of things a study has not measured.
+ *
+ * APT-LABS is not a study. It is a company that has not yet sold anything,
+ * and the honest register of that is short and commercial — no customer, no
+ * revenue, no contract, no team, no track record. Those are not research
+ * unknowns to be published beneath a heading about evidence; they are the
+ * first five questions, and naming them in the reader's own vocabulary is
+ * the difference between a company with no customers yet and an
+ * organisation whose existence is in question.
+ *
+ * UNK-05 previously carried "Organisation registration and team" — a
+ * missing company, filed beside an unmeasured cohort. That is precisely the
+ * category error this register exists to prevent, and it committed it. The
+ * contact route now lives on COMPANY, and the row that remains is the
+ * registration number itself, which is a filing fact rather than a
+ * research finding.
+ *
+ * `since` is when the question became a question, not a measurement date.
  */
 export const UNKNOWN_FACTS: readonly {
   id: string;
@@ -733,33 +1079,85 @@ export const UNKNOWN_FACTS: readonly {
 }[] = [
   {
     id: "UNK-01",
-    what: "Institutions running this system",
-    why: "No deployment has taken place. The one built surface runs in this repository and is openable by anyone.",
+    what: "Customers",
+    why: "None. No school has bought or run the product, and no MVP has been commissioned. This is a measured zero, published as a zero rather than as a missing figure.",
     since: "2026-09",
   },
   {
     id: "UNK-02",
-    what: "Population sizes",
-    why: "No institution's register is held in this repository. A count held on one device is a reading about that device, not about a population.",
+    what: "Revenue and pricing",
+    why: "No figure is published because none exists. The commercial shape is stated — per school, per term — but no price has been set and no invoice has been issued.",
     since: "2026-09",
   },
   {
     id: "UNK-03",
-    what: "Performance of any kind",
-    why: "No population has passed through the chain, so no measure derived from one can be published, and no denominator or statement exists for any rate. Either would be a guess presented as a figure.",
+    what: "Outcome or performance evidence",
+    why: "No customer has used the product long enough to produce one. A measure derived from a real institution's records cannot exist until a real institution is running it.",
     since: "2026-09",
   },
   {
     id: "UNK-04",
-    what: "Partnerships and procurement relationships",
+    what: "Contracts, partnerships and procurement",
     why: "No contract, tender record or partner agreement is documented in this repository.",
     since: "2026-09",
   },
   {
     id: "UNK-05",
-    what: "Organisation registration and team",
-    why: "Legal status and team members are not documented. Names, titles and registration numbers are not published until recorded with evidence.",
+    what: "Company registration number",
+    why: "Not documented here. Names, contact and geography are published on this site as the organisation's own record; a registration number is a filing fact and is supplied on request rather than asserted without one.",
     since: "2026-09",
+  },
+] as const;
+
+/* ---------------------------------------------------------------- */
+/* TARGETS — what the company is trying to make true                */
+/* ---------------------------------------------------------------- */
+
+/**
+ * Named intended outcomes, held at TARGET.
+ *
+ * The previous vocabulary defined TARGET, wrote a STATE_RULES clause for
+ * it, gave it a slot in the temperature scale and asserted its warmth in
+ * the contrast checker — and then used it zero times. Not on one row, on
+ * any row, anywhere on the site.
+ *
+ * That is not a small omission. A company that cannot say what it is
+ * trying to make true has nothing for a reader to fund toward: the raise
+ * has no destination, and a site whose only figures are absences describes
+ * a project rather than a plan. TARGET is what a pitch is for, and it is
+ * the one state that may carry a number and a date without that number
+ * being a measurement.
+ *
+ * Every row is an intention with a date and a stated measure of success,
+ * and none of them is a result. That distinction is the entire reason
+ * TARGET exists, and RULE-03 forbids rendering one as the other.
+ */
+export const TARGETS: readonly {
+  id: string;
+  what: string;
+  /** How we would know it was met. Named now, so it cannot move later. */
+  measure: string;
+  by: string;
+}[] = [
+  {
+    id: "TGT-01",
+    what: "One school running the School Console for a full term, on its own records.",
+    measure:
+      "A named school, a start date, and that school confirming it used the product through one complete term.",
+    by: "2027-Q1",
+  },
+  {
+    id: "TGT-02",
+    what: "First paid MVP commission, scoped against one named problem.",
+    measure: "An agreed scope, a signed engagement and an invoice raised — not a conversation.",
+    by: "2027-Q2",
+  },
+  {
+    id: "TGT-03",
+    what: "Three paying schools, which is the number at which this stops being one pilot.",
+    measure:
+      "Three distinct paying institutions, counted from contracts rather than from installations.",
+    by: "2027-Q4",
   },
 ] as const;
 

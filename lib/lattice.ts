@@ -230,12 +230,29 @@ export function buildLattice(): Lattice {
       role: stage.what,
       holds: stage.what,
       custody: stage.owner,
-      provenance: `Stage ${stage.ord} of the value chain. Custody: ${stage.owner}.`,
-      /* The chain is a specification, and a specification is PROTOTYPE
-         here in the system's own sense: built, inspectable, deployed
-         nowhere. It is not VERIFIED, because no record has passed through
-         all seven stages. */
-      state: "PROTOTYPE",
+      /* Provenance is read from the stage, never composed here.
+         This was a template — `Stage ${stage.ord} of the value chain.
+         Custody: ${stage.owner}.` — which manufactured a register-shaped
+         sentence about a row that was never in any register. A node whose
+         provenance is generated at the point of drawing cannot be checked
+         against the thing it claims, which is the one property this whole
+         system is built on. */
+      provenance: stage.provenance,
+      /* PLANNED, not PROTOTYPE.
+
+         These seven stages were stamped PROTOTYPE on the reasoning that
+         "a specification is PROTOTYPE here in the system's own sense".
+         It is not. PROTOTYPE permits "built and running locally,
+         inspectable by anyone who opens the route" and forbids anything
+         invented; a specification is neither built nor inspectable, and
+         nothing in this repository executes a stage. Stamping them
+         PROTOTYPE inflated the canvas tally from 6 to 13 PROTOTYPE and
+         contradicted the build grid's own caption, which says a planned
+         design carries no figure because it has none to carry.
+
+         PLANNED is the correct state and it is what PLANNED is for:
+         designed, not built, no figures. The chain is a design. */
+      state: "PLANNED",
       position: place(X_CHAIN, chainY(i)),
     });
   });
@@ -265,30 +282,37 @@ export function buildLattice(): Lattice {
     });
   });
 
-  /* -- The builds ---------------------------------------------- */
-  BUILDS.forEach((build, i) => {
+/* -- The products ------------------------------------------- */
+  BUILDS.forEach((product, i) => {
     nodes.push({
-      id: `build:${build.domain}`,
+      id: `build:${product.name}`,
       kind: "build",
       ord: String(i + 1).padStart(2, "0"),
-      name: build.name,
-      role: build.chain,
-      holds: `${build.domain} — an instantiation of the same chain over one domain.`,
-      /* Custody is stated, never blank. A build with no route has no
+      name: product.name,
+      role: product.chain,
+      /* The buyer, not a restatement of the type. This was minted from a
+         template — `${build.domain} — an instantiation of the same chain
+         over one domain` — which is a sentence about the diagram rather
+         than about the thing on it, and which meant the product's actual
+         customer appeared nowhere on the canvas. Naming the buyer here is
+         what makes the node a product rather than an instance of a
+         pattern. */
+      holds: product.buyer,
+      /* Custody is stated, never blank. A product with no route has no
          recorded institution holding its records, and "not established"
          is a different statement from "nobody holds them" — the first is
          this system's UNKNOWN, the second would be a measurement. */
-      custody: build.href ? "Not yet recorded" : "Not established",
-      provenance: build.provenance,
-      state: build.state,
-      href: build.href,
+      custody: product.href ? "Not yet recorded" : "Not established",
+      provenance: product.provenance,
+      state: product.state,
+      href: product.href,
       position: place(X_BUILD, buildY(i)),
     });
     edges.push({
-      id: `instance:${build.domain}->${build.node}`,
+      id: `instance:${product.name}->${product.node}`,
       kind: "instance",
-      source: `build:${build.domain}`,
-      target: `plane:${build.node}`,
+      source: `build:${product.name}`,
+      target: `plane:${product.node}`,
     });
   });
 
@@ -296,14 +320,14 @@ export function buildLattice(): Lattice {
 }
 
 /* -- What the canvas is allowed to claim --------------------------
-   Every node on the lattice is either PROTOTYPE (built, openable here)
-   or PLANNED (designed, no figures). That distribution is not a styling
-   decision: it is the tally of the nodes actually rendered, computed
-   rather than asserted, and it is what the tally strip beside the canvas
-   prints. The order comes from EVIDENCE_STATES rather than being restated
-   here, because the same ordering governs the tags, the tally bars and the
-   measure cells and a second copy of it would be a second thing to keep
-   in step.
+   Every node on the lattice is PLANNED (a design, no figures) or
+   PROTOTYPE (built, openable here, no customer). That distribution is not
+   a styling decision: it is the tally of the nodes actually rendered,
+   computed rather than asserted, and it is what the tally strip beside
+   the canvas prints. The order comes from EVIDENCE_STATES rather than
+   being restated here, because the same ordering governs the tags, the
+   tally bars and the measure cells, and a second copy of it would be a
+   second thing to keep in step.
    ----------------------------------------------------------------- */
 
 export function latticeTally(nodes: readonly LatticeNode[]): {
