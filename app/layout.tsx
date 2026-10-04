@@ -8,6 +8,12 @@ import "./globals.css";
 // Next.js CSS import from the root layout is.
 import "@xyflow/react/dist/style.css";
 import "./lattice.css";
+/* The epistemic surfaces. Loaded globally rather than per-route because
+   ASIANCODER.MD's semantic palette — teal verified, cyan evidence,
+   violet intelligence, amber pending, red contradiction — has to mean the
+   same thing on every surface it appears on. A palette that resolves per
+   route is not a palette. */
+import "./epistem.css";
 import { COMPANY } from "@/lib/system";
 import { SITE_URL } from "@/lib/site";
 

@@ -1,0 +1,862 @@
+/* ═══════════════════════════════════════════════════════════════════
+   EPISTEMIC SURFACES — app/epistem.css
+
+   The APT-LABS visual language, per ASIANCODER.MD:
+
+     near-black graphite      extremely subtle grid      off-white type
+     teal    = verified / live        cyan     = evidence / data
+     violet  = intelligence          amber    = uncertainty / pending
+     red     = contradiction          thin borders, small radii
+     no excessive blur, no giant gradients, no glassmorphism
+
+   Typography should read closer to a scientific instrument than to
+   consumer software: a mono face carries every label, and the display
+   face is reserved for content that is actually the subject. Numbers are
+   always mono and always tabular, because a column of figures that
+   does not line up is unreadable as a comparison.
+
+   This file is owned by one author and is the ONLY stylesheet the
+   epistem components reference. Class names are declared in the brief
+   each component was written against; if a component needs something not
+   here, that is a finding, not a licence to add an inline style.
+
+   ── THE ONE RULE THIS STYLESHEET ENFORCES ──────────────────────────
+
+   Colour is never the only channel. Every state in this system has a
+   second, non-visual encoding: a rank numeral, a word, a glyph, or a
+   line style. That is not an accessibility afterthought bolted on at the
+   end — it is the design. ASIANCODER.MD's premise is that the failure
+   mode is a fluent statement that looks authoritative and is not, and a
+   reader who cannot perceive the difference is exactly the reader this
+   system is built to protect. So the redundant channel is load-bearing
+   and removing it is a regression, not a simplification.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Tokens ──────────────────────────────────────────────────────
+   Added to the palette in globals.css rather than replacing anything.
+   --ep-* is namespaced so a future surface can use the same names
+   without touching this file. */
+
+:root {
+  /* The five semantic hues ASIANCODER.MD assigns. */
+  --ep-live: #7bf0c6;          /* teal    · verified / live          */
+  --ep-data: #7cc5e0;          /* cyan    · evidence / data          */
+  --ep-think: #b9a4e8;         /* violet  · intelligence / hypothesis*/
+  --ep-pending: #efb429;       /* amber   · uncertainty / pending    */
+  --ep-clash: #ef6b6b;         /* red     · contradiction / failure  */
+
+  /* Alpha derivations, so a hue can be used as a wash without a new
+     token per state. 12% reads as a tint on the graphite, 4% as a
+     hover, 30% as a rule. */
+  --ep-live-a30: rgba(123, 240, 198, 0.30);
+  --ep-live-a12: rgba(123, 240, 198, 0.12);
+  --ep-live-a04: rgba(123, 240, 198, 0.04);
+
+  --ep-data-a30: rgba(124, 197, 224, 0.30);
+  --ep-data-a12: rgba(124, 197, 224, 0.12);
+  --ep-data-a04: rgba(124, 197, 224, 0.04);
+
+  --ep-think-a30: rgba(185, 164, 232, 0.30);
+  --ep-think-a12: rgba(185, 164, 232, 0.12);
+  --ep-think-a04: rgba(185, 164, 232, 0.04);
+
+  --ep-pending-a30: rgba(239, 180, 41, 0.30);
+  --ep-pending-a12: rgba(239, 180, 41, 0.12);
+  --ep-pending-a04: rgba(239, 180, 41, 0.04);
+
+  --ep-clash-a30: rgba(239, 107, 107, 0.30);
+  --ep-clash-a12: rgba(239, 107, 107, 0.12);
+  --ep-clash-a04: rgba(239, 107, 107, 0.04);
+
+  /* The axis-track height and the gap-bar height are named because
+     three components need them to agree. A meter whose height differs
+     from the vector it is compared against is a comparison that lies. */
+  --ep-track-h: 6px;
+  --ep-bar-h: 22px;
+}
+
+/* ── Shared atoms ──────────────────────────────────────────────── */
+
+.ep-panel {
+  border: 1px solid var(--rule-2);
+  border-radius: 2px;
+  background: rgba(10, 14, 21, 0.42);
+}
+
+.ep-key {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+.ep-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CATEGORY TAG
+
+   The rank numeral is not decoration. It is the redundant channel that
+   makes the firewall readable without colour, and it is why the chip is
+   sized by its number rather than by its label.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.ep-cat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 6px;
+  border: 1px solid var(--rule-2);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--ash);
+  cursor: help;
+}
+
+.ep-cat-rank {
+  /* The numeral sits in its own well so it reads as a measurement
+     rather than as part of the word. */
+  display: grid;
+  place-items: center;
+  min-width: 15px;
+  height: 13px;
+  padding: 0 3px;
+  border-radius: 1px;
+  background: var(--wash-2);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+/* Rank bands. FACT and OBSERVATION earn the live hue because they are
+   the only two categories that can be directly evidenced; everything
+   from INFERENCE down cools toward ash, because that is the direction
+   of decreasing entitlement. UNKNOWN is the quietest of all. */
+.ep-cat[data-rank-band="strong"] {
+  border-color: var(--ep-live-a30);
+  color: var(--ep-live);
+}
+.ep-cat[data-rank-band="strong"] .ep-cat-rank {
+  background: var(--ep-live-a12);
+  color: var(--ep-live);
+}
+
+.ep-cat[data-rank-band="mid"] {
+  border-color: var(--ep-data-a30);
+  color: var(--ep-data);
+}
+.ep-cat[data-rank-band="mid"] .ep-cat-rank {
+  background: var(--ep-data-a12);
+  color: var(--ep-data);
+}
+
+.ep-cat[data-rank-band="weak"] {
+  border-color: var(--ep-think-a30);
+  color: var(--ep-think);
+}
+.ep-cat[data-rank-band="weak"] .ep-cat-rank {
+  background: var(--ep-think-a12);
+  color: var(--ep-think);
+}
+
+.ep-cat[data-rank-band="unestablished"] {
+  /* Dashed, and quiet. An unknown that shouts is a hidden zero. */
+  border-style: dashed;
+  border-color: var(--rule-2);
+  color: var(--quiet);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CONFIDENCE LEDGER
+
+   The value and its reasons are one unit. There is no CSS-only state in
+   which the number appears alone — a `.ep-conf` without `.ep-conf-line`
+   children is a bug, and the component is written so the reasons are
+   mandatory props.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.ep-conf {
+  border-left: 2px solid var(--rule-2);
+  padding-left: 10px;
+}
+
+.ep-conf-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-figure);
+  line-height: 1;
+  color: var(--ink);
+}
+
+.ep-conf-line {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr);
+  gap: 6px;
+  margin-top: 5px;
+  font-size: var(--fs-ui);
+  line-height: 18px;
+  color: var(--ash);
+}
+
+.ep-conf-line-pos { color: var(--ep-live); }
+.ep-conf-line-neg { color: var(--ep-pending); }
+
+/* The sign is the redundant channel for direction, so it is a glyph and
+   not a colour. */
+.ep-conf-line-pos::before { content: "+"; }
+.ep-conf-line-neg::before { content: "\2212"; } /* real minus */
+
+.ep-conf-warn {
+  margin-top: var(--s-2);
+  padding: 6px 8px;
+  border: 1px solid var(--ep-pending-a30);
+  border-radius: 2px;
+  background: var(--ep-pending-a04);
+  font-size: var(--fs-ui);
+  line-height: 18px;
+  color: var(--ep-pending);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   STATEMENT CARD
+   ═══════════════════════════════════════════════════════════════════ */
+
+.ep-stmt {
+  padding: var(--s-3);
+  border: 1px solid var(--rule-2);
+  border-radius: 2px;
+  background: rgba(10, 14, 21, 0.42);
+}
+
+.ep-stmt-head {
+  display: flex;
+  gap: var(--s-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.ep-stmt-kind {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+.ep-stmt-text {
+  margin: var(--s-2) 0 0;
+  max-width: 72ch;
+  font-size: var(--fs-body);
+  line-height: 26px;
+  color: var(--ink);
+}
+
+.ep-stmt-meta {
+  display: flex;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+  margin-top: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  color: var(--quiet);
+}
+
+/* A recorded category transition. A promotion is the interesting case:
+   it is a move toward a category with stronger entitlement, so it wears
+   the contradiction hue and is labelled, never rendered as a quiet
+   edit. */
+.ep-stmt-trans {
+  margin-top: var(--s-2);
+  padding: 6px 8px;
+  border-left: 2px solid var(--rule-2);
+  font-size: var(--fs-ui);
+  line-height: 18px;
+  color: var(--ash);
+}
+.ep-stmt-trans[data-promotion="true"] {
+  border-left-color: var(--ep-clash);
+  background: var(--ep-clash-a04);
+  color: var(--ash);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   GUARDS
+
+   Severity is a word AND a bar, never a colour alone. The quoted span
+   is the payload: a guard that names an event without showing the words
+   it caught is an oracle, and oracles are the thing this system exists
+   to replace.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.ep-guard-item {
+  display: grid;
+  grid-template-columns: 3px minmax(0, 1fr);
+  gap: var(--s-3);
+  padding: var(--s-3) 0;
+  border-bottom: 1px solid var(--rule);
+}
+.ep-guard-item:last-child { border-bottom: 0; }
+
+.ep-guard-item[data-severity="CRITICAL"] { border-left-color: var(--ep-clash); }
+.ep-guard-item[data-severity="MATERIAL"]  { border-left-color: var(--ep-pending); }
+.ep-guard-item[data-severity="ADVISORY"]  { border-left-color: var(--rule-3); }
+
+.ep-guard-sev {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+}
+.ep-guard-item[data-severity="CRITICAL"] .ep-guard-sev { color: var(--ep-clash); }
+.ep-guard-item[data-severity="MATERIAL"]  .ep-guard-sev { color: var(--ep-pending); }
+.ep-guard-item[data-severity="ADVISORY"]  .ep-guard-sev { color: var(--quiet); }
+
+/* The quoted span. Quoted, not paraphrased, and set in the body face so
+   it reads as content rather than as metadata. */
+.ep-guard-ev {
+  margin-top: 6px;
+  padding: 6px 8px;
+  border-left: 2px solid var(--rule-3);
+  background: rgba(0, 0, 0, 0.28);
+  font-size: var(--fs-ui);
+  line-height: 20px;
+  color: var(--ink);
+  max-width: 68ch;
+}
+
+.ep-guard-body {
+  margin: 4px 0 0;
+  font-size: var(--fs-ui);
+  line-height: 20px;
+  color: var(--ash);
+  max-width: 72ch;
+}
+
+/* Acknowledged, not dismissed. A CRITICAL guard that has been seen is
+   still true; the state shows a human looked, not that it stopped. */
+.ep-guard-item[data-acknowledged="true"] { opacity: 0.72; }
+.ep-guard-item[data-acknowledged="true"] .ep-guard-sev::after {
+  content: " · acknowledged";
+  color: var(--quiet);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   EVIDENCE LEDGER
+   ═══════════════════════════════════════════════════════════════════ */
+
+.ep-ledger { border-top: 1px solid var(--rule-2); }
+
+.ep-ledger-row {
+  display: grid;
+  grid-template-columns: minmax(0, 2.1fr) 116px minmax(0, 1fr) 132px;
+  gap: var(--s-3);
+  align-items: start;
+  padding: var(--s-3) 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.ep-ledger-cell { min-width: 0; }
+.ep-ledger-cell > * { margin: 0; }
+
+/* Independence is the point of this ledger, so it gets a rule of its own
+   rather than sharing the citation cell's styling. */
+.ep-rank {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-ui);
+  color: var(--ink);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   THE EPISTEMIC DIFFERENTIAL
+
+   Four lanes, never merged, never collapsed into a diff. The whole point
+   is that they disagree, and any treatment that reconciles them on
+   screen has destroyed the finding before the reader could see it.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.ep-diff { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule-2); }
+
+.ep-diff-lane {
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr);
+  gap: var(--s-3);
+  padding: var(--s-3);
+  background: var(--panel);
+}
+
+.ep-diff-lane-key {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+/* Each lane wears its own hue, and the hue means the lane. */
+.ep-diff-lane[data-lane="MODEL_SAID"]       { box-shadow: inset 2px 0 0 var(--ep-think); }
+.ep-diff-lane[data-lane="EVIDENCE_SUPPORTS"]{ box-shadow: inset 2px 0 0 var(--ep-data); }
+.ep-diff-lane[data-lane="VERIFIABLE"]      { box-shadow: inset 2px 0 0 var(--ep-live); }
+.ep-diff-lane[data-lane="UNKNOWN"]         { box-shadow: inset 2px 0 0 var(--rule-3); }
+
+.ep-diff-lane[data-lane="MODEL_SAID"] .ep-diff-lane-key { color: var(--ep-think); }
+.ep-diff-lane[data-lane="EVIDENCE_SUPPORTS"] .ep-diff-lane-key { color: var(--ep-data); }
+.ep-diff-lane[data-lane="VERIFIABLE"] .ep-diff-lane-key { color: var(--ep-live); }
+.ep-diff-lane[data-lane="UNKNOWN"] .ep-diff-lane-key { color: var(--quiet); }
+
+.ep-diff-lane-val {
+  font-size: var(--fs-body);
+  line-height: 26px;
+  color: var(--ink);
+  max-width: 68ch;
+}
+
+/* An empty lane says so in words. An empty box would read as an absence
+   of findings rather than an absence of content. */
+.ep-diff-lane-val[data-empty="true"] { color: var(--quiet); font-style: italic; }
+
+/* Divergences get the most ink on the screen. A divergence is the
+   finding; the lanes are the setup. */
+.ep-diff-div {
+  margin-top: var(--s-3);
+  padding: var(--s-3);
+  border: 1px solid var(--ep-clash-a30);
+  border-radius: 2px;
+  background: var(--ep-clash-a04);
+}
+.ep-diff-div-kind {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--ep-clash);
+}
+.ep-diff-div-detail {
+  margin: 5px 0 0;
+  font-size: var(--fs-ui);
+  line-height: 20px;
+  color: var(--ash);
+  max-width: 78ch;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   THE GAP METER
+
+   Two bars on one scale, never two numbers side by side. The whole
+   instrument is the DISTANCE between them, so the eye has to see them
+   against each other rather than read them independently.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.ep-gap-bars { display: grid; gap: 6px; }
+
+.ep-gap-bar { display: grid; grid-template-columns: 96px minmax(0, 1fr) 48px; gap: var(--s-2); align-items: center; }
+
+.ep-gap-bar-key {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+/* The track is the 0-1 domain made visible, so the reader can see the
+   scale rather than infer it. */
+.ep-gap-bar > div {
+  position: relative;
+  height: var(--ep-bar-h);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--rule);
+  border-radius: 1px;
+}
+.ep-gap-bar > div > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  display: block;
+  background: var(--rule-3);
+}
+
+/* Midline at 0.5, so a bar over half is visibly over half. */
+.ep-gap-bar > div::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--rule-2);
+}
+
+.ep-gap-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--s-3);
+  padding: 6px 9px;
+  border: 1px solid var(--ep-clash-a30);
+  border-radius: 2px;
+  background: var(--ep-clash-a04);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--ls-caps);
+  color: var(--ep-clash);
+}
+
+.ep-gap-status {
+  margin: var(--s-2) 0 0;
+  max-width: 74ch;
+  font-size: var(--fs-ui);
+  line-height: 20px;
+  color: var(--ash);
+}
+
+/* The proxy's method, printed. A shallow measure that does not admit it
+   is shallow and misleading. */
+.ep-gap-status code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  color: var(--quiet);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   HEALTH VECTOR
+   ═══════════════════════════════════════════════════════════════════ */
+
+.ep-hv { display: grid; gap: 0; }
+
+.ep-hv-axis {
+  display: grid;
+  grid-template-columns: 172px 132px minmax(0, 1fr);
+  gap: var(--s-3);
+  align-items: start;
+  padding: var(--s-3) 0;
+  border-bottom: 1px solid var(--rule);
+}
+.ep-hv-axis:last-child { border-bottom: 0; }
+
+.ep-hv-track {
+  position: relative;
+  height: var(--ep-track-h);
+  margin-top: 5px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--rule);
+  border-radius: 1px;
+}
+.ep-hv-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--ep-data);
+}
+
+/* A NULL axis is the important case. It is dashed and empty and says
+   "not measured" — never a zero-width bar, which would read as a
+   measurement of nothing rather than an absence of measurement. That
+   distinction is the entire difference between this system and a
+   progress bar. */
+.ep-hv-null {
+  border-style: dashed;
+  border-color: var(--rule-2);
+  background: transparent;
+}
+
+.ep-hv-basis {
+  margin: 4px 0 0;
+  font-size: var(--fs-ui);
+  line-height: 19px;
+  color: var(--quiet);
+  max-width: 72ch;
+}
+.ep-hv-basis li { list-style: none; }
+.ep-hv-basis li::before { content: "— "; color: var(--rule-3); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   RADAR
+   ═══════════════════════════════════════════════════════════════════ */
+
+.ep-radar { display: block; max-width: 420px; }
+
+.ep-radar-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  fill: var(--quiet);
+}
+
+.ep-radar-spoke { stroke: var(--rule-2); fill: none; }
+.ep-radar-ring { stroke: var(--rule); fill: none; }
+.ep-radar-polygon { fill: var(--ep-data-a12); stroke: var(--ep-data); stroke-width: 1; }
+.ep-radar-null-spoke { stroke: var(--rule-2); stroke-dasharray: 2 3; fill: none; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   LOOP TIMELINE
+   ═══════════════════════════════════════════════════════════════════ */
+
+.ep-loop { display: flex; align-items: stretch; gap: 0; overflow-x: auto; padding-bottom: var(--s-2); }
+
+.ep-loop-stage {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 132px;
+  padding: var(--s-3);
+  border: 1px solid var(--rule-2);
+  border-right-width: 0;
+  background: rgba(10, 14, 21, 0.42);
+}
+.ep-loop-stage:last-child { border-right-width: 1px; }
+
+.ep-loop-node {
+  display: flex;
+  gap: 7px;
+  align-items: baseline;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.ep-loop-stage[data-state="entered"] {
+  border-color: var(--ep-live-a30);
+  background: var(--ep-live-a04);
+}
+.ep-loop-stage[data-state="entered"] .ep-loop-node { color: var(--ep-live); }
+
+/* Skipped is styled, not omitted. A stage the loop never entered is a
+   finding about the run, and hiding it would make a pipeline look like
+   a process. */
+.ep-loop-stage[data-state="skipped"] {
+  border-style: dashed;
+  background: transparent;
+}
+.ep-loop-stage[data-state="skipped"] .ep-loop-node { color: var(--quiet); }
+.ep-loop-stage[data-state="skipped"] .ep-loop-node::after { content: " · not entered"; }
+
+.ep-loop-stage[data-state="blocked"] {
+  border-color: var(--ep-clash-a30);
+  background: var(--ep-clash-a04);
+}
+.ep-loop-stage[data-state="blocked"] .ep-loop-node { color: var(--ep-clash); }
+
+.ep-loop-conn {
+  margin: var(--s-2) 0 0;
+  font-size: var(--fs-micro);
+  line-height: 17px;
+  color: var(--quiet);
+}
+
+/* A gate that was not met. This is the module's whole reason to exist,
+   so it gets a rule and its own background. */
+.ep-loop-gate {
+  margin-top: var(--s-2);
+  padding: 6px 7px;
+  border: 1px solid var(--ep-clash-a30);
+  border-radius: 2px;
+  background: var(--ep-clash-a04);
+  font-size: var(--fs-micro);
+  line-height: 17px;
+  color: var(--ash);
+}
+.ep-loop-gate li { list-style: none; }
+.ep-loop-gate li::before { content: "\00d7  "; color: var(--ep-clash); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   ATTACKS
+   ═══════════════════════════════════════════════════════════════════ */
+
+.ep-atk-item {
+  padding: var(--s-3) 0;
+  border-bottom: 1px solid var(--rule);
+}
+.ep-atk-item:last-child { border-bottom: 0; }
+
+.ep-atk-item[data-severity="CRITICAL"] { border-left: 2px solid var(--ep-clash); padding-left: var(--s-3); }
+.ep-atk-item[data-severity="MATERIAL"]  { border-left: 2px solid var(--ep-pending); padding-left: var(--s-3); }
+.ep-atk-item[data-severity="ADVISORY"]  { border-left: 2px solid var(--rule-3); padding-left: var(--s-3); }
+
+.ep-atk-sev {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+}
+.ep-atk-item[data-severity="CRITICAL"] .ep-atk-sev { color: var(--ep-clash); }
+.ep-atk-item[data-severity="MATERIAL"]  .ep-atk-sev { color: var(--ep-pending); }
+.ep-atk-item[data-severity="ADVISORY"]  .ep-atk-sev { color: var(--quiet); }
+
+/* The attacker's target, quoted. An attack on a paraphrase cannot be
+   assessed, so the quote is the load-bearing part of the row. */
+.ep-atk-target {
+  display: block;
+  margin-top: 6px;
+  padding: 6px 8px;
+  border-left: 2px solid var(--ep-clash-a30);
+  background: rgba(0, 0, 0, 0.28);
+  font-size: var(--fs-ui);
+  line-height: 20px;
+  color: var(--ink);
+}
+
+.ep-atk-req {
+  margin: 6px 0 0;
+  font-size: var(--fs-ui);
+  line-height: 19px;
+  color: var(--ash);
+}
+.ep-atk-req::before {
+  content: "requires change: ";
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+/* Resolved attacks stay visible. Withdrawing is recorded, not erased. */
+.ep-atk-item[data-status="ADDRESSED"] { opacity: 0.6; }
+.ep-atk-item[data-status="ACCEPTED_RISK"] { opacity: 0.6; }
+.ep-atk-item[data-status="OPEN"] .ep-atk-sev::after { content: " · open"; color: var(--ep-clash); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   BRANCH BOARD
+   ═══════════════════════════════════════════════════════════════════ */
+
+.ep-branch { display: grid; grid-template-columns: repeat(auto-fit, minmax(288px, 1fr)); gap: var(--s-3); }
+
+.ep-branch-card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--s-3);
+  border: 1px solid var(--rule-2);
+  border-radius: 2px;
+  background: rgba(10, 14, 21, 0.42);
+}
+
+/* A protected branch is fenced. It is visually excluded from the
+   synthesis pool, so it should look excluded from the board. */
+.ep-branch-card[data-protected="true"] {
+  border-color: var(--ep-live-a30);
+  background: var(--ep-live-a04);
+}
+.ep-branch-card[data-protected="true"]::after {
+  content: "protected from optimisation";
+  display: block;
+  margin-top: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--ep-live);
+}
+
+.ep-branch-strategy {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--ep-think);
+}
+
+.ep-branch-field { margin-top: var(--s-2); font-size: var(--fs-ui); line-height: 20px; color: var(--ash); }
+.ep-branch-field b {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  font-weight: 400;
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+/* A collapsed pair: two branches that share a mechanism. This is the
+   anti-median engine reporting that apparent diversity is presentational,
+   and it is styled as a finding rather than as a low score. */
+.ep-branch-collapsed {
+  padding: var(--s-3);
+  border: 1px solid var(--ep-pending-a30);
+  border-radius: 2px;
+  background: var(--ep-pending-a04);
+}
+.ep-branch-collapsed .ep-branch-field { color: var(--ep-pending); }
+
+.ep-branch-dist { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-2); margin-top: var(--s-2); }
+.ep-branch-dist > div { display: grid; gap: 3px; }
+.ep-branch-dist .ep-key { font-size: var(--fs-micro); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   CREATIVITY GATE
+   ═══════════════════════════════════════════════════════════════════ */
+
+.ep-gate { display: grid; gap: var(--s-2); }
+
+.ep-gate-verb {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: var(--s-3);
+  border: 1px solid var(--rule-2);
+  border-radius: 2px;
+  background: rgba(10, 14, 21, 0.42);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+.ep-gate-verb:hover:not(:disabled) { border-color: var(--rule-3); background: var(--wash); }
+.ep-gate-verb:disabled { opacity: 0.4; cursor: not-allowed; }
+.ep-gate-verb:focus-visible { outline: 2px solid var(--signal); outline-offset: 1px; }
+
+.ep-gate-verb[data-verdict="KEEP"] { border-left: 2px solid var(--ep-live); }
+.ep-gate-verb[data-verdict="KILL"] { border-left: 2px solid var(--rule-3); }
+.ep-gate-verb[data-verdict="INCUBATE"] { border-left: 2px solid var(--ep-pending); }
+.ep-gate-verb[data-verdict="COMBINE"] { border-left: 2px solid var(--ep-data); }
+.ep-gate-verb[data-verdict="DISTORT"] { border-left: 2px solid var(--ep-think); }
+
+/* PROTECT FROM OPTIMIZATION is the one that gets the live hue and the
+   only filled treatment on the panel. ASIANCODER.MD singles it out for a
+   reason: it is the control that stops the machine erasing a human's
+   strange idea, and it should be the most obvious thing in the gate. */
+.ep-gate-verb[data-verdict="PROTECT_FROM_OPTIMIZATION"] {
+  border-color: var(--ep-live-a30);
+  border-left-width: 2px;
+  background: var(--ep-live-a04);
+  color: var(--ep-live);
+}
+
+.ep-gate-reason {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-sans);
+  font-size: var(--fs-ui);
+  line-height: 19px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--quiet);
+}
+
+.ep-gate-protected {
+  padding: var(--s-3);
+  border: 1px solid var(--ep-live-a30);
+  border-radius: 2px;
+  background: var(--ep-live-a04);
+  font-size: var(--fs-ui);
+  line-height: 20px;
+  color: var(--ash);
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────
+   ASIANCODER.MD permits animation only where it carries state change.
+   Everything here is a hover or focus transition, so honouring
+   prefers-reduced-motion costs nothing and is required anyway. */
+
+@media (prefers-reduced-motion: reduce) {
+  .ep-gate-verb,
+  .ep-cat,
+  .ep-stmt { transition: none; }
+}

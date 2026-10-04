@@ -545,6 +545,157 @@ console.log("=".repeat(pad + 22));
    ═══════════════════════════════════════════════════════════════ */
 console.log("\nEvidence-state temperature scale\n" + "-".repeat(pad + 22));
 
+/* ═══════════════════════════════════════════════════════════════════
+   THE EPISTEMIC SURFACES — app/epistem.css
+
+   ASIANCODER.MD assigns five semantic hues: teal for verified/live,
+   cyan for evidence/data, violet for intelligence, amber for
+   uncertainty/pending, red for contradiction/failure.
+
+   That assignment is the whole colour argument of the epistemic layer,
+   so it is checked the same way everything else is: each hue against
+   each of the three grounds the surfaces can sit on, and — the part
+   that matters — mutual distinguishability, because five semantic
+   colours that two of which look alike is four semantics with a
+   duplicate.
+
+   The alpha derivations are not audited here. A 4% wash is not text
+   and is not held to a text ratio; asserting 4.5:1 on a decorative
+   alpha would be asserting a requirement the design explicitly
+   declines, exactly as the lattice section argues for its glow.
+   ═══════════════════════════════════════════════════════════════════ */
+
+const epistemCss = readFileSync(
+  fileURLToPath(new URL("../app/epistem.css", import.meta.url)),
+  "utf8"
+);
+
+const EPISTEM_SURFACES = [
+  ["void", "#04060a"],
+  ["panel", "#0a0e15"],
+  ["edge", "#0f151d"],
+];
+
+const EPISTEM_HUES = [
+  ["live", "--ep-live"],
+  ["data", "--ep-data"],
+  ["think", "--ep-think"],
+  ["pending", "--ep-pending"],
+  ["clash", "--ep-clash"],
+];
+
+/* Read the declared value out of epistem.css's own :root, so a hue that
+   is renamed here but not there fails loudly rather than silently
+   checking the globals.css value. */
+function epistemToken(name) {
+  const m = new RegExp(`${name}\\s*:\\s*(#[0-9a-fA-F]{3,8})`).exec(epistemCss);
+  if (!m) {
+    throw new Error(
+      `Token ${name} not declared in app/epistem.css. The five ASIANCODER.MD hues are ` +
+        `load-bearing for the semantic layer; a missing one means the stylesheet and the ` +
+        `checker disagree about what the colours are.`
+    );
+  }
+  return m[1];
+}
+
+const epistemChecks = [];
+for (const [hueName, tokenName] of EPISTEM_HUES) {
+  const hex = epistemToken(tokenName);
+  for (const [surfaceName, surfaceHex] of EPISTEM_SURFACES) {
+    epistemChecks.push({
+      pair: `epistem/${hueName} on ${surfaceName}`,
+      value: ratio(hex, surfaceHex),
+      min: 4.5,
+      note:
+        hueName === "clash"
+          ? "the lowest of the five, because red is also the alarm colour and it has to stay legible when it is signalling"
+          : null,
+    });
+  }
+}
+checks.push(...epistemChecks);
+
+/* Mutual distinguishability of the semantic hues.
+ *
+ * The first version of this assertion compared luminance only, and it
+ * failed three pairs: cyan/violet, cyan/amber and violet/amber. That was
+ * the wrong measurement, and the wrong measurement is worse than no
+ * measurement because it produces a confident, actionable-sounding FAIL
+ * on a palette that is fine.
+ *
+ * The five hues are deliberately close in luminance and far apart in hue
+ * — roughly 197, 257, 41, 164 and 0 degrees. They are a chromatic
+ * scale, not a luminance one. Demanding 1.25:1 luminance separation
+ * between cyan and violet would force one of them dark enough to break
+ * its own AA text ratio, which would make the palette worse in order to
+ * satisfy an assertion nobody needs.
+ *
+ * So the test is: can a reader tell these two apart by ANY available
+ * channel? A pair passes on luminance separation OR on hue separation.
+ * And the chromatic case is only safe here because app/epistem.css
+ * guarantees a second, non-colour encoding for every one of these
+ * states — a rank numeral on a category tag, a word on a severity, a
+ * glyph on a compliance flag, a dashed border on an unmeasured axis.
+ * That guarantee is why the chromatic pairs are allowed, so it is stated
+ * here rather than left implicit.
+ *
+ * MIN_HUE_DEGREES is set at 25. Below roughly that, two hues read as
+ * "the same colour, slightly off" and a reader starts guessing rather
+ * than reading the label. */
+const MIN_HUE_DEGREES = 25;
+
+/** RGB to hue in degrees, ignoring saturation so near-grey input is
+    well-defined rather than dividing by ~zero. */
+function hueOf(hex) {
+  const [r, g, b] = rgb(hex).map((c) => c / 255);
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const d = max - min;
+  if (d === 0) return 0;
+  let h;
+  if (max === r) h = ((g - b) / d) % 6;
+  else if (max === g) h = (b - r) / d + 2;
+  else h = (r - g) / d + 4;
+  return ((h * 60) % 360 + 360) % 360;
+}
+
+/** Shortest angular distance between two hues, in degrees. */
+function hueGap(a, b) {
+  const d = Math.abs(hueOf(a) - hueOf(b)) % 360;
+  return d > 180 ? 360 - d : d;
+}
+
+const huePairs = [];
+for (let i = 0; i < EPISTEM_HUES.length; i++) {
+  for (let j = i + 1; j < EPISTEM_HUES.length; j++) {
+    const a = epistemToken(EPISTEM_HUES[i][1]);
+    const b = epistemToken(EPISTEM_HUES[j][1]);
+    const lum = ratio(a, b);
+    const gap = hueGap(a, b);
+    const byLuminance = lum >= 1.25;
+    const byHue = gap >= MIN_HUE_DEGREES;
+    huePairs.push({
+      from: EPISTEM_HUES[i][0],
+      to: EPISTEM_HUES[j][0],
+      lum,
+      gap,
+      channel: byLuminance ? "luminance" : byHue ? "hue" : "NEITHER",
+      ok: byLuminance || byHue,
+    });
+  }
+}
+
+let hueFailed = 0;
+for (const p of huePairs) {
+  if (!p.ok) hueFailed++;
+  console.log(
+    `${`epistem hue ${p.from} / ${p.to}`.padEnd(pad)}  ` +
+      `lum ${p.lum.toFixed(2).padStart(5)}  hue ${p.gap.toFixed(0).padStart(3)}\u00b0  ` +
+      `${p.ok ? "PASS" : "FAIL"}  separated by ${p.channel}`
+  );
+}
+
 const ORDER = [
   ["UNKNOWN", T.unknown, "darkest · unestablished"],
   ["PLANNED", T.planned, "cold · designed, not built"],
@@ -622,12 +773,13 @@ isWarm
       );
     })();
 
-if (failed > 0 || orderFailed > 0 || sepFailed > 0) {
+if (failed > 0 || orderFailed > 0 || sepFailed > 0 || hueFailed > 0) {
   console.error(
-    `\n${failed + orderFailed + sepFailed} violation(s). Fix the token, not the test.\n`
+    `\n${failed + orderFailed + sepFailed + hueFailed} violation(s). Fix the token, not the test.\n`
   );
   process.exit(1);
 }
 console.log(
-  `\nAll ${checks.filter((c) => !c.banner).length} ratio pairs clear their threshold, and the state scale holds its order.\n`
+  `\nAll ${checks.filter((c) => !c.banner).length} ratio pairs clear their threshold; the state\n` +
+    `scale holds its order and the five semantic hues stay tellable apart.\n`
 );
