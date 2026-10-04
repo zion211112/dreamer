@@ -455,9 +455,26 @@
 
 .ep-gap-bars { display: grid; gap: 6px; }
 
-.ep-gap-bar { display: grid; grid-template-columns: 96px minmax(0, 1fr) 48px; gap: var(--s-2); align-items: center; }
+/* The bar's DOM is two spans inside a single element carrying `--v`:
+     <div class="ep-gap-bar" style="--v: 62%"><span/><span/></div>
 
-.ep-gap-bar-key {
+   The first draft of this rule expected `.ep-gap-bar > div > span`, so
+   ASIANCODER.MD's flagship instrument rendered as two lines of text with no
+   track, no fill and no scale. `--v` was written by the component and read
+   nowhere, which is exactly what a class-list brief cannot catch.
+
+   So the track and the fill are both painted by pseudo-elements placed into
+   the middle grid column: `::before` is the 0-1 domain with its midline, `::after`
+   is the fill at `width: var(--v)`. */
+.ep-gap-bar {
+  display: grid;
+  grid-template-columns: 136px minmax(0, 1fr) 48px;
+  gap: var(--s-2);
+  align-items: center;
+}
+
+.ep-gap-bar > span:first-child {
+  grid-column: 1;
   font-family: var(--font-mono);
   font-size: var(--fs-micro);
   letter-spacing: var(--ls-caps);
@@ -465,31 +482,62 @@
   color: var(--quiet);
 }
 
-/* The track is the 0-1 domain made visible, so the reader can see the
-   scale rather than infer it. */
-.ep-gap-bar > div {
-  position: relative;
-  height: var(--ep-bar-h);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--rule);
-  border-radius: 1px;
-}
-.ep-gap-bar > div > span {
-  position: absolute;
-  inset: 0 auto 0 0;
-  display: block;
-  background: var(--rule-3);
+.ep-gap-bar > span:last-child {
+  grid-column: 3;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-ui);
+  color: var(--ink);
 }
 
-/* Midline at 0.5, so a bar over half is visibly over half. */
-.ep-gap-bar > div::after {
+/* The track, with the 0.5 midline drawn as a hard gradient stop so a bar
+   over half is visibly over half without a second element. */
+.ep-gap-bar::before {
   content: "";
-  position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: var(--rule-2);
+  grid-column: 2;
+  grid-row: 1;
+  height: var(--ep-bar-h);
+  border: 1px solid var(--rule);
+  border-radius: 1px;
+  background:
+    linear-gradient(
+      to right,
+      var(--rule-2) 0,
+      var(--rule-2) 1px,
+      transparent 1px,
+      transparent calc(100% - 1px),
+      var(--rule-2) calc(100% - 1px),
+      var(--rule-2) 100%
+    ),
+    rgba(255, 255, 255, 0.03);
+}
+
+/* The fill. Fluency and support get different hues so the eye can compare
+   them without reading the numbers, and so the danger case is a pair of
+   visibly different lengths rather than two identical-looking bars. */
+.ep-gap-bar::after {
+  content: "";
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: start;
+  width: var(--v, 0%);
+  height: calc(var(--ep-bar-h) - 2px);
+  border-radius: 1px;
+  background: var(--ep-think);
+}
+
+.ep-gap-bar[data-bar="SUPPORT"]::after { background: var(--ep-data); }
+
+/* The proxy is labelled in the component as well as here. A second word
+   costs nothing and a reader scanning only the bars still learns which one
+   is a measurement and which is a surface statistic. */
+.ep-gap-bar[data-proxy="true"]::after {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--ep-think) 0 4px,
+    rgba(185, 164, 232, 0.55) 4px 8px
+  );
 }
 
 .ep-gap-flag {
@@ -673,6 +721,28 @@
 .ep-radar-ring { stroke: var(--rule); fill: none; }
 .ep-radar-polygon { fill: var(--ep-data-a12); stroke: var(--ep-data); stroke-width: 1; }
 .ep-radar-null-spoke { stroke: var(--rule-2); stroke-dasharray: 2 3; fill: none; }
+
+/* The radar's null channel, which is the reason it exists.
+ *
+ * An unmeasured axis gets a DASHED spoke and NO polygon vertex — not a
+ * vertex at the origin. A vertex at the origin is where a fabricated zero
+ * would land, and a radar that draws an unmeasured axis as zero is worse
+ * than no radar: it makes "nobody looked" and "we looked and found
+ * nothing" pixel-identical. The rim diamond marks the spoke as present but
+ * unfilled, and the label reads "not measured".
+ *
+ * The component also renders an sr-only table of the same readings, so the
+ * chart is never the only way to read it. */
+.ep-radar [data-null="true"] { stroke: var(--rule-2); fill: none; }
+
+/* The caption rows under the chart. `.ep-radar-label` is a class the
+   component reuses on <p> elements as well as SVG <text>, so the HTML uses
+   the mono colour rather than the SVG fill. */
+p.ep-radar-label {
+  margin: 2px 0;
+  line-height: 17px;
+  color: var(--quiet);
+}
 
 /* ═══════════════════════════════════════════════════════════════════
    LOOP TIMELINE

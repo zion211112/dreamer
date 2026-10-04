@@ -19,6 +19,7 @@ import { EvidenceLedger } from "@/components/epistem/EvidenceLedger";
 import { GuardList } from "@/components/epistem/GuardList";
 import { StatementCard } from "@/components/epistem/StatementCard";
 import { HealthVector } from "@/components/epistem/HealthVector";
+import { AxisRadar } from "@/components/epistem/AxisRadar";
 import { displayConfidence, statementConfidence } from "@/lib/epistemic/confidence";
 import { CATEGORY_RULES, type StatementCategory } from "@/lib/epistemic/taxonomy";
 
@@ -100,6 +101,31 @@ export function RegisterSurface() {
       </div>
 
       <HealthVector readings={health} />
+
+      {/* The vector's shape, not its rows.
+
+          ASIANCODER.MD asks for a "radar / vector". The row list above
+          answers "what is each axis" and is where a drill-down belongs; this
+          answers "do these nine axes agree with each other", which is a
+          different question and the reason to have both. A set of axes that
+          all read mid-range can be one healthy system or one system where
+          nothing was measured, and the shape is what tells them apart at a
+          glance.
+
+          It renders an sr-only table of the same readings underneath, so the
+          chart is never the only way to read the numbers. */}
+      <section className="section" aria-labelledby="vector-heading">
+        <div className="section-head">
+          <h2 className="section-title" id="vector-heading">
+            The shape of it
+          </h2>
+          <p className="section-kicker">
+            <span className="figure">{health.filter((r) => r.value === null).length}</span>{" "}
+            of {health.length} axes not measured
+          </p>
+        </div>
+        <AxisRadar readings={health} />
+      </section>
 
       {/* ── The firewall ────────────────────────────────────────────
           Eleven categories, each with the test that decides membership.
