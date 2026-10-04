@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { COMPANY, LIVE_BUILDS, PLANE, PRODUCTS } from "@/lib/system";
+import { BUILT_LAYERS, COMPANY, CONSOLE, PRODUCTS, STACK } from "@/lib/system";
 import { Identity } from "./Identity";
 import { StateTag } from "./StateTag";
 
@@ -61,82 +61,69 @@ export function NodeIndex() {
           are asked: what is being built (the stack, the one page that
           answers it), and what can be opened today (the product). The
           loop below them is the system those two run on. */}
-      <div className="index-group">
-        <p className="index-group-key">The company</p>
-        <ul className="index-list">
-          <li>
-            <Link
-              href="/stack"
-              className="index-node"
-              aria-current={isCurrent("/stack") ? "page" : undefined}
-            >
-              {/* The stack in twelve pixels: a dark stratum, the one built
-                  layer emitting, a dark stratum. It is the same statement
-                  the section makes at full width, and it is the only place
-                  in this rail where a mark is drawn rather than written. */}
-              <span className="index-node-ord" aria-hidden="true">
-                <span className="strata-mark" />
-              </span>
-              <span className="index-node-name">Sovereign stack</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/product"
-              className="index-node"
-              aria-current={isCurrent("/product") ? "page" : undefined}
-            >
-              <span className="index-node-ord figure">01</span>
-              <span className="index-node-name">School Console</span>
-              {/* A lit port: this route has a product behind it, and it is
-                  the one link in this rail that opens something you can buy. */}
-              <span className="port port--live" aria-hidden="true" />
-            </Link>
-          </li>
-        </ul>
-      </div>
+      {/* ── ONE TAXONOMY, NOT TWO ───────────────────────────────────
 
+          This rail previously listed "Sovereign stack" and "School
+          Console", and then immediately underneath "THE SYSTEM · THE LOOP"
+          with Field / Register / Intelligence / Control / Evidence — two
+          different sets of five, about forty pixels apart, with no signal
+          that they are different things. A visitor scrolling past would
+          have taken them for one list of five and the company for having
+          no idea what it is made of.
+
+          So the loop is gone from the rail. It is not deleted: /lattice
+          still draws it, and the five routes still exist, but a rail is a
+          navigation and it should teach one structure. The stack is that
+          structure — it is the company's own, it is what the homepage is
+          about, and one lit stratum in twelve pixels is a better mark than
+          an ordnance number.
+
+          The loop is reachable from the stack page and from the foot. */}
       <div className="index-group">
-        <p className="index-group-key">The system · the loop</p>
-        <ul className="index-list">
-          {PLANE.map((node) => (
-            <li key={node.key}>
+        <p className="index-group-key">The stack</p>
+        <ul className="index-list index-stack">
+          {STACK.map((layer) => (
+            <li key={layer.key} className="index-stack-row" data-built={layer.state === "PROTOTYPE" ? "true" : "false"}>
+              <span className="index-stack-spine" aria-hidden="true" />
               <Link
-                href={node.href}
+                href="/stack"
                 className="index-node"
-                aria-current={isCurrent(node.href) ? "page" : undefined}
+                aria-current={isCurrent("/stack") ? "page" : undefined}
               >
-                <span className="index-node-ord figure">{node.ord}</span>
-                <span className="index-node-name">{node.name}</span>
+                <span className="index-node-name">{layer.name}</span>
+                {layer.alias ? (
+                  <span className="index-stack-alias">{layer.alias}</span>
+                ) : null}
               </Link>
             </li>
           ))}
         </ul>
       </div>
 
-      {/* The products group used to sit here, between the loop and the
-          lattice, and it held one link. It is gone rather than moved: both
-          of its jobs are now done better above — the stack is the page that
-          explains what the company is, and the product link sits beside it
-          in "The company" where a reader asks for it. The catalogue of
-          what is sold keeps its own route, linked from the foot below. */}
-
       <div className="index-group">
-        <p className="index-group-key">One view of it</p>
+        <p className="index-group-key">What can be opened</p>
         <ul className="index-list">
+          <li>
+            <Link
+              href={CONSOLE.href}
+              className="index-node"
+              aria-current={isCurrent(CONSOLE.href) ? "page" : undefined}
+            >
+              {/* A lit port: this route has a product behind it, and it is
+                  the one link in this rail that opens something a person
+                  can actually run. */}
+              <span className="port port--live" aria-hidden="true" />
+              <span className="index-node-name">{CONSOLE.name}</span>
+            </Link>
+          </li>
           <li>
             <Link
               href="/lattice"
               className="index-node"
               aria-current={pathname === "/lattice" ? "page" : undefined}
             >
-              {/* A mark, not an ordinal: this column otherwise holds a
-                  sequence and this link is not one. `.glyph` exists
-                  because the mono face does not carry the symbol, and the
-                  mark is hidden because the name beside it says what the
-                  link is. */}
               <span className="index-node-ord" aria-hidden="true">
-                <span className="glyph">◆</span>
+                <span className="strata-mark" />
               </span>
               <span className="index-node-name">Lattice topology</span>
             </Link>
@@ -144,18 +131,15 @@ export function NodeIndex() {
         </ul>
       </div>
 
-      {/* There is no second group here any more. It held two links into the
-          build floor and the roll, and both of those routes were discarded:
-          a filled port on a link that resolves to nothing is the one failure
-          this index's grammar exists to prevent, so the group went rather
-          than the links. When there is somewhere a reader can act, it is
-          listed here — and until then this is the site's whole navigation. */}
+      {/* The rail's foot. States the same count the strata margin states,
+          in the rail's own terms — not a second taxonomy, and not a
+          sentence about a loop that is no longer listed here. */}
       <p className="index-foot">
-        One system, five layers — and the loop below is how a record becomes a
-        decision. {PRODUCTS.length} products and tracks are listed on{" "}
-        <Link href="/control">Control</Link>; exactly{" "}
-        <span className="figure">{LIVE_BUILDS.length}</span> of them has a
-        surface you can open today.
+        Five layers. {BUILT_LAYERS.length} has a surface a person can run; the
+        other {STACK.length - BUILT_LAYERS.length} are designs, and a design is
+        not a capability.{" "}
+        {PRODUCTS.length} products and tracks are catalogued on{" "}
+        <Link href="/control">Control</Link>.
       </p>
 
       {/* The identity corner, and the one thing a reader can actually do.

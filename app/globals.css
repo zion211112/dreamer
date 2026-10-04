@@ -448,6 +448,19 @@ body::after {
   letter-spacing: var(--ls-figure);
 }
 
+/* DM Mono draws a slashed zero by default. Inside a technical instrument
+   that is a sensible convention, and here it is the largest zero on the
+   page — "0 customers", the number the whole site is arguing from. At
+   54px a slashed zero reads as a typo, as an encoding artefact, or as a
+   struck-through value, and a reader who has to decide which will stop
+   trusting the figure.
+
+   The house zero is unslashed everywhere figures are set at display size.
+   Tabular alignment, which is what the slashed zero was actually buying,
+   is kept. */
+.measure-figure { font-feature-settings: "tnum" 0, "zero" 0; }
+.strata-count { font-feature-settings: "tnum" 0, "zero" 0; }
+
 .prose { max-width: var(--measure); color: var(--dust); }
 .prose p { margin: 0 0 var(--s-3); text-wrap: pretty; }
 .prose strong { color: var(--ink); font-weight: 600; }
@@ -2524,9 +2537,17 @@ body::after {
 /* Measures. A figure block states the number and, underneath it, what
    the number is and what state carries it — so a bare figure can never
    be lifted out of context and quoted as an achievement. */
+/* `repeat(5, 1fr)` forced five equal columns regardless of how many cells
+   there were, so a four-measure row left one cell stranded at 2/5 width
+   with a different apparent background. `auto-fit` lets the row be as
+   short as it actually is, and `minmax(13rem, 1fr)` keeps a cell from
+   collapsing below the width its figure and label need.
+
+   `1fr` not `auto-fit minmax(0,1fr)` — a 0-min track is what let the
+   stranded cell stretch and break the rhythm. */
 .measure-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
   border: 1px solid var(--rule-2);
   background: rgba(10, 14, 21, 0.5);
 }
@@ -2939,3 +2960,262 @@ body::after {
   .strata { grid-template-columns: minmax(0, 1fr); gap: var(--s-4); }
   .strata-margin { position: static; }
 }
+
+/* ── The stack, at rail width ────────────────────────────────────
+   Five rows, one continuous spine down the left, one segment lit. The
+   spine is the point: five separate marks would read as five unrelated
+   links, and a rail is the one place where "these are the same thing"
+   has to be visible rather than asserted. */
+.index-stack { display: grid; gap: 0; }
+
+.index-stack-row {
+  display: grid;
+  grid-template-columns: 3px minmax(0, 1fr);
+  gap: var(--s-3);
+  align-items: center;
+}
+
+/* One continuous rule, drawn as segments with no gap between them. */
+.index-stack-spine { border-radius: 0; background: var(--rule); }
+.index-stack-row[data-built="true"] .index-stack-spine {
+  background: var(--signal);
+  box-shadow: 0 0 10px rgba(53, 217, 164, 0.45);
+}
+
+/* The alias sits AFTER the layer name with real separation.
+
+   It was inline with no gap, so "Identity" and "The Roll" rendered as
+   "IdentityThe Roll" — one word, because a name at `--fs-label` and an alias
+   at `--fs-micro` collided inside a flex row narrower than the rail. The
+   rail is 260px and the longest pair is "Infrastructure" + "The Fab", so
+   the fix is a real column rather than a space. */
+.index-stack-row .index-node {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.index-stack-row .index-node-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.index-stack-alias {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  color: var(--dust);
+  white-space: nowrap;
+}
+
+/* Below the alias, the row keeps only the name. Two words at 11px in a
+   260px rail is a wall, and the alias is the half a visitor reads once. */
+@media (max-width: 1200px) {
+  .index-stack-alias { display: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   THE CATALOGUE
+
+   Was three equal cards in a three-column grid. That is the most
+   recognisable piece of AI-generated interface on this site: equal weight
+   implies a comparison the reader is not making, and these three products
+   have nothing to compare on. One has a route, two do not — and that
+   difference is the whole information, so the layout now carries it.
+
+   A catalogue is a list. Cards in a row are a device for making a list
+   look like a marketplace.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* The one that runs: full width, the only element on the page allowed a
+   filled border, because it is the only thing here a person can actually
+   execute. */
+.catalogue-lead {
+  padding: var(--s-5);
+  border: 1px solid var(--signal-a30);
+  border-radius: 2px;
+  background: var(--signal-a04);
+}
+
+.catalogue-lead-head {
+  display: flex;
+  gap: var(--s-4);
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.catalogue-kind,
+.catalogue-track-kind {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
+.catalogue-name {
+  margin: 6px 0 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-h1);
+  line-height: 38px;
+  letter-spacing: var(--ls-h1);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.catalogue-key {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--rule-3);
+}
+
+/* "For <buyer>" is the line a buyer actually reads, so it is set at body
+   size rather than as a caption. */
+.catalogue-for {
+  margin: var(--s-3) 0 0;
+  max-width: 56ch;
+  font-size: var(--fs-body);
+  line-height: 24px;
+  color: var(--ink);
+}
+
+.catalogue-prov {
+  margin: var(--s-2) 0 0;
+  max-width: 68ch;
+  font-size: var(--fs-ui);
+  line-height: 20px;
+  color: var(--quiet);
+}
+
+/* The link describes the outcome, not the mechanism. "Learn more" is
+   banned by the brief; so is "Open the product", because it says what the
+   button does rather than what the reader gets. */
+.catalogue-open {
+  display: inline-flex;
+  gap: var(--s-2);
+  align-items: center;
+  margin-top: var(--s-4);
+  padding: 10px 14px;
+  border-radius: 2px;
+  background: var(--signal);
+  color: var(--void);
+  font-family: var(--font-mono);
+  font-size: var(--fs-ui);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: filter 140ms ease;
+}
+.catalogue-open:hover { filter: brightness(1.08); }
+.catalogue-open .glyph { color: inherit; }
+
+/* ── The designed tracks ──────────────────────────────────────────
+   Indented, smaller measure, no border. A track with no surface is not a
+   smaller product, it is a different kind of thing, and putting it in the
+   same row as the one that runs would say otherwise. */
+.catalogue-tracks {
+  margin-top: var(--s-5);
+  padding-left: var(--s-5);
+  border-left: 1px solid var(--rule);
+}
+
+.catalogue-tracks-key {
+  margin: 0 0 var(--s-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+}
+
+.catalogue-tracks ul { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s-4); }
+
+.catalogue-track {
+  display: grid;
+  gap: 6px;
+  max-width: 62ch;
+}
+
+.catalogue-track-head {
+  display: flex;
+  gap: var(--s-2);
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.catalogue-track-name {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  line-height: 26px;
+  letter-spacing: var(--ls-h3);
+  color: var(--ash);
+}
+
+.catalogue-track-kind { color: var(--quiet); }
+
+.catalogue-track-for {
+  margin: 0;
+  font-size: var(--fs-ui);
+  line-height: 20px;
+  color: var(--ash);
+}
+
+.catalogue-track-prov {
+  margin: 0;
+  font-size: var(--fs-ui);
+  line-height: 19px;
+  color: var(--quiet);
+}
+
+/* The row that explains why these are not links. Kept, because "why is
+   this grey" is a question every reader of an uneven catalogue asks. */
+.catalogue-tracks-foot {
+  margin: var(--s-4) 0 0;
+  max-width: 62ch;
+  font-size: var(--fs-ui);
+  line-height: 20px;
+  color: var(--dust);
+}
+
+/* Below the fold-width the indent has nothing to indent from, so the
+   tracks go flush and separate on a rule instead. */
+@media (max-width: 720px) {
+  .catalogue-tracks { padding-left: 0; border-left: 0; padding-top: var(--s-4); border-top: 1px solid var(--rule); }
+  .catalogue-lead { padding: var(--s-4); }
+}
+
+/* ── The identity corner, labelled ─────────────────────────────────
+   It was a bare diamond in the top-right corner. On an instrument
+   panel an unexplained glyph reads as a rendering artefact or a
+   disabled control, and a visitor has no way to know it opens anything.
+   Nine characters removes the question. */
+.identity-trigger {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  width: auto;
+  height: 32px;
+  padding: 0 10px 0 9px;
+  border-radius: 2px;
+}
+
+.identity-word {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--quiet);
+  max-width: 12ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.identity-trigger:hover .identity-word,
+.identity-trigger[aria-expanded="true"] .identity-word { color: var(--ash); }

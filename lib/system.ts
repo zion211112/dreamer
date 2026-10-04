@@ -1165,17 +1165,16 @@ export const MEASURED_MODULE_COUNT = "9";
 
 export const MEASURES: readonly Measure[] = [
   {
-    /* The stack figure leads the band, and it is the one number that
-       states what the company is rather than what it has sold: how much
-       of its own architecture exists. Counted from STACK, so it is true
-       by construction — add a layer with a surface and the figure
-       follows. */
-    figure: `${BUILT_LAYERS.length} / ${STACK.length}`,
-    key: "layers of the stack built",
-    note: "The record layer is built and openable; identity, builds, infrastructure and allocation are designed, not built.",
-    state: "PROTOTYPE",
-  },
-  {
+    /* The stack count that used to lead this band has been REMOVED.
+
+       It read "${BUILT_LAYERS.length} / ${STACK.length} layers of the stack
+       built" and duplicated the count the strata margin renders one screen
+       earlier: the same fact twice, in two visual languages, fifteen hundred
+       pixels apart, and the duplicate carried the largest type.
+
+       Duplication is not rigour, it is the appearance of rigour. The count
+       lives in the diagram, where it is that diagram's own subject, and this
+       band now carries only figures a diagram cannot show. */
     /* Counted, not typed. Deriving these from the arrays above makes them
        true by construction: add a product row and the figure follows.
 

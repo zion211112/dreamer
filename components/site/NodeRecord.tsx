@@ -28,10 +28,26 @@ import { StateTag } from "./StateTag";
  */
 export function NodeRecord() {
   const pathname = usePathname();
-  const node = PLANE.find((n) =>
-    n.href === "/"
-      ? pathname === "/"
-      : pathname === n.href || pathname.startsWith(`${n.href}/`)
+
+  /* The homepage is NOT node 01.
+
+     PLANE[0].href is "/", so the old match made the homepage a Field node
+     and the rail rendered a full "SELECTED NODE / 01 / 05 Field" record —
+     with Field's role, its custody and its provenance — on the one page
+     that is about the company rather than about the loop. It read as a
+     live selection the reader had made, and it was the single most
+     misleading element on the site.
+
+     The loop is five routes: /register, /intelligence, /control, /evidence
+     and /lattice. The homepage is not one of them, so it has no node, so
+     the panel renders nothing. Same for /stack and /product.
+
+     Returned rather than filled in, because a rail panel that names
+     something the reader did not choose is worse than no panel — and on a
+     page whose subject is evidence discipline it is the one element on
+     screen making a false claim. */
+  const node = PLANE.find(
+    (n) => n.href !== "/" && (pathname === n.href || pathname.startsWith(`${n.href}/`))
   );
 
   /* A route that is not one of the five has no node of its own, and
@@ -46,17 +62,20 @@ export function NodeRecord() {
      evidence state is named rather than linked to a definition of one,
      because there is no state on this route to define. */
   if (!node) {
-    return (
-      <aside className="plane-record" aria-label="Selected node record">
-        <p className="index-group-key">Selected node</p>
-        <p className="record-absent">No node</p>
-        <p className="record-role">
-          This route is a view of the whole system rather than one of its
-          five stages, so it has no node of its own to describe. The record
-          for whatever is selected inside it is beside the canvas.
-        </p>
-      </aside>
-    );
+    /* Return nothing rather than an explanation.
+
+       This rendered a panel headed "SELECTED NODE" showing "01 / 05 Field"
+       and Field's role — on the homepage, and on every route that is not one
+       of the five loop stages. It did that because `node` was resolved as a
+       fallback to PLANE[0], so the rail confidently described a node the
+       reader had not selected and could not select.
+
+       A rail panel that names something you did not choose is worse than
+       no panel: it reads as a live selection, and on a page whose subject
+       is evidence discipline it is the one element on screen making a
+       false claim. The lattice has its own record for its own selection, so
+       nothing is lost where a record is actually wanted. */
+    return null;
   }
 
   return (

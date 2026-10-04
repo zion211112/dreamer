@@ -127,11 +127,18 @@ export function Identity() {
         onClick={() => setOpen((v) => !v)}
       >
         {/* The mark carries the initials once there is a session, and the
-            same emitting diamond the wordmark uses before there is one. The
-            aria-label is the state, because the initials alone say nothing
-            to a screen reader. */}
+            same emitting diamond the wordmark uses before there is one.
+
+            It is labelled rather than bare: an unexplained glyph in the
+            top-right corner of an instrument panel reads as a rendering
+            artefact or an unlabelled control, and a visitor has no way to
+            know it opens anything. The word "Session" costs nine
+            characters and removes the question. */}
         <span className="identity-mark" aria-hidden="true">
           {ready && identity ? initialsOf(identity.name) : null}
+        </span>
+        <span className="identity-word" aria-hidden="true">
+          {identity ? identity.name : "Session"}
         </span>
         <span className="sr-only">
           {identity
