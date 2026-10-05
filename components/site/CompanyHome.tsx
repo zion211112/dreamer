@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { ValueChain } from "@/components/site/ValueChain";
 import { StateTag } from "@/components/site/StateTag";
+import { WorkflowHero } from "@/components/site/WorkflowHero";
 import {
-  BUILT_LAYERS,
   COMPANY,
   CONSOLE,
   PRODUCTS,
-  STACK,
   TENDER_SYSTEM,
 } from "@/lib/system";
 
@@ -15,47 +14,7 @@ export function CompanyHome() {
 
   return (
     <div className="company-home">
-      <section className="company-hero" aria-labelledby="company-title">
-        <div className="company-hero-copy">
-          <p className="company-eyebrow">APT-LABS / Sovereign infrastructure</p>
-          <h1 id="company-title">{COMPANY.mantra}</h1>
-          <p className="company-intro">
-            Five layers join local records, earned identity, open builds,
-            physical infrastructure and community allocation.
-          </p>
-          <div className="company-actions">
-            <Link className="company-button" href="/stack">
-              Inspect the five layers <span aria-hidden="true">↗</span>
-            </Link>
-            <Link className="company-text-link" href="#portfolio">
-              Products and build tracks <span aria-hidden="true">↓</span>
-            </Link>
-          </div>
-        </div>
-
-        <figure className="company-diagram">
-          <figcaption className="diagram-cap">
-            <span>System / sovereignty stack</span>
-            <span>{String(STACK.length).padStart(2, "0")} LAYERS</span>
-          </figcaption>
-          <ol className="diagram-layers">
-            {STACK.map((layer, index) => (
-              <li className="diagram-layer" data-live={layer.state === "PROTOTYPE"} key={layer.key}>
-                <div className="diagram-layer-head">
-                  <span className="diagram-index">{String(index + 1).padStart(2, "0")}</span>
-                  <span className="diagram-name">{layer.name}</span>
-                  {layer.alias ? <span className="diagram-alias">{layer.alias}</span> : null}
-                  <StateTag state={layer.state} />
-                </div>
-                <p className="diagram-role">{layer.role}</p>
-              </li>
-            ))}
-          </ol>
-          <p className="diagram-note">
-            Prototype surfaces: {BUILT_LAYERS.length} / {STACK.length}
-          </p>
-        </figure>
-      </section>
+      <WorkflowHero />
 
       <section className="portfolio-section" id="portfolio" aria-labelledby="products-title">
         <div className="portfolio-heading">
