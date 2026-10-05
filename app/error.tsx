@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import { CompanyWorkspace } from "@/components/site/CompanyWorkspace";
 
 /**
  * Route-level error boundary.
@@ -28,7 +29,8 @@ export default function Error({
   }, [error]);
 
   return (
-    <main id="main-content" className="sheet">
+    <CompanyWorkspace fallbackLabel="Runtime error">
+    <div className="sheet">
       <Link href="/" className="plane-wordmark">
         <span className="plane-mark" aria-hidden="true" />
         APT-LABS
@@ -53,7 +55,7 @@ export default function Error({
           Retry this surface
         </button>
         <Link href="/" className="btn-ghost">
-          Back to the control plane
+          Back to APT-LABS
         </Link>
         <Link href="/evidence" className="btn-ghost">
           The evidence states
@@ -70,6 +72,7 @@ export default function Error({
           "No digest was issued for this fault; the browser console holds the local trace."
         )}
       </p>
-    </main>
+    </div>
+    </CompanyWorkspace>
   );
 }

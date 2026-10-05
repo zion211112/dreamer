@@ -10,6 +10,7 @@ import { useSearchParams } from "next/navigation";
 import { readiness } from "../../../lib/school";
 import { useSchoolData } from "../../../components/console/useSchoolData";
 import { ModuleGlyph, ModuleTile } from "../../../components/console/bits";
+import { PRODUCTS, TENDER_SYSTEM } from "../../../lib/system";
 import {
   CONSOLE_MENU,
   CONSOLE_MODULES,
@@ -132,14 +133,12 @@ function ConsoleLogin({
       <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/10 px-4 sm:px-[21px]">
         <div className="flex items-center gap-3 font-mono text-meta uppercase tracking-caps text-dust">
           <Diamond size={15} className="text-signal" />
-          <span>APT-LABS · Console</span>
+          <span>APT-LABS / LOCAL RECORDS</span>
         </div>
-        <Link
-          href="/"
-          className="font-mono text-label uppercase tracking-caps text-ash transition-colors hover:text-ink"
-        >
-          ← The control plane
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link href="/contact" className="console-contact-link">Contact</Link>
+          <Link href="/" className="font-mono text-label uppercase tracking-caps text-ash transition-colors hover:text-ink">APT-LABS ↗</Link>
+        </div>
       </header>
 
       <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center overflow-y-auto px-4 py-8 sm:px-6 sm:py-12">
@@ -216,21 +215,31 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
   const [mod, setMod] = useState<string>("all");
   const [query, setQuery] = useState("");
   const [favs, setFavs] = useState<Set<string>>(() => loadConsoleFavs());
+  const [profileOpen, setProfileOpen] = useState(false);
   const school = useSchoolData();
   const searchRef = useRef<HTMLInputElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   // "/" or ⌘K focuses the search — the Linear muscle memory.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       const t = e.target as HTMLElement | null;
       const inField = t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement || t instanceof HTMLSelectElement;
+      if (e.key === "Escape") setProfileOpen(false);
       if ((e.key === "/" && !inField) || (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey))) {
         e.preventDefault();
         searchRef.current?.focus();
       }
     }
+    function onPointerDown(e: PointerEvent) {
+      if (!profileRef.current?.contains(e.target as Node)) setProfileOpen(false);
+    }
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("pointerdown", onPointerDown);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("pointerdown", onPointerDown);
+    };
   }, []);
 
   const q = query.trim().toLowerCase();
@@ -258,23 +267,58 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
   return (
     <div className="console-ui flex h-dvh flex-col overflow-hidden bg-void font-sans text-ink">
       <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/10 px-4 sm:px-[21px]">
-        <div className="flex items-center gap-3 font-mono text-meta uppercase tracking-caps text-dust">
+        <div className="flex min-w-0 items-center gap-3 font-mono text-meta uppercase tracking-caps text-dust">
           <Diamond size={15} className="text-signal" />
-          <span>APT-LABS · School Console</span>
+          <Link href="/" className="shrink-0 text-dust transition-colors hover:text-ink">APT-LABS</Link>
+          <span className="text-quiet">/ RECORDS /</span>
+          <span className="truncate text-ink">Local workspace</span>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="hidden items-center gap-2 border border-ink/10 bg-ink/5 py-1.5 pl-3.5 pr-4 font-mono text-label text-dust sm:flex">
-            <span className="h-1.5 w-1.5 rounded-full bg-signal" aria-hidden="true" />
-            {session.name} · {session.role}
-          </span>
-          <button
-            type="button"
-            onClick={onSignOut}
-            className="min-h-11 border border-ink/10 px-4 py-1.5 text-meta font-semibold text-dust transition-colors hover:border-ink/25 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
-            aria-label="Sign out of the console"
-          >
-            Sign out
-          </button>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Link href="/contact" className="console-contact-link">Contact</Link>
+          <div className="console-profile" ref={profileRef}>
+            <button type="button" className="console-profile-trigger" aria-expanded={profileOpen} aria-haspopup="dialog" onClick={() => setProfileOpen((open) => !open)}>
+              <span className="console-profile-mark" aria-hidden="true">{session.name.slice(0, 1).toUpperCase()}</span>
+              <span className="console-profile-name">{session.name}</span>
+              <span aria-hidden="true">⌄</span>
+            </button>
+            {profileOpen ? (
+              <section className="console-profile-menu" role="dialog" aria-label="Local profile and product workspaces">
+                <div className="console-profile-person">
+                  <span className="console-profile-mark" aria-hidden="true">{session.name.slice(0, 1).toUpperCase()}</span>
+                  <div><strong>{session.name}</strong><span>{session.role} / {session.school}</span></div>
+                </div>
+                <p className="console-profile-local"><i aria-hidden="true" /> LOCAL SESSION · THIS DEVICE ONLY</p>
+                <div className="console-profile-context">
+                  <span>WORKING RECORDSPACE</span>
+                  <strong>{session.school}</strong>
+                  <small>{session.role} · demonstration data, not an institutional record</small>
+                </div>
+                <div className="console-profile-system">
+                  <p>THE SYSTEM THIS WORK SITS IN</p>
+                  <Link href="/stack" onClick={() => setProfileOpen(false)}>Record → identity → build → infrastructure → allocation <span aria-hidden="true">↗</span></Link>
+                </div>
+                <div className="console-profile-products">
+                  <p>OTHER APT-LABS WORK / NOT OPEN HERE</p>
+                  <div className="console-profile-pending">
+                    <span className="console-file-glyph" aria-hidden="true" />
+                    <span>{TENDER_SYSTEM.name}<small>Not available in this workspace</small></span>
+                    <span className="console-profile-state">UNKNOWN</span>
+                  </div>
+                  {PRODUCTS.filter((product) => !product.href).map((product) => (
+                    <div className="console-profile-pending" key={product.name}>
+                      <span className="console-file-glyph" aria-hidden="true" />
+                      <span>{product.name}<small>Build track · not a live product</small></span>
+                      <span className="console-profile-state">PLANNED</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="console-profile-actions">
+                  <Link href="/" onClick={() => setProfileOpen(false)}>APT-LABS overview <span aria-hidden="true">↗</span></Link>
+                  <button type="button" onClick={onSignOut}>End local session</button>
+                </div>
+              </section>
+            ) : null}
+          </div>
         </div>
       </header>
 
@@ -289,17 +333,18 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
               </div>
             </div>
 
-            <nav aria-label="Console modules" className="flex flex-col gap-1 px-[10px] py-[13px] lg:px-[13px]">
+            <nav aria-label="Console files" className="console-file-tree flex flex-col gap-1 px-[10px] py-[13px] lg:px-[13px]">
+              <p className="hidden px-3 pb-2 font-mono text-micro uppercase tracking-caps text-quiet lg:block">OPERATIONS / FILES</p>
               <button
                 type="button"
                 onClick={() => setMod("all")}
                 aria-pressed={activeKey === "all"}
                 aria-label="All modules"
-                title="All modules"
+                title="All files"
                 className={`flex min-h-11 items-center justify-center gap-2.5 px-3 text-ui transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal lg:justify-start ${activeKey === "all" ? "bg-ink/10 font-medium text-ink" : "text-ash hover:bg-ink/5 hover:text-ink"}`}
               >
                 <ModuleGlyph module="all" size={15} className={activeKey === "all" ? "text-signal" : undefined} />
-                <span className="hidden lg:inline">All modules</span>
+                <span className="hidden lg:inline">All files</span>
               </button>
               {CONSOLE_MODULES.map((module) => (
                 <button
@@ -349,14 +394,15 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder={`Search ${mod === "all" ? "tools" : mod}...`}
+              placeholder={`Find ${mod === "all" ? "a file" : `${mod} tools`}...`}
               className="h-11 w-full border border-ink/10 bg-panel px-4 text-ui text-ink outline-none transition-colors placeholder:text-ash focus-visible:border-signal focus-visible:ring-2 focus-visible:ring-signal/40"
               aria-label="Search tools within the console"
             />
           </div>
 
           {showModules ? (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="console-directory" aria-label="Product modules">
+              <div className="console-directory-head"><span>Name</span><span>Contents</span><span>Type</span></div>
               {CONSOLE_MODULES.map((module) => (
                 <ModuleCard key={module} module={module} onOpen={() => setMod(module)} />
               ))}
@@ -367,7 +413,8 @@ function ConsoleWorkspace({ session, onSignOut }: { session: ConsoleSession; onS
               <p className="mt-2 text-sm text-dust">Try another search or choose a different module.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+            <div className="console-tool-directory" aria-label={`${mod} product files`}>
+              <div className="console-directory-head"><span>Name</span><span>Module</span><span>Action</span></div>
               {visible.map((tool) => (
                 <ToolCard key={tool.id} tool={tool} fav={favs.has(tool.id)} onFav={(event) => toggleFav(tool.id, event)} />
               ))}
@@ -386,18 +433,14 @@ function ModuleCard({ module, onOpen }: { module: string; onOpen: () => void }) 
     <button
       type="button"
       onClick={onOpen}
-      className="group flex min-h-[150px] flex-col justify-between gap-4 overflow-hidden rounded-2xl border border-ink/10 bg-panel p-5 text-left transition-all duration-150 hover:border-ink/25 hover:bg-edge focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
+      className="console-directory-row group"
     >
-      <div className="flex items-start justify-between gap-3">
-        <ModuleTile module={module} tint={menu.tint} />
-        <span className="rounded-sm border border-ink/10 bg-ink/5 px-3 py-1 font-mono text-micro uppercase tracking-caps text-dust transition-colors group-hover:border-ink/25 group-hover:text-ink">
-          {tools.length} {tools.length === 1 ? "tool" : "tools"} →
-        </span>
+      <div className="console-directory-name">
+        <ModuleTile module={module} tint={menu.tint} size={34} />
+        <div><h3>{module}</h3><p>{menu.desc}</p></div>
       </div>
-      <div>
-        <h3 className="font-display text-h3 font-normal leading-tight text-ink">{module}</h3>
-        <p className="mt-1.5 text-ui leading-relaxed text-dust">{menu.desc}</p>
-      </div>
+      <span className="console-directory-count">{tools.length} {tools.length === 1 ? "file" : "files"}</span>
+      <span className="console-directory-kind">DIRECTORY <span aria-hidden="true">↗</span></span>
     </button>
   );
 }
@@ -414,21 +457,21 @@ function ToolCard({
 }) {
   const menu = CONSOLE_MENU[tool.module];
   return (
-    <Link
-      href={`/console/${tool.id}`}
-      aria-label={`Open ${tool.title}`}
-      className="group relative flex min-h-[140px] flex-col justify-between overflow-hidden rounded-2xl border border-ink/10 bg-panel p-5 transition-all duration-150 hover:border-ink/25 hover:bg-edge focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-void"
-    >
-      <div>
-        <div className="mb-4 flex items-start justify-between gap-3">
-          <ModuleTile module={tool.module} tint={menu?.tint} size={40} />
-          <button
+    <div className="console-tool-row group">
+      <Link href={`/console/${tool.id}`} aria-label={`Open ${tool.title}`} className="console-tool-open">
+        <span className="console-file-glyph" aria-hidden="true" />
+        <span className="console-tool-title"><strong>{tool.title}</strong><small>{tool.desc}</small></span>
+        <span className="console-directory-kind">{tool.id.padStart(2, "0")}</span>
+      </Link>
+      <span className="console-tool-module">{tool.module}</span>
+      <div className="console-tool-actions">
+        <button
             type="button"
             title={fav ? "Remove from favourites" : "Add to favourites"}
             aria-pressed={fav}
             aria-label={fav ? `Remove ${tool.title} from favourites` : `Add ${tool.title} to favourites`}
             onClick={onFav}
-            className={`min-h-9 min-w-9 rounded-full border border-ink/10 p-1.5 transition-all md:opacity-0 md:group-hover:opacity-100 ${
+            className={`console-favorite ${
               fav ? "border-signal/20 bg-signal/10 text-signal" : "border-ink/10 bg-panel text-ash hover:border-ink/20 hover:text-ink"
             } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal`}
           >
@@ -443,16 +486,8 @@ function ToolCard({
             >
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
             </svg>
-          </button>
-        </div>
-        <h3 className="font-display text-h3 font-normal leading-tight text-ink">{tool.title}</h3>
-        <p className="mt-1.5 text-ui leading-relaxed text-dust">{tool.desc}</p>
+        </button>
       </div>
-      <div className="flex items-center justify-between gap-3">
-        <span className="font-mono text-micro uppercase tracking-caps text-ash">
-          {tool.id.padStart(2, "0")} · {tool.module}
-        </span>
-      </div>
-    </Link>
+    </div>
   );
 }

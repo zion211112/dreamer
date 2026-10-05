@@ -1,25 +1,26 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CompanyWorkspace } from "@/components/site/CompanyWorkspace";
 import { EmptyState } from "@/components/site/EmptyState";
-import { PLANE } from "@/lib/system";
 
 export const metadata: Metadata = {
   title: "Not found",
   description:
-    "This route is not in the register. Every surface the system publishes is listed on the control plane.",
+    "This route is not in the register. The system layers and their evidence remain available in the APT-LABS workspace.",
 };
 
 /**
  * The 404, written in the system's own grammar.
  *
- * A dead route is a record that does not exist, so it is rendered as an
- * empty register: named, explained, and pointed at what does exist.
+ * An unknown address is rendered as an empty register: named, explained,
+ * and pointed at the system surfaces that do exist.
  * "Page not found" would be a foreign sentence on a site whose whole
  * claim is that absence is stated precisely.
  */
 export default function NotFound() {
   return (
-    <main id="main-content" className="sheet">
+    <CompanyWorkspace fallbackLabel="Unregistered file">
+    <div className="sheet">
       <Link href="/" className="plane-wordmark">
         <span className="plane-mark" aria-hidden="true" />
         APT-LABS
@@ -32,10 +33,9 @@ export default function NotFound() {
 
       <div className="prose" style={{ marginTop: 18 }}>
         <p>
-          The system publishes five public nodes and one view of them. A URL
-          that resolves to nothing is not a hidden surface — it is a surface
-          that does not exist, and saying so plainly is the same rule the
-          register applies to every other absence.
+          APT-LABS is organized around five dependent layers. This address is
+          not one of their records or routes; nothing is hidden behind it.
+          The system map and evidence remain open to inspect.
         </p>
       </div>
 
@@ -44,25 +44,25 @@ export default function NotFound() {
           title="Nothing registered at this address"
           body="No surface, record or node answers to the address you opened. Nothing was withheld and nothing failed — the address simply is not part of this system."
           unit="route"
-          why="The published routes are enumerated in lib/system.ts and rendered as the five live nodes in the control plane index; an address outside that set was never minted."
-          unblocks="Opening one of the five node routes below. Each one is a live surface with its evidence state on it."
+          why="The system publishes only surfaces that resolve to a declared record; an address outside that set was never minted."
+          unblocks="Returning to the overview, reading the five-layer stack, or opening the evidence ledger."
           state="UNKNOWN — not an error state. The route's non-existence is a fact about the system, not a failure of it."
         />
       </div>
 
-      <nav aria-label="Published nodes" className="action-row" style={{ marginTop: 28 }}>
-        {PLANE.map((node) => (
-          <Link key={node.key} href={node.href} className="btn-ghost">
-            {node.ord} · {node.name}
-          </Link>
-        ))}
+      <nav aria-label="System routes" className="action-row" style={{ marginTop: 28 }}>
+        <Link href="/" className="btn-ghost">APT-LABS overview</Link>
+        <Link href="/stack" className="btn-ghost">Five-layer system</Link>
+        <Link href="/evidence" className="btn-ghost">Evidence ledger</Link>
       </nav>
 
       <div className="action-row" style={{ marginTop: 16 }}>
         <Link href="/evidence" className="link">
-          Or read what the system does not yet know
+          Read what the system does not yet know
         </Link>
+        <Link href="/contact" className="link">Contact APT-LABS</Link>
       </div>
-    </main>
+    </div>
+    </CompanyWorkspace>
   );
 }

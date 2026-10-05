@@ -9,34 +9,34 @@ import Link from "next/link";
  */
 export default function ConsoleNotFound() {
   return (
-    <main
-      id="main-content"
-      className="console-ui flex min-h-dvh flex-col items-center justify-center bg-void px-6 text-ink"
-    >
-      <p className="font-mono text-label uppercase tracking-caps text-ash">
-        Console · Seat not found
-      </p>
-      <h1 className="mt-4 max-w-[22ch] text-center font-display text-4xl font-semibold tracking-tight">
-        No workspace answers to this address.
-      </h1>
-      <p className="mt-4 max-w-[54ch] text-center text-sm leading-6 text-dust">
-        The console has ten seats, numbered 2, 3, 4, 6, 7, 8, 9, 12, 17 and
-        18. An id outside that set is not a hidden workspace — it does not
-        exist. Nothing you entered on this device is affected.
-      </p>
-      <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+    <main id="main-content" className="console-ui console-product-ui min-h-dvh bg-void text-ink">
+      <header className="console-product-topbar">
+        <div className="console-product-breadcrumb"><Link href="/">APT-LABS</Link><span>/</span><Link href="/console">RECORDS</Link><span>/</span><strong>Unregistered file</strong></div>
+        <Link href="/contact" className="console-contact-link">Contact <span aria-hidden="true">↗</span></Link>
+      </header>
+      <div className="console-product-document">
+        <div className="console-product-pathbar"><span>LOCAL RECORDS</span><span>/</span><strong>NO FILE AT THIS ADDRESS</strong></div>
+        <section className="sheet" aria-labelledby="console-missing-title">
+          <p className="font-mono text-label uppercase tracking-caps text-ash">Console file · not registered</p>
+          <h1 id="console-missing-title" className="mt-4 max-w-[22ch] font-display text-h1 font-semibold leading-tight">No workspace answers to this address.</h1>
+          <p className="mt-4 max-w-[54ch] text-sm leading-6 text-dust">
+            This workspace has ten registered files. An address outside that set is not hidden; it does not exist. Nothing you entered on this device is affected.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center gap-3">
         <Link
           href="/console"
           className="inline-flex min-h-11 items-center border border-signal bg-signal px-6 py-3 text-sm font-semibold text-void transition hover:bg-signalDim"
         >
-          ← Back to the console
+          ← All records
         </Link>
         <Link
           href="/control"
           className="inline-flex min-h-11 items-center border border-ink/15 px-6 py-3 text-sm font-semibold text-ink transition hover:border-signal hover:text-signal"
         >
-          About this surface
+          APT-LABS system
         </Link>
+      </div>
+        </section>
       </div>
     </main>
   );

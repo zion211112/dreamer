@@ -151,7 +151,7 @@ export function ControlSurface() {
               const mine = attacks.filter((a) => a.reviewerType === rt).length;
               return (
                 <div className="register-row register--quad" role="row" key={rt}>
-                  <div className="register-cell" role="cell">
+                  <div className="register-cell" role="cell" data-field="Reviewer">
                     <button
                       type="button"
                       className={reviewer === rt ? "btn-ghost" : undefined}

@@ -20,7 +20,7 @@ export default function ConsoleLoading() {
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
           <polygon points="12 2 22 12 12 22 2 12" />
         </svg>
-        <span>APT-LABS · Console</span>
+        <span>APT-LABS / LOCAL RECORDS</span>
       </div>
       <div className="flex flex-1 items-center justify-center" aria-hidden="true">
         <p className="font-mono text-micro uppercase tracking-caps text-ash">

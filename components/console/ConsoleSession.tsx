@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { loadConsoleSession } from "../../lib/console";
+import { loadConsoleSession, type ConsoleSession as LocalConsoleSession } from "../../lib/console";
 
 /**
  * A local-session UX guard, not an authentication boundary.
@@ -12,10 +13,14 @@ import { loadConsoleSession } from "../../lib/console";
 export default function ConsoleSession({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [ok, setOk] = useState(false);
+  const [session, setSession] = useState<LocalConsoleSession | null>(null);
 
   useEffect(() => {
-    const session = loadConsoleSession();
-    if (session) setOk(true);
+    const stored = loadConsoleSession();
+    if (stored) {
+      setSession(stored);
+      setOk(true);
+    }
     else router.replace("/console");
   }, [router]);
 
@@ -26,5 +31,17 @@ export default function ConsoleSession({ children }: { children: ReactNode }) {
       </div>
     );
   }
-  return <>{children}</>;
+  return (
+    <>
+      {session ? (
+        <div className="console-session-profile">
+          <span className="console-session-avatar" aria-hidden="true">{session.name.slice(0, 1).toUpperCase()}</span>
+          <div className="console-session-person"><span>LOCAL PROFILE / THIS DEVICE</span><strong>{session.name}</strong></div>
+          <span className="console-session-school">{session.role} / {session.school}</span>
+          <Link href="/contact">Contact APT-LABS <span aria-hidden="true">↗</span></Link>
+        </div>
+      ) : null}
+      {children}
+    </>
+  );
 }

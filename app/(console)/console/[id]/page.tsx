@@ -57,48 +57,52 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
   const menu = CONSOLE_MENU[tool.module];
 
   return (
-    <main id="main-content" className="console-ui flex min-h-dvh flex-col bg-void font-sans text-ink print:bg-white print:text-black">
-      <header className="flex h-[55px] shrink-0 items-center justify-between border-b border-ink/10 px-4 sm:px-[21px] print:hidden">
-        <div className="flex items-center gap-3 font-mono text-meta uppercase tracking-caps text-dust">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <polygon points="12 2 22 12 12 22 2 12" />
-          </svg>
-          <span>APT-LABS · Console</span>
+    <main id="main-content" className="console-ui console-product-ui min-h-dvh bg-void font-sans text-ink print:bg-white print:text-black">
+      <header className="console-product-topbar print:hidden">
+        <div className="console-product-breadcrumb">
+          <Link href="/">APT-LABS</Link><span>/</span><Link href="/stack">SYSTEM</Link><span>/</span><Link href="/console">RECORDS</Link><span>/</span><strong>{tool.title}</strong>
         </div>
-        <Link href="/console" className="min-h-11 py-3 font-mono text-label uppercase tracking-caps text-ash transition-colors hover:text-ink focus-visible:text-signal">
-          ← Console
-        </Link>
+        <Link href="/contact" className="console-contact-link">Contact APT-LABS <span aria-hidden="true">↗</span></Link>
       </header>
 
-      {/* The module rail — one quiet tab strip, glyph per tool. */}
-      <nav aria-label="Console modules" className="flex items-center gap-1 overflow-x-auto border-b border-ink/10 bg-panel px-4 py-1.5 sm:px-5 print:hidden">
-        {RAIL.map(([id, label]) => {
-          const t = toolById(id);
-          if (!t) return null;
-          const isActive = tool.id === id;
-          return (
-            <Link
-              key={id}
-              href={`/console/${id}`}
-              aria-current={isActive ? "page" : undefined}
-              className={`flex min-h-11 shrink-0 items-center gap-2 border-b-2 px-3 transition-colors ${
-                isActive ? "border-signal text-ink" : "border-transparent text-dust hover:text-ink"
-              }`}
-            >
-              <ModuleGlyph module={t.module} size={14} className={isActive ? "text-signal" : "text-ash"} />
-              <span className="whitespace-nowrap font-mono text-label uppercase tracking-caps">{label}</span>
-            </Link>
-          );
-        })}
-      </nav>
-        <div className="mx-auto w-full max-w-[1440px] flex-1 px-4 py-6 sm:px-[34px] sm:py-10 md:px-[34px] md:py-12 print:p-0">
+      <div className="console-product-workspace">
+        <aside className="console-product-explorer print:hidden" aria-label="Operations files">
+          <p className="console-product-folder">OPERATIONS / FILES</p>
+          <Link className="console-product-all" href="/console"><span aria-hidden="true">⌂</span> All records</Link>
+          <nav aria-label="Console tool files">
+            {RAIL.map(([id, label]) => {
+              const t = toolById(id);
+              if (!t) return null;
+              const isActive = tool.id === id;
+              return (
+                <Link
+                  key={id}
+                  href={`/console/${id}`}
+                  aria-current={isActive ? "page" : undefined}
+                  className="console-product-file"
+                  data-current={isActive || undefined}
+                  title={t.desc}
+                >
+                  <span className="console-file-glyph" aria-hidden="true" />
+                  <span>{label}</span>
+                  <ModuleGlyph module={t.module} size={13} className={isActive ? "text-signal" : "text-ash"} />
+                </Link>
+              );
+            })}
+          </nav>
+          <div className="console-product-explorer-foot">LOCAL DATA<br />ON THIS DEVICE</div>
+        </aside>
+
+        <div className="console-product-document">
+          <div className="console-product-pathbar"><span>RECORDS</span><span>/</span><span>{tool.module.toUpperCase()}</span><span>/</span><strong>{tool.id.padStart(2, "0")} · {tool.title}</strong></div>
+          <div className="mx-auto w-full max-w-[1440px] flex-1 px-4 py-6 sm:px-[34px] sm:py-10 md:px-[34px] md:py-12 print:p-0">
           <div className="mb-8 flex min-w-0 flex-wrap items-start gap-4 border-b border-ink/10 pb-6 print:hidden">
             <ModuleTile module={tool.module} tint={menu?.tint} size={52} />
             <div>
               <p className="mb-2 font-mono text-label uppercase tracking-caps text-signal">
-                Console / {tool.module} / {tool.id.padStart(2, "0")}
+                {tool.module} / {tool.id.padStart(2, "0")} / LOCAL FILE
               </p>
-              <h1 className="font-display text-4xl font-semibold tracking-tight md:text-5xl">{tool.title}</h1>
+              <h1 className="font-display text-h2 font-semibold leading-tight">{tool.title}</h1>
               <p className="mt-3 max-w-[60ch] text-sm leading-6 text-dust">{tool.desc}</p>
             </div>
           </div>
@@ -114,7 +118,9 @@ export default function ConsoleToolPage({ params }: { params: { id: string } }) 
             >
               ← Back to the console
             </Link>
+            </div>
           </div>
+        </div>
       </div>
     </main>
   );

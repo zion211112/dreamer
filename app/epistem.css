@@ -716,6 +716,7 @@
   font-size: var(--fs-micro);
   fill: var(--quiet);
 }
+.ep-radar > table.sr-only { table-layout: fixed; contain: size; }
 
 .ep-radar-spoke { stroke: var(--rule-2); fill: none; }
 .ep-radar-ring { stroke: var(--rule); fill: none; }

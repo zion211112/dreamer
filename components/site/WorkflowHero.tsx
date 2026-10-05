@@ -104,7 +104,7 @@ function WorkflowSurface() {
       <div className="workflow-toolbar">
         <Link className="workflow-project" href="/" aria-label="APT-LABS home">
           <span className="workflow-project-mark" aria-hidden="true">A</span>
-          <span><strong>APT-LABS</strong><small>{COMPANY.mantra}</small></span>
+          <span><strong>APT-LABS</strong><h1 className="workflow-project-title">{COMPANY.mantra}</h1></span>
         </Link>
         <div className="workflow-toolbar-links">
           <span className="workflow-save-state" title="The architecture is derived from the evidence register."><i aria-hidden="true" /> NOTHING GETS PROMOTED BY DRAGGING</span>

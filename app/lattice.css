@@ -539,6 +539,24 @@
   .lattice-order-cell { flex: 1 1 40%; }
   .lattice-tools { width: 100%; }
 
+  .register--quad { --cols: minmax(0, 1fr); }
+  .register-head.register--quad { display: none; }
+  .register-row.register--quad { grid-template-columns: var(--cols); gap: var(--s-2); }
+  .register-row.register--quad .register-cell {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: var(--s-3);
+    min-width: 0;
+  }
+  .register-row.register--quad .register-cell::before {
+    content: attr(data-field);
+    color: var(--quiet);
+    font-family: var(--font-mono);
+    font-size: var(--fs-micro);
+    letter-spacing: var(--ls-caps);
+    text-transform: uppercase;
+  }
+
   .register--lattice { --cols: 40px minmax(0, 1fr); }
   .register-head.register--lattice,
   .register-row.register--lattice { grid-template-columns: var(--cols); }
