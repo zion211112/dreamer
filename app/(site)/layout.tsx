@@ -1,27 +1,9 @@
-import { NodeIndex } from "@/components/site/NodeIndex";
-import { NodeRecord } from "@/components/site/NodeRecord";
-import { NodeGraph } from "@/components/site/Graph";
+import Link from "next/link";
+import { COMPANY } from "@/lib/system";
 
 /**
- * The workspace — the shell shared by every public route.
- *
- * Two columns, and the split is arithmetic rather than taste:
- *
- *   THE RAIL    the node index (every node published here, grouped by
- *               kind) above the node record (what the selected node is,
- *               holds, and why its state). Both are statements *about*
- *               the system; they share a rail because they are the same
- *               kind of thing, and because the plane needs the width.
- *   THE PLANE   the route, above a compact spine that says where in the
- *               loop the reader has arrived.
- *
- * This is the one structural bet of the design: a system whose whole
- * claim is inspectability should be laid out the way an inspection tool
- * is laid out, with the thing you selected always visible rather than
- * scrolled away. Everything else on the page is secondary to that.
- *
- * The compact spine hides itself on the homepage, where the full canvas
- * graph renders instead — one statement per screen, never two.
+ * Public company shell. Products lead; infrastructure and evidence
+ * explain how they are designed and what is established.
  */
 export default function SiteLayout({
   children,
@@ -29,16 +11,35 @@ export default function SiteLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="plane">
-      <div className="plane-rail">
-        <NodeIndex />
-        <NodeRecord />
-      </div>
-
-      <main className="plane-main canvas" id="main-content">
-        <NodeGraph variant="spine" />
-        {children}
-      </main>
+    <div className="company-site">
+      <header className="company-header">
+        <Link href="/" className="company-brand" aria-label="APT-LABS home">
+          <span className="company-brand-mark" aria-hidden="true" />
+          <span>APT-LABS</span>
+        </Link>
+        <nav className="company-nav" aria-label="Main navigation">
+          <Link href="/#portfolio">Portfolio</Link>
+          <Link href="/stack">Infrastructure</Link>
+          <Link href="/evidence">Evidence</Link>
+        </nav>
+        <a
+          className="company-contact"
+          href={`mailto:${COMPANY.contact.email}`}
+          aria-label={`Email APT-LABS at ${COMPANY.contact.email}`}
+        >
+          Email APT-LABS <span aria-hidden="true">↗</span>
+        </a>
+      </header>
+      <main className="company-main" id="main-content">{children}</main>
+      <footer className="company-footer">
+        <Link href="/">APT-LABS</Link>
+        <div className="company-footer-contact">
+          <a href={`mailto:${COMPANY.contact.email}`}>{COMPANY.contact.email}</a>
+          <span>{COMPANY.contact.note}</span>
+        </div>
+        <span>{COMPANY.kind}</span>
+        <Link href="/lattice">System map <span aria-hidden="true">↗</span></Link>
+      </footer>
     </div>
   );
 }

@@ -1,8 +1,17 @@
 # APT-LABS
 
-A local-first control plane for evidence-bound records, operational decisions,
-and inspectable intelligence — plus the School Console, its first working field
-implementation.
+APT-LABS is building sovereign infrastructure: records held at source,
+identity earned through work, open builds, physical infrastructure and
+community allocation under readable rules. The School Console is one
+Record-layer prototype, not the company, the stack or its primary market.
+Tender System is another named product line; its scope and implementation
+state are not documented in this repository.
+
+The five layers are ordered by dependency. Record is the only layer with an
+openable product surface; the other four remain at their declared design
+states. The repository also describes a five-node inspection topology and a
+seven-stage operational value chain. See [the architecture guide](docs/ARCHITECTURE.md)
+before changing public framing.
 
 **The product sentence, and the rule the code enforces:**
 
@@ -10,11 +19,11 @@ implementation.
 > evidence state — and where the system cannot establish a fact, it preserves
 > the uncertainty instead of resolving it in its own favour.
 
-Every number, tag and sentence on the public site is minted in `lib/system.ts`
-and nowhere else. There are no seeded people, builds, projects, costs, votes,
-or impact figures anywhere in this repository. The registers start empty on
-purpose; an empty register that says why it is empty is a feature of this
-system, not a gap in it.
+Public system claims and maturity states are declared in `lib/system.ts`.
+The Console also contains invented, locally seeded demonstration records;
+they are not institutional records and must never be described as customers,
+adoption or outcomes. Public registers for real institutional activity remain
+empty until evidence exists.
 
 ---
 
@@ -31,33 +40,37 @@ published at `/evidence` and enforced as a type in `lib/system.ts`.
 | `PROTOTYPE` | Built and running locally, openable by anyone | Deployed, adopted, or in use |
 | `TARGET` | A named intended outcome | Current performance |
 | `PLANNED` | Designed, not built | Implemented; carries no figures |
+| `DEMONSTRATION` | A working surface populated with invented data | A real record or result |
 | `UNKNOWN` | The value is not established | Zero, blank, or omitted |
 
 `UNKNOWN ≠ zero` and `PROTOTYPE ≠ deployed` are the two rules most of the
-design follows from. The geography (Kirinyaga, Kenya) is declared product
-context and is rendered at the state it actually carries: `UNKNOWN`.
+design follows from. Kirinyaga, Kenya is declared as where the company builds
+from, at `PROTOTYPE`; it is not an operating footprint or a deployment claim.
 
 ---
 
 ## Routes
 
-| Route | Node | What it is |
+| Route | Surface | What it is |
 | --- | --- | --- |
-| `/` | 01 Field | The first viewport: the mantra, the measures, the five-node graph, and a closing count of one build of six |
-| `/register` | 02 Register | What the system records, the anatomy of a row, the empty register |
-| `/intelligence` | 03 Intelligence | Derived signals, each bound to the records it came from |
-| `/control` | 04 Control | Contribution, decision, allocation, execution — with the School Console presented as the first implementation |
-| `/evidence` | 05 Evidence | The five states, the contract rules, the published unknowns |
-| `/console` | — | One built example of the grammar: local session, nine modules, ten tools |
+| `/` | Company home | The company, five-layer stack, product lines and declared maturity |
+| `/stack` | Stack | The five sovereignty layers and the contribution constraints for Identity |
+| `/lattice` | Topology | Interactive view connecting the inspection nodes, value chain and products |
+| `/register` | Register | Record grammar and what the system is designed to hold |
+| `/intelligence` | Intelligence | Derived signals and the records/methods they depend on |
+| `/control` | Control | Human decisions, rules, allocation and execution boundaries |
+| `/evidence` | Evidence | State definitions, claim rules and established unknowns |
+| `/product` | Product detail | The School Console’s capabilities, demo-data boundary and commercial facts |
+| `/console` | Product prototype | Device-local School Console with invented demonstration data |
+| `/console/[id]` | Product tool | One School Console module/tool |
 
-Every node on that list resolves to a real route. The five planned builds in
-`BUILDS` do not appear in it, because they have no surface: the School Console
-is an example of the grammar rather than the product, and the site closes on
-the count rather than the achievement.
+The company home is not the Field node. The Field node in `PLANE` resolves to
+`/console`; `/` is listed separately in the sitemap. This distinction keeps
+the company website from masquerading as an operational product screen.
 
-The console is `noindex` and disallowed in `robots.txt`: it is a device-local
-prototype, and a search result implying an institution runs it would be the
-exact claim this system is built to prevent.
+`/console` is `noindex` and disallowed in `robots.txt`: it is a device-local
+prototype populated with invented data. A search result implying an
+institution runs it would overstate the evidence.
 
 ---
 
@@ -81,7 +94,9 @@ npm run dev          # http://localhost:3000
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run check:scale` | Verifies the type ladder, both tracking registers and the space grid, then guards them against drift |
 | `npm run check:contrast` | Computes every WCAG ratio from the token file and asserts the state temperature order |
-| `npm run check` | typecheck + lint + check:scale + check:contrast + build — run before every commit |
+| `npm run check:lexicon` | Checks public vocabulary and product/architecture boundaries |
+| `npm run check:epistemic` | Exercises evidence and claim-guard behavior |
+| `npm run check` | typecheck + lint + scale + contrast + lexicon + epistemic checks + build |
 
 Neither audit is cosmetic, and both parse `app/globals.css` instead of
 trusting the stylesheet that uses it. `check:scale` recomputes the type ladder
@@ -94,7 +109,7 @@ if a hard-coded `letter-spacing` or an off-grid px length has crept back in,
 because without that drift guard the constants are only true until the next
 edit.
 
-`check:contrast` computes 59 real pairs on the dark palette — every text token
+`check:contrast` computes 107 real pairs on the dark palette — every text token
 on all three surfaces, filled-control ink on each jade register, accent text on
 the accent's own translucent washes, the row wash, and focus rings at 3:1. It
 also asserts something a ratio cannot express alone: that the five evidence
@@ -115,20 +130,20 @@ exit non-zero on any failure.
   rendered, never omitted.
 - **Absence is content.** Empty states name what would legitimately appear,
   why it is empty, and what would fill it. "Nothing here" alone is a bug.
-- **One design system, two surfaces.** Tokens live in `app/globals.css` and
-  are mirrored in `tailwind.config.ts`; the console and the site must not
-  drift into two products. The console is the flat one — no aura field,
-  because an instrument panel with an aurora behind it is a dashboard.
+- **One company, multiple product surfaces.** The site explains the stack and
+  portfolio; `/console` is a distinct school-operations prototype, not the
+  company website. Shared type, spacing, color and evidence-state tokens live
+  in `app/globals.css` and `tailwind.config.ts`.
 - **The register grammar.** The ground is dark and light is what a claim has to
   earn, so depth is made with luminance rather than with a drop shadow — a
   raised surface is separated by one pixel of light at its top edge. Ruled
   rows are the primary layout primitive, hairline only, radii capped at 2px.
   One interactive colour, `--signal` #35d9a4, and informational amber that is
   never interactive. Every state is text plus mark, never colour alone.
-- **The workspace is a workspace.** The site is two columns: a 336px sticky
-  rail holding the node index and the node record, and the plane. Every node
-  in the index is a live route except the five planned builds, which render as
-  text with a hollow port rather than as links that resolve to nothing.
+- **Three models stay distinct.** `STACK` describes five layers of
+  sovereignty; `PLANE` describes five inspection nodes; `VALUE_CHAIN`
+  describes seven transformations from observation to measurement. Do not
+  use one model’s labels or counts as another’s.
 - **The scale is checked, not asserted.** One size constant, two tracking
   registers, one space constant, all re-derived from `app/globals.css` on
   every build by `npm run check:scale`. A number this file quotes has to be
@@ -154,7 +169,7 @@ exit non-zero on any failure.
 
 ```
 app/
-  (site)/          five public nodes + loading state
+  (site)/          company site, architecture routes and product detail
   (console)/       the School Console (client-side, device-local)
   not-found.tsx    register-grammar 404
   error.tsx        route error boundary
@@ -163,18 +178,23 @@ app/
   apple-icon.tsx   dark-surface mark
   opengraph-image.tsx  share card: the mantra at 112px, PROTOTYPE declared
   robots.ts        crawl policy (console excluded)
-  sitemap.ts       derived from the same PLANE array as the nav
+  sitemap.ts       company home + public topology/views; excludes Console
 components/
-  site/            NodeIndex, NodeRecord, Graph, BuildGrid, register, tally,
-                   state tag, empty state
+  site/            company home, value chain, topology, stack, registers,
+                   evidence state tag and empty state
   console/         the nine console modules + shared bits
+  epistem/         evidence, claim, control and human-judgment interfaces
 lib/
-  system.ts        THE runtime source of truth for every public claim
+  system.ts        source of truth for stack, topology, value chain, products and states
+  console.ts       Console-specific module and tool catalogue
+  proto-school.ts  invented data used only by the local Console demonstration
   site.ts          canonical origin resolution
   domain modules   marking, fees, timetable, inspection, …
 scripts/
   check-scale.mjs      ladder, tracking and space audit, plus the drift guard
   check-contrast.mjs   WCAG audit and state ordering; non-zero exit on failure
+docs/
+  ARCHITECTURE.md      the three system models, products, routes and code map
 RESEARCH TRASH/    archived previous passes — excluded from build and deploy
 ```
 

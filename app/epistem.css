@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════════
    EPISTEMIC SURFACES — app/epistem.css
 
-   The APT-LABS visual language, per ASIANCODER.MD:
+  The APT-LABS visual language, per africancoder.md:
 
      near-black graphite      extremely subtle grid      off-white type
      teal    = verified / live        cyan     = evidence / data
@@ -25,7 +25,7 @@
    Colour is never the only channel. Every state in this system has a
    second, non-visual encoding: a rank numeral, a word, a glyph, or a
    line style. That is not an accessibility afterthought bolted on at the
-   end — it is the design. ASIANCODER.MD's premise is that the failure
+  end — it is the design. AfricanCoder's premise is that the failure
    mode is a fluent statement that looks authoritative and is not, and a
    reader who cannot perceive the difference is exactly the reader this
    system is built to protect. So the redundant channel is load-bearing
@@ -38,7 +38,7 @@
    without touching this file. */
 
 :root {
-  /* The five semantic hues ASIANCODER.MD assigns. */
+  /* The five semantic hues declared by the current design brief. */
   --ep-live: #7bf0c6;          /* teal    · verified / live          */
   --ep-data: #7cc5e0;          /* cyan    · evidence / data          */
   --ep-think: #b9a4e8;         /* violet  · intelligence / hypothesis*/
@@ -459,7 +459,7 @@
      <div class="ep-gap-bar" style="--v: 62%"><span/><span/></div>
 
    The first draft of this rule expected `.ep-gap-bar > div > span`, so
-   ASIANCODER.MD's flagship instrument rendered as two lines of text with no
+  The flagship instrument rendered as two lines of text with no
    track, no fill and no scale. `--v` was written by the component and read
    nowhere, which is exactly what a class-list brief cannot catch.
 
@@ -1019,7 +1019,7 @@ p.ep-radar-label {
 .ep-gate-verb[data-verdict="DISTORT"] { border-left: 2px solid var(--ep-think); }
 
 /* PROTECT FROM OPTIMIZATION is the one that gets the live hue and the
-   only filled treatment on the panel. ASIANCODER.MD singles it out for a
+  only filled treatment on the panel. The design brief singles it out for a
    reason: it is the control that stops the machine erasing a human's
    strange idea, and it should be the most obvious thing in the gate. */
 .ep-gate-verb[data-verdict="PROTECT_FROM_OPTIMIZATION"] {
@@ -1051,7 +1051,7 @@ p.ep-radar-label {
 }
 
 /* ── Reduced motion ───────────────────────────────────────────────
-   ASIANCODER.MD permits animation only where it carries state change.
+  The design brief permits animation only where it carries state change.
    Everything here is a hover or focus transition, so honouring
    prefers-reduced-motion costs nothing and is required anyway. */
 

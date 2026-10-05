@@ -5,7 +5,7 @@ import { BuildGrid } from "@/components/site/BuildGrid";
 import { StatusBand } from "@/components/site/StatusBand";
 import { EmptyState } from "@/components/site/EmptyState";
 import { StateTag } from "@/components/site/StateTag";
-import { ValueChain } from "@/components/site/Graph";
+import { ValueChain } from "@/components/site/ValueChain";
 import { CONSOLE, LIVE_BUILDS, PRODUCTS, VALUE_CHAIN } from "@/lib/system";
 
 export const metadata: Metadata = {
@@ -218,7 +218,7 @@ export default function ControlPage() {
           raised against these very claims, the confidence ledger behind
           every figure, and the derived health vector.
 
-          Both halves belong on one page, because ASIANCODER.MD's failing
+          Both halves belong on one page, because AfricanCoder's standard
           is a reader who cannot inspect the evidence at the moment of
           judgement. A separate page for the apparatus is a separate
           moment, and by then the reader has already believed something. */}

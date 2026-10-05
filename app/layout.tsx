@@ -9,7 +9,7 @@ import "./globals.css";
 import "@xyflow/react/dist/style.css";
 import "./lattice.css";
 /* The epistemic surfaces. Loaded globally rather than per-route because
-   ASIANCODER.MD's semantic palette — teal verified, cyan evidence,
+  The semantic palette — teal verified, cyan evidence,
    violet intelligence, amber pending, red contradiction — has to mean the
    same thing on every surface it appears on. A palette that resolves per
    route is not a palette. */

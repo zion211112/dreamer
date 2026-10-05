@@ -4,13 +4,11 @@
 // is minted here and nowhere else. A claim may only be added to this file
 // if an evidence path exists for it — that is the whole point of the system.
 //
-// APT-LABS is a software company. It builds and sells products: management
-// systems that run an institution's operations, MVPs commissioned against
-// a named problem, and studios where a build happens in the open. That
-// sentence is commercial and it is the reason the rest of this file
-// exists: a company that sells software has to say what it has built,
-// what it costs, who it is for, and what is not yet true — in that order,
-// and without dressing a design up as a customer.
+// APT-LABS builds sovereign infrastructure: a five-layer system connecting
+// locally held records, work-earned identity, open builds, physical nodes,
+// and community allocation. Products apply this system to different domains;
+// no single product or vertical defines the company. This file records both
+// the architecture and the evidence state of each thing the site describes.
 //
 // THE EPISTEMIC CONTRACT, as code:
 //
@@ -295,10 +293,9 @@ export const COMPANY = {
   /**
    * The same claim at display size, pre-broken into two designed lines.
    *
-   * Display type is the only place on the site a reader is guaranteed to
-   * read, so it carries the thesis rather than a category. "The record is
-   * sovereign" was a principle without a subject; this names the subject
-   * and the objection it answers in the same breath.
+  * Display type is the first company-level statement a reader encounters.
+  * The line names the full direction of the system, from custody at the
+  * record layer through decisions about shared infrastructure.
    *
    * The break is stored rather than left to `text-wrap: balance`, because
    * balance will orphan a single word on its own line at display size,
@@ -306,12 +303,12 @@ export const COMPANY = {
    * globals.css is derived from the width of the wider stored line, so the
    * designed break is always the one that fits.
    */
-  mantra: "The record is sovereign.",
-  mantraLines: ["The record", "is sovereign."],
+  mantra: "Sovereignty, from record to allocation.",
+  mantraLines: ["Sovereignty,", "from record to allocation."],
 
   /**
-   * What that means, cashed immediately. One sentence, two clauses: the
-   * definition of the word the hero uses, then the state of the stack.
+  * What that means, cashed immediately: one sentence defining the stack's
+  * custody, contribution and allocation principles.
    *
    * It previously listed the three product kinds — management systems,
    * MVPs, studios — which is the catalogue, and the catalogue has its own
@@ -321,8 +318,7 @@ export const COMPANY = {
    * leave the device, so nothing above it can overrule it. That is the
    * whole definition, and it fits in a sentence.
    *
-   * This string is also the meta description and the share-card line, so
-   * it carries the count as well: one layer of five is built.
+  * This string is also the meta description and the share-card description.
    */
   supporting:
     "The record stays where it was written. Weight is minted by work and never sold. Allocation happens through rules the community can read before it decides.",
@@ -332,11 +328,10 @@ export const COMPANY = {
    * its customer is not being careful — it is refusing to answer the
    * question.
    *
-   * These were "Schools" and "Small firms", which described a records-layer
-   * vendor's customer list and had nothing to do with ASIANCODER.MD. A
-   * control plane for AI agents is bought by whoever is accountable for an
-   * agent's behaviour: the person who signs off what it does, not the person
-   * who ships it. That distinction is the product.
+  * These are intended participants in the wider system, not a complete
+  * customer list or a statement that any one group has adopted it. The
+  * School Console is one application for one institutional domain; the
+  * shared-infrastructure and allocation layers extend beyond that domain.
    */
   buyers: [
     {
@@ -431,7 +426,7 @@ export const PLANE: readonly PlaneNode[] = [
     key: "field",
     name: "Field",
     role: "The product's front door — the operator captures the institution's working week as it happens.",
-    href: "/",
+    href: "/console",
     state: "PROTOTYPE",
     holds: "What the operator would enter here. The capture interface is built; no institution has entered anything.",
     custody: "The institution",
@@ -799,6 +794,13 @@ export const CONSOLE = {
     "Sold per school, per term, to the school itself. The buyer is the head teacher or the proprietor rather than a ministry, because the record never leaves the device.",
   provenance:
     "Built and openable at /console. No school runs it: there is no deployment, no customer and no outcome record. The data inside it is invented and is labelled DEMONSTRATION wherever it is described.",
+} as const;
+
+/** Tender System is named by APT-LABS; implementation facts are not published here yet. */
+export const TENDER_SYSTEM = {
+  name: "Tender System",
+  summary: "A separate APT-LABS product line. Public scope and implementation details are not yet established.",
+  state: "UNKNOWN" as EvidenceState,
 } as const;
 
 /* ---------------------------------------------------------------- */

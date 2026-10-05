@@ -14,22 +14,28 @@ clean repository.
 
 ## Product truth each design must serve (from first principles)
 
-- **What this is:** a local-first control plane for auditable, evidence-bound
-  records (asset lifecycle, people register, collective decisions), plus one
-  built instantiation of it — a school operations console (marking, timetable,
-  fees, reports). The console is a build rather than the product: the same
-  chain runs over six domains and exactly one of them has a surface to open.
+- **What this is:** one stack, five layers. The record layer — a local-first
+  register of auditable, evidence-bound records (events, decisions, and the
+  evidence state of every claim) that an institution holds outright — plus
+  four layers above it: identity (a roll of people whose weight is minted by
+  work and never bought), builds worked in the open, the physical layer of
+  power, water and connection, and rule-governed allocation. Exactly one
+  layer has a surface to open: a school operations console, which is the
+  record layer's first implementation and this company's first product.
 - **Non-negotiables carried over from the old contract:** no invented claims; every
   published figure carries an evidence state (VERIFIED / PROTOTYPE / TARGET /
   PLANNED / UNKNOWN); unknown ≠ zero; prototype ≠ deployed.
 - **Audience:** institutions, builders, local teams (Kirinyaga, Kenya declared),
   and school administrators evaluating the console.
-- **Memory target (J):** one idea must survive the visit — *"records, not
-  assertions."* That is `COMPANY.mantra`, stored pre-broken as two lines
+- **Memory target (J):** one idea must survive the visit — *"the record is
+  sovereign"* — the record stays where it was written and no layer above it
+  may overrule it. That is `COMPANY.mantra`, stored pre-broken as two lines
   because the hero is a fluid display setting and a sentence that cannot be set
   at display size was never designed to be the largest thing on the page. The
-  longer form — *"this system records reality, not aspiration"* — is
-  `COMPANY.primary`, and still carries the full claim immediately below it.
+  longer form is `COMPANY.primary`, and the word is cashed in the sentence
+  immediately below the mantra, because a word at 181px that is not defined on
+  the same screen is decoration. The stack on the homepage is the second thing
+  that must survive the visit: *five layers, one built.*
 
 ---
 
@@ -343,18 +349,91 @@ layer must move behind interaction.
 
 ---
 
+## DESIGN 05 — "THE STACK" — **CURRENT**
+
+> **Status: current.** This is the pass that changed what the site is
+> *about* rather than how it looks, and the finding that forced it is
+> worth stating plainly: every earlier design here was impeccable and
+> every one of them described a school-software company. Not because any
+> of them lied — the register never lied, and the evidence contract held
+> on every page — but because the site's ontology was absent. The
+> five-node loop is the *record layer*. The product is the record layer's
+> first implementation. Above both sits four more layers this company
+> intends to build: identity (a roll of people whose weight is minted by
+> work, not bought), builds in the open, the physical layer of power,
+> water and connection, and rule-governed allocation. A reader who finished
+> DESIGN 02 could state exactly what the system does with a record and had
+> no idea what it was for. That is a legibility failure, and legibility is
+> the first thing this brief asks for.
+
+**▸ INTUITION**
+
+> One system, five layers, one lit. The ontology rendered as a section
+> through the ground: the layer that exists emits light down its left
+> edge, and the four above it are drawn in hairlines. Nothing about it is
+> a card, a diagram or an illustration.
+
+**▸ REBUILD**
+- **Subject:** `STACK` in `lib/system.ts` — five layers, each with
+  `holds`, `built`, `settles`, `provenance` and a structural evidence
+  state. `BUILT_LAYERS` derives the figure the homepage leads with, so
+  "1 of 5" is true by construction rather than by typing.
+- **Mantra:** "Operational software." → **"The record is sovereign."** A
+  category is not a company, and at 181px it was the largest sentence on
+  the site and the least informative. "Sovereign" is defined in the
+  sentence immediately below it — the record stays where it was written and
+  no layer above it may overrule it — because a word that large that is
+  not cashed immediately is exactly the kind of word this system exists to
+  refuse.
+- **Instrument:** `components/site/Stack.tsx`, two densities. The full
+  setting is a four-field `dl` per layer; the compact setting drops to
+  ordinal, name, role and state, and adds a line only for the layer that
+  has one. Asymmetry is deliberate: filling all five rows with explanation
+  turns a diagram back into prose, which is how a stack stops reading as
+  a stack.
+- **Contribution rules:** `CONTRIBUTION` on `/stack` — four constraints
+  written as `rule / means / never`, because a governance mechanism is
+  only as trustworthy as the thing it forbids. The concentration
+  threshold is deliberately not printed, and the page says why: a number
+  beside a rule that has never run is a slogan with a decimal point. That
+  refusal is the most load-bearing piece of copy on the site.
+- **Position in the page:** hero → **stack** → what we sell → measures →
+  targets → what is not established → the loop → the ask. The stack moves
+  the ontology above the catalogue without removing the catalogue.
+- **Navigation:** the rail opens with "The company" — the stack, then the
+  product — because navigation that opens with the architecture explains
+  the company to a reader who has not yet been told what it is.
+
+**▸ FAILURE MODES**
+1. Stack-as-vague-ambition → a grand vision page with no states on it. The
+   fix is that the section renders in the same grammar as the register:
+   a layer cannot be drawn without its state, and `settles` names evidence
+   rather than a date.
+2. Detail overload on the homepage → the compact setting exists for the
+   homepage and the full setting for `/stack`, one click apart.
+3. The contributions rules read as marketing → each rule carries its own
+   prohibition, and one of the prohibitions is "this site will not print
+   the number", which is a promise about conduct rather than a claim
+   about capability.
+
+**▸ FALSIFIER**
+
+> If a first-time reader cannot state, after the homepage, that this
+> company builds five layers and that one of them is built — the ontology
+> is still buried, however well the registers read.
+
 ## Comparison at a glance
 
-| | 01 Register | 02 Aura | 03 Control Plane | 04 Field Station |
-|---|---|---|---|---|
-| Status | superseded | **current** | absorbed | absorbed |
-| Surface | paper / light | near-black / aura field | graphite / dark | off-white / light |
-| Core primitive | ruled row | node on a lit ground | schematic node | status band + tally |
-| Accent | one ink accent | jade `#35d9a4`, one interactive colour | signal amber, position only | cool secondary for `VERIFIED` |
-| Motion | row progression | field drift only | loop line redraw | count re-roll |
-| Console presence | as appendix record | one build of six | as hero panel | as inspectable export |
-| Strongest against | claim inflation | generic-dark risk | navigation confusion | caveat fatigue |
-| Weakest against | first-visit warmth | atmosphere with nothing under it | dead-node overclaim | caveat fatigue |
+| | 01 Register | 02 Aura | 03 Control Plane | 04 Field Station | 05 The Stack |
+|---|---|---|---|---|---|
+| Status | superseded | absorbed | absorbed | absorbed | **current** |
+| Surface | paper / light | near-black / aura field | graphite / dark | off-white / light | near-black / aura field, with light emitted per layer |
+| Core primitive | ruled row | node on a lit ground | schematic node | status band + tally | strata: five layers, one lit down its left edge |
+| Accent | one ink accent | jade `#35d9a4`, one interactive colour | signal amber, position only | cool secondary for `VERIFIED` | jade `#35d9a4`, plus a lit left edge carrying the state |
+| Motion | row progression | field drift only | loop line redraw | count re-roll | none of its own — the section is still |
+| Console presence | as appendix record | one build of six | as hero panel | as inspectable export | layer one's implementation, named as such |
+| Strongest against | claim inflation | generic-dark risk | navigation confusion | caveat fatigue | the "we are just a school-software vendor" misread |
+| Weakest against | first-visit warmth | atmosphere with nothing under it | dead-node overclaim | caveat fatigue | nothing yet — falsifier unrun |
 
 ## Quality-gate summary (ASIANCODER §QUALITY GATES)
 

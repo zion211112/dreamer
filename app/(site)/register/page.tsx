@@ -188,7 +188,7 @@ export default function RegisterPage() {
           raised against these very claims, the confidence ledger behind
           every figure, and the derived health vector.
 
-          Both halves belong on one page, because ASIANCODER.MD's failing
+          Both halves belong on one page, because AfricanCoder's standard
           is a reader who cannot inspect the evidence at the moment of
           judgement. A separate page for the apparatus is a separate
           moment, and by then the reader has already believed something. */}
