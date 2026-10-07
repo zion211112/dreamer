@@ -38,13 +38,13 @@ export function StatusBand() {
         </p>
       </div>
       <div className="status-band-item">
-        <div className="status-band-key">Data</div>
-        <p className="status-band-val">
-          Everything shown runs on invented records, labelled{" "}
-          <StateTag state="DEMONSTRATION" />. No real person or institution
-          is described anywhere on this site.
-        </p>
-      </div>
+              <div className="status-band-key">Data</div>
+              <p className="status-band-val">
+                Everything shown runs on invented records, labelled{" "}
+                <StateTag state="PROTOTYPE" />. No real person or institution
+                is described anywhere on this site.
+              </p>
+            </div>
       <div className="status-band-item">
         <div className="status-band-key">Custody</div>
         <p className="status-band-val">

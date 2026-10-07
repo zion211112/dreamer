@@ -90,7 +90,6 @@ const T = {
   prototype: token("state-prototype"),
   target: token("state-target"),
   planned: token("state-planned"),
-  demonstration: token("state-demonstration"),
   unknown: token("state-unknown"),
 };
 
@@ -114,7 +113,6 @@ const textTokens = [
   ["state/PROTOTYPE", T.prototype],
   ["state/TARGET", T.target],
   ["state/PLANNED", T.planned],
-  ["state/DEMONSTRATION", T.demonstration],
   ["state/UNKNOWN", T.unknown],
 ];
 
@@ -699,7 +697,6 @@ for (const p of huePairs) {
 const ORDER = [
   ["UNKNOWN", T.unknown, "darkest · unestablished"],
   ["PLANNED", T.planned, "cold · designed, not built"],
-  ["DEMONSTRATION", T.demonstration, "cool · runs, but the data is invented"],
   ["TARGET", T.target, "hot · intended, not measured"],
   ["VERIFIED", T.verified, "cold jade · settled by a source"],
   ["PROTOTYPE", T.prototype, "brightest · present and inspectable"],
@@ -733,11 +730,8 @@ spread >= 3
 
 /* Every adjacent pair on the scale has to separate at 9.5px tag size.
    A monotonic ladder is not enough on its own: two states can sit in the
-   right order and still be too close to tell apart, which is how a sixth
-   state gets added and quietly becomes indistinguishable from the one
-   above it. DEMONSTRATION is the case this guards — it exists to separate
-   "the product runs" from "the data is real", and if it renders the same
-   colour as PLANNED it has achieved nothing. */
+   right order and still be too close to tell apart. The five-state scale
+   guards against any adjacent pair becoming indistinguishable. */
 const MIN_ADJACENT = 1.15;
 let sepFailed = 0;
 for (let i = 0; i < ORDER.length - 1; i++) {

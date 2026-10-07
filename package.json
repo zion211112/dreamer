@@ -11,7 +11,7 @@
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:scale": "node scripts/check-scale.mjs",
     "check:lexicon": "node scripts/check-lexicon.mjs",
-    "check:epistemic": "node --experimental-transform-types --no-warnings scripts/check-epistemic.mjs",
+    "check:epistemic": "node --no-warnings --experimental-strip-types scripts/check-epistemic.mjs",
     "check": "npm run typecheck && npm run lint && npm run check:scale && npm run check:contrast && npm run check:lexicon && npm run check:epistemic && npm run build"
   },
   "dependencies": {

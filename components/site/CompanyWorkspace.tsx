@@ -4,44 +4,25 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { StateTag } from "@/components/site/StateTag";
-import { COMPANY, PRODUCTS, TENDER_SYSTEM, type EvidenceState } from "@/lib/system";
+import { COMPANY, type EvidenceState } from "@/lib/system";
 
 type DirectoryItem = { label: string; href?: string; detail?: string; state?: EvidenceState };
 type DirectoryGroup = { label: string; items: DirectoryItem[] };
 
 const DIRECTORY: DirectoryGroup[] = [
   {
-    label: "System",
+    label: "Company",
     items: [
-      { label: "Overview", href: "/", detail: "The company and its system" },
-      { label: "The stack", href: "/stack", detail: "Five layers, by dependency" },
-      { label: "System map", href: "/lattice", detail: "The connected register" },
+      { label: "Home", href: "/", detail: "Problem → Capability → Proof → Contact" },
+      { label: "Work", href: "/work", detail: "APT Fab · APT Studio · Selected work" },
+      { label: "The Roll", href: "/roll", detail: "Public evidence methodology + records" },
+      { label: "BenBen", href: "/benben", detail: "School Console prototype · Allocation track" },
     ],
   },
   {
-    label: "Records",
-    items: [
-      { label: "Registers", href: "/register", detail: "Records and their states" },
-      { label: "Evidence ledger", href: "/evidence", detail: "What is established" },
-      { label: "Intelligence", href: "/intelligence", detail: "Derived signals and limits" },
-      { label: "Allocation rules", href: "/control", detail: "Rules before decisions" },
-    ],
+    label: "Organization",
+    items: [{ label: "Contact", href: "/contact", detail: "Demo, pilot and diligence" }],
   },
-  {
-    label: "Portfolio",
-    items: [
-      { label: "Portfolio files", href: "/#portfolio", detail: "Products and build tracks" },
-      { label: "Product catalogue", href: "/product", detail: "What is open and what is not" },
-      { label: "Current demo", href: "/console", detail: "The openable product surface" },
-      { label: TENDER_SYSTEM.name, detail: "Scope not yet published", state: TENDER_SYSTEM.state },
-      ...PRODUCTS.filter((product) => !product.href).map((product) => ({
-        label: product.name,
-        detail: "Designed build track · not a live product",
-        state: product.state,
-      })),
-    ],
-  },
-  { label: "Organization", items: [{ label: "Contact", href: "/contact", detail: "Demo, pilot and diligence" }] },
 ];
 
 function routeLabel(pathname: string) {
@@ -130,18 +111,23 @@ export function CompanyWorkspace({ children, fallbackLabel = "Overview" }: { chi
                   <span><strong>Allocation</strong> Rules come before decisions.</span>
                 </div>
                 <div className="workspace-profile-products">
-                  <p>PORTFOLIO / SECONDARY FILES</p>
-                  <Link href="/console" onClick={() => setProfileOpen(false)}>
-                    <span className="workspace-file-icon" aria-hidden="true" />
-                    <span>Current demo<small>One product surface is open</small></span>
-                    <span className="workspace-file-open" aria-hidden="true">↗</span>
-                  </Link>
-                  <div className="workspace-product-pending">
-                    <span className="workspace-file-icon" aria-hidden="true" />
-                    <span>{TENDER_SYSTEM.name}<small>Scope not yet published</small></span>
-                    <StateTag state={TENDER_SYSTEM.state} />
-                  </div>
-                </div>
+                                  <p>PORTFOLIO / SECONDARY FILES</p>
+                                  <Link href="/work" onClick={() => setProfileOpen(false)}>
+                                    <span className="workspace-file-icon" aria-hidden="true" />
+                                    <span>Work<small>APT Fab · APT Studio · Selected prototypes</small></span>
+                                    <span className="workspace-file-open" aria-hidden="true">↗</span>
+                                  </Link>
+                                  <Link href="/benben" onClick={() => setProfileOpen(false)}>
+                                    <span className="workspace-file-icon" aria-hidden="true" />
+                                    <span>BenBen<small>School Console prototype · Allocation track</small></span>
+                                    <span className="workspace-file-open" aria-hidden="true">↗</span>
+                                  </Link>
+                                  <Link href="/roll" onClick={() => setProfileOpen(false)}>
+                                    <span className="workspace-file-icon" aria-hidden="true" />
+                                    <span>The Roll<small>Public evidence methodology</small></span>
+                                    <span className="workspace-file-open" aria-hidden="true">↗</span>
+                                  </Link>
+                                </div>
                 <Link className="workspace-profile-email" href="/contact" onClick={() => setProfileOpen(false)}>
                   {COMPANY.contact.email}<span aria-hidden="true">↗</span>
                 </Link>
@@ -168,12 +154,12 @@ export function CompanyWorkspace({ children, fallbackLabel = "Overview" }: { chi
                 {group.items.map((item) => {
                   const current = item.href === pathname;
                   const content = (
-                    <>
-                      <span className="workspace-file-icon" aria-hidden="true" />
-                      <span>{item.label}</span>
-                      {item.state ? <StateTag state={item.state} /> : item.href === "/console" ? <span className="workspace-tree-state" aria-label="Prototype">P</span> : null}
-                    </>
-                  );
+                                      <>
+                                        <span className="workspace-file-icon" aria-hidden="true" />
+                                        <span>{item.label}</span>
+                                        {item.state ? <StateTag state={item.state} /> : null}
+                                      </>
+                                    );
                   return item.href ? (
                     <Link className="workspace-tree-link" data-current={current || undefined} href={item.href} key={item.label} aria-current={current ? "page" : undefined} title={item.detail}>
                       {content}
@@ -201,14 +187,14 @@ export function CompanyWorkspace({ children, fallbackLabel = "Overview" }: { chi
           </div>
           <main className="company-main" id="main-content">{children}</main>
           <footer className="company-footer">
-            <Link href="/">APT-LABS</Link>
-            <div className="company-footer-contact">
-              <Link href="/contact">{COMPANY.contact.email}</Link>
-              <span>{COMPANY.contact.note}</span>
-            </div>
-            <span>{COMPANY.kind}</span>
-            <Link href="/lattice">System map <span aria-hidden="true">↗</span></Link>
-          </footer>
+                      <Link href="/">APT-LABS</Link>
+                      <div className="company-footer-contact">
+                        <Link href="/contact">{COMPANY.contact.email}</Link>
+                        <span>{COMPANY.contact.note}</span>
+                      </div>
+                      <span>{COMPANY.kind}</span>
+                      <Link href="/roll">The Roll <span aria-hidden="true">↗</span></Link>
+                    </footer>
         </div>
       </div>
     </div>

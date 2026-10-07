@@ -65,7 +65,6 @@ export type EvidenceState =
   | "PROTOTYPE"
   | "TARGET"
   | "PLANNED"
-  | "DEMONSTRATION"
   | "UNKNOWN";
 
 export const EVIDENCE_STATES: readonly EvidenceState[] = [
@@ -73,13 +72,12 @@ export const EVIDENCE_STATES: readonly EvidenceState[] = [
   "PROTOTYPE",
   "TARGET",
   "PLANNED",
-  "DEMONSTRATION",
   "UNKNOWN",
 ] as const;
 
 /**
- * The six states in narrative order — settled, present, intended,
- * designed, demonstrated, unestablished.
+ * The five states in narrative order — settled, present, intended,
+ * designed, unestablished.
  *
  * Declared once so the tally, the register band, the lattice canvas and
  * the state table cannot disagree about what comes first, and so a state
@@ -93,7 +91,6 @@ export const STATE_ORDER: readonly EvidenceState[] = [
   "PROTOTYPE",
   "TARGET",
   "PLANNED",
-  "DEMONSTRATION",
   "UNKNOWN",
 ] as const;
 
@@ -203,10 +200,7 @@ export const CONSOLE_VOCABULARY_SCOPED = {
  * What each state legally permits a route to say. This is the enforcement
  * point: `permits` is a constraint on language, not a description of it.
  *
- * Every entry is written so a reader can hold a sentence against it. The
- * DEMONSTRATION rule is what earns the sixth state: it separates "the
- * product works" from "the data is real", which are two different claims
- * about one surface and the two most often run together.
+ * Every entry is written so a reader can hold a sentence against it.
  */
 export const STATE_RULES: Record<EvidenceState, { permits: string; forbids: string }> = {
   VERIFIED: {
@@ -225,10 +219,6 @@ export const STATE_RULES: Record<EvidenceState, { permits: string; forbids: stri
     permits: "Designed, not built. An architecture or a track can be described.",
     forbids: "Any figure, count, date or capability claim.",
   },
-  DEMONSTRATION: {
-    permits: "The surface runs and the data in it is invented, labelled as such wherever that data is described.",
-    forbids: "Reading as a record of anything that happened. Demonstration data never counts as a customer, an outcome, or a real institution.",
-  },
   UNKNOWN: {
     permits: "An explicit statement that the value is not established.",
     forbids: "Zero, blank, omission, or a neighbouring figure that implies a value.",
@@ -240,85 +230,54 @@ export const STATE_RULES: Record<EvidenceState, { permits: string; forbids: stri
 /* ---------------------------------------------------------------- */
 
 /**
- * APT-LABS is a software company that builds and sells products.
+ * APT-LABS builds locally owned institutional infrastructure systems.
  *
- * Three things it makes, and they are three different commercial shapes
- * rather than three domains of one architecture:
+ * Customer value:
+ * - lower recurring operational cost
+ * - reduced downtime
+ * - easier repair and maintenance
+ * - better operational visibility
+ * - improved institutional workflows
+ * - locally maintainable capability
+ * - documented technical knowledge
+ * - measurable performance
+ * - repeatable infrastructure
  *
- *   MANAGEMENT SYSTEMS  the operating software an institution runs its
- *                       week on. Sold per institution, per term. The
- *                       School Console is one.
- *   MVPs                commissioned against one named problem. Scoped
- *                       and priced per build.
- *   STUDIOS             where a build happens in the open, with its
- *                       register published as it goes.
+ * Operating method:
  *
- * The previous version of this file refused to say any of that. It called
- * the company a "control plane", named its one shipped product "The built
- * surface", gave its sector as "Field operations", and told the reader on
- * the homepage that the product was "an example · not the product".
- * Every one of those was a category error pointed the same way — away
- * from the buyer.
+ * DISCOVER → DIAGNOSE → PROVE → RECORD → REPEAT
  *
- * The cost was concrete. A reader could not tell what the company sells,
- * who pays, or what the one working thing in the repository was for. And
- * the site had no noun for price, customer, contract, pipeline or team
- * anywhere — not because those are unknown, which is a legitimate thing
- * to publish, but because the register's grammar had nowhere to put them.
+ * This is the commercial surface. The architecture is infrastructure.
  */
 export const COMPANY = {
   name: "APT-LABS",
 
   /** What kind of company this is, in the words a reader would use. */
-  kind: "Sovereign infrastructure",
+  kind: "Locally owned institutional infrastructure systems",
 
   /**
    * One sentence: what this company is.
    *
-   * Five layers, floor to roof: the record an institution holds outright,
-   * identity sealed by the work people actually did, the build happening
-   * in the open, the physical node — power, water, connection — and the
-   * allocation a community decides under rules it can read first.
+   * APT-LABS builds locally owned institutional infrastructure systems.
+   * Lower recurring operational cost. Reduced downtime. Easier repair
+   * and maintenance. Better operational visibility. Improved institutional
+   * workflows. Locally maintainable capability. Documented technical
+   * knowledge. Measurable performance. Repeatable infrastructure.
    *
-   * The load-bearing word is SOVEREIGN, and it is defined two lines below
-   * rather than left for the reader to infer. The record stays where it was
-   * written. Identity cannot be bought. Allocation happens through a rule
-   * the community can read before it votes. Each of those is a property the
-   * stack has, not an aspiration, which is the difference between a thesis
-   * and a slogan.
+   * Operating method: DISCOVER → DIAGNOSE → PROVE → RECORD → REPEAT
    */
   primary:
-    "APT-LABS builds sovereign infrastructure: the record you hold, the identity sealed by your work, the build in the open, the node itself, and the allocation you can read before you decide.",
+    "APT-LABS builds locally owned institutional infrastructure systems — lower recurring operational cost, reduced downtime, easier repair and maintenance, better operational visibility, improved institutional workflows, locally maintainable capability, documented technical knowledge, measurable performance, repeatable infrastructure.",
 
   /**
    * The same claim at display size, pre-broken into two designed lines.
-   *
-  * Display type is the first company-level statement a reader encounters.
-  * The line names the full direction of the system, from custody at the
-  * record layer through decisions about shared infrastructure.
-   *
-   * The break is stored rather than left to `text-wrap: balance`, because
-   * balance will orphan a single word on its own line at display size,
-   * which is the ugliest thing a display setting can do. The hero clamp in
-   * globals.css is derived from the width of the wider stored line, so the
-   * designed break is always the one that fits.
    */
   mantra: "Sovereignty, from record to allocation.",
   mantraLines: ["Sovereignty,", "from record to allocation."],
 
   /**
-  * What that means, cashed immediately: one sentence defining the stack's
-  * custody, contribution and allocation principles.
-   *
-   * It previously listed the three product kinds — management systems,
-   * MVPs, studios — which is the catalogue, and the catalogue has its own
-   * route. This line has a harder job: a word as large as "sovereign"
-   * must be defined before it can be believed, and the definition has to
-   * be a property the product actually has. It is: the record does not
-   * leave the device, so nothing above it can overrule it. That is the
-   * whole definition, and it fits in a sentence.
-   *
-  * This string is also the meta description and the share-card description.
+   * What that means, cashed immediately: one sentence defining the stack's
+   * custody, contribution and allocation principles.
    */
   supporting:
     "The record stays where it was written. Weight is minted by work and never sold. Allocation happens through rules the community can read before it decides.",
@@ -328,23 +287,47 @@ export const COMPANY = {
    * its customer is not being careful — it is refusing to answer the
    * question.
    *
-  * These are intended participants in the wider system, not a complete
-  * customer list or a statement that any one group has adopted it. The
-  * School Console is one application for one institutional domain; the
-  * shared-infrastructure and allocation layers extend beyond that domain.
+   * The first customer remains UNKNOWN. We invite institutions, county/
+   * public-sector teams, technical institutions, businesses, host
+   * organizations, and local technical partners to bring a real
+   * operational problem.
    */
   buyers: [
     {
       name: "Institutions",
       what: "A school, a clinic, a firm — anything that keeps records someone else could hold instead.",
-      state: "PROTOTYPE" as EvidenceState,
-      note: "The record layer is built and openable from this site. No institution has entered a record onto it.",
+      state: "UNKNOWN" as EvidenceState,
+      note: "First customer is UNKNOWN. Inviting institutions to bring a real operational problem.",
     },
     {
-      name: "Communities",
-      what: "The people who fund a node and the ones who live on it.",
-      state: "PLANNED" as EvidenceState,
-      note: "The allocation layer is designed and the rules are written down. Nothing has been funded and no allocation has been run.",
+      name: "County / public-sector teams",
+      what: "Local government teams running institutional infrastructure.",
+      state: "UNKNOWN" as EvidenceState,
+      note: "First customer is UNKNOWN. Inviting public-sector teams to bring a real operational problem.",
+    },
+    {
+      name: "Technical institutions",
+      what: "Polytechnics, TVETs, and training centres running local infrastructure.",
+      state: "UNKNOWN" as EvidenceState,
+      note: "First customer is UNKNOWN. Inviting technical institutions to bring a real operational problem.",
+    },
+    {
+      name: "Businesses",
+      what: "Companies needing locally owned infrastructure they can repair and maintain.",
+      state: "UNKNOWN" as EvidenceState,
+      note: "First customer is UNKNOWN. Inviting businesses to bring a real operational problem.",
+    },
+    {
+      name: "Host organizations",
+      what: "Organizations hosting infrastructure on behalf of communities.",
+      state: "UNKNOWN" as EvidenceState,
+      note: "First customer is UNKNOWN. Inviting host organizations to bring a real operational problem.",
+    },
+    {
+      name: "Local technical partners",
+      what: "Technical teams that maintain and operate infrastructure locally.",
+      state: "UNKNOWN" as EvidenceState,
+      note: "First customer is UNKNOWN. Inviting local technical partners to bring a real operational problem.",
     },
   ] as const,
 
@@ -353,40 +336,19 @@ export const COMPANY = {
    *
    * Kirinyaga is the county the company builds from and the region its
    * first product is made for. It is NOT an operating geography: no
-   * customer, deployment or field presence is evidenced anywhere, and the
-   * previous version rendered this value in a slot labelled "Operating
-   * geography" — asserting exactly what the state tag beside it denied.
-   * A county a company builds from is a fact about the company; a county
-   * it operates in is a claim about customers, and only the first is true.
-   *
-   * "Where the company builds from" is the phrase, and it is deliberate:
-   * true, unembarrassing, and not readable as a footprint.
+   * customer, deployment or field presence is evidenced anywhere.
    */
   geography: {
     value: "Kirinyaga, Kenya",
     /** What the value is. Not a market claim. */
     scope: "Where the company builds from",
-    state: "PROTOTYPE" as EvidenceState,
+    state: "UNKNOWN" as EvidenceState,
     provenance:
-      "Stated by the organisation as the place the company works from and the region the first product is made for. No customer, deployment or field presence is evidenced, so no operating claim is made anywhere on this site.",
+      "Stated by the organisation as the place the company works from and the region the first product is made for. No customer, deployment or field presence is evidenced.",
   },
 
   /**
    * How to reach the company.
-   *
-   * Its absence was the most expensive omission on this site. A prototype
-   * whose navigation rail says in effect "there is nothing here you can
-   * act on" is not a pitch, it is an archive — and an organisation's
-   * contact route is a diligence fact, not a research question. Filing
-   * "Organisation registration and team" under UNKNOWN_FACTS beside
-   * "population sizes" put a missing company in the same category as an
-   * unmeasured cohort, which is how a company with no customers yet comes
-   * to look like a research programme rather than a business that can be
-   * wired.
-   *
-   * Stated as the organisation's own record. Nothing here is derived, and
-   * nothing here is verified by this repository — which is why it is
-   * PROTOTYPE and not VERIFIED.
    */
   contact: {
     email: "aptlabske@gmail.com",
@@ -394,7 +356,7 @@ export const COMPANY = {
     note: "Demo access, pilot enquiries and investor diligence.",
     state: "PROTOTYPE" as EvidenceState,
     provenance:
-      "Contact route stated by the organisation. Not verified by anything in this repository, and published as the organisation's own record rather than as a checked fact.",
+      "Contact route stated by the organisation. Not verified by anything in this repository.",
   },
 } as const;
 
@@ -771,29 +733,28 @@ export const CONSOLE = {
     "The operating software a school runs its week on — the roll, the money, the marks, the timetable and the parents — running entirely on the school's own device.",
   state: "PROTOTYPE" as EvidenceState,
   /**
-   * The data state, declared separately from the product state on purpose.
-   *
-   * The console builds itself: on first load with empty stores it writes
-   * ten named Kenyan schools, roughly 7,650 enrolments, a term of
-   * assessment scores and fee records (lib/proto-school.ts). That data is
-   * good enough to drive every module and entirely invented, which is
-   * what DEMONSTRATION exists to say.
-   *
-   * The previous site published "no institutional record has been
-   * entered" on /register while the console held ten of them. Both
-   * sentences were on the same website. This field is what resolves it,
-   * and `MEASURES` renders the module count beside it.
-   */
-  dataState: "DEMONSTRATION" as EvidenceState,
-  dataNote:
-    "The console fills itself with invented schools, learners and records on first load, so every module can be opened. None of it is a real institution and none of it describes a real person.",
+   /** The data state, declared separately from the product state on purpose.
+      *
+      * The console builds itself: on first load with empty stores it writes
+      * ten named Kenyan schools, roughly 7,650 enrolments, a term of
+      * assessment scores and fee records (lib/proto-school.ts). That data is
+      * good enough to drive every module and entirely invented.
+      *
+      * The previous site published "no institutional record has been
+      * entered" on /register while the console held ten of them. Both
+      * sentences were on the same website. This field is what resolves it,
+      * and `MEASURES` renders the module count beside it.
+      */
+     dataState: "PROTOTYPE" as EvidenceState,
+     dataNote:
+       "The console fills itself with invented schools, learners and records on first load, so every module can be opened. None of it is a real institution and none of it describes a real person.",
   localFirst:
     "Records written on a device like this stay on the device that wrote them until the school exports them. Nothing is transmitted.",
   /** The commercial shape: what it costs and who decides. */
   commercial:
     "Sold per school, per term, to the school itself. The buyer is the head teacher or the proprietor rather than a ministry, because the record never leaves the device.",
   provenance:
-    "Built and openable at /console. No school runs it: there is no deployment, no customer and no outcome record. The data inside it is invented and is labelled DEMONSTRATION wherever it is described.",
+    "Built and openable at /console. No school runs it: there is no deployment, no customer and no outcome record. The data inside it is invented and is labelled PROTOTYPE wherever it is described.",
 } as const;
 
 /** Tender System is named by APT-LABS; implementation facts are not published here yet. */
@@ -996,7 +957,7 @@ export const STACK: readonly StackLayer[] = [
       "The register grammar is implemented and enforced, and the first product built on it is openable from this site now. No institution has entered a record.",
     settles: "One institution running the built product on its own records.",
     provenance:
-      "Built and openable. Not deployed, not sold: there is no customer, no outcome record, and the data inside the product is invented and labelled DEMONSTRATION.",
+      "Built and openable. Not deployed, not sold: there is no customer, no outcome record, and the data inside the product is invented and labelled PROTOTYPE.",
   },
   {
     /* The Roll. Held at PLANNED for one reason, and the reason is the
@@ -1006,7 +967,7 @@ export const STACK: readonly StackLayer[] = [
     ord: "02",
     key: "identity",
     name: "Identity",
-    alias: "The Roll",
+    alias: "",
     role: "Who was here, and what they have done — weight minted by work, never bought.",
     holds:
       "A local register of people, each row sealed by hash, and contribution weight earned through recorded work that never transfers and is never for sale.",
@@ -1024,7 +985,7 @@ export const STACK: readonly StackLayer[] = [
     ord: "03",
     key: "build",
     name: "Build",
-    alias: "The Studio",
+    alias: "",
     role: "The work happening in the open, with its register published while it happens.",
     holds:
       "Builds: the brief, the decisions taken, the records they produced, and what each build actually did.",
@@ -1041,7 +1002,7 @@ export const STACK: readonly StackLayer[] = [
     ord: "04",
     key: "infrastructure",
     name: "Infrastructure",
-    alias: "The Fab",
+    alias: "",
     role: "Power, water and connection at the node — the layer software alone cannot reach.",
     holds:
       "Deployments and their meters: what was built, what it produced, what it consumed and what it cost.",
@@ -1050,7 +1011,7 @@ export const STACK: readonly StackLayer[] = [
     settles:
       "One site operating, with its output published as a register rather than as a press note.",
     provenance:
-      "Held at PLANNED, and it carries no figure here for that reason: this is the layer every infrastructure company in the world describes in the future tense.",
+      "Held at PLANNED. This is the layer every infrastructure company in the world describes in the future tense.",
   },
   {
     /* Allocation, by rule. The mechanism is the part that must not be
@@ -1059,7 +1020,7 @@ export const STACK: readonly StackLayer[] = [
     ord: "05",
     key: "allocation",
     name: "Allocation",
-    alias: "BenBen",
+    alias: "",
     role: "Where a community decides what to fund, under rules it can read before it decides.",
     holds:
       "Proposals, the thresholds that govern them, the decisions taken, and the work that followed each decision.",
@@ -1068,7 +1029,7 @@ export const STACK: readonly StackLayer[] = [
       "Designed as a board where proposals are posted, needs are stated, and decisions are taken under published rules. No pool, no round and no allocation has been run through it.",
     settles: "One funding round run end to end, with its rules, decisions and results published.",
     provenance:
-      "Held at PLANNED. Nothing about this layer is claimed here — the contribution rules below are the design it will have to satisfy, not a description of it running.",
+      "Held at PLANNED. Nothing about this layer is claimed — the contribution rules below are the design it will have to satisfy, not a description of it running.",
   },
 ] as const;
 
@@ -1195,7 +1156,7 @@ export const MEASURES: readonly Measure[] = [
     figure: MEASURED_MODULE_COUNT,
     key: "modules in it",
     note: "Counted from the console's own module list and verified in CI, not typed by hand. Each one opens and works on invented data.",
-    state: "DEMONSTRATION",
+    state: "PROTOTYPE",
   },
   {
     figure: String(PRODUCTS.length),
@@ -1258,16 +1219,6 @@ export const CONTRACT_RULES: readonly {
     subject: "PLANNED",
     equals: "Designed, not built.",
     doesNotEqual: "Implemented. Planned surfaces carry no figures.",
-  },
-  {
-    /* The sixth rule, for the sixth state. Its `doesNotEqual` is the whole
-       reason DEMONSTRATION was added rather than reusing PROTOTYPE:
-       "it works" and "the data is real" are two claims, and the previous
-       vocabulary had exactly one word for both. */
-    id: "RULE-06",
-    subject: "DEMONSTRATION",
-    equals: "The surface runs, and the data in it is invented.",
-    doesNotEqual: "A record of anything that happened. Demonstration data never counts as a customer, an outcome, or a real institution.",
   },
   {
     id: "RULE-05",
