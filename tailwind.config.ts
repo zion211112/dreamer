@@ -36,40 +36,32 @@ const config: Config = {
       },
 
       fontSize: {
-        xs: [tokens.typography.scale.xs, { lineHeight: tokens.typography.ui.lineHeight.normal, letterSpacing: tokens.typography.ui.letterSpacing.normal }],
-        sm: [tokens.typography.scale.sm, { lineHeight: tokens.typography.ui.lineHeight.normal, letterSpacing: tokens.typography.ui.letterSpacing.normal }],
-        base: [tokens.typography.scale.base, { lineHeight: tokens.typography.ui.lineHeight.normal, letterSpacing: tokens.typography.ui.letterSpacing.normal }],
-        lg: [tokens.typography.scale.lg, { lineHeight: tokens.typography.ui.lineHeight.relaxed, letterSpacing: tokens.typography.ui.letterSpacing.normal }],
-        xl: [tokens.typography.scale.xl, { lineHeight: tokens.typography.ui.lineHeight.relaxed, letterSpacing: tokens.typography.ui.letterSpacing.normal }],
-        "2xl": [tokens.typography.scale["2xl"], { lineHeight: tokens.typography.display.lineHeight.snug, letterSpacing: tokens.typography.display.letterSpacing.tight }],
-        "3xl": [tokens.typography.scale["3xl"], { lineHeight: tokens.typography.display.lineHeight.snug, letterSpacing: tokens.typography.display.letterSpacing.tight }],
-        "4xl": [tokens.typography.scale["4xl"], { lineHeight: tokens.typography.display.lineHeight.tight, letterSpacing: tokens.typography.display.letterSpacing.tight }],
-        "5xl": [tokens.typography.scale["5xl"], { lineHeight: tokens.typography.display.lineHeight.tight, letterSpacing: tokens.typography.display.letterSpacing.tight }],
-        "6xl": [tokens.typography.scale["6xl"], { lineHeight: tokens.typography.display.lineHeight.tight, letterSpacing: tokens.typography.display.letterSpacing.tight }],
-        "7xl": [tokens.typography.scale["7xl"], { lineHeight: tokens.typography.display.lineHeight.tight, letterSpacing: tokens.typography.display.letterSpacing.tight }],
+        xs: `${tokens.typography.scale.xs}`,
+        sm: `${tokens.typography.scale.sm}`,
+        base: `${tokens.typography.scale.base}`,
+        lg: `${tokens.typography.scale.lg}`,
+        xl: `${tokens.typography.scale.xl}`,
+        "2xl": `${tokens.typography.scale["2xl"]}`,
+        "3xl": `${tokens.typography.scale["3xl"]}`,
+        "4xl": `${tokens.typography.scale["4xl"]}`,
+        "5xl": `${tokens.typography.scale["5xl"]}`,
+        "6xl": `${tokens.typography.scale["6xl"]}`,
+        "7xl": `${tokens.typography.scale["7xl"]}`,
       },
-
-      fontWeight: {
-        light: 300,
-        regular: 400,
-        medium: 500,
-        semibold: 600,
-        bold: 700,
-      },
-
+      
       lineHeight: {
-        tight: tokens.typography.display.lineHeight.tight,
-        snug: tokens.typography.display.lineHeight.snug,
-        normal: tokens.typography.ui.lineHeight.normal,
-        relaxed: tokens.typography.ui.lineHeight.relaxed,
-        mono: tokens.typography.mono.lineHeight,
+        tight: `${tokens.typography.display.lineHeight.tight}`,
+        snug: `${tokens.typography.display.lineHeight.snug}`,
+        normal: `${tokens.typography.ui.lineHeight.normal}`,
+        relaxed: `${tokens.typography.ui.lineHeight.relaxed}`,
+        mono: `${tokens.typography.mono.lineHeight}`,
       },
-
+      
       letterSpacing: {
-        tight: tokens.typography.display.letterSpacing.tight,
-        normal: tokens.typography.ui.letterSpacing.normal,
-        wide: tokens.typography.ui.letterSpacing.wide,
-        mono: tokens.typography.mono.letterSpacing,
+        tight: `${tokens.typography.display.letterSpacing.tight}`,
+        normal: `${tokens.typography.ui.letterSpacing.normal}`,
+        wide: `${tokens.typography.ui.letterSpacing.wide}`,
+        mono: `${tokens.typography.mono.letterSpacing}`,
       },
 
       /* ───────────────── SPACING ───────────────── */
@@ -84,16 +76,20 @@ const config: Config = {
       },
 
       /* ───────────────── BORDER RADIUS ───────────────── */
-      borderRadius: tokens.radius,
+      borderRadius: Object.fromEntries(
+        Object.entries(tokens.radius).map(([key, value]) => [key, `${value}`])
+      ),
 
       /* ───────────────── SHADOWS ───────────────── */
-      boxShadow: tokens.shadow,
+      boxShadow: Object.fromEntries(
+        Object.entries(tokens.shadow).map(([key, value]) => [key, `${value}`])
+      ),
 
       /* ───────────────── TRANSITIONS ───────────────── */
       transitionDuration: {
-        fast: "120ms",
-        base: "200ms",
-        slow: "300ms",
+        fast: `${tokens.transition.fast}`,
+        base: `${tokens.transition.base}`,
+        slow: `${tokens.transition.slow}`,
         slower: "500ms",
       },
       transitionTimingFunction: {
@@ -101,15 +97,17 @@ const config: Config = {
       },
 
       /* ───────────────── Z-INDEX ───────────────── */
-      zIndex: tokens.zIndex,
+      zIndex: Object.fromEntries(
+        Object.entries(tokens.zIndex).map(([key, value]) => [key, `${value}`])
+      ),
 
       /* ───────────────── BREAKPOINTS ───────────────── */
       screens: {
-        sm: tokens.breakpoint.sm,
-        md: tokens.breakpoint.md,
-        lg: tokens.breakpoint.lg,
-        xl: tokens.breakpoint.xl,
-        "2xl": tokens.breakpoint["2xl"],
+        sm: `${tokens.breakpoint.sm}`,
+        md: `${tokens.breakpoint.md}`,
+        lg: `${tokens.breakpoint.lg}`,
+        xl: `${tokens.breakpoint.xl}`,
+        "2xl": `${tokens.breakpoint["2xl"]}`,
       },
 
       /* ───────────────── CUSTOM UTILITIES ───────────────── */

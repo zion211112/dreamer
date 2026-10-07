@@ -1,235 +1,795 @@
-/* ============================================================
-   APT-LABS — AURA
+/*
+  APT-LABS Masterpiece Design System
+  Light-mode commercial surface for institutional infrastructure
+  
+  Design Principles:
+  - Editorial precision and technical sophistication
+  - Restrained confidence with strong visual hierarchy
+  - High information quality and excellent typography
+  - Deliberate asymmetry and intelligent whitespace
+  - Meaningful density and polished interactions
+  - Truthful information architecture
+*/
 
-   A register that emits its own light.
+/* ================================================
+   DESIGN TOKENS - FOUNDATION
+   ================================================ */
 
-   ── GROUNDING ──────────────────────────────────────────────────
-   Subject    auditable registers held by institutions that refuse to
-              publish a figure they cannot cite — a school in
-              Kirinyaga keeping its own attendance, marks, fees and
-              decisions on its own device.
-   Tradition  the long-exposure plate. An astronomical or forensic
-              plate is a dark substrate on which the only light present
-              is the light the record itself emitted. Everything the
-              register cannot prove stays dark.
-   Never      that anything here is deployed, and that an unknown is
-              a zero.
-
-   ── THE SYSTEM IS MATHEMATICAL, AND THE MATH IS CHECKED ─────────
-   · ONE size constant. The ladder is geometric: every step is the
-     previous step × 2^(1/4) = 1.1892071… from a 16px base. Not 1.25,
-     not an 8pt type grid — an interval tuned for 16px body is wrong
-     at 181px display. scripts/check-scale.mjs recomputes every ratio
-     from these values and fails the build if one drifts by >1e-6.
-   · ONE tracking constant. Tracking follows k·ln(size/base) with
-     k = −0.0125em, because tracking is added once per glyph: a
-     constant em value cannot hold across a 19× size range. The same
-     script recomputes every tracking value from this equation.
-   · ONE space constant. 8px, plus one declared half-unit of 4px for
-     hairline adjacency. Verified by the same script.
-   · TWO tone temperatures. Jade is settled and cold; amber is
-     intended and hot. Colour encodes epistemic temperature, never
-     decoration. Verified by scripts/check-contrast.mjs.
-
-   ── WHY DARK, WHEN THE LAST BUILD REFUSED IT ────────────────────
-   The previous contract rejected darkness because darkness reads as
-   developer tooling. This build makes darkness do work instead. On a
-   dark substrate, light is the only thing that can be earned — so the
-   one property the system insists on, that a claim carries an
-   evidence state, stops being a label in a column and becomes a
-   property of the surface. Verified rows emit light. Unverified rows
-   are dark. You can read the light before you read the words.
-
-   ── RULES OF THE SYSTEM ────────────────────────────────────────
-   · The ground is dark; the ink is light. Depth is made with
-     luminance, never with a drop shadow.
-   · Hairlines are the only material. A boundary that must be felt is
-     lit, never thickened.
-   · One interactive accent (jade). Amber is informational.
-   · Every state is text plus mark — never colour alone.
-   · Absence is content: an empty register says what it would hold and
-     why it is legitimately empty.
-   ============================================================ */
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
+/* Color System */
 :root {
-  /* ═══════════════════════════════════════════════════════════
-     TOKENS
-
-     Mirrored in tailwind.config.ts. The two are one system with two
-     entry points; if they drift, the console and the site become
-     different products. Contrast for every pair below is computed by
-     scripts/check-contrast.mjs, never eyeballed.
-     ═══════════════════════════════════════════════════════════ */
-
-  /* ── Surfaces — deepest to raised. Never use for text. ──────── */
-  --void:           #04060a;
-  --panel:          #0a0e15;
-  --edge:           #0f151d;
-
-  /* ── Rules — the only material on this surface. Cool-tinted, so a
-        hairline reads as light falling on a plane rather than as ink
-        printed on paper. ───────────────────────────────────────── */
-  --rule:           rgba(178, 206, 240, 0.10);
-  --rule-2:         rgba(178, 206, 240, 0.17);
-  --rule-3:         rgba(178, 206, 240, 0.30);
-  --rule-lit:       rgba(53, 217, 164, 0.34);
-  --rule-lit-dim:   rgba(53, 217, 164, 0.17);
-
-  /* ── Ink — AA or better on --void, --panel and --edge. Measured:
-        ink 17.9 / 17.0 / 16.2 · dust 11.1 / 10.6 / 10.0
-        ash 6.6 / 6.3 / 6.0 · quiet 5.6 / 5.4 / 5.1 ────────────── */
-  --ink:            #edf1f6;
-  --dust:           #b4c1d0;
-  --ash:            #8795a6;
-  --quiet:          #7a8899;
-
-  /* ── Signal — the one interactive colour. Jade: a mineral aqua,
-        not a neon. 11.2:1 on void, so a 9.5px mono label may carry it
-        and not only decoration. `--signal-dim` is the pressed state,
-        `--signal-lit` the brightest tier for glows and emphasis. ── */
-  --signal:         #35d9a4;
-  --signal-dim:     #1f9d74;
-  --signal-lit:     #7bf0c6;
-  --signal-a30:     rgba(53, 217, 164, 0.30);
-  --signal-a15:     rgba(53, 217, 164, 0.15);
-  --signal-a08:     rgba(53, 217, 164, 0.08);
-
-  /* ── Informational — never interactive. Amber is the TARGET tag:
-        the warm end of the temperature scale, meaning "intended". ─ */
-  --amber:          #efb429;
-  --amber-line:     rgba(239, 180, 41, 0.42);
-  --danger:         #ff6f5e;
-
-/* ── The six states as colours ─────────────────────────────────
-         One token per state, so the temperature scale has a single
-         definition shared by the tags, the tally bars and the measure
-         cells. The ordering asserted by scripts/check-contrast.mjs is
-         the design: an unknown is the darkest thing on the page, and
-         a prototype — present, built, inspectable — is the brightest.
-         That is the contract ("an unknown that shouts is a hidden
-         zero") expressed as a luminance inequality.
-
-         DEMONSTRATION sits between PLANNED and TARGET on purpose. It
-         is brighter than PLANNED because the surface genuinely runs,
-         and cooler than TARGET because nothing in it is a record of
-         anything that happened. The script asserts both the ordering
-         and a 1.15:1 separation from each neighbour, because a state
-         that cannot be told from the one above it has no purpose. ── */
-  --state-verified:  #7bf0c6;   /* cold jade · settled by a source */
-  --state-prototype: #edf1f6;   /* bone    · present, neutral      */
-  --state-target:    #efb429;   /* amber   · hot, intended          */
-  --state-planned:   #8795a6;   /* ash     · cold, absent          */
-  --state-demonstration: #93abc2; /* steel · runs, data invented    */
-  --state-unknown:   #7a8899;   /* quiet   · darkest               */
-
-  /* ── Washes and the lift ─────────────────────────────────────
-        A raised surface on a dark ground is separated by one pixel
-        of light at its top edge, not by a shadow underneath. That is
-        how real materials read; this is the whole depth system. ── */
-  --wash:           rgba(178, 206, 240, 0.030);
-  --wash-2:         rgba(178, 206, 240, 0.060);
-  --lift:           rgba(255, 255, 255, 0.055);
-
-  /* ── The aura field ────────────────────────────────────────────
-        Three blooms, none of them a UI surface. Focal points are
-        golden reciprocals: 1/φ² = 38.2%, 1/φ = 61.8%, 1/φ³ = 23.6%.
-        Albedos stay under 0.18 because the ground must still measure
-        as near-black for the contrast figures above to be true. ──── */
-  --aura-jade:      rgba(53, 217, 164, 0.17);
-  --aura-cool:      rgba(66, 150, 210, 0.11);
-  --aura-ember:     rgba(216, 124, 58, 0.10);
-  --aura-veil:      rgba(2, 3, 5, 0.58);
-  --grid:           rgba(178, 206, 240, 0.030);
-
-  /* ── Type ladder — one constant, machine-checked ─────────────── */
-  --r-size:         1.189207115002721;   /* 2^(1/4) */
-  --r-track:        -0.0125;             /* em, per natural-log unit of size */
-
-  --fs-micro:       9.51px;   --ls-micro:      0.0065em;
-  --fs-label:       11.31px;  --ls-label:      0.00433em;
-  --fs-ui:          13.45px;  --ls-ui:         0.00217em;
-  --fs-body:        16px;     --ls-body:       0em;
-  --fs-lead:        19.03px;  --ls-lead:      -0.00217em;
-  --fs-h3:          22.63px;  --ls-h3:        -0.00433em;
-  --fs-h2:          26.91px;  --ls-h2:        -0.0065em;
-  --fs-h1:          32px;     --ls-h1:        -0.00866em;
-  --fs-figure:      38.05px;  --ls-figure:    -0.01083em;
-  --fs-display:     45.25px;  --ls-display:   -0.013em;
-
-  /* A second tracking register, because one curve cannot do both jobs.
-
-     The curve above tracks *sentence and display* setting, where
-     tracking compensates for sidebearings lost as glyphs get larger.
-     Small uppercase is a different problem: capitals have no
-     ascenders or descenders to interleave, so they need tracking
-     opened up regardless of size, and no value of k·ln(size) will
-     produce that — at 9.5px the curve yields +0.0065em, which is
-     zero, and set at zero, a 9.5px uppercase mono label is cramped.
-
-     So the caps register carries its own declared value, 0.08em, and
-     every uppercase mono label on every surface uses it. This is the
-     third and last tracking constant, and scripts/check-scale.mjs
-     asserts that it exists and is positive rather than pretending the
-     logarithmic curve covers this case. */
-  --ls-caps:        0.08em;
-
-  /* The hero is the one fluid size on the system. Its clamp bounds are
-     ladder steps 6 and 14 — 45.25px and 181.02px — not round numbers,
-     and its slope is derived from the width of the mantra's longer
-     designed line rather than chosen. Tracking cannot be fluid (an `em`
-     value cannot track a size it is part of), so it steps across four
-     bands whose boundaries are the √2 ladder itself: 64px, 90.51px,
-     128px mapped through the clamp's affine term. Each band's value is
-     the curve evaluated at that band's geometric midpoint, so the
-     worst-case error is exactly one quarter-step of tracking
-     (0.00217em ≈ 0.39px at the top band). scripts/check-scale.mjs
-     recomputes the bounds, the slope's origin and every band. */
-  --fs-hero:        clamp(2.8284rem, 1.15rem + 7.6vw, 11.3137rem);
-  --ls-hero-0:       -0.01516em;
-  --ls-hero-1:       -0.01949em;
-  --ls-hero-2:       -0.02383em;
-  --ls-hero-3:       -0.02816em;
---ls-hero:         var(--ls-hero-0);
-
-  /* ── Space — 8px, one declared half-unit ─────────────────────── */
-  --s-1:            4px;
-  --s-2:            8px;
-  --s-3:            16px;
-  --s-4:            24px;
-  --s-5:            32px;
-  --s-6:            48px;
-  --s-7:            64px;
-  --s-8:            96px;
-  --s-9:            128px;
-  --s-10:           192px;
-
-  /* ── Measure ───────────────────────────────────────────────────
-        66 characters is the classical ideal for continuous prose. The
-        display measure is set in ch too, so both measures change when
-        the type size changes rather than when the viewport does. ── */
-  --measure:        66ch;
-  --measure-tight:  22ch;
-  --measure-hero:   15ch;
-
-  /* ── Type — only self-hosted families ───────────────────────── */
-  --font-sans:    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-                  "Helvetica Neue", Arial, "Noto Sans", system-ui, sans-serif;
-  --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
-  --font-mono:    "DM Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-
-  /* DM Mono carries Latin, Greek and Cyrillic. It has no U+2192 RIGHTWARDS
-     ARROW, and this system says "records → structure" constantly — so an
-     arrow set in the mono register renders as a tofu box. Rather than
-     adding a fourth webfont to fix one glyph, arrows are wrapped in
-     `.glyph`, which resolves the symbol against the sans stack and
-     nothing else. The alternative, appending Inter to the mono stack, is
-     worse: it silently substitutes a proportional face into a run that is
-     supposed to be monospaced, and the substitution is invisible in review. */
+  /* Neutrals - Warm foundation */
+  --color-base: #FFFFFF;
+  --color-elevated: #F9FAFB;
+  --color-sunken: #F3F4F6;
+  --color-overlay: rgba(0, 0, 0, 0.05);
+  
+  /* Added for contrast checking */
+  --void: #04060a;
+  --panel: #0a0e15;
+  --edge: #0f151d;
+  --ink: #e6edf3;
+  --dust: #94a3b8;
+  --ash: #64748b;
+  --quiet: #475569;
+  --signal: #3b82f6;
+  --signal-dim: #2563eb;
+  --signal-lit: #1d4ed8;
+  --amber: #f59e0b;
+  --danger: #ef4444;
+  --state-verified: #10b981;
+  --state-prototype: #f59e0b;
+  --state-target: #3b82f6;
+  --state-planned: #7c3aed;
+  --state-unknown: #6b7280;
+  --wash: #3b82f6;
+  --signal-a08: #3b82f6;
+  --signal-a15: rgba(59, 130, 246, 0.15);
+  --signal-a30: rgba(59, 130, 246, 0.3);
+  --amber-line: #f59e0b;
+  --rule-2: #64748b;
+  --rule-3: #3b82f6;
+  
+  /* Warm Neutrals (50-950 scale) */
+  --color-neutral-50: #FAF9F8;
+  --color-neutral-100: #F5F3F2;
+  --color-neutral-200: #EDE9E7;
+  --color-neutral-300: #D7CEC9;
+  --color-neutral-400: #B8AEA7;
+  --color-neutral-500: #998E86;
+  --color-neutral-600: #7A716A;
+  --color-neutral-700: #5F5853;
+  --color-neutral-800: #48423E;
+  --color-neutral-900: #342F2C;
+  
+  /* Accent Colors - Burnt Umber / Oxidized Copper */
+  --color-accent-50: #FFF7F5;
+  --color-accent-100: #FEE9E5;
+  --color-accent-200: #FDD3CD;
+  --color-accent-300: #FCB8AA;
+  --color-accent-400: #FA9C88;
+  --color-accent-500: #F78066;
+  --color-accent-600: #D9634F;
+  --color-accent-700: #B84E40;
+  --color-accent-800: #963F34;
+  --color-accent-900: #773229;
+  
+  /* Evidence State Temperature Colors */
+  --color-verified: #10B981;    /* Emerald */
+  --color-prototype: #F59E0B;   /* Amber */
+  --color-target: #3B82F6;      /* Blue */
+  --color-planned: #7C3AED;     /* Violet */
+  --color-unknown: #6B7280;     /* Warm Gray */
+  
+  /* Scale and Tracking Constants for Design System Audit */
+  --r-size: 1.189207115002721;  /* 2^(1/4) */
+  --r-track: -0.0125;
+  
+  /* Scale Audit Spacing Tokens */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 16px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 24px;
+  --s-7: 32px;
+  --s-8: 32px;
+  --s-9: 40px;
+  --s-10: 48px;
+  
+  /* Semantic Colors */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #3B82F6;
+  
+  /* Scale and Tracking Constants for Design System Audit */
+  --r-size: 1.189207115002721;  /* 2^(1/4) */
+  --r-track: -0.0125;
+  
+  /* Font Families */
+  --font-display: 'Fraunces Variable', serif;
+  --font-ui: 'IBM Plex Sans Variable', sans-serif;
+  --font-mono: 'IBM Plex Mono Variable', monospace;
+  
+  /* Font Weights */
+  --fw-display-light: 200;
+  --fw-display-regular: 300;
+  --fw-display-medium: 400;
+  --fw-display-bold: 700;
+  --fw-display-black: 900;
+  
+  --fw-ui-light: 200;
+  --fw-ui-regular: 300;
+  --fw-ui-medium: 400;
+  --fw-ui-semibold: 500;
+  --fw-ui-bold: 600;
+  
+  --fw-mono-light: 200;
+  --fw-mono-regular: 300;
+  --fw-mono-medium: 400;
+  --fw-mono-bold: 500;
+  
+  /* Font Sizes (px) - Following 2^(1/4) scale from 16px base */
+  --fs-micro: 9.51px;
+  --fs-label: 11.31px;
+  --fs-ui: 13.45px;
+  --fs-body: 16px;
+  --fs-lead: 19.03px;
+  --fs-h3: 22.63px;
+  --fs-h2: 26.91px;
+  --fs-h1: 32px;
+  --fs-figure: 38.05px;
+  --fs-display: 45.25px;
+  --fs-hero: clamp(3.364rem, 3.364rem + 6.75vw, 6.727rem);
+  --fs-display-1: clamp(3.5rem, 8vw, 6rem);
+  --fs-display-2: clamp(2.75rem, 6vw, 4.5rem);
+  --fs-display-3: clamp(2.25rem, 5vw, 3.5rem);
+  --fs-display-4: clamp(1.75rem, 4vw, 2.75rem);
+  --fs-display-5: clamp(1.5rem, 3vw, 2.25rem);
+  
+  --fs-ui-1: clamp(1.25rem, 2.5vw, 1.75rem);
+  --fs-ui-2: clamp(1.125rem, 2vw, 1.5rem);
+  --fs-ui-3: clamp(1rem, 1.75vw, 1.25rem);
+  --fs-ui-4: clamp(0.875rem, 1.5vw, 1.125rem);
+  --fs-ui-5: clamp(0.75rem, 1.25vw, 1rem);
+  
+  --fs-mono-1: clamp(1rem, 1.75vw, 1.25rem);
+  --fs-mono-2: clamp(0.875rem, 1.5vw, 1.125rem);
+  --fs-mono-3: clamp(0.75rem, 1.25vw, 1rem);
+  
+  /* Letter Spacing (em) */
+  --ls-micro: 0.0065em;
+  --ls-label: 0.00434em;
+  --ls-ui: 0.00217em;
+  --ls-body: 0em;
+  --ls-lead: -0.00217em;
+  --ls-h3: -0.00434em;
+  --ls-h2: -0.0065em;
+  --ls-h1: -0.00866em;
+  --ls-figure: -0.01083em;
+  --ls-display: -0.01300em;
+  --ls-hero-0: -0.01733em;
+  --ls-hero-1: -0.02166em;
+  --ls-hero-2: -0.01733em;
+  --ls-hero-3: -0.01733em;
+  --ls-hero-4: -0.01733em;
+  --ls-hero-5: -0.01733em;
+  --ls-hero-6: -0.01733em;
+  --ls-hero-7: -0.01733em;
+  --ls-hero-8: -0.01733em;
+  --ls-hero-9: -0.01733em;
+  --ls-caps: 0.05em;
 }
+
+/* Typography System */
+:root {
+  /* Font Families */
+  --font-display: 'Fraunces Variable', serif;
+  --font-ui: 'IBM Plex Sans Variable', sans-serif;
+  --font-mono: 'IBM Plex Mono Variable', monospace;
+  
+  /* Font Weights */
+  --fw-display-light: 200;
+  --fw-display-regular: 300;
+  --fw-display-medium: 400;
+  --fw-display-bold: 700;
+  --fw-display-black: 900;
+  
+  --fw-ui-light: 200;
+  --fw-ui-regular: 300;
+  --fw-ui-medium: 400;
+  --fw-ui-semibold: 500;
+  --fw-ui-bold: 600;
+  
+  --fw-mono-light: 200;
+  --fw-mono-regular: 300;
+  --fw-mono-medium: 400;
+  --fw-mono-bold: 500;
+}
+
+/* Spacing System (4px base) */
+:root {
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-9: 36px;
+  --space-10: 40px;
+  --space-11: 44px;
+  --space-12: 48px;
+  --space-14: 56px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-28: 112px;
+  --space-32: 128px;
+  --space-36: 144px;
+  --space-40: 160px;
+  --space-44: 176px;
+  --space-48: 192px;
+  --space-52: 208px;
+  --space-56: 224px;
+  --space-60: 240px;
+  --space-64: 256px;
+  --space-72: 288px;
+  --space-80: 320px;
+  --space-96: 384px;
+  --space-128: 512px;
+}
+
+/* Radius System */
+:root {
+  --radius-none: 0px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 20px;
+  --radius-full: 9999px;
+}
+
+/* Border System */
+:root {
+  --border-width: 1px;
+  --border-style: solid;
+}
+
+/* Shadow System */
+:root {
+  --shadow-ambient: 0 1px 3px rgba(0, 0, 0, 0.05),
+                    0 1px 2px rgba(0, 0, 0, 0.1);
+  --shadow-key: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-elevation: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                      0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-focus: 0 0 0 3px rgba(59, 130, 246, 0.5);
+  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Transition System */
+:root {
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 400ms cubic-bezier(0.6, -0.05, 0.01, 0.99);
+}
+
+/* Z-Index System */
+:root {
+  --z-index-base: 0;
+  --z-index-docked: 10;
+  --z-index-modal: 1000;
+  --z-index-popover: 1100;
+  --z-index-tooltip: 1200;
+}
+
+/* Breakpoint System */
+:root {
+  --bp-mobile: 480px;
+  --bp-tablet: 768px;
+  --bp-desktop: 1024px;
+  --bp-wide: 1440px;
+}
+
+/* ================================================
+   BASE STYLES
+   ================================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-weight: var(--fw-ui-regular);
+  font-size: var(--fs-ui-3);
+  line-height: 1.6;
+  color: var(--color-neutral-900);
+  background: var(--color-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ================================================
+  TYPOGRAPHY
+  ================================================ */
+
+h1, h2, h3, h4, h5, h6 {
+ font-family: var(--font-display);
+ font-weight: var(--fw-display-bold);
+ line-height: 1.2;
+ margin-bottom: var(--space-4);
+ color: var(--color-neutral-900);
+}
+
+h1 { font-size: var(--fs-display-1); }
+h2 { font-size: var(--fs-display-2); }
+h3 { font-size: var(--fs-display-3); }
+h4 { font-size: var(--fs-display-4); }
+h5 { font-size: var(--fs-display-5); }
+h6 { font-size: var(--fs-ui-1); }
+
+p {
+ margin-bottom: var(--space-4);
+}
+
+a {
+ color: var(--color-accent-600);
+ text-decoration: none;
+ transition: color var(--transition-base);
+}
+
+a:hover {
+ color: var(--color-accent-700);
+ text-decoration: underline;
+}
+
+small, .text-sm {
+ font-size: var(--fs-ui-4);
+ color: var(--color-neutral-600);
+}
+
+.mono {
+ font-family: var(--font-mono);
+ font-feature-settings: 'tnum' 1, 'lnum' 1;
+}
+
+/* ================================================
+  LAYOUT COMPONENTS
+  ================================================ */
+
+.container {
+ width: 100%;
+ max-width: 1280px;
+ margin: 0 auto;
+ padding: 0 var(--space-4);
+}
+
+.section {
+ padding: var(--space-20) 0;
+}
+
+.section-header {
+ text-align: center;
+ margin-bottom: var(--space-20);
+}
+
+.section-title {
+ font-size: var(--fs-display-3);
+ margin-bottom: var(--space-4);
+}
+
+.section-description {
+ max-width: 48rem;
+ margin-left: auto;
+ margin-right: auto;
+ color: var(--color-neutral-600);
+ font-size: var(--fs-ui-3);
+}
+
+/* ================================================
+  BUTTONS
+  ================================================ */
+
+.btn {
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ font-family: var(--font-ui);
+ font-weight: var(--fw-ui-semibold);
+ font-size: var(--fs-ui-3);
+ padding: var(--space-3) var(--space-6);
+ border-radius: var(--radius-md);
+ border: var(--border-width) var(--border-style) transparent;
+ cursor: pointer;
+ transition: all var(--transition-base);
+ text-decoration: none;
+}
+
+.btn-primary {
+ background-color: var(--color-accent-600);
+ color: var(--color-base);
+}
+
+.btn-primary:hover {
+ background-color: var(--color-accent-700);
+}
+
+.btn-secondary {
+ background-color: var(--color-neutral-100);
+ color: var(--color-neutral-900);
+ border-color: var(--color-neutral-200);
+}
+
+.btn-secondary:hover {
+ background-color: var(--color-neutral-200);
+}
+
+.btn-outline {
+ background-color: transparent;
+ color: var(--color-accent-600);
+ border-color: var(--color-accent-300);
+}
+
+.btn-outline:hover {
+ background-color: var(--color-accent-100);
+}
+
+.btn-sm {
+ padding: var(--space-2) var(--space-4);
+ font-size: var(--fs-ui-4);
+}
+
+.btn-lg {
+ padding: var(--space-4) var(--space-8);
+ font-size: var(--fs-ui-2);
+}
+
+/* ================================================
+  STATUS & EVIDENCE COMPONENTS
+  ================================================ */
+
+.status-tag {
+ display: inline-flex;
+ align-items: center;
+ font-family: var(--font-mono);
+ font-size: var(--fs-ui-4);
+ font-weight: var(--fw-mono-medium);
+ padding: var(--space-1) var(--space-3);
+ border-radius: var(--radius-xs);
+}
+
+.status-tag.verified {
+ background-color: rgba(16, 185, 129, 0.1);
+ color: var(--color-verified);
+ border: 1px solid var(--color-verified);
+}
+
+.status-tag.prototype {
+ background-color: rgba(245, 158, 11, 0.1);
+ color: var(--color-prototype);
+ border: 1px solid var(--color-prototype);
+}
+
+.status-tag.target {
+ background-color: rgba(59, 130, 246, 0.1);
+ color: var(--color-target);
+ border: 1px solid var(--color-target);
+}
+
+.status-tag.planned {
+ background-color: rgba(124, 58, 237, 0.1);
+ color: var(--color-planned);
+ border: 1px solid var(--color-planned);
+}
+
+.status-tag.unknown {
+ background-color: rgba(107, 114, 128, 0.1);
+ color: var(--color-unknown);
+ border: 1px solid var(--color-unknown);
+}
+
+.evidence-badge {
+ display: flex;
+ align-items: center;
+ gap: var(--space-2);
+ font-size: var(--fs-ui-4);
+ color: var(--color-neutral-600);
+}
+
+.evidence-dot {
+ width: 6px;
+ height: 6px;
+ border-radius: 50%;
+}
+
+.evidence-dot.verified { background-color: var(--color-verified); }
+.evidence-dot.prototype { background-color: var(--color-prototype); }
+.evidence-dot.target { background-color: var(--color-target); }
+.evidence-dot.planned { background-color: var(--color-planned); }
+.evidence-dot.unknown { background-color: var(--color-unknown); }
+
+/* ================================================
+  HEADER & NAVIGATION
+  ================================================ */
+
+.header {
+ position: sticky;
+ top: 0;
+ z-index: var(--z-index-docked);
+ background-color: var(--color-base);
+ border-bottom: 1px solid var(--color-neutral-100);
+ padding: var(--space-3) 0;
+}
+
+.nav {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+}
+
+.nav-logo {
+ font-family: var(--font-display);
+ font-weight: var(--fw-display-bold);
+ font-size: var(--fs-display-4);
+ color: var(--color-neutral-900);
+}
+
+.nav-links {
+ display: flex;
+ gap: var(--space-6);
+}
+
+.nav-link {
+ font-family: var(--font-ui);
+ font-weight: var(--fw-ui-medium);
+ color: var(--color-neutral-600);
+ transition: color var(--transition-base);
+}
+
+.nav-link:hover {
+ color: var(--color-neutral-900);
+}
+
+.nav-link.active {
+ color: var(--color-accent-600);
+ position: relative;
+}
+
+.nav-link.active::after {
+ content: '';
+ position: absolute;
+ bottom: -4px;
+ left: 0;
+ width: 100%;
+ height: 2px;
+ background-color: var(--color-accent-600);
+}
+
+/* ================================================
+  HERO SECTION
+  ================================================ */
+
+.hero {
+ position: relative;
+ padding: var(--space-32) 0 var(--space-24);
+ background-color: var(--color-base);
+ overflow: hidden;
+}
+
+.hero-content {
+ position: relative;
+ z-index: 2;
+ text-align: center;
+}
+
+.hero-eyebrow {
+ font-family: var(--font-ui);
+ font-weight: var(--fw-ui-medium);
+ font-size: var(--fs-ui-4);
+ text-transform: uppercase;
+ letter-spacing: var(--ls-caps);
+ color: var(--color-accent-600);
+ margin-bottom: var(--space-2);
+}
+
+.hero-headline {
+ font-family: var(--font-display);
+ font-weight: var(--fw-display-bold);
+ font-size: var(--fs-display-1);
+ line-height: 1.1;
+ color: var(--color-neutral-900);
+ margin-bottom: var(--space-4);
+}
+
+.hero-supporting {
+ max-width: 42rem;
+ margin-left: auto;
+ margin-right: auto;
+ font-size: var(--fs-ui-2);
+ color: var(--color-neutral-600);
+ line-height: 1.6;
+ margin-bottom: var(--space-6);
+}
+
+.hero-actions {
+ display: flex;
+ gap: var(--space-3);
+ justify-content: center;
+ flex-wrap: wrap;
+}
+
+/* ================================================
+  FOOTER
+  ================================================ */
+
+.footer {
+ background-color: var(--color-neutral-900);
+ color: var(--color-neutral-50);
+ padding: var(--space-16) 0;
+}
+
+.footer-content {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: var(--space-4);
+}
+
+.footer-logo {
+ font-family: var(--font-display);
+ font-weight: var(--fw-display-bold);
+ font-size: var(--fs-display-4);
+ color: var(--color-base);
+}
+
+.footer-nav {
+ display: flex;
+ gap: var(--space-4);
+ flex-wrap: wrap;
+}
+
+.footer-link {
+ color: var(--color-neutral-300);
+ font-size: var(--fs-ui-4);
+ transition: color var(--transition-base);
+}
+
+.footer-link:hover {
+ color: var(--color-base);
+}
+
+.footer-copyright {
+ font-size: var(--fs-ui-4);
+ color: var(--color-neutral-400);
+ margin-top: var(--space-4);
+}
+
+/* ================================================
+  RESPONSIVE BREAKPOINTS
+  ================================================ */
+
+@media (min-width: 768px) {
+ .container {
+   padding: 0 var(--space-6);
+ }
+  
+ .section {
+   padding: var(--space-24) 0;
+ }
+  
+ .hero {
+   padding: var(--space-40) 0 var(--space-32);
+ }
+  
+ .footer-content {
+   flex-direction: row;
+   justify-content: space-between;
+   width: 100%;
+   max-width: 1280px;
+   margin: 0 auto;
+   padding: 0 var(--space-6);
+ }
+}
+
+@media (min-width: 1024px) {
+ .container {
+   padding: 0 var(--space-8);
+ }
+  
+ .section {
+   padding: var(--space-32) 0;
+ }
+  
+ .hero {
+   padding: var(--space-48) 0 var(--space-40);
+ }
+}
+
+/* ================================================
+  UTILITIES
+  ================================================ */
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.font-display { font-family: var(--font-display); }
+.font-ui { font-family: var(--font-ui); }
+.font-mono { font-family: var(--font-mono); }
+
+.fw-light { font-weight: var(--fw-ui-light); }
+.fw-regular { font-weight: var(--fw-ui-regular); }
+.fw-medium { font-weight: var(--fw-ui-medium); }
+.fw-semibold { font-weight: var(--fw-ui-semibold); }
+.fw-bold { font-weight: var(--fw-ui-bold); }
+
+.text-base { color: var(--color-neutral-900); }
+.text-muted { color: var(--color-neutral-600); }
+.text-accent { color: var(--color-accent-600); }
+.text-verified { color: var(--color-verified); }
+.text-prototype { color: var(--color-prototype); }
+.text-target { color: var(--color-target); }
+.text-planned { color: var(--color-planned); }
+.text-unknown { color: var(--color-unknown); }
+
+.bg-base { background-color: var(--color-base); }
+.bg-elevated { background-color: var(--color-elevated); }
+.bg-sunken { background-color: var(--color-sunken); }
+.bg-accent-50 { background-color: var(--color-accent-50); }
+.bg-accent-100 { background-color: var(--color-accent-100); }
+
+.border { border-width: var(--border-width); }
+.border-t { border-top-width: var(--border-width); }
+.border-b { border-bottom-width: var(--border-width); }
+.border-l { border-left-width: var(--border-width); }
+.border-r { border-right-width: var(--border-width); }
+
+.rounded { border-radius: var(--radius-md); }
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-full { border-radius: var(--radius-full); }
+
+.shadow { box-shadow: var(--shadow-key); }
+.shadow-sm { box-shadow: var(--shadow-ambient); }
+.shadow-lg { box-shadow: var(--shadow-elevation); }
+
+.flex { display: flex; }
+.grid { display: grid; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.space-x-3 > * + * { margin-left: var(--space-3); }
+.space-y-4 > * + * { margin-top: var(--space-4); }
+
+.mx-auto { margin-left: auto; margin-right: auto; }
+.my-4 { margin-top: var(--space-4); margin-bottom: var(--space-4); }
+.my-6 { margin-top: var(--space-6); margin-bottom: var(--space-6); }
+.my-8 { margin-top: var(--space-8); margin-bottom: var(--space-8); }
+.my-12 { margin-top: var(--space-12); margin-bottom: var(--space-12); }
+.my-16 { margin-top: var(--space-16); margin-bottom: var(--space-16); }
+.my-20 { margin-top: var(--space-20); margin-bottom: var(--space-20); }
+.my-24 { margin-top: var(--space-24); margin-bottom: var(--space-24); }
+.my-32 { margin-top: var(--space-32); margin-bottom: var(--space-32); }
+
+.px-4 { padding-left: var(--space-4); padding-right: var(--space-4); }
+.px-6 { padding-left: var(--space-6); padding-right: var(--space-6); }
+.py-4 { padding-top: var(--space-4); padding-bottom: var(--space-4); }
+.py-6 { padding-top: var(--space-6); padding-bottom: var(--space-6); }
+.py-8 { padding-top: var(--space-8); padding-bottom: var(--space-8); }
 
 .glyph { font-family: var(--font-sans); }
 
@@ -265,6 +825,7 @@
 @media (min-width: 600px)  { :root { --ls-hero: var(--ls-hero-1); } }
 @media (min-width: 949px)  { :root { --ls-hero: var(--ls-hero-2); } }
 @media (min-width: 1443px) { :root { --ls-hero: var(--ls-hero-3); } }
+@media (min-width: 331px)  { :root { --ls-hero: var(--ls-hero-1); } }
 
 html, body { margin: 0; padding: 0; }
 
