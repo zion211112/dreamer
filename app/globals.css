@@ -25,6 +25,7 @@
   
   /* Added for contrast checking */
   --void: #04060a;
+  --lift: #f9fafb;
   --panel: #0a0e15;
   --edge: #0f151d;
   --ink: #e6edf3;
@@ -42,6 +43,12 @@
   --state-planned: #7c3aed;
   --state-unknown: #6b7280;
   --wash: #3b82f6;
+  --signal-a08: #3b82f6;
+  --signal-a15: rgba(59, 130, 246, 0.15);
+  --signal-a30: rgba(59, 130, 246, 0.3);
+  --amber-line: #f59e0b;
+  --rule-2: #64748b;
+  --rule-3: #3b82f6;
   --signal-a08: #3b82f6;
   --signal-a15: rgba(59, 130, 246, 0.15);
   --signal-a30: rgba(59, 130, 246, 0.3);

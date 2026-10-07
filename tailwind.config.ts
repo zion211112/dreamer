@@ -36,17 +36,17 @@ const config: Config = {
       },
 
       fontSize: {
-        xs: `${tokens.typography.scale.xs}`,
-        sm: `${tokens.typography.scale.sm}`,
-        base: `${tokens.typography.scale.base}`,
-        lg: `${tokens.typography.scale.lg}`,
-        xl: `${tokens.typography.scale.xl}`,
-        "2xl": `${tokens.typography.scale["2xl"]}`,
-        "3xl": `${tokens.typography.scale["3xl"]}`,
-        "4xl": `${tokens.typography.scale["4xl"]}`,
-        "5xl": `${tokens.typography.scale["5xl"]}`,
-        "6xl": `${tokens.typography.scale["6xl"]}`,
-        "7xl": `${tokens.typography.scale["7xl"]}`,
+        xs: [String(tokens.typography.scale.xs), { lineHeight: String(tokens.typography.ui.lineHeight.normal), letterSpacing: tokens.typography.ui.letterSpacing.normal }],
+        sm: [String(tokens.typography.scale.sm), { lineHeight: String(tokens.typography.ui.lineHeight.normal), letterSpacing: tokens.typography.ui.letterSpacing.normal }],
+        base: [String(tokens.typography.scale.base), { lineHeight: String(tokens.typography.ui.lineHeight.normal), letterSpacing: tokens.typography.ui.letterSpacing.normal }],
+        lg: [String(tokens.typography.scale.lg), { lineHeight: String(tokens.typography.ui.lineHeight.relaxed), letterSpacing: tokens.typography.ui.letterSpacing.normal }],
+        xl: [String(tokens.typography.scale.xl), { lineHeight: String(tokens.typography.ui.lineHeight.relaxed), letterSpacing: tokens.typography.ui.letterSpacing.normal }],
+        "2xl": [String(tokens.typography.scale["2xl"]), { lineHeight: String(tokens.typography.display.lineHeight.snug), letterSpacing: String(tokens.typography.display.letterSpacing.tight) }],
+        "3xl": [String(tokens.typography.scale["3xl"]), { lineHeight: String(tokens.typography.display.lineHeight.snug), letterSpacing: String(tokens.typography.display.letterSpacing.tight) }],
+        "4xl": [String(tokens.typography.scale["4xl"]), { lineHeight: String(tokens.typography.display.lineHeight.tight), letterSpacing: String(tokens.typography.display.letterSpacing.tight) }],
+        "5xl": [String(tokens.typography.scale["5xl"]), { lineHeight: String(tokens.typography.display.lineHeight.tight), letterSpacing: String(tokens.typography.display.lineHeight.tight) }],
+        "6xl": [String(tokens.typography.scale["6xl"]), { lineHeight: String(tokens.typography.display.lineHeight.tight), letterSpacing: String(tokens.typography.display.lineHeight.tight) }],
+        "7xl": [String(tokens.typography.scale["7xl"]), { lineHeight: String(tokens.typography.display.lineHeight.tight), letterSpacing: String(tokens.typography.display.letterSpacing.tight) }],
       },
       
       lineHeight: {
