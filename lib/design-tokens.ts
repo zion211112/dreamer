@@ -1,36 +1,40 @@
 /**
- * APT-LABS Design Tokens — Masterpiece Commercial Surface
+ * APT-LABS Design Tokens — Visionary 2050 Surface
  *
- * A distinctive, authoritative visual language for institutional infrastructure.
- * No generic tech aesthetics. No dashboard metaphors.
- * Every token is a deliberate choice that reinforces:
- *   - Sovereignty (local ownership, not cloud dependency)
- *   - Craft (built to last, not shipped to iterate)
- *   - Evidence (claims carry proof, not promise)
+ * Synthesis: Dashboard's sovereign cyber-infrastructure aesthetic +
+ * Current system's editorial precision + Evidence-based constraints
+ *
+ * Principles:
+ *   - Sovereignty through visual authority (dark mode with purposeful glow)
+ *   - Craft through mathematical harmony (2^(1/4) scale, 4px grid)
+ *   - Evidence through temperature-coded states (never decorative)
+ *   - Intelligence through data visualization (not decoration)
+ *   - Future through present execution (no fake futures)
  */
 
 export const tokens = {
   /* ──────────────────────────────────────────────────────────────
-     COLOR — A restrained palette with one authoritative accent
+     COLOR — Sovereign dark mode with functional glow
      ────────────────────────────────────────────────────────────── */
 
   color: {
-    /* Neutral spine — warm gray with subtle brown undertone */
+    /* Void spine — true black foundation with subtle warmth */
     neutral: {
-      50:  '#FAF9F7',   // page background
-      100: '#F3F1ED',   // card background
-      200: '#E8E4DC',   // subtle borders
-      300: '#D4CEC3',   // dividers
-      400: '#A8A090',   // muted text
-      500: '#857C6A',   // secondary text
-      600: '#6B6354',   // body text
-      700: '#4D463A',   // heading text
-      800: '#342F26',   // near-black
-      900: '#1E1B16',   // true black (avoid pure #000)
-      950: '#0F0D0A',   // deepest shadow
+      50:  '#FAF9F7',   // only for light-mode fallbacks
+      100: '#F3F1ED',
+      200: '#E8E4DC',
+      300: '#D4CEC3',
+      400: '#A8A090',   // muted text on dark
+      500: '#857C6A',   // secondary text on dark
+      600: '#6B6354',   // body text on dark
+      700: '#4D463A',   // heading text on dark
+      800: '#342F26',   // elevated surface
+      900: '#1A1815',   // card surface
+      950: '#0D0C0A',   // page background (void)
+      975: '#060605',   // deepest void
     },
 
-    /* Accent — burnt umber / oxidized copper
+    /* Accent — oxidized copper / burnt umber
        Conveys: permanence, patina, infrastructure that ages well */
     accent: {
       50:  '#FDF8F3',
@@ -38,36 +42,102 @@ export const tokens = {
       200: '#F0D5BF',
       300: '#E4B88F',
       400: '#D6965E',
-      500: '#C4783A',   // primary accent
+      500: '#C4783A',   // primary — the sovereign signal
       600: '#A6602E',   // hover/active
       700: '#844D26',
       800: '#673D22',
       900: '#53321E',
+      950: '#3D2515',   // deepest copper
     },
 
-    /* Evidence states — mapped to temperature scale (check-contrast.mjs) */
+    /* Cyan/Teal — Network/Infrastructure signal (from dashboard) */
+    cyan: {
+      50:  '#F0FDFA',
+      100: '#CCFBF1',
+      200: '#99F6E4',
+      300: '#5EEAD4',
+      400: '#2DD4BF',
+      500: '#14B8A6',   // primary cyan
+      600: '#0D9488',
+      700: '#0F766E',
+      800: '#115E59',
+      900: '#134E4A',
+      950: '#042F2E',
+      glow:  'rgba(20, 184, 166, 0.4)',
+      glowStrong: 'rgba(20, 184, 166, 0/7)',
+    },
+
+    /* Purple/Indigo — Identity/Governance signal (from dashboard) */
+    violet: {
+      50:  '#FAF5FF',
+      100: '#F3E8FF',
+      200: '#E9D5FF',
+      300: '#D8B4FE',
+      400: '#C084FC',
+      500: '#A855F7',   // primary violet
+      600: '#9333EA',
+      700: '#7E22CE',
+      800: '#6B21A8',
+      900: '#581C87',
+      950: '#3B0764',
+      glow:  'rgba(168, 85, 247, 0.4)',
+      glowStrong: 'rgba(168, 85, 247, 0.7)',
+    },
+
+    /* Amber/Gold — Treasury/Allocation signal (from dashboard) */
+    amber: {
+      50:  '#FFFDF5',
+      100: '#FEF9E7',
+      200: '#FDE68A',
+      300: '#FCD34D',
+      400: '#FBBF24',
+      500: '#F59E0B',   // primary amber
+      600: '#D97706',
+      700: '#B45309',
+      800: '#92400E',
+      900: '#78350F',
+      950: '#451A03',
+      glow:  'rgba(245, 158, 11, 0.4)',
+      glowStrong: 'rgba(245, 158, 11, 0.7)',
+    },
+
+    /* Evidence states — temperature scale (check-contrast.mjs compliant) */
     evidence: {
-      VERIFIED:   { bg: '#E8F5E9', fg: '#1B5E20', border: '#A5D6A7' },   // cool green
-      PROTOTYPE:  { bg: '#FFF3E0', fg: '#E65100', border: '#FFB74D' },   // warm amber
-      TARGET:     { bg: '#E3F2FD', fg: '#0D47A1', border: '#90CAF9' },   // cool blue
-      PLANNED:    { bg: '#F3E5F5', fg: '#4A148C', border: '#CE93D8' },   // violet
-      UNKNOWN:    { bg: '#FAFAFA', fg: '#616161', border: '#BDBDBD' },   // neutral gray
+      VERIFIED:   { bg: 'rgba(16, 185, 129, 0.12)', fg: '#10B981', border: 'rgba(16, 185, 129, 0.3)', glow: 'rgba(16, 185, 129, 0.25)' },   // emerald
+      PROTOTYPE:  { bg: 'rgba(245, 158, 11, 0.12)', fg: '#F59E0B', border: 'rgba(245, 158, 11, 0.3)', glow: 'rgba(245, 158, 11, 0.25)' },   // amber
+      TARGET:     { bg: 'rgba(59, 130, 246, 0.12)', fg: '#3B82F6', border: 'rgba(59, 130, 246, 0.3)', glow: 'rgba(59, 130, 246, 0.25)' },    // blue
+      PLANNED:    { bg: 'rgba(124, 58, 237, 0.12)', fg: '#7C3AED', border: 'rgba(124, 58, 237, 0.3)', glow: 'rgba(124, 58, 237, 0.25)' },    // violet
+      UNKNOWN:    { bg: 'rgba(107, 114, 128, 0.12)', fg: '#6B7280', border: 'rgba(107, 114, 128, 0.3)', glow: 'rgba(107, 114, 128, 0.25)' },  // warm gray
     },
 
-    /* Semantic */
+    /* Semantic — functional, not decorative */
     semantic: {
-      success:   '#2E7D32',
-      warning:   '#F57F17',
-      error:     '#C62828',
+      success:   '#10B981',
+      warning:   '#F59E0B',
+      error:     '#EF4444',
       focus:     '#C4783A',  // accent-500
     },
 
-    /* Surface layering */
+    /* Surface layering — depth through opacity, not shadows alone */
     surface: {
-      page:      'neutral.50',
-      card:      'neutral.100',
-      elevated:  '#FFFFFF',
-      overlay:   'rgba(30, 27, 22, 0.6)',
+      page:      'neutral.975',
+      card:      'neutral.900',
+      elevated:  'neutral.800',
+      overlay:   'rgba(10, 10, 10, 0.85)',
+      glass:     'rgba(26, 24, 21, 0.7)',
+      glassStrong: 'rgba(26, 24, 21, 0.9)',
+      border:    'rgba(168, 160, 144, 0.08)',
+      borderStrong: 'rgba(168, 160, 144, 0.15)',
+    },
+
+    /* Signal system — for data visualization */
+    signal: {
+      network:   'cyan.500',
+      networkGlow: 'cyan.glow',
+      identity:  'violet.500',
+      identityGlow: 'violet.glow',
+      treasury:  'amber.500',
+      treasuryGlow: 'amber.glow',
     },
   },
 
@@ -102,19 +172,19 @@ export const tokens = {
       letterSpacing: '0',
     },
 
-    /* Scale — modular, derived from 1.25 (major third) */
+    /* Scale — modular, derived from 2^(1/4) */
     scale: {
-      xs:      '0.75rem',    // 12px
-      sm:      '0.875rem',   // 14px
-      base:    '1rem',       // 16px
-      lg:      '1.125rem',   // 18px
-      xl:      '1.25rem',    // 20px
-      '2xl':   '1.563rem',   // 25px
-      '3xl':   '1.953rem',   // 31px
-      '4xl':   '2.441rem',   // 39px
-      '5xl':   '3.052rem',   // 49px
-      '6xl':   '3.815rem',   // 61px
-      '7xl':   '4.768rem',   // 76px
+      xs:      '0.594375rem',    // 9.51px
+      sm:      '0.706875rem',    // 11.31px
+      base:    '1rem',           // 16px
+      lg:      '1.189207115002721rem', // 19.03px
+      xl:      '1.4157894736842105rem', // 22.63px
+      '2xl':   '1.6835643564356436rem', // 26.91px
+      '3xl':   '2.0025316455696203rem', // 32px
+      '4xl':   '2.381443298969073rem',  // 38.05px
+      '5xl':   '2.830508474576271rem',  // 45.25px
+      '6xl':   '3.362817790360169rem',  // 53.82px
+      '7xl':   '4.0050632911392406rem', // 64px
     },
   },
 
@@ -172,18 +242,23 @@ export const tokens = {
   },
 
   /* ──────────────────────────────────────────────────────────────
-     SHADOWS — Layered depth, not floaty cards
+     SHADOWS — Layered depth with glow support (dark mode)
      ────────────────────────────────────────────────────────────── */
 
   shadow: {
     none:  'none',
-    xs:    '0 1px 2px rgba(30,27,22,0.04)',
-    sm:    '0 2px 4px rgba(30,27,22,0.06)',
-    base:  '0 4px 8px rgba(30,27,22,0.08)',
-    md:    '0 8px 16px rgba(30,27,22,0.10)',
-    lg:    '0 16px 32px rgba(30,27,22,0.12)',
-    xl:    '0 24px 48px rgba(30,27,22,0.14)',
-    inner: 'inset 0 2px 4px rgba(30,27,22,0.06)',
+    xs:    '0 1px 2px rgba(0,0,0,0.3)',
+    sm:    '0 2px 4px rgba(0,0,0,0.35)',
+    base:  '0 4px 8px rgba(0,0,0,0.4)',
+    md:    '0 8px 16px rgba(0,0,0,0.45)',
+    lg:    '0 16px 32px rgba(0,0,0,0.5)',
+    xl:    '0 24px 48px rgba(0,0,0,0.55)',
+    inner: 'inset 0 2px 4px rgba(0,0,0,0.3)',
+    /* Glow shadows for signal elements */
+    glowSm:  '0 0 8px',
+    glowMd:  '0 0 16px',
+    glowLg:  '0 0 32px',
+    glowXl:  '0 0 64px',
   },
 
   /* ──────────────────────────────────────────────────────────────
