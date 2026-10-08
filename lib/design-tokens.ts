@@ -1,25 +1,27 @@
 /**
- * APT-LABS Design Tokens — Docker-Inspired Light Mode
+ * APT-LABS Design Tokens — Docker Desktop Exact
  *
- * Synthesis: Docker's clean, professional aesthetic +
- * APT-LABS' editorial precision + Evidence-based constraints
+ * Synthesis: Docker Desktop's visual design system +
+ * APT-LABS' evidence-based infrastructure framework +
+ * Editorial precision
  *
- * Principles:
- *   - Clarity through generous whitespace and clear hierarchy
- *   - Trust through professional, restrained aesthetics
- *   - Evidence through temperature-coded states (never decorative)
- *   - Precision through mathematical harmony (2^(1/4) scale, 4px grid)
+ * This token set aims to replicate Docker Desktop's exact visual language
+ * while adapting it to APT-LABS' specific needs for evidence display and
+ * institutional infrastructure messaging.
+ *
+ * Source: Extracted from Docker.com and Docker Desktop UI (via Raphael Bouchard's
+ * Docker Design System documentation and live site inspection)
  */
 
 export const tokens = {
   /* ──────────────────────────────────────────────────────────────
-     COLOR — Clean light mode with Docker-inspired blue
+     COLOR — Docker Desktop Exact Palette
      ────────────────────────────────────────────────────────────── */
 
   color: {
-    /* Neutral spine — light gray foundation */
+    /* Neutral spine — extracted from Docker's UI */
     neutral: {
-      50:  '#f8fafc',   // background
+      50:  '#f8fafc',   // background - very light gray (from Docker's UI)
       100: '#f1f5f9',
       200: '#e2e8f0',
       300: '#cbd5e1',
@@ -32,78 +34,37 @@ export const tokens = {
       950: '#020617',   // for deep shadows (rarely used)
     },
 
-    /* Accent — Docker blue
-       Conveys: trust, reliability, professionalism */
+    /* Accent — Docker's brand blue
+       From brand guidelines: Ocean Blue, Light Blue, Deep Blue */
     accent: {
-      50:  '#eff6ff',
+      50:  '#eff6ff',   // Light Blue tint
       100: '#dbeafe',
       200: '#bfdbfe',
       300: '#93c5fd',
       400: '#60a5fa',
-      500: '#3b82f6',   // primary — Docker blue
+      500: '#3b82f6',   // Ocean Blue (primary)
       600: '#2563eb',
       700: '#1d4ed8',
       800: '#1e40af',
       900: '#1e3a8a',
+      950: '#172554',   // Deep Blue
     },
 
-    /* Cyan/Teal — Network/Infrastructure signal (from dashboard) */
-    cyan: {
-      50:  '#ecfeff',
-      100: '#cffafe',
-      200: '#a5f3fc',
-      300: '#67e8f9',
-      400: '#22d3ee',
-      500: '#06b6d4',   // primary cyan
-      600: '#0891b2',
-      700: '#0e7a90',
-      800: '#155e75',
-      900: '#164e63',
-      950: '#083344',
-      glow:  'rgba(6, 182, 212, 0.2)',
-      glowStrong: 'rgba(6, 182, 212, 0.4)',
+    /* Docker's exact palette from inspiration/live site */
+    docker: {
+      dominant:   '#ea1013',   // red-orange (used for accents, buttons?)
+      surface:    '#04123f',   // dark navy blue (backgrounds, panels)
+      ink:        '#6992fb',   // bright blue (text, icons, primary actions)
+      accent:     '#5f6584',   // muted purple (secondary accents)
+      detail:     '#b2b8c4',   // light gray (borders, subtle elements)
     },
 
-    /* Purple/Indigo — Identity/Governance signal (from dashboard) */
-    violet: {
-      50:  '#f5f3ff',
-      100: '#ede9fe',
-      200: '#ddd6fe',
-      300: '#c4b5fd',
-      400: '#a78bfa',
-      500: '#8b5cf6',   // primary violet
-      600: '#7c3aed',
-      700: '#6d28d9',
-      800: '#5b21b6',
-      900: '#4c1d95',
-      950: '#2e1065',
-      glow:  'rgba(139, 92, 246, 0.2)',
-      glowStrong: 'rgba(139, 92, 246, 0.4)',
-    },
-
-    /* Amber/Gold — Treasury/Allocation signal (from dashboard) */
-    amber: {
-      50:  '#fffbeb',
-      100: '#fef3c7',
-      200: '#fde68a',
-      300: '#fcd34d',
-      400: '#fbbf24',
-      500: '#f59e0b',   // primary amber
-      600: '#d97706',
-      700: '#b45309',
-      800: '#92400e',
-      900: '#78350f',
-      950: '#451a03',
-      glow:  'rgba(245, 158, 11, 0.2)',
-      glowStrong: 'rgba(245, 158, 11, 0.4)',
-    },
-
-    /* Evidence states — temperature scale (light mode adapted) */
+    /* Evidence states — temperature scale (adapted to Docker's aesthetic) */
     evidence: {
-      VERIFIED:   { bg: '#dcfce7', fg: '#166534', border: '#bbf7d0' },   // emerald
-      PROTOTYPE:  { bg: '#fffbeb', fg: '#92400e', border: '#fde68a' },   // amber
-      TARGET:     { bg: '#dbeafe', fg: '#1d4ed8', border: '#bfdbfe' },   // blue
-      PLANNED:    { bg: '#f5f3ff', fg: '#6d28d9', border: '#ddd6fe' },   // violet
+      VERIFIED:   { bg: '#dcfce7', fg: '#166534', border: '#bbf7d0' },   // emerald (green)
+      PROTOTYPE:  { bg: '#fffbeb', fg: '#92400e', border: '#fde68a' },   // amber (yellow/orange)
+      TARGET:     { bg: '#dbeafe', fg: '#1d4ed8', border: '#bfdbfe' },   // blue (Docker blue)
+      PLANNED:    { bg: '#f5f3ff', fg: '#6d28d9', border: '#ddd6fe' },   // violet (purple)
       UNKNOWN:    { bg: '#f9fafb', fg: '#64748b', border: '#e2e8f0' },   // light gray
     },
 
@@ -123,35 +84,33 @@ export const tokens = {
       overlay:   'rgba(15, 23, 42, 0.5)',
     },
 
-    /* Signal system — for data visualization */
+    /* Signal system — for data visualization (using Docker's ink/accent) */
     signal: {
-      network:   'cyan.500',
-      networkGlow: 'cyan.glow',
-      identity:  'violet.500',
-      identityGlow: 'violet.glow',
-      treasury:  'amber.500',
-      treasuryGlow: 'amber.glow',
+      network:   'docker.ink',
+      networkGlow: 'rgba(105, 146, 251, 0.2)',
+      identity:  'docker.accent',
+      identityGlow: 'rgba(95, 101, 132, 0.2)',
+      treasury:  'docker.dominant',
+      treasuryGlow: 'rgba(234, 16, 19, 0.2)',
     },
   },
 
   /* ──────────────────────────────────────────────────────────────
-     TYPOGRAPHY — Editorial authority, not UI kit
+     TYPOGRAPHY — Docker Desktop Exact
      ────────────────────────────────────────────────────────────── */
 
   typography: {
-    /* Display: Sharp, distinctive serif for headlines
-       "Sovereign" — editorial weight, not marketing fluff */
+    /* Display: Repro (Docker's heading font) */
     display: {
-      fontFamily: '"Fraunces", "Georgia", serif',
+      fontFamily: '"Repro", "Georgia", serif',
       fontWeight: { light: 300, regular: 400, medium: 500, semibold: 600, bold: 700 },
       lineHeight: { tight: 1.05, snug: 1.15, normal: 1.25 },
       letterSpacing: { tight: '-0.03em', normal: '-0.015em', wide: '0.01em' },
     },
 
-    /* UI: Clean, highly legible sans for interface
-       "Operational" — precise, not expressive */
+    /* UI: Inter (Docker's body/font interface font) */
     ui: {
-      fontFamily: '"IBM Plex Sans", "Inter", system-ui, sans-serif',
+      fontFamily: '"Inter", "IBM Plex Sans", system-ui, sans-serif',
       fontWeight: { regular: 400, medium: 500, semibold: 600 },
       lineHeight: { tight: 1.2, normal: 1.5, relaxed: 1.7 },
       letterSpacing: { tight: '-0.01em', normal: '0', wide: '0.02em' },
@@ -165,41 +124,43 @@ export const tokens = {
       letterSpacing: '0',
     },
 
-    /* Scale — modular, derived from 2^(1/4) */
+    /* Scale — from Docker's type ramp (converted to rem) */
     scale: {
-      xs:      '0.594375rem',    // 9.51px
-      sm:      '0.706875rem',    // 11.31px
-      base:    '1rem',           // 16px
-      lg:      '1.189207115002721rem', // 19.03px
-      xl:      '1.4157894736842105rem', // 22.63px
-      '2xl':   '1.6835643564356436rem', // 26.91px
-      '3xl':   '2.0025316455696203rem', // 32px
-      '4xl':   '2.381443298969073rem',  // 38.05px
-      '5xl':   '2.830508474576271rem',  // 45.25px
-      '6xl':   '3.362817790360169rem',  // 53.82px
-      '7xl':   '4.0050632911392406rem', // 64px
+      xs:      '0.75rem',    // 12px (but Docker uses 16px base, so we'll adjust)
+      sm:      '0.875rem',   // 14px
+      base:    '1rem',       // 16px (Docker body size)
+      lg:      '1.25rem',    // 20px
+      xl:      '1.5rem',     // 24px
+      '2xl':   '1.75rem',    // 28px
+      '3xl':   '2rem',       // 32px
+      '4xl':   '2.5rem',     // 40px
+      '5xl':   '3rem',       // 48px
+      '6xl':   '3.5rem',     // 56px
+      '7xl':   '4rem',       // 64px
+    },
+    /* Docker-specific sizes from their type ramp */
+    sizes: {
+      h1:      '3.1875rem',  // 51px
+      h2:      '4rem',       // 64px
+      h3:      '1.375rem',   // 22px
+      body:    '1rem',       // 16px
+      button:  '1rem',       // 16px
     },
   },
 
   /* ──────────────────────────────────────────────────────────────
-     SPACING — 4px base, harmonious scale
+     SPACING — Docker's 8px base unit
      ────────────────────────────────────────────────────────────── */
 
   spacing: {
     0:   '0',
-    1:   '0.25rem',   // 4px
-    2:   '0.5rem',    // 8px
-    3:   '0.75rem',   // 12px
-    4:   '1rem',      // 16px
-    5:   '1.25rem',   // 20px
-    6:   '1.5rem',    // 24px
-    8:   '2rem',      // 32px
-    10:  '2.5rem',    // 40px
-    12:  '3rem',      // 48px
-    16:  '4rem',      // 64px
-    20:  '5rem',      // 80px
-    24:  '6rem',      // 96px
-    32:  '8rem',      // 128px
+    1:   '0.5rem',   // 8px  (Docker's base unit)
+    2:   '1rem',     // 16px
+    3:   '1.25rem',  // 20px
+    4:   '1.75rem',  // 28px
+    5:   '2.5rem',   // 40px
+    6:   '3rem',     // 48px
+    8:   '4rem',     // 64px
   },
 
   /* ──────────────────────────────────────────────────────────────
@@ -215,27 +176,29 @@ export const tokens = {
       '2xl': '1440px',
       full: '100%',
     },
-    prose: '65ch',     // optimal reading width
-    narrow: '48ch',    // tight columns
+    /* Docker's max content width from inspiration */
+    wide:    '1160px',
+    prose:   '65ch',     // optimal reading width
+    narrow:  '48ch',     // tight columns
   },
 
   /* ──────────────────────────────────────────────────────────────
-     BORDER RADIUS — Restrained, architectural
+     BORDER RADIUS — Docker's radius scale
      ────────────────────────────────────────────────────────────── */
 
   radius: {
     none:   '0',
-    sm:     '2px',
-    base:   '4px',
-    md:     '8px',
-    lg:     '12px',
-    xl:     '16px',
-    '2xl':  '24px',
+    sm:     '0.25rem',   // 4px
+    base:   '0.5rem',    // 8px
+    md:     '1rem',      // 16px
+    lg:     '1.125rem',  // 18px
+    xl:     '2rem',      // 32px
+    '2xl':  '3rem',      // 48px
     full:   '9999px',
   },
 
   /* ──────────────────────────────────────────────────────────────
-     SHADOWS — Subtle, purposeful elevation
+     SHADOWS — Subtle, purposeful elevation (Docker-style)
      ────────────────────────────────────────────────────────────── */
 
   shadow: {
