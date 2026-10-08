@@ -1,133 +1,126 @@
 /**
- * APT-LABS Design Tokens — Visionary 2050 Surface
+ * APT-LABS Design Tokens — Docker-Inspired Light Mode
  *
- * Synthesis: Dashboard's sovereign cyber-infrastructure aesthetic +
- * Current system's editorial precision + Evidence-based constraints
+ * Synthesis: Docker's clean, professional aesthetic +
+ * APT-LABS' editorial precision + Evidence-based constraints
  *
  * Principles:
- *   - Sovereignty through visual authority (dark mode with purposeful glow)
- *   - Craft through mathematical harmony (2^(1/4) scale, 4px grid)
+ *   - Clarity through generous whitespace and clear hierarchy
+ *   - Trust through professional, restrained aesthetics
  *   - Evidence through temperature-coded states (never decorative)
- *   - Intelligence through data visualization (not decoration)
- *   - Future through present execution (no fake futures)
+ *   - Precision through mathematical harmony (2^(1/4) scale, 4px grid)
  */
 
 export const tokens = {
   /* ──────────────────────────────────────────────────────────────
-     COLOR — Sovereign dark mode with functional glow
+     COLOR — Clean light mode with Docker-inspired blue
      ────────────────────────────────────────────────────────────── */
 
   color: {
-    /* Void spine — true black foundation with subtle warmth */
+    /* Neutral spine — light gray foundation */
     neutral: {
-      50:  '#FAF9F7',   // only for light-mode fallbacks
-      100: '#F3F1ED',
-      200: '#E8E4DC',
-      300: '#D4CEC3',
-      400: '#A8A090',   // muted text on dark
-      500: '#857C6A',   // secondary text on dark
-      600: '#6B6354',   // body text on dark
-      700: '#4D463A',   // heading text on dark
-      800: '#342F26',   // elevated surface
-      900: '#1A1815',   // card surface
-      950: '#0D0C0A',   // page background (void)
-      975: '#060605',   // deepest void
+      50:  '#f8fafc',   // background
+      100: '#f1f5f9',
+      200: '#e2e8f0',
+      300: '#cbd5e1',
+      400: '#94a3b8',   // muted text
+      500: '#64748b',   // secondary text
+      600: '#475569',   // body text
+      700: '#334155',   // heading text
+      800: '#1e293b',   // dark text
+      900: '#0f172a',   // darkest text
+      950: '#020617',   // for deep shadows (rarely used)
     },
 
-    /* Accent — oxidized copper / burnt umber
-       Conveys: permanence, patina, infrastructure that ages well */
+    /* Accent — Docker blue
+       Conveys: trust, reliability, professionalism */
     accent: {
-      50:  '#FDF8F3',
-      100: '#F9EDE3',
-      200: '#F0D5BF',
-      300: '#E4B88F',
-      400: '#D6965E',
-      500: '#C4783A',   // primary — the sovereign signal
-      600: '#A6602E',   // hover/active
-      700: '#844D26',
-      800: '#673D22',
-      900: '#53321E',
-      950: '#3D2515',   // deepest copper
+      50:  '#eff6ff',
+      100: '#dbeafe',
+      200: '#bfdbfe',
+      300: '#93c5fd',
+      400: '#60a5fa',
+      500: '#3b82f6',   // primary — Docker blue
+      600: '#2563eb',
+      700: '#1d4ed8',
+      800: '#1e40af',
+      900: '#1e3a8a',
     },
 
     /* Cyan/Teal — Network/Infrastructure signal (from dashboard) */
     cyan: {
-      50:  '#F0FDFA',
-      100: '#CCFBF1',
-      200: '#99F6E4',
-      300: '#5EEAD4',
-      400: '#2DD4BF',
-      500: '#14B8A6',   // primary cyan
-      600: '#0D9488',
-      700: '#0F766E',
-      800: '#115E59',
-      900: '#134E4A',
-      950: '#042F2E',
-      glow:  'rgba(20, 184, 166, 0.4)',
-      glowStrong: 'rgba(20, 184, 166, 0/7)',
+      50:  '#ecfeff',
+      100: '#cffafe',
+      200: '#a5f3fc',
+      300: '#67e8f9',
+      400: '#22d3ee',
+      500: '#06b6d4',   // primary cyan
+      600: '#0891b2',
+      700: '#0e7a90',
+      800: '#155e75',
+      900: '#164e63',
+      950: '#083344',
+      glow:  'rgba(6, 182, 212, 0.2)',
+      glowStrong: 'rgba(6, 182, 212, 0.4)',
     },
 
     /* Purple/Indigo — Identity/Governance signal (from dashboard) */
     violet: {
-      50:  '#FAF5FF',
-      100: '#F3E8FF',
-      200: '#E9D5FF',
-      300: '#D8B4FE',
-      400: '#C084FC',
-      500: '#A855F7',   // primary violet
-      600: '#9333EA',
-      700: '#7E22CE',
-      800: '#6B21A8',
-      900: '#581C87',
-      950: '#3B0764',
-      glow:  'rgba(168, 85, 247, 0.4)',
-      glowStrong: 'rgba(168, 85, 247, 0.7)',
+      50:  '#f5f3ff',
+      100: '#ede9fe',
+      200: '#ddd6fe',
+      300: '#c4b5fd',
+      400: '#a78bfa',
+      500: '#8b5cf6',   // primary violet
+      600: '#7c3aed',
+      700: '#6d28d9',
+      800: '#5b21b6',
+      900: '#4c1d95',
+      950: '#2e1065',
+      glow:  'rgba(139, 92, 246, 0.2)',
+      glowStrong: 'rgba(139, 92, 246, 0.4)',
     },
 
     /* Amber/Gold — Treasury/Allocation signal (from dashboard) */
     amber: {
-      50:  '#FFFDF5',
-      100: '#FEF9E7',
-      200: '#FDE68A',
-      300: '#FCD34D',
-      400: '#FBBF24',
-      500: '#F59E0B',   // primary amber
-      600: '#D97706',
-      700: '#B45309',
-      800: '#92400E',
-      900: '#78350F',
-      950: '#451A03',
-      glow:  'rgba(245, 158, 11, 0.4)',
-      glowStrong: 'rgba(245, 158, 11, 0.7)',
+      50:  '#fffbeb',
+      100: '#fef3c7',
+      200: '#fde68a',
+      300: '#fcd34d',
+      400: '#fbbf24',
+      500: '#f59e0b',   // primary amber
+      600: '#d97706',
+      700: '#b45309',
+      800: '#92400e',
+      900: '#78350f',
+      950: '#451a03',
+      glow:  'rgba(245, 158, 11, 0.2)',
+      glowStrong: 'rgba(245, 158, 11, 0.4)',
     },
 
-    /* Evidence states — temperature scale (check-contrast.mjs compliant) */
+    /* Evidence states — temperature scale (light mode adapted) */
     evidence: {
-      VERIFIED:   { bg: 'rgba(16, 185, 129, 0.12)', fg: '#10B981', border: 'rgba(16, 185, 129, 0.3)', glow: 'rgba(16, 185, 129, 0.25)' },   // emerald
-      PROTOTYPE:  { bg: 'rgba(245, 158, 11, 0.12)', fg: '#F59E0B', border: 'rgba(245, 158, 11, 0.3)', glow: 'rgba(245, 158, 11, 0.25)' },   // amber
-      TARGET:     { bg: 'rgba(59, 130, 246, 0.12)', fg: '#3B82F6', border: 'rgba(59, 130, 246, 0.3)', glow: 'rgba(59, 130, 246, 0.25)' },    // blue
-      PLANNED:    { bg: 'rgba(124, 58, 237, 0.12)', fg: '#7C3AED', border: 'rgba(124, 58, 237, 0.3)', glow: 'rgba(124, 58, 237, 0.25)' },    // violet
-      UNKNOWN:    { bg: 'rgba(107, 114, 128, 0.12)', fg: '#6B7280', border: 'rgba(107, 114, 128, 0.3)', glow: 'rgba(107, 114, 128, 0.25)' },  // warm gray
+      VERIFIED:   { bg: '#dcfce7', fg: '#166534', border: '#bbf7d0' },   // emerald
+      PROTOTYPE:  { bg: '#fffbeb', fg: '#92400e', border: '#fde68a' },   // amber
+      TARGET:     { bg: '#dbeafe', fg: '#1d4ed8', border: '#bfdbfe' },   // blue
+      PLANNED:    { bg: '#f5f3ff', fg: '#6d28d9', border: '#ddd6fe' },   // violet
+      UNKNOWN:    { bg: '#f9fafb', fg: '#64748b', border: '#e2e8f0' },   // light gray
     },
 
     /* Semantic — functional, not decorative */
     semantic: {
-      success:   '#10B981',
-      warning:   '#F59E0B',
-      error:     '#EF4444',
-      focus:     '#C4783A',  // accent-500
+      success:   '#166534',
+      warning:   '#92400e',
+      error:     '#dc2626',
+      focus:     '#3b82f6',  // accent-500
     },
 
-    /* Surface layering — depth through opacity, not shadows alone */
+    /* Surface layering — depth through subtle shadows */
     surface: {
-      page:      'neutral.975',
-      card:      'neutral.900',
-      elevated:  'neutral.800',
-      overlay:   'rgba(10, 10, 10, 0.85)',
-      glass:     'rgba(26, 24, 21, 0.7)',
-      glassStrong: 'rgba(26, 24, 21, 0.9)',
-      border:    'rgba(168, 160, 144, 0.08)',
-      borderStrong: 'rgba(168, 160, 144, 0.15)',
+      page:      'neutral.50',
+      card:      'neutral.100',
+      elevated:  '#ffffff',
+      overlay:   'rgba(15, 23, 42, 0.5)',
     },
 
     /* Signal system — for data visualization */
@@ -242,23 +235,18 @@ export const tokens = {
   },
 
   /* ──────────────────────────────────────────────────────────────
-     SHADOWS — Layered depth with glow support (dark mode)
+     SHADOWS — Subtle, purposeful elevation
      ────────────────────────────────────────────────────────────── */
 
   shadow: {
     none:  'none',
-    xs:    '0 1px 2px rgba(0,0,0,0.3)',
-    sm:    '0 2px 4px rgba(0,0,0,0.35)',
-    base:  '0 4px 8px rgba(0,0,0,0.4)',
-    md:    '0 8px 16px rgba(0,0,0,0.45)',
-    lg:    '0 16px 32px rgba(0,0,0,0.5)',
-    xl:    '0 24px 48px rgba(0,0,0,0.55)',
-    inner: 'inset 0 2px 4px rgba(0,0,0,0.3)',
-    /* Glow shadows for signal elements */
-    glowSm:  '0 0 8px',
-    glowMd:  '0 0 16px',
-    glowLg:  '0 0 32px',
-    glowXl:  '0 0 64px',
+    xs:    '0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.1)',
+    sm:    '0 2px 4px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.12)',
+    base:  '0 4px 8px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.1)',
+    md:    '0 8px 16px rgba(0,0,0,0.12), 0 4px 6px rgba(0,0,0,0.08)',
+    lg:    '0 16px 32px rgba(0,0,0,0.14), 0 8px 12px rgba(0,0,0,0.05)',
+    xl:    '0 24px 48px rgba(0,0,0,0.16), 0 12px 16px rgba(0,0,0,0.02)',
+    inner: 'inset 0 2px 4px rgba(0,0,0,0.06)',
   },
 
   /* ──────────────────────────────────────────────────────────────
@@ -297,7 +285,7 @@ export const tokens = {
     xl:  '1280px',
     '2xl': '1440px',
   },
-} as const;
+};
 
 /* Type helpers */
 export type ColorScale = keyof typeof tokens.color.neutral;

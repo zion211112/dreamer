@@ -18,13 +18,28 @@ export default function HomePage() {
       <CurrentProof />
       <StackSummary />
       <footer className="home-footer">
-        <p>{COMPANY.name} — {COMPANY.mantra}</p>
-        <p>
-          <a href="/contact">Start a conversation</a> ·
-          <a href="/work">See the work</a> ·
-          <a href="/roll">View the evidence</a> ·
-          <a href="/benben">BenBen track</a>
-        </p>
+        <div className="container">
+          <p className="text-muted">
+            {COMPANY.name} — {COMPANY.mantra}
+          </p>
+          <div className="space-y-4 text-center md:text-left">
+            <a href="/contact" className="text-accent hover:text-accent/80 transition-colors">
+              Start a conversation
+            </a>
+            <span className="mx-2 text-muted">·</span>
+            <a href="/work" className="text-accent hover:text-accent/80 transition-colors">
+              See the work
+            </a>
+            <span className="mx-2 text-muted">·</span>
+            <a href="/roll" className="text-accent hover:text-accent/80 transition-colors">
+              View the evidence
+            </a>
+            <span className="mx-2 text-muted">·</span>
+            <a href="/benben" className="text-accent hover:text-accent/80 transition-colors">
+              BenBen track
+            </a>
+          </div>
+        </div>
       </footer>
     </main>
   );
