@@ -21,40 +21,40 @@ export const tokens = {
   color: {
     /* Neutral spine — extracted from Docker's UI */
     neutral: {
-      50:  '#f8fafc',   // background - very light gray (from Docker's UI)
-      100: '#f1f5f9',
-      200: '#e2e8f0',
-      300: '#cbd5e1',
-      400: '#94a3b8',   // muted text
-      500: '#64748b',   // secondary text
-      600: '#475569',   // body text
-      700: '#334155',   // heading text
-      800: '#1e293b',   // dark text
-      900: '#0f172a',   // darkest text
-      950: '#020617',   // for deep shadows (rarely used)
+      50:  '#f9fafb',   // background - very light gray (from Docker's UI)
+      100: '#f2f4f8',
+      200: '#e5eaf2',
+      300: '#d9e1ec',
+      400: '#ccd8e6',
+      500: '#bfcfe0',
+      600: '#b3c6da',
+      700: '#a6bdd4',
+      800: '#9ab5ce',
+      900: '#8dacc8',
+      950: '#000000',   // headline text
     },
 
-    /* Accent — Docker's brand blue
-       From brand guidelines: Ocean Blue, Light Blue, Deep Blue */
+    /* Accent — Docker's ink blue
+       From the palette: #2560ff (ink) */
     accent: {
-      50:  '#eff6ff',   // Light Blue tint
-      100: '#dbeafe',
-      200: '#bfdbfe',
-      300: '#93c5fd',
-      400: '#60a5fa',
-      500: '#3b82f6',   // Ocean Blue (primary)
-      600: '#2563eb',
-      700: '#1d4ed8',
-      800: '#1e40af',
-      900: '#1e3a8a',
-      950: '#172554',   // Deep Blue
+      50:  '#f6f8fe',   // Light Blue tint (pillBackgroundColor)
+      100: '#c0e0fa',   // pillBorderColor
+      200: '#99d0f8',   // interpolated
+      300: '#73b6f5',   // interpolated
+      400: '#1c90ed',   // pillCopyColor
+      500: '#2560ff',   // Docker ink (primary) - buttonPrimaryBackground
+      600: '#0d4ed8',   // interpolated
+      700: '#003db5',   // buttonPrimaryBorder
+      800: '#002978',   // tooltipBackground
+      900: '#001b4c',   // interpolated
+      950: '#000f26',   // interpolated
     },
 
     /* Docker's exact palette from inspiration/live site */
     docker: {
       dominant:   '#ea1013',   // red-orange (used for accents, buttons?)
-      surface:    '#04123f',   // dark navy blue (backgrounds, panels)
-      ink:        '#6992fb',   // bright blue (text, icons, primary actions)
+      surface:    '#f9fafb',   // background color
+      ink:        '#2560ff',   // bright blue (text, icons, primary actions)
       accent:     '#5f6584',   // muted purple (secondary accents)
       detail:     '#b2b8c4',   // light gray (borders, subtle elements)
     },

@@ -23,26 +23,26 @@
   --color-sunken: #F3F4F6;
   --color-overlay: rgba(0, 0, 0, 0.05);
   
-  /* Added for contrast checking */
-  --void: #04060a;
-  --lift: #f9fafb;
-  --panel: #0a0e15;
-  --edge: #0f151d;
-  --ink: #e6edf3;
-  --dust: #94a3b8;
-  --ash: #64748b;
-  --quiet: #475569;
-  --signal: #3b82f6;
-  --signal-dim: #2563eb;
-  --signal-lit: #1d4ed8;
-  --amber: #f59e0b;
-  --danger: #ef4444;
-  --state-verified: #10b981;
-  --state-prototype: #f59e0b;
-  --state-target: #3b82f6;
-  --state-planned: #7c3aed;
-  --state-unknown: #6b7280;
-  --wash: #3b82f6;
+  /* Added for contrast checking - Light mode SaaS palette */
+  --void: #fafafa;   /* neutral.50 */
+  --lift: #f9fafb;   /* keep lift as is? */
+  --panel: #f5f5f5;  /* neutral.100 */
+  --edge: #e5e5e5;   /* neutral.200 */
+  --ink: #111827;    /* neutral.950 */
+  --dust: #737373;   /* neutral.500 */
+  --ash: #525252;    /* neutral.600 */
+  --quiet: #404040;  /* neutral.700 */
+  --signal: #3b82f6;   /* accent.500 */
+  --signal-dim: #2563eb; /* accent.600 */
+  --signal-lit: #1d4ed8; /* accent.700 */
+  --amber: #f59e0b;    /* semantic.warning */
+  --danger: #ef4444;   /* semantic.error */
+  --state-verified: #10b981; /* semantic.success */
+  --state-prototype: #f59e0b; /* semantic.warning */
+  --state-target: #3b82f6;   /* accent.500 */
+  --state-planned: #7c3aed;    /* keep violet */
+  --state-unknown: #6b7280;    /* neutral.800 */
+  --wash: #3b82f6;       /* accent.500 */
   --signal-a08: #3b82f6;
   --signal-a15: rgba(59, 130, 246, 0.15);
   --signal-a30: rgba(59, 130, 246, 0.3);
@@ -68,17 +68,18 @@
   --color-neutral-800: #48423E;
   --color-neutral-900: #342F2C;
   
-  /* Accent Colors - Burnt Umber / Oxidized Copper */
-  --color-accent-50: #FFF7F5;
-  --color-accent-100: #FEE9E5;
-  --color-accent-200: #FDD3CD;
-  --color-accent-300: #FCB8AA;
-  --color-accent-400: #FA9C88;
-  --color-accent-500: #F78066;
-  --color-accent-600: #D9634F;
-  --color-accent-700: #B84E40;
-  --color-accent-800: #963F34;
-  --color-accent-900: #773229;
+  /* Accent Colors - Vivid blue for primary actions */
+  --color-accent-50: #eff6ff;
+  --color-accent-100: #dbeafe;
+  --color-accent-200: #bfdbfe;
+  --color-accent-300: #93c5fd;
+  --color-accent-400: #60a5fa;
+  --color-accent-500: #3b82f6;
+  --color-accent-600: #2563eb;
+  --color-accent-700: #1d4ed8;
+  --color-accent-800: #1e40af;
+  --color-accent-900: #1e3a8a;
+  --color-accent-950: #172554;
   
   /* Evidence State Temperature Colors */
   --color-verified: #10B981;    /* Emerald */
