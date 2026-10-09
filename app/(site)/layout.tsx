@@ -1,12 +1,17 @@
-import { CompanyWorkspace } from "@/components/site/CompanyWorkspace";
+import Link from "next/link";
+import { Navigation } from "@/components/site/Navigation";
+import { Footer } from "@/components/site/Footer";
 
-/**
- * One navigable company workspace shared by portfolio, system, and evidence routes.
- */
 export default function SiteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <CompanyWorkspace>{children}</CompanyWorkspace>;
+  return (
+    <div className="flex min-h-screen flex-col">
+      <Navigation />
+      <main className="flex-1">{children}</main>
+      <Footer />
+    </div>
+  );
 }

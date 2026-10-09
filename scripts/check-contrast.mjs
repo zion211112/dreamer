@@ -357,12 +357,11 @@ const basesOf = (selector, bases, label) =>
    a token change in globals.css would otherwise leave this section
    testing a ground the site stopped rendering on. */
 const pageHex = (() => {
-  const body = css.match(/\nbody \{([\s\S]*?)\n\}/);
-  const bg = body?.[1].match(/background:\s*([^;]+);/);
-  if (!bg) throw new Error("app/globals.css declares no background on body");
-  return paint(bg[1]).hex;
+  if (!bodyMatch) throw new Error("app/globals.css declares no background on body");
+  const bgMatch = bodyMatch[0].match(/background:\\s*([^;]+);/);
+  if (!bgMatch) throw new Error("app/globals.css declares no background on body");
+  return paint(bgMatch[1]).hex;
 })();
-
 const page = [{ name: "the page", hex: pageHex }];
 
 /* The reading order. Its cells carry a 140ms colour AND background-color
@@ -773,7 +772,9 @@ if (failed > 0 || orderFailed > 0 || sepFailed > 0 || hueFailed > 0) {
   );
   process.exit(1);
 }
+
 console.log(
   `\nAll ${checks.filter((c) => !c.banner).length} ratio pairs clear their threshold; the state\n` +
-    `scale holds its order and the five semantic hues stay tellable apart.\n`
+  `scale holds its order and the five semantic hues stay tellable apart.\n`
 );
+

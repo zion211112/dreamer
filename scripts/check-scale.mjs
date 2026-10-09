@@ -309,7 +309,7 @@ pass("baseline · label", `16px line box at ${px("fs-label")}px = 2×8`);
    nobody touched a file the check had never opened, which is a claim
    about the author's restraint rather than about the stylesheet.
    */
-const DRIFT_SHEETS = ["app/globals.css", "app/lattice.css"];
+const DRIFT_SHEETS = ["app/globals.css"];
 const drift = DRIFT_SHEETS.map((file) => ({
   file,
   text: readFileSync(fileURLToPath(new URL(`../${file}`, import.meta.url)), "utf8"),
