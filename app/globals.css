@@ -33,7 +33,10 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  font-feature-settings: 'cv11', 'ss01';
 }
+
+.font-display { font-family: 'Instrument Serif', Georgia, serif; }
 
 ::selection { background: var(--accent); color: #fff; }
 
