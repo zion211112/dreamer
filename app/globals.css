@@ -3,27 +3,59 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  --bg: #0a0f1a;
+  --bg-elevated: #111827;
+  --fg: #e5e7eb;
+  --fg-muted: #9ca3af;
+  --accent: #22d3ee;
+  --accent-dim: #06b6d4;
+  --warn: #fbbf24;
+  --danger: #f87171;
+  --success: #34d399;
+  --border: #1f2937;
+  --card: #111827;
 }
 
-html,
+* { box-sizing: border-box; }
+html, body, #__next { height: 100%; margin: 0; }
+
 body {
-  background: #07090d;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
-*::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-*::-webkit-scrollbar-thumb {
-  background: #1d2530;
-  border-radius: 8px;
-}
-*::-webkit-scrollbar-track {
-  background: transparent;
+::selection { background: var(--accent); color: var(--bg); }
+
+.scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.scrollbar-thin::-webkit-scrollbar-thumb:hover { background: var(--fg-muted); }
+
+@keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+.animate-blink { animation: blink 1s step-end infinite; }
+
+@keyframes pulse-subtle { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+.animate-pulse-subtle { animation: pulse-subtle 2s ease-in-out infinite; }
+
+.glow-accent { box-shadow: 0 0 20px rgba(34, 211, 238, 0.15), 0 0 40px rgba(34, 211, 238, 0.05); }
+.glow-warn { box-shadow: 0 0 20px rgba(251, 191, 36, 0.15), 0 0 40px rgba(251, 191, 36, 0.05); }
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--accent) 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-input[type="range"] {
-  height: 4px;
+.grid-pattern {
+  background-image:
+    linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
+
+.terminal-font { font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace; }
