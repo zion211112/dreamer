@@ -1,0 +1,17 @@
+/* Epistemic surface tokens — semantic colour scale */
+:root {
+  /* Live/verified — teal (signal) */
+  --ep-live: #35d9a4;
+
+  /* Data/evidence — cyan */
+  --ep-data: #22d3ee;
+
+  /* Intelligence/thinking — violet */
+  --ep-think: #a78bfa;
+
+  /* Pending/uncertain — amber */
+  --ep-pending: #fbbf24;
+
+  /* Clash/contradiction/failure — red */
+  --ep-clash: #ef4444;
+}

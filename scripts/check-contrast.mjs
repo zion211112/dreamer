@@ -274,6 +274,16 @@ function paint(value) {
       a: rgba[4] === undefined ? 1 : Number(rgba[4]),
     };
   }
+  /* Handle modern rgb() syntax without commas: rgb(2 6 23) or rgb(2 6 23 / 0.5) */
+  const rgbModern = v.match(/^rgb\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*(?:\/\s*([\d.]+)\s*)?\)$/);
+  if (rgbModern) {
+    return {
+      hex: `#${[1, 2, 3]
+        .map((i) => Math.round(Number(rgbModern[i])).toString(16).padStart(2, "0"))
+        .join("")}`,
+      a: rgbModern[4] === undefined ? 1 : Number(rgbModern[4]),
+    };
+  }
   throw new Error(`Cannot read a colour out of "${value}"`);
 }
 
@@ -356,9 +366,10 @@ const basesOf = (selector, bases, label) =>
    is composited onto whatever `body` paints. Read rather than assumed:
    a token change in globals.css would otherwise leave this section
    testing a ground the site stopped rendering on. */
+const bodyMatch = css.match(/body\s*\{[^}]*background:\s*([^;]+);/);
 const pageHex = (() => {
   if (!bodyMatch) throw new Error("app/globals.css declares no background on body");
-  const bgMatch = bodyMatch[0].match(/background:\\s*([^;]+);/);
+  const bgMatch = bodyMatch[0].match(/background:\s*([^;]+);/);
   if (!bgMatch) throw new Error("app/globals.css declares no background on body");
   return paint(bgMatch[1]).hex;
 })();

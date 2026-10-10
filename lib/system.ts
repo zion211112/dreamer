@@ -15,6 +15,113 @@ export const COMPANY = {
   linkedin: "https://linkedin.com/company/aptlabs",
 };
 
+/* ═══════════════════════════════════════════════════════════════════
+   EVIDENCE — Five-state temperature scale, lowest luminance to highest
+   UNKNOWN (darkest) → PLANNED → TARGET → VERIFIED → PROTOTYPE (brightest)
+   DEMONSTRATION removed per §08.
+   ═══════════════════════════════════════════════════════════════════ */
+
+export type EvidenceState = "VERIFIED" | "PROTOTYPE" | "TARGET" | "PLANNED" | "UNKNOWN";
+
+export const EVIDENCE_STATES: EvidenceState[] = [
+  "VERIFIED",
+  "PROTOTYPE",
+  "TARGET",
+  "PLANNED",
+  "UNKNOWN",
+];
+
+export const STATE_ORDER: Record<EvidenceState, number> = {
+  UNKNOWN: 0,
+  PLANNED: 1,
+  TARGET: 2,
+  VERIFIED: 3,
+  PROTOTYPE: 4,
+};
+
+export const STATE_RULES = [
+  { state: "VERIFIED" as EvidenceState, rule: "Settled by an attributable source" },
+  { state: "PROTOTYPE" as EvidenceState, rule: "Present, inspectable, not deployed" },
+  { state: "TARGET" as EvidenceState, rule: "Intended, measurable, not yet observed" },
+  { state: "PLANNED" as EvidenceState, rule: "Designed, resourced, not built" },
+  { state: "UNKNOWN" as EvidenceState, rule: "No evidence recorded; do not infer" },
+] as const;
+
+export const CONTRACT_RULES = [
+  { id: "RULE-01", text: "An evidence state is a claim about observability, not quality" },
+  { id: "RULE-02", text: "UNKNOWN is the default; every claim starts here" },
+  { id: "RULE-03", text: "PROTOTYPE outranks TARGET — present beats intended" },
+  { id: "RULE-04", text: "A VERIFIED claim without a source is a bug" },
+  { id: "RULE-05", text: "The temperature scale is the contract — no sixth state" },
+] as const;
+
+/* ═══════════════════════════════════════════════════════════════════
+   CONSOLE VOCABULARY BOUNDARY — The nouns that must NOT appear on the
+   public surface. Read by scripts/check-lexicon.mjs.
+   ═══════════════════════════════════════════════════════════════════ */
+
+export const CONSOLE_VOCABULARY = [
+  "fees",
+  "timetable",
+  "attendance",
+  "marking",
+  "learners",
+  "grades",
+  "report card",
+  "discipline",
+  "detention",
+  "suspension",
+  "expulsion",
+  "parent portal",
+  "school fees",
+  "fee statement",
+  "fee balance",
+  "term fees",
+  "admission",
+  "enrollment",
+  "withdrawal",
+  "transfer certificate",
+  "academic year",
+  "term dates",
+  "holiday calendar",
+  "exam schedule",
+  "results slip",
+  "transcript",
+  "certificate",
+  "alumni",
+  "staff payroll",
+  "payslip",
+  "leave balance",
+  "substitution",
+  "cover lesson",
+  "inventory",
+  "asset tag",
+  "maintenance request",
+  "procurement",
+  "purchase order",
+  "budget line",
+  "vote head",
+  "capitation",
+  "bursary",
+  "scholarship",
+] as const;
+
+/* ═══════════════════════════════════════════════════════════════════
+   CONSOLE VOCABULARY SCOPE — The ONE route where console vocabulary is
+   permitted because its subject IS the product. Read by scripts/check-lexicon.mjs.
+   ═══════════════════════════════════════════════════════════════════ */
+
+export const CONSOLE_VOCABULARY_SCOPED = ["/product"] as const;
+
+/* ═══════════════════════════════════════════════════════════════════
+   CONSOLE — Re-exports for the exempt /product route. The public surface
+   imports CONSOLE_MODULES.length here as MEASURED_MODULE_COUNT.
+   ═══════════════════════════════════════════════════════════════════ */
+
+export { CONSOLE_MODULES, CONSOLE_MENU, CONSOLE_TOOLS, CONSOLE_DATA_STATE } from "./console";
+
+export const MEASURED_MODULE_COUNT = "5";
+
 export const STACK = [
   {
     layer: "Record",
@@ -171,3 +278,27 @@ export const MEASURES = [
   { key: "Lines of Evidence", figure: "3,400+" },
   { key: "Open Source", figure: "100%" },
 ];
+
+/* ═══════════════════════════════════════════════════════════════════
+   REGISTERS — Canonical register specifications for the evidence layer
+   Read by scripts/check-lexicon.mjs for source resolution.
+   ═══════════════════════════════════════════════════════════════════ */
+
+export const REGISTERS = [
+  { ord: "PERSON", name: "Person Register", description: "Canonical person & role registry" },
+  { ord: "ORG", name: "Organization Register", description: "Institution identity & settings" },
+  { ord: "LOCATION", name: "Location Register", description: "Physical & virtual spaces" },
+  { ord: "TASK", name: "Work Task Register", description: "Timetables, duties, room assignments" },
+  { ord: "EVIDENCE", name: "Evidence Ledger", description: "Graduated evidence for every claim" },
+] as const;
+
+/* ═══════════════════════════════════════════════════════════════════
+   SIGNALS — APT Signal product hypothesis (not public feature)
+   Read by scripts/check-lexicon.mjs for source resolution.
+   ═══════════════════════════════════════════════════════════════════ */
+
+export const SIGNALS = [
+  { id: "SIG-ROLL", name: "Roll Signal", description: "Attendance & presence signals" },
+  { id: "SIG-WORK", name: "Work Signal", description: "Scheduling & allocation signals" },
+  { id: "SIG-EVIDENCE", name: "Evidence Signal", description: "Verification & compliance signals" },
+] as const;
