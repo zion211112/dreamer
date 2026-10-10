@@ -165,6 +165,10 @@ function eventsEqual(a: Event, b: Event): boolean {
     a.kind === b.kind &&
     a.summary === b.summary &&
     a.stage === b.stage &&
-    JSON.stringify(a.refs) === JSON.stringify(b.refs)
+    JSON.stringify(a.refs) === JSON.stringify(b.refs) &&
+    a.actor.type === b.actor.type &&
+    a.actor.component === b.actor.component &&
+    JSON.stringify(a.guards) === JSON.stringify(b.guards) &&
+    JSON.stringify(a.metrics) === JSON.stringify(b.metrics)
   );
 }

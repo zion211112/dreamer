@@ -72,9 +72,9 @@ const BaseStatementSchema = z.object({
   kind: z.enum(["CLAIM", "INFERENCE", "ASSUMPTION", "COUNTERFACTUAL"]),
   id: StatementId,
   text: z.string().min(1),
-  category: z.enum(["FACT", "INFERENCE", "ASSUMPTION", "COUNTERFACTUAL"]),
+  category: z.enum(["FACT", "INFERENCE", "ASSUMPTION", "COUNTERFACTUAL", "UNKNOWN"]),
   chainStage: z.enum(["OBSERVED", "INFERRED", "PROJECTED", "UNKNOWN"]),
-  support: z.enum(["SUPPORTED", "WEAKLY_SUPPORTED", "UNTESTED"]),
+  support: z.enum(["SUPPORTED", "WEAKLY_SUPPORTED", "UNTESTED", "UNKNOWN"]),
   provenance: z.object({
     author: z.string(),
     timestamp: z.string(),
@@ -96,7 +96,7 @@ export type BaseStatement = z.infer<typeof BaseStatementSchema>;
 
 const ClaimSchema = BaseStatementSchema.extend({
   kind: z.literal("CLAIM"),
-  category: z.literal("FACT"),
+  category: z.enum(["FACT", "INFERENCE", "ASSUMPTION", "COUNTERFACTUAL", "UNKNOWN"]),
   evidenceIds: z.array(EvidenceId),
   sourceIds: z.array(SourceId),
   independentSupports: z.number().int().min(0),

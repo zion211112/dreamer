@@ -17,11 +17,10 @@ export function Navigation() {
   }, []);
 
   const navItems = [
-    { href: "/#product", label: "Product" },
-    { href: "/#evidence", label: "Evidence" },
-    { href: "/#stack", label: "Stack" },
-    { href: "/#how-it-works", label: "Method" },
-    { href: "/console", label: "Console" },
+    { href: "/work", label: "Work" },
+    { href: "/roll", label: "Roll" },
+    { href: "/benben", label: "BenBen" },
+    { href: "/contact", label: "Contact" },
   ];
 
   return (
@@ -74,10 +73,10 @@ export function Navigation() {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
             <Link
-              href="/console"
+              href="/work"
               className="px-4 py-2 text-sm font-medium text-neutral-300 hover:text-white transition-colors rounded-base hover:bg-neutral-800/50"
             >
-              Open Console
+              View Work
             </Link>
             <Link
               href="/contact"
@@ -127,22 +126,6 @@ export function Navigation() {
                 {item.label}
               </Link>
             ))}
-            <div className="flex flex-col gap-3 pt-4 border-t border-neutral-700/50">
-              <Link
-                href="/console"
-                className="px-3 py-3 text-base font-medium text-neutral-300 hover:text-white transition-colors rounded-base hover:bg-neutral-800/50 text-center"
-                onClick={() => setMobileOpen(false)}
-              >
-                Open Console
-              </Link>
-              <Link
-                href="/contact"
-                className="btn-primary text-center"
-                onClick={() => setMobileOpen(false)}
-              >
-                Start a Conversation
-              </Link>
-            </div>
           </div>
         </div>
       </nav>

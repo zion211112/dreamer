@@ -91,16 +91,27 @@ export function measureDiversity(branches: Branch[]): DiversityResult {
 
   // Strategy compliance: CONSERVATIVE should share mechanisms, RADICAL_MECHANISM should differ
   const strategyCompliance: Array<{ strategy: string; compliant: boolean; reason: string }> = [];
+
+  // Count conservative branches to determine if sharing is expected
+  const conservativeBranches = branches.filter(b => b.strategy === "CONSERVATIVE");
+
   for (const branch of branches) {
     if (branch.strategy === "CONSERVATIVE") {
-      // CONSERVATIVE is compliant if it shares a mechanism with another branch
-      const sharesMechanism = branches.some(
+      // CONSERVATIVE is compliant if:
+      // - It shares a mechanism with another CONSERVATIVE branch, OR
+      // - There are no other CONSERVATIVE branches (nothing to share with)
+      const sharesMechanism = conservativeBranches.some(
         (b) => b.id !== branch.id && (b.mechanism === branch.mechanism || areSynonyms(b.mechanism, branch.mechanism))
       );
+      const isOnlyConservative = conservativeBranches.length === 1;
       strategyCompliance.push({
         strategy: branch.strategy,
-        compliant: sharesMechanism,
-        reason: sharesMechanism ? "Conservative branch shares mechanism as expected" : "Conservative branch has unique mechanism",
+        compliant: sharesMechanism || isOnlyConservative,
+        reason: sharesMechanism
+          ? "Conservative branch shares mechanism as expected"
+          : isOnlyConservative
+            ? "Conservative branch is the only one; no sharing expected"
+            : "Conservative branch has unique mechanism",
       });
     } else if (branch.strategy === "RADICAL_MECHANISM") {
       // RADICAL_MECHANISM is compliant if it has a unique mechanism
@@ -242,9 +253,11 @@ export interface BranchWithVerdicts {
  * Append a verdict to a branch
  */
 export function appendVerdict(branch: Branch, verdict: Verdict): BranchWithVerdicts {
+  const protectedFromOptimization = verdict.verdict === "PROTECT_FROM_OPTIMIZATION";
   return {
     ...branch,
     verdicts: [...(branch.verdicts as unknown as Verdict[]), verdict],
+    protectedFromOptimization: branch.protectedFromOptimization || protectedFromOptimization,
   };
 }
 
@@ -267,7 +280,7 @@ export function synthesisInput(branches: BranchWithVerdicts[]): SynthesisInputRe
     const hasKill = branch.verdicts.some((v) => v.verdict === "KILL");
 
     if (hasProtection) {
-      included.push(branch);
+      excluded.push(branch);
       excludedBecause.push({ id: branch.id, reason: "PROTECT_FROM_OPTIMIZATION verdict" });
     } else if (hasKill) {
       excluded.push(branch);

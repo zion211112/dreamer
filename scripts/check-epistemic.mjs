@@ -152,8 +152,8 @@ record(
    3. NEGATIVE CASE — a clean claim must raise nothing
    ═══════════════════════════════════════════════════════════════════ */
 
-const cleanSource = fx.cleanClaim.sourceIds[0];
 const cleanClaim = fx.cleanClaim;
+const cleanSource = fx.solarSource;
 
 const cleanGuards = guard.guardStatement({
   statement: cleanClaim,
@@ -771,7 +771,10 @@ record(
 /* 15b. Two independent agents restating one claim MUST raise
        CONSENSUS_AMPLIFICATION. Every agent here is Actor.type MODEL, so
        counting actor types made this undetectable. */
-const mkClaim = (id, text, capability, provider) =>
+const provenanceA = { author: "agent:adapter:a", timestamp: NOW, tool: "adapter:a" };
+const provenanceB = { author: "agent:adapter:b", timestamp: NOW, tool: "adapter:b" };
+
+const mkClaim = (id, text, capability, provider, provenance) =>
   model.parseClaim({
     kind: "CLAIM",
     id: model.StatementId.parse(id),
@@ -779,7 +782,7 @@ const mkClaim = (id, text, capability, provider) =>
     category: "FACT",
     chainStage: "INFERRED",
     support: "WEAKLY_SUPPORTED",
-    provenance: fx.solarObservation.provenance,
+    provenance,
     confidence: { factors: [{ factor: "DIRECT_MEASUREMENT", basis: "derived", because: id }] },
     transitions: [],
     guards: [],
@@ -793,8 +796,8 @@ const mkClaim = (id, text, capability, provider) =>
   });
 
 const twoAgents = [
-  mkClaim("amp-1", "The programme is working.", "DEEP_REASONING", "adapter:a"),
-  mkClaim("amp-2", "The programme is working.", "FAST", "adapter:b"),
+  mkClaim("amp-1", "The programme is working.", "DEEP_REASONING", "adapter:a", provenanceA),
+  mkClaim("amp-2", "The programme is working.", "FAST", "adapter:b", provenanceB),
 ];
 const ampGuards = guard.guardAll(twoAgents, []);
 record(
@@ -809,8 +812,8 @@ record(
 );
 
 const oneAgentTwice = [
-  mkClaim("same-1", "Identical output.", "DEEP_REASONING", "adapter:a"),
-  mkClaim("same-2", "Identical output.", "DEEP_REASONING", "adapter:a"),
+  mkClaim("same-1", "Identical output.", "DEEP_REASONING", "adapter:a", provenanceA),
+  mkClaim("same-2", "Identical output.", "DEEP_REASONING", "adapter:a", provenanceA),
 ];
 record(
   "one agent repeating itself is NOT amplification",

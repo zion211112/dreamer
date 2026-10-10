@@ -356,6 +356,45 @@ function detectConsensusAmplification(ctx: GuardContext): GuardEvent | null {
 }
 
 /* ═════════════════════════════════════════════════════════════════════
+   CONSENSUS_AMPLIFICATION Cross-Agent Detector
+
+   Fires when multiple agents restate the same unsupported claim
+   ════════════════════════════════════════════════════════════════════ */
+
+function detectConsensusAmplificationCrossAgent(ctx: GuardContext): GuardEvent | null {
+  const { statement, all } = ctx;
+
+  if (statement.kind !== "CLAIM") return null;
+  const claim = statement as Claim;
+
+  // Find other claims with the same text from different agents
+  // We identify different agents by checking provenance author or tool
+  const otherSameText = all.filter(
+    (s) => s.id !== statement.id && s.kind === "CLAIM" && s.text === claim.text
+  );
+
+  if (otherSameText.length === 0) return null;
+
+  // Check if they come from different agents (different provenance author/tool)
+  const claimProvenance = claim.provenance;
+  const differentAgents = otherSameText.some(
+    (s) =>
+      (s as Claim).provenance.author !== claimProvenance.author ||
+      (s as Claim).provenance.tool !== claimProvenance.tool
+  );
+
+  if (!differentAgents) return null;
+
+  return makeGuard(
+    "CONSENSUS_AMPLIFICATION",
+    "WARNING",
+    `Multiple agents restate the same unsupported claim: "${claim.text.slice(0, 50)}..."`,
+    `Claim "${claim.id}" has ${otherSameText.length} restatement(s) from different agents`,
+    claim.text.slice(0, 50) + "...",
+  );
+}
+
+/* ═════════════════════════════════════════════════════════════════════
    FLUENCY_EVIDENCE_GAP Detector
 
    Fires when fluent language masks missing evidence
@@ -407,6 +446,7 @@ const DETECTORS = [
   detectConsensusClaimUnsupported,
   detectSourceClaimFactCollapse,
   detectConsensusAmplification,
+  detectConsensusAmplificationCrossAgent,
   detectFluencyEvidenceGap,
 ];
 
