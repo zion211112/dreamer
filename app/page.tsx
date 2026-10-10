@@ -1,173 +1,89 @@
 'use client';
 
-import { useState, useCallback, useEffect, KeyboardEvent } from 'react';
-import { FileTreeWrapper } from '@/components/FileTree';
+import { useState, useCallback, useEffect, useMemo } from 'react';
+import { TopNav, type NavItemId } from '@/components/TopNav';
+import { ExplorerTree } from '@/components/ExplorerTree';
 import { Pane } from '@/components/Pane';
+import { Inspector } from '@/components/Inspector';
 import { StatusBar } from '@/components/StatusBar';
 import { CommandPalette } from '@/components/CommandPalette';
-
-interface Tab {
-  id: string;
-  name: string;
-  path: string;
-  content: string;
-  language: string;
-  modified: boolean;
-  active: boolean;
-}
-
-const MOCK_CONTENT: Record<string, { content: string; language: string }> = {
-  '/src/app/page.tsx': {
-    language: 'typescript',
-    content: `import { FileTreeWrapper } from '@/components/FileTree';
-import { Pane } from '@/components/Pane';
-import { StatusBar } from '@/components/StatusBar';
-import { CommandPalette } from '@/components/CommandPalette';
+import { Tab, createTab, getMockContent } from '@/lib/editor';
+import { CommandContext } from '@/lib/commands';
+import { findNode, DEPARTMENTS } from '@/lib/ontology';
 
 export default function Page() {
-  return (
-    <div className="flex h-screen overflow-hidden terminal-font">
-      <FileTreeWrapper selectedPath={null} onSelect={() => {}} onToggle={() => {}} />
-      <Pane tabs={[]} activeTabId={null} onTabChange={() => {}} onTabClose={() => {}} />
-      <StatusBar mode="NORMAL" position={1} total={1} />
-      <CommandPalette isOpen={false} onClose={() => {}} />
-    </div>
-  );
-}`
-  },
-  '/src/app/layout.tsx': {
-    language: 'typescript',
-    content: `import type { Metadata } from 'next';
-import './globals.css';
-
-export const metadata: Metadata = {
-  title: 'proto.shell — orchestrator interface for everyone',
-  description: 'A witty, expert, enterprise-grade file manager interface.',
-};
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en" class="h-full">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      </head>
-      <body className="h-full bg-[var(--bg)] text-[var(--fg)] antialiased grid-pattern">
-        {children}
-      </body>
-    </html>
-  );
-}`
-  },
-  '/src/app/globals.css': {
-    language: 'css',
-    content: `@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root {
-  --bg: #0a0f1a;
-  --bg-elevated: #111827;
-  --fg: #e5e7eb;
-  --fg-muted: #9ca3af;
-  --accent: #22d3ee;
-  --accent-dim: #06b6d4;
-  --warn: #fbbf24;
-  --danger: #f87171;
-  --success: #34d399;
-  --border: #1f2937;
-  --card: #111827;
-}
-
-* { box-sizing: border-box; }
-html, body, #__next { height: 100%; margin: 0; }
-
-body {
-  background: var(--bg);
-  color: var(--fg);
-  font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, monospace;
-  font-size: 13px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}`
-  },
-  '/config/package.json': {
-    language: 'json',
-    content: `{
-  "name": "newprotoshell",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "next": "14.2.35",
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
-  },
-  "devDependencies": {
-    "@types/node": "20.14.12",
-    "@types/react": "18.3.3",
-    "@types/react-dom": "18.3.0",
-    "autoprefixer": "10.4.19",
-    "postcss": "8.4.40",
-    "tailwindcss": "3.4.10",
-    "typescript": "5.5.4"
-  }
-}`
-  },
-};
-
-function getLanguageFromPath(path: string): string {
-  const ext = '.' + path.split('.').pop()?.toLowerCase();
-  const LANGUAGES: Record<string, string> = {
-    '.tsx': 'typescript', '.ts': 'typescript', '.js': 'javascript', '.jsx': 'javascript',
-    '.json': 'json', '.css': 'css', '.html': 'html', '.md': 'markdown',
-    '.py': 'python', '.rs': 'rust', '.go': 'go',
-  };
-  return LANGUAGES[ext] || 'plaintext';
-}
-
-function createTab(path: string): Tab {
-  const mock = MOCK_CONTENT[path] || { content: `// ${path}\n// File content would load here...`, language: getLanguageFromPath(path) };
-  return {
-    id: path,
-    name: path.split('/').pop() || path,
-    path,
-    content: mock.content,
-    language: mock.language,
-    modified: false,
-    active: true,
-  };
-}
-
-export default function Page() {
-  const [tabs, setTabs] = useState<Tab[]>([
-    createTab('/src/app/page.tsx'),
-    createTab('/src/app/layout.tsx'),
-    createTab('/config/package.json'),
-  ]);
-  const [activeTabId, setActiveTabId] = useState<string | null>('/src/app/page.tsx');
-  const [selectedPath, setSelectedPath] = useState<string | null>('/src/app/page.tsx');
+  const [tabs, setTabs] = useState<Tab[]>([]);
+  const [activeTabId, setActiveTabId] = useState<string | null>(null);
+  const [selectedPath, setSelectedPath] = useState<string | null>(null);
+  const [expandedPaths, setExpandedPaths] = useState<Set<string>>(() => new Set([
+    '/foundation', '/foundation/core', '/products', '/products/web',
+  ]));
+  const [navSection, setNavSection] = useState<NavItemId>('workspace');
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mode, setMode] = useState<'NORMAL' | 'INSERT' | 'VISUAL' | 'COMMAND'>('NORMAL');
-  const [cursorPosition, setCursorPosition] = useState({ line: 42, col: 12 });
+  const [cursorPosition, setCursorPosition] = useState({ line: 1, col: 1 });
+  const [notifications, setNotifications] = useState<Array<{ id: number; message: string; type: string }>>([]);
+  const [sidebarWidth, setSidebarWidth] = useState(264);
 
-  const handleFileSelect = useCallback((path: string) => {
+  useEffect(() => {
+    const initialTabs = [
+      createTab('/products/web/page.tsx', getMockContent('/products/web/page.tsx')),
+      createTab('/foundation/core/config.ts', getMockContent('/foundation/core/config.ts')),
+    ];
+    setTabs(initialTabs);
+    setActiveTabId(initialTabs[0].id);
+    setSelectedPath(initialTabs[0].path);
+  }, []);
+
+  const showNotification = useCallback((message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') => {
+    const id = Date.now();
+    setNotifications(prev => [...prev.slice(-3), { id, message, type }]);
+    setTimeout(() => setNotifications(prev => prev.filter(n => n.id !== id)), 2800);
+  }, []);
+
+  const handleSelect = useCallback((path: string) => {
     setSelectedPath(path);
-    const existingTab = tabs.find(t => t.path === path);
-    if (existingTab) {
-      setActiveTabId(existingTab.id);
-    } else {
-      const newTab = createTab(path);
-      setTabs(prev => [...prev, newTab]);
-      setActiveTabId(newTab.id);
+    const node = findNode(path);
+    if (node?.type === 'dir') {
+      setExpandedPaths(prev => {
+        const next = new Set(prev);
+        if (next.has(path)) next.delete(path); else next.add(path);
+        return next;
+      });
+      return;
     }
-  }, [tabs]);
+    setTabs(prev => {
+      const existing = prev.find(t => t.path === path);
+      if (existing) {
+        setActiveTabId(existing.id);
+        return prev;
+      }
+      const newTab = createTab(path, getMockContent(path));
+      setActiveTabId(newTab.id);
+      return [...prev, newTab];
+    });
+  }, []);
+
+  const handleToggle = useCallback((path: string) => {
+    setExpandedPaths(prev => {
+      const next = new Set(prev);
+      if (next.has(path)) next.delete(path); else next.add(path);
+      return next;
+    });
+  }, []);
+
+  const handleNav = useCallback((id: NavItemId) => {
+    setNavSection(id);
+    if (id === 'workspace') return;
+    const dept = DEPARTMENTS.find(d => d.id === id);
+    if (dept) {
+      setExpandedPaths(prev => new Set(prev).add(dept.root.path));
+      setSelectedPath(dept.root.path);
+      const first = dept.root.children?.find(c => c.type === 'file');
+      if (first) handleSelect(first.path);
+    }
+  }, [handleSelect]);
 
   const handleTabChange = useCallback((id: string) => {
     setActiveTabId(id);
@@ -178,82 +94,140 @@ export default function Page() {
   const handleTabClose = useCallback((id: string) => {
     setTabs(prev => {
       const next = prev.filter(t => t.id !== id);
-      if (activeTabId === id && next.length > 0) {
-        setActiveTabId(next[next.length - 1].id);
-      }
+      if (activeTabId === id && next.length > 0) setActiveTabId(next[next.length - 1].id);
+      if (next.length === 0) setActiveTabId(null);
       return next;
     });
   }, [activeTabId]);
 
+  const handleTabUpdate = useCallback((id: string, updates: Partial<Tab>) => {
+    setTabs(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
+  }, []);
+
   const handleNewTab = useCallback(() => {
-    // In a real app, this would open a new untitled file
+    const newTab = createTab('/untitled-' + Date.now() + '.txt');
+    setTabs(prev => [...prev, newTab]);
+    setActiveTabId(newTab.id);
   }, []);
 
-  const handleCommand = useCallback((cmd: any) => {
-    console.log('Command executed:', cmd.title);
-  }, []);
+  const commandContext: CommandContext = useMemo(() => ({
+    tabs, activeTabId, selectedPath, setTabs, setActiveTabId, setSelectedPath,
+    setCommandPaletteOpen, setMode,
+    onTabUpdate: handleTabUpdate, onTabClose: handleTabClose, onNewTab: handleNewTab,
+    showNotification,
+  }), [tabs, activeTabId, selectedPath, handleTabUpdate, handleTabClose, handleNewTab, showNotification]);
 
-  // Global keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: globalThis.KeyboardEvent) => {
-      // Ctrl+K - Command Palette
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        setCommandPaletteOpen(true);
-      }
-      // Ctrl+P - Quick Open
-      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
-        e.preventDefault();
-        setCommandPaletteOpen(true);
-      }
-      // Ctrl+B - Toggle Sidebar
-      if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
-        e.preventDefault();
-        // Toggle sidebar logic here
-      }
-      // Ctrl+` - Terminal
-      if ((e.ctrlKey || e.metaKey) && e.key === '`') {
-        e.preventDefault();
-        // Toggle terminal
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  return (
-    <div className="flex h-screen overflow-hidden terminal-font" onKeyDown={e => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); setCommandPaletteOpen(true); }
       if ((e.ctrlKey || e.metaKey) && e.key === 'p') { e.preventDefault(); setCommandPaletteOpen(true); }
-    }}>
-      <FileTreeWrapper
-        selectedPath={selectedPath}
-        onSelect={handleFileSelect}
-        onToggle={() => {}}
-      />
+      if ((e.ctrlKey || e.metaKey) && e.key === 'b') { e.preventDefault(); setSidebarOpen(v => !v); }
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        const activeTab = tabs.find(t => t.id === activeTabId);
+        if (activeTab?.modified) {
+          handleTabUpdate(activeTab.id, { modified: false, saved: true });
+          showNotification('Saved ' + activeTab.name, 'success');
+        }
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'n') { e.preventDefault(); handleNewTab(); }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'w') { e.preventDefault(); if (activeTabId) handleTabClose(activeTabId); }
+      if (e.key === 'Escape' && mode !== 'NORMAL') setMode('NORMAL');
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [tabs, activeTabId, mode, handleTabUpdate, handleTabClose, handleNewTab, showNotification]);
 
-      <div className="flex-1 flex flex-col min-w-0">
-        <Pane
-          tabs={tabs}
-          activeTabId={activeTabId}
-          onTabChange={handleTabChange}
-          onTabClose={handleTabClose}
-          onNewTab={handleNewTab}
-        />
-        <StatusBar
-          mode={mode}
-          position={cursorPosition}
-          total={{ lines: 156, chars: 4231 }}
-          language={tabs.find(t => t.id === activeTabId)?.language || 'typescript'}
+  useEffect(() => {
+    let dragging = false;
+    const onMove = (e: MouseEvent) => {
+      if (!dragging) return;
+      setSidebarWidth(Math.min(420, Math.max(200, e.clientX)));
+    };
+    const onUp = () => { dragging = false; };
+    const el = document.getElementById('sidebar-resize');
+    if (el) {
+      el.addEventListener('mousedown', () => { dragging = true; });
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onUp);
+    }
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+  }, []);
+
+  const activeTab = tabs.find(t => t.id === activeTabId);
+  const totalLines = activeTab ? activeTab.content.split('\n').length : 1;
+  const totalChars = activeTab ? activeTab.content.length : 0;
+  const activeNode = selectedPath ? findNode(selectedPath) : null;
+
+  return (
+    <div className="flex flex-col h-screen overflow-hidden">
+      <TopNav active={navSection} onNav={handleNav} onPalette={() => setCommandPaletteOpen(true)} />
+
+      <div className="flex flex-1 min-h-0">
+        {sidebarOpen && (
+          <div className="flex flex-shrink-0">
+            <div className="flex flex-col h-full border-r hairline" style={{ width: sidebarWidth }}>
+              <ExplorerTree
+                selectedPath={selectedPath}
+                expandedPaths={expandedPaths}
+                onSelect={handleSelect}
+                onToggle={handleToggle}
+              />
+            </div>
+            <div id="sidebar-resize" className="resize-handle self-stretch" />
+          </div>
+        )}
+
+        <div className="flex-1 flex flex-col min-w-0">
+          <Pane
+            tabs={tabs}
+            activeTabId={activeTabId}
+            onTabChange={handleTabChange}
+            onTabClose={handleTabClose}
+            onNewTab={handleNewTab}
+            onTabUpdate={handleTabUpdate}
+            onOpenFile={handleSelect}
+          />
+          <StatusBar
+            mode={mode}
+            position={cursorPosition}
+            total={{ lines: totalLines, chars: totalChars }}
+            language={activeTab?.language || 'typescript'}
+            modified={activeTab?.modified || false}
+            sidebarOpen={sidebarOpen}
+            onToggleSidebar={() => setSidebarOpen(v => !v)}
+          />
+        </div>
+
+        <Inspector
+          node={activeNode}
+          onOpenFile={handleSelect}
+          onToggle={handleToggle}
+          expandedPaths={expandedPaths}
         />
       </div>
 
       <CommandPalette
         isOpen={commandPaletteOpen}
         onClose={() => setCommandPaletteOpen(false)}
-        onCommand={handleCommand}
+        context={commandContext}
       />
+
+      {notifications.map(n => (
+        <div
+          key={n.id}
+          className={"fixed bottom-12 right-6 z-50 px-4 py-2.5 rounded-lg shadow-2xl text-[12px] font-medium animate-slide-in glass border hairline " +
+            (n.type === 'success' ? 'text-[var(--success)]' : '') +
+            (n.type === 'error' ? 'text-[var(--danger)]' : '') +
+            (n.type === 'warning' ? 'text-[var(--warn)]' : '') +
+            (n.type === 'info' ? 'text-[var(--fg)]' : '')}
+        >
+          {n.message}
+        </div>
+      ))}
     </div>
   );
 }

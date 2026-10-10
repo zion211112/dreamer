@@ -25,6 +25,7 @@ build.done
 NUL
 tmp-*.log
 tmp-*.html
+tmp/
 
 # Screenshot tooling. The harness (capture.cjs) is worth keeping; its browser
 # profile, node_modules, captures and logs are throwaway artifacts.

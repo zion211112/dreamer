@@ -1,208 +1,101 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Tab, createTab, getMockContent } from '@/lib/editor';
 
-interface Tab {
-  id: string;
-  name: string;
-  path: string;
-  content: string;
-  language: string;
-  modified: boolean;
-  active: boolean;
+interface PaneProps {
+  tabs: Tab[];
+  activeTabId: string | null;
+  onTabChange: (id: string) => void;
+  onTabClose: (id: string) => void;
+  onNewTab: () => void;
+  onTabUpdate: (id: string, updates: Partial<Tab>) => void;
+  onOpenFile: (path: string) => void;
 }
 
-const LANGUAGES: Record<string, string> = {
-  '.tsx': 'typescript',
-  '.ts': 'typescript',
-  '.js': 'javascript',
-  '.jsx': 'javascript',
-  '.json': 'json',
-  '.css': 'css',
-  '.html': 'html',
-  '.md': 'markdown',
-  '.py': 'python',
-  '.rs': 'rust',
-  '.go': 'go',
-};
-
-const MOCK_CONTENT: Record<string, { content: string; language: string }> = {
-  '/src/app/page.tsx': {
-    language: 'typescript',
-    content: `import { FileTreeWrapper } from '@/components/FileTree';
-import { Pane } from '@/components/Pane';
-import { StatusBar } from '@/components/StatusBar';
-import { CommandPalette } from '@/components/CommandPalette';
-
-export default function Page() {
-  return (
-    <div className="flex h-screen overflow-hidden terminal-font">
-      <FileTreeWrapper selectedPath={null} onSelect={() => {}} onToggle={() => {}} />
-      <Pane tabs={[]} activeTabId={null} onTabChange={() => {}} onTabClose={() => {}} />
-      <StatusBar mode="NORMAL" position={1} total={1} />
-      <CommandPalette isOpen={false} onClose={() => {}} />
-    </div>
-  );
-}`
-  },
-  '/src/app/layout.tsx': {
-    language: 'typescript',
-    content: `import type { Metadata } from 'next';
-import './globals.css';
-
-export const metadata: Metadata = {
-  title: 'proto.shell — orchestrator interface for everyone',
-  description: 'A witty, expert, enterprise-grade file manager interface.',
-};
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en" class="h-full">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      </head>
-      <body class="h-full bg-[var(--bg)] text-[var(--fg)] antialiased grid-pattern">
-        {children}
-      </body>
-    </html>
-  );
-}`
-  },
-  '/src/app/globals.css': {
-    language: 'css',
-    content: `@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root {
-  --bg: #0a0f1a;
-  --bg-elevated: #111827;
-  --fg: #e5e7eb;
-  --fg-muted: #9ca3af;
-  --accent: #22d3ee;
-  --accent-dim: #06b6d4;
-  --warn: #fbbf24;
-  --danger: #f87171;
-  --success: #34d399;
-  --border: #1f2937;
-  --card: #111827;
-}
-
-* { box-sizing: border-box; }
-html, body, #__next { height: 100%; margin: 0; }
-
-body {
-  background: var(--bg);
-  color: var(--fg);
-  font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, monospace;
-  font-size: 13px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}`
-  },
-  '/config/package.json': {
-    language: 'json',
-    content: `{
-  "name": "newprotoshell",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "next": "14.2.35",
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
-  },
-  "devDependencies": {
-    "@types/node": "20.14.12",
-    "@types/react": "18.3.3",
-    "@types/react-dom": "18.3.0",
-    "autoprefixer": "10.4.19",
-    "postcss": "8.4.40",
-    "tailwindcss": "3.4.10",
-    "typescript": "5.5.4"
-  }
-}`
-  },
-};
-
-function getLanguageFromPath(path: string): string {
-  const ext = '.' + path.split('.').pop()?.toLowerCase();
-  return LANGUAGES[ext] || 'plaintext';
-}
-
-function getMockContent(path: string) {
-  return MOCK_CONTENT[path] || { content: `// ${path}\n// File content would load here...`, language: getLanguageFromPath(path) };
-}
-
-function highlightLine(line: string, language: string): string {
+function highlightLineSafe(line: string, language: string): string {
+  if (!line) return '<span></span>';
+  let html = escapeHtml(line);
   if (language === 'typescript' || language === 'javascript') {
-    return line
-      .replace(/(\/\/.*$)/gm, '<span class="text-[var(--fg-muted)]">$1</span>')
-      .replace(/\b(const|let|var|function|return|if|else|for|while|import|export|from|default|interface|type|class|extends|implements|public|private|protected|readonly|async|await|try|catch|finally|throw|new|this|super|typeof|instanceof|in|of|as|is)\b/g, '<span class="text-[var(--accent)]">$1</span>')
-      .replace(/\b(string|number|boolean|object|any|void|never|unknown|Record|Array|Promise|Map|Set)\b/g, '<span class="text-[var(--warn)]">$1</span>')
-      .replace(/(".*?"|'.*?'|`.*?`)/g, '<span class="text-[var(--success)]">$1</span>')
-      .replace(/(\d+)/g, '<span class="text-[var(--warn)]">$1</span>');
+    html = html
+      .replace(/(\/\/.*$)/, '<span class="comment">$1</span>')
+      .replace(/\b(const|let|var|function|return|if|else|for|while|import|export|from|default|interface|type|class|extends|implements|public|private|protected|readonly|async|await|try|catch|finally|throw|new|this|super|typeof|instanceof|in|of|as|is)\b/g, '<span class="keyword">$1</span>')
+      .replace(/\b(string|number|boolean|object|any|void|never|unknown|Record|Array|Promise|Map|Set|Date|Error|console)\b/g, '<span class="type">$1</span>')
+      .replace(/(".*?"|'.*?'|`.*?`)/g, '<span class="string">$1</span>')
+      .replace(/(\b\d+\.?\d*\b)/g, '<span class="number">$1</span>');
+  } else if (language === 'json') {
+    html = html
+      .replace(/(".*?")\s*:/g, '<span class="key">$1</span>:')
+      .replace(/:\s*(".*?")/g, ': <span class="string">$1</span>')
+      .replace(/:\s*(\d+\.?\d*)/g, ': <span class="number">$1</span>')
+      .replace(/:\s*(true|false|null)\b/g, ': <span class="keyword">$1</span>');
+  } else if (language === 'css') {
+    html = html
+      .replace(/([^{}:]+)\s*{/g, '<span class="selector">$1</span> {')
+      .replace(/(\s+)([^:]+):/g, '$1<span class="property">$2</span>:')
+      .replace(/:\s*([^;]+);/g, ': <span class="value">$1</span>;');
   }
-  if (language === 'json') {
-    return line
-      .replace(/(".*?")\s*:/g, '<span class="text-[var(--accent)]">$1</span>:')
-      .replace(/:\s*(".*?")/g, ': <span class="text-[var(--success)]">$1</span>')
-      .replace(/:\s*(\d+)/g, ': <span class="text-[var(--warn)]">$1</span>')
-      .replace(/:\s*(true|false|null)/g, ': <span class="text-[var(--warn)]">$1</span>');
-  }
-  if (language === 'css') {
-    return line
-      .replace(/([^{}:]+)\s*{/g, '<span class="text-[var(--accent)]">$1</span> {')
-      .replace(/(\s+)([^:]+):/g, '$1<span class="text-[var(--warn)]">$2</span>:')
-      .replace(/:\s*([^;]+);/g, ': <span class="text-[var(--success)]">$1</span>;');
-  }
-  return line;
+  return html;
 }
 
-function Editor({ tab, onChange }: { tab: Tab; onChange: (content: string) => void }) {
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function Editor({ tab, onChange }: {
+  tab: Tab;
+  onChange: (content: string) => void;
+}) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [scrollTop, setScrollTop] = useState(0);
+  const highlightRef = useRef<HTMLDivElement>(null);
+  const lineNumRef = useRef<HTMLDivElement>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value);
-  };
+  }, [onChange]);
 
-  const handleScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
-    setScrollTop(e.currentTarget.scrollTop);
-  };
+  const handleScroll = useCallback((e: React.UIEvent<HTMLTextAreaElement>) => {
+    const { scrollTop, scrollLeft } = e.currentTarget;
+    if (highlightRef.current) {
+      highlightRef.current.style.transform = `translate(${-scrollLeft}px, ${-scrollTop}px)`;
+    }
+    if (lineNumRef.current) {
+      lineNumRef.current.style.transform = `translateY(${-scrollTop}px)`;
+    }
+  }, []);
 
   const lines = tab.content.split('\n');
   const lineNumbers = lines.map((_, i) => i + 1);
 
   return (
-    <div className="flex-1 flex relative">
+    <div className="flex-1 flex relative min-h-0">
       <div
-        className="w-10 bg-[var(--bg)] border-r border-[var(--border)] flex flex-col items-center pt-2 select-none overflow-hidden"
-        style={{ fontSize: '11px', lineHeight: '1.6' }}
+        ref={lineNumRef}
+        className="w-11 bg-[var(--surface)] border-r hairline flex flex-col items-center pt-3 select-none overflow-hidden flex-shrink-0"
+        style={{ fontSize: '11px', lineHeight: '1.7' }}
       >
         {lineNumbers.map((num, i) => (
-          <div key={i} className="w-full text-right pr-2 text-[var(--fg-muted)]" style={{ height: '1.6em' }}>
+          <div key={i} className="w-full text-right pr-3 text-[var(--fg-faint)]" style={{ height: '1.7em' }}>
             {num}
           </div>
         ))}
       </div>
-      <div className="flex-1 relative">
+      <div className="flex-1 relative min-w-0">
         <textarea
           ref={textareaRef}
           className="absolute inset-0 bg-transparent border-none resize-none outline-none terminal-font tab-size-2"
           style={{
-            fontSize: '12px',
-            lineHeight: '1.6',
-            padding: '8px 12px',
+            fontSize: '12.5px',
+            lineHeight: '1.7',
+            padding: '10px 14px',
             color: 'var(--fg)',
-            caretColor: 'var(--accent)',
+            caretColor: 'var(--accent-hi)',
+            background: 'transparent',
           }}
           value={tab.content}
           onChange={handleChange}
@@ -210,17 +103,19 @@ function Editor({ tab, onChange }: { tab: Tab; onChange: (content: string) => vo
           spellCheck={false}
         />
         <div
+          ref={highlightRef}
           className="absolute inset-0 pointer-events-none terminal-font overflow-hidden"
           style={{
-            fontSize: '12px',
-            lineHeight: '1.6',
-            padding: '8px 12px',
+            fontSize: '12.5px',
+            lineHeight: '1.7',
+            padding: '10px 14px',
             whiteSpace: 'pre-wrap',
             wordBreak: 'break-word',
+            color: 'transparent',
           }}
         >
           {lines.map((line, i) => (
-            <div key={i} style={{ height: '1.6em' }} dangerouslySetInnerHTML={{ __html: highlightLine(line, tab.language) }} />
+            <div key={i} style={{ height: '1.7em' }} dangerouslySetInnerHTML={{ __html: highlightLineSafe(line, tab.language) }} />
           ))}
         </div>
       </div>
@@ -234,67 +129,103 @@ export function Pane({
   onTabChange,
   onTabClose,
   onNewTab,
-}: {
-  tabs: Tab[];
-  activeTabId: string | null;
-  onTabChange: (id: string) => void;
-  onTabClose: (id: string) => void;
-  onNewTab: () => void;
-}) {
+  onTabUpdate,
+  onOpenFile,
+}: PaneProps) {
   const activeTab = tabs.find(t => t.id === activeTabId);
 
+  const handleEditorChange = useCallback((content: string) => {
+    if (activeTab) {
+      onTabUpdate(activeTab.id, { content, modified: true, saved: false });
+    }
+  }, [activeTab, onTabUpdate]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent, tabId: string) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      e.preventDefault();
+      const tab = tabs.find(t => t.id === tabId);
+      if (tab?.modified) {
+        onTabUpdate(tabId, { modified: false, saved: true });
+      }
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
+      e.preventDefault();
+      onTabClose(tabId);
+    }
+  }, [tabs, onTabUpdate, onTabClose]);
+
   return (
-    <div className="flex-1 flex flex-col min-w-0 bg-[var(--bg-elevated)]">
-      <div className="flex items-center h-8 px-2 border-b border-[var(--border)] bg-[var(--card)] gap-1 overflow-x-auto scrollbar-thin">
-        {tabs.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => onTabChange(tab.id)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-[12px] rounded-t transition-colors whitespace-nowrap ${
-              tab.id === activeTabId
-                ? 'bg-[var(--bg-elevated)] text-[var(--fg)] border-b-2 border-[var(--accent)]'
-                : 'text-[var(--fg-muted)] hover:text-[var(--fg)] hover:bg-[var(--bg)]'
-            }`}
-          >
-            <span className="text-[var(--accent)]" style={{ fontSize: '11px' }}>
-              {tab.path.match(/\.(\w+)$/)?.[1] || '○'}
-            </span>
-            <span className="truncate max-w-[160px]">{tab.name}</span>
-            {tab.modified && <span className="text-[var(--warn)]" style={{ fontSize: '9px' }}>●</span>}
+    <div className="flex-1 flex flex-col min-w-0 min-h-0 bg-[var(--surface)]">
+      <div className="flex items-center h-10 px-2 border-b hairline bg-[var(--surface)] gap-1 overflow-x-auto scrollbar-thin flex-shrink-0">
+        {tabs.map(tab => {
+          const isActive = tab.id === activeTabId;
+          const ext = tab.path.match(/\.(\w+)$/)?.[1] || '';
+          return (
             <button
-              onClick={(e) => { e.stopPropagation(); onTabClose(tab.id); }}
-              className="ml-1 p-0.5 rounded hover:bg-[var(--fg)]/10 text-[var(--fg-muted)] hover:text-[var(--danger)] transition-colors"
-              style={{ fontSize: '10px', lineHeight: 1 }}
+              key={tab.id}
+              onClick={() => onTabChange(tab.id)}
+              onKeyDown={(e) => handleKeyDown(e, tab.id)}
+              className={'group flex items-center gap-2 pl-3 pr-2 py-1.5 text-[12px] rounded-t-md transition-all whitespace-nowrap relative max-w-[200px] ' +
+                (isActive
+                  ? 'bg-[var(--bg)] text-[var(--fg)]'
+                  : 'text-[var(--fg-muted)] hover:text-[var(--fg)] hover:bg-[var(--border)]')}
+              style={isActive ? { boxShadow: 'inset 0 2px 0 var(--accent)' } : undefined}
             >
-              ×
+              <span className={'text-[9px] font-mono px-1 rounded ' + (isActive ? 'text-[var(--accent-hi)] bg-[var(--accent-soft)]' : 'text-[var(--fg-faint)]')}>
+                {ext || '·'}
+              </span>
+              <span className="truncate">{tab.name}</span>
+              {tab.modified && (
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--warn)] flex-shrink-0" title="unsaved" />
+              )}
+              <span
+                role="button"
+                tabIndex={0}
+                onClick={(e) => { e.stopPropagation(); onTabClose(tab.id); }}
+                className="ml-0.5 p-0.5 rounded hover:bg-[var(--border)] text-[var(--fg-faint)] hover:text-[var(--danger)] transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0"
+                style={{ fontSize: '12px', lineHeight: 1 }}
+              >
+                ×
+              </span>
             </button>
-          </button>
-        ))}
+          );
+        })}
         <button
           onClick={onNewTab}
-          className="flex items-center justify-center w-8 h-6 rounded text-[var(--fg-muted)] hover:text-[var(--fg)] hover:bg-[var(--bg)] transition-colors"
-          style={{ fontSize: '14px' }}
+          className="flex items-center justify-center w-7 h-7 rounded-md text-[var(--fg-muted)] hover:text-[var(--fg)] hover:bg-[var(--border)] transition-colors flex-shrink-0"
+          style={{ fontSize: '15px' }}
           title="New file (Ctrl+N)"
         >
           +
         </button>
         {tabs.length === 0 && (
           <div className="flex-1 flex items-center justify-center text-[var(--fg-muted)] text-[12px] px-4">
-            No files open. Double-click a file or press <kbd className="px-1.5 py-0.5 bg-[var(--bg)] rounded text-[10px] border border-[var(--border)]">Ctrl+P</kbd> to search
+            No files open. Click a file in the explorer or press <span className="kbd mx-1.5">Ctrl+P</span> to search
           </div>
         )}
       </div>
-      <div className="flex-1 flex overflow-hidden">
+
+      <div className="flex-1 flex overflow-hidden min-h-0">
         {activeTab ? (
-          <Editor tab={activeTab} onChange={(content) => {
-            // In a real app, update tab content
-          }} />
+          <Editor tab={activeTab} onChange={handleEditorChange} />
         ) : (
           <div className="flex-1 flex items-center justify-center text-[var(--fg-muted)]">
-            <div className="text-center p-8">
-              <div className="text-[var(--accent)] text-4xl mb-4" style={{ fontSize: '48px', opacity: 0.3 }}>proto.shell</div>
-              <p className="text-[13px] mb-2">Orchestrator interface for everyone</p>
-              <p className="text-[11px] opacity-60">Press <kbd className="px-2 py-1 bg-[var(--bg)] rounded border border-[var(--border)]">Ctrl+K</kbd> for commands</p>
+            <div className="text-center p-8 animate-fade-in">
+              <div
+                className="w-14 h-14 mx-auto mb-5 rounded-2xl flex items-center justify-center"
+                style={{ background: 'linear-gradient(135deg, var(--accent) 0%, var(--cyan) 100%)', boxShadow: '0 8px 32px rgba(124,108,255,0.3)' }}
+              >
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
+                </svg>
+              </div>
+              <h2 className="text-[15px] font-semibold text-[var(--fg)] mb-1.5">File manager for systems thinkers</h2>
+              <p className="text-[12px] text-[var(--fg-muted)] mb-5">Every node is a page. Select anything to inspect it.</p>
+              <div className="flex items-center justify-center gap-4 text-[11px] text-[var(--fg-faint)]">
+                <span className="flex items-center gap-1.5"><span className="kbd">Ctrl+K</span> commands</span>
+                <span className="flex items-center gap-1.5"><span className="kbd">Ctrl+B</span> sidebar</span>
+                <span className="flex items-center gap-1.5"><span className="kbd">Ctrl+N</span> new file</span>
+              </div>
             </div>
           </div>
         )}
