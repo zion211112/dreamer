@@ -1,34 +1,23 @@
 {
-  "name": "apt-labs-site",
+  "name": "newprotoshell",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "typecheck": "tsc --noEmit",
-    "check:contrast": "node scripts/check-contrast.mjs",
-    "check:scale": "node scripts/check-scale.mjs",
-    "check:lexicon": "node scripts/check-lexicon.mjs",
-    "check:epistemic": "node --no-warnings --experimental-strip-types scripts/check-epistemic.mjs",
-    "check": "npm run typecheck && npm run lint && npm run check:scale && npm run check:contrast && npm run check:lexicon && npm run check:epistemic && npm run build"
+    "lint": "next lint"
   },
   "dependencies": {
-    "@xyflow/react": "^12.12.0",
     "next": "14.2.35",
     "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "zod": "^4.6.5",
-    "zustand": "^5.0.15"
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
     "@types/node": "20.14.12",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
     "autoprefixer": "10.4.19",
-    "eslint": "8.57.0",
-    "eslint-config-next": "14.2.35",
     "postcss": "8.4.40",
     "tailwindcss": "3.4.10",
     "typescript": "5.5.4"
