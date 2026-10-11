@@ -70,51 +70,122 @@ function dir(name: string, path: string, children: FileNode[]): FileNode {
   };
 }
 
+/**
+ * Kernel sub-foundations: identity, issuance, verification
+ */
+function kernel(): FileNode {
+  return dir('kernel', '/kernel', [
+    dir('identity', '/kernel/identity', [
+      file('did-method.ts', '/kernel/identity/did-method.ts', 3200, 2),
+      file('key-registry.ts', '/kernel/identity/key-registry.ts', 2800, 3),
+      file('identity-utils.ts', '/kernel/identity/identity-utils.ts', 1500, 4),
+    ]),
+    dir('issuance', '/kernel/issuance', [
+      dir('teacher', '/kernel/issuance/teacher', [
+        file('schema.ts', '/kernel/issuance/teacher/schema.ts', 2400, 1),
+        file('mint.ts', '/kernel/issuance/teacher/mint.ts', 4100, 0),
+        file('revoke.ts', '/kernel/issuance/teacher/revoke.ts', 1800, 2),
+      ]),
+      dir('learner', '/kernel/issuance/learner', [
+        file('schema.ts', '/kernel/issuance/learner/schema.ts', 2200, 1),
+        file('accept.ts', '/kernel/issuance/learner/accept.ts', 3900, 0),
+        file('showcase.ts', '/kernel/issuance/learner/showcase.ts', 3300, 2),
+      ]),
+      file('core.ts', '/kernel/issuance/core.ts', 5000, 0),
+    ]),
+    dir('verification', '/kernel/verification', [
+      file('validator.ts', '/kernel/verification/validator.ts', 3500, 1),
+      file('challenger.ts', '/kernel/verification/challenger.ts', 2900, 2),
+      file('gatekeeper.ts', '/kernel/verification/gatekeeper.ts', 3100, 0),
+    ]),
+    file('tsconfig.json', '/kernel/tsconfig.json', 600, 5),
+    file('eslint.config.mjs', '/kernel/eslint.config.mjs', 950, 5),
+  ]);
+}
+
+/**
+ * Institutions: schools, accreditation, verification authorities
+ */
+function institutions(): FileNode {
+  return dir('institutions', '/institutions', [
+    dir('schools', '/institutions/schools', [
+      file('accreditation.yml', '/institutions/schools/accreditation.yml', 4100, 0),
+      file('roster.json', '/institutions/schools/roster.json', 12000, 1),
+      file('circulum-map.ts', '/institutions/schools/circulum-map.ts', 3800, 2),
+    ]),
+    dir('accreditation', '/institutions/accreditation', [
+      file('standards.md', '/institutions/accreditation/standards.md', 8500, 0),
+      file('audit-log.ts', '/institutions/accreditation/audit-log.ts', 4200, 1),
+      file('appeals.yaml', '/institutions/accreditation/appeals.yaml', 1900, 2),
+    ]),
+    dir('authorities', '/institutions/authorities', [
+      file('root-certs.pem', '/institutions/authorities/root-certs.pem', 1800, 0),
+      file('crl.ts', '/institutions/authorities/crl.ts', 2600, 1),
+      file('ocsp.ts', '/institutions/authorities/ocsp.ts', 2200, 2),
+    ]),
+    file('treaty.md', '/institutions/treaty.md', 5600, 0),
+  ]);
+}
+
+/**
+ * People: teachers, learners, anchors
+ */
+function people(): FileNode {
+  return dir('people', '/people', [
+    dir('teachers', '/people/teachers', [
+      file('profiles.json', '/people/teachers/profiles.json', 22000, 0),
+      file('reputation.ts', '/people/teachers/reputation.ts', 3300, 1),
+      file('availability.ics', '/people/teachers/availability.ics', 900, 2),
+    ]),
+    dir('learners', '/people/learners', [
+      file('wallet.ts', '/people/learners/wallet.ts', 4100, 0),
+      file('progress.md', '/people/learners/progress.md', 6700, 1),
+      file('goals.yaml', '/people/learners/goals.yaml', 1100, 2),
+    ]),
+    dir('anchors', '/people/anchors', [
+      file('anchors.json', '/people/anchors/anchors.json', 8900, 0),
+      file('attest.ts', '/people/anchors/attest.ts', 2700, 1),
+      file('challenge.ts', '/people/anchors/challenge.ts', 2400, 2),
+    ]),
+    file('handbook.md', '/people/handbook.md', 4800, 1),
+    file('code-of-conduct.md', '/people/code-of-conduct.md', 3100, 0),
+  ]);
+}
+
+/**
+ * Foundation: the root of the system. Its children ARE the 3 true
+ * sub-foundations — kernel (where SBTs are issued), institutions
+ * (schools, accreditation, verification authorities), and people
+ * (teachers, learners, anchors). Foundations live inside foundations.
+ */
 function foundation(): FileNode {
   return dir('foundation', '/foundation', [
-    dir('core', '/foundation/core', [
-      file('config.ts', '/foundation/core/config.ts', 3421, 2),
-      file('constants.ts', '/foundation/core/constants.ts', 1876, 2),
-      file('types.ts', '/foundation/core/types.ts', 4210, 3),
-      file('utils.ts', '/foundation/core/utils.ts', 5632, 1),
-      file('errors.ts', '/foundation/core/errors.ts', 2145, 4),
-    ]),
-    dir('shared', '/foundation/shared', [
-      file('hooks.ts', '/foundation/shared/hooks.ts', 6721, 1),
-      file('context.tsx', '/foundation/shared/context.tsx', 3892, 2),
-      file('api.ts', '/foundation/shared/api.ts', 4567, 0),
-      file('storage.ts', '/foundation/shared/storage.ts', 2981, 3),
-    ]),
-    file('tsconfig.json', '/foundation/tsconfig.json', 573, 5),
-    file('eslint.config.mjs', '/foundation/eslint.config.mjs', 892, 5),
+    kernel(),
+    institutions(),
+    people(),
+    file('manifest.json', '/foundation/manifest.json', 1400, 1),
+    file('charter.md', '/foundation/charter.md', 5200, 2),
   ]);
 }
 
 function products(): FileNode {
   return dir('products', '/products', [
-    dir('web', '/products/web', [
-      file('layout.tsx', '/products/web/layout.tsx', 2156, 0),
-      file('page.tsx', '/products/web/page.tsx', 8432, 0),
-      file('globals.css', '/products/web/globals.css', 3210, 1),
-      dir('components', '/products/web/components', [
-        file('Header.tsx', '/products/web/components/Header.tsx', 4123, 1),
-        file('Sidebar.tsx', '/products/web/components/Sidebar.tsx', 3876, 1),
-        file('Footer.tsx', '/products/web/components/Footer.tsx', 1234, 2),
-        file('Navigation.tsx', '/products/web/components/Navigation.tsx', 5210, 0),
+    dir('builds', '/products/builds', [
+      dir('teacher-console', '/products/builds/teacher-console', [
+        file('console.tsx', '/products/builds/teacher-console/console.tsx', 8400, 0),
+        file('issuance.ts', '/products/builds/teacher-console/issuance.ts', 5100, 0),
+        file('roster.tsx', '/products/builds/teacher-console/roster.tsx', 4300, 1),
       ]),
-      dir('features', '/products/web/features', [
-        file('Dashboard.tsx', '/products/web/features/Dashboard.tsx', 7821, 0),
-        file('Settings.tsx', '/products/web/features/Settings.tsx', 4532, 1),
-        file('Profile.tsx', '/products/web/features/Profile.tsx', 3210, 2),
+      dir('school-console', '/products/builds/school-console', [
+        file('console.tsx', '/products/builds/school-console/console.tsx', 9100, 0),
+        file('verify.ts', '/products/builds/school-console/verify.ts', 3800, 1),
+        file('analytics.tsx', '/products/builds/school-console/analytics.tsx', 5600, 1),
       ]),
-    ]),
-    dir('mobile', '/products/mobile', [
-      file('App.tsx', '/products/mobile/App.tsx', 2341, 2),
-      file('navigation.tsx', '/products/mobile/navigation.tsx', 4123, 1),
-      dir('screens', '/products/mobile/screens', [
-        file('HomeScreen.tsx', '/products/mobile/screens/HomeScreen.tsx', 3876, 1),
-        file('DetailScreen.tsx', '/products/mobile/screens/DetailScreen.tsx', 4210, 2),
+      dir('credential-wallet', '/products/builds/credential-wallet', [
+        file('wallet.tsx', '/products/builds/credential-wallet/wallet.tsx', 6700, 0),
+        file('present.ts', '/products/builds/credential-wallet/present.ts', 2900, 2),
       ]),
+      file('placement-engine.ts', '/products/builds/placement-engine.ts', 7400, 0),
     ]),
   ]);
 }
@@ -122,65 +193,25 @@ function products(): FileNode {
 function design(): FileNode {
   return dir('design', '/design', [
     dir('tokens', '/design/tokens', [
-      file('colors.ts', '/design/tokens/colors.ts', 3421, 3),
-      file('spacing.ts', '/design/tokens/spacing.ts', 1234, 3),
-      file('typography.ts', '/design/tokens/typography.ts', 2876, 4),
-      file('shadows.ts', '/design/tokens/shadows.ts', 1567, 4),
-      file('motion.ts', '/design/tokens/motion.ts', 2134, 2),
-      file('breakpoints.ts', '/design/tokens/breakpoints.ts', 892, 4),
+      file('colors.ts', '/design/tokens/colors.ts', 3400, 1),
+      file('typography.ts', '/design/tokens/typography.ts', 2100, 1),
+      file('motion.ts', '/design/tokens/motion.ts', 1600, 2),
     ]),
     dir('components', '/design/components', [
-      file('Button.tsx', '/design/components/Button.tsx', 4532, 1),
-      file('Input.tsx', '/design/components/Input.tsx', 3876, 1),
-      file('Card.tsx', '/design/components/Card.tsx', 3210, 2),
-      file('Modal.tsx', '/design/components/Modal.tsx', 5421, 0),
-      file('Dropdown.tsx', '/design/components/Dropdown.tsx', 3876, 1),
-      file('Tooltip.tsx', '/design/components/Tooltip.tsx', 2134, 2),
-      file('Avatar.tsx', '/design/components/Avatar.tsx', 1876, 3),
-      file('Badge.tsx', '/design/components/Badge.tsx', 1543, 3),
+      file('node-card.tsx', '/design/components/node-card.tsx', 3900, 0),
+      file('edge-bezier.tsx', '/design/components/edge-bezier.tsx', 2800, 0),
     ]),
-    dir('patterns', '/design/patterns', [
-      file('forms.tsx', '/design/patterns/forms.tsx', 6721, 1),
-      file('tables.tsx', '/design/patterns/tables.tsx', 5432, 2),
-      file('navigation.tsx', '/design/patterns/navigation.tsx', 4321, 2),
-      file('feedback.tsx', '/design/patterns/feedback.tsx', 3876, 1),
-    ]),
-    file('tokens.json', '/design/tokens.json', 4210, 3),
   ]);
 }
 
 function operations(): FileNode {
   return dir('operations', '/operations', [
-    dir('ci', '/operations/ci', [
-      dir('github', '/operations/ci/github', [
-        file('ci.yml', '/operations/ci/github/ci.yml', 3421, 1),
-        file('deploy.yml', '/operations/ci/github/deploy.yml', 2876, 2),
-        file('release.yml', '/operations/ci/github/release.yml', 2134, 3),
-      ]),
-      dir('scripts', '/operations/ci/scripts', [
-        file('build.sh', '/operations/ci/scripts/build.sh', 1876, 2),
-        file('test.sh', '/operations/ci/scripts/test.sh', 1543, 3),
-        file('lint.sh', '/operations/ci/scripts/lint.sh', 1234, 3),
-      ]),
-    ]),
     dir('infrastructure', '/operations/infrastructure', [
-      file('Dockerfile', '/operations/infrastructure/Dockerfile', 2341, 2),
-      file('docker-compose.yml', '/operations/infrastructure/docker-compose.yml', 3210, 3),
-      dir('kubernetes', '/operations/infrastructure/kubernetes', [
-        file('deployment.yaml', '/operations/infrastructure/kubernetes/deployment.yaml', 2876, 2),
-        file('service.yaml', '/operations/infrastructure/kubernetes/service.yaml', 1543, 3),
-        file('ingress.yaml', '/operations/infrastructure/kubernetes/ingress.yaml', 2134, 3),
-      ]),
-      dir('terraform', '/operations/infrastructure/terraform', [
-        file('main.tf', '/operations/infrastructure/terraform/main.tf', 4532, 1),
-        file('variables.tf', '/operations/infrastructure/terraform/variables.tf', 2134, 2),
-        file('outputs.tf', '/operations/infrastructure/terraform/outputs.tf', 1543, 2),
-      ]),
+      file('deploy.yml', '/operations/infrastructure/deploy.yml', 2600, 1),
+      file('docker-compose.yml', '/operations/infrastructure/docker-compose.yml', 3100, 2),
     ]),
     dir('monitoring', '/operations/monitoring', [
-      file('prometheus.yml', '/operations/monitoring/prometheus.yml', 2876, 3),
-      file('grafana-dashboard.json', '/operations/monitoring/grafana-dashboard.json', 5432, 1),
-      file('alerts.yml', '/operations/monitoring/alerts.yml', 3210, 2),
+      file('alerts.yml', '/operations/monitoring/alerts.yml', 1900, 1),
     ]),
   ]);
 }
@@ -188,42 +219,20 @@ function operations(): FileNode {
 function laboratory(): FileNode {
   return dir('laboratory', '/laboratory', [
     dir('experiments', '/laboratory/experiments', [
-      file('wasm-runtime.ts', '/laboratory/experiments/wasm-runtime.ts', 8721, 0),
-      file('ai-embedding.ts', '/laboratory/experiments/ai-embedding.ts', 6543, 1),
-      file('crdt-sync.ts', '/laboratory/experiments/crdt-sync.ts', 7210, 2),
-      file('webgpu-compute.ts', '/laboratory/experiments/webgpu-compute.ts', 5432, 0),
+      file('wasm-runtime.ts', '/laboratory/experiments/wasm-runtime.ts', 8700, 0),
+      file('crdt-sync.ts', '/laboratory/experiments/crdt-sync.ts', 7200, 1),
     ]),
     dir('research', '/laboratory/research', [
-      dir('papers', '/laboratory/research/papers', [
-        file('distributed-consensus.md', '/laboratory/research/papers/distributed-consensus.md', 12432, 4),
-        file('local-first-architecture.md', '/laboratory/research/papers/local-first-architecture.md', 9876, 3),
-        file('end-to-end-encryption.md', '/laboratory/research/papers/end-to-end-encryption.md', 11234, 5),
-      ]),
-      dir('notes', '/laboratory/research/notes', [
-        file('architecture-decisions.md', '/laboratory/research/notes/architecture-decisions.md', 4532, 0),
-        file('performance-baselines.md', '/laboratory/research/notes/performance-baselines.md', 3210, 1),
-        file('security-model.md', '/laboratory/research/notes/security-model.md', 5432, 2),
-      ]),
-    ]),
-    dir('prototypes', '/laboratory/prototypes', [
-      dir('realtime-editor', '/laboratory/prototypes/realtime-editor', [
-        file('index.ts', '/laboratory/prototypes/realtime-editor/index.ts', 4321, 1),
-        file('sync-engine.ts', '/laboratory/prototypes/realtime-editor/sync-engine.ts', 6721, 2),
-      ]),
-      dir('visual-programming', '/laboratory/prototypes/visual-programming', [
-        file('editor.tsx', '/laboratory/prototypes/visual-programming/editor.tsx', 8210, 0),
-        file('node-registry.ts', '/laboratory/prototypes/visual-programming/node-registry.ts', 5432, 1),
-      ]),
-      dir('local-first-db', '/laboratory/prototypes/local-first-db', [
-        file('database.ts', '/laboratory/prototypes/local-first-db/database.ts', 7621, 0),
-        file('sync-protocol.ts', '/laboratory/prototypes/local-first-db/sync-protocol.ts', 5876, 1),
-      ]),
+      file('local-first.md', '/laboratory/research/local-first.md', 9800, 2),
     ]),
   ]);
 }
 
 export const DEPARTMENT_COLORS: Record<string, string> = {
   foundation: '#7c6cff',
+  kernel: '#9d8fff',
+  institutions: '#56c8dc',
+  people: '#f0b45a',
   products: '#56c8dc',
   design: '#f0b45a',
   operations: '#4ade80',
@@ -232,37 +241,44 @@ export const DEPARTMENT_COLORS: Record<string, string> = {
 
 export const DEPARTMENTS: Department[] = [
   {
+    id: 'workspace',
+    name: 'workspace',
+    description: 'control dashboard',
+    icon: '◎',
+    root: dir('workspace', '/workspace', []),
+  },
+  {
     id: 'foundation',
     name: 'foundation',
-    description: 'Core platform primitives',
+    description: 'kernel · institutions · people',
     icon: '⬡',
     root: foundation(),
   },
   {
     id: 'products',
     name: 'products',
-    description: 'Shipping surfaces',
+    description: 'builds: consoles & engines',
     icon: '▢',
     root: products(),
   },
   {
     id: 'design',
     name: 'design',
-    description: 'Design system',
+    description: 'tokens & system',
     icon: '◇',
     root: design(),
   },
   {
     id: 'operations',
     name: 'operations',
-    description: 'Infrastructure & delivery',
+    description: 'infra & delivery',
     icon: '⬢',
     root: operations(),
   },
   {
     id: 'laboratory',
     name: 'laboratory',
-    description: 'R&D and prototypes',
+    description: 'R&D prototypes',
     icon: '⬠',
     root: laboratory(),
   },

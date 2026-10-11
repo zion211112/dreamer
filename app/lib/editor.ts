@@ -120,17 +120,17 @@ export interface Tab {
   modified: boolean;
 }`,
   '/design/tokens/colors.ts': `export const colors = {
-  bg: '#0a0f1a',
-  bgElevated: '#111827',
-  fg: '#e5e7eb',
-  fgMuted: '#9ca3af',
-  accent: '#22d3ee',
-  accentDim: '#06b6d4',
-  warn: '#fbbf24',
-  danger: '#f87171',
-  success: '#34d399',
-  border: '#1f2937',
-  card: '#111827',
+  bg: '#0a0f1a';
+  bgElevated: '#111827';
+  fg: '#e5e7eb';
+  fgMuted: '#9ca3af';
+  accent: '#22d3ee';
+  accentDim: '#06b6d4';
+  warn: '#fbbf24';
+  danger: '#f87171';
+  success: '#34d399';
+  border: '#1f2937';
+  card: '#111827';
 } as const;`,
   '/operations/infrastructure/Dockerfile': `FROM node:20-alpine AS builder
 WORKDIR /app
@@ -163,10 +163,131 @@ CMD ["node", "server.js"]`,
     return (this.instance.exports[fn] as Function)(...args);
   }
 }`,
+  // Teacher console - real-feeling UI copy for teacher workflow
+  '/people/teachers/console.tsx': `import { CredentialCard } from '@/components/CredentialCard';
+import { IssuanceForm } from '@/components/IssuanceForm';
+import { ReputationMetrics } from '@/components/ReputationMetrics';
+
+export default function TeacherConsole() {
+  return (
+    <div className="space-y-6">
+      <header className="flex justify-between items-center">
+        <h1 className="text-2xl font-semibold">
+          Teaching Console
+        </h1>
+        <div className="flex items-center space-x-4">
+          <button className="px-4 py-2 border rounded hover:bg-accent/10">
+            New Credential
+          </button>
+          <button className="px-4 py-2 border rounded hover:bg-accent/10">
+            Manage Templates
+          </button>
+        </div>
+      </header>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <section className="space-y-4">
+          <ReputationMetrics />
+          <h2 className="text-lg font-medium mb-2">Recent Activity</h2>
+          <div className="space-y-3">
+            <div className="p-3 border rounded">
+              Issued "Advanced Web Development" to 12 learners • 2 hours ago
+            </div>
+            <div className="p-3 border rounded">
+              Revoked expired certificate for JS-2024-001 • 1 day ago
+            </div>
+            <div className="p-3 border rounded">
+              Received endorsement from Senior Dev • 3 days ago
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="text-lg font-medium mb-2">Issue New Credential</h2>
+          <IssuanceForm />
+        </section>
+      </div>
+    </div>
+  );
+}`,
+  // School console - real-feeling UI copy for institutional workflow
+  '/institutions/schools/console.tsx': `import { AccreditationStatus } from '@/components/AccreditationStatus';
+import { RosterManager } from '@/components/RosterManager';
+import { CurriculumMap } from '@/components/CurriculumMap';
+
+export default function SchoolConsole() {
+  return (
+    <div className="space-y-6">
+      <header className="flex justify-between items-center">
+        <h1 className="text-2xl font-semibold">
+          Lincoln Academic Consortium
+        </h1>
+        <div className="flex items-center space-x-4">
+          <button className="px-4 py-2 border rounded hover:bg-accent/10">
+            Update Accreditation
+          </button>
+          <button className="px-4 py-2 border rounded hover:bg-accent/10">
+            Manage Partnerships
+          </button>
+        </div>
+      </header>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <section className="space-y-4">
+          <AccreditationStatus />
+          <h2 className="text-lg font-medium mb-2">Recent Verifications</h2>
+          <div className="space-y-3">
+            <div className="p-3 border rounded">
+              Verified 45 learner credentials • Today
+            </div>
+            <div className="p-3 border rounded">
+              Updated curriculum standards • 2 days ago
+            </div>
+            <div className="p-3 border rounded">
+              Partnered with Tech Institute • 1 week ago
+            </div>
+          </div>
+        </section>
+
+        <section className="space-y-4">
+          <RosterManager />
+          <h2 className="text-lg font-medium mb-2">Faculty Updates</h2>
+          <div className="space-y-3">
+            <div className="p-3 border rounded">
+              Added 3 new instructor profiles
+            </div>
+            <div className="p-3 border rounded">
+              Updated availability for Spring term
+            </div>
+            <div className="p-3 border rounded">
+              Completed background checks
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <CurriculumMap />
+          <h2 className="text-lg font-medium mb-2>Standards Alignment</h2>
+          <div className="space-y-3">
+            <div className="p-3 border rounded">
+              87% of courses aligned to v2.1 framework
+            </div>
+            <div className="p-3 border rounded">
+              New cybersecurity track under review
+            </div>
+            <div className="p-3 border rounded">
+              Audit scheduled for Q1 next year
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}`,
 };
 
 export function getMockContent(path: string): string {
-  return MOCK_CONTENTS[path] || `// ${path}\n// Start editing...\n`;
+  return MOCK_CONTENTS[path] || `// ${path}\n// Start editing...\\n`;
 }
 
 export function highlightLine(line: string, language: string): string {
@@ -179,8 +300,8 @@ export function highlightLine(line: string, language: string): string {
       .replace(/(\/\/.*$)/, '<span class="comment">$1</span>')
       .replace(/\b(const|let|var|function|return|if|else|for|while|import|export|from|default|interface|type|class|extends|implements|public|private|protected|readonly|async|await|try|catch|finally|throw|new|this|super|typeof|instanceof|in|of|as|is)\b/g, '<span class="keyword">$1</span>')
       .replace(/\b(string|number|boolean|object|any|void|never|unknown|Record|Array|Promise|Map|Set|Date|Error|console)\b/g, '<span class="type">$1</span>')
-      .replace(/(".*?"|'.*?'|`.*?`)/g, '<span class="string">$1</span>')
-      .replace(/(\b\d+\.?\d*\b)/g, '<span class="number">$1</span>');
+      .replace(/(?:".*?"|'.*?'|`.*?`)/g, '<span class="string">$&</span>')
+      .replace(/\b\d+\.?\d*\b/g, '<span class="number">$&</span>');
   } else if (language === 'json') {
     html = html
       .replace(/(".*?")\s*:/g, '<span class="key">$1</span>:')
@@ -197,7 +318,7 @@ export function highlightLine(line: string, language: string): string {
       .replace(/^(#{1,6})\s+(.+)$/gm, '<span class="keyword">$1</span> <span class="heading">$2</span>')
       .replace(/`([^`]+)`/g, '<span class="string">`$1`</span>')
       .replace(/\*\*(.+?)\*\*/g, '<span class="bold">$1</span>')
-      .replace(/\*(.+?)\*/g, '<span class="italic">$1</span>');
+      .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<span class="italic">$1</span>');
   } else if (language === 'yaml') {
     html = html
       .replace(/^(\s*)(.+?):\s*(.*)$/gm, '$1<span class="key">$2</span>: <span class="value">$3</span>')
@@ -209,10 +330,10 @@ export function highlightLine(line: string, language: string): string {
 
 function escapeHtml(text: string): string {
   return text
-    .replace(/&/g, '&')
-    .replace(/</g, '<')
-    .replace(/>/g, '>')
-    .replace(/"/g, '"')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 }
 

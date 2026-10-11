@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { DEPARTMENTS, DEPARTMENT_COLORS, FileNode, getIcon } from '@/lib/ontology';
+import { DEPARTMENTS, DEPARTMENT_COLORS, FileNode, getIcon, WORKSPACE_ROOT } from '@/lib/ontology';
 import { formatSize } from '@/lib/editor';
 
 interface ExplorerTreeProps {

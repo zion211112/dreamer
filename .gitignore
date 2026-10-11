@@ -41,3 +41,6 @@ tmp-shot/
 **/shots/
 
 .dead-css-map.json
+.worktrees/
+
+.worktrees/

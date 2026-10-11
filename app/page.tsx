@@ -2,8 +2,10 @@
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { TopNav, type NavItemId } from '@/components/TopNav';
+import { SearchLane } from '@/components/SearchLane';
 import { ExplorerTree } from '@/components/ExplorerTree';
-import { Pane } from '@/components/Pane';
+import { ChatAgent } from '@/components/ChatAgent';
+import { ModuleSurface } from '@/components/ModuleSurface';
 import { Inspector } from '@/components/Inspector';
 import { StatusBar } from '@/components/StatusBar';
 import { CommandPalette } from '@/components/CommandPalette';
@@ -16,9 +18,10 @@ export default function Page() {
   const [activeTabId, setActiveTabId] = useState<string | null>(null);
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
   const [expandedPaths, setExpandedPaths] = useState<Set<string>>(() => new Set([
-    '/foundation', '/foundation/core', '/products', '/products/web',
+    '/kernel', '/kernel/issuance', '/people', '/products',
   ]));
   const [navSection, setNavSection] = useState<NavItemId>('workspace');
+  const [searchOpen, setSearchOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mode, setMode] = useState<'NORMAL' | 'INSERT' | 'VISUAL' | 'COMMAND'>('NORMAL');
@@ -28,8 +31,8 @@ export default function Page() {
 
   useEffect(() => {
     const initialTabs = [
-      createTab('/products/web/page.tsx', getMockContent('/products/web/page.tsx')),
-      createTab('/foundation/core/config.ts', getMockContent('/foundation/core/config.ts')),
+      createTab('/kernel/issuance/core.ts', getMockContent('/kernel/issuance/core.ts')),
+      createTab('/kernel/identity/did-method.ts', getMockContent('/kernel/identity/did-method.ts')),
     ];
     setTabs(initialTabs);
     setActiveTabId(initialTabs[0].id);
@@ -118,8 +121,17 @@ export default function Page() {
   }), [tabs, activeTabId, selectedPath, handleTabUpdate, handleTabClose, handleNewTab, showNotification]);
 
   useEffect(() => {
+    const onOpenPath = (e: Event) => {
+      const path = (e as CustomEvent).detail as string;
+      if (path) handleSelect(path);
+    };
+    window.addEventListener('sbt:open-path', onOpenPath);
+    return () => window.removeEventListener('sbt:open-path', onOpenPath);
+  }, [handleSelect]);
+
+  useEffect(() => {
     const handleKeyDown = (e: globalThis.KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); setCommandPaletteOpen(true); }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); setSearchOpen(v => !v); }
       if ((e.ctrlKey || e.metaKey) && e.key === 'p') { e.preventDefault(); setCommandPaletteOpen(true); }
       if ((e.ctrlKey || e.metaKey) && e.key === 'b') { e.preventDefault(); setSidebarOpen(v => !v); }
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
@@ -132,11 +144,14 @@ export default function Page() {
       }
       if ((e.ctrlKey || e.metaKey) && e.key === 'n') { e.preventDefault(); handleNewTab(); }
       if ((e.ctrlKey || e.metaKey) && e.key === 'w') { e.preventDefault(); if (activeTabId) handleTabClose(activeTabId); }
-      if (e.key === 'Escape' && mode !== 'NORMAL') setMode('NORMAL');
+      if (e.key === 'Escape') {
+        if (searchOpen) setSearchOpen(false);
+        else if (mode !== 'NORMAL') setMode('NORMAL');
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [tabs, activeTabId, mode, handleTabUpdate, handleTabClose, handleNewTab, showNotification]);
+  }, [tabs, activeTabId, mode, searchOpen, handleTabUpdate, handleTabClose, handleNewTab, showNotification]);
 
   useEffect(() => {
     let dragging = false;
@@ -164,11 +179,12 @@ export default function Page() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
-      <TopNav active={navSection} onNav={handleNav} onPalette={() => setCommandPaletteOpen(true)} />
+      <TopNav active={navSection} onNav={handleNav} onPalette={() => setSearchOpen(v => !v)} />
+      <SearchLane />
 
       <div className="flex flex-1 min-h-0">
         {sidebarOpen && (
-          <div className="flex flex-shrink-0">
+          <div className="flex flex-shrink-0 relative">
             <div className="flex flex-col h-full border-r hairline" style={{ width: sidebarWidth }}>
               <ExplorerTree
                 selectedPath={selectedPath}
@@ -176,21 +192,17 @@ export default function Page() {
                 onSelect={handleSelect}
                 onToggle={handleToggle}
               />
+              {/* chat agent docked bottom-right of the sidebar */}
+              <div className="absolute bottom-2 right-2 z-20">
+                <ChatAgent activeModule={navSection === 'workspace' ? null : navSection} />
+              </div>
             </div>
             <div id="sidebar-resize" className="resize-handle self-stretch" />
           </div>
         )}
 
         <div className="flex-1 flex flex-col min-w-0">
-          <Pane
-            tabs={tabs}
-            activeTabId={activeTabId}
-            onTabChange={handleTabChange}
-            onTabClose={handleTabClose}
-            onNewTab={handleNewTab}
-            onTabUpdate={handleTabUpdate}
-            onOpenFile={handleSelect}
-          />
+          <ModuleSurface section={navSection} />
           <StatusBar
             mode={mode}
             position={cursorPosition}
