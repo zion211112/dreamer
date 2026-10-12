@@ -4,38 +4,38 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { DEPARTMENTS, DEPARTMENT_COLORS, WORKSPACE_ROOT, FileNode } from '@/lib/ontology';
 import type { NavItemId } from '@/components/TopNav';
 
-export type ModuleSurfaceId = Extract<NavItemId, 'workspace' | 'foundation' | 'products' | 'design' | 'operations' | 'laboratory'>;
+export type ModuleSurfaceId = Extract<NavItemId, 'workspace' | 'kernel' | 'network' | 'builds' | 'operations' | 'laboratory'>;
 
 const MODULE_SURFACES: Record<ModuleSurfaceId, { title: string; icon: string; description: string }> = {
   workspace: {
-    title: 'Dashboard',
+    title: 'Command Center',
+    icon: '◎',
+    description: 'Control dashboard — system status, recent activity, quick actions',
+  },
+  kernel: {
+    title: 'SBT Kernel Graph',
     icon: '⬡',
-    description: 'Overview of all modules and system status',
+    description: 'Identity · Issuance · Verification — live primitive topology',
   },
-  foundation: {
-    title: 'SBT Kernel Node Graph',
-    icon: '○',
-    description: 'Visualize core primitives and their relationships',
+  network: {
+    title: 'Network Explorer',
+    icon: '◈',
+    description: 'Institutions ◈ · People ◇ — dual-sided credentialing market',
   },
-  products: {
-    title: 'Builds Hub',
+  builds: {
+    title: 'Builds Registry',
     icon: '▢',
-    description: 'Manage product builds and deployment pipelines',
-  },
-  design: {
-    title: 'Token Board',
-    icon: '◇',
-    description: 'Design tokens and system controls',
+    description: 'Consoles · Wallet · Engine — pull, fork, improve like GitHub',
   },
   operations: {
-    title: 'Ops Board',
+    title: 'Operations Board',
     icon: '⬢',
-    description: 'Infrastructure monitoring and delivery',
+    description: 'Infra & delivery — deploy, monitor, alert',
   },
   laboratory: {
-    title: 'Lab Board',
+    title: 'Laboratory',
     icon: '⬠',
-    description: 'R&D experiments and prototypes',
+    description: 'R&D prototypes — experiments, research, wasm runtime',
   },
 };
 
@@ -47,9 +47,9 @@ export function ModuleSurface({ section }: ModuleSurfaceProps) {
   const surface = MODULE_SURFACES[section as ModuleSurfaceId];
   const color = section === 'workspace' ? undefined : DEPARTMENT_COLORS[section as string];
 
-  // Special rendering for foundation section
-  if (section === 'foundation') {
-    return <FoundationSurface />;
+  // Special rendering for kernel section
+  if (section === 'kernel') {
+    return <KernelSurface />;
   }
 
   return (
@@ -86,8 +86,8 @@ export function ModuleSurface({ section }: ModuleSurfaceProps) {
   );
 }
 
-// Foundation Surface Component - Hand-rolled SVG in React-Flow visual language
-function FoundationSurface() {
+// Kernel Surface Component - Hand-rolled SVG in React-Flow visual language
+function KernelSurface() {
   type FileNode = {
     id: string;
     name: string;
@@ -122,7 +122,7 @@ function FoundationSurface() {
 
   // Convert ontology tree to our node structure
   useEffect(() => {
-    const root = WORKSPACE_ROOT.children?.find(c => c.id === '/foundation') || WORKSPACE_ROOT.children?.[0] || WORKSPACE_ROOT;
+    const root = WORKSPACE_ROOT.children?.find(c => c.id === '/kernel') || WORKSPACE_ROOT.children?.[0] || WORKSPACE_ROOT;
     const nodesMap = new Map<string, NodeData>();
     const edgesList: EdgeData[] = [];
 

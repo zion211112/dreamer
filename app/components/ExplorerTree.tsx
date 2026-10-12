@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { DEPARTMENTS, DEPARTMENT_COLORS, FileNode, getIcon, WORKSPACE_ROOT, DEPARTMENT_COLORS as DEPT_COLORS } from '@/lib/ontology';
 import { formatSize } from '@/lib/editor';
 
-type MarketView = 'supply' | 'demand' | 'modules';
+type MarketView = 'institutions' | 'people' | 'modules';
 
 interface MarketMetrics {
   label: string;
@@ -145,8 +145,8 @@ function ModuleHead({
   );
 }
 
-// Supply-side market data (Institutions)
-const SUPPLY_NODES: MarketNode[] = [
+// Institutions market data
+const INSTITUTIONS_NODES: MarketNode[] = [
   {
     id: 'supply-schools',
     name: 'Schools',
@@ -212,8 +212,8 @@ const SUPPLY_NODES: MarketNode[] = [
   },
 ];
 
-// Demand-side market data (People)
-const DEMAND_NODES: MarketNode[] = [
+// People market data
+const PEOPLE_NODES: MarketNode[] = [
   {
     id: 'demand-learners',
     name: 'Learners',
@@ -378,7 +378,7 @@ function MarketSectionHead({
   const isSelected = selectedPath === section.path;
   const totalChildren = section.children?.length ?? 0;
   const totalMetrics = section.children?.reduce((acc, c) => acc + (c.metrics?.length ?? 0), 0) ?? 0;
-  const sectionColor = view === 'supply' ? DEPT_COLORS.institutions : DEPT_COLORS.people;
+  const sectionColor = view === 'institutions' ? DEPT_COLORS.institutions : DEPT_COLORS.people;
 
   return (
     <div className="mb-1">
@@ -392,7 +392,7 @@ function MarketSectionHead({
           className="w-5 h-5 rounded flex items-center justify-center text-[10px] flex-shrink-0"
           style={{ background: sectionColor + '1a', color: sectionColor, border: `1px solid ${sectionColor}44` }}
         >
-          {view === 'supply' ? '◈' : '◇'}
+          {view === 'institutions' ? '◈' : '◇'}
         </span>
         <span className={'flex-1 truncate text-[12px] font-semibold tracking-wide ' + (isSelected ? 'text-[var(--fg)]' : 'text-[var(--fg)]')}>
           {section.name}
@@ -432,8 +432,8 @@ export function ExplorerTree({ selectedPath, expandedPaths, onSelect, onToggle }
   const [view, setView] = useState<MarketView>('modules');
 
   const currentNodes = useMemo(() => {
-    if (view === 'supply') return SUPPLY_NODES;
-    if (view === 'demand') return DEMAND_NODES;
+    if (view === 'institutions') return INSTITUTIONS_NODES;
+    if (view === 'people') return PEOPLE_NODES;
     return [] as MarketNode[];
   }, [view]);
 
@@ -449,7 +449,7 @@ export function ExplorerTree({ selectedPath, expandedPaths, onSelect, onToggle }
         </div>
         {/* View Toggle */}
         <div className="flex items-center gap-1 bg-[var(--surface)] rounded p-0.5">
-          {(['modules', 'supply', 'demand'] as MarketView[]).map(v => (
+          {(['modules', 'institutions', 'people'] as MarketView[]).map(v => (
             <button
               key={v}
               onClick={() => setView(v)}
@@ -458,9 +458,9 @@ export function ExplorerTree({ selectedPath, expandedPaths, onSelect, onToggle }
                   ? 'bg-[var(--accent)] text-white shadow-sm'
                   : 'text-[var(--fg-muted)] hover:text-[var(--fg)] hover:bg-[var(--border)]'
               }`}
-              title={v === 'modules' ? 'Module view' : v === 'supply' ? 'Supply (Institutions)' : 'Demand (People)'}
+              title={v === 'modules' ? 'Module view' : v === 'institutions' ? 'Institutions (◈)' : 'People (◇)'}
             >
-              {v === 'modules' ? '⬡' : v === 'supply' ? '◈' : '◇'}
+              {v === 'modules' ? '⬡' : v === 'institutions' ? '◈' : '◇'}
             </button>
           ))}
         </div>
@@ -504,7 +504,7 @@ export function ExplorerTree({ selectedPath, expandedPaths, onSelect, onToggle }
       {/* footer */}
       <div className="px-3 py-2 border-t hairline flex items-center justify-between flex-shrink-0">
         <span className="text-[10px] text-[var(--fg-faint)] font-mono">
-          {view === 'modules' ? '6 modules' : view === 'supply' ? 'Supply side' : 'Demand side'}
+          {view === 'modules' ? '6 modules' : view === 'institutions' ? 'Institutions' : 'People'}
         </span>
         <div className="flex items-center gap-1.5 text-[var(--fg-faint)]">
           <span className="text-[var(--success)] text-[10px]">+2</span>

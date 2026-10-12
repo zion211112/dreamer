@@ -280,31 +280,31 @@ function createCommands(): Command[] {
 
     // Workspace commands - open department roots
     {
-      id: 'open-foundation',
-      title: 'Open Foundation',
-      description: 'Open foundation department',
+      id: 'open-kernel',
+      title: 'Open Kernel',
+      description: 'Open SBT kernel primitives',
       shortcut: '',
       category: 'Workspace',
-      action: (ctx) => openFile(ctx, '/foundation/core/config.ts'),
-      keywords: ['foundation', 'core', 'config']
+      action: (ctx) => openFile(ctx, '/kernel/issuance/core.ts'),
+      keywords: ['kernel', 'sbt', 'issuance']
     },
     {
-      id: 'open-products',
-      title: 'Open Products',
-      description: 'Open products department',
+      id: 'open-network',
+      title: 'Open Network',
+      description: 'Open network — institutions & people',
       shortcut: '',
       category: 'Workspace',
-      action: (ctx) => openFile(ctx, '/products/web/page.tsx'),
-      keywords: ['products', 'web', 'page']
+      action: (ctx) => openFile(ctx, '/network/institutions/schools/accreditation.yml'),
+      keywords: ['network', 'institutions', 'people', 'accreditation']
     },
     {
-      id: 'open-design',
-      title: 'Open Design System',
-      description: 'Open design system',
+      id: 'open-builds',
+      title: 'Open Builds',
+      description: 'Open builds registry — consoles, wallet, engine',
       shortcut: '',
       category: 'Workspace',
-      action: (ctx) => openFile(ctx, '/design/tokens/colors.ts'),
-      keywords: ['design', 'tokens', 'colors']
+      action: (ctx) => openFile(ctx, '/builds/teacher-console/console.tsx'),
+      keywords: ['builds', 'teacher', 'console', 'wallet']
     },
     {
       id: 'open-operations',
@@ -323,6 +323,58 @@ function createCommands(): Command[] {
       category: 'Workspace',
       action: (ctx) => openFile(ctx, '/laboratory/experiments/wasm-runtime.ts'),
       keywords: ['laboratory', 'experiments', 'wasm']
+    },
+
+    // Builds-specific commands
+    {
+      id: 'builds-fork',
+      title: 'Fork Repository',
+      description: 'Fork a build repository',
+      shortcut: '',
+      category: 'Builds',
+      action: (ctx) => ctx.showNotification('Fork build - not implemented', 'info'),
+      keywords: ['fork', 'build', 'repository'],
+      when: (ctx) => ctx.selectedPath?.startsWith('/builds') || false
+    },
+    {
+      id: 'builds-clone',
+      title: 'Clone Repository',
+      description: 'Copy clone URL for build repository',
+      shortcut: '',
+      category: 'Builds',
+      action: (ctx) => ctx.showNotification('Clone URL copied - not implemented', 'info'),
+      keywords: ['clone', 'build', 'repository', 'git'],
+      when: (ctx) => ctx.selectedPath?.startsWith('/builds') || false
+    },
+    {
+      id: 'builds-star',
+      title: 'Star Repository',
+      description: 'Star a build repository',
+      shortcut: '',
+      category: 'Builds',
+      action: (ctx) => ctx.showNotification('Starred - not implemented', 'info'),
+      keywords: ['star', 'build', 'repository', 'favorite'],
+      when: (ctx) => ctx.selectedPath?.startsWith('/builds') || false
+    },
+    {
+      id: 'builds-pr',
+      title: 'Create Pull Request',
+      description: 'Open PR for current build',
+      shortcut: '',
+      category: 'Builds',
+      action: (ctx) => ctx.showNotification('Create PR - not implemented', 'info'),
+      keywords: ['pr', 'pull request', 'build', 'contribute'],
+      when: (ctx) => ctx.selectedPath?.startsWith('/builds') || false
+    },
+    {
+      id: 'builds-issues',
+      title: 'View Issues',
+      description: 'View issues for current build',
+      shortcut: '',
+      category: 'Builds',
+      action: (ctx) => ctx.showNotification('View issues - not implemented', 'info'),
+      keywords: ['issues', 'build', 'bug', 'feature'],
+      when: (ctx) => ctx.selectedPath?.startsWith('/builds') || false
     },
 
     // Mode switching

@@ -154,55 +154,72 @@ function people(): FileNode {
   ]);
 }
 
+function builds(): FileNode {
+  return dir('builds', '/builds', [
+    dir('teacher-console', '/builds/teacher-console', [
+      file('console.tsx', '/builds/teacher-console/console.tsx', 8400, 0),
+      file('issuance.ts', '/builds/teacher-console/issuance.ts', 5100, 0),
+      file('roster.tsx', '/builds/teacher-console/roster.tsx', 4300, 1),
+    ]),
+    dir('school-console', '/builds/school-console', [
+      file('console.tsx', '/builds/school-console/console.tsx', 9100, 0),
+      file('verify.ts', '/builds/school-console/verify.ts', 3800, 1),
+      file('analytics.tsx', '/builds/school-console/analytics.tsx', 5600, 1),
+    ]),
+    dir('credential-wallet', '/builds/credential-wallet', [
+      file('wallet.tsx', '/builds/credential-wallet/wallet.tsx', 6700, 0),
+      file('present.ts', '/builds/credential-wallet/present.ts', 2900, 2),
+    ]),
+    file('placement-engine.ts', '/builds/placement-engine.ts', 7400, 0),
+  ]);
+}
+
 /**
- * Foundation: the root of the system. Its children ARE the 3 true
- * sub-foundations — kernel (where SBTs are issued), institutions
- * (schools, accreditation, verification authorities), and people
- * (teachers, learners, anchors). Foundations live inside foundations.
+ * Network: institutions ◈ + people ◇
+ * The dual-sided market of credentialing — schools, accreditation, authorities
+ * on one side; teachers, learners, anchors on the other.
  */
-function foundation(): FileNode {
-  return dir('foundation', '/foundation', [
-    kernel(),
-    institutions(),
-    people(),
-    file('manifest.json', '/foundation/manifest.json', 1400, 1),
-    file('charter.md', '/foundation/charter.md', 5200, 2),
-  ]);
-}
-
-function products(): FileNode {
-  return dir('products', '/products', [
-    dir('builds', '/products/builds', [
-      dir('teacher-console', '/products/builds/teacher-console', [
-        file('console.tsx', '/products/builds/teacher-console/console.tsx', 8400, 0),
-        file('issuance.ts', '/products/builds/teacher-console/issuance.ts', 5100, 0),
-        file('roster.tsx', '/products/builds/teacher-console/roster.tsx', 4300, 1),
+function network(): FileNode {
+  return dir('network', '/network', [
+    dir('institutions', '/network/institutions', [
+      dir('schools', '/network/institutions/schools', [
+        file('accreditation.yml', '/network/institutions/schools/accreditation.yml', 4100, 0),
+        file('roster.json', '/network/institutions/schools/roster.json', 12000, 1),
+        file('curriculum-map.ts', '/network/institutions/schools/curriculum-map.ts', 3800, 2),
       ]),
-      dir('school-console', '/products/builds/school-console', [
-        file('console.tsx', '/products/builds/school-console/console.tsx', 9100, 0),
-        file('verify.ts', '/products/builds/school-console/verify.ts', 3800, 1),
-        file('analytics.tsx', '/products/builds/school-console/analytics.tsx', 5600, 1),
+      dir('accreditation', '/network/institutions/accreditation', [
+        file('standards.md', '/network/institutions/accreditation/standards.md', 8500, 0),
+        file('audit-log.ts', '/network/institutions/accreditation/audit-log.ts', 4200, 1),
+        file('appeals.yaml', '/network/institutions/accreditation/appeals.yaml', 1900, 2),
       ]),
-      dir('credential-wallet', '/products/builds/credential-wallet', [
-        file('wallet.tsx', '/products/builds/credential-wallet/wallet.tsx', 6700, 0),
-        file('present.ts', '/products/builds/credential-wallet/present.ts', 2900, 2),
+      dir('authorities', '/network/institutions/authorities', [
+        file('root-certs.pem', '/network/institutions/authorities/root-certs.pem', 1800, 0),
+        file('crl.ts', '/network/institutions/authorities/crl.ts', 2600, 1),
+        file('ocsp.ts', '/network/institutions/authorities/ocsp.ts', 2200, 2),
       ]),
-      file('placement-engine.ts', '/products/builds/placement-engine.ts', 7400, 0),
+      file('treaty.md', '/network/institutions/treaty.md', 5600, 0),
     ]),
-  ]);
-}
-
-function design(): FileNode {
-  return dir('design', '/design', [
-    dir('tokens', '/design/tokens', [
-      file('colors.ts', '/design/tokens/colors.ts', 3400, 1),
-      file('typography.ts', '/design/tokens/typography.ts', 2100, 1),
-      file('motion.ts', '/design/tokens/motion.ts', 1600, 2),
+    dir('people', '/network/people', [
+      dir('teachers', '/network/people/teachers', [
+        file('profiles.json', '/network/people/teachers/profiles.json', 22000, 0),
+        file('reputation.ts', '/network/people/teachers/reputation.ts', 3300, 1),
+        file('availability.ics', '/network/people/teachers/availability.ics', 900, 2),
+      ]),
+      dir('learners', '/network/people/learners', [
+        file('wallet.ts', '/network/people/learners/wallet.ts', 4100, 0),
+        file('progress.md', '/network/people/learners/progress.md', 6700, 1),
+        file('goals.yaml', '/network/people/learners/goals.yaml', 1100, 2),
+      ]),
+      dir('anchors', '/network/people/anchors', [
+        file('anchors.json', '/network/people/anchors/anchors.json', 8900, 0),
+        file('attest.ts', '/network/people/anchors/attest.ts', 2700, 1),
+        file('challenge.ts', '/network/people/anchors/challenge.ts', 2400, 2),
+      ]),
+      file('handbook.md', '/network/people/handbook.md', 4800, 1),
+      file('code-of-conduct.md', '/network/people/code-of-conduct.md', 3100, 0),
     ]),
-    dir('components', '/design/components', [
-      file('node-card.tsx', '/design/components/node-card.tsx', 3900, 0),
-      file('edge-bezier.tsx', '/design/components/edge-bezier.tsx', 2800, 0),
-    ]),
+    file('manifest.json', '/network/manifest.json', 1400, 1),
+    file('charter.md', '/network/charter.md', 5200, 2),
   ]);
 }
 
@@ -231,12 +248,10 @@ function laboratory(): FileNode {
 }
 
 export const DEPARTMENT_COLORS: Record<string, string> = {
-  foundation: '#7c6cff',
-  kernel: '#9d8fff',
-  institutions: '#56c8dc',
-  people: '#f0b45a',
-  products: '#56c8dc',
-  design: '#f0b45a',
+  workspace: '#7c6cff',
+  kernel: '#7c6cff',
+  network: '#56c8dc',
+  builds: '#56c8dc',
   operations: '#4ade80',
   laboratory: '#f26d6d',
 };
@@ -250,25 +265,25 @@ export const DEPARTMENTS: Department[] = [
     root: dir('workspace', '/workspace', []),
   },
   {
-    id: 'foundation',
-    name: 'foundation',
-    description: 'kernel · institutions · people',
+    id: 'kernel',
+    name: 'kernel',
+    description: 'SBT primitives: identity · issuance · verification',
     icon: '⬡',
-    root: foundation(),
+    root: kernel(),
   },
   {
-    id: 'products',
-    name: 'products',
-    description: 'builds: consoles & engines',
+    id: 'network',
+    name: 'network',
+    description: 'institutions ◈ · people ◇',
+    icon: '◈',
+    root: network(),
+  },
+  {
+    id: 'builds',
+    name: 'builds',
+    description: 'consoles · wallet · engine — pull, fork, improve',
     icon: '▢',
-    root: products(),
-  },
-  {
-    id: 'design',
-    name: 'design',
-    description: 'tokens & system',
-    icon: '◇',
-    root: design(),
+    root: builds(),
   },
   {
     id: 'operations',
