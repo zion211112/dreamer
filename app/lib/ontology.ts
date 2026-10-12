@@ -9,6 +9,8 @@ export interface FileNode {
   children?: FileNode[];
   parent?: string;
   path: string;
+  marketType?: 'school' | 'accreditation' | 'authority' | 'learner' | 'teacher' | 'anchor';
+  metrics?: Array<{ label: string; value: string; trend?: 'up' | 'down' | 'neutral' }>;
 }
 
 export interface Department {
