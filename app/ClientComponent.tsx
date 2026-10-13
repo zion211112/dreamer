@@ -17,14 +17,14 @@ interface Toast {
   out: boolean;
 }
 
-const MODULE_KEYS: NavItemId[] = ['kernel', 'network', 'builds', 'operations', 'laboratory'];
+const MODULE_KEYS: NavItemId[] = ['kernel', 'network', 'builds', 'operations', 'research'];
 
 const initialOpenDirs: Record<string, boolean> = {
   kernel: true,
   network: true,
   builds: true,
   operations: true,
-  laboratory: true,
+  research: true,
 };
 
 export default function ClientComponent() {
@@ -147,7 +147,7 @@ export default function ClientComponent() {
       style={{
         display: 'grid',
         gridTemplateRows: '40px 1fr 26px',
-        gridTemplateColumns: '260px 1fr 320px',
+        gridTemplateColumns: '232px 1fr 304px',
         gridTemplateAreas: `
           "header header header"
           "explorer main inspector"

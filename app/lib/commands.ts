@@ -285,7 +285,7 @@ function createCommands(): Command[] {
       description: 'Open SBT kernel primitives',
       shortcut: '',
       category: 'Workspace',
-      action: (ctx) => openFile(ctx, '/kernel/issuance/core.ts'),
+      action: (ctx) => openFile(ctx, 'kernel/core'),
       keywords: ['kernel', 'sbt', 'issuance']
     },
     {
@@ -294,8 +294,8 @@ function createCommands(): Command[] {
       description: 'Open network — institutions & people',
       shortcut: '',
       category: 'Workspace',
-      action: (ctx) => openFile(ctx, '/network/institutions/schools/accreditation.yml'),
-      keywords: ['network', 'institutions', 'people', 'accreditation']
+      action: (ctx) => openFile(ctx, 'network/commons/schools'),
+      keywords: ['network', 'institutions', 'people', 'schools']
     },
     {
       id: 'open-builds',
@@ -303,7 +303,7 @@ function createCommands(): Command[] {
       description: 'Open builds registry — consoles, wallet, engine',
       shortcut: '',
       category: 'Workspace',
-      action: (ctx) => openFile(ctx, '/builds/teacher-console/console.tsx'),
+      action: (ctx) => openFile(ctx, 'builds/teacher-console'),
       keywords: ['builds', 'teacher', 'console', 'wallet']
     },
     {
@@ -312,17 +312,17 @@ function createCommands(): Command[] {
       description: 'Open operations infrastructure',
       shortcut: '',
       category: 'Workspace',
-      action: (ctx) => openFile(ctx, '/operations/infrastructure/Dockerfile'),
-      keywords: ['operations', 'infrastructure', 'docker']
+      action: (ctx) => openFile(ctx, 'operations/protocol'),
+      keywords: ['operations', 'infrastructure', 'audit']
     },
     {
-      id: 'open-laboratory',
-      title: 'Open Laboratory',
-      description: 'Open laboratory experiments',
+      id: 'open-research',
+      title: 'Open Research',
+      description: 'Open research and dev experiments',
       shortcut: '',
       category: 'Workspace',
-      action: (ctx) => openFile(ctx, '/laboratory/experiments/wasm-runtime.ts'),
-      keywords: ['laboratory', 'experiments', 'wasm']
+      action: (ctx) => openFile(ctx, 'research/corridor-mirrors'),
+      keywords: ['research', 'experiments', 'optics']
     },
 
     // Builds-specific commands

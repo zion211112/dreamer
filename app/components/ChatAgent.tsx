@@ -38,7 +38,7 @@ export function ChatAgent({ isOpen, page, module, onToggle }: ChatAgentProps) {
       {
         id: Date.now(),
         who: 'hermes',
-        html: 'I read the tree. <span style="color:var(--accent-hi)">kernel/issuance/core</span> defines the four evidence states. Want me to wire the Roll minting to the Anchor signature check, or scaffold <span style="color:var(--accent-hi)">builds/engine/replacement-engine</span> first?',
+        html: 'I read the tree. <span style="color:var(--accent-hi)">kernel/core</span> mints capability records to The Roll. Want me to wire the mint to the anchor signature check, or scaffold <span style="color:var(--accent-hi)">builds/replacement-engine</span> first?',
       },
     ]);
   }, []);

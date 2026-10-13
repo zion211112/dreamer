@@ -104,7 +104,7 @@ export function SessionProvider({
     const who = gate();
     if (!who || !clean) return;
     setResearch(prev => [{ title: clean, by: who, time: 'now' }, ...prev]);
-    push(`you submitted research to the laboratory: ${clean}`, 'proto');
+    push(`you submitted research to the bench: ${clean}`, 'proto');
     toast(`◎ research submitted · ${clean}`, '◎');
   }, [gate, push, toast]);
 

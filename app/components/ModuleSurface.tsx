@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { MODULES, MODULE_ORDER, TREE, PEOPLE, TOTAL_BUILDS, BUILT_COUNT, ANCHORS, LEDGER, findPage, firstMeaningfulLine, stateColor, type OntoPage, type NavItemId } from '@/lib/ontology';
 import { highlight } from '@/lib/editor';
 import { useSession } from '@/lib/session';
@@ -28,7 +28,7 @@ export function ModuleSurface({ view, module, page, onNav, onSelectPage, onOpenP
   if (view === 'kemet') return <KemetOsLanding onNav={onNav} onOpenPage={onOpenPage} onView={onView} />;
 
   // A module is selected — its landing.
-  if (module) return <ModuleLanding moduleId={module} onSelectPage={onSelectPage} toast={toast} />;
+  if (module) return <ModuleLanding moduleId={module} onSelectPage={onSelectPage} onOpenPage={onOpenPage} toast={toast} />;
 
   // The workspace dashboard.
   return <WorkspaceView onNav={onNav} onOpenPage={onOpenPage} toast={toast} />;
@@ -157,7 +157,7 @@ function WorkspaceView({ onNav, onOpenPage, toast }: { onNav: (id: NavItemId) =>
         </p>
         <div className="cta">
           <button className="btn btn-primary" onClick={() => onNav('kernel')}>Open the kernel →</button>
-          <button className="btn btn-ghost" onClick={() => onOpenPage('operations/audits/protocol')}>Read the protocol</button>
+          <button className="btn btn-ghost" onClick={() => onOpenPage('operations/protocol')}>Read the protocol</button>
           <button className="btn btn-ghost" onClick={() => toast('Fork request queued · node will be provisioned', '⟐')}>Fork a node</button>
         </div>
         <div className="hint">
@@ -207,19 +207,172 @@ function WorkspaceView({ onNav, onOpenPage, toast }: { onNav: (id: NavItemId) =>
 }
 
 /* ══════════════════════════════════════════════════════════════
-   MODULE LANDING — guide (kernel) + page cards
+   CENTERPIECES — the minimal page at the center of each module:
+   its operatus, cloaked sublime. Meaning above navigation.
    ══════════════════════════════════════════════════════════════ */
 
-function ModuleLanding({ moduleId, onSelectPage, toast }: { moduleId: string; onSelectPage: (id: string) => void; toast: (msg: string, icon?: string) => void }) {
+function KernelAura() {
+  return (
+    <section className="section">
+      <div className="aura">
+        <div className="aura-orb" />
+        <div className="aura-aspects">
+          <span>issuance</span><i>·</i><span>evidence</span><i>·</i><span>roll</span><i>·</i><span>identity</span>
+        </div>
+      </div>
+      <p className="essence">
+        The core of the operatus, cloaked — what was minted, what was proven,
+        what was recorded, who you are. The record, ours.
+      </p>
+    </section>
+  );
+}
+
+function NetworkMesh() {
+  return (
+    <section className="section">
+      <svg className="mesh" viewBox="0 0 400 130">
+        <g className="mesh-edges">
+          <line x1="70" y1="65" x2="200" y2="38" />
+          <line x1="70" y1="65" x2="200" y2="92" />
+          <line x1="70" y1="65" x2="330" y2="65" />
+          <line x1="200" y1="38" x2="200" y2="92" />
+          <line x1="200" y1="38" x2="330" y2="65" />
+          <line x1="200" y1="92" x2="330" y2="65" />
+        </g>
+        <g className="mesh-nodes">
+          <circle cx="70" cy="65" r="4" />
+          <circle cx="200" cy="38" r="4" />
+          <circle cx="200" cy="92" r="4" />
+          <circle cx="330" cy="65" r="4" />
+        </g>
+        <g className="mesh-labels">
+          <text x="70" y="90">commons</text>
+          <text x="200" y="24">tally</text>
+          <text x="200" y="118">people</text>
+          <text x="330" y="90">anchors</text>
+        </g>
+      </svg>
+      <p className="essence">
+        The mesh is the message — commons, tally, people, anchors.
+        Every node a peer; every edge a promise. Joining next:
+        universities as institutions, companies sourcing talent,
+        community funds building anything.
+      </p>
+    </section>
+  );
+}
+
+function BuildsYard({ onSelectPage, onOpenPage }: { onSelectPage: (id: string) => void; onOpenPage: (id: string) => void }) {
+  const { tally, postToTally } = useSession();
+  return (
+    <section className="section">
+      <div className="yard">
+        {TREE.builds.pages.map(p => {
+          const posted = tally.builds.find(b => b.name === p.name);
+          return (
+            <div className="project" key={p.id} onClick={() => onSelectPage(p.id)}>
+              <div className="project-head">
+                <span className="dot-state" style={{ background: stateColor(p.state) }} />
+                <span className="project-name">{p.name}</span>
+                <span className={'state-pill ' + p.state}>{p.state}</span>
+              </div>
+              <div className="project-plea">{firstMeaningfulLine(p.content)}</div>
+              <div className="project-foot">
+                {posted ? (
+                  <span className="project-funded">✓ on the tally · {posted.backers} backers · KES {posted.pledged.toLocaleString()}</span>
+                ) : (
+                  <span className="project-plea-tag">seeking funds · seeking hands</span>
+                )}
+                <button
+                  className="btn btn-ghost sm"
+                  onClick={e => {
+                    e.stopPropagation();
+                    if (posted) onOpenPage('network/tally/smis');
+                    else postToTally(p.name);
+                  }}
+                >
+                  {posted ? 'view tally' : '→ tally'}
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <p className="essence">The yard — every build a project, begging for funds and hands. Post one to the tally; the mesh decides.</p>
+    </section>
+  );
+}
+
+function OperationsBoard({ onSelectPage }: { onSelectPage: (id: string) => void }) {
+  const stages = [
+    { n: 'deploy', page: 'operations/kirinyaga-pilot', desc: '3 schools · 1 studio · 30 days', state: 'planned' as const },
+    { n: 'audit', page: 'operations/protocol', desc: 'Every claim checkable by someone who owes us nothing', state: 'built' as const },
+    { n: 'seal', page: 'operations/governance', desc: 'The public tally — one SBT, one vote', state: 'planned' as const },
+  ];
+  return (
+    <section className="section">
+      <div className="board">
+        {stages.map((s, i) => (
+          <Fragment key={s.n}>
+            {i > 0 && <span className="board-join">→</span>}
+            <div className="stage" onClick={() => onSelectPage(s.page)}>
+              <div className="stage-head"><span className="stage-n">{i + 1}</span>{s.n}</div>
+              <div className="stage-desc">{s.desc}</div>
+              <span className={'state-pill ' + s.state}>{s.state}</span>
+            </div>
+          </Fragment>
+        ))}
+      </div>
+      <p className="essence">Ship, seal, repeat — deploy, audit, seal. Every stage on the record.</p>
+    </section>
+  );
+}
+
+function ResearchBench({ onSelectPage }: { onSelectPage: (id: string) => void }) {
+  const hyp: Record<string, string> = {
+    'research/corridor-mirrors': 'Visual depth cues reduce cognitive load between classrooms.',
+    'research/hostel-audio': 'Directional audio nodes for off-hours revision. Zero student testing.',
+    'research/mwea-box': 'Three shorts in thirty days, from Kirinyaga stories, at ~10% of studio cost.',
+  };
+  return (
+    <section className="section">
+      <div className="bench">
+        {TREE.research.pages.map(p => (
+          <div className="specimen" key={p.id} onClick={() => onSelectPage(p.id)}>
+            <div className="specimen-head">
+              <span className="specimen-name">{p.name}</span>
+              <span className={'state-pill ' + p.state}>{p.state}</span>
+            </div>
+            <div className="specimen-hyp">{hyp[p.id]}</div>
+          </div>
+        ))}
+      </div>
+      <p className="essence">The bench — pre-registered experiments. Null results published; failure is data.</p>
+    </section>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MODULE LANDING — centerpiece + claim walk (kernel) + page cards
+   ══════════════════════════════════════════════════════════════ */
+
+function ModuleLanding({ moduleId, onSelectPage, onOpenPage, toast }: { moduleId: string; onSelectPage: (id: string) => void; onOpenPage: (id: string) => void; toast: (msg: string, icon?: string) => void }) {
   const mod = MODULES[moduleId];
   const tree = TREE[moduleId];
-  const { me, claim, research, submitResearch, postToTally } = useSession();
+  const { me, claim, research, submitResearch, postToTally, tally } = useSession();
   const [walk, setWalk] = useState({ step: 1, name: '' });
   const [researchTitle, setResearchTitle] = useState('');
 
   return (
     <main className="main" id="main">
       <MainHead title={mod.title} desc={mod.desc} />
+
+      {moduleId === 'kernel' && <KernelAura />}
+      {moduleId === 'network' && <NetworkMesh />}
+      {moduleId === 'builds' && <BuildsYard onSelectPage={onSelectPage} onOpenPage={onOpenPage} />}
+      {moduleId === 'operations' && <OperationsBoard onSelectPage={onSelectPage} />}
+      {moduleId === 'research' && <ResearchBench onSelectPage={onSelectPage} />}
 
       {moduleId === 'kernel' && (
         <section className="section">
@@ -332,9 +485,9 @@ function ModuleLanding({ moduleId, onSelectPage, toast }: { moduleId: string; on
         </div>
       </section>
 
-      {moduleId === 'laboratory' && (
+      {moduleId === 'research' && (
         <section className="section">
-          <div className="section-label">laboratory · submit research</div>
+          <div className="section-label">the bench · submit research</div>
           <div className="walk-row">
             <input
               className="walk-input"

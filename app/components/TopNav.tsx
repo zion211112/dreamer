@@ -70,9 +70,26 @@ export function TopNav({ view, active, onNav, onView, onPalette }: TopNavProps) 
         <kbd>⌘K</kbd>
       </div>
 
-      <div className="who">
-        <span className="av">{me ? me.av : 'A'}</span>
-        <span>{me ? `${me.name} · ${me.sbt}` : 'aptlabs · control · v1.4'}</span>
+      <div
+        className="who"
+        title={me ? `${me.name} · ${me.sbt} · rights: ${me.rights.join(' · ')}` : 'unclaimed — claim your identity SBT (⌘1 kernel)'}
+      >
+        <span className={'av' + (me ? ' claimed' : ' unclaimed')} style={me ? { background: me.color } : undefined}>
+          {me ? me.av : 'A'}
+        </span>
+        <span className="who-meta">
+          {me ? (
+            <>
+              <span className="who-name">{me.name}</span>
+              <span className="who-sbt">{me.sbt} · on the roll</span>
+            </>
+          ) : (
+            <>
+              <span className="who-name dim">unclaimed</span>
+              <span className="who-sbt">claim your SBT · ⌘1</span>
+            </>
+          )}
+        </span>
       </div>
     </header>
   );
