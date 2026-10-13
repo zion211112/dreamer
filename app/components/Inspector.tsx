@@ -2,6 +2,7 @@
 
 import { MODULES, MODULE_ORDER, TREE, ANCHORS, findPage } from '@/lib/ontology';
 import { highlight } from '@/lib/editor';
+import { useSession } from '@/lib/session';
 
 interface InspectorProps {
   module: string;
@@ -12,6 +13,7 @@ interface InspectorProps {
 export function Inspector({ module, page, onAction }: InspectorProps) {
   const mod = MODULES[module];
   const f = page ? findPage(page) : null;
+  const { signatures, anchor } = useSession();
 
   // Module overview — no page selected.
   if (!f) {
@@ -91,6 +93,13 @@ export function Inspector({ module, page, onAction }: InspectorProps) {
           <span style={{ marginLeft: 'auto' }} className="sig">✓ signed</span>
         </div>
       )}
+      {(signatures[f.id] || []).map((s, i) => (
+        <div className="anchor-row" key={`${s.by}-${i}`}>
+          <span className="av">{s.by[0].toUpperCase()}</span>
+          {s.by}
+          <span style={{ marginLeft: 'auto' }} className="sig">✓ anchored</span>
+        </div>
+      ))}
 
       <div className="insp-section-label">actions</div>
       <div className="anchor-row" style={{ cursor: 'pointer' }} onClick={() => onAction('mint', f.id)}>
@@ -101,6 +110,9 @@ export function Inspector({ module, page, onAction }: InspectorProps) {
       </div>
       <div className="anchor-row" style={{ cursor: 'pointer' }} onClick={() => onAction('audit', f.id)}>
         <span className="sig">◎</span>Request audit
+      </div>
+      <div className="anchor-row" style={{ cursor: 'pointer' }} onClick={() => anchor(f.id, f.name)}>
+        <span className="sig">⚿</span>Request anchor signature
       </div>
 
       {/* keep module reference for callers that need it */}

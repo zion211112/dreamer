@@ -1,6 +1,7 @@
 'use client';
 
 import { MODULES, MODULE_ORDER, type NavItemId } from '@/lib/ontology';
+import { useSession } from '@/lib/session';
 
 export type { NavItemId };
 export type ViewId = 'kemet' | 'workspace';
@@ -14,6 +15,7 @@ interface TopNavProps {
 }
 
 export function TopNav({ view, active, onNav, onView, onPalette }: TopNavProps) {
+  const { me } = useSession();
   return (
     <header className="header">
       <div className="brand" onClick={() => onView('kemet')} role="button" tabIndex={0}
@@ -69,8 +71,8 @@ export function TopNav({ view, active, onNav, onView, onPalette }: TopNavProps) 
       </div>
 
       <div className="who">
-        <span className="av">A</span>
-        <span>aptlabs · control · v1.4</span>
+        <span className="av">{me ? me.av : 'A'}</span>
+        <span>{me ? `${me.name} · ${me.sbt}` : 'aptlabs · control · v1.4'}</span>
       </div>
     </header>
   );

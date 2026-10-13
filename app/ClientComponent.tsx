@@ -8,6 +8,7 @@ import { Inspector } from '@/components/Inspector';
 import { StatusBar } from '@/components/StatusBar';
 import { CommandPalette } from '@/components/CommandPalette';
 import { ChatAgent } from '@/components/ChatAgent';
+import { SessionProvider } from '@/lib/session';
 
 interface Toast {
   id: number;
@@ -141,6 +142,7 @@ export default function ClientComponent() {
   }, [module, view, selectModule, toggleModule]);
 
   return (
+    <SessionProvider toast={toast}>
     <div
       style={{
         display: 'grid',
@@ -227,5 +229,6 @@ export default function ClientComponent() {
         ))}
       </div>
     </div>
+    </SessionProvider>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { findPage } from '@/lib/ontology';
+import { useSession } from '@/lib/session';
 
 interface ChatAgentProps {
   isOpen: boolean;
@@ -28,6 +29,8 @@ export function ChatAgent({ isOpen, page, module, onToggle }: ChatAgentProps) {
   const [input, setInput] = useState('');
   const bodyRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const greeted = useRef(false);
+  const { me } = useSession();
 
   // Greeting on boot.
   useEffect(() => {
@@ -39,6 +42,16 @@ export function ChatAgent({ isOpen, page, module, onToggle }: ChatAgentProps) {
       },
     ]);
   }, []);
+
+  // Hermes notices when the persona claims an identity.
+  useEffect(() => {
+    if (me && !greeted.current) {
+      greeted.current = true;
+      agentSay(
+        `The roll brightened — <span style="color:var(--accent-hi)">${me.name} · ${me.sbt}</span>. Soulbound, unsellable. Build, vote, invest, sign: the loop is yours.`,
+      );
+    }
+  }, [me]);
 
   useEffect(() => {
     if (isOpen) inputRef.current?.focus();
