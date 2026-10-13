@@ -3,7 +3,7 @@
 import { MODULES, MODULE_ORDER, TREE, stateColor, type NavItemId } from '@/lib/ontology';
 
 interface ExplorerTreeProps {
-  module: string;
+  module: string | null;
   openDirs: Record<string, boolean>;
   file: string | null;
   onSelectModule: (mod: string) => void;

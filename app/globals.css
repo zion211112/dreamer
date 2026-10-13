@@ -204,6 +204,33 @@ button { font-family: inherit; cursor: pointer; }
   transition: 0.15s;
 }
 .nav button.active .pip { box-shadow: 0 0 8px currentColor; }
+.view-toggle {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px;
+  flex-shrink: 0;
+}
+.view-toggle button {
+  background: transparent;
+  border: 0;
+  color: var(--fg-muted);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  padding: 3px 9px;
+  border-radius: 4px;
+  transition: 0.12s;
+  white-space: nowrap;
+}
+.view-toggle button:hover { color: var(--fg); }
+.view-toggle button.active {
+  background: var(--bg-elevated);
+  color: var(--fg);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
 .search {
   flex: 1;
   max-width: 440px;
@@ -536,6 +563,122 @@ button { font-family: inherit; cursor: pointer; }
 .activity .row .p::before { content: "›"; color: var(--fg-dim); margin-right: 8px; }
 .activity .row .t { color: var(--fg-dim); }
 .activity .row .right { display: flex; gap: 8px; align-items: center; }
+
+/* ═══ THE LEDGER — physical ledger shell ═══ */
+.ledger {
+  background-color: var(--bg-raised);
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 27px,
+    var(--border) 27px,
+    var(--border) 28px
+  );
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.ledger-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 28px;
+  padding: 0 14px 0 20px;
+  position: relative;
+  border-bottom: 1px solid transparent;
+}
+.ledger-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(248, 113, 113, 0.28);
+}
+.ledger-row .av {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  color: #0a0a0b;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.ledger-row .who { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.ledger-row .n {
+  font-family: var(--font-serif);
+  font-size: 13.5px;
+  color: var(--fg);
+  white-space: nowrap;
+}
+.ledger-row .r {
+  font-size: 10.5px;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ledger-row .rights { display: flex; gap: 4px; margin-left: auto; }
+.ledger-row .rights span {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+.ledger-row .sbt {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--fg-dim);
+  width: 52px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.ledger-row .stamp {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--green);
+  border: 1px solid var(--green);
+  border-radius: 3px;
+  padding: 1px 5px;
+  transform: rotate(-2deg);
+  opacity: 0.85;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+/* ═══ GUIDE — identity SBT steps ═══ */
+.guide { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.step {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+.step .n {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--cyan);
+  color: #0a0a0b;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.step .t { font-family: var(--font-serif); font-size: 14px; color: var(--fg); margin-bottom: 2px; }
+.step .d { font-size: 11.5px; color: var(--fg-muted); line-height: 1.4; }
 .state-pill {
   font-size: 10px;
   padding: 2px 7px;

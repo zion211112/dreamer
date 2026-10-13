@@ -1,12 +1,15 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { MODULES, MODULE_ORDER, TREE, findFile, type NavItemId } from '@/lib/ontology';
+import { MODULES, MODULE_ORDER, TREE, type NavItemId } from '@/lib/ontology';
+import type { ViewId } from '@/components/TopNav';
 
 interface CommandPaletteProps {
   isOpen: boolean;
+  view: ViewId;
   onClose: () => void;
   onNav: (id: NavItemId) => void;
+  onView: (v: ViewId) => void;
   onSelectFile: (id: string) => void;
   onToggleAgent: () => void;
 }
@@ -20,7 +23,7 @@ interface PaletteItem {
   act: () => void;
 }
 
-export function CommandPalette({ isOpen, onClose, onNav, onSelectFile, onToggleAgent }: CommandPaletteProps) {
+export function CommandPalette({ isOpen, view, onClose, onNav, onView, onSelectFile, onToggleAgent }: CommandPaletteProps) {
   const [query, setQuery] = useState('');
   const [idx, setIdx] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -35,14 +38,30 @@ export function CommandPalette({ isOpen, onClose, onNav, onSelectFile, onToggleA
   }, [isOpen]);
 
   const commands: PaletteItem[] = useMemo(() => [
+    {
+      id: 'nav-kemet',
+      label: 'Go to Kemet-OS',
+      sub: 'the one-page landing',
+      kbd: '⌘0',
+      icon: '◈',
+      act: () => onView('kemet'),
+    },
     ...MODULE_ORDER.map((id, i) => ({
       id: `nav-${id}`,
       label: `Go to ${MODULES[id].title}`,
       sub: 'module',
       kbd: `⌘${i + 1}`,
-      icon: '⌘',
+      icon: MODULES[id].icon,
       act: () => onNav(id as NavItemId),
     })),
+    {
+      id: 'view-workspace',
+      label: view === 'workspace' ? 'Show Kemet-OS landing' : 'Show Workspace',
+      sub: 'toggle the branch',
+      kbd: '⌘B',
+      icon: '▤',
+      act: () => onView(view === 'workspace' ? 'kemet' : 'workspace'),
+    },
     {
       id: 'agent-toggle',
       label: 'Toggle Hermes Agent',
@@ -59,7 +78,7 @@ export function CommandPalette({ isOpen, onClose, onNav, onSelectFile, onToggleA
       icon: '◈',
       act: () => {},
     },
-  ], [onNav, onToggleAgent]);
+  ], [onNav, onView, onToggleAgent, view]);
 
   const files: PaletteItem[] = useMemo(() => {
     const out: PaletteItem[] = [];
@@ -128,7 +147,7 @@ export function CommandPalette({ isOpen, onClose, onNav, onSelectFile, onToggleA
             <>
               <div className="palette-section">commands</div>
               {filtered.cmds.map((c, i) => (
-                <PaletteRow key={c.id} item={c} idx={i} active={idx === i} onHover={() => setIdx(i)} onClick={() => runIndex(i)} />
+                <PaletteRow key={c.id} item={c} active={idx === i} onHover={() => setIdx(i)} onClick={() => runIndex(i)} />
               ))}
             </>
           )}
@@ -136,7 +155,7 @@ export function CommandPalette({ isOpen, onClose, onNav, onSelectFile, onToggleA
             <>
               <div className="palette-section">files</div>
               {filtered.files.map((c, i) => (
-                <PaletteRow key={c.id} item={c} idx={filtered.cmds.length + i} active={idx === filtered.cmds.length + i} onHover={() => setIdx(filtered.cmds.length + i)} onClick={() => runIndex(filtered.cmds.length + i)} />
+                <PaletteRow key={c.id} item={c} active={idx === filtered.cmds.length + i} onHover={() => setIdx(filtered.cmds.length + i)} onClick={() => runIndex(filtered.cmds.length + i)} />
               ))}
             </>
           )}
@@ -149,8 +168,7 @@ export function CommandPalette({ isOpen, onClose, onNav, onSelectFile, onToggleA
   );
 }
 
-function PaletteRow({ item, idx, active, onHover, onClick }: { item: PaletteItem; idx: number; active: boolean; onHover: () => void; onClick: () => void }) {
-  void idx;
+function PaletteRow({ item, active, onHover, onClick }: { item: PaletteItem; active: boolean; onHover: () => void; onClick: () => void }) {
   return (
     <div
       className={'palette-item' + (active ? ' active' : '')}
@@ -166,5 +184,3 @@ function PaletteRow({ item, idx, active, onHover, onClick }: { item: PaletteItem
     </div>
   );
 }
-
-export { findFile };

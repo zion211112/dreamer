@@ -7,7 +7,7 @@
 
 export type EvidenceState = 'built' | 'proto' | 'planned' | 'unknown';
 
-export type NavItemId = 'workspace' | 'kernel' | 'network' | 'builds' | 'operations' | 'laboratory';
+export type NavItemId = 'kernel' | 'network' | 'builds' | 'operations' | 'laboratory';
 
 export interface OntoFile {
   id: string;
@@ -43,17 +43,15 @@ export interface OntoActivity {
 }
 
 export const MODULES: Record<string, OntoModule> = {
-  workspace: { label: 'workspace', color: 'var(--accent)', icon: '◇',
-    title: 'Command Center', desc: 'control dashboard — system status, recent activity, quick actions' },
-  kernel: { label: 'kernel', color: 'var(--cyan)', icon: '⌘',
-    title: 'Kernel', desc: 'truth layer — issuance, evidence, the roll' },
-  network: { label: 'network', color: 'var(--green)', icon: '◉',
-    title: 'Network', desc: 'mesh layer — institutions, people, anchors' },
-  builds: { label: 'builds', color: 'var(--amber)', icon: '▤',
-    title: 'Builds', desc: 'tools layer — consoles, wallet, replacement engine' },
-  operations: { label: 'operations', color: 'var(--red)', icon: '●',
-    title: 'Operations', desc: 'execution layer — deployments, MoUs, audits' },
-  laboratory: { label: 'laboratory', color: 'var(--pink)', icon: '◎',
+  kernel: { label: 'Kernel', color: 'var(--cyan)', icon: '⌘',
+    title: 'Kernel', desc: 'truth layer — issuance, evidence, identity SBT, the roll' },
+  network: { label: 'Network', color: 'var(--green)', icon: '◉',
+    title: 'Network', desc: 'mesh layer — commons, tally, anchors, institutions' },
+  builds: { label: 'Builds', color: 'var(--amber)', icon: '▤',
+    title: 'Builds', desc: 'tools layer — consoles, wallet, workshops, forking' },
+  operations: { label: 'Operations', color: 'var(--red)', icon: '●',
+    title: 'Operations', desc: 'execution layer — audits, deployments, governance' },
+  laboratory: { label: 'Laboratory', color: 'var(--pink)', icon: '◎',
     title: 'Laboratory', desc: 'r&d layer — spatial experiments, AI pipelines, media' },
 };
 
@@ -72,7 +70,7 @@ export const TREE: Record<string, { dirs: string[]; files: OntoFile[] }> = {
     ]
   },
   kernel: {
-    dirs: ['issuance', 'evidence', 'roll'],
+    dirs: ['issuance', 'evidence', 'roll', 'identity'],
     files: [
       { id: 'kernel/issuance/core.ts', name: 'core.ts', size: '4.9K', lines: 104,
         state: 'built', lang: 'typescript',
@@ -83,14 +81,26 @@ export const TREE: Record<string, { dirs: string[]; files: OntoFile[] }> = {
       { id: 'kernel/roll/ledger.ts', name: 'ledger.ts', size: '6.7K', lines: 148,
         state: 'proto', lang: 'typescript',
         content: '// The Roll — unforgeable public ledger.\n\n// Append-only. Every record is signed by its maker.\n// Every blueprint is published for county fork.\n// No record can be edited — only superseded.\n\nexport interface RollEntry {\n  seq: number;\n  hash: string;\n  prev: string;\n  payload: CapabilityRecord;\n}\n\nexport function append(entry: RollEntry): RollEntry {\n  // persists to disk + mesh sync\n}' },
+      { id: 'kernel/identity/sbt-guide.md', name: 'sbt-guide.md', size: '1.9K', lines: 30,
+        state: 'built', lang: 'markdown',
+        content: '# Claim your Identity SBT\n\nThree moves. Two minutes. One soulbound token.\n\n## 1 · Register\nOpen the kernel. Name yourself — no papers, no gatekeeper.\n\n## 2 · Sign\nSign the claim with your wallet. An anchor countersigns.\n\n## 3 · Receive\nYour SBT lands in your wallet. Soulbound: yours, unsellable.\n\nIt is the key to The Roll — build, vote, invest, sign.' },
     ]
   },
   network: {
-    dirs: ['institutions', 'people', 'anchors'],
+    dirs: ['commons', 'tally', 'people', 'anchors'],
     files: [
-      { id: 'network/institutions/schools.md', name: 'schools.md', size: '2.4K', lines: 38,
+      { id: 'network/commons/town-square.md', name: 'town-square.md', size: '2.8K', lines: 46,
+        state: 'proto', lang: 'markdown',
+        content: '# Town Square\n\nThe commons — where everyone meets, builders and not.\n\n## What it is\nA public square on the mesh. No build required to belong.\nAsk, argue, announce, celebrate. Threads, not transactions.\n\n## Rules\n- No one is a stranger here. Learners, elders, makers, watchers.\n- Questions outrank claims.\n- Every thread is open. Lurking is allowed.' },
+      { id: 'network/commons/schools.md', name: 'schools.md', size: '2.4K', lines: 38,
         state: 'built', lang: 'markdown',
         content: '# School Nodes · Kirinyaga\n\n## Active (3)\n- Kirinyaga Boys Secondary — Kagio\n- Mwea Primary — Mwea\n- Nyamindi Primary — Nyamindi\n\n## Pending MoU (0)\n\n## Reach\nEach node runs the free offline School Console.\nZero cost. Zero internet. Report cards in 45 seconds.' },
+      { id: 'network/tally/smis.md', name: 'smis.md', size: '3.4K', lines: 58,
+        state: 'proto', lang: 'markdown',
+        content: '# SMIS — live on the tally\n\nThe ongoing SMIS: a voted project, open to invest.\n\n## Ballot\n- 214 for · 38 against · quorum met\n- Closes in 6 days\n\n## Investment\n- KES 1.2M pledged of 2.0M goal\n- 41 backers · smallest stake KES 500\n- Returns flow to The Roll, pro-rata\n\n## Rule\nOnly ledger members vote. One SBT, one vote.\nNon-builders may invest — the square decides.' },
+      { id: 'network/tally/ballot.md', name: 'ballot.md', size: '2.2K', lines: 34,
+        state: 'planned', lang: 'markdown',
+        content: '# Ballot\n\nHow a project earns the tally.\n\n## Steps\n1. Blueprint minted to The Roll\n2. Anchor seconds the motion\n3. Ledger members vote — one SBT, one vote\n4. Investment opens on quorum\n\n## Guard\nNo whale weights. No anonymous votes.\nThe tally is public, like everything here.' },
       { id: 'network/people/roster.md', name: 'roster.md', size: '3.6K', lines: 52,
         state: 'proto', lang: 'markdown',
         content: '# On the Roll\n\n## Operators\n- aptlabs — genesis node\n\n## Anchors (verified)\n- wanjiru.m — Kagio welding · 14 builds signed\n- joseph.k — Mwea carpentry · 9 builds signed\n- grace.n — Nyamindi acoustics · 4 builds signed\n\n## Builders\n- kofi.a — firmware & CAD · 3 blueprints\n- saidi.m — turbine fabrication · 2 blueprints\n\n## Learners\n- amina.h — Mwea studio · first short rendered\n- brian.o — Kagio · apprentice welder' },
@@ -100,7 +110,7 @@ export const TREE: Record<string, { dirs: string[]; files: OntoFile[] }> = {
     ]
   },
   builds: {
-    dirs: ['consoles', 'wallet'],
+    dirs: ['consoles', 'wallet', 'workshops'],
     files: [
       { id: 'builds/consoles/school-console.md', name: 'school-console.md', size: '7.2K', lines: 122,
         state: 'built', lang: 'markdown',
@@ -114,6 +124,9 @@ export const TREE: Record<string, { dirs: string[]; files: OntoFile[] }> = {
       { id: 'builds/engine/replacement-engine.ts', name: 'replacement-engine.ts', size: '7.2K', lines: 168,
         state: 'proto', lang: 'typescript',
         content: '// Replacement Engine — the import-substitution core.\n\n// Input: a landed import quote (PDF or number)\n// Output: a locally fabricable alternative + BOM + crew\n\nexport interface ImportTarget {\n  name: string;\n  landed_cost: number;   // KES\n  tariff_rate: number;   // %\n  lead_time_days: number;\n}\n\nexport interface LocalBuild {\n  bom: BillOfMaterials;\n  crew: TriNode;\n  estimated_cost: number;\n  estimated_days: number;\n}' },
+      { id: 'builds/workshops/collab.md', name: 'collab.md', size: '2.6K', lines: 44,
+        state: 'proto', lang: 'markdown',
+        content: '# Workshops — build together\n\nWhere collaborative building and forking happen.\n\n## Fork\nEvery blueprint on The Roll is forkable. One click.\nFork, adapt, mint your evidence back.\n\n## Collab\nCrews form around a blueprint. Roles: maker, anchor, reviewer.\nThe engine splits credit by signature weight.\n\n## Rule\nA fork without evidence is a draft. Publish or perish.' },
     ]
   },
   operations: {
@@ -167,6 +180,35 @@ export const ANCHORS = [
   { av: 'W', name: 'wanjiru.m', meta: '14 builds signed' },
   { av: 'J', name: 'joseph.k', meta: '9 builds signed' },
   { av: 'G', name: 'grace.n', meta: '4 builds signed' },
+];
+
+/* ══════════════════════════════════════════════════════════════
+   THE LEDGER — members who can build, vote, sign.
+   One SBT, one vote. Ledger over roster: the record is the member.
+   ══════════════════════════════════════════════════════════════ */
+
+export interface LedgerEntry {
+  av: string;
+  name: string;
+  role: string;
+  rights: string[];
+  sbt: string;
+  color: string;
+}
+
+export const LEDGER: LedgerEntry[] = [
+  { av: 'A', name: 'aptlabs', role: 'operator · genesis', rights: ['build', 'vote', 'sign', 'audit'], sbt: 'SBT-0001',
+    color: 'linear-gradient(135deg,var(--accent),var(--accent-hi))' },
+  { av: 'W', name: 'wanjiru.m', role: 'anchor · kagio welding', rights: ['build', 'vote', 'sign'], sbt: 'SBT-0042',
+    color: 'linear-gradient(135deg,var(--cyan),#67e8f9)' },
+  { av: 'J', name: 'joseph.k', role: 'anchor · mwea carpentry', rights: ['build', 'vote', 'sign'], sbt: 'SBT-0057',
+    color: 'linear-gradient(135deg,var(--green),#86efac)' },
+  { av: 'G', name: 'grace.n', role: 'anchor · nyamindi acoustics', rights: ['build', 'vote'], sbt: 'SBT-0063',
+    color: 'linear-gradient(135deg,var(--amber),#fde68a)' },
+  { av: 'K', name: 'kofi a.', role: 'builder · firmware & cad', rights: ['build', 'vote'], sbt: 'SBT-0118',
+    color: 'linear-gradient(135deg,var(--pink),#f9a8d4)' },
+  { av: 'A', name: 'amina.h', role: 'learner · mwea studio', rights: ['vote'], sbt: 'SBT-0204',
+    color: 'linear-gradient(135deg,var(--red),#fca5a5)' },
 ];
 
 export const TOTAL_BUILDS = Object.values(TREE).reduce((n, t) => n + t.files.length, 0);
@@ -271,7 +313,6 @@ function buildModuleRoot(modId: string): FileNode {
 }
 
 export const DEPARTMENT_TOKENS: Record<string, string> = {
-  workspace: 'var(--accent)',
   kernel: 'var(--cyan)',
   network: 'var(--green)',
   builds: 'var(--amber)',

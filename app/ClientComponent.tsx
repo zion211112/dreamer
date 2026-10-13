@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { TopNav, type NavItemId } from '@/components/TopNav';
+import { TopNav, type NavItemId, type ViewId } from '@/components/TopNav';
 import { ExplorerTree } from '@/components/ExplorerTree';
 import { ModuleSurface } from '@/components/ModuleSurface';
 import { Inspector } from '@/components/Inspector';
@@ -16,8 +16,9 @@ interface Toast {
   out: boolean;
 }
 
+const MODULE_KEYS: NavItemId[] = ['kernel', 'network', 'builds', 'operations', 'laboratory'];
+
 const initialOpenDirs: Record<string, boolean> = {
-  workspace: true,
   kernel: true,
   network: true,
   builds: true,
@@ -26,7 +27,8 @@ const initialOpenDirs: Record<string, boolean> = {
 };
 
 export default function ClientComponent() {
-  const [module, setModule] = useState<string>('workspace');
+  const [view, setView] = useState<ViewId>('kemet');
+  const [module, setModule] = useState<NavItemId | null>(null);
   const [openDirs, setOpenDirs] = useState<Record<string, boolean>>(initialOpenDirs);
   const [file, setFile] = useState<string | null>(null);
   const [agentOpen, setAgentOpen] = useState(true);
@@ -43,17 +45,25 @@ export default function ClientComponent() {
     }, 2200);
   }, []);
 
-  const selectModule = useCallback((mod: string) => {
+  // Entering a module lands on the workspace branch.
+  const selectModule = useCallback((mod: NavItemId) => {
     setModule(mod);
     setFile(null);
+    setView('workspace');
     setOpenDirs(prev => ({ ...prev, [mod]: true }));
   }, []);
 
   const selectFile = useCallback((id: string) => {
-    const mod = id.split('/')[0];
+    const mod = id.split('/')[0] as NavItemId;
     setModule(mod);
     setFile(id);
+    setView('workspace');
     setOpenDirs(prev => ({ ...prev, [mod]: true }));
+  }, []);
+
+  const selectView = useCallback((v: ViewId) => {
+    setView(v);
+    if (v === 'kemet') setFile(null);
   }, []);
 
   const toggleModule = useCallback((mod: string) => {
@@ -62,7 +72,8 @@ export default function ClientComponent() {
 
   const toggleAgent = useCallback(() => setAgentOpen(v => !v), []);
 
-  // Keybindings: ⌘K/⌘P palette, ⌘⇧A agent, ⌘1-6 modules, Esc.
+  // Keybindings: ⌘K/⌘P palette, ⌘⇧A agent, ⌘0 kemet-os, ⌘B workspace,
+  // ⌘1–5 modules, Escape.
   useEffect(() => {
     const onKey = (e: globalThis.KeyboardEvent) => {
       const meta = e.metaKey || e.ctrlKey;
@@ -82,11 +93,21 @@ export default function ClientComponent() {
         toggleAgent();
         return;
       }
-      if (meta && e.key >= '1' && e.key <= '6') {
+      if (meta && e.key.toLowerCase() === 'b') {
         e.preventDefault();
-        const mods = ['workspace', 'kernel', 'network', 'builds', 'operations', 'laboratory'];
+        setView(v => (v === 'kemet' ? 'workspace' : 'kemet'));
+        return;
+      }
+      if (meta && e.key === '0') {
+        e.preventDefault();
+        setView('kemet');
+        setFile(null);
+        return;
+      }
+      if (meta && e.key >= '1' && e.key <= '5') {
+        e.preventDefault();
         const i = parseInt(e.key, 10) - 1;
-        if (mods[i]) selectModule(mods[i]);
+        if (MODULE_KEYS[i]) selectModule(MODULE_KEYS[i]);
         return;
       }
       if (e.key === 'Escape') {
@@ -99,7 +120,7 @@ export default function ClientComponent() {
 
   // Boot toast.
   useEffect(() => {
-    const t = setTimeout(() => toast('Control surface v1.4 · ready', '◆'), 400);
+    const t = setTimeout(() => toast('Kemet-OS v1.4 · ready', '◈'), 400);
     return () => clearTimeout(t);
   }, [toast]);
 
@@ -112,12 +133,12 @@ export default function ClientComponent() {
   }, [toast]);
 
   const handleExplorerModuleClick = useCallback((mod: string) => {
-    if (mod === module) {
+    if (mod === module && view === 'workspace') {
       toggleModule(mod);
     } else {
-      selectModule(mod);
+      selectModule(mod as NavItemId);
     }
-  }, [module, selectModule, toggleModule]);
+  }, [module, view, selectModule, toggleModule]);
 
   return (
     <div
@@ -136,8 +157,10 @@ export default function ClientComponent() {
     >
       <div style={{ gridArea: 'header' }}>
         <TopNav
-          active={module as NavItemId}
+          view={view}
+          active={module}
           onNav={selectModule}
+          onView={selectView}
           onPalette={() => setPaletteOpen(true)}
         />
       </div>
@@ -155,18 +178,20 @@ export default function ClientComponent() {
 
       <div style={{ gridArea: 'main' }}>
         <ModuleSurface
+          view={view}
           module={module}
           file={file}
           onNav={selectModule}
           onSelectFile={selectFile}
           onOpenFile={selectFile}
+          onView={selectView}
           toast={toast}
         />
       </div>
 
       <div style={{ gridArea: 'inspector' }}>
         <Inspector
-          module={module}
+          module={module || 'kernel'}
           file={file}
           onAction={handleInspectorAction}
         />
@@ -179,14 +204,16 @@ export default function ClientComponent() {
       <ChatAgent
         isOpen={agentOpen}
         file={file}
-        module={module}
+        module={module || 'kernel'}
         onToggle={toggleAgent}
       />
 
       <CommandPalette
         isOpen={paletteOpen}
+        view={view}
         onClose={() => setPaletteOpen(false)}
         onNav={selectModule}
+        onView={selectView}
         onSelectFile={selectFile}
         onToggleAgent={toggleAgent}
       />
