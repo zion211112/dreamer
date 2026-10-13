@@ -10,7 +10,7 @@ interface CommandPaletteProps {
   onClose: () => void;
   onNav: (id: NavItemId) => void;
   onView: (v: ViewId) => void;
-  onSelectFile: (id: string) => void;
+  onSelectPage: (id: string) => void;
   onToggleAgent: () => void;
 }
 
@@ -23,7 +23,7 @@ interface PaletteItem {
   act: () => void;
 }
 
-export function CommandPalette({ isOpen, view, onClose, onNav, onView, onSelectFile, onToggleAgent }: CommandPaletteProps) {
+export function CommandPalette({ isOpen, view, onClose, onNav, onView, onSelectPage, onToggleAgent }: CommandPaletteProps) {
   const [query, setQuery] = useState('');
   const [idx, setIdx] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -72,7 +72,7 @@ export function CommandPalette({ isOpen, view, onClose, onNav, onView, onSelectF
     },
     {
       id: 'mint',
-      label: 'Mint current file to The Roll',
+      label: 'Mint current page to The Roll',
       sub: 'action',
       kbd: '',
       icon: '◈',
@@ -80,33 +80,33 @@ export function CommandPalette({ isOpen, view, onClose, onNav, onView, onSelectF
     },
   ], [onNav, onView, onToggleAgent, view]);
 
-  const files: PaletteItem[] = useMemo(() => {
+  const pages: PaletteItem[] = useMemo(() => {
     const out: PaletteItem[] = [];
     for (const mod of MODULE_ORDER) {
-      for (const f of TREE[mod].files) {
+      for (const p of TREE[mod].pages) {
         out.push({
-          id: f.id,
-          label: f.name,
-          sub: f.id,
+          id: p.id,
+          label: p.name,
+          sub: p.id,
           kbd: '',
           icon: '▤',
-          act: () => onSelectFile(f.id),
+          act: () => onSelectPage(p.id),
         });
       }
     }
     return out;
-  }, [onSelectFile]);
+  }, [onSelectPage]);
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
-    if (!q) return { cmds: commands.slice(0, 7), files: files.slice(0, 5) };
+    if (!q) return { cmds: commands.slice(0, 7), pages: pages.slice(0, 5) };
     return {
       cmds: commands.filter(c => c.label.toLowerCase().includes(q) || c.sub.toLowerCase().includes(q)),
-      files: files.filter(f => f.label.toLowerCase().includes(q) || f.sub.toLowerCase().includes(q)),
+      pages: pages.filter(p => p.label.toLowerCase().includes(q) || p.sub.toLowerCase().includes(q)),
     };
-  }, [query, commands, files]);
+  }, [query, commands, pages]);
 
-  const flat = useMemo(() => [...filtered.cmds, ...filtered.files], [filtered]);
+  const flat = useMemo(() => [...filtered.cmds, ...filtered.pages], [filtered]);
 
   useEffect(() => {
     if (idx >= flat.length) setIdx(Math.max(0, flat.length - 1));
@@ -139,7 +139,7 @@ export function CommandPalette({ isOpen, view, onClose, onNav, onView, onSelectF
             else if (e.key === 'Enter') { e.preventDefault(); runIndex(idx); }
             else if (e.key === 'Escape') { e.preventDefault(); onClose(); }
           }}
-          placeholder="Type a command or search files…"
+          placeholder="Type a command or search pages…"
           autoComplete="off"
         />
         <div className="palette-list" ref={listRef}>
@@ -151,15 +151,15 @@ export function CommandPalette({ isOpen, view, onClose, onNav, onView, onSelectF
               ))}
             </>
           )}
-          {filtered.files.length > 0 && (
+          {filtered.pages.length > 0 && (
             <>
-              <div className="palette-section">files</div>
-              {filtered.files.map((c, i) => (
+              <div className="palette-section">pages</div>
+              {filtered.pages.map((c, i) => (
                 <PaletteRow key={c.id} item={c} active={idx === filtered.cmds.length + i} onHover={() => setIdx(filtered.cmds.length + i)} onClick={() => runIndex(filtered.cmds.length + i)} />
               ))}
             </>
           )}
-          {filtered.cmds.length === 0 && filtered.files.length === 0 && (
+          {filtered.cmds.length === 0 && filtered.pages.length === 0 && (
             <div className="palette-section" style={{ textAlign: 'center', padding: '32px' }}>No matches</div>
           )}
         </div>

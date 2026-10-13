@@ -5,21 +5,29 @@ import { MODULES, MODULE_ORDER, TREE, stateColor, type NavItemId } from '@/lib/o
 interface ExplorerTreeProps {
   module: string | null;
   openDirs: Record<string, boolean>;
-  file: string | null;
+  page: string | null;
   onSelectModule: (mod: string) => void;
   onToggleModule: (mod: string) => void;
-  onSelectFile: (id: string) => void;
+  onSelectPage: (id: string) => void;
 }
 
-function FileItem({ f, active }: { f: (typeof TREE)[string]['files'][number]; active: boolean }) {
+function PageItem({ p, active, onSelect }: {
+  p: (typeof TREE)[string]['pages'][number];
+  active: boolean;
+  onSelect: (id: string) => void;
+}) {
   return (
     <div
       className={'tree-item' + (active ? ' active' : '')}
-      data-file={f.id}
+      data-page={p.id}
+      onClick={() => onSelect(p.id)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={e => { if (e.key === 'Enter') onSelect(p.id); }}
     >
-      <span className="dot-state" style={{ background: stateColor(f.state) }} />
-      <span className="fname">{f.name}</span>
-      <span className="meta">{f.size}</span>
+      <span className="dot-state" style={{ background: stateColor(p.state) }} />
+      <span className="pname">{p.name}</span>
+      <span className="meta">{p.size}</span>
     </div>
   );
 }
@@ -27,15 +35,12 @@ function FileItem({ f, active }: { f: (typeof TREE)[string]['files'][number]; ac
 export function ExplorerTree({
   module,
   openDirs,
-  file,
+  page,
   onSelectModule,
   onToggleModule,
-  onSelectFile,
+  onSelectPage,
 }: ExplorerTreeProps) {
-  const totalFiles = Object.values(TREE).reduce((n, t) => n + t.files.length, 0);
-  const totalDirs = Object.values(TREE).reduce((n, t) => n + t.dirs.length, 0);
-  void totalFiles;
-  void totalDirs;
+  void onToggleModule;
 
   return (
     <aside className="explorer" id="explorer">
@@ -67,25 +72,26 @@ export function ExplorerTree({
                 ▸
               </span>
               <span className="name">{mod.label}</span>
-              <span className="meta">{tree.files.length}f · {tree.dirs.length}d</span>
+              <span className="meta">{tree.pages.length}p · {tree.dirs.length}d</span>
             </div>
 
             <div className={'tree-sub' + (isOpen ? ' open' : '')}>
               {tree.dirs.map(d => {
-                const dirFiles = tree.files.filter(f => f.id.startsWith(`${modId}/${d}/`));
+                const dirPages = tree.pages.filter(p => p.id.startsWith(`${modId}/${d}/`));
                 return (
                   <div key={d}>
                     <div className="tree-item" data-dir={`${modId}/${d}`}>
                       <span className="ic">▸</span>
                       <span className="name">{d}</span>
-                      <span className="meta">{dirFiles.length}</span>
+                      <span className="meta">{dirPages.length}p</span>
                     </div>
                     <div className="tree-sub open">
-                      {dirFiles.map(f => (
-                        <FileItem
-                          key={f.id}
-                          f={f}
-                          active={file === f.id}
+                      {dirPages.map(p => (
+                        <PageItem
+                          key={p.id}
+                          p={p}
+                          active={page === p.id}
+                          onSelect={onSelectPage}
                         />
                       ))}
                     </div>
@@ -93,10 +99,10 @@ export function ExplorerTree({
                 );
               })}
 
-              {tree.files
-                .filter(f => !tree.dirs.some(d => f.id.startsWith(`${modId}/${d}/`)))
-                .map(f => (
-                  <FileItem key={f.id} f={f} active={file === f.id} />
+              {tree.pages
+                .filter(p => !tree.dirs.some(d => p.id.startsWith(`${modId}/${d}/`)))
+                .map(p => (
+                  <PageItem key={p.id} p={p} active={page === p.id} onSelect={onSelectPage} />
                 ))}
             </div>
           </div>

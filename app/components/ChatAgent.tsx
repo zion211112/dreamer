@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { findFile } from '@/lib/ontology';
+import { findPage } from '@/lib/ontology';
 
 interface ChatAgentProps {
   isOpen: boolean;
-  file: string | null;
+  page: string | null;
   module: string;
   onToggle: () => void;
 }
@@ -17,13 +17,13 @@ interface Msg {
 }
 
 const SCRIPTED = [
-  'Reading tree. I see {file} selected. Want me to audit the BOM against the import quote, or check the anchor signature chain?',
-  'Note: {file} is in state {state}. I can propose the next evidence step — either fabricate a prototype or schedule an audit.',
-  'Blueprint {file} is forkable. Should I emit a fork request to the Nyamindi node?',
-  'The Roll shows 3 anchors on this module. Signature chain is clean. I can mint {file} now if you authorize.',
+  'Reading tree. I see {page} selected. Want me to audit the BOM against the import quote, or check the anchor signature chain?',
+  'Note: {page} is in state {state}. I can propose the next evidence step — either fabricate a prototype or schedule an audit.',
+  'Blueprint {page} is forkable. Should I emit a fork request to the Nyamindi node?',
+  'The Roll shows 3 anchors on this module. Signature chain is clean. I can mint {page} now if you authorize.',
 ];
 
-export function ChatAgent({ isOpen, file, module, onToggle }: ChatAgentProps) {
+export function ChatAgent({ isOpen, page, module, onToggle }: ChatAgentProps) {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState('');
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -35,7 +35,7 @@ export function ChatAgent({ isOpen, file, module, onToggle }: ChatAgentProps) {
       {
         id: Date.now(),
         who: 'hermes',
-        html: 'I read the tree. <span style="color:var(--accent-hi)">kernel/issuance/core.ts</span> defines the four evidence states. Want me to wire the Roll minting to the Anchor signature check, or scaffold <span style="color:var(--accent-hi)">builds/engine/replacement-engine.ts</span> first?',
+        html: 'I read the tree. <span style="color:var(--accent-hi)">kernel/issuance/core</span> defines the four evidence states. Want me to wire the Roll minting to the Anchor signature check, or scaffold <span style="color:var(--accent-hi)">builds/engine/replacement-engine</span> first?',
       },
     ]);
   }, []);
@@ -55,10 +55,10 @@ export function ChatAgent({ isOpen, file, module, onToggle }: ChatAgentProps) {
   };
 
   const agentRespond = () => {
-    const f = file ? findFile(file) : null;
+    const f = page ? findPage(page) : null;
     const tmpl = SCRIPTED[Math.floor(Math.random() * SCRIPTED.length)];
     const reply = tmpl
-      .replace(/\{file\}/g, f ? f.name : 'no file')
+      .replace(/\{page\}/g, f ? f.name : 'no page')
       .replace(/\{state\}/g, f ? f.state : 'unknown');
     setTimeout(() => agentSay(reply), 500 + Math.random() * 600);
   };

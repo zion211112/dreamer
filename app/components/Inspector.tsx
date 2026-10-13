@@ -1,19 +1,19 @@
 'use client';
 
-import { MODULES, MODULE_ORDER, TREE, ANCHORS, findFile } from '@/lib/ontology';
+import { MODULES, MODULE_ORDER, TREE, ANCHORS, findPage } from '@/lib/ontology';
 import { highlight } from '@/lib/editor';
 
 interface InspectorProps {
   module: string;
-  file: string | null;
-  onAction: (action: 'mint' | 'fork' | 'audit', file: string) => void;
+  page: string | null;
+  onAction: (action: 'mint' | 'fork' | 'audit', page: string) => void;
 }
 
-export function Inspector({ module, file, onAction }: InspectorProps) {
+export function Inspector({ module, page, onAction }: InspectorProps) {
   const mod = MODULES[module];
-  const f = file ? findFile(file) : null;
+  const f = page ? findPage(page) : null;
 
-  // Module overview — no file selected.
+  // Module overview — no page selected.
   if (!f) {
     const tree = TREE[module];
     return (
@@ -27,8 +27,8 @@ export function Inspector({ module, file, onAction }: InspectorProps) {
         <div className="insp-path">/{mod.label}</div>
         <div className="meta-grid">
           <div className="meta-cell"><div className="k">module</div><div className="v small">{mod.label}</div></div>
-          <div className="meta-cell"><div className="k">files</div><div className="v">{tree.files.length}</div></div>
-          <div className="meta-cell"><div className="k">dirs</div><div className="v">{tree.dirs.length}</div></div>
+          <div className="meta-cell"><div className="k">pages</div><div className="v">{tree.pages.length}</div></div>
+          <div className="meta-cell"><div className="k">sub-depts</div><div className="v">{tree.dirs.length}</div></div>
           <div className="meta-cell"><div className="k">state</div><div className="v green small">ready</div></div>
         </div>
         <div className="insp-section-label">description</div>

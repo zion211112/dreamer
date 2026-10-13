@@ -1,14 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { findFile } from '@/lib/ontology';
+import { findPage } from '@/lib/ontology';
 
 interface StatusBarProps {
-  file: string | null;
+  page: string | null;
   mode: string;
 }
 
-export function StatusBar({ file, mode }: StatusBarProps) {
+export function StatusBar({ page, mode }: StatusBarProps) {
   const [clock, setClock] = useState('--:--:--');
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export function StatusBar({ file, mode }: StatusBarProps) {
     return () => clearInterval(id);
   }, []);
 
-  const f = file ? findFile(file) : null;
+  const f = page ? findPage(page) : null;
 
   return (
     <footer className="status">

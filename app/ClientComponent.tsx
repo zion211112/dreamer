@@ -30,7 +30,7 @@ export default function ClientComponent() {
   const [view, setView] = useState<ViewId>('kemet');
   const [module, setModule] = useState<NavItemId | null>(null);
   const [openDirs, setOpenDirs] = useState<Record<string, boolean>>(initialOpenDirs);
-  const [file, setFile] = useState<string | null>(null);
+  const [page, setPage] = useState<string | null>(null);
   const [agentOpen, setAgentOpen] = useState(true);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [mode] = useState('NORMAL');
@@ -48,22 +48,22 @@ export default function ClientComponent() {
   // Entering a module lands on the workspace branch.
   const selectModule = useCallback((mod: NavItemId) => {
     setModule(mod);
-    setFile(null);
+    setPage(null);
     setView('workspace');
     setOpenDirs(prev => ({ ...prev, [mod]: true }));
   }, []);
 
-  const selectFile = useCallback((id: string) => {
+  const selectPage = useCallback((id: string) => {
     const mod = id.split('/')[0] as NavItemId;
     setModule(mod);
-    setFile(id);
+    setPage(id);
     setView('workspace');
     setOpenDirs(prev => ({ ...prev, [mod]: true }));
   }, []);
 
   const selectView = useCallback((v: ViewId) => {
     setView(v);
-    if (v === 'kemet') setFile(null);
+    if (v === 'kemet') setPage(null);
   }, []);
 
   const toggleModule = useCallback((mod: string) => {
@@ -101,7 +101,7 @@ export default function ClientComponent() {
       if (meta && e.key === '0') {
         e.preventDefault();
         setView('kemet');
-        setFile(null);
+        setPage(null);
         return;
       }
       if (meta && e.key >= '1' && e.key <= '5') {
@@ -169,10 +169,10 @@ export default function ClientComponent() {
         <ExplorerTree
           module={module}
           openDirs={openDirs}
-          file={file}
+          page={page}
           onSelectModule={handleExplorerModuleClick}
           onToggleModule={toggleModule}
-          onSelectFile={selectFile}
+          onSelectPage={selectPage}
         />
       </div>
 
@@ -180,10 +180,10 @@ export default function ClientComponent() {
         <ModuleSurface
           view={view}
           module={module}
-          file={file}
+          page={page}
           onNav={selectModule}
-          onSelectFile={selectFile}
-          onOpenFile={selectFile}
+          onSelectPage={selectPage}
+          onOpenPage={selectPage}
           onView={selectView}
           toast={toast}
         />
@@ -192,18 +192,18 @@ export default function ClientComponent() {
       <div style={{ gridArea: 'inspector' }}>
         <Inspector
           module={module || 'kernel'}
-          file={file}
+          page={page}
           onAction={handleInspectorAction}
         />
       </div>
 
       <div style={{ gridArea: 'status' }}>
-        <StatusBar file={file} mode={mode} />
+        <StatusBar page={page} mode={mode} />
       </div>
 
       <ChatAgent
         isOpen={agentOpen}
-        file={file}
+        page={page}
         module={module || 'kernel'}
         onToggle={toggleAgent}
       />
@@ -214,7 +214,7 @@ export default function ClientComponent() {
         onClose={() => setPaletteOpen(false)}
         onNav={selectModule}
         onView={selectView}
-        onSelectFile={selectFile}
+        onSelectPage={selectPage}
         onToggleAgent={toggleAgent}
       />
 

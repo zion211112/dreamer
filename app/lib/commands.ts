@@ -65,7 +65,7 @@ function openFile(context: CommandContext, path: string) {
     context.setSelectedPath(path);
   } else {
     const node = findNode(path);
-    const content = node?.type === 'file' ? getMockContent(path) : '';
+    const content = node?.type === 'page' ? getMockContent(path) : '';
     const newTab = { ...createTab(path, content), active: true };
     context.setTabs(prev => [...prev, newTab]);
     context.setActiveTabId(newTab.id);
