@@ -1,5 +1,204 @@
 'use client';
 
+/* ══════════════════════════════════════════════════════════════
+   ONTOLOGY — the full APT-LABS data model
+   Ported from task1.txt
+   ══════════════════════════════════════════════════════════════ */
+
+export type EvidenceState = 'built' | 'proto' | 'planned' | 'unknown';
+
+export type NavItemId = 'workspace' | 'kernel' | 'network' | 'builds' | 'operations' | 'laboratory';
+
+export interface OntoFile {
+  id: string;
+  name: string;
+  size: string;
+  lines: number;
+  state: EvidenceState;
+  lang: string;
+  content: string;
+}
+
+export interface OntoModule {
+  label: string;
+  color: string;
+  icon: string;
+  title: string;
+  desc: string;
+}
+
+export interface OntoPerson {
+  av: string;
+  name: string;
+  role: string;
+  tag: 'operator' | 'anchor' | 'builder' | 'learner';
+  meta: string;
+  color: string;
+}
+
+export interface OntoActivity {
+  p: string;
+  state: EvidenceState;
+  time: string;
+}
+
+export const MODULES: Record<string, OntoModule> = {
+  workspace: { label: 'workspace', color: 'var(--accent)', icon: '◇',
+    title: 'Command Center', desc: 'control dashboard — system status, recent activity, quick actions' },
+  kernel: { label: 'kernel', color: 'var(--cyan)', icon: '⌘',
+    title: 'Kernel', desc: 'truth layer — issuance, evidence, the roll' },
+  network: { label: 'network', color: 'var(--green)', icon: '◉',
+    title: 'Network', desc: 'mesh layer — institutions, people, anchors' },
+  builds: { label: 'builds', color: 'var(--amber)', icon: '▤',
+    title: 'Builds', desc: 'tools layer — consoles, wallet, replacement engine' },
+  operations: { label: 'operations', color: 'var(--red)', icon: '●',
+    title: 'Operations', desc: 'execution layer — deployments, MoUs, audits' },
+  laboratory: { label: 'laboratory', color: 'var(--pink)', icon: '◎',
+    title: 'Laboratory', desc: 'r&d layer — spatial experiments, AI pipelines, media' },
+};
+
+export const MODULE_ORDER = Object.keys(MODULES);
+
+export const TREE: Record<string, { dirs: string[]; files: OntoFile[] }> = {
+  workspace: {
+    dirs: [],
+    files: [
+      { id: 'workspace/readme.md', name: 'readme.md', size: '3.1K', lines: 42,
+        state: 'built', lang: 'markdown',
+        content: '# aptlabs · control surface\n\nThe kernel is open. The record is yours.\n\n## What this is\nA sovereign infrastructure and media pilot for Kirinyaga County.\n\n## Layers\n1. Gate — free school console\n2. Mesh — local assembly crews\n3. Studio — Mwea animation box\n4. Roll — open public ledger\n\n## Principles\n- No child is tested. The space is the experiment.\n- Every claim is checkable by someone who owes us nothing.\n- Every blueprint is open. The second county pays nothing.' },
+      { id: 'workspace/roadmap.md', name: 'roadmap.md', size: '4.8K', lines: 88,
+        state: 'proto', lang: 'markdown',
+        content: '# 30-Day Roadmap\n\n## Week 1 — Procurement\n- Local steel stock (Kagio)\n- Optical glass (Sagana)\n- GPU nodes (imported)\n- 3 school MoUs signed\n\n## Week 2 — School Installs\n- Modular desk arrays\n- Parallel mirror corridors\n- Directional hostel audio\n\n## Week 3 — Studio Calibration\n- Train local youth on diffusion models\n- Custom African art LoRAs\n- Character anchoring\n\n## Week 4 — Render & Seal\n- 3 animated shorts released\n- Baseline grade metrics logged\n- CAD blueprints minted to The Roll' },
+    ]
+  },
+  kernel: {
+    dirs: ['issuance', 'evidence', 'roll'],
+    files: [
+      { id: 'kernel/issuance/core.ts', name: 'core.ts', size: '4.9K', lines: 104,
+        state: 'built', lang: 'typescript',
+        content: '// /kernel/issuance/core.ts\n// Mints capability records to The Roll.\n\nexport type EvidenceState = "BUILT" | "PROTOTYPE" | "PLANNED" | "UNKNOWN";\n\nexport interface CapabilityRecord {\n  maker: string;        // anchor wallet\n  blueprint: string;    // hash of CAD + BOM\n  evidence: EvidenceState;\n  import_quote: number; // KES\n  local_cost: number;   // KES\n  signed_at: string;    // ISO\n}\n\nexport function mint(record: CapabilityRecord): string {\n  // Anchor signature is required — no build mints without one.\n  // Returns the roll hash.\n  return hash(record);\n}' },
+      { id: 'kernel/evidence/states.ts', name: 'states.ts', size: '3.2K', lines: 62,
+        state: 'built', lang: 'typescript',
+        content: '// Evidence states — the four honest states.\n\n// BUILT     — deployed, functioning, verified on-site\nexport const BUILT = "BUILT";\n\n// PROTOTYPE — exists in physical form, unverified at scale\nexport const PROTOTYPE = "PROTOTYPE";\n\n// PLANNED   — design exists, no physical proof yet\nexport const PLANNED = "PLANNED";\n\n// UNKNOWN   — claim exists, no evidence either way\nexport const UNKNOWN = "UNKNOWN";' },
+      { id: 'kernel/roll/ledger.ts', name: 'ledger.ts', size: '6.7K', lines: 148,
+        state: 'proto', lang: 'typescript',
+        content: '// The Roll — unforgeable public ledger.\n\n// Append-only. Every record is signed by its maker.\n// Every blueprint is published for county fork.\n// No record can be edited — only superseded.\n\nexport interface RollEntry {\n  seq: number;\n  hash: string;\n  prev: string;\n  payload: CapabilityRecord;\n}\n\nexport function append(entry: RollEntry): RollEntry {\n  // persists to disk + mesh sync\n}' },
+    ]
+  },
+  network: {
+    dirs: ['institutions', 'people', 'anchors'],
+    files: [
+      { id: 'network/institutions/schools.md', name: 'schools.md', size: '2.4K', lines: 38,
+        state: 'built', lang: 'markdown',
+        content: '# School Nodes · Kirinyaga\n\n## Active (3)\n- Kirinyaga Boys Secondary — Kagio\n- Mwea Primary — Mwea\n- Nyamindi Primary — Nyamindi\n\n## Pending MoU (0)\n\n## Reach\nEach node runs the free offline School Console.\nZero cost. Zero internet. Report cards in 45 seconds.' },
+      { id: 'network/people/roster.md', name: 'roster.md', size: '3.6K', lines: 52,
+        state: 'proto', lang: 'markdown',
+        content: '# On the Roll\n\n## Operators\n- aptlabs — genesis node\n\n## Anchors (verified)\n- wanjiru.m — Kagio welding · 14 builds signed\n- joseph.k — Mwea carpentry · 9 builds signed\n- grace.n — Nyamindi acoustics · 4 builds signed\n\n## Builders\n- kofi.a — firmware & CAD · 3 blueprints\n- saidi.m — turbine fabrication · 2 blueprints\n\n## Learners\n- amina.h — Mwea studio · first short rendered\n- brian.o — Kagio · apprentice welder' },
+      { id: 'network/anchors/treaty.md', name: 'treaty.md', size: '5.5K', lines: 96,
+        state: 'built', lang: 'markdown',
+        content: '# Treaty\n\nRatified between Kirinyaga hub and Nyamindi node.\n\n## Terms\n1. Blueprints are open. Always.\n2. Every build requires an anchor signature.\n3. Revenue share: 60% maker crew, 25% cooperative, 15% node upkeep.\n4. Null results are published. Failure is data.\n5. No imported hardware counts as a build.\n\nSigned: aptlabs · 2026-09-14' },
+    ]
+  },
+  builds: {
+    dirs: ['consoles', 'wallet'],
+    files: [
+      { id: 'builds/consoles/school-console.md', name: 'school-console.md', size: '7.2K', lines: 122,
+        state: 'built', lang: 'markdown',
+        content: '# School Console\n\n## What it does\nOffline-first school administration. CBC + KCSE compliant report cards in 45 seconds.\n\n## Cost to school\nZero. Forever.\n\n## Why it exists\nIt is useful on its own. It is also how grade data reaches the evaluation, with each school\'s consent.\n\n## Technical\n- 100% offline. Syncs when internet is available.\n- SQLite local. No cloud dependency.\n- Runs on any Windows laptop from the last decade.' },
+      { id: 'builds/consoles/teacher-console.md', name: 'teacher-console.md', size: '4.1K', lines: 74,
+        state: 'built', lang: 'markdown',
+        content: '# Teacher Console\n\nDaily admin for teachers. Attendance, marks, parent notes.\n\nThe teacher-console is the primary surface. The school-console aggregates.' },
+      { id: 'builds/wallet/credential-wallet.ts', name: 'credential-wallet.ts', size: '5.8K', lines: 132,
+        state: 'proto', lang: 'typescript',
+        content: '// Credential Wallet — the maker-facing side of The Roll.\n\n// Every maker owns their record. No school owns it.\n// No employer owns it. It outlives all of them.\n\nexport interface Wallet {\n  address: string;\n  records: CapabilityRecord[];\n  anchor_of: string[];  // schools where this maker is verified\n}\n\nexport function exportCovenant(w: Wallet): string {\n  // signed offline. QR on print. survives network death.\n}' },
+      { id: 'builds/engine/replacement-engine.ts', name: 'replacement-engine.ts', size: '7.2K', lines: 168,
+        state: 'proto', lang: 'typescript',
+        content: '// Replacement Engine — the import-substitution core.\n\n// Input: a landed import quote (PDF or number)\n// Output: a locally fabricable alternative + BOM + crew\n\nexport interface ImportTarget {\n  name: string;\n  landed_cost: number;   // KES\n  tariff_rate: number;   // %\n  lead_time_days: number;\n}\n\nexport interface LocalBuild {\n  bom: BillOfMaterials;\n  crew: TriNode;\n  estimated_cost: number;\n  estimated_days: number;\n}' },
+    ]
+  },
+  operations: {
+    dirs: ['deployments', 'audits'],
+    files: [
+      { id: 'operations/deployments/kirinyaga-pilot.md', name: 'kirinyaga-pilot.md', size: '5.3K', lines: 108,
+        state: 'planned', lang: 'markdown',
+        content: '# Kirinyaga Pilot — 30 Days\n\n## Scope\n3 schools · 1 studio · $60,000\n\n## Schedule\n- Days 1–7: Procurement\n- Days 8–15: School installs\n- Days 16–22: Studio calibration\n- Days 23–30: Render, audit, seal\n\n## Success metrics\n- Grade delta: pilot vs. control streams\n- Cost delta: local vs. import, per unit\n- Shillings paid to local makers\n- Blueprints minted to The Roll' },
+      { id: 'operations/audits/protocol.md', name: 'protocol.md', size: '4.4K', lines: 82,
+        state: 'built', lang: 'markdown',
+        content: '# Audit Protocol\n\nEvery claim is checkable by someone who owes us nothing.\n\n## Verification\n- On-site physical inspection\n- Itemized invoice comparison\n- Independent auditor signature\n- Public ledger publication\n\n## Null Results\nIf a claim fails, we publish the null result.\nA failed claim on a public ledger is still worth $60,000 to the next county.' },
+    ]
+  },
+  laboratory: {
+    dirs: ['optics', 'acoustics', 'media'],
+    files: [
+      { id: 'laboratory/optics/corridor-mirrors.md', name: 'corridor-mirrors.md', size: '3.9K', lines: 72,
+        state: 'proto', lang: 'markdown',
+        content: '# Corridor Optics\n\nParallel mirror arrays in transition spaces.\n\n## Hypothesis\nVisual depth cues reduce cognitive load between classrooms.\n\n## State\nExploratory. Pre-registered. Null result will be published.\n\n## Constraint\nFree-standing. Zero wall drilling.' },
+      { id: 'laboratory/acoustics/hostel-audio.md', name: 'hostel-audio.md', size: '3.1K', lines: 58,
+        state: 'proto', lang: 'markdown',
+        content: '# Hostel Acoustics\n\nDirectional audio nodes for off-hours revision.\n\n## Specification\n- 15-degree directional cones\n- Curriculum summaries + classical loops\n- Zero student testing\n\n## Constraint\nModular. Free-standing. Reversible.' },
+      { id: 'laboratory/media/mwea-box.md', name: 'mwea-box.md', size: '6.2K', lines: 114,
+        state: 'planned', lang: 'markdown',
+        content: '# Mwea Animation Box\n\n## Rigs\n2x GPU workstations. Local animators.\n\n## Output\n3 short films in 30 days, from Kirinyaga stories.\n\n## Pipeline\n1. Story from local elders\n2. Character design, physical sculpture first\n3. LoRA training on African art styles\n4. ControlNet depth anchoring\n5. Local animators keyframe\n6. AI fills background + concept\n7. Render, edit, release\n\n## Cost\n~10% of traditional studio cost per minute.' },
+    ]
+  }
+};
+
+export const PEOPLE: OntoPerson[] = [
+  { av: 'A', name: 'aptlabs', role: 'operator · control surface', tag: 'operator', meta: 'genesis node',
+    color: 'linear-gradient(135deg,var(--accent),var(--accent-hi))' },
+  { av: 'W', name: 'wanjiru m.', role: 'anchor · kagio welding', tag: 'anchor', meta: '14 builds signed',
+    color: 'linear-gradient(135deg,var(--cyan),#67e8f9)' },
+  { av: 'K', name: 'kofi a.', role: 'builder · firmware & cad', tag: 'builder', meta: '3 blueprints minted',
+    color: 'linear-gradient(135deg,var(--green),#86efac)' },
+  { av: 'A', name: 'amina h.', role: 'learner · mwea studio', tag: 'learner', meta: 'first short rendered',
+    color: 'linear-gradient(135deg,var(--amber),#fde68a)' },
+];
+
+export const ACTIVITY: OntoActivity[] = [
+  { p: 'kernel/issuance/core.ts — evidence states committed', state: 'built', time: '2m' },
+  { p: 'builds/teacher-console — forked by wanjiru.m', state: 'proto', time: '18m' },
+  { p: 'network/treaty.md — ratified · kirinyaga ⇄ nyamindi', state: 'built', time: '1h' },
+  { p: 'laboratory/optics/corridor-mirrors — day 3 measurement', state: 'proto', time: '3h' },
+  { p: 'operations/deployments/kirinyaga-pilot — moU drafted', state: 'planned', time: '5h' },
+  { p: 'builds/engine/replacement-engine.ts — first BOM emitted', state: 'proto', time: '8h' },
+];
+
+export const ANCHORS = [
+  { av: 'W', name: 'wanjiru.m', meta: '14 builds signed' },
+  { av: 'J', name: 'joseph.k', meta: '9 builds signed' },
+  { av: 'G', name: 'grace.n', meta: '4 builds signed' },
+];
+
+export const TOTAL_BUILDS = Object.values(TREE).reduce((n, t) => n + t.files.length, 0);
+export const BUILT_COUNT = Object.values(TREE).flatMap(t => t.files).filter(f => f.state === 'built').length;
+export const DIR_COUNT = Object.values(TREE).reduce((n, t) => n + t.dirs.length, 0);
+
+export function findFile(id: string): (OntoFile & { module: string }) | null {
+  for (const mod of MODULE_ORDER) {
+    for (const f of TREE[mod].files) {
+      if (f.id === id) return { ...f, module: mod };
+    }
+  }
+  return null;
+}
+
+export function stateColor(state: string): string {
+  return {
+    built: 'var(--green)',
+    proto: 'var(--amber)',
+    prototype: 'var(--amber)',
+    planned: 'var(--cyan)',
+    unknown: 'var(--fg-muted)',
+  }[state.toLowerCase()] || 'var(--fg-muted)';
+}
+
+export function firstMeaningfulLine(content: string): string {
+  const lines = content.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('//') && !l.startsWith('#'));
+  const first = lines[0] || '';
+  return first.slice(0, 120) + (first.length > 120 ? '…' : '');
+}
+
+/** Legacy FileNode shape kept for components that still traverse a tree. */
 export interface FileNode {
   id: string;
   name: string;
@@ -9,8 +208,9 @@ export interface FileNode {
   children?: FileNode[];
   parent?: string;
   path: string;
-  marketType?: 'school' | 'accreditation' | 'authority' | 'learner' | 'teacher' | 'anchor';
-  metrics?: Array<{ label: string; value: string; trend?: 'up' | 'down' | 'neutral' }>;
+  state?: EvidenceState;
+  lang?: string;
+  content?: string;
 }
 
 export interface Department {
@@ -19,47 +219,6 @@ export interface Department {
   description: string;
   icon: string;
   root: FileNode;
-}
-
-const ICONS = {
-  dir: '▸',
-  dirOpen: '▾',
-  file: '○',
-  ts: '⟨ts⟩',
-  tsx: '⟨tsx⟩',
-  js: '⟨js⟩',
-  jsx: '⟨jsx⟩',
-  json: '⟨json⟩',
-  css: '⟨css⟩',
-  html: '⟨html⟩',
-  md: '⟨md⟩',
-  py: '⟨py⟩',
-  rs: '⟨rs⟩',
-  go: '⟨go⟩',
-  yaml: '⟨yaml⟩',
-  yml: '⟨yml⟩',
-  toml: '⟨toml⟩',
-  sh: '⟨sh⟩',
-  dockerfile: '⟨docker⟩',
-  default: '⟨⟩',
-} as const;
-
-function getIcon(name: string, type: 'file' | 'dir', expanded: boolean): string {
-  if (type === 'dir') return expanded ? ICONS.dirOpen : ICONS.dir;
-  const ext = name.split('.').pop()?.toLowerCase();
-  if (name.toLowerCase() === 'dockerfile') return ICONS.dockerfile;
-  return ICONS[ext as keyof typeof ICONS] || ICONS.default;
-}
-
-function file(name: string, path: string, size: number, daysAgo: number): FileNode {
-  return {
-    id: path.replace(/[/\.]/g, '-'),
-    name,
-    type: 'file',
-    size,
-    modified: new Date(Date.now() - daysAgo * 86400000),
-    path,
-  };
 }
 
 function dir(name: string, path: string, children: FileNode[]): FileNode {
@@ -72,234 +231,63 @@ function dir(name: string, path: string, children: FileNode[]): FileNode {
   };
 }
 
-/**
- * Kernel sub-foundations: identity, issuance, verification
- */
-function kernel(): FileNode {
-  return dir('kernel', '/kernel', [
-    dir('identity', '/kernel/identity', [
-      file('did-method.ts', '/kernel/identity/did-method.ts', 3200, 2),
-      file('key-registry.ts', '/kernel/identity/key-registry.ts', 2800, 3),
-      file('identity-utils.ts', '/kernel/identity/identity-utils.ts', 1500, 4),
-    ]),
-    dir('issuance', '/kernel/issuance', [
-      dir('teacher', '/kernel/issuance/teacher', [
-        file('schema.ts', '/kernel/issuance/teacher/schema.ts', 2400, 1),
-        file('mint.ts', '/kernel/issuance/teacher/mint.ts', 4100, 0),
-        file('revoke.ts', '/kernel/issuance/teacher/revoke.ts', 1800, 2),
-      ]),
-      dir('learner', '/kernel/issuance/learner', [
-        file('schema.ts', '/kernel/issuance/learner/schema.ts', 2200, 1),
-        file('accept.ts', '/kernel/issuance/learner/accept.ts', 3900, 0),
-        file('showcase.ts', '/kernel/issuance/learner/showcase.ts', 3300, 2),
-      ]),
-      file('core.ts', '/kernel/issuance/core.ts', 5000, 0),
-    ]),
-    dir('verification', '/kernel/verification', [
-      file('validator.ts', '/kernel/verification/validator.ts', 3500, 1),
-      file('challenger.ts', '/kernel/verification/challenger.ts', 2900, 2),
-      file('gatekeeper.ts', '/kernel/verification/gatekeeper.ts', 3100, 0),
-    ]),
-    file('tsconfig.json', '/kernel/tsconfig.json', 600, 5),
-    file('eslint.config.mjs', '/kernel/eslint.config.mjs', 950, 5),
-  ]);
+/** Build a FileNode tree from TREE so legacy components keep working. */
+function buildModuleRoot(modId: string): FileNode {
+  const mod = MODULES[modId];
+  const tree = TREE[modId];
+  const children: FileNode[] = [];
+
+  for (const d of tree.dirs) {
+    const dirPath = `${modId}/${d}`;
+    const dirFiles = tree.files.filter(f => f.id.startsWith(dirPath + '/'));
+    const fileNodes: FileNode[] = dirFiles.map(f => ({
+      id: f.id,
+      name: f.name,
+      type: 'file',
+      path: f.id,
+      state: f.state,
+      lang: f.lang,
+      content: f.content,
+    }));
+    children.push(dir(d, dirPath, fileNodes));
+  }
+
+  for (const f of tree.files) {
+    const isNested = tree.dirs.some(d => f.id.startsWith(`${modId}/${d}/`));
+    if (!isNested) {
+      children.push({
+        id: f.id,
+        name: f.name,
+        type: 'file',
+        path: f.id,
+        state: f.state,
+        lang: f.lang,
+        content: f.content,
+      });
+    }
+  }
+
+  return dir(mod.label, modId, children);
 }
 
-/**
- * Institutions: schools, accreditation, verification authorities
- */
-function institutions(): FileNode {
-  return dir('institutions', '/institutions', [
-    dir('schools', '/institutions/schools', [
-      file('accreditation.yml', '/institutions/schools/accreditation.yml', 4100, 0),
-      file('roster.json', '/institutions/schools/roster.json', 12000, 1),
-      file('circulum-map.ts', '/institutions/schools/circulum-map.ts', 3800, 2),
-    ]),
-    dir('accreditation', '/institutions/accreditation', [
-      file('standards.md', '/institutions/accreditation/standards.md', 8500, 0),
-      file('audit-log.ts', '/institutions/accreditation/audit-log.ts', 4200, 1),
-      file('appeals.yaml', '/institutions/accreditation/appeals.yaml', 1900, 2),
-    ]),
-    dir('authorities', '/institutions/authorities', [
-      file('root-certs.pem', '/institutions/authorities/root-certs.pem', 1800, 0),
-      file('crl.ts', '/institutions/authorities/crl.ts', 2600, 1),
-      file('ocsp.ts', '/institutions/authorities/ocsp.ts', 2200, 2),
-    ]),
-    file('treaty.md', '/institutions/treaty.md', 5600, 0),
-  ]);
-}
-
-/**
- * People: teachers, learners, anchors
- */
-function people(): FileNode {
-  return dir('people', '/people', [
-    dir('teachers', '/people/teachers', [
-      file('profiles.json', '/people/teachers/profiles.json', 22000, 0),
-      file('reputation.ts', '/people/teachers/reputation.ts', 3300, 1),
-      file('availability.ics', '/people/teachers/availability.ics', 900, 2),
-    ]),
-    dir('learners', '/people/learners', [
-      file('wallet.ts', '/people/learners/wallet.ts', 4100, 0),
-      file('progress.md', '/people/learners/progress.md', 6700, 1),
-      file('goals.yaml', '/people/learners/goals.yaml', 1100, 2),
-    ]),
-    dir('anchors', '/people/anchors', [
-      file('anchors.json', '/people/anchors/anchors.json', 8900, 0),
-      file('attest.ts', '/people/anchors/attest.ts', 2700, 1),
-      file('challenge.ts', '/people/anchors/challenge.ts', 2400, 2),
-    ]),
-    file('handbook.md', '/people/handbook.md', 4800, 1),
-    file('code-of-conduct.md', '/people/code-of-conduct.md', 3100, 0),
-  ]);
-}
-
-function builds(): FileNode {
-  return dir('builds', '/builds', [
-    dir('teacher-console', '/builds/teacher-console', [
-      file('console.tsx', '/builds/teacher-console/console.tsx', 8400, 0),
-      file('issuance.ts', '/builds/teacher-console/issuance.ts', 5100, 0),
-      file('roster.tsx', '/builds/teacher-console/roster.tsx', 4300, 1),
-    ]),
-    dir('school-console', '/builds/school-console', [
-      file('console.tsx', '/builds/school-console/console.tsx', 9100, 0),
-      file('verify.ts', '/builds/school-console/verify.ts', 3800, 1),
-      file('analytics.tsx', '/builds/school-console/analytics.tsx', 5600, 1),
-    ]),
-    dir('credential-wallet', '/builds/credential-wallet', [
-      file('wallet.tsx', '/builds/credential-wallet/wallet.tsx', 6700, 0),
-      file('present.ts', '/builds/credential-wallet/present.ts', 2900, 2),
-    ]),
-    file('placement-engine.ts', '/builds/placement-engine.ts', 7400, 0),
-  ]);
-}
-
-/**
- * Network: institutions ◈ + people ◇
- * The dual-sided market of credentialing — schools, accreditation, authorities
- * on one side; teachers, learners, anchors on the other.
- */
-function network(): FileNode {
-  return dir('network', '/network', [
-    dir('institutions', '/network/institutions', [
-      dir('schools', '/network/institutions/schools', [
-        file('accreditation.yml', '/network/institutions/schools/accreditation.yml', 4100, 0),
-        file('roster.json', '/network/institutions/schools/roster.json', 12000, 1),
-        file('curriculum-map.ts', '/network/institutions/schools/curriculum-map.ts', 3800, 2),
-      ]),
-      dir('accreditation', '/network/institutions/accreditation', [
-        file('standards.md', '/network/institutions/accreditation/standards.md', 8500, 0),
-        file('audit-log.ts', '/network/institutions/accreditation/audit-log.ts', 4200, 1),
-        file('appeals.yaml', '/network/institutions/accreditation/appeals.yaml', 1900, 2),
-      ]),
-      dir('authorities', '/network/institutions/authorities', [
-        file('root-certs.pem', '/network/institutions/authorities/root-certs.pem', 1800, 0),
-        file('crl.ts', '/network/institutions/authorities/crl.ts', 2600, 1),
-        file('ocsp.ts', '/network/institutions/authorities/ocsp.ts', 2200, 2),
-      ]),
-      file('treaty.md', '/network/institutions/treaty.md', 5600, 0),
-    ]),
-    dir('people', '/network/people', [
-      dir('teachers', '/network/people/teachers', [
-        file('profiles.json', '/network/people/teachers/profiles.json', 22000, 0),
-        file('reputation.ts', '/network/people/teachers/reputation.ts', 3300, 1),
-        file('availability.ics', '/network/people/teachers/availability.ics', 900, 2),
-      ]),
-      dir('learners', '/network/people/learners', [
-        file('wallet.ts', '/network/people/learners/wallet.ts', 4100, 0),
-        file('progress.md', '/network/people/learners/progress.md', 6700, 1),
-        file('goals.yaml', '/network/people/learners/goals.yaml', 1100, 2),
-      ]),
-      dir('anchors', '/network/people/anchors', [
-        file('anchors.json', '/network/people/anchors/anchors.json', 8900, 0),
-        file('attest.ts', '/network/people/anchors/attest.ts', 2700, 1),
-        file('challenge.ts', '/network/people/anchors/challenge.ts', 2400, 2),
-      ]),
-      file('handbook.md', '/network/people/handbook.md', 4800, 1),
-      file('code-of-conduct.md', '/network/people/code-of-conduct.md', 3100, 0),
-    ]),
-    file('manifest.json', '/network/manifest.json', 1400, 1),
-    file('charter.md', '/network/charter.md', 5200, 2),
-  ]);
-}
-
-function operations(): FileNode {
-  return dir('operations', '/operations', [
-    dir('infrastructure', '/operations/infrastructure', [
-      file('deploy.yml', '/operations/infrastructure/deploy.yml', 2600, 1),
-      file('docker-compose.yml', '/operations/infrastructure/docker-compose.yml', 3100, 2),
-    ]),
-    dir('monitoring', '/operations/monitoring', [
-      file('alerts.yml', '/operations/monitoring/alerts.yml', 1900, 1),
-    ]),
-  ]);
-}
-
-function laboratory(): FileNode {
-  return dir('laboratory', '/laboratory', [
-    dir('experiments', '/laboratory/experiments', [
-      file('wasm-runtime.ts', '/laboratory/experiments/wasm-runtime.ts', 8700, 0),
-      file('crdt-sync.ts', '/laboratory/experiments/crdt-sync.ts', 7200, 1),
-    ]),
-    dir('research', '/laboratory/research', [
-      file('local-first.md', '/laboratory/research/local-first.md', 9800, 2),
-    ]),
-  ]);
-}
-
-export const DEPARTMENT_COLORS: Record<string, string> = {
-  workspace: '#7c6cff',
-  kernel: '#7c6cff',
-  network: '#56c8dc',
-  builds: '#56c8dc',
-  operations: '#4ade80',
-  laboratory: '#f26d6d',
+export const DEPARTMENT_TOKENS: Record<string, string> = {
+  workspace: 'var(--accent)',
+  kernel: 'var(--cyan)',
+  network: 'var(--green)',
+  builds: 'var(--amber)',
+  operations: 'var(--red)',
+  laboratory: 'var(--pink)',
 };
 
-export const DEPARTMENTS: Department[] = [
-  {
-    id: 'workspace',
-    name: 'workspace',
-    description: 'control dashboard',
-    icon: '◎',
-    root: dir('workspace', '/workspace', []),
-  },
-  {
-    id: 'kernel',
-    name: 'kernel',
-    description: 'SBT primitives: identity · issuance · verification',
-    icon: '⬡',
-    root: kernel(),
-  },
-  {
-    id: 'network',
-    name: 'network',
-    description: 'institutions ◈ · people ◇',
-    icon: '◈',
-    root: network(),
-  },
-  {
-    id: 'builds',
-    name: 'builds',
-    description: 'consoles · wallet · engine — pull, fork, improve',
-    icon: '▢',
-    root: builds(),
-  },
-  {
-    id: 'operations',
-    name: 'operations',
-    description: 'infra & delivery',
-    icon: '⬢',
-    root: operations(),
-  },
-  {
-    id: 'laboratory',
-    name: 'laboratory',
-    description: 'R&D prototypes',
-    icon: '⬠',
-    root: laboratory(),
-  },
-];
+export const DEPARTMENT_COLORS: Record<string, string> = DEPARTMENT_TOKENS;
+
+export const DEPARTMENTS: Department[] = MODULE_ORDER.map(id => ({
+  id,
+  name: MODULES[id].label,
+  description: MODULES[id].desc,
+  icon: MODULES[id].icon,
+  root: buildModuleRoot(id),
+}));
 
 export const WORKSPACE_ROOT: FileNode = {
   id: 'workspace',
@@ -321,6 +309,7 @@ export function getAllFiles(node: FileNode): FileNode[] {
 
 export function findNode(path: string, root: FileNode = WORKSPACE_ROOT): FileNode | null {
   if (root.path === path) return root;
+  if (root.path === '/' && path === root.id) return root;
   if (root.type === 'dir' && root.children) {
     for (const child of root.children) {
       const found = findNode(path, child);
@@ -340,6 +329,3 @@ export function getParentPath(path: string): string {
 export function getPathParts(path: string): string[] {
   return path.split('/').filter(Boolean);
 }
-
-export { getIcon };
-export type { FileNode as Node };

@@ -1,240 +1,204 @@
 'use client';
 
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { TopNav, type NavItemId } from '@/components/TopNav';
-import { SearchLane } from '@/components/SearchLane';
 import { ExplorerTree } from '@/components/ExplorerTree';
 import { ModuleSurface } from '@/components/ModuleSurface';
 import { Inspector } from '@/components/Inspector';
 import { StatusBar } from '@/components/StatusBar';
 import { CommandPalette } from '@/components/CommandPalette';
-import { Tab, createTab, getMockContent } from '@/lib/editor';
-import { CommandContext } from '@/lib/commands';
-import { findNode, DEPARTMENTS } from '@/lib/ontology';
+import { ChatAgent } from '@/components/ChatAgent';
+
+interface Toast {
+  id: number;
+  msg: string;
+  icon: string;
+  out: boolean;
+}
+
+const initialOpenDirs: Record<string, boolean> = {
+  workspace: true,
+  kernel: true,
+  network: true,
+  builds: true,
+  operations: true,
+  laboratory: true,
+};
 
 export default function ClientComponent() {
-  const [tabs, setTabs] = useState<Tab[]>([]);
-  const [activeTabId, setActiveTabId] = useState<string | null>(null);
-  const [selectedPath, setSelectedPath] = useState<string | null>(null);
-  const [expandedPaths, setExpandedPaths] = useState<Set<string>>(() => new Set([
-    '/kernel', '/kernel/issuance', '/network', '/network/institutions', '/network/people', '/builds',
-  ]));
-  const [navSection, setNavSection] = useState<NavItemId>('workspace');
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [mode, setMode] = useState<'NORMAL' | 'INSERT' | 'VISUAL' | 'COMMAND'>('NORMAL');
-  const [cursorPosition, setCursorPosition] = useState({ line: 1, col: 1 });
-  const [notifications, setNotifications] = useState<Array<{ id: number; message: string; type: string }>>([]);
-  const [sidebarWidth, setSidebarWidth] = useState(264);
+  const [module, setModule] = useState<string>('workspace');
+  const [openDirs, setOpenDirs] = useState<Record<string, boolean>>(initialOpenDirs);
+  const [file, setFile] = useState<string | null>(null);
+  const [agentOpen, setAgentOpen] = useState(true);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [mode] = useState('NORMAL');
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
-  useEffect(() => {
-    const initialTabs = [
-      createTab('/kernel/issuance/core.ts', getMockContent('/kernel/issuance/core.ts')),
-      createTab('/kernel/identity/did-method.ts', getMockContent('/kernel/identity/did-method.ts')),
-    ];
-    setTabs(initialTabs);
-    setActiveTabId(initialTabs[0].id);
-    setSelectedPath(initialTabs[0].path);
-  }, []);
-
-  const showNotification = useCallback((message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') => {
+  const toast = useCallback((msg: string, icon = '◆') => {
     const id = Date.now();
-    setNotifications(prev => [...prev.slice(-3), { id, message, type }]);
-    setTimeout(() => setNotifications(prev => prev.filter(n => n.id !== id)), 2800);
+    setToasts(prev => [...prev, { id, msg, icon, out: false }]);
+    setTimeout(() => {
+      setToasts(prev => prev.map(t => (t.id === id ? { ...t, out: true } : t)));
+      setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 300);
+    }, 2200);
   }, []);
 
-  const handleSelect = useCallback((path: string) => {
-    setSelectedPath(path);
-    const node = findNode(path);
-    if (node?.type === 'dir') {
-      setExpandedPaths(prev => {
-        const next = new Set(prev);
-        if (next.has(path)) next.delete(path); else next.add(path);
-        return next;
-      });
-      return;
-    }
-    setTabs(prev => {
-      const existing = prev.find(t => t.path === path);
-      if (existing) {
-        setActiveTabId(existing.id);
-        return prev;
-      }
-      const newTab = createTab(path, getMockContent(path));
-      setActiveTabId(newTab.id);
-      return [...prev, newTab];
-    });
+  const selectModule = useCallback((mod: string) => {
+    setModule(mod);
+    setFile(null);
+    setOpenDirs(prev => ({ ...prev, [mod]: true }));
   }, []);
 
-  const handleToggle = useCallback((path: string) => {
-    setExpandedPaths(prev => {
-      const next = new Set(prev);
-      if (next.has(path)) next.delete(path); else next.add(path);
-      return next;
-    });
+  const selectFile = useCallback((id: string) => {
+    const mod = id.split('/')[0];
+    setModule(mod);
+    setFile(id);
+    setOpenDirs(prev => ({ ...prev, [mod]: true }));
   }, []);
 
-  const handleNav = useCallback((id: NavItemId) => {
-    setNavSection(id);
-    if (id === 'workspace') return;
-    const dept = DEPARTMENTS.find(d => d.id === id);
-    if (dept) {
-      setExpandedPaths(prev => new Set(prev).add(dept.root.path));
-      setSelectedPath(dept.root.path);
-      const first = dept.root.children?.find(c => c.type === 'file');
-      if (first) handleSelect(first.path);
-    }
-  }, [handleSelect]);
-
-  const handleTabChange = useCallback((id: string) => {
-    setActiveTabId(id);
-    const tab = tabs.find(t => t.id === id);
-    if (tab) setSelectedPath(tab.path);
-  }, [tabs]);
-
-  const handleTabClose = useCallback((id: string) => {
-    setTabs(prev => {
-      const next = prev.filter(t => t.id !== id);
-      if (activeTabId === id && next.length > 0) setActiveTabId(next[next.length - 1].id);
-      if (next.length === 0) setActiveTabId(null);
-      return next;
-    });
-  }, [activeTabId]);
-
-  const handleTabUpdate = useCallback((id: string, updates: Partial<Tab>) => {
-    setTabs(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
+  const toggleModule = useCallback((mod: string) => {
+    setOpenDirs(prev => ({ ...prev, [mod]: !prev[mod] }));
   }, []);
 
-  const handleNewTab = useCallback(() => {
-    const newTab = createTab('/untitled-' + Date.now() + '.txt');
-    setTabs(prev => [...prev, newTab]);
-    setActiveTabId(newTab.id);
-  }, []);
+  const toggleAgent = useCallback(() => setAgentOpen(v => !v), []);
 
-  const commandContext: CommandContext = useMemo(() => ({
-    tabs, activeTabId, selectedPath, setTabs, setActiveTabId, setSelectedPath,
-    setCommandPaletteOpen, setMode,
-    onTabUpdate: handleTabUpdate, onTabClose: handleTabClose, onNewTab: handleNewTab,
-    showNotification,
-  }), [tabs, activeTabId, selectedPath, handleTabUpdate, handleTabClose, handleNewTab, showNotification]);
-
+  // Keybindings: ⌘K/⌘P palette, ⌘⇧A agent, ⌘1-6 modules, Esc.
   useEffect(() => {
-    const onOpenPath = (e: Event) => {
-      const path = (e as CustomEvent).detail as string;
-      if (path) handleSelect(path);
-    };
-    window.addEventListener('sbt:open-path', onOpenPath);
-    return () => window.removeEventListener('sbt:open-path', onOpenPath);
-  }, [handleSelect]);
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      const meta = e.metaKey || e.ctrlKey;
 
-  useEffect(() => {
-    const handleKeyDown = (e: globalThis.KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); setSearchOpen(v => !v); }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'p') { e.preventDefault(); setCommandPaletteOpen(true); }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'b') { e.preventDefault(); setSidebarOpen(v => !v); }
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      if (meta && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        const activeTab = tabs.find(t => t.id === activeTabId);
-        if (activeTab?.modified) {
-          handleTabUpdate(activeTab.id, { modified: false, saved: true });
-          showNotification('Saved ' + activeTab.name, 'success');
-        }
+        setPaletteOpen(v => !v);
+        return;
       }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'n') { e.preventDefault(); handleNewTab(); }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'w') { e.preventDefault(); if (activeTabId) handleTabClose(activeTabId); }
+      if (meta && e.key.toLowerCase() === 'p') {
+        e.preventDefault();
+        setPaletteOpen(true);
+        return;
+      }
+      if (meta && e.shiftKey && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+        toggleAgent();
+        return;
+      }
+      if (meta && e.key >= '1' && e.key <= '6') {
+        e.preventDefault();
+        const mods = ['workspace', 'kernel', 'network', 'builds', 'operations', 'laboratory'];
+        const i = parseInt(e.key, 10) - 1;
+        if (mods[i]) selectModule(mods[i]);
+        return;
+      }
       if (e.key === 'Escape') {
-        if (searchOpen) setSearchOpen(false);
-        else if (mode !== 'NORMAL') setMode('NORMAL');
+        setPaletteOpen(false);
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [tabs, activeTabId, mode, searchOpen, handleTabUpdate, handleTabClose, handleNewTab, showNotification]);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selectModule, toggleAgent]);
 
+  // Boot toast.
   useEffect(() => {
-    let dragging = false;
-    const onMove = (e: MouseEvent) => {
-      if (!dragging) return;
-      setSidebarWidth(Math.min(420, Math.max(200, e.clientX)));
-    };
-    const onUp = () => { dragging = false; };
-    const el = document.getElementById('sidebar-resize');
-    if (el) {
-      el.addEventListener('mousedown', () => { dragging = true; });
-      window.addEventListener('mousemove', onMove);
-      window.addEventListener('mouseup', onUp);
-    }
-    return () => {
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-    };
-  }, []);
+    const t = setTimeout(() => toast('Control surface v1.4 · ready', '◆'), 400);
+    return () => clearTimeout(t);
+  }, [toast]);
 
-  const activeTab = tabs.find(t => t.id === activeTabId);
-  const totalLines = activeTab ? activeTab.content.split('\n').length : 1;
-  const totalChars = activeTab ? activeTab.content.length : 0;
-  const activeNode = selectedPath ? findNode(selectedPath) : null;
+  const handleInspectorAction = useCallback((action: 'mint' | 'fork' | 'audit', id: string) => {
+    const f = id.split('/').pop() || id;
+    if (action === 'mint') toast(`Minting ${f} to The Roll…`, '◈');
+    else if (action === 'fork') toast(`Fork request queued for ${f}`, '⟐');
+    else toast(`Audit request submitted · ${f}`, '◎');
+    setTimeout(() => toast(`✓ ${f} · ${action} confirmed`, '◆'), 900);
+  }, [toast]);
+
+  const handleExplorerModuleClick = useCallback((mod: string) => {
+    if (mod === module) {
+      toggleModule(mod);
+    } else {
+      selectModule(mod);
+    }
+  }, [module, selectModule, toggleModule]);
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
-      <TopNav active={navSection} onNav={handleNav} onPalette={() => setSearchOpen(v => !v)} />
-      <SearchLane />
-
-      <div className="flex flex-1 min-h-0">
-        {sidebarOpen && (
-          <div className="flex flex-shrink-0 relative">
-            <div className="flex flex-col h-full border-r hairline" style={{ width: sidebarWidth }}>
-              <ExplorerTree
-                selectedPath={selectedPath}
-                expandedPaths={expandedPaths}
-                onSelect={handleSelect}
-                onToggle={handleToggle}
-              />
-            </div>
-            <div id="sidebar-resize" className="resize-handle self-stretch" />
-          </div>
-        )}
-
-        <div className="flex-1 flex flex-col min-w-0">
-          <ModuleSurface section={navSection} />
-          <StatusBar
-            mode={mode}
-            position={cursorPosition}
-            total={{ lines: totalLines, chars: totalChars }}
-            language={activeTab?.language || 'typescript'}
-            modified={activeTab?.modified || false}
-            sidebarOpen={sidebarOpen}
-            onToggleSidebar={() => setSidebarOpen(v => !v)}
-          />
-        </div>
-
-        <Inspector
-          node={activeNode}
-          onOpenFile={handleSelect}
-          onToggle={handleToggle}
-          expandedPaths={expandedPaths}
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateRows: '40px 1fr 26px',
+        gridTemplateColumns: '260px 1fr 320px',
+        gridTemplateAreas: `
+          "header header header"
+          "explorer main inspector"
+          "status status status"
+        `,
+        height: '100vh',
+        overflow: 'hidden',
+      }}
+    >
+      <div style={{ gridArea: 'header' }}>
+        <TopNav
+          active={module as NavItemId}
+          onNav={selectModule}
+          onPalette={() => setPaletteOpen(true)}
         />
       </div>
 
-      <CommandPalette
-        isOpen={commandPaletteOpen}
-        onClose={() => setCommandPaletteOpen(false)}
-        context={commandContext}
+      <div style={{ gridArea: 'explorer' }}>
+        <ExplorerTree
+          module={module}
+          openDirs={openDirs}
+          file={file}
+          onSelectModule={handleExplorerModuleClick}
+          onToggleModule={toggleModule}
+          onSelectFile={selectFile}
+        />
+      </div>
+
+      <div style={{ gridArea: 'main' }}>
+        <ModuleSurface
+          module={module}
+          file={file}
+          onNav={selectModule}
+          onSelectFile={selectFile}
+          onOpenFile={selectFile}
+          toast={toast}
+        />
+      </div>
+
+      <div style={{ gridArea: 'inspector' }}>
+        <Inspector
+          module={module}
+          file={file}
+          onAction={handleInspectorAction}
+        />
+      </div>
+
+      <div style={{ gridArea: 'status' }}>
+        <StatusBar file={file} mode={mode} />
+      </div>
+
+      <ChatAgent
+        isOpen={agentOpen}
+        file={file}
+        module={module}
+        onToggle={toggleAgent}
       />
 
-      {notifications.map(n => (
-        <div
-          key={n.id}
-          className={"fixed bottom-12 right-6 z-50 px-4 py-2.5 rounded-lg shadow-2xl text-[12px] font-medium animate-slide-in glass border hairline " +
-            (n.type === 'success' ? 'text-[var(--success)]' : '') +
-            (n.type === 'error' ? 'text-[var(--danger)]' : '') +
-            (n.type === 'warning' ? 'text-[var(--warn)]' : '') +
-            (n.type === 'info' ? 'text-[var(--fg)]' : '')}
-        >
-          {n.message}
-        </div>
-      ))}
+      <CommandPalette
+        isOpen={paletteOpen}
+        onClose={() => setPaletteOpen(false)}
+        onNav={selectModule}
+        onSelectFile={selectFile}
+        onToggleAgent={toggleAgent}
+      />
+
+      <div className="toast-wrap" id="toastWrap">
+        {toasts.map(t => (
+          <div key={t.id} className={'toast' + (t.out ? ' out' : '')}>
+            <span className="ic">{t.icon}</span>
+            {t.msg}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -343,6 +343,28 @@ export function formatSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)}M`;
 }
 
+/**
+ * Syntax highlight a source string into HTML with task1.txt token classes.
+ * Output is safe to inject via dangerouslySetInnerHTML (input is escaped first).
+ * Supports typescript + markdown like the original control surface.
+ */
+export function highlight(content: string, lang: string): string {
+  let html = escapeHtml(content);
+
+  if (lang === 'typescript') {
+    // comments first (before keywords so // lines don't get keyword-wrapped)
+    html = html.replace(/(\/\/[^\n]*)/g, '<span class="cmt">$1</span>');
+    html = html.replace(/\b(export|interface|function|const|type|return|import|from)\b/g, '<span class="kw">$1</span>');
+    html = html.replace(/"([^"]*)"/g, '<span class="str">"$1"</span>');
+    html = html.replace(/\b(\d+)\b/g, '<span class="num">$1</span>');
+  } else if (lang === 'markdown') {
+    html = html.replace(/(^#{1,6} [^\n]*)/gm, '<span class="kw">$1</span>');
+    html = html.replace(/(^[-*] )/gm, '<span class="cmt">$1</span>');
+  }
+
+  return html;
+}
+
 export function formatDate(date: Date): string {
   return date.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
