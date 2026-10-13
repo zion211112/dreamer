@@ -81,10 +81,10 @@ function KemetOsLanding({ onNav, onOpenPage, onView }: { onNav: (id: NavItemId) 
         <div className="section-label">the landing</div>
         <h2>Sovereign work.<br />The <em>record</em>, ours.</h2>
         <p className="lede">
-          AptLabs is sovereign infrastructure for builders who make
-          physical things. Claim your identity SBT — then build, vote,
-          invest, and sign. Every blueprint open. Every claim checkable
-          by someone who owes us nothing.
+          A closed-loop execution stack translating community intent into
+          physical and computational reality. Soulbound tokens earned
+          through verifiable work, open blueprints, quadratic funding,
+          and ZK-insulated juries — no state intermediation.
         </p>
         <div className="cta">
           <button className="btn btn-primary" onClick={() => onNav('kernel')}>Claim your identity SBT →</button>
