@@ -70,7 +70,7 @@ function KemetOsLanding({ onNav, onOpenPage, onView }: { onNav: (id: NavItemId) 
         <div className="title">
           <div className="badge-ic" style={{ color: 'var(--accent)' }}>◇</div>
           <div>
-            <h1>Kemet-OS</h1>
+            <h1>the record</h1>
             <div className="desc">the aptlabs landing — one page, everything plain</div>
           </div>
         </div>
@@ -78,7 +78,7 @@ function KemetOsLanding({ onNav, onOpenPage, onView }: { onNav: (id: NavItemId) 
       </div>
 
       <section className="section hero">
-        <div className="section-label">kemetic os · the landing</div>
+        <div className="section-label">the landing</div>
         <h2>Sovereign work.<br />The <em>record</em>, ours.</h2>
         <p className="lede">
           AptLabs is sovereign infrastructure for builders who make
