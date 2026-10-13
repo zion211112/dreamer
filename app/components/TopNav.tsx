@@ -22,7 +22,7 @@ export function TopNav({ view, active, onNav, onView, onPalette }: TopNavProps) 
         onKeyDown={e => { if (e.key === 'Enter') onView('kemet'); }}>
         <span className="dot" />
         <span>aptlabs</span>
-        <span className="sub">Kemet-OS · v1.4</span>
+        <span className="sub">the record · v1.4</span>
       </div>
 
       <nav className="nav">
