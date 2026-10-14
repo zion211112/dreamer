@@ -40,7 +40,7 @@ export function CommandPalette({ isOpen, view, onClose, onNav, onView, onSelectP
   const commands: PaletteItem[] = useMemo(() => [
     {
       id: 'nav-kemet',
-      label: 'Go to Kemet-OS',
+      label: 'Go to the record',
       sub: 'the one-page landing',
       kbd: '⌘0',
       icon: '◈',
@@ -56,7 +56,7 @@ export function CommandPalette({ isOpen, view, onClose, onNav, onView, onSelectP
     })),
     {
       id: 'view-workspace',
-      label: view === 'workspace' ? 'Show Kemet-OS landing' : 'Show Workspace',
+      label: view === 'workspace' ? 'Show the record landing' : 'Show Workspace',
       sub: 'toggle the branch',
       kbd: '⌘B',
       icon: '▤',

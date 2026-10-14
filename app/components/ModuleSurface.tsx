@@ -24,7 +24,7 @@ export function ModuleSurface({ view, module, page, onNav, onSelectPage, onOpenP
     if (f) return <PageView f={f} />;
   }
 
-  // Kemet-OS — the one-page landing, stripped to basics.
+  // the record — the one-page landing, stripped to basics.
   if (view === 'kemet') return <KemetOsLanding onNav={onNav} onOpenPage={onOpenPage} onView={onView} />;
 
   // A module is selected — its landing.

@@ -48,9 +48,9 @@ export function TopNav({ view, active, onNav, onView, onPalette }: TopNavProps) 
           onClick={() => onView('kemet')}
           role="tab"
           aria-selected={view === 'kemet'}
-          title="Kemet-OS — the one-page landing (⌘0)"
+          title="the record — the one-page landing (⌘0)"
         >
-          ◈ Kemet-OS
+          ◈ the record
         </button>
         <button
           className={view === 'workspace' ? 'active' : ''}

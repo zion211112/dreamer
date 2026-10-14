@@ -121,7 +121,7 @@ export default function ClientComponent() {
 
   // Boot toast.
   useEffect(() => {
-    const t = setTimeout(() => toast('Kemet-OS v1.4 · ready', '◈'), 400);
+    const t = setTimeout(() => toast('the record · v1.4 · ready', '◈'), 400);
     return () => clearTimeout(t);
   }, [toast]);
 
