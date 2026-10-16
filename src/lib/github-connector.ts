@@ -1,49 +1,42 @@
 /**
  * GitHub Connector - Handles GitHub API connection
- * Fusion element from github-sparkle-link repository
+ * APT-LABS: minimal, opinionated software connection
  */
 export const github = {
   connected: false,
   user: null,
   login: null,
   avatar_url: null,
-  lastChecked: Date.now(),
+  lastChecked: 0,
   error: null,
-  modulesStatus: new Map<string, 'idle' | 'loading' | 'success' | 'error'>(
-
-  ),
+  modulesStatus: new Map(),
 
   async checkConnection() {
     this.error = null
     this.lastChecked = Date.now()
 
-    // Simulate API call latency
     return new Promise<boolean>(resolve => {
-      setTimeout(async () => {
-        // 90% chance of successful connection
+      setTimeout(() => {
         const success = Math.random() > 0.1
 
         if (success) {
           this.connected = true
-          this.user = {
-            login: 'zion211112',
-            avatar_url: 'https://avatars.githubusercontent.com/u/12345678'
-          }
+          this.user = { login: 'zion211112', avatar_url: 'https://avatars.githubusercontent.com/u/12345678' }
           this.login = 'zion211112'
           this.avatar_url = 'https://avatars.githubusercontent.com/u/12345678'
-
-          // Initialize module statuses
-          this.modulesStatus.set('network', 'idle')
-          this.modulesStatus.set('builds', 'idle')
-          this.modulesStatus.set('operations', 'idle')
-          this.modulesStatus.set('research', 'idle')
-          this.modulesStatus.set('kernel', 'idle')
+          this.modulesStatus = new Map([
+            ['network', 'idle'],
+            ['builds', 'idle'],
+            ['operations', 'idle'],
+            ['research', 'idle'],
+            ['kernel', 'idle']
+          ])
         } else {
           this.connected = false
           this.user = null
           this.login = null
           this.avatar_url = null
-          this.error = 'Unable to connect to GitHub API. Please check your connection.'
+          this.error = 'Unable to connect to GitHub API.'
         }
 
         resolve(success)
@@ -51,21 +44,14 @@ export const github = {
     })
   },
 
-  async fetchModuleStatus(moduleKey: string) {
+  fetchModuleStatus(moduleKey: string) {
     if (!this.connected) return
 
     this.modulesStatus.set(moduleKey, 'loading')
 
     return new Promise<string>(resolve => {
       setTimeout(() => {
-        const statuses: Record<string, string> = {
-          network: 'connected',
-          builds: 'queued',
-          operations: 'running',
-          research: 'analyzing',
-          kernel: 'active'
-        }
-
+        const statuses = { network: 'connected', builds: 'queued', operations: 'running', research: 'analyzing', kernel: 'active' }
         const status = statuses[moduleKey] || 'idle'
         this.modulesStatus.set(moduleKey, status as any)
         resolve(status)

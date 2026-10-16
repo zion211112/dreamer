@@ -1,9 +1,9 @@
 /**
- * Workspace Modules - APT-LABS style module organization
- * Fusion element from dreamer project
+ * Workspace Modules - APT-LABS style 5-module organization
+ * catalyzes African sovereignty journey through independent software capability
  */
 export const workspace = {
-  name: 'GitHub Sparkle Link',
+  name: 'APT-LABS African Sovereignty',
   modules: [
     { key: 'network', label: 'Network', getStatus: () => github.getModuleStatus('network') },
     { key: 'builds', label: 'Builds', getStatus: () => github.getModuleStatus('builds') },
@@ -13,8 +13,8 @@ export const workspace = {
   ],
   defaultModule: 'network',
   theme: {
-    primary: '#3b82f6',
+    primary: '#3b82f5',
     secondary: '#1d4ed8',
-    background: '#f3f4f6'
+    background: '#f8f9fa'
   }
 }
