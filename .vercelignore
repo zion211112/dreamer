@@ -1,0 +1,36 @@
+# Files Vercel does not need in the uploaded source.
+#
+# This is a DEPLOY-SIZE guard, not a source-control one. .gitignore decides
+# what is committed; .vercelignore decides what is uploaded to build the site.
+# Both are needed because `next build` must still be able to see the files it
+# compiles, while everything else is dead weight on the wire.
+#
+# The single most important entry is RESEARCH TRASH: ~163MB of archived site,
+# a browser profile, a nested node_modules and a capture harness. It is
+# excluded from tsconfig already, so the build never reads it.
+
+node_modules
+.next
+out
+.vercel
+
+# Archived previous passes. Not referenced by any route.
+RESEARCH TRASH
+**/tmp-shot/
+**/edge-profile/
+**/shots/
+
+# Local notes and configuration that are not part of the built site.
+.gitignore
+DESIGNS.md
+ASIANCODER.MD
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+*.log
+
+# Editor and OS noise
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+*.pem
