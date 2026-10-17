@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # APT-LABS African Sovereignty Dashboard
 
 Minimal end-to-end prototype fusing GitHub API connectivity with APT-LABS 5-module workspace architecture.
@@ -45,3 +46,20 @@ This prototype embodies APT-LABS' commitment to:
 - **Opinionated choices**: Clear architecture decisions that guide development
 - **Sovereignty**: Empowering independent development without platform lock-in
 - **African empowerment**: Building local capacity for global software excellence
+=======
+# newprotoshell
+
+A file-manager-inspired workspace. One page, one route, zero heavy deps.
+
+- Sign in with any handle (demo: ama / kofi / wanjiru, role selectable)
+- Files: folder browser with search, sort, breadcrumbs, live file creation
+- Builds: React-style flow graphs, vote with your name
+- Tenders: issue, bid, vote bids, award (builders bid)
+- Console: teacher-only learner records with attendance + marks (unknown ≠ 0)
+- Vault: soulbound tokens earned by actions, not purchases
+
+State persists in localStorage. Deploy on Vercel: `vercel` or push to GitHub and import.
+
+Design: dark `#07090d` canvas, jade `#35d9a4` signal, amber `#e8b84b` output,
+golden-ratio type rhythm, 8px spacing grid.
+>>>>>>> 00f29f52fcb5df38165e2e9f1550b71a6407453b
