@@ -24,7 +24,7 @@ export default function ModulePage({ params }: { params: { module: string } }) {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
           {pages.map(p => (
             <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 16px', background: 'var(--bg-raised)', border: '1px solid var(--border)', borderRadius: '8px' }}>
-              <span className="state-pill" style={{ fontSize: '9px', padding: '1px 6px' }} className={`state-pill ${p.state}`}>{p.state}</span>
+              <span className={`state-pill ${p.state}`} style={{ fontSize: '9px', padding: '1px 6px' }}>{p.state}</span>
               <Link href={`/${params.module}/${p.id.split('/').slice(1).join('/')}`} style={{ color: 'var(--fg)', fontFamily: 'var(--font-serif)', fontSize: '14px', fontWeight: '600' }}>{p.name}</Link>
               <span style={{ marginLeft: 'auto', fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--fg-dim)' }}>{p.size}</span>
             </div>

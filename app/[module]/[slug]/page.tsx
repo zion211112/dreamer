@@ -18,7 +18,7 @@ export default function PageView({ params }: { params: { module: string; slug: s
           </div>
         </div>
         <div className="updated">
-          <span className="state-pill" className={`state-pill ${f.state}`}>{f.state}</span>
+          <span className={`state-pill ${f.state}`}>{f.state}</span>
         </div>
       </div>
 

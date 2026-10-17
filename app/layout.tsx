@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="relative z-10 h-full">
           <TopNav />
           <div className="pt-[40px]">
-            <SessionProvider toast={() => {}}>{children}</SessionProvider>
+            <SessionProvider>{children}</SessionProvider>
           </div>
         </div>
       </body>

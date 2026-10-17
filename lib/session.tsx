@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
-import { type LedgerEntry, type OntoActivity } from '@/lib/ontology'
+import { type OntoActivity } from '@/lib/ontology'
 
 export interface TallyBuild { name: string; by: string; backers: number; pledged: number }
 export interface TallyNumbers { for: number; against: number; pledged: number; backers: number; builds: TallyBuild[] }
@@ -27,7 +27,7 @@ interface Session {
 
 const SessionCtx = createContext<Session | null>(null)
 
-export function SessionProvider({ toast, children }: { toast: (msg: string, icon?: string) => void; children: ReactNode }) {
+export function SessionProvider({ toast = () => {}, children }: { toast?: (msg: string, icon?: string) => void; children: ReactNode }) {
   const [me, setMe] = useState<LedgerEntry | null>(null)
   const [extra, setExtra] = useState<OntoActivity[]>([])
   const [sigs, setSigs] = useState<Record<string, { by: string }[]>>({})
