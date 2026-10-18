@@ -1,5 +1,7 @@
 # dependencies
 /node_modules
+/.next
+*.tsbuildinfo
 
 # build
 /dist
@@ -21,12 +23,6 @@ yarn-error.log*
 .vscode/**
 .idea/**
 
-# TanStack Start
-/.server
-/.client
-
-# vitest
-/node_modules/.vite
 
 # os
 *~

@@ -9,9 +9,9 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Keep the APT-LABS workspace as a single interactive application surface at `/`; module and page selections share the explorer and inspector context so changing views retains the workspace shell.
-- Keep browser-safe module definitions and demo records in `src/lib/workspace-data.ts` and `src/lib/module-records.ts`; preview actions modify in-memory state only and must not imply live network transactions or connected AI.
-- Define all workspace visual roles in `src/styles.css` and use the shared Button and Dialog controls for workspace interactions.
-
-- Studio (design-to-React) lives in `design-studio.tsx` and generates code deterministically from local frame data; no live Figma connection is implied.
-- Render module records through purpose-specific views in `module-surface.tsx` and use shared navigation callbacks for connected pages; this preserves one workspace context without duplicating destination data.
+- Treat the Tender as the primary domain entity. Keep lifecycle validation and Roll generation consistent between `src/lib/tender.ts` and the Supabase migration.
+- Keep illustrative market records distinct from shared Supabase records. Never present a demo quote, funding figure, or completion as a live transaction.
+- Keep School Console records local to the device; do not send student records to Supabase or imply that local storage is encrypted or multi-user.
+- Preserve server-side authentication and authorization checks alongside database row-level security for school publication and crew Assembly.
+- Keep design tokens and visual roles in `src/styles.css`; use shared controls for interactive UI.
+- Funding remains contact-only until an approved payment and compliance design exists. Do not imply connected AI, OCR, or message delivery without an implemented provider.
