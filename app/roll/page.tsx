@@ -9,11 +9,13 @@ export const metadata = {
   description: 'A public ledger of completed local builds, recorded only after Anchor sign-off.',
 };
 
-export default async function RollPage() {
+export default async function RollPage({ searchParams }: { searchParams: Promise<{ mode?: string }> }) {
+  const { mode } = await searchParams;
+  const guest = mode === 'guest';
   const records = await getPublicRoll();
   return (
     <main className="site-shell">
-      <SiteHeader />
+      <SiteHeader guest={guest} />
       <section className="page-intro roll-intro">
         <p className="eyebrow"><span className="section-index">03</span> Public proof of work</p>
         <h1>The Roll.</h1>
@@ -48,7 +50,7 @@ export default async function RollPage() {
               <span>Anchor sign-off</span><i />
               <span>Atomic Roll record</span>
             </div>
-            <Link className="text-link" href="/tenders">Review open Tenders <ArrowRight aria-hidden="true" size={14} /></Link>
+            <Link className="text-link" href={guest ? '/tenders?mode=guest' : '/tenders'}>Review open Tenders <ArrowRight aria-hidden="true" size={14} /></Link>
           </div>
         )}
       </section>

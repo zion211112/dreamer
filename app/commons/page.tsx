@@ -14,12 +14,15 @@ function formatDate(value: string): string {
   return new Intl.DateTimeFormat('en', { dateStyle: 'medium', timeZone: 'UTC' }).format(new Date(value));
 }
 
-export default async function CommonsPage() {
+export default async function CommonsPage({ searchParams }: { searchParams: Promise<{ mode?: string }> }) {
+  const { mode } = await searchParams;
+  const guest = mode === 'guest';
   const [activity, identity] = await Promise.all([getCommonsActivity(), getCommonsIdentityState()]);
+  const canAct = identity.authenticated && !guest;
 
   return (
     <main className="site-shell commons-shell">
-      <SiteHeader />
+      <SiteHeader guest={guest} />
       <section className="commons-hero">
         <div>
           <p className="eyebrow"><span className="signal-dot" /> APT-LABS / COMMONS</p>
@@ -33,7 +36,7 @@ export default async function CommonsPage() {
         <div className="commons-activity">
           <div className="commons-section-heading">
             <div><p className="eyebrow">01 / ACTIVITY</p><h2>From the workshop</h2></div>
-            <Link className="text-link" href="/commons/library">Open the Library <ArrowRight aria-hidden="true" size={14} /></Link>
+            <div className="commons-hero-links"><Link className="text-link" href={guest ? '/commons/opportunities?mode=guest' : '/commons/opportunities'}>Asset-linked opportunities <ArrowRight aria-hidden="true" size={14} /></Link><Link className="text-link" href={guest ? '/commons/library?mode=guest' : '/commons/library'}>Open the Library <ArrowRight aria-hidden="true" size={14} /></Link></div>
           </div>
           {activity.error && <div className="commons-alert" role="alert">{activity.error}</div>}
           {!activity.configured && (
@@ -54,9 +57,9 @@ export default async function CommonsPage() {
             {activity.data?.map(post => (
               <article className="commons-post-card" key={post.id}>
                 <div className="commons-post-meta"><span>{post.post_kind === 'poll' ? 'ADVISORY POLL' : 'FIELD NOTE'}</span><span>{formatDate(post.published_at)}</span></div>
-                <h3><Link href={`/commons/${post.id}`}>{post.title}</Link></h3>
+                <h3><Link href={`/commons/${post.id}${guest ? '?mode=guest' : ''}`}>{post.title}</Link></h3>
                 <p>{post.body}</p>
-                <div className="commons-post-byline"><span>Shared by {post.author_name}</span><Link href={`/commons/${post.id}`}>Open discussion <ArrowRight aria-hidden="true" size={13} /></Link></div>
+                <div className="commons-post-byline"><span>Shared by {post.author_name}</span><Link href={`/commons/${post.id}${guest ? '?mode=guest' : ''}`}>Open discussion <ArrowRight aria-hidden="true" size={13} /></Link></div>
               </article>
             ))}
           </div>
@@ -66,37 +69,37 @@ export default async function CommonsPage() {
           <section className="commons-side-card">
             <p className="eyebrow">02 / PARTICIPATE</p>
             <h2>Keep the signal useful.</h2>
-            {identity.error && <div className="commons-alert" role="alert">{identity.error}</div>}
-            {!identity.authenticated && (
+            {!guest && identity.error && <div className="commons-alert" role="alert">{identity.error}</div>}
+            {!canAct && (
               <>
                 <p>Public reading does not require an account. Approved adult contributors can submit moderated notes, resource links and advisory polls.</p>
                 <Link className="button button-primary" href="/sign-in?next=%2Fcommons">Sign in to request access <ArrowRight aria-hidden="true" size={14} /></Link>
               </>
             )}
-            {identity.authenticated && !identity.error && !identity.contributor && identity.requestStatus === 'pending' && identity.contributorRequestsOpen && (
+            {canAct && !identity.error && !identity.contributor && identity.requestStatus === 'pending' && identity.contributorRequestsOpen && (
               <div className="commons-pending"><span className="signal-dot" /><span><strong>Request in review</strong><small>Commons contributions remain closed until a moderator responds.</small></span></div>
             )}
-            {identity.authenticated && !identity.error && !identity.contributor && identity.requestStatus === 'pending' && !identity.contributorRequestsOpen && (
+            {canAct && !identity.error && !identity.contributor && identity.requestStatus === 'pending' && !identity.contributorRequestsOpen && (
               <div className="commons-closed"><strong>Request is waiting.</strong><span>No active moderator is currently available to review pending contributor requests.</span></div>
             )}
-            {identity.authenticated && !identity.error && !identity.contributor && identity.requestStatus !== 'pending' && (
+            {canAct && !identity.error && !identity.contributor && identity.requestStatus !== 'pending' && (
               identity.contributorRequestsOpen ? <>
                 <p>Access is granted by a human moderator. Email sign-in proves control of an address, not age, identity or professional qualifications. Youth participation is not enabled.</p>
                 <CommonsActionForm action={requestCommonsAccess} submitLabel={identity.requestStatus === 'declined' ? 'Request review again' : 'Request contributor access'} />
               </> : <div className="commons-closed"><strong>Contribution is read-only at this deployment.</strong><span>No active moderator is available to review requests. Read public activity and return when human review is staffed.</span></div>
             )}
-            {identity.authenticated && !identity.error && identity.contributor && (
+            {canAct && !identity.error && identity.contributor && (
               <>
                 <p>Your account has approved contributor access. Each submission is reviewed before publication.</p>
                 <Link className="button button-primary" href="/commons/contribute"><SquarePen aria-hidden="true" size={14} /> Create a contribution</Link>
               </>
             )}
-            {identity.moderator && (
+            {canAct && identity.moderator && (
               <Link className="commons-moderator-link" href="/commons/moderation"><ShieldCheck aria-hidden="true" size={14} /> Moderator desk</Link>
             )}
           </section>
 
-          {identity.authenticated && !identity.error && (
+          {canAct && !identity.error && (
             <section className="commons-side-card commons-identity-card">
               <p className="eyebrow">03 / YOUR PUBLIC IDENTITY</p>
               <h2>Private by default.</h2>

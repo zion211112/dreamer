@@ -13,7 +13,8 @@ const icons = {
   software: Compass,
 } as const;
 
-export function TenderCard({ tender }: { tender: Tender }) {
+export function TenderCard({ tender, guest = false }: { tender: Tender; guest?: boolean }) {
+  const dossierHref = `/tenders/${tender.slug}${guest ? '?mode=guest' : ''}`;
   const Icon = icons[tender.category];
   const signaledPercent = tender.fundingTargetMinor > 0
     ? Math.min(100, Math.floor(tender.currentSignaledAmountMinor / tender.fundingTargetMinor * 100))
@@ -34,7 +35,7 @@ export function TenderCard({ tender }: { tender: Tender }) {
         <span className="eyebrow">{categoryLabels[tender.category]}</span>
         {tender.isIllustrative && <span className="demo-chip">Illustrative</span>}
       </div>
-      <h3><Link href={`/tenders/${tender.slug}`}>{tender.assetName}</Link></h3>
+      <h3><Link href={dossierHref}>{tender.assetName}</Link></h3>
       <p className="tender-summary">{tender.summary}</p>
       <p className="tender-location">{tender.issuer} <span>·</span> {tender.location}</p>
       <div className="quote-pair asset-economics-compact">
@@ -49,8 +50,8 @@ export function TenderCard({ tender }: { tender: Tender }) {
         </div>
         <small>{tender.isIllustrative ? 'Scenario only · no live capital signal' : allocationNote}</small>
       </div>
-      <Link className="card-link" href={`/tenders/${tender.slug}`}>
-        Read the Tender <ArrowUpRight aria-hidden="true" size={15} />
+      <Link className="card-link" href={dossierHref}>
+        Inspect Asset <ArrowUpRight aria-hidden="true" size={15} />
       </Link>
     </article>
   );

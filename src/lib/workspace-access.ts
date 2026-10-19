@@ -28,7 +28,7 @@ function parseWorkspaceContexts(value: unknown): WorkspaceContextOption[] {
     }
     const row = item as Record<string, unknown>;
     const kind = row.context_kind;
-    if (kind !== 'network' && kind !== 'school' && kind !== 'crew') {
+    if (kind !== 'network' && kind !== 'funder' && kind !== 'school' && kind !== 'crew') {
       throw new Error('Workspace context contains an unknown context kind.');
     }
     const key = row.context_key;
@@ -68,7 +68,7 @@ function parseWorkspaceContexts(value: unknown): WorkspaceContextOption[] {
   if (contexts.filter(context => context.kind === 'network').length !== 1) {
     throw new Error('An authenticated workspace must have exactly one base network context.');
   }
-  const kindOrder = { network: 0, school: 1, crew: 2 };
+  const kindOrder = { network: 0, funder: 1, school: 2, crew: 3 };
   return contexts.sort((left, right) =>
     kindOrder[left.kind] - kindOrder[right.kind]
     || left.label.localeCompare(right.label)

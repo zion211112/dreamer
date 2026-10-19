@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   if (!context.authenticated) return NextResponse.redirect(new URL('/sign-in?error=session-failed', request.url));
   const defaultWorkspaceParams = new URLSearchParams({
     context: context.defaultContextKey,
-    view: 'demand',
+    view: 'assets',
   });
   const finalDestination = destination === '/workspace' ? `/workspace?${defaultWorkspaceParams.toString()}` : destination;
   return NextResponse.redirect(new URL(finalDestination, request.url));

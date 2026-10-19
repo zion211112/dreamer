@@ -1,107 +1,76 @@
 import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, MoveUpRight } from 'lucide-react';
+import { ArrowDownRight, ArrowRight, ArrowUpRight, BadgeCheck, Boxes, Orbit, UsersRound } from 'lucide-react';
 import { SiteHeader } from '@/components/site-header';
 import { TenderCard } from '@/components/tender-card';
-import { formatMoney } from '@/lib/tender-data';
 import { getMarketTenders } from '@/lib/tender-repository';
 import { getWorkspaceContext } from '@/lib/workspace-access';
-import { capitalEfficiencyPercent } from '@/lib/tender';
-import { redirect } from 'next/navigation';
 
 export default async function HomePage() {
-  const workspace = await getWorkspaceContext();
-  if (workspace.authenticated) {
-    const params = new URLSearchParams({ context: workspace.defaultContextKey, view: 'demand' });
-    redirect(`/workspace?${params.toString()}`);
-  }
-
-  const tenders = await getMarketTenders();
+  const [workspace, tenders] = await Promise.all([getWorkspaceContext(), getMarketTenders()]);
   const featured = tenders.find(tender => tender.slug === 'school-console');
-  const marketSelection = tenders.filter(tender => tender.slug !== 'school-console').slice(0, 3);
-  const efficiency = featured ? capitalEfficiencyPercent(featured) : null;
+  const portfolio = tenders.slice(0, 3);
 
   return (
-    <main className="site-shell">
+    <main className="site-shell frontdoor-shell">
       <SiteHeader />
-      <section className="hero">
-        <div className="hero-copy">
-          <p className="eyebrow hero-kicker"><span className="signal-dot" /> APT-LABS / SOVEREIGN ASSET ENGINE</p>
-          <h1>Capital gets a blueprint.<br /><em>{' '}Communities get an engine.</em></h1>
-          <p className="hero-intro">
-            We turn shared needs into durable infrastructure—priced in the open, built by accountable crews, and recorded when the work is verified. The revolution is less slogan, more serviceable pump.
-          </p>
-          <div className="hero-actions">
-            <Link className="button button-primary" href="/tenders">Explore the asset market <ArrowRight aria-hidden="true" size={16} /></Link>
-            <Link className="text-link" href="/roll">Inspect the Roll <ArrowUpRight aria-hidden="true" size={15} /></Link>
+      <section className="frontdoor-hero">
+        <div className="frontdoor-copy">
+          <p className="eyebrow frontdoor-kicker"><span className="signal-dot" /> APT-LABS / SOVEREIGN COORDINATION ENGINE</p>
+          <h1>Capital has a place<br />to <em>land.</em></h1>
+          <p className="frontdoor-lede">Assets make the work legible. The Commons finds the team. The Roll keeps the proof.</p>
+          <p className="frontdoor-body">A small, serious network for turning African infrastructure ideas into assets that can be built, measured, and remembered.</p>
+          <div className="frontdoor-actions">
+            <Link className="button button-primary" href="/tenders">Explore Assets <ArrowRight aria-hidden="true" size={15} /></Link>
+            <Link className="text-link" href="/sign-in">Enter the studio <ArrowUpRight aria-hidden="true" size={14} /></Link>
           </div>
-          <div className="hero-roles" aria-label="The sovereign asset loop">
-            <span><b>01</b> Need</span><i aria-hidden="true" />
-            <span><b>02</b> Capital</span><i aria-hidden="true" />
-            <span><b>03</b> Build</span><i aria-hidden="true" />
-            <span><b>04</b> Proof</span>
-          </div>
+          <div className="frontdoor-coordinate"><span>00° / 00′ / LOCAL BY DESIGN</span><span>PROTOTYPE FIELD GUIDE · 001</span></div>
         </div>
-        <div aria-label="Illustrative sovereign asset economics" className="hero-ledger">
-          <div className="ledger-header">
-            <span className="eyebrow">ASSET DOSSIER / 001</span>
-            <span className="status-tag">{featured?.isIllustrative ? 'SCENARIO / ILLUSTRATIVE' : 'PUBLISHED ASSET'}</span>
-          </div>
-          <div className="ledger-title">
-            <span className="ledger-mark">A/01</span>
-            <div><h2>{featured?.assetName ?? 'Community infrastructure'}</h2><p>{featured?.category ?? 'Asset'} · {featured?.location ?? 'Local execution node'}</p></div>
-            <MoveUpRight aria-hidden="true" className="ledger-arrow" size={17} />
-          </div>
-          <div className="ledger-ruler"><span>CAPITAL EFFICIENCY / YEAR 01</span><i /></div>
-          <div className="ledger-quote"><span>Asset build cost</span><strong>{featured ? formatMoney(featured.assetBuildCostMinor, featured.currency) : '—'}</strong></div>
-          <div className="ledger-quote"><span>Projected annual yield</span><strong>{featured?.projectedAnnualYieldMinor !== null && featured ? formatMoney(featured.projectedAnnualYieldMinor, featured.currency) : 'Model pending'}</strong></div>
-          <div className="ledger-savings"><span>Yield / build cost</span><strong>{efficiency === null ? 'Not modeled' : `${efficiency}% scenario`}</strong></div>
-          <p className="ledger-disclaimer">{featured?.economicModelNote ?? 'A modeled return is not realized revenue. This profile requires an evidence-backed operating model.'} {featured?.isIllustrative ? 'Illustrative scenario only; no live asset or cash flow is claimed.' : ''}</p>
-          <Link className="ledger-open" href={featured ? `/tenders/${featured.slug}` : '/tenders'}>Inspect the asset profile <ArrowUpRight aria-hidden="true" size={15} /></Link>
+        <div className="coordination-map" aria-label="Asset, Commons and Roll work together">
+          <div className="map-coordinate map-coordinate-top">FIELD NOTE 001 — THE LOOP</div>
+          <div className="map-lines" aria-hidden="true"><i /><i /><i /></div>
+          <div className="map-node map-node-asset"><Boxes aria-hidden="true" size={19} /><span>01 / ASSET</span><strong>Back the build.</strong><small>Capital · BOM · yield model</small></div>
+          <div className="map-node map-node-commons"><UsersRound aria-hidden="true" size={19} /><span>02 / COMMONS</span><strong>Find your people.</strong><small>Roles · skills · applications</small></div>
+          <div className="map-node map-node-roll"><BadgeCheck aria-hidden="true" size={19} /><span>03 / ROLL</span><strong>Keep the proof.</strong><small>Deployment · capability</small></div>
+          <div className="map-center"><Orbit aria-hidden="true" size={21} /><span>APT</span><small>COORDINATE</small></div>
+          <div className="map-coordinate map-coordinate-bottom">A CLOSED LOOP, BUILT IN THE OPEN <ArrowDownRight aria-hidden="true" size={13} /></div>
+          <div className="map-stamp">DEMO<br />PROTOTYPE</div>
         </div>
-        <div aria-hidden="true" className="hero-index">APT / MARKET <span>—</span> 001</div>
       </section>
 
-      <section aria-labelledby="market-preview-title" className="market-preview">
+      <section aria-labelledby="asset-one-title" className="asset-one-band">
+        <div className="asset-one-index"><span>FLAGSHIP / ASSET 001</span><span>SOFTWARE · LOCAL-FIRST</span></div>
+        <div className="asset-one-main">
+          <div>
+            <p className="eyebrow">THE FIRST BUILD IN THE PORTFOLIO</p>
+            <h2 id="asset-one-title">School Console</h2>
+            <p>A practical, device-local school tool—and an early test of how useful software can enter the Asset network without exporting school records.</p>
+          </div>
+          <div className="asset-one-actions">
+            <Link className="button button-primary" href={featured ? `/tenders/${featured.slug}` : '/tenders'}>Inspect Asset 001 <ArrowUpRight aria-hidden="true" size={15} /></Link>
+            <span>The teacher tool stays separate and local.</span>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="portfolio-heading" className="frontdoor-portfolio">
         <div className="section-heading">
-          <div><p className="eyebrow">Execution nodes · Community infrastructure</p><h2 id="market-preview-title">Build what keeps value working here.</h2></div>
-          <Link className="text-link" href="/tenders">Explore the asset register <ArrowRight aria-hidden="true" size={15} /></Link>
+          <div><p className="eyebrow">01 / ASSETS · OPPORTUNITY WITH A BLUEPRINT</p><h2 id="portfolio-heading">Browse the work worth doing.</h2></div>
+          <Link className="text-link" href="/tenders">Open Asset register <ArrowRight aria-hidden="true" size={14} /></Link>
         </div>
-        <div className="preview-grid">{marketSelection.map(tender => <TenderCard key={tender.id} tender={tender} />)}</div>
+        <div className="preview-grid">{portfolio.map(tender => <TenderCard key={tender.id} tender={tender} />)}</div>
+        <p className="demo-boundary">Scenario records are labeled. Projected yield is a model—not a return. Capital Intent is not payment or escrow.</p>
       </section>
 
-      <section className="console-callout">
-        <div className="console-callout-index">PRODUCT / 01</div>
-        <div>
-          <p className="eyebrow">One build among many</p>
-          <h2>A useful tool at the gate.<br /><span>A school’s need can become infrastructure.</span></h2>
-          <p>The School Console helps with the school week on this device. A school leader can separately prepare an asset Tender through the authorized publication flow; student records stay local.</p>
-        </div>
-        <div className="console-callout-actions">
-          <Link className="button button-outline" href="/console">Enter the Console <ArrowUpRight aria-hidden="true" size={15} /></Link>
-          <Link className="text-link" href={featured ? `/tenders/${featured.slug}` : '/tenders'}>See its Tender <ArrowRight aria-hidden="true" size={14} /></Link>
-        </div>
+      <section className="frontdoor-pillars" aria-label="The network pillars">
+        <article><span>02 / PEOPLE</span><h3>The Commons is where a crew starts.</h3><p>Asset-linked roles connect builders and founders around a defined piece of work—not an endless feed.</p><Link href="/commons/opportunities">Find opportunities <ArrowRight aria-hidden="true" size={13} /></Link></article>
+        <article><span>03 / PROOF</span><h3>The Roll remembers the hands.</h3><p>Anchor-verified deployments are the source of capability proof. No credential is minted from a profile claim.</p><Link href="/roll">Read the public Roll <ArrowRight aria-hidden="true" size={13} /></Link></article>
+        <article><span>THE WORKSHOP / TRY IT</span><h3>Walk the prototype first.</h3><p>Enter with no account. Guest mode is isolated from live applications, capital signals, and Roll records.</p><Link href="/workspace?mode=guest&view=assets">Try the studio <ArrowRight aria-hidden="true" size={13} /></Link></article>
       </section>
 
-      <section className="method-strip" aria-label="How the Tender model works">
-        <article><span>01 / SURFACE THE NEED</span><h3>A real asset. A legible brief.</h3><p>Communities define the infrastructure they need and the people it will serve.</p></article>
-        <article><span>02 / ALLOCATE CAPITAL</span><h3>Cost, crew, yield assumptions.</h3><p>An itemized build plan makes capital allocation and local participation inspectable.</p></article>
-        <article><span>03 / PROVE THE WORK</span><h3>Anchor signs. The Roll remembers.</h3><p>Completion is an accountable state transition—not a claim in a pitch deck.</p></article>
-      </section>
-
-      <section aria-labelledby="participants-title" className="participants-section">
-        <div className="participants-heading"><p className="eyebrow">One engine · Many hands</p><h2 id="participants-title">Company form. Community purpose.</h2><p>APT-LABS uses the discipline of capital allocation to build infrastructure people can maintain, govern, and use. Public assets and verified work stay inspectable; permissions remain tied to real relationships.</p></div>
-        <div className="participants-grid">
-          <article><span>CAPITAL / 01</span><h3>Make allocation inspectable.</h3><p>See asset build cost, modeled yield, local retention, crew allocation, and which assumptions still need evidence.</p><Link className="text-link" href="/tenders">Explore asset dossiers <ArrowRight size={14} /></Link></article>
-          <article><span>COMMONS / 02</span><h3>Knowledge travels with work.</h3><p>Browse maker activity and an inspectable library of resources with provenance and license labels.</p><Link className="text-link" href="/commons">Enter the Commons <ArrowRight size={14} /></Link></article>
-          <article><span>PROOF / 03</span><h3>Follow what is verified.</h3><p>Only completed deployments signed by the assigned Anchor enter the immutable Roll.</p><Link className="text-link" href="/roll">Read the Roll <ArrowRight size={14} /></Link></article>
-        </div>
-      </section>
-
-      <footer className="site-footer">
+      <footer className="site-footer frontdoor-footer">
         <Link className="wordmark footer-wordmark" href="/"><span aria-hidden="true" className="wordmark-symbol">A</span><span>APT<span className="wordmark-dash">—</span>LABS</span></Link>
-        <p>For the people, by the people—built to keep working.</p>
-        <nav aria-label="Footer navigation"><Link href="/tenders">Assets</Link><Link href="/commons">Commons</Link><Link href="/roll">Roll</Link><Link href="/console">School Console</Link></nav>
-        <span className="footer-note">Modeled yield is not realized revenue. Illustrative records are labeled. No capital is held by this platform.</span>
+        <p>For the people, by the people—built with care.</p>
+        <nav aria-label="Footer navigation"><Link href="/tenders">Assets</Link><Link href="/commons">Commons</Link><Link href="/roll">Roll</Link><Link href="/sign-in">{workspace.authenticated ? 'Workspace' : 'Sign in'}</Link></nav>
       </footer>
     </main>
   );

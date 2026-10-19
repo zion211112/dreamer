@@ -8,7 +8,7 @@ import type { Tender, TenderCategory } from '@/lib/tender';
 
 const filters: Array<'all' | TenderCategory> = ['all', 'education', 'energy', 'agriculture', 'media', 'software'];
 
-export function TenderBoard({ tenders }: { tenders: Tender[] }) {
+export function TenderBoard({ tenders, guest = false }: { tenders: Tender[]; guest?: boolean }) {
   const [category, setCategory] = useState<typeof filters[number]>('all');
   const [query, setQuery] = useState('');
   const results = useMemo(() => tenders.filter(tender =>
@@ -37,7 +37,7 @@ export function TenderBoard({ tenders }: { tenders: Tender[] }) {
       </div>
       <p aria-live="polite" className="board-count">{results.length.toString().padStart(2, '0')} open calls <span>·</span> All quotes shown in their listed currency</p>
       {results.length > 0
-        ? <div className="board-grid">{results.map(tender => <TenderCard key={tender.id} tender={tender} />)}</div>
+        ? <div className="board-grid">{results.map(tender => <TenderCard guest={guest} key={tender.id} tender={tender} />)}</div>
         : <div className="empty-state"><p className="eyebrow">No matching Tender</p><h2>Try a broader search.</h2><p>Nothing was hidden or removed from the market.</p></div>}
     </>
   );

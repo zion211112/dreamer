@@ -8,8 +8,15 @@ import { categoryLabels, formatMoney } from '@/lib/tender-data';
 import { getMarketTenderBySlug } from '@/lib/tender-repository';
 import { getWorkspaceContext } from '@/lib/workspace-access';
 
-export default async function TenderDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default async function TenderDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ mode?: string }>;
+}) {
+  const [{ id }, { mode }] = await Promise.all([params, searchParams]);
+  const guest = mode === 'guest';
   const [tender, workspace] = await Promise.all([
     getMarketTenderBySlug(id),
     getWorkspaceContext(),
@@ -56,8 +63,8 @@ export default async function TenderDetailPage({ params }: { params: Promise<{ i
 
   return (
     <main className="site-shell">
-      <SiteHeader />
-      <div className="detail-back"><Link href="/tenders"><ArrowLeft aria-hidden="true" size={14} /> Back to the asset register</Link><span>ASSET DOSSIER / {tender.id.toUpperCase()}</span></div>
+      <SiteHeader guest={guest} />
+      <div className="detail-back"><Link href={guest ? '/tenders?mode=guest' : '/tenders'}><ArrowLeft aria-hidden="true" size={14} /> Back to the asset register</Link><span>ASSET DOSSIER / {tender.id.toUpperCase()}</span></div>
       <div className="detail-layout">
         <article className="detail-main">
           <header className="detail-heading">
@@ -181,7 +188,7 @@ export default async function TenderDetailPage({ params }: { params: Promise<{ i
                 tender.currentSignaledAmountMinor < tender.fundingTargetMinor
               }
               assetName={tender.assetName}
-              authenticated={workspace.authenticated}
+              authenticated={workspace.authenticated && !guest}
               currency={tender.currency}
               isIllustrative={tender.isIllustrative}
               targetAmountMinor={tender.fundingTargetMinor}
@@ -189,7 +196,6 @@ export default async function TenderDetailPage({ params }: { params: Promise<{ i
             />
             <p className="rail-legal">Intent is non-binding. No money moves here. Offline settlement requires authorized verification before Assembly.</p>
             <div className="rail-meta"><span>ISSUER</span><strong>{tender.issuer}</strong><span>LOCATION</span><strong>{tender.location}</strong><span>STATE</span><strong className="status-open"><i />{statusLabel}</strong></div>
-            <Link className="rail-console-link" href="/console">Open the School Console · local device <span aria-hidden="true">↗</span></Link>
           </div>
         </aside>
       </div>

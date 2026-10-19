@@ -12,10 +12,13 @@ export async function generateMetadata({ params }: { params: Promise<{ resourceI
 
 export default async function CommonsResourcePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ resourceId: string }>;
+  searchParams: Promise<{ mode?: string }>;
 }) {
-  const { resourceId } = await params;
+  const [{ resourceId }, { mode }] = await Promise.all([params, searchParams]);
+  const guest = mode === 'guest';
   const [result, identity] = await Promise.all([
     getCommonsResource(resourceId),
     getCommonsIdentityState(),
@@ -23,7 +26,7 @@ export default async function CommonsResourcePage({
   if (!result.configured) {
     return (
       <main className="site-shell commons-shell">
-        <SiteHeader />
+        <SiteHeader guest={guest} />
         <div className="commons-alert">Commons is not connected here. This resource cannot be verified.</div>
       </main>
     );
@@ -31,9 +34,9 @@ export default async function CommonsResourcePage({
   if (result.error || !result.data) {
     return (
       <main className="site-shell commons-shell">
-        <SiteHeader />
+        <SiteHeader guest={guest} />
         <div className="commons-alert" role="alert">{result.error ?? 'Resource not found.'}</div>
-        <Link className="text-link" href="/commons/library">Return to the Library</Link>
+        <Link className="text-link" href={guest ? '/commons/library?mode=guest' : '/commons/library'}>Return to the Library</Link>
       </main>
     );
   }
@@ -41,9 +44,9 @@ export default async function CommonsResourcePage({
 
   return (
     <main className="site-shell commons-shell">
-      <SiteHeader />
+      <SiteHeader guest={guest} />
       <article className="commons-detail">
-        <Link className="commons-back-link" href="/commons/library">← Commons Library</Link>
+        <Link className="commons-back-link" href={guest ? '/commons/library?mode=guest' : '/commons/library'}>← Commons Library</Link>
         <p className="eyebrow">RESOURCE RECORD / {resource.resource_kind.toUpperCase()}</p>
         <h1>{resource.title}</h1>
         <p className="commons-detail-lede">{resource.summary}</p>
@@ -62,11 +65,11 @@ export default async function CommonsResourcePage({
           <div className="commons-related-tender">
             <span>RELATED WORK</span>
             <p>This record is associated with a published Tender.</p>
-            <Link className="text-link" href="/tenders">Review the public Market <ArrowUpRight aria-hidden="true" size={13} /></Link>
+            <Link className="text-link" href={guest ? '/tenders?mode=guest' : '/tenders'}>Review the public Market <ArrowUpRight aria-hidden="true" size={13} /></Link>
           </div>
         )}
-        {identity.error && <div className="commons-alert" role="alert">{identity.error}</div>}
-        {identity.authenticated && !identity.error && (
+        {!guest && identity.error && <div className="commons-alert" role="alert">{identity.error}</div>}
+        {identity.authenticated && !guest && !identity.error && (
           <section className="commons-detail-report">
             <div><ShieldCheck aria-hidden="true" size={15} /><span>Flag a provenance, rights or safety concern.</span></div>
             <CommonsReportForm targetId={resource.id} targetKind="resource" />

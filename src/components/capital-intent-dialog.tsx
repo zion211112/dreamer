@@ -63,7 +63,7 @@ export function CapitalIntentDialog({
           disabled={isIllustrative || !acceptingSignals}
           title={isIllustrative ? 'Scenario records cannot accept a live signal.' : undefined}
         >
-          Signal Capital Intent <ArrowUpRight aria-hidden="true" size={15} />
+          Invest in Asset <ArrowUpRight aria-hidden="true" size={15} />
         </Button>
       </DialogTrigger>
       <DialogContent className="intent-dialog capital-intent-dialog">

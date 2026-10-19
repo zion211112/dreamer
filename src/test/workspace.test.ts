@@ -1,7 +1,7 @@
 import {
   getDefaultContextKey,
   getDefaultWorkspace,
-  getWorkspaceHref,
+  isWorkspaceLane,
   resolveWorkspaceContext,
   type WorkspaceContextOption,
 } from '@/lib/workspace';
@@ -29,6 +29,18 @@ const contexts: WorkspaceContextOption[] = [
     tenderSlug: null,
     tenderStatus: null,
     assetName: null,
+    isIllustrative: false,
+  },
+  {
+    key: 'funder:asset-1',
+    kind: 'funder',
+    label: 'Solar kitchen',
+    role: 'funder',
+    organizationId: 'school-1',
+    tenderId: 'asset-1',
+    tenderSlug: 'solar-kitchen',
+    tenderStatus: 'open',
+    assetName: 'Solar kitchen',
     isIllustrative: false,
   },
   {
@@ -63,20 +75,24 @@ describe('workspace selection', () => {
     expect(getDefaultWorkspace([], 'anchor')).toBe('apt');
   });
 
-  it('maps product context to its route without granting access', () => {
-    expect(getWorkspaceHref('apt')).toBe('/workspace');
-    expect(getWorkspaceHref('school')).toBe('/console');
+  it('recognizes only the three Network Studio panes', () => {
+    expect(isWorkspaceLane('assets')).toBe(true);
+    expect(isWorkspaceLane('commons')).toBe(true);
+    expect(isWorkspaceLane('roll')).toBe(true);
+    expect(isWorkspaceLane('demand')).toBe(false);
+    expect(isWorkspaceLane('assemblies')).toBe(false);
   });
 
   it('defaults to an assigned crew context or the selected school context', () => {
     expect(getDefaultContextKey(contexts, 'apt')).toBe('crew:tender-1:builder');
     expect(getDefaultContextKey(contexts, 'school')).toBe('school:school-1');
     expect(getDefaultContextKey([contexts[0]], 'school')).toBe('network');
+    expect(getDefaultContextKey([contexts[0], contexts[2]], 'apt')).toBe('funder:asset-1');
   });
 
   it('resolves only a server-provided context and falls back for stale context keys', () => {
     expect(resolveWorkspaceContext(contexts, 'crew:tender-1:builder', 'network')).toEqual({
-      context: contexts[2],
+      context: contexts[3],
       invalid: false,
     });
     expect(resolveWorkspaceContext(contexts, 'school:other-account', 'network')).toEqual({

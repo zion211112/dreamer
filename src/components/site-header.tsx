@@ -1,20 +1,21 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Orbit } from 'lucide-react';
 import { WorkspaceSwitcher } from '@/components/workspace-switcher';
 import { getWorkspaceContext } from '@/lib/workspace-access';
 
-export async function SiteHeader() {
+export async function SiteHeader({ guest = false }: { guest?: boolean }) {
   const context = await getWorkspaceContext();
+  const signedIn = context.authenticated && !guest;
 
   return (
-    <header className={`site-header ${context.authenticated ? 'site-header-signed-in' : ''}`}>
+    <header className={`site-header ${signedIn ? 'site-header-signed-in' : ''}`}>
       <div className="site-header-brand">
         <Link aria-label="APT-LABS home" className="wordmark" href="/">
           <span aria-hidden="true" className="wordmark-symbol">A</span>
           <span>APT<span className="wordmark-dash">—</span>LABS</span>
         </Link>
-        {context.authenticated && (
+        {signedIn && (
           <Suspense fallback={<span className="workspace-switcher workspace-switcher-loading">Loading context…</span>}>
             <WorkspaceSwitcher
               contexts={context.contexts}
@@ -25,17 +26,18 @@ export async function SiteHeader() {
         )}
       </div>
       <nav aria-label="Main navigation" className="site-nav">
-        <Link href="/tenders">Work</Link>
-        <Link href="/commons">Commons</Link>
-        <Link href="/roll">The Roll</Link>
-        <Link href="/console">School Console</Link>
+        <Link href={guest ? '/tenders?mode=guest' : '/tenders'}>Assets</Link>
+        <Link href={guest ? '/commons?mode=guest' : '/commons'}>Commons</Link>
+        <Link href={guest ? '/roll?mode=guest' : '/roll'}>Roll</Link>
       </nav>
       <div className="header-actions">
-        {context.authenticated
+        {guest
+          ? <span className="header-demo-pill"><Orbit aria-hidden="true" size={13} /> GUEST / DEMO</span>
+          : signedIn
           ? <span className="header-account">{context.email ?? 'Signed in'}</span>
           : <>
               <Link className="header-sign-in" href="/sign-in">Sign in</Link>
-              <Link className="header-issue" href="/sign-up">Create account <ArrowUpRight aria-hidden="true" size={14} /></Link>
+              <Link className="header-issue" href="/sign-in">Try studio <ArrowUpRight aria-hidden="true" size={14} /></Link>
             </>}
       </div>
     </header>

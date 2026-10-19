@@ -6,31 +6,29 @@ import {
   BookOpen,
   CircleAlert,
   Compass,
-  Factory,
   GraduationCap,
+  BriefcaseBusiness,
   Layers3,
   LockKeyhole,
   ScrollText,
   ShieldCheck,
-  Sparkles,
 } from 'lucide-react';
 import { SiteHeader } from '@/components/site-header';
 import { capitalEfficiencyPercent } from '@/lib/tender';
 import { formatMoney } from '@/lib/tender-data';
 import type { RollRecord, Tender } from '@/lib/tender';
-import type { WorkspaceContextOption } from '@/lib/workspace';
-
-export type WorkspaceLane = 'demand' | 'tenders' | 'assemblies' | 'roll';
+import type { WorkspaceContextOption, WorkspaceLane } from '@/lib/workspace';
+import type { CommonsPost } from '@/lib/commons';
 
 const lanes: Array<{ key: WorkspaceLane; label: string; hint: string; icon: typeof Layers3 }> = [
-  { key: 'demand', label: 'Demand', hint: 'Name the need', icon: Sparkles },
-  { key: 'tenders', label: 'Tenders', hint: 'Inspect the math', icon: Layers3 },
-  { key: 'assemblies', label: 'Assembly', hint: 'Do assigned work', icon: Factory },
-  { key: 'roll', label: 'Roll', hint: 'Read verified proof', icon: ScrollText },
+  { key: 'assets', label: 'Assets', hint: 'Capital & execution', icon: Layers3 },
+  { key: 'commons', label: 'Commons', hint: 'People & opportunity', icon: BriefcaseBusiness },
+  { key: 'roll', label: 'Roll', hint: 'Proof & capability', icon: ScrollText },
 ];
 
-function laneHref(contextKey: string, lane: WorkspaceLane): string {
+function laneHref(contextKey: string, lane: WorkspaceLane, guest: boolean): string {
   const params = new URLSearchParams({ context: contextKey, view: lane });
+  if (guest) params.set('mode', 'guest');
   return `/workspace?${params.toString()}`;
 }
 
@@ -48,6 +46,7 @@ function statusLabel(value: string): string {
 function contextTitle(context: WorkspaceContextOption | null): string {
   if (!context) return 'Public preview';
   if (context.kind === 'network') return 'Network Member';
+  if (context.kind === 'funder') return `Funder · ${context.assetName ?? context.label}`;
   if (context.kind === 'school') {
     const role = context.role === 'principal' ? 'School Admin'
       : context.role === 'tender_issuer' ? 'Tender Issuer'
@@ -57,10 +56,44 @@ function contextTitle(context: WorkspaceContextOption | null): string {
   return `${context.role.charAt(0).toUpperCase()}${context.role.slice(1)} · ${context.assetName ?? context.label}`;
 }
 
-function StateRail({ context, configured }: { context: WorkspaceContextOption | null; configured: boolean }) {
+function CommonsSurface({ posts, guest, error }: { posts: CommonsPost[]; guest: boolean; error: string | null }) {
+  return (
+    <div className="cockpit-commons">
+      <div className="commons-opportunity-callout">
+        <div><p className="eyebrow">WORK / ASSET-LINKED</p><h3>Find the people behind the build.</h3><p>Open roles attach to a specific Asset. A Builder’s Roll profile travels with an application.</p></div>
+        <Link className="button button-primary" href={guest ? '/commons/opportunities?mode=guest' : '/commons/opportunities'}>Open opportunities <ArrowRight aria-hidden="true" size={14} /></Link>
+      </div>
+      <div className="commons-feed-heading"><span className="eyebrow">FIELD SIGNAL / MODERATED ACTIVITY</span><Link href={guest ? '/commons?mode=guest' : '/commons'}>Commons archive <ArrowUpRight aria-hidden="true" size={13} /></Link></div>
+      {error ? <div className="opportunity-alert" role="alert">{error}</div> : !posts.length ? (
+        <div className="cockpit-empty-state"><BookOpen aria-hidden="true" size={19} /><h3>The workshop is quiet.</h3><p>There are no published Commons updates yet. Asset-linked opportunities remain available in the work board.</p></div>
+      ) : posts.slice(0, 5).map(post => (
+        <article className="cockpit-commons-post" key={post.id}>
+          <div className="cockpit-commons-meta"><span>{post.post_kind === 'poll' ? 'ADVISORY POLL' : 'FIELD NOTE'}</span><time dateTime={post.published_at}>{dateLabel(post.published_at)}</time></div>
+          <h3><Link href={`/commons/${post.id}${guest ? '?mode=guest' : ''}`}>{post.title}</Link></h3>
+          <p>{post.body}</p>
+          <div className="cockpit-commons-byline"><span>{post.author_name}</span><Link href={`/commons/${post.id}${guest ? '?mode=guest' : ''}`}>Open note <ArrowRight aria-hidden="true" size={12} /></Link></div>
+        </article>
+      ))}
+      {guest && <p className="cockpit-note">Guest view is read-only. Sign in to apply for roles or request Commons contributor access.</p>}
+    </div>
+  );
+}
+
+function StateRail({ context, configured, guest, tenders }: { context: WorkspaceContextOption | null; configured: boolean; guest: boolean; tenders: Tender[] }) {
   const role = context?.kind === 'crew' ? context.role : null;
-  const schoolCanPublish = context?.kind === 'school' && ['principal', 'tender_issuer'].includes(context.role);
-  const schoolConsoleHref = schoolCanPublish ? '/console?role=principal#issue-tender' : '/console';
+
+  if (guest) {
+    return (
+      <section className="cockpit-rail-card cockpit-rail-primary">
+        <p className="eyebrow">PROTOTYPE / GUEST MODE</p>
+        <h2>Explore without a login.</h2>
+        <div className="cockpit-state-line"><LockKeyhole aria-hidden="true" size={14} /><strong>Public records only</strong></div>
+        <p>This read-only view cannot publish opportunities, apply, signal capital, or write proof. It does not create identity or entitlements; server permissions remain authoritative.</p>
+        <Link className="button button-primary" href="/sign-in">Create a network identity <ArrowRight aria-hidden="true" size={14} /></Link>
+        <div className="cockpit-rail-evidence"><ShieldCheck aria-hidden="true" size={14} /><span>Guest access never grants membership or a role.</span></div>
+      </section>
+    );
+  }
 
   if (role) {
     const state = context?.tenderStatus ? statusLabel(context.tenderStatus) : 'Assigned Tender';
@@ -83,20 +116,36 @@ function StateRail({ context, configured }: { context: WorkspaceContextOption | 
     );
   }
 
+  if (context?.kind === 'funder') {
+    const asset = tenders.find(tender => tender.id === context.tenderId);
+    return (
+      <section className="cockpit-rail-card cockpit-rail-primary">
+        <p className="eyebrow">FUNDER / CAPITAL INTENT</p>
+        <h2>{context.assetName ?? 'Your backed Asset'}</h2>
+        <div className="cockpit-state-line"><span className="cockpit-state-dot" /><strong>Intent recorded · non-binding</strong></div>
+        {asset ? (
+          <div className="funder-context-metrics">
+            <div><span>BUILD COST</span><strong>{formatMoney(asset.assetBuildCostMinor, asset.currency)}</strong></div>
+            <div><span>PROJECTED ANNUAL YIELD</span><strong>{asset.projectedAnnualYieldMinor === null ? 'Not modeled' : formatMoney(asset.projectedAnnualYieldMinor, asset.currency)}</strong></div>
+            <div><span>CAPITAL EFFICIENCY</span><strong>{capitalEfficiencyPercent(asset) === null ? 'Evidence pending' : `${capitalEfficiencyPercent(asset)}% / year`}</strong></div>
+          </div>
+        ) : <p>Asset economics could not be loaded for this capital context.</p>}
+        <p>Intent is not a payment, escrow balance, or yield right. Offline settlement is separately verified by an authorized issuer.</p>
+        {context.tenderSlug && <Link className="button button-primary" href={`/tenders/${context.tenderSlug}`}>Open Asset dossier <ArrowRight aria-hidden="true" size={14} /></Link>}
+        <div className="cockpit-rail-evidence"><ShieldCheck aria-hidden="true" size={14} /><span>Projected yield is a model, not realized revenue.</span></div>
+      </section>
+    );
+  }
+
   if (context?.kind === 'school') {
     return (
       <section className="cockpit-rail-card cockpit-rail-primary">
-        <p className="eyebrow">DEMAND / LOCAL CONSOLE</p>
-        <h2>Your device is the starting point.</h2>
+        <p className="eyebrow">SCHOOL / LOCAL CONTEXT</p>
+        <h2>Keep records on the device.</h2>
         <div className="cockpit-state-line"><GraduationCap aria-hidden="true" size={14} /><strong>School records stay local</strong></div>
-        <p>{schoolCanPublish
-          ? 'Use the Console to prepare a school Tender with quotes, an itemized bill of materials and assigned crew.'
-          : 'The Console is available locally. Tender publication remains limited to a Principal or Tender issuer.'}</p>
-        <Link className="button button-primary" href={schoolConsoleHref}>
-          {schoolCanPublish ? 'Prepare a school Tender' : 'Open School Console'}
-          <ArrowRight aria-hidden="true" size={14} />
-        </Link>
-        <div className="cockpit-rail-evidence"><LockKeyhole aria-hidden="true" size={14} /><span>No student or local Console records are sent to this workspace.</span></div>
+        <p>The School Console is a separate local-first utility, represented in the public register as Asset 001. No student records or device drafts enter this network workspace.</p>
+        <Link className="button button-primary" href="/tenders/school-console">Review Asset 001 <ArrowRight aria-hidden="true" size={14} /></Link>
+        <div className="cockpit-rail-evidence"><LockKeyhole aria-hidden="true" size={14} /><span>Network actions require separately verified membership.</span></div>
       </section>
     );
   }
@@ -121,35 +170,14 @@ function StateRail({ context, configured }: { context: WorkspaceContextOption | 
   );
 }
 
-function DemandSurface({ context }: { context: WorkspaceContextOption | null }) {
-  const schoolCanPublish = context?.kind === 'school' && ['principal', 'tender_issuer'].includes(context.role);
-  const href = schoolCanPublish ? '/console?role=principal#issue-tender' : context?.kind === 'school' ? '/console' : '/tenders';
-  return (
-    <div className="cockpit-empty-state cockpit-demand-empty">
-      <div className="cockpit-empty-glyph"><Sparkles aria-hidden="true" size={20} /></div>
-      <p className="eyebrow">DEMAND / ORIGIN POINT</p>
-      <h3>{context?.kind === 'school' ? 'The Console stays on this device.' : 'A shared Demand inbox is not live yet.'}</h3>
-      <p>
-        {context?.kind === 'school'
-          ? 'School Console drafts stay in browser storage. A Principal or Tender issuer can use its existing, explicit publishing flow to prepare a Tender; no draft or student record syncs here.'
-          : 'No shared intake queue or founder submission workflow is connected. We show no sample needs as live demand.'}
-      </p>
-      <div className="cockpit-boundary-row">
-        <span><i /> SOURCE</span><strong>{context?.kind === 'school' ? 'Local School Console' : 'No shared source'}</strong>
-        <span><i /> NEXT</span><strong>{context?.kind === 'school' ? 'Review locally, publish deliberately' : 'Public Tenders remain readable'}</strong>
-      </div>
-      <Link className="cockpit-subtle-link" href={href}>
-        {schoolCanPublish ? 'Prepare a school Tender locally' : context?.kind === 'school' ? 'Open local Console' : 'Inspect public Market'}
-        <ArrowRight aria-hidden="true" size={14} />
-      </Link>
-    </div>
-  );
-}
-
-function TenderSurface({ tenders }: { tenders: Tender[] }) {
-  const visibleTenders = tenders.slice(0, 6);
+function TenderSurface({ tenders, guest, context }: { tenders: Tender[]; guest: boolean; context: WorkspaceContextOption | null }) {
+  const registerHref = guest ? '/tenders?mode=guest' : '/tenders';
+  const prioritized = context?.tenderId
+    ? [...tenders].sort((left, right) => Number(right.id === context.tenderId) - Number(left.id === context.tenderId))
+    : tenders;
+  const visibleTenders = prioritized.slice(0, 6);
   if (!visibleTenders.length) {
-    return <div className="cockpit-empty-state"><p className="eyebrow">TENDER / MARKET</p><h3>No open Tenders are listed.</h3><p>The Asset Register will show published infrastructure when it exists. Illustrative scenarios are never shown as live work.</p><Link className="cockpit-subtle-link" href="/tenders">Open public asset register <ArrowRight aria-hidden="true" size={14} /></Link></div>;
+    return <div className="cockpit-empty-state"><p className="eyebrow">TENDER / MARKET</p><h3>No open Tenders are listed.</h3><p>The Asset Register will show published infrastructure when it exists. Illustrative scenarios are never shown as live work.</p><Link className="cockpit-subtle-link" href={registerHref}>Open public asset register <ArrowRight aria-hidden="true" size={14} /></Link></div>;
   }
   return (
     <div className="cockpit-tender-list">
@@ -160,7 +188,7 @@ function TenderSurface({ tenders }: { tenders: Tender[] }) {
             <span>{tender.location || tender.category}</span>
           </div>
           <div className="cockpit-tender-main">
-            <div><h3><Link href={`/tenders/${tender.slug}`}>{tender.assetName}</Link></h3><p>{tender.summary}</p></div>
+            <div><h3><Link href={`/tenders/${tender.slug}${guest ? '?mode=guest' : ''}`}>{tender.assetName}</Link></h3><p>{tender.summary}</p></div>
             <ArrowUpRight aria-hidden="true" size={15} />
           </div>
           <div className="cockpit-math">
@@ -171,62 +199,12 @@ function TenderSurface({ tenders }: { tenders: Tender[] }) {
           </div>
           <div className="cockpit-tender-footer">
             <span>{tender.issuer} · {tender.isIllustrative ? 'planning example only' : 'public listing'}</span>
-            <Link href={`/tenders/${tender.slug}`}>Inspect asset dossier <ArrowRight aria-hidden="true" size={13} /></Link>
+            <Link href={`/tenders/${tender.slug}${guest ? '?mode=guest' : ''}`}>Inspect asset dossier <ArrowRight aria-hidden="true" size={13} /></Link>
           </div>
         </article>
       ))}
       <p className="cockpit-note">Yield figures are scenarios, not realized revenue. Capital Intent is non-binding and does not mean funds have settled.</p>
-      <Link className="cockpit-subtle-link" href="/tenders">Browse the public asset register <ArrowRight aria-hidden="true" size={14} /></Link>
-    </div>
-  );
-}
-
-function AssemblySurface({
-  contexts,
-  selectedContext,
-  tenders,
-}: {
-  contexts: WorkspaceContextOption[];
-  selectedContext: WorkspaceContextOption | null;
-  tenders: Tender[];
-}) {
-  const assignments = selectedContext?.kind === 'crew'
-    ? [selectedContext]
-    : contexts.filter(context => context.kind === 'crew');
-  if (!assignments.length) {
-    return (
-      <div className="cockpit-empty-state">
-        <div className="cockpit-empty-glyph"><Factory aria-hidden="true" size={20} /></div>
-        <p className="eyebrow">ASSEMBLY / ASSIGNED WORK ONLY</p>
-        <h3>No assigned Assembly is in this context.</h3>
-        <p>Assembly is not an open chat room or public crew directory. It appears here only when your account is assigned to a Tender.</p>
-        <Link className="cockpit-subtle-link" href="/tenders">Inspect open work <ArrowRight aria-hidden="true" size={14} /></Link>
-      </div>
-    );
-  }
-  return (
-    <div className="cockpit-assignment-list">
-      {assignments.map(assignment => {
-        const tender = tenders.find(item => item.id === assignment.tenderId);
-        const status = assignment.tenderStatus ?? tender?.status ?? 'open';
-        return (
-          <article className="cockpit-assignment-card" key={assignment.key}>
-            <div className="cockpit-assignment-heading">
-              <span className="cockpit-role-chip">{assignment.role}</span>
-              <span>{statusLabel(status)}</span>
-            </div>
-            <h3>{assignment.assetName ?? assignment.label}</h3>
-            <p>{tender?.summary ?? 'Assigned Tender record; open the private Assembly for its current Blueprint and transition state.'}</p>
-            <div className="cockpit-assignment-footer">
-              <span>{tender?.isIllustrative || assignment.isIllustrative ? 'Illustrative record · cannot enter Assembly' : 'Server-verified assignment'}</span>
-              {assignment.tenderId && !assignment.isIllustrative
-                ? <Link href={`/assembly/${assignment.tenderId}`}>Open Assembly <ArrowRight aria-hidden="true" size={13} /></Link>
-                : <span>Not actionable</span>}
-            </div>
-          </article>
-        );
-      })}
-      <p className="cockpit-note">Milestones and sign-off remain inside the existing assigned-crew workflow; no chat, file uploads or payment release are implied.</p>
+      <Link className="cockpit-subtle-link" href={registerHref}>Browse the public asset register <ArrowRight aria-hidden="true" size={14} /></Link>
     </div>
   );
 }
@@ -295,23 +273,27 @@ function RollSurface({
 }
 
 export function WorkspaceCockpit({
-  contexts,
   context,
   view,
   tenders,
   roll,
+  commonsPosts,
+  commonsError,
   configured,
   invalidContext,
   email,
+  guest,
 }: {
-  contexts: WorkspaceContextOption[];
   context: WorkspaceContextOption | null;
   view: WorkspaceLane;
   tenders: Tender[];
   roll: RollRecord[];
+  commonsPosts: CommonsPost[];
+  commonsError: string | null;
   configured: boolean;
   invalidContext: boolean;
   email: string | null;
+  guest: boolean;
 }) {
   const title = contextTitle(context);
   const lane = lanes.find(item => item.key === view) ?? lanes[0];
@@ -319,10 +301,10 @@ export function WorkspaceCockpit({
 
   return (
     <main className="site-shell workspace-shell cockpit-shell">
-      <SiteHeader />
+      <SiteHeader guest={guest} />
       <div className="cockpit-topline">
-        <div><p className="eyebrow"><span className="signal-dot" /> APT-LABS / EXECUTION COCKPIT</p><h1>Where the work moves.</h1></div>
-        <div className="cockpit-topline-context"><span>ACTIVE CONTEXT</span><strong>{title}</strong><small>{email ?? 'Public preview · no account data'}</small></div>
+        <div><p className="eyebrow"><span className="signal-dot" /> APT-LABS / NETWORK STUDIO</p><h1>{guest ? 'Take a look around.' : 'Where the work moves.'}</h1></div>
+        <div className="cockpit-topline-context"><span>{guest ? 'PROTOTYPE ACCESS' : 'ACTIVE CONTEXT'}</span><strong>{guest ? 'Guest / read-only' : title}</strong><small>{guest ? 'Public preview · live actions disabled' : email ?? 'Public preview · no account data'}</small></div>
       </div>
 
       {invalidContext && (
@@ -335,8 +317,8 @@ export function WorkspaceCockpit({
       )}
 
       <div className="cockpit-grid">
-        <aside className="cockpit-left" aria-label="Durable loop navigation">
-          <div className="cockpit-loop-label"><span>THE DURABLE LOOP</span><span>01 — 04</span></div>
+        <aside className="cockpit-left" aria-label="Network studio navigation">
+          <div className="cockpit-loop-label"><span>NETWORK STUDIO</span><span>01 — 03</span></div>
           <nav className="cockpit-loop-nav">
             {lanes.map((item, index) => {
               const Icon = item.icon;
@@ -344,7 +326,7 @@ export function WorkspaceCockpit({
                 <Link
                   aria-current={view === item.key ? 'page' : undefined}
                   className={`cockpit-loop-link ${view === item.key ? 'active' : ''}`}
-                  href={laneHref(context?.key ?? 'network', item.key)}
+                  href={laneHref(context?.key ?? 'network', item.key, guest)}
                   key={item.key}
                 >
                   <span className="cockpit-loop-index">0{index + 1}</span>
@@ -356,44 +338,43 @@ export function WorkspaceCockpit({
             })}
           </nav>
           <div className="cockpit-left-divider" />
-          <p className="eyebrow">TOOLS</p>
-          <Link className="cockpit-tool-link" href="/commons"><BookOpen aria-hidden="true" size={15} /><span>Commons<small>Activity & library</small></span><ArrowUpRight aria-hidden="true" size={13} /></Link>
-          {context?.kind === 'school' && <Link className="cockpit-tool-link" href="/console"><GraduationCap aria-hidden="true" size={15} /><span>School Console<small>Local to this device</small></span><ArrowUpRight aria-hidden="true" size={13} /></Link>}
+          <p className="eyebrow">QUICK ACCESS</p>
+          <Link className="cockpit-tool-link" href={guest ? '/commons/opportunities?mode=guest' : '/commons/opportunities'}><BriefcaseBusiness aria-hidden="true" size={15} /><span>Open roles<small>Asset-linked work</small></span><ArrowUpRight aria-hidden="true" size={13} /></Link>
+          <Link className="cockpit-tool-link" href={guest ? '/tenders/school-console?mode=guest' : '/tenders/school-console'}><GraduationCap aria-hidden="true" size={15} /><span>School Console Asset<small>Asset 001 · local utility</small></span><ArrowUpRight aria-hidden="true" size={13} /></Link>
           <div className="cockpit-left-footer"><ShieldCheck aria-hidden="true" size={14} /><span>Contexts show relationships. Server permissions decide actions.</span></div>
         </aside>
 
         <section className="cockpit-center" aria-labelledby="cockpit-lane-title">
           <div className="cockpit-center-heading">
             <div className="cockpit-center-icon"><LaneIcon aria-hidden="true" size={18} /></div>
-            <div><p className="eyebrow">THE LOOP / {String(lanes.findIndex(item => item.key === view) + 1).padStart(2, '0')}</p><h2 id="cockpit-lane-title">{lane.label}</h2></div>
+            <div><p className="eyebrow">THE NETWORK / {String(lanes.findIndex(item => item.key === view) + 1).padStart(2, '0')}</p><h2 id="cockpit-lane-title">{lane.label}</h2></div>
             <span className="cockpit-context-pill">{context?.kind === 'crew' ? context.role.toUpperCase() : context?.kind === 'school' ? 'SCHOOL CONTEXT' : 'NETWORK VIEW'}</span>
           </div>
-          <div className="cockpit-loop-track" aria-label={`Selected loop stage: ${lane.label}`}>
-            {lanes.map((item, index) => <span className={item.key === view ? 'current' : index < lanes.findIndex(entry => entry.key === view) ? 'past' : ''} key={item.key}><i />{item.label}</span>)}
+          <div className="network-pane-tabs" aria-label="Selected network pane">
+            {lanes.map(item => <span aria-current={item.key === view ? 'page' : undefined} className={item.key === view ? 'current' : ''} key={item.key}>{item.label}</span>)}
           </div>
           <div className="cockpit-lane-content">
-            {view === 'demand' && <DemandSurface context={context} />}
-            {view === 'tenders' && <TenderSurface tenders={tenders} />}
-            {view === 'assemblies' && <AssemblySurface contexts={contexts} selectedContext={context} tenders={tenders} />}
+            {view === 'assets' && <TenderSurface context={context} guest={guest} tenders={tenders} />}
+            {view === 'commons' && <CommonsSurface error={commonsError} guest={guest} posts={commonsPosts} />}
             {view === 'roll' && <RollSurface configured={configured} context={context} records={roll} />}
           </div>
         </section>
 
-        <aside className="cockpit-right" aria-label="Current state and authorized actions">
+        <aside className="cockpit-right" aria-label="Profile and current state">
           <div className="cockpit-rail-heading"><p className="eyebrow">STATE / NEXT ACTION</p><span>LIVE PERMISSIONS</span></div>
-          <StateRail configured={configured} context={context} />
+          <StateRail configured={configured} context={context} guest={guest} tenders={tenders} />
           <section className="cockpit-rail-card cockpit-rail-limits">
-            <p className="eyebrow">PROTOCOL LIMITS / NOW</p>
+            <p className="eyebrow">PROOF / CURRENT RULE</p>
             <ul>
-                <li><span>Capital</span><strong>Intent · settlement pending</strong></li>
-                <li><span>Demand sync</span><strong>Explicit publication</strong></li>
-                <li><span>Capability badges</span><strong>Roll-backed proof</strong></li>
+                <li><span>Profile</span><strong>Consent-first</strong></li>
+                <li><span>Capability</span><strong>Verified deployment</strong></li>
+                <li><span>Capital</span><strong>Intent is not payment</strong></li>
             </ul>
-            <Link className="cockpit-subtle-link" href="/commons">Read how the network works <ArrowRight aria-hidden="true" size={13} /></Link>
+            <Link className="cockpit-subtle-link" href="/roll">Inspect proof rules <ArrowRight aria-hidden="true" size={13} /></Link>
           </section>
         </aside>
       </div>
-      <footer className="page-footer"><span>APT-LABS / WORKSPACE</span><span>Demand → Tender → Assembly → Roll · state is not a transaction</span></footer>
+      <footer className="page-footer"><span>APT-LABS / NETWORK STUDIO</span><span>Assets ↔ Commons ↔ Roll · verified work moves the graph</span></footer>
     </main>
   );
 }

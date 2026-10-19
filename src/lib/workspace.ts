@@ -1,5 +1,5 @@
 export type WorkspaceKey = 'apt' | 'school';
-export type WorkspaceContextKind = 'network' | 'school' | 'crew';
+export type WorkspaceContextKind = 'network' | 'funder' | 'school' | 'crew';
 
 export interface WorkspaceContextOption {
   key: string;
@@ -14,10 +14,10 @@ export interface WorkspaceContextOption {
   isIllustrative: boolean;
 }
 
-export type WorkspaceLane = 'demand' | 'tenders' | 'assemblies' | 'roll';
+export type WorkspaceLane = 'assets' | 'commons' | 'roll';
 
 export function isWorkspaceLane(value: string | null | undefined): value is WorkspaceLane {
-  return value === 'demand' || value === 'tenders' || value === 'assemblies' || value === 'roll';
+  return value === 'assets' || value === 'commons' || value === 'roll';
 }
 
 export function getDefaultWorkspace(
@@ -30,10 +30,6 @@ export function getDefaultWorkspace(
     : 'apt';
 }
 
-export function getWorkspaceHref(workspace: WorkspaceKey): string {
-  return workspace === 'school' ? '/console' : '/workspace';
-}
-
 export function getDefaultContextKey(
   contexts: readonly WorkspaceContextOption[],
   defaultWorkspace: WorkspaceKey,
@@ -42,10 +38,12 @@ export function getDefaultContextKey(
   if (defaultWorkspace === 'school') {
     return contexts.find(context => context.kind === 'school')?.key
       ?? contexts.find(context => context.kind === 'crew')?.key
+      ?? contexts.find(context => context.kind === 'funder')?.key
       ?? network?.key
       ?? 'network';
   }
   return contexts.find(context => context.kind === 'crew')?.key
+    ?? contexts.find(context => context.kind === 'funder')?.key
     ?? network?.key
     ?? 'network';
 }

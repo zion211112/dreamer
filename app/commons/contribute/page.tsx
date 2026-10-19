@@ -13,7 +13,9 @@ export const metadata = {
   description: 'Submit a field note, advisory poll or source-linked resource for human review.',
 };
 
-export default async function CommonsContributePage() {
+export default async function CommonsContributePage({ searchParams }: { searchParams: Promise<{ mode?: string }> }) {
+  const { mode } = await searchParams;
+  if (mode === 'guest') redirect('/commons?mode=guest');
   const [identity, library] = await Promise.all([getCommonsIdentityState(), getCommonsLibrary()]);
   if (!identity.authenticated) redirect('/sign-in?next=%2Fcommons%2Fcontribute');
 

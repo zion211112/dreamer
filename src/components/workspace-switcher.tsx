@@ -1,10 +1,10 @@
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useMemo, useState, useTransition } from 'react';
-import { Check, ChevronDown, Compass, GraduationCap, Pin, Users } from 'lucide-react';
+import { Check, ChevronDown, Compass, Pin, Users } from 'lucide-react';
 import { saveWorkspaceDefault } from '../../app/workspace/actions';
-import { getWorkspaceHref, type WorkspaceContextOption, type WorkspaceKey } from '@/lib/workspace';
+import type { WorkspaceContextOption, WorkspaceKey } from '@/lib/workspace';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +22,7 @@ interface WorkspaceSwitcherProps {
 
 function contextRoleLabel(context: WorkspaceContextOption): string {
   if (context.kind === 'network') return 'Network Member';
+  if (context.kind === 'funder') return 'Funder';
   if (context.kind === 'school') {
     return context.role === 'principal' ? 'School Admin' : context.role === 'tender_issuer' ? 'Tender Issuer' : 'Teacher';
   }
@@ -29,7 +30,6 @@ function contextRoleLabel(context: WorkspaceContextOption): string {
 }
 
 export function WorkspaceSwitcher({ defaultWorkspace, contexts, defaultContextKey }: WorkspaceSwitcherProps) {
-  const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
   const [preference, setPreference] = useState(defaultWorkspace);
@@ -42,9 +42,8 @@ export function WorkspaceSwitcher({ defaultWorkspace, contexts, defaultContextKe
       ?? contexts.find(context => context.kind === 'network'),
     [contexts, defaultContextKey, requestedKey],
   );
-  const onConsole = pathname?.startsWith('/console') ?? false;
   const selectedRole = selectedContext ? contextRoleLabel(selectedContext) : 'Network Member';
-  const currentLabel = onConsole ? 'School Console · Local Device' : `Workspace: ${selectedRole}`;
+  const currentLabel = `Workspace: ${selectedRole}`;
 
   function saveDefault(workspace: WorkspaceKey) {
     setFeedback('');
@@ -73,10 +72,10 @@ export function WorkspaceSwitcher({ defaultWorkspace, contexts, defaultContextKe
       <DropdownMenuTrigger asChild>
         <button aria-label={`Current context: ${currentLabel}`} className="workspace-switcher" type="button">
           <span className="workspace-switcher-current">
-            {onConsole ? <GraduationCap aria-hidden="true" size={14} /> : <Compass aria-hidden="true" size={14} />}
+            <Compass aria-hidden="true" size={14} />
             <span className="workspace-switcher-copy">
               <strong>{currentLabel}</strong>
-              {!onConsole && selectedContext?.kind !== 'network' && <small>{selectedContext?.label}</small>}
+              {selectedContext?.kind !== 'network' && <small>{selectedContext?.label}</small>}
             </span>
           </span>
           <ChevronDown aria-hidden="true" className="workspace-switcher-chevron" size={14} />
@@ -85,7 +84,7 @@ export function WorkspaceSwitcher({ defaultWorkspace, contexts, defaultContextKe
       <DropdownMenuContent align="start" className="workspace-menu" sideOffset={10}>
         <DropdownMenuLabel className="workspace-menu-label">VERIFIED WORK CONTEXTS</DropdownMenuLabel>
         {contexts.map(context => {
-          const active = !onConsole && selectedContext?.key === context.key;
+          const active = selectedContext?.key === context.key;
           const roleLabel = contextRoleLabel(context);
           const Icon = context.kind === 'crew' ? Users : Compass;
           const workspacePreference: WorkspaceKey = context.kind === 'school' ? 'school' : 'apt';
@@ -120,15 +119,6 @@ export function WorkspaceSwitcher({ defaultWorkspace, contexts, defaultContextKe
             </div>
           );
         })}
-        <div className={`workspace-menu-row ${onConsole ? 'active' : ''}`}>
-          <DropdownMenuItem asChild className="workspace-menu-open">
-            <a href={getWorkspaceHref('school')}>
-              <GraduationCap aria-hidden="true" size={15} />
-              <span><strong>School Console · Local Device</strong><small>School records stay in this browser</small></span>
-              {onConsole && <Check aria-label="Current product" className="workspace-menu-check" size={14} />}
-            </a>
-          </DropdownMenuItem>
-        </div>
         <DropdownMenuSeparator />
         <DropdownMenuLabel className="workspace-menu-note">
           Contexts are resolved from server-verified membership and assignment. Switching never grants access.

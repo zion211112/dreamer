@@ -11,9 +11,10 @@ export const metadata = {
 export default async function CommonsLibraryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; mode?: string }>;
 }) {
-  const [{ q = '' }, library] = await Promise.all([searchParams, getCommonsLibrary()]);
+  const [{ q = '', mode }, library] = await Promise.all([searchParams, getCommonsLibrary()]);
+  const guest = mode === 'guest';
   const query = q.trim().toLocaleLowerCase();
   const resources = (library.data ?? []).filter(resource =>
     !query || [
@@ -28,12 +29,12 @@ export default async function CommonsLibraryPage({
 
   return (
     <main className="site-shell commons-shell">
-      <SiteHeader />
+      <SiteHeader guest={guest} />
       <section className="commons-subhero">
         <p className="eyebrow">COMMONS / LIBRARY</p>
         <h1>References worth keeping.</h1>
         <p>Public links, not hosted files. Every record carries its source, attribution, declared license and revision so makers can inspect provenance before relying on it.</p>
-        <Link className="text-link" href="/commons">← Back to activity</Link>
+        <Link className="text-link" href={guest ? '/commons?mode=guest' : '/commons'}>← Back to activity</Link>
       </section>
       <section className="commons-library-section">
         <form action="/commons/library" className="commons-search" role="search">
@@ -59,7 +60,7 @@ export default async function CommonsLibraryPage({
           {resources.map(resource => (
             <article className="commons-resource-card" key={resource.id}>
               <div className="commons-resource-topline"><span>{resource.resource_kind.toUpperCase()}</span><span>REV. {resource.revision}</span></div>
-              <h2><Link href={`/commons/library/${resource.id}`}>{resource.title}</Link></h2>
+              <h2><Link href={`/commons/library/${resource.id}${guest ? '?mode=guest' : ''}`}>{resource.title}</Link></h2>
               <p>{resource.summary}</p>
               <div className="commons-resource-meta">
                 <span><small>ATTRIBUTION</small>{resource.attribution}</span>
@@ -67,7 +68,7 @@ export default async function CommonsLibraryPage({
               </div>
               <div className="commons-resource-footer">
                 <span>Source: <a href={resource.source_url} rel="noopener noreferrer" target="_blank">open original <ExternalLink aria-hidden="true" size={11} /></a></span>
-                <Link href={`/commons/library/${resource.id}`}>Inspect record <ArrowRight aria-hidden="true" size={13} /></Link>
+                <Link href={`/commons/library/${resource.id}${guest ? '?mode=guest' : ''}`}>Inspect record <ArrowRight aria-hidden="true" size={13} /></Link>
               </div>
             </article>
           ))}
