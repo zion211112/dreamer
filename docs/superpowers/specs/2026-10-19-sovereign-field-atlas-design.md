@@ -3,6 +3,7 @@
 - **Status:** Draft for user review
 - **Date:** 2026-10-19
 - **Product:** APT-LABS
+
 **Supersedes:** The visual presentation and information hierarchy of the current public-site and workspace surfaces. It does not supersede the Tender lifecycle, Workspace context, Commons, or School Console contracts.
 
 ## 1. Purpose
