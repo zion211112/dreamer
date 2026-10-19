@@ -2,6 +2,7 @@
 
 import { createSupabaseServerClient, hasSupabaseConfiguration } from '@/lib/supabase/server';
 import { getSiteOrigin, safeReturnPath } from '@/lib/supabase/urls';
+import { redirect } from 'next/navigation';
 
 export async function requestOAuth(
   provider: 'google' | 'github',
@@ -41,8 +42,23 @@ export async function authenticateWithPassword(formData: FormData): Promise<{
   const password = String(formData.get('password') ?? '');
   const next = safeReturnPath(String(formData.get('next') ?? '/workspace'));
 
-  // Fixed admin credential for prototype access.
+  // Fixed admin credential for prototype access — establishes a real Supabase session.
   if (email === 'admin' && password === 'root') {
+    const supabase = await createSupabaseServerClient();
+    const { error: signUpError } = await supabase.auth.signUp({
+      email: 'admin@apt-labs.local',
+      password: 'root',
+    });
+    // Ignore sign-up error if user already exists.
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: 'admin@apt-labs.local',
+      password: 'root',
+    });
+    if (error) {
+      console.error(`Direct admin sign-in failed: ${error.message}`);
+      return { error: 'Direct sign-in failed.' };
+    }
+    if (!data.session) return { error: 'A verified account session could not be established.' };
     return { authenticated: true };
   }
 
@@ -83,4 +99,12 @@ export async function authenticateWithPassword(formData: FormData): Promise<{
   }
   if (!data.session) return { error: 'A verified account session could not be established.' };
   return { authenticated: true };
+}
+
+export async function directSignIn(formData: FormData): Promise<void> {
+  const next = safeReturnPath(String(formData.get('next') ?? '/workspace'));
+  const result = await authenticateWithPassword(formData);
+  if (result.authenticated) {
+    redirect(next);
+  }
 }

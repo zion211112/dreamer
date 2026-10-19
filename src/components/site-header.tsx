@@ -25,7 +25,7 @@ export async function SiteHeader({ frontDoor = false }: { frontDoor?: boolean })
           </Suspense>
         )}
       </div>
-      {!frontDoor && (
+      {!frontDoor && signedIn && (
         <nav aria-label="Main navigation" className="site-nav">
           <Link href="/tenders">Assets</Link>
           <Link href="/commons">Commons</Link>
