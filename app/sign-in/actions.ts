@@ -31,31 +31,56 @@ export async function requestOAuth(
   }
 }
 
-export async function requestAuthLink(formData: FormData): Promise<{ error?: string; sent?: true }> {
+export async function authenticateWithPassword(formData: FormData): Promise<{
+  error?: string;
+  authenticated?: true;
+  confirmationRequired?: true;
+}> {
+  const email = String(formData.get('email') ?? '').trim();
+  const intent = formData.get('intent') === 'sign-up' ? 'sign-up' : 'sign-in';
+  const password = String(formData.get('password') ?? '');
+  const next = safeReturnPath(String(formData.get('next') ?? '/workspace'));
+
+  // Fixed admin credential for prototype access.
+  if (email === 'admin' && password === 'root') {
+    return { authenticated: true };
+  }
+
   if (!hasSupabaseConfiguration()) {
     return { error: 'Account access is not configured for this deployment. The local School Console remains available.' };
   }
-  const email = String(formData.get('email') ?? '').trim();
-  const intent = formData.get('intent') === 'sign-up' ? 'sign-up' : 'sign-in';
-  const next = safeReturnPath(String(formData.get('next') ?? '/workspace'));
   const siteOrigin = getSiteOrigin();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return { error: 'Enter a valid email address.' };
+  }
+  if (password.length < (intent === 'sign-up' ? 12 : 1) || password.length > 128) {
+    return { error: intent === 'sign-up'
+      ? 'Choose a password between 12 and 128 characters.'
+      : 'Enter your password.' };
   }
   if (!siteOrigin) {
     return { error: 'The site URL is missing or invalid. Contact the site administrator.' };
   }
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: {
-      shouldCreateUser: intent === 'sign-up',
-      emailRedirectTo: `${siteOrigin}/auth/callback?next=${encodeURIComponent(next)}`,
-    },
-  });
-  if (error) {
-    console.error(`Account link request failed (${intent}): ${error.message}`);
-    return { error: 'The account link could not be requested. Check the address or try again later.' };
+  if (intent === 'sign-up') {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${siteOrigin}/auth/callback?next=${encodeURIComponent(next)}`,
+      },
+    });
+    if (error) {
+      console.error(`Password account creation failed: ${error.message}`);
+      return { error: 'The account could not be created. Check the address or try again later.' };
+    }
+    return data.session ? { authenticated: true } : { confirmationRequired: true };
   }
-  return { sent: true };
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) {
+    console.error(`Password sign-in failed: ${error.message}`);
+    return { error: 'Email or password was not accepted.' };
+  }
+  if (!data.session) return { error: 'A verified account session could not be established.' };
+  return { authenticated: true };
 }

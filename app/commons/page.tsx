@@ -16,13 +16,13 @@ function formatDate(value: string): string {
 
 export default async function CommonsPage({ searchParams }: { searchParams: Promise<{ mode?: string }> }) {
   const { mode } = await searchParams;
-  const guest = mode === 'guest';
+  const guest = false;
   const [activity, identity] = await Promise.all([getCommonsActivity(), getCommonsIdentityState()]);
   const canAct = identity.authenticated && !guest;
 
   return (
     <main className="site-shell commons-shell">
-      <SiteHeader guest={guest} />
+      <SiteHeader />
       <section className="commons-hero">
         <div>
           <p className="eyebrow"><span className="signal-dot" /> APT-LABS / COMMONS</p>

@@ -1731,6 +1731,79 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .frontdoor-body { max-width: 475px; margin: 11px 0 0; color: var(--color-muted-ink); font-size: 13px; line-height: 1.8; }
 .frontdoor-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 23px; margin-top: 27px; }
 .frontdoor-coordinate { display: flex; justify-content: space-between; gap: 15px; max-width: 460px; margin-top: 62px; color: var(--color-muted-ink); font: 8px var(--font-code); letter-spacing: .06em; }
+.frontdoor-orbit {
+  position: relative;
+  width: min(100%, 550px);
+  aspect-ratio: 1.04;
+  justify-self: end;
+  border: 1px solid rgb(44 102 135 / 30%);
+  background:
+    linear-gradient(rgb(44 102 135 / 8%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(44 102 135 / 8%) 1px, transparent 1px),
+    rgb(250 246 236 / 72%);
+  background-size: 24px 24px;
+  box-shadow: 13px 13px 0 rgb(37 35 31 / 7%);
+}
+.frontdoor-orbit-coordinate, .frontdoor-orbit-caption {
+  position: absolute;
+  color: var(--color-muted-ink);
+  font: 8px var(--font-code);
+  letter-spacing: .08em;
+}
+.frontdoor-orbit-coordinate { top: 15px; left: 16px; }
+.frontdoor-orbit-caption { right: 15px; bottom: 13px; }
+.frontdoor-orbit-graphic { position: absolute; inset: 12%; display: grid; place-items: center; overflow: hidden; }
+.frontdoor-orbit-ring, .frontdoor-orbit-cross, .frontdoor-orbit-point, .frontdoor-orbit-core { position: absolute; }
+.frontdoor-orbit-ring { aspect-ratio: 1; border: 1px solid rgb(44 102 135 / 36%); border-radius: 50%; }
+.frontdoor-orbit-ring-outer { width: 74%; border-style: dashed; }
+.frontdoor-orbit-ring-inner { width: 47%; border-color: rgb(201 87 42 / 65%); }
+.frontdoor-orbit-cross { width: 94%; height: 1px; background: rgb(44 102 135 / 30%); }
+.frontdoor-orbit-cross-x { transform: rotate(34deg); }
+.frontdoor-orbit-cross-y { transform: rotate(-34deg); }
+.frontdoor-orbit-core {
+  display: grid;
+  width: 92px;
+  height: 92px;
+  place-content: center;
+  justify-items: center;
+  gap: 3px;
+  border: 1px solid var(--color-kiln);
+  border-radius: 50%;
+  background: var(--color-bg);
+  color: var(--color-kiln);
+}
+.frontdoor-orbit-core b { font: 8px var(--font-code); letter-spacing: .13em; }
+.frontdoor-orbit-point { width: 11px; height: 11px; border: 1px solid var(--color-blueprint); border-radius: 50%; background: var(--color-panel); }
+.frontdoor-orbit-point-one { top: 18%; left: 29%; }
+.frontdoor-orbit-point-two { top: 32%; right: 17%; border-color: var(--color-kiln); }
+.frontdoor-orbit-point-three { bottom: 13%; left: 55%; }
+.frontdoor-orbit-label {
+  position: absolute;
+  z-index: 1;
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-line);
+  background: var(--color-panel);
+  box-shadow: 4px 4px 0 rgb(37 35 31 / 7%);
+}
+.frontdoor-orbit-label span { color: var(--color-blueprint); font: 7px var(--font-code); letter-spacing: .08em; }
+.frontdoor-orbit-label strong { font: 500 14px var(--font-editorial); }
+.frontdoor-orbit-label-one { top: 24%; left: 4%; }
+.frontdoor-orbit-label-two { top: 39%; right: 3%; }
+.frontdoor-orbit-label-three { bottom: 17%; left: 27%; }
+.frontdoor-orbit-stamp {
+  position: absolute;
+  right: 6%;
+  bottom: 18%;
+  padding: 6px 8px;
+  border: 1px solid rgb(201 87 42 / 60%);
+  color: var(--color-kiln);
+  font: 7px/1.4 var(--font-code);
+  letter-spacing: .08em;
+  text-align: center;
+  transform: rotate(-8deg);
+}
 .coordination-map {
   position: relative;
   width: min(100%, 550px);
@@ -1821,6 +1894,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .frontdoor-pillars h3 { max-width: 250px; margin: 14px 0 8px; font: 500 21px/1.15 var(--font-editorial); }
 .frontdoor-pillars p { min-height: 50px; margin: 0 0 13px; color: var(--color-muted-ink); font-size: 10px; line-height: 1.7; }
 .frontdoor-pillars a { display: inline-flex; align-items: center; gap: 7px; color: var(--color-kiln); font: 8px var(--font-code); }
+.frontdoor-principle { max-width: 880px; padding: 66px 0 74px; }
+.frontdoor-principle > .eyebrow { color: var(--color-blueprint); }
+.frontdoor-principle h2 { margin: 13px 0 16px; font: 500 clamp(30px, 5vw, 55px)/1.04 var(--font-editorial); letter-spacing: -.055em; }
+.frontdoor-principle h2 em { color: var(--color-kiln); font-style: normal; }
+.frontdoor-principle > p:last-child { max-width: 640px; margin: 0; color: var(--color-muted-ink); font-size: 12px; line-height: 1.85; }
 .frontdoor-footer { margin-top: 0; }
 
 .auth-shell .site-header { min-height: 62px; }
@@ -1859,7 +1937,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 }
 .auth-provider-button:hover:not(:disabled) { border-color: var(--color-blueprint); background: #fffdf7; }
 .auth-provider-button:disabled { cursor: not-allowed; opacity: .48; }
-.auth-guest-button { width: 100%; margin-top: 4px; }
 .auth-provider-note { margin: 0; color: var(--color-muted-ink); font-size: 9px; }
 .auth-email-option { margin-top: 18px; border-top: 1px solid var(--color-line); }
 .auth-email-option summary { display: flex; justify-content: space-between; padding: 13px 0 0; color: var(--color-blueprint); cursor: pointer; font: 9px var(--font-code); list-style: none; }
@@ -1982,6 +2059,15 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .frontdoor-hero { grid-template-columns: 1fr; min-height: 0; gap: 32px; padding: 46px 5px 38px; }
   .frontdoor-copy h1 { font-size: clamp(55px, 16vw, 82px); }
   .frontdoor-coordinate { margin-top: 32px; font-size: 6px; }
+  .frontdoor-orbit { width: min(100%, 470px); justify-self: center; }
+  .frontdoor-orbit-label { padding: 8px 9px; }
+  .frontdoor-orbit-label strong { font-size: 12px; }
+  .frontdoor-orbit-label-one { left: 2%; }
+  .frontdoor-orbit-label-two { right: 2%; }
+  .frontdoor-orbit-label-three { left: 20%; }
+  .frontdoor-orbit-stamp { right: 3%; bottom: 16%; font-size: 6px; }
+  .frontdoor-orbit-caption { font-size: 6px; }
+  .frontdoor-principle { padding: 43px 3px 52px; }
   .coordination-map { width: min(100%, 470px); justify-self: center; }
   .map-node { min-height: 94px; padding: 9px; }
   .map-node strong { font-size: 13px; }

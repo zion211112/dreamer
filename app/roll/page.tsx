@@ -11,11 +11,11 @@ export const metadata = {
 
 export default async function RollPage({ searchParams }: { searchParams: Promise<{ mode?: string }> }) {
   const { mode } = await searchParams;
-  const guest = mode === 'guest';
+  const guest = false;
   const records = await getPublicRoll();
   return (
     <main className="site-shell">
-      <SiteHeader guest={guest} />
+      <SiteHeader />
       <section className="page-intro roll-intro">
         <p className="eyebrow"><span className="section-index">03</span> Public proof of work</p>
         <h1>The Roll.</h1>

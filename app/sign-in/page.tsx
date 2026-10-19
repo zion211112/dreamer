@@ -5,7 +5,7 @@ import { safeReturnPath } from '@/lib/supabase/urls';
 
 export const metadata = {
   title: 'Sign in — APT-LABS',
-  description: 'Sign in to your APT-LABS account.',
+  description: 'Sign in to your APT-LABS account with Google, GitHub, or email and password.',
 };
 
 export default async function SignInPage({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {

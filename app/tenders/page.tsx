@@ -9,11 +9,11 @@ export const metadata = {
 
 export default async function TendersPage({ searchParams }: { searchParams: Promise<{ mode?: string }> }) {
   const { mode } = await searchParams;
-  const guest = mode === 'guest';
+  const guest = false;
   const tenders = await getMarketTenders();
   return (
     <main className="site-shell">
-      <SiteHeader guest={guest} />
+      <SiteHeader />
       <section className="page-intro board-intro">
         <p className="eyebrow"><span className="section-index">01</span> People invest in assets. Teams build from the Commons.</p>
         <h1>The Asset Register.</h1>

@@ -9,7 +9,6 @@ import {
   GraduationCap,
   BriefcaseBusiness,
   Layers3,
-  LockKeyhole,
   ScrollText,
   ShieldCheck,
 } from 'lucide-react';
@@ -26,9 +25,8 @@ const lanes: Array<{ key: WorkspaceLane; label: string; hint: string; icon: type
   { key: 'roll', label: 'Roll', hint: 'Proof & capability', icon: ScrollText },
 ];
 
-function laneHref(contextKey: string, lane: WorkspaceLane, guest: boolean): string {
+function laneHref(contextKey: string, lane: WorkspaceLane): string {
   const params = new URLSearchParams({ context: contextKey, view: lane });
-  if (guest) params.set('mode', 'guest');
   return `/workspace?${params.toString()}`;
 }
 
@@ -56,44 +54,30 @@ function contextTitle(context: WorkspaceContextOption | null): string {
   return `${context.role.charAt(0).toUpperCase()}${context.role.slice(1)} · ${context.assetName ?? context.label}`;
 }
 
-function CommonsSurface({ posts, guest, error }: { posts: CommonsPost[]; guest: boolean; error: string | null }) {
+function CommonsSurface({ posts, error }: { posts: CommonsPost[]; error: string | null }) {
   return (
     <div className="cockpit-commons">
       <div className="commons-opportunity-callout">
         <div><p className="eyebrow">WORK / ASSET-LINKED</p><h3>Find the people behind the build.</h3><p>Open roles attach to a specific Asset. A Builder’s Roll profile travels with an application.</p></div>
-        <Link className="button button-primary" href={guest ? '/commons/opportunities?mode=guest' : '/commons/opportunities'}>Open opportunities <ArrowRight aria-hidden="true" size={14} /></Link>
+        <Link className="button button-primary" href="/commons/opportunities">Open opportunities <ArrowRight aria-hidden="true" size={14} /></Link>
       </div>
-      <div className="commons-feed-heading"><span className="eyebrow">FIELD SIGNAL / MODERATED ACTIVITY</span><Link href={guest ? '/commons?mode=guest' : '/commons'}>Commons archive <ArrowUpRight aria-hidden="true" size={13} /></Link></div>
+      <div className="commons-feed-heading"><span className="eyebrow">FIELD SIGNAL / MODERATED ACTIVITY</span><Link href="/commons">Commons archive <ArrowUpRight aria-hidden="true" size={13} /></Link></div>
       {error ? <div className="opportunity-alert" role="alert">{error}</div> : !posts.length ? (
         <div className="cockpit-empty-state"><BookOpen aria-hidden="true" size={19} /><h3>The workshop is quiet.</h3><p>There are no published Commons updates yet. Asset-linked opportunities remain available in the work board.</p></div>
       ) : posts.slice(0, 5).map(post => (
         <article className="cockpit-commons-post" key={post.id}>
           <div className="cockpit-commons-meta"><span>{post.post_kind === 'poll' ? 'ADVISORY POLL' : 'FIELD NOTE'}</span><time dateTime={post.published_at}>{dateLabel(post.published_at)}</time></div>
-          <h3><Link href={`/commons/${post.id}${guest ? '?mode=guest' : ''}`}>{post.title}</Link></h3>
+          <h3><Link href={`/commons/${post.id}`}>{post.title}</Link></h3>
           <p>{post.body}</p>
-          <div className="cockpit-commons-byline"><span>{post.author_name}</span><Link href={`/commons/${post.id}${guest ? '?mode=guest' : ''}`}>Open note <ArrowRight aria-hidden="true" size={12} /></Link></div>
+          <div className="cockpit-commons-byline"><span>{post.author_name}</span><Link href={`/commons/${post.id}`}>Open note <ArrowRight aria-hidden="true" size={12} /></Link></div>
         </article>
       ))}
-      {guest && <p className="cockpit-note">Guest view is read-only. Sign in to apply for roles or request Commons contributor access.</p>}
     </div>
   );
 }
 
-function StateRail({ context, configured, guest, tenders }: { context: WorkspaceContextOption | null; configured: boolean; guest: boolean; tenders: Tender[] }) {
+function StateRail({ context, configured, tenders }: { context: WorkspaceContextOption | null; configured: boolean; tenders: Tender[] }) {
   const role = context?.kind === 'crew' ? context.role : null;
-
-  if (guest) {
-    return (
-      <section className="cockpit-rail-card cockpit-rail-primary">
-        <p className="eyebrow">PROTOTYPE / GUEST MODE</p>
-        <h2>Explore without a login.</h2>
-        <div className="cockpit-state-line"><LockKeyhole aria-hidden="true" size={14} /><strong>Public records only</strong></div>
-        <p>This read-only view cannot publish opportunities, apply, signal capital, or write proof. It does not create identity or entitlements; server permissions remain authoritative.</p>
-        <Link className="button button-primary" href="/sign-in">Create a network identity <ArrowRight aria-hidden="true" size={14} /></Link>
-        <div className="cockpit-rail-evidence"><ShieldCheck aria-hidden="true" size={14} /><span>Guest access never grants membership or a role.</span></div>
-      </section>
-    );
-  }
 
   if (role) {
     const state = context?.tenderStatus ? statusLabel(context.tenderStatus) : 'Assigned Tender';
@@ -170,8 +154,8 @@ function StateRail({ context, configured, guest, tenders }: { context: Workspace
   );
 }
 
-function TenderSurface({ tenders, guest, context }: { tenders: Tender[]; guest: boolean; context: WorkspaceContextOption | null }) {
-  const registerHref = guest ? '/tenders?mode=guest' : '/tenders';
+function TenderSurface({ tenders, context }: { tenders: Tender[]; context: WorkspaceContextOption | null }) {
+  const registerHref = '/tenders';
   const prioritized = context?.tenderId
     ? [...tenders].sort((left, right) => Number(right.id === context.tenderId) - Number(left.id === context.tenderId))
     : tenders;
@@ -188,7 +172,7 @@ function TenderSurface({ tenders, guest, context }: { tenders: Tender[]; guest: 
             <span>{tender.location || tender.category}</span>
           </div>
           <div className="cockpit-tender-main">
-            <div><h3><Link href={`/tenders/${tender.slug}${guest ? '?mode=guest' : ''}`}>{tender.assetName}</Link></h3><p>{tender.summary}</p></div>
+            <div><h3><Link href={`/tenders/${tender.slug}`}>{tender.assetName}</Link></h3><p>{tender.summary}</p></div>
             <ArrowUpRight aria-hidden="true" size={15} />
           </div>
           <div className="cockpit-math">
@@ -199,7 +183,7 @@ function TenderSurface({ tenders, guest, context }: { tenders: Tender[]; guest: 
           </div>
           <div className="cockpit-tender-footer">
             <span>{tender.issuer} · {tender.isIllustrative ? 'planning example only' : 'public listing'}</span>
-            <Link href={`/tenders/${tender.slug}${guest ? '?mode=guest' : ''}`}>Inspect asset dossier <ArrowRight aria-hidden="true" size={13} /></Link>
+            <Link href={`/tenders/${tender.slug}`}>Inspect asset dossier <ArrowRight aria-hidden="true" size={13} /></Link>
           </div>
         </article>
       ))}
@@ -282,7 +266,6 @@ export function WorkspaceCockpit({
   configured,
   invalidContext,
   email,
-  guest,
 }: {
   context: WorkspaceContextOption | null;
   view: WorkspaceLane;
@@ -293,7 +276,6 @@ export function WorkspaceCockpit({
   configured: boolean;
   invalidContext: boolean;
   email: string | null;
-  guest: boolean;
 }) {
   const title = contextTitle(context);
   const lane = lanes.find(item => item.key === view) ?? lanes[0];
@@ -301,10 +283,10 @@ export function WorkspaceCockpit({
 
   return (
     <main className="site-shell workspace-shell cockpit-shell">
-      <SiteHeader guest={guest} />
+      <SiteHeader />
       <div className="cockpit-topline">
-        <div><p className="eyebrow"><span className="signal-dot" /> APT-LABS / NETWORK STUDIO</p><h1>{guest ? 'Take a look around.' : 'Where the work moves.'}</h1></div>
-        <div className="cockpit-topline-context"><span>{guest ? 'PROTOTYPE ACCESS' : 'ACTIVE CONTEXT'}</span><strong>{guest ? 'Guest / read-only' : title}</strong><small>{guest ? 'Public preview · live actions disabled' : email ?? 'Public preview · no account data'}</small></div>
+        <div><p className="eyebrow"><span className="signal-dot" /> APT-LABS / NETWORK STUDIO</p><h1>Where the work moves.</h1></div>
+        <div className="cockpit-topline-context"><span>ACTIVE CONTEXT</span><strong>{title}</strong><small>{email ?? 'Signed in'}</small></div>
       </div>
 
       {invalidContext && (
@@ -326,7 +308,7 @@ export function WorkspaceCockpit({
                 <Link
                   aria-current={view === item.key ? 'page' : undefined}
                   className={`cockpit-loop-link ${view === item.key ? 'active' : ''}`}
-                  href={laneHref(context?.key ?? 'network', item.key, guest)}
+                  href={laneHref(context?.key ?? 'network', item.key)}
                   key={item.key}
                 >
                   <span className="cockpit-loop-index">0{index + 1}</span>
@@ -339,8 +321,8 @@ export function WorkspaceCockpit({
           </nav>
           <div className="cockpit-left-divider" />
           <p className="eyebrow">QUICK ACCESS</p>
-          <Link className="cockpit-tool-link" href={guest ? '/commons/opportunities?mode=guest' : '/commons/opportunities'}><BriefcaseBusiness aria-hidden="true" size={15} /><span>Open roles<small>Asset-linked work</small></span><ArrowUpRight aria-hidden="true" size={13} /></Link>
-          <Link className="cockpit-tool-link" href={guest ? '/tenders/school-console?mode=guest' : '/tenders/school-console'}><GraduationCap aria-hidden="true" size={15} /><span>School Console Asset<small>Asset 001 · local utility</small></span><ArrowUpRight aria-hidden="true" size={13} /></Link>
+          <Link className="cockpit-tool-link" href="/commons/opportunities"><BriefcaseBusiness aria-hidden="true" size={15} /><span>Open roles<small>Asset-linked work</small></span><ArrowUpRight aria-hidden="true" size={13} /></Link>
+          <Link className="cockpit-tool-link" href="/tenders/school-console"><GraduationCap aria-hidden="true" size={15} /><span>School Console Asset<small>Asset 001 · local utility</small></span><ArrowUpRight aria-hidden="true" size={13} /></Link>
           <div className="cockpit-left-footer"><ShieldCheck aria-hidden="true" size={14} /><span>Contexts show relationships. Server permissions decide actions.</span></div>
         </aside>
 
@@ -354,15 +336,15 @@ export function WorkspaceCockpit({
             {lanes.map(item => <span aria-current={item.key === view ? 'page' : undefined} className={item.key === view ? 'current' : ''} key={item.key}>{item.label}</span>)}
           </div>
           <div className="cockpit-lane-content">
-            {view === 'assets' && <TenderSurface context={context} guest={guest} tenders={tenders} />}
-            {view === 'commons' && <CommonsSurface error={commonsError} guest={guest} posts={commonsPosts} />}
+            {view === 'assets' && <TenderSurface context={context} tenders={tenders} />}
+            {view === 'commons' && <CommonsSurface error={commonsError} posts={commonsPosts} />}
             {view === 'roll' && <RollSurface configured={configured} context={context} records={roll} />}
           </div>
         </section>
 
         <aside className="cockpit-right" aria-label="Profile and current state">
           <div className="cockpit-rail-heading"><p className="eyebrow">STATE / NEXT ACTION</p><span>LIVE PERMISSIONS</span></div>
-          <StateRail configured={configured} context={context} guest={guest} tenders={tenders} />
+          <StateRail configured={configured} context={context} tenders={tenders} />
           <section className="cockpit-rail-card cockpit-rail-limits">
             <p className="eyebrow">PROOF / CURRENT RULE</p>
             <ul>

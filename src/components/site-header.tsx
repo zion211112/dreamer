@@ -4,9 +4,9 @@ import { ArrowUpRight, Orbit } from 'lucide-react';
 import { WorkspaceSwitcher } from '@/components/workspace-switcher';
 import { getWorkspaceContext } from '@/lib/workspace-access';
 
-export async function SiteHeader({ guest = false }: { guest?: boolean }) {
+export async function SiteHeader({ frontDoor = false }: { frontDoor?: boolean }) {
   const context = await getWorkspaceContext();
-  const signedIn = context.authenticated && !guest;
+  const signedIn = context.authenticated;
 
   return (
     <header className={`site-header ${signedIn ? 'site-header-signed-in' : ''}`}>
@@ -25,14 +25,19 @@ export async function SiteHeader({ guest = false }: { guest?: boolean }) {
           </Suspense>
         )}
       </div>
-      <nav aria-label="Main navigation" className="site-nav">
-        <Link href={guest ? '/tenders?mode=guest' : '/tenders'}>Assets</Link>
-        <Link href={guest ? '/commons?mode=guest' : '/commons'}>Commons</Link>
-        <Link href={guest ? '/roll?mode=guest' : '/roll'}>Roll</Link>
-      </nav>
+      {!frontDoor && (
+        <nav aria-label="Main navigation" className="site-nav">
+          <Link href="/tenders">Assets</Link>
+          <Link href="/commons">Commons</Link>
+          <Link href="/roll">Roll</Link>
+        </nav>
+      )}
       <div className="header-actions">
-        {guest
-          ? <span className="header-demo-pill"><Orbit aria-hidden="true" size={13} /> GUEST / DEMO</span>
+        {frontDoor
+          ? <>
+              {!signedIn && <Link className="header-sign-in" href="/sign-in">Sign in</Link>}
+              <Link className="header-issue" href={signedIn ? '/workspace' : '/sign-in?next=%2Fworkspace'}>{signedIn ? 'Open studio' : 'Sign in to studio'} <ArrowUpRight aria-hidden="true" size={14} /></Link>
+            </>
           : signedIn
           ? <span className="header-account">{context.email ?? 'Signed in'}</span>
           : <>

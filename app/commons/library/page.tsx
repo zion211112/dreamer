@@ -14,7 +14,7 @@ export default async function CommonsLibraryPage({
   searchParams: Promise<{ q?: string; mode?: string }>;
 }) {
   const [{ q = '', mode }, library] = await Promise.all([searchParams, getCommonsLibrary()]);
-  const guest = mode === 'guest';
+  const guest = false;
   const query = q.trim().toLocaleLowerCase();
   const resources = (library.data ?? []).filter(resource =>
     !query || [
@@ -29,7 +29,7 @@ export default async function CommonsLibraryPage({
 
   return (
     <main className="site-shell commons-shell">
-      <SiteHeader guest={guest} />
+      <SiteHeader />
       <section className="commons-subhero">
         <p className="eyebrow">COMMONS / LIBRARY</p>
         <h1>References worth keeping.</h1>

@@ -18,7 +18,7 @@ export default async function CommonsResourcePage({
   searchParams: Promise<{ mode?: string }>;
 }) {
   const [{ resourceId }, { mode }] = await Promise.all([params, searchParams]);
-  const guest = mode === 'guest';
+  const guest = false;
   const [result, identity] = await Promise.all([
     getCommonsResource(resourceId),
     getCommonsIdentityState(),
@@ -26,7 +26,7 @@ export default async function CommonsResourcePage({
   if (!result.configured) {
     return (
       <main className="site-shell commons-shell">
-        <SiteHeader guest={guest} />
+        <SiteHeader />
         <div className="commons-alert">Commons is not connected here. This resource cannot be verified.</div>
       </main>
     );
@@ -34,7 +34,7 @@ export default async function CommonsResourcePage({
   if (result.error || !result.data) {
     return (
       <main className="site-shell commons-shell">
-        <SiteHeader guest={guest} />
+        <SiteHeader />
         <div className="commons-alert" role="alert">{result.error ?? 'Resource not found.'}</div>
         <Link className="text-link" href={guest ? '/commons/library?mode=guest' : '/commons/library'}>Return to the Library</Link>
       </main>
@@ -44,7 +44,7 @@ export default async function CommonsResourcePage({
 
   return (
     <main className="site-shell commons-shell">
-      <SiteHeader guest={guest} />
+      <SiteHeader />
       <article className="commons-detail">
         <Link className="commons-back-link" href={guest ? '/commons/library?mode=guest' : '/commons/library'}>← Commons Library</Link>
         <p className="eyebrow">RESOURCE RECORD / {resource.resource_kind.toUpperCase()}</p>

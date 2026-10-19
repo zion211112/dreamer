@@ -23,7 +23,7 @@ export default async function CommonsPostPage({
   searchParams: Promise<{ mode?: string }>;
 }) {
   const [{ postId }, { mode }] = await Promise.all([params, searchParams]);
-  const guest = mode === 'guest';
+  const guest = false;
   const [result, identity] = await Promise.all([
     getCommonsPostDetail(postId),
     getCommonsIdentityState(),
@@ -31,7 +31,7 @@ export default async function CommonsPostPage({
   if (!result.configured) {
     return (
       <main className="site-shell commons-shell">
-        <SiteHeader guest={guest} />
+        <SiteHeader />
         <div className="commons-alert">Commons is not connected here. No live activity can be displayed.</div>
       </main>
     );
@@ -39,7 +39,7 @@ export default async function CommonsPostPage({
   if (!result.data || result.error) {
     return (
       <main className="site-shell commons-shell">
-        <SiteHeader guest={guest} />
+        <SiteHeader />
         <div className="commons-alert" role="alert">{result.error ?? 'This post is not available.'}</div>
         <Link className="text-link" href="/commons">Return to Commons activity</Link>
       </main>
@@ -53,7 +53,7 @@ export default async function CommonsPostPage({
 
   return (
     <main className="site-shell commons-shell">
-      <SiteHeader guest={guest} />
+      <SiteHeader />
       <article className="commons-detail commons-post-detail">
         <Link className="commons-back-link" href={guest ? '/commons?mode=guest' : '/commons'}>← Commons activity</Link>
         <div className="commons-post-meta"><span>{post.post_kind === 'poll' ? 'ADVISORY POLL' : 'FIELD NOTE'}</span><span>{formatDate(post.published_at)} UTC</span></div>

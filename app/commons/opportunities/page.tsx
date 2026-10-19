@@ -18,7 +18,7 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
     getMarketTenders(),
     getCommonsOpportunities(),
   ]);
-  const guest = mode === 'guest';
+  const guest = false;
   let applications: Awaited<ReturnType<typeof getVisibleOpportunityApplications>> = [];
   let applicationError: string | null = null;
   try {
@@ -38,7 +38,7 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
 
   return (
     <main className="site-shell opportunities-shell">
-      <SiteHeader guest={guest} />
+      <SiteHeader />
       <div className="opportunities-back"><Link href={guest ? '/commons?mode=guest' : '/commons'}><ArrowLeft aria-hidden="true" size={14} /> Commons</Link><span><Compass aria-hidden="true" size={13} /> NETWORK / OPPORTUNITIES</span></div>
       {applicationError && <p className="opportunity-alert" role="alert">{applicationError}</p>}
       <OpportunityBoard

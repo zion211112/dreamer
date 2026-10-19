@@ -23,7 +23,6 @@ function formatDate(value: string): string {
 
 export default async function CommonsModerationPage({ searchParams }: { searchParams: Promise<{ mode?: string }> }) {
   const { mode } = await searchParams;
-  if (mode === 'guest') redirect('/commons?mode=guest');
   const identity = await getCommonsIdentityState();
   if (!identity.authenticated) redirect('/sign-in?next=%2Fcommons%2Fmoderation');
 

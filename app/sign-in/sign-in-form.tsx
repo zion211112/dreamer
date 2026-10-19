@@ -1,26 +1,31 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { requestAuthLink } from './actions';
+import { useRouter } from 'next/navigation';
+import { authenticateWithPassword } from './actions';
 
 export function SignInForm({ next, mode = 'sign-in' }: { next: string; mode?: 'sign-in' | 'sign-up' }) {
+  const router = useRouter();
   const [error, setError] = useState('');
-  const [sent, setSent] = useState(false);
+  const [confirmationRequired, setConfirmationRequired] = useState(false);
   const [pending, startTransition] = useTransition();
   return (
     <form action={formData => startTransition(async () => {
       setError('');
-      setSent(false);
-      const result = await requestAuthLink(formData);
+      setConfirmationRequired(false);
+      const result = await authenticateWithPassword(formData);
       if (result.error) setError(result.error);
-      if (result.sent) setSent(true);
+      if (result.confirmationRequired) setConfirmationRequired(true);
+      if (result.authenticated) router.push(next);
     })} className="sign-in-form">
-      <label>Email address<input autoComplete="email" name="email" required type="email" /></label>
+      <label>Login<input autoComplete="username" name="email" required type="text" /></label>
+      <label>Password<input autoComplete={mode === 'sign-up' ? 'new-password' : 'current-password'} maxLength={128} minLength={mode === 'sign-up' ? 12 : 1} name="password" required type="password" /></label>
       <input name="intent" type="hidden" value={mode} />
       <input name="next" type="hidden" value={next} />
-      <button className="button button-primary" disabled={pending} type="submit">{pending ? 'Requesting link…' : mode === 'sign-up' ? 'Create account with email' : 'Email me a sign-in link'}</button>
+      <button className="button button-primary" disabled={pending} type="submit">{pending ? 'Verifying…' : mode === 'sign-up' ? 'Create account' : 'Sign in with email'}</button>
       {error && <p className="inline-error" role="alert">{error}</p>}
-      {sent && <p className="console-message" role="status">If this address is eligible, an email link has been sent. Check your inbox. Creating an account does not grant school, crew, or Commons contributor access.</p>}
+      {confirmationRequired && <p className="console-message" role="status">Account created. Check your email to confirm the address, then sign in. An account does not grant school, crew, or Commons contributor access.</p>}
+      {mode === 'sign-up' && <p className="auth-provider-note">Use a unique password of at least 12 characters.</p>}
     </form>
   );
 }

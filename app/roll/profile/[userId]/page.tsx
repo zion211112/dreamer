@@ -18,7 +18,7 @@ export default async function RollProfilePage({
   searchParams: Promise<{ mode?: string }>;
 }) {
   const [{ userId }, { mode }] = await Promise.all([params, searchParams]);
-  const guest = mode === 'guest';
+  const guest = false;
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(userId)) notFound();
   const result = await getPublicRollProfile(userId);
   if (result.error) throw new Error(result.error);
@@ -27,7 +27,7 @@ export default async function RollProfilePage({
   const { profile, badges } = result;
   return (
     <main className="site-shell roll-profile-shell">
-      <SiteHeader guest={guest} />
+      <SiteHeader />
       <div className="opportunities-back"><Link href={guest ? '/roll?mode=guest' : '/roll'}><ArrowLeft aria-hidden="true" size={14} /> The Roll</Link><span>PUBLIC CAPABILITY PROFILE</span></div>
       <header className="roll-profile-head">
         <div className="roll-profile-mark"><HardHat aria-hidden="true" size={25} /><span>ROLL / BUILDER</span></div>

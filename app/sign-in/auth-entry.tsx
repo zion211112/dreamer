@@ -2,8 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Github, ArrowRight } from 'lucide-react';
+import { Github } from 'lucide-react';
 import { requestOAuth } from './actions';
 import { SignInForm } from './sign-in-form';
 
@@ -29,7 +28,6 @@ export function AuthEntry({
   callbackError?: string;
   mode?: 'sign-in' | 'sign-up';
 }) {
-  const router = useRouter();
   const [error, setError] = useState('');
   const [pending, startTransition] = useTransition();
 
@@ -53,7 +51,7 @@ export function AuthEntry({
       </div>
       <p className="eyebrow">THE SOVEREIGN COORDINATION ENGINE</p>
       <h1>Find your place<br /><em>in the work.</em></h1>
-      <p className="auth-entry-intro">Assets need teams. Teams need proof. Step inside the workshop—no credentials required for the prototype.</p>
+      <p className="auth-entry-intro">Sign in to enter your APT-LABS workspace. A verified account is required for private workspace access.</p>
 
       {callbackError && <p className="inline-error" role="alert">{callbackError}</p>}
       <div className="auth-entry-actions">
@@ -63,24 +61,21 @@ export function AuthEntry({
         <button className="auth-provider-button" disabled={!configured || pending} onClick={() => beginOAuth('github')} type="button">
           <Github aria-hidden="true" size={17} /> Continue with GitHub
         </button>
-        {!configured && <p className="auth-provider-note" role="status">Google and GitHub sign-in need configured OAuth providers. Guest access is available now.</p>}
+        {!configured && <p className="auth-provider-note" role="status">OAuth and email/password authentication need Supabase URL and public key settings on this deployment.</p>}
         {error && <p className="inline-error" role="alert">{error}</p>}
-        <button className="button button-primary auth-guest-button" onClick={() => router.push(`/workspace?mode=guest&view=assets`)} type="button">
-          Enter the studio as a guest <ArrowRight aria-hidden="true" size={15} />
-        </button>
       </div>
       <details className="auth-email-option">
-        <summary>More options <span aria-hidden="true">+</span></summary>
+        <summary>Use email and password <span aria-hidden="true">+</span></summary>
         {configured
           ? <SignInForm mode={mode} next={next} />
-          : <div className="setup-notice" role="status"><strong>Email sign-in is not configured.</strong><p>Account access requires Supabase URL and public key settings.</p></div>}
+          : <div className="setup-notice" role="status"><strong>Authentication is not configured.</strong><p>Set Supabase URL and public key settings before enabling account access.</p></div>}
       </details>
       <p className="auth-account-switch">
         {mode === 'sign-up'
           ? <>Already have an account? <Link href={`/sign-in?next=${encodeURIComponent(next)}`}>Sign in</Link></>
           : <>New to the network? <Link href={`/sign-up?next=${encodeURIComponent(next)}`}>Create a basic account</Link></>}
       </p>
-      <p className="auth-entry-boundary">Guest mode uses public scenario data only. It cannot apply, invest, publish, or change the shared Roll.</p>
+      <p className="auth-entry-boundary">Identity does not grant school, crew, or publishing permissions. Those are verified separately on the server.</p>
       <div className="auth-entry-foot"><span>DEMO PROTOTYPE</span><span>IDENTITY ≠ ENTITLEMENT</span></div>
     </section>
   );

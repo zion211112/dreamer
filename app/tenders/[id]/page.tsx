@@ -16,7 +16,7 @@ export default async function TenderDetailPage({
   searchParams: Promise<{ mode?: string }>;
 }) {
   const [{ id }, { mode }] = await Promise.all([params, searchParams]);
-  const guest = mode === 'guest';
+  const guest = false;
   const [tender, workspace] = await Promise.all([
     getMarketTenderBySlug(id),
     getWorkspaceContext(),
@@ -63,7 +63,7 @@ export default async function TenderDetailPage({
 
   return (
     <main className="site-shell">
-      <SiteHeader guest={guest} />
+      <SiteHeader />
       <div className="detail-back"><Link href={guest ? '/tenders?mode=guest' : '/tenders'}><ArrowLeft aria-hidden="true" size={14} /> Back to the asset register</Link><span>ASSET DOSSIER / {tender.id.toUpperCase()}</span></div>
       <div className="detail-layout">
         <article className="detail-main">
