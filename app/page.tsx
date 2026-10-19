@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, Orbit } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Orbit } from 'lucide-react';
 import { SiteHeader } from '@/components/site-header';
 
 export default function HomePage() {

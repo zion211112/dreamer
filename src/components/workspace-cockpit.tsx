@@ -9,6 +9,7 @@ import {
   GraduationCap,
   BriefcaseBusiness,
   Layers3,
+  LockKeyhole,
   ScrollText,
   ShieldCheck,
 } from 'lucide-react';
