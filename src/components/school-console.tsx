@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 import { ArrowDownToLine, ArrowRight, ArrowUpRight, BookOpen, Check, ClipboardCheck, Clock3, FileText, GraduationCap, LayoutList, Megaphone, Plus, Printer, ShieldAlert, Sparkles, WalletCards, X } from 'lucide-react';
 import { getSchoolCrewCandidates, publishSchoolTender, type SchoolCrewCandidate } from '../../app/console/actions';
-import { SiteHeader } from '@/components/site-header';
 import { Button } from '@/components/ui/button';
 import { initialConsoleSnapshot, loadConsoleSnapshot, saveConsoleSnapshot, type ConsoleSnapshot, type SchoolTenderDraft } from '@/lib/console-storage';
 import { markPaper, parseCsvPapers, parseJsonPapers, type SchemeQuestion } from '@/lib/mark-engine';
@@ -59,7 +59,7 @@ function saveDownload(name: string, content: string, mimeType: string) {
   URL.revokeObjectURL(url);
 }
 
-export function SchoolConsole() {
+export function SchoolConsole({ header }: { header: ReactNode }) {
   const [role, setRole] = useState<'teacher' | 'principal'>('teacher');
   const [activeModule, setActiveModule] = useState<string>('Auto-Marking');
   const [snapshot, setSnapshot] = useState<ConsoleSnapshot>(initialConsoleSnapshot);
@@ -279,7 +279,7 @@ export function SchoolConsole() {
 
   return (
     <main className="site-shell console-shell">
-      <SiteHeader />
+      {header}
       <section className="console-intro">
         <div>
           <p className="eyebrow"><span className="signal-dot" /> Local-first school utility · {loaded ? 'Ready on this device' : 'Opening local workspace'}</p>

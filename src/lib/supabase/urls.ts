@@ -1,5 +1,5 @@
 export function safeReturnPath(value: string): string {
-  if (!value.startsWith('/') || value.startsWith('//') || value.includes('\\')) return '/console';
+  if (!value.startsWith('/') || value.startsWith('//') || value.includes('\\')) return '/workspace';
   return value;
 }
 

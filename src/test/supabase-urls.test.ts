@@ -14,7 +14,7 @@ describe('Supabase redirect URLs', () => {
 
   it('accepts only same-site return paths', () => {
     expect(safeReturnPath('/assembly/123?step=materials')).toBe('/assembly/123?step=materials');
-    expect(safeReturnPath('//attacker.example')).toBe('/console');
-    expect(safeReturnPath('/\\attacker.example')).toBe('/console');
+    expect(safeReturnPath('//attacker.example')).toBe('/workspace');
+    expect(safeReturnPath('/\\attacker.example')).toBe('/workspace');
   });
 });

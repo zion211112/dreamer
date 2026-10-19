@@ -14,7 +14,10 @@ Anchor signs the active Blueprint.
 - `/roll` — immutable proof records; illustrative examples cannot appear here.
 - `/console` — a local-first school utility with teacher and principal views.
 - `/assembly/[tenderId]` — authenticated, assigned-crew execution workflow.
-- `/sign-in` — Supabase email-link sign-in for shared school and crew actions.
+- `/workspace` — the context-aware Demand → Tender → Assembly → Roll cockpit.
+- `/commons` — public activity with a separate searchable `/commons/library`,
+  contribution flow and moderator desk.
+- `/sign-up` and `/sign-in` — basic account creation and email-link sign-in.
 
 The checked-in market examples are explicitly illustrative. Without Supabase
 configuration, the public market uses those local examples and the Roll is
@@ -43,7 +46,9 @@ npm run build
 2. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
    Set `NEXT_PUBLIC_SITE_URL` to the exact HTTPS origin used for deployment.
    Never expose a service-role key to the application.
-3. Apply `supabase/migrations/20261019000000_tender_engine.sql` to the
+3. Apply `supabase/migrations/20261019000000_tender_engine.sql`,
+   `supabase/migrations/20261019010000_workspace_commons.sql`, then
+   `supabase/migrations/20261019020000_workspace_contexts.sql` to the
    project's Postgres database.
 4. Enable email-link authentication and allow the deployed
    `/auth/callback` URL in Supabase Auth redirect settings.
@@ -66,8 +71,41 @@ npm run build
 
 Email sign-in is not school authorization by itself. A user without the
 required organization or crew membership cannot issue Tenders or access a
-private Assembly. Missing configuration and authorization failures are shown
-as explicit errors; they do not fall back to fake success.
+private Assembly. Basic account creation does not grant a school role,
+contributor entitlement, or wallet/keypair.
+
+### Workspace contexts
+
+The Workspace switcher lists the signed-in member's active organization and
+crew contexts from `get_workspace_contexts()`. The server validates each
+selected context against this account's current assignments; changing the URL
+or switcher cannot grant access. The School Console remains a separate
+`Local Device` product entry.
+
+Demand is an explicit local-Console boundary, not a shared inbox in this
+release. School Tender publication uses the existing quote, itemized
+Blueprint and crew-assignment workflow. There is no Funder account binding,
+Tender bidding, escrow, deposit, payment, yield, or SBT issuance. The cockpit
+shows these limits instead of simulated account balances or actions.
+
+### Commons moderation
+
+Commons public reads use published-only database views. Access requests,
+posts, resource links, comments, polls and reports are handled through
+server-checked database functions and row-level security. To staff moderation,
+an administrator must provision at least one trusted moderator directly in
+Supabase; never expose moderator provisioning through public account metadata
+or client-side controls. Until an active moderator exists, Commons is
+read-only and contribution RPCs reject new submissions.
+
+Moderators review access requests outside the assumption that email proves
+age or qualifications. Youth participation is not enabled. Resource entries
+are approved public links with contributor-supplied source, attribution,
+declared license and revision; the app does not host files or independently
+certify rights. Commons polls are advisory and cannot authorize funding,
+payments, crew assignments or treasury decisions. Keep access and moderation
+provisioning within an operational adult-safeguarding process before opening
+contributor requests.
 
 ## School Console data boundary
 

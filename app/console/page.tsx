@@ -1,4 +1,5 @@
 import { SchoolConsole } from '@/components/school-console';
+import { SiteHeader } from '@/components/site-header';
 
 export const metadata = {
   title: 'School Console — APT-LABS',
@@ -6,5 +7,5 @@ export const metadata = {
 };
 
 export default function ConsolePage() {
-  return <SchoolConsole />;
+  return <SchoolConsole header={<SiteHeader />} />;
 }
