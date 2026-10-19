@@ -15,6 +15,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { SiteHeader } from '@/components/site-header';
+import { capitalEfficiencyPercent } from '@/lib/tender';
 import { formatMoney } from '@/lib/tender-data';
 import type { RollRecord, Tender } from '@/lib/tender';
 import type { WorkspaceContextOption } from '@/lib/workspace';
@@ -111,10 +112,10 @@ function StateRail({ context, configured }: { context: WorkspaceContextOption | 
         {!configured && <p className="cockpit-caution">Account-backed actions are unavailable until Supabase is configured.</p>}
       </section>
       <section className="cockpit-rail-card">
-        <p className="eyebrow">CAPITAL / CONTACT ONLY</p>
-        <h2>Interest is not funding.</h2>
-        <p>There is no Funder account, escrow, deposit, payment or yield workflow here. A public Tender may offer a contact-only conversation.</p>
-        <Link className="cockpit-subtle-link" href="/tenders">Review the public Market <ArrowUpRight aria-hidden="true" size={13} /></Link>
+        <p className="eyebrow">CAPITAL / INTENT SIGNAL</p>
+        <h2>Allocate with eyes open.</h2>
+        <p>Authenticated members can record non-binding Capital Intent. It is not payment, settlement, escrow, or a promise of yield; an authorized issuer must verify offline settlement.</p>
+        <Link className="cockpit-subtle-link" href="/tenders">Inspect asset dossiers <ArrowUpRight aria-hidden="true" size={13} /></Link>
       </section>
     </>
   );
@@ -148,7 +149,7 @@ function DemandSurface({ context }: { context: WorkspaceContextOption | null }) 
 function TenderSurface({ tenders }: { tenders: Tender[] }) {
   const visibleTenders = tenders.slice(0, 6);
   if (!visibleTenders.length) {
-    return <div className="cockpit-empty-state"><p className="eyebrow">TENDER / MARKET</p><h3>No open Tenders are listed.</h3><p>The Market will show published work when it exists. Illustrative examples are not substituted for live records.</p><Link className="cockpit-subtle-link" href="/tenders">Open public Market <ArrowRight aria-hidden="true" size={14} /></Link></div>;
+    return <div className="cockpit-empty-state"><p className="eyebrow">TENDER / MARKET</p><h3>No open Tenders are listed.</h3><p>The Asset Register will show published infrastructure when it exists. Illustrative scenarios are never shown as live work.</p><Link className="cockpit-subtle-link" href="/tenders">Open public asset register <ArrowRight aria-hidden="true" size={14} /></Link></div>;
   }
   return (
     <div className="cockpit-tender-list">
@@ -163,19 +164,19 @@ function TenderSurface({ tenders }: { tenders: Tender[] }) {
             <ArrowUpRight aria-hidden="true" size={15} />
           </div>
           <div className="cockpit-math">
-            <div><span>IMPORT ALTERNATIVE</span><strong>{formatMoney(tender.importQuoteMinor, tender.currency)}</strong></div>
+            <div><span>ASSET BUILD COST</span><strong>{formatMoney(tender.assetBuildCostMinor, tender.currency)}</strong></div>
             <i aria-hidden="true" />
-            <div><span>PROPOSED LOCAL BOM</span><strong>{formatMoney(tender.localBomMinor, tender.currency)}</strong></div>
-            <div className="cockpit-math-delta"><span>PLANNING DIFFERENCE</span><strong>{formatMoney(tender.importQuoteMinor - tender.localBomMinor, tender.currency)}</strong></div>
+            <div><span>PROJECTED ANNUAL YIELD</span><strong>{tender.projectedAnnualYieldMinor === null ? 'Not modeled' : formatMoney(tender.projectedAnnualYieldMinor, tender.currency)}</strong></div>
+            <div className="cockpit-math-delta"><span>CAPITAL EFFICIENCY</span><strong>{capitalEfficiencyPercent(tender) === null ? 'Evidence pending' : `${capitalEfficiencyPercent(tender)}% / year`}</strong></div>
           </div>
           <div className="cockpit-tender-footer">
             <span>{tender.issuer} · {tender.isIllustrative ? 'planning example only' : 'public listing'}</span>
-            <Link href={`/tenders/${tender.slug}`}>Inspect Tender <ArrowRight aria-hidden="true" size={13} /></Link>
+            <Link href={`/tenders/${tender.slug}`}>Inspect asset dossier <ArrowRight aria-hidden="true" size={13} /></Link>
           </div>
         </article>
       ))}
-      <p className="cockpit-note">The difference is a planning comparison—not realized savings, funds collected or available escrow.</p>
-      <Link className="cockpit-subtle-link" href="/tenders">Browse all public Tenders <ArrowRight aria-hidden="true" size={14} /></Link>
+      <p className="cockpit-note">Yield figures are scenarios, not realized revenue. Capital Intent is non-binding and does not mean funds have settled.</p>
+      <Link className="cockpit-subtle-link" href="/tenders">Browse the public asset register <ArrowRight aria-hidden="true" size={14} /></Link>
     </div>
   );
 }
@@ -230,20 +231,56 @@ function AssemblySurface({
   );
 }
 
-function RollSurface({ records, configured }: { records: RollRecord[]; configured: boolean }) {
+function RollSurface({
+  records,
+  configured,
+  context,
+}: {
+  records: RollRecord[];
+  configured: boolean;
+  context: WorkspaceContextOption | null;
+}) {
+  const capabilityRecord = context?.kind === 'crew' && !context.isIllustrative
+    ? records.find(record => record.tenderId === context.tenderId)
+    : undefined;
+  const capabilityBadge = capabilityRecord && context
+    ? (
+      <article className="capability-badge" aria-label="Roll-backed capability badge prototype">
+        <div className="capability-badge-seal"><BadgeCheck aria-hidden="true" size={25} /><span>APT / ROLL</span></div>
+        <div className="capability-badge-copy">
+          <p className="eyebrow">CAPABILITY BADGE / NON-TRANSFERABLE</p>
+          <h3>{capabilityRecord.assetName}</h3>
+          <p>{context.role} · Anchor-verified deployment · {dateLabel(capabilityRecord.deployedAt)}</p>
+          <code>ROLL {capabilityRecord.id} · BLUEPRINT {capabilityRecord.blueprintHash.slice(0, 18)}…</code>
+        </div>
+        <div className="capability-badge-foot">LABOR PROOF · NO YIELD RIGHTS ATTACHED</div>
+      </article>
+    )
+    : null;
   if (!records.length) {
     return (
-      <div className="cockpit-empty-state">
-        <div className="cockpit-empty-glyph"><BadgeCheck aria-hidden="true" size={20} /></div>
-        <p className="eyebrow">ROLL / PROOF RECORD</p>
-        <h3>No completed build is recorded yet.</h3>
-        <p>The Roll is written only when the existing Tender lifecycle records Anchor sign-off and deployment. A personal SBT or transferable credential is not issued.</p>
-        <Link className="cockpit-subtle-link" href="/roll">Open the public Roll <ArrowRight aria-hidden="true" size={14} /></Link>
-      </div>
+      <>
+        {capabilityBadge}
+        <div className="cockpit-empty-state">
+          <div className="cockpit-empty-glyph"><BadgeCheck aria-hidden="true" size={20} /></div>
+          <p className="eyebrow">ROLL / PROOF RECORD</p>
+          <h3>No completed build is recorded yet.</h3>
+          <p>The Roll is written only after assigned-Anchor sign-off and deployment. A cryptographically portable credential is not issued in this deployment.</p>
+          <Link className="cockpit-subtle-link" href="/roll">Open the public Roll <ArrowRight aria-hidden="true" size={14} /></Link>
+        </div>
+      </>
     );
   }
   return (
     <div className="cockpit-roll-list">
+      {capabilityBadge}
+      {context?.kind === 'crew' && !capabilityBadge && (
+        <div className="capability-badge-empty">
+          <p className="eyebrow">CAPABILITY BADGE / NOT YET EARNED</p>
+          <strong>Build first. The Roll remembers.</strong>
+          <span>Only a deployed, Anchor-signed Tender can support a labor credential. Capital intent and account activity do not count.</span>
+        </div>
+      )}
       <div className="cockpit-roll-heading"><BadgeCheck aria-hidden="true" size={17} /><span>{configured ? 'PUBLISHED DEPLOYMENT RECORDS' : 'PUBLIC PREVIEW · NO LIVE DATABASE'}</span></div>
       {records.slice(0, 6).map(record => (
         <article className="cockpit-roll-card" key={record.id}>
@@ -252,7 +289,7 @@ function RollSurface({ records, configured }: { records: RollRecord[]; configure
           <Link href="/roll">Inspect proof record <ArrowRight aria-hidden="true" size={13} /></Link>
         </article>
       ))}
-      <p className="cockpit-note">The Roll records completed work and its Blueprint hash. It is not an SBT, wallet, yield balance or voting entitlement.</p>
+      <p className="cockpit-note">The prototype capability badge is a context-linked view of a Roll record, not yet a public-key-verifiable credential. No cash-flow or cooperative voting rights are issued by this screen.</p>
     </div>
   );
 }
@@ -338,7 +375,7 @@ export function WorkspaceCockpit({
             {view === 'demand' && <DemandSurface context={context} />}
             {view === 'tenders' && <TenderSurface tenders={tenders} />}
             {view === 'assemblies' && <AssemblySurface contexts={contexts} selectedContext={context} tenders={tenders} />}
-            {view === 'roll' && <RollSurface configured={configured} records={roll} />}
+            {view === 'roll' && <RollSurface configured={configured} context={context} records={roll} />}
           </div>
         </section>
 
@@ -348,9 +385,9 @@ export function WorkspaceCockpit({
           <section className="cockpit-rail-card cockpit-rail-limits">
             <p className="eyebrow">PROTOCOL LIMITS / NOW</p>
             <ul>
-              <li><span>Capital</span><strong>Contact only</strong></li>
-              <li><span>Demand sync</span><strong>Not connected</strong></li>
-              <li><span>Capability tokens</span><strong>Not issued</strong></li>
+                <li><span>Capital</span><strong>Intent · settlement pending</strong></li>
+                <li><span>Demand sync</span><strong>Explicit publication</strong></li>
+                <li><span>Capability badges</span><strong>Roll-backed proof</strong></li>
             </ul>
             <Link className="cockpit-subtle-link" href="/commons">Read how the network works <ArrowRight aria-hidden="true" size={13} /></Link>
           </section>

@@ -22,10 +22,10 @@ export function parseKesMinorUnits(value: string): number | undefined {
 
 export function compileSchoolTenderBOM(
   drafts: SchoolTenderBOMLineDraft[],
-  localQuoteMinor: number,
+  assetBuildCostMinor: number,
 ): SchoolTenderBOMLine[] {
-  if (!Number.isSafeInteger(localQuoteMinor) || localQuoteMinor <= 0) {
-    throw new Error('The local quote must be a positive amount in KES.');
+  if (!Number.isSafeInteger(assetBuildCostMinor) || assetBuildCostMinor <= 0) {
+    throw new Error('The asset build cost must be a positive amount in KES.');
   }
   if (!Array.isArray(drafts) || drafts.length < 1 || drafts.length > 100) {
     throw new Error('Add between 1 and 100 itemized Blueprint lines.');
@@ -53,14 +53,14 @@ export function compileSchoolTenderBOM(
     }
     const lineTotal = quantity * unitCostMinor;
     if (!Number.isSafeInteger(lineTotal) || !Number.isSafeInteger(totalMinor + lineTotal)) {
-      throw new Error(`Blueprint line ${index + 1} exceeds the supported quote precision.`);
+      throw new Error(`Blueprint line ${index + 1} exceeds the supported currency precision.`);
     }
     totalMinor += lineTotal;
     return { item, quantity, unit, unitCostMinor };
   });
 
-  if (totalMinor !== localQuoteMinor) {
-    throw new Error('The itemized Blueprint total must exactly match the proposed local quote.');
+  if (totalMinor !== assetBuildCostMinor) {
+    throw new Error('The itemized Blueprint total must exactly match the asset build cost.');
   }
   return lines;
 }

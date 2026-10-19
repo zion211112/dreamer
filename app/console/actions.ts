@@ -67,8 +67,16 @@ export async function publishSchoolTender(input: {
     return { error: 'School publishing is not configured for this deployment.' };
   }
   const { draft, anchorUserId, builderUserId, apprenticeUserId } = input;
-  const importQuoteMinor = typeof draft.importQuote === 'string' ? parseKesMinorUnits(draft.importQuote) : undefined;
-  const localBomMinor = typeof draft.localQuote === 'string' ? parseKesMinorUnits(draft.localQuote) : undefined;
+  const assetBuildCostMinor = typeof draft.assetBuildCost === 'string' ? parseKesMinorUnits(draft.assetBuildCost) : undefined;
+  const projectedAnnualYieldMinor = draft.projectedAnnualYield.trim()
+    ? parseKesMinorUnits(draft.projectedAnnualYield)
+    : null;
+  const localSpendPercentage = Number(draft.localSpendPercentage);
+  const crewWageAllocationMinor = {
+    anchor: parseKesMinorUnits(draft.crewWageAllocation.anchor),
+    builder: parseKesMinorUnits(draft.crewWageAllocation.builder),
+    apprentice: parseKesMinorUnits(draft.crewWageAllocation.apprentice),
+  };
   if (
     typeof draft.assetName !== 'string' ||
     draft.assetName.trim().length < 1 ||
@@ -76,20 +84,27 @@ export async function publishSchoolTender(input: {
     typeof draft.need !== 'string' ||
     draft.need.trim().length < 1 ||
     draft.need.trim().length > 10000 ||
-    importQuoteMinor === undefined ||
-    localBomMinor === undefined ||
-    importQuoteMinor <= localBomMinor ||
-    localBomMinor <= 0 ||
+    assetBuildCostMinor === undefined ||
+    assetBuildCostMinor <= 0 ||
+    (draft.projectedAnnualYield.trim() !== '' && projectedAnnualYieldMinor === undefined) ||
+    !Number.isFinite(localSpendPercentage) ||
+    localSpendPercentage < 0 ||
+    localSpendPercentage > 100 ||
+    crewWageAllocationMinor.anchor === undefined ||
+    crewWageAllocationMinor.builder === undefined ||
+    crewWageAllocationMinor.apprentice === undefined ||
+    crewWageAllocationMinor.anchor + crewWageAllocationMinor.builder + crewWageAllocationMinor.apprentice > assetBuildCostMinor ||
+    (projectedAnnualYieldMinor !== null && !draft.economicModelNote.trim()) ||
     !uuidPattern.test(anchorUserId) ||
     !uuidPattern.test(builderUserId) ||
     !uuidPattern.test(apprenticeUserId) ||
     new Set([anchorUserId, builderUserId, apprenticeUserId]).size !== 3
   ) {
-    return { error: 'Review the Tender fields, same-currency quotes and three distinct crew assignments.' };
+    return { error: 'Review the asset economics, itemized build cost and three distinct crew assignments.' };
   }
   let blueprintLines: ReturnType<typeof compileSchoolTenderBOM>;
   try {
-    blueprintLines = compileSchoolTenderBOM(draft.blueprintLines, localBomMinor);
+    blueprintLines = compileSchoolTenderBOM(draft.blueprintLines, assetBuildCostMinor);
   } catch (error) {
     return { error: `The Tender cannot be published: ${actionError(error)}` };
   }
@@ -100,12 +115,16 @@ export async function publishSchoolTender(input: {
     const supabase = await createSupabaseServerClient();
     const { data: userData, error: authError } = await supabase.auth.getUser();
     if (authError || !userData.user) return { error: 'Sign in with an authorized school account first.' };
-    const { data, error } = await supabase.rpc('publish_school_tender', {
+    const { data, error } = await supabase.rpc('publish_school_asset_tender', {
       p_slug: slug,
       p_asset_name: draft.assetName.trim(),
       p_summary: draft.need.trim(),
-      p_import_quote_minor: importQuoteMinor,
-      p_local_bom_minor: localBomMinor,
+      p_asset_build_cost_minor: assetBuildCostMinor,
+      p_target_amount_minor: assetBuildCostMinor,
+      p_projected_annual_yield_minor: projectedAnnualYieldMinor,
+      p_local_spend_percentage: localSpendPercentage,
+      p_crew_wage_allocation_minor: crewWageAllocationMinor,
+      p_economic_model_note: projectedAnnualYieldMinor === null ? null : draft.economicModelNote.trim(),
       p_blueprint_lines: blueprintLines.map(line => ({
         item: line.item,
         quantity: line.quantity,

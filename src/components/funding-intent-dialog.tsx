@@ -17,8 +17,8 @@ import { formatMoney } from '@/lib/tender-data';
 export function FundingIntentDialog({ tender }: { tender: Tender }) {
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState('');
-  const quoteLabel = tender.isIllustrative ? 'illustrative local build estimate' : 'proposed local build quote';
-  const note = `I would like to discuss the ${tender.assetName} Tender (${tender.slug}). The ${quoteLabel} is ${formatMoney(tender.localBomMinor, tender.currency)}. This is an enquiry only, not a pledge or payment.`;
+  const quoteLabel = tender.isIllustrative ? 'illustrative asset build cost' : 'asset build cost';
+  const note = `I would like to discuss the ${tender.assetName} Tender (${tender.slug}). The ${quoteLabel} is ${formatMoney(tender.assetBuildCostMinor, tender.currency)}. This is an enquiry only, not a pledge or payment.`;
 
   async function copyNote() {
     try {

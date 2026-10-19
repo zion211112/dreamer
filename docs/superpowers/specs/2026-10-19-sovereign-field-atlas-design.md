@@ -10,7 +10,7 @@
 
 Give APT-LABS a distinctive, pitch-ready visual identity and make the end-to-end product legible as a real physical-work network rather than a generic SaaS dashboard.
 
-The design should help a first-time visitor understand what the network does, inspect how a proposed local build compares with an imported alternative, follow a Tender through accountable execution, and distinguish verified evidence from examples or intent. It should make the public site, Workspace, Commons, and School Console feel like parts of one coherent system without collapsing their different data and permission boundaries.
+The design should help a first-time visitor understand how local infrastructure demand becomes a capitalized, accountable build, how an asset is modeled for yield, and how verified evidence differs from examples or intent. It should make the public site, Workspace, Commons, and School Console feel like parts of one coherent system without collapsing their different data and permission boundaries.
 
 This is a visual, information-architecture, and interaction redesign. It does not add backend capabilities.
 
@@ -27,9 +27,9 @@ The redesign preserves these boundaries:
 - Market, Commons, and Roll remain publicly readable.
 - A chosen Workspace context is a view of a server-verified relationship; it never grants access.
 - School Console records remain on the local device. The UI must not imply encryption, multi-user storage, backup, or synchronization.
-- School Tender publication remains a separate, explicit server-authorized action. Only its intended Tender information, Blueprint, quotes, and crew assignment cross into the shared system; student and unrelated Console records do not.
+- School Tender publication remains a separate, explicit server-authorized action. Only its reviewed Tender economics, Blueprint, and crew assignment cross into the shared system; student and unrelated Console records do not.
 - Illustrative records and figures are always visibly illustrative. They are not live needs, activity, funding, savings, crews, deployments, or Roll proof.
-- Capital remains contact-only. No deposit, pledge, escrow, payment, yield, or treasury balance is implied.
+- Capital Intent is an authenticated, non-binding signal, not a transfer or escrow. The interface distinguishes signaled intent from issuer-verified offline settlement; payment integration remains pending.
 - Commons remains moderated and provenance-oriented, not a general social network.
 - No shared Demand inbox, chat, CAD/file upload, capability token, SBT, wallet, or contribution-weighted governance is implied.
 - Errors and unavailable capabilities are visible as errors or boundaries, never replaced with success-shaped fallback content.
@@ -70,18 +70,18 @@ Authenticated landing behavior remains unchanged unless a separate approved prod
 
 ### 4.2 Public Market and Tender dossier
 
-The public Tender board is a filterable work register with a strong distinction between live published Tenders and local illustrative examples. Each entry leads with the physical outcome, need, location, lifecycle state, and provenance. Import/local comparisons use aligned amounts, currency, units, and an explicit label such as “planning difference”; they do not use “savings” as a realized result.
+The public Tender board is a filterable work register with a strong distinction between live published Tenders and local illustrative examples. Each entry leads with the physical outcome, need, location, lifecycle state, capital-allocation state, and provenance.
 
 A Tender detail page is redesigned as a structured dossier:
 
 1. **Identity:** asset, need, category, location, issuer, Tender ID, lifecycle state, and provenance.
-2. **Economics:** imported alternative alongside proposed local BOM, with calculation method/currency and the limitation that quotes require local verification.
+2. **Economics:** asset build cost, projected annual yield and its assumptions, capital efficiency, local capital retention, and proposed crew compensation.
 3. **Blueprint:** itemized lines, quantities, costs, version, and available integrity/provenance evidence.
 4. **Execution:** assigned/proposed crew shown only to the extent permitted by current consent and access rules.
 5. **Lifecycle:** the actual Tender state and its authorized milestones.
-6. **Capital:** contact-only enquiry, clearly distinguished from pledged, committed, or held funds.
+6. **Capital:** Capital Intent amount and status, clearly distinguished from verified offline settlement, held funds, and payment.
 
-Do not use a progress bar or funded percentage in a way that suggests escrow, collected capital, or a payment balance. If an existing funding-intent signal is displayed, label what it actually represents and state that no money moves or is held. Illustrative funder records remain unmistakably examples.
+Do not use a progress bar or capital state in a way that suggests escrow, collected capital, or a payment balance. State that a signal is non-binding and no money moves or is held. Illustrative records remain unmistakably examples.
 
 ### 4.3 Workspace field desk
 
@@ -100,15 +100,15 @@ Stage behavior:
 - **Demand:** School contexts link to the existing local Console and its authorized Tender publication path. Other contexts explain that a shared Demand inbox does not exist and offer only real public work routes.
 - **Tender:** show public records and the inspectable economics. Any actions are real, currently authorized flows; there is no invented “bid as crew” or “fund” workflow.
 - **Assembly:** show only assignments returned for the signed-in user. The next action comes from the current server-provided Tender state and links to existing crew authorization.
-- **Roll:** show actual deployed proof records or a designed empty state. Do not show personal SBTs or imply that a Roll record is a wallet credential.
+- **Roll:** show actual deployed proof records or a designed empty state. Capability Badges are non-transferable labor credentials backed by verified Roll evidence, not wallet assets or yield rights.
 
 Network members without extra entitlements see a real public-work starting point and the actual account/role limits. No open-role signup or self-serve invitation is invented.
 
 ### 4.4 Assembly and Roll
 
-Assembly retains the existing assigned-crew workflow and server-side transition checks. The visual treatment should make state, responsible role, active Blueprint, required next transition, and evidence easy to inspect. No chat, arbitrary upload, or capital release control is added.
+Assembly retains the assigned-crew workflow and server-side transition checks. The visual treatment should make state, responsible role, active Blueprint, required next transition, and evidence easy to inspect. Crew communication and Blueprint file exchange belong in this war room only when backed by authenticated, access-controlled persistence. No capital-release control is implied.
 
-Roll is a public proof ledger: each record communicates what was deployed, when, which approved Blueprint/proof reference it relates to, and how verification occurred. The presentation distinguishes a verified deployed record from a Tender, an illustrative example, or a proposed blueprint. The Roll is not represented as an SBT, transferable credential, yield entitlement, or token governance record.
+Roll is a public proof ledger: each record communicates what was deployed, when, which approved Blueprint/proof reference it relates to, and how verification occurred. The presentation distinguishes a verified deployed record from a Tender, an illustrative example, or a proposed blueprint. A Capability Badge represents proof of physical labor; it does not confer transferability, a yield entitlement, or token governance rights.
 
 ### 4.5 Commons
 

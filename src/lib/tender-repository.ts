@@ -42,10 +42,19 @@ const marketRowSchema = z.object({
   location: z.string(),
   issuer: z.string(),
   currency: z.string(),
-  import_quote_minor: minorUnitsSchema,
-  local_bom_minor: minorUnitsSchema,
+  asset_build_cost_minor: minorUnitsSchema,
   funding_target_minor: minorUnitsSchema,
-  status: z.enum(['draft', 'open', 'materials', 'fabrication', 'anchor_signed', 'deployed', 'cancelled']),
+  current_signaled_amount_minor: minorUnitsSchema,
+  current_settled_amount_minor: minorUnitsSchema,
+  projected_annual_yield_minor: minorUnitsSchema.nullable(),
+  local_spend_percentage: z.coerce.number().min(0).max(100).nullable(),
+  crew_wage_allocation_minor: z.object({
+    anchor: minorUnitsSchema,
+    builder: minorUnitsSchema,
+    apprentice: minorUnitsSchema,
+  }).nullable(),
+  economic_model_note: z.string().nullable(),
+  status: z.enum(['draft', 'open', 'capitalized_pending_settlement', 'materials', 'fabrication', 'anchor_signed', 'deployed', 'cancelled']),
   is_illustrative: z.boolean(),
   source_product_id: z.string().nullable(),
   blueprint: blueprintSchema,
@@ -57,7 +66,7 @@ const rollRowSchema = z.object({
   id: z.string(),
   tender_id: z.string(),
   asset_name: z.string(),
-  import_savings_minor: minorUnitsSchema,
+  asset_build_cost_minor: minorUnitsSchema,
   currency: z.string(),
   crew_snapshot: z.array(z.object({
     id: z.string(),
@@ -91,9 +100,14 @@ function mapMarketRow(value: unknown): Tender {
     location: row.location,
     issuer: row.issuer,
     currency: row.currency,
-    importQuoteMinor: row.import_quote_minor,
-    localBomMinor: row.local_bom_minor,
+    assetBuildCostMinor: row.asset_build_cost_minor,
     fundingTargetMinor: row.funding_target_minor,
+    currentSignaledAmountMinor: row.current_signaled_amount_minor,
+    currentSettledAmountMinor: row.current_settled_amount_minor,
+    projectedAnnualYieldMinor: row.projected_annual_yield_minor,
+    localSpendPercentage: row.local_spend_percentage,
+    crewWageAllocationMinor: row.crew_wage_allocation_minor,
+    economicModelNote: row.economic_model_note,
     status: row.status,
     isIllustrative: row.is_illustrative,
     sourceTenderId: row.source_product_id ?? undefined,
@@ -169,14 +183,14 @@ export async function getPublicRoll(): Promise<RollRecord[]> {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from('public_roll_records')
-    .select('id,tender_id,asset_name,import_savings_minor,currency,crew_snapshot,blueprint_snapshot,blueprint_id,blueprint_hash,anchor_crew_member_id,anchor_signed_at,deployed_at')
+    .select('id,tender_id,asset_name,asset_build_cost_minor,currency,crew_snapshot,blueprint_snapshot,blueprint_id,blueprint_hash,anchor_crew_member_id,anchor_signed_at,deployed_at')
     .order('deployed_at', { ascending: false });
   if (error) throw new Error(`The public Roll could not be loaded: ${error.message}`);
   return z.array(rollRowSchema).parse(data).map(record => ({
     id: record.id,
     tenderId: record.tender_id,
     assetName: record.asset_name,
-    importSavingsMinor: record.import_savings_minor,
+    assetBuildCostMinor: record.asset_build_cost_minor,
     currency: record.currency,
     crew: record.crew_snapshot.map(member => ({
       id: member.id,

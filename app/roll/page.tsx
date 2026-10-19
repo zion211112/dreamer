@@ -17,14 +17,14 @@ export default async function RollPage() {
       <section className="page-intro roll-intro">
         <p className="eyebrow"><span className="section-index">03</span> Public proof of work</p>
         <h1>The Roll.</h1>
-        <p>Not a promise wall. A permanent record of completed builds: the asset, the consented crew names, the quote comparison and the Anchor sign-off behind it.</p>
+        <p>Not a promise wall. A permanent record of completed builds: the asset, consented crew names, build economics, Blueprint provenance, and the Anchor sign-off behind it.</p>
       </section>
       <section aria-label="Completed deployments" className="roll-ledger">
-        <div className="roll-table-head"><span>ASSET / REFERENCE</span><span>IMPORT SAVED</span><span>CREW / PROOF</span><span>BLUEPRINT</span></div>
+        <div className="roll-table-head"><span>ASSET / REFERENCE</span><span>BUILD COST</span><span>CREW / PROOF</span><span>BLUEPRINT</span></div>
         {records.length > 0 ? records.map(record => (
           <article className="roll-row" key={record.id}>
             <div><span className="roll-record-index">{record.id}</span><strong>{record.assetName}</strong><small>{record.tenderId}</small></div>
-            <strong className="saved-value">{formatMoney(record.importSavingsMinor, record.currency)}</strong>
+            <strong className="roll-build-cost">{formatMoney(record.assetBuildCostMinor, record.currency)}</strong>
             <div><span>{record.crew.map(member => member.displayName).join(' · ')}</span><small><BadgeCheck aria-hidden="true" size={12} /> Anchor sign-off recorded</small></div>
             <details className="roll-blueprint">
               <summary>View Blueprint <small>{record.blueprintHash.slice(0, 12)}…</small></summary>
@@ -54,7 +54,7 @@ export default async function RollPage() {
       </section>
       <section className="roll-method">
         <div><p className="eyebrow">The Roll rule</p><h2>What gets recorded, stays inspectable.</h2></div>
-        <p>A deployed Tender carries a single immutable proof snapshot. The blueprint hash, crew, same-currency quote comparison and sign-off travel together. Illustrative examples can never enter this ledger.</p>
+        <p>A deployed Tender carries a single immutable proof snapshot. The blueprint hash, crew, asset build cost, and sign-off travel together. Illustrative examples can never enter this ledger.</p>
       </section>
       <footer className="page-footer"><span>APT-LABS / PROOF LEDGER</span><span>{records.length.toString().padStart(2, '0')} verified deployments</span></footer>
     </main>

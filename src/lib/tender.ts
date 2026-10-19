@@ -1,6 +1,7 @@
 export const tenderStatuses = [
   'draft',
   'open',
+  'capitalized_pending_settlement',
   'materials',
   'fabrication',
   'anchor_signed',
@@ -72,9 +73,14 @@ export interface Tender {
   location: string;
   issuer: string;
   currency: string;
-  importQuoteMinor: number;
-  localBomMinor: number;
+  assetBuildCostMinor: number;
   fundingTargetMinor: number;
+  currentSignaledAmountMinor: number;
+  currentSettledAmountMinor: number;
+  projectedAnnualYieldMinor: number | null;
+  localSpendPercentage: number | null;
+  crewWageAllocationMinor: Record<CrewRole, number> | null;
+  economicModelNote: string | null;
   status: TenderStatus;
   isIllustrative: boolean;
   sourceTenderId?: string;
@@ -84,11 +90,32 @@ export interface Tender {
   anchorSignOff?: AnchorSignOff;
 }
 
+export type CapitalAllocationState =
+  | 'unfunded'
+  | 'soft_committed'
+  | 'awaiting_settlement'
+  | 'partially_settled'
+  | 'fully_capitalized';
+
+export function capitalAllocationState(
+  tender: Pick<Tender, 'fundingTargetMinor' | 'currentSignaledAmountMinor' | 'currentSettledAmountMinor'>,
+): CapitalAllocationState {
+  if (tender.fundingTargetMinor > 0 && tender.currentSettledAmountMinor >= tender.fundingTargetMinor) {
+    return 'fully_capitalized';
+  }
+  if (tender.currentSettledAmountMinor > 0) return 'partially_settled';
+  if (tender.fundingTargetMinor > 0 && tender.currentSignaledAmountMinor >= tender.fundingTargetMinor) {
+    return 'awaiting_settlement';
+  }
+  if (tender.currentSignaledAmountMinor > 0) return 'soft_committed';
+  return 'unfunded';
+}
+
 export interface RollRecord {
   id: string;
   tenderId: string;
   assetName: string;
-  importSavingsMinor: number;
+  assetBuildCostMinor: number;
   currency: string;
   crew: CrewMember[];
   blueprintLines: BlueprintLine[];
@@ -134,17 +161,43 @@ export function validateCatalog(catalog: TenderCatalog): void {
     tendersById.set(tender.id, tender);
     slugs.add(tender.slug);
 
-    if (!Number.isSafeInteger(tender.importQuoteMinor) || tender.importQuoteMinor < 0) {
-      throw new TenderInvariantError(`Invalid import quote for ${tender.slug}`);
-    }
-    if (!Number.isSafeInteger(tender.localBomMinor) || tender.localBomMinor < 0) {
-      throw new TenderInvariantError(`Invalid local BOM quote for ${tender.slug}`);
-    }
-    if (tender.localBomMinor > tender.importQuoteMinor) {
-      throw new TenderInvariantError(`Local build quote exceeds import quote for ${tender.slug}`);
+    if (!Number.isSafeInteger(tender.assetBuildCostMinor) || tender.assetBuildCostMinor <= 0) {
+      throw new TenderInvariantError(`Invalid asset build cost for ${tender.slug}`);
     }
     if (!Number.isSafeInteger(tender.fundingTargetMinor) || tender.fundingTargetMinor < 0) {
       throw new TenderInvariantError(`Invalid funding target for ${tender.slug}`);
+    }
+    if (
+      !Number.isSafeInteger(tender.currentSignaledAmountMinor) ||
+      tender.currentSignaledAmountMinor < 0 ||
+      !Number.isSafeInteger(tender.currentSettledAmountMinor) ||
+      tender.currentSettledAmountMinor < 0 ||
+      tender.currentSettledAmountMinor > tender.currentSignaledAmountMinor
+    ) {
+      throw new TenderInvariantError(`Invalid capital allocation totals for ${tender.slug}`);
+    }
+    if (tender.projectedAnnualYieldMinor !== null &&
+      (!Number.isSafeInteger(tender.projectedAnnualYieldMinor) || tender.projectedAnnualYieldMinor < 0)) {
+      throw new TenderInvariantError(`Invalid projected annual yield for ${tender.slug}`);
+    }
+    if (tender.localSpendPercentage !== null &&
+      (!Number.isFinite(tender.localSpendPercentage) || tender.localSpendPercentage < 0 || tender.localSpendPercentage > 100)) {
+      throw new TenderInvariantError(`Invalid local capital retention percentage for ${tender.slug}`);
+    }
+    if (tender.crewWageAllocationMinor !== null) {
+      const allocation = tender.crewWageAllocationMinor;
+      const total = allocation.anchor + allocation.builder + allocation.apprentice;
+      if (
+        !Number.isSafeInteger(allocation.anchor) || allocation.anchor < 0 ||
+        !Number.isSafeInteger(allocation.builder) || allocation.builder < 0 ||
+        !Number.isSafeInteger(allocation.apprentice) || allocation.apprentice < 0 ||
+        !Number.isSafeInteger(total) || total > tender.assetBuildCostMinor
+      ) {
+        throw new TenderInvariantError(`Invalid crew wage allocation for ${tender.slug}`);
+      }
+    }
+    if ((tender.projectedAnnualYieldMinor === null) !== (tender.economicModelNote === null)) {
+      throw new TenderInvariantError(`Projected annual yield requires a model note for ${tender.slug}`);
     }
     if (blueprintIds.has(tender.blueprint.id)) {
       throw new TenderInvariantError(`Duplicate Blueprint id: ${tender.blueprint.id}`);
@@ -170,8 +223,8 @@ export function validateCatalog(catalog: TenderCatalog): void {
       localLineIds.add(line.id);
       return sum + lineTotal(line);
     }, 0);
-    if (total !== tender.localBomMinor) {
-      throw new TenderInvariantError(`Blueprint total does not match local quote for ${tender.slug}`);
+    if (total !== tender.assetBuildCostMinor) {
+      throw new TenderInvariantError(`Blueprint total does not match asset build cost for ${tender.slug}`);
     }
     for (const role of ['anchor', 'builder', 'apprentice'] as const) {
       if (tender.crew.filter(member => member.role === role).length !== 1) {
@@ -229,7 +282,7 @@ export function validateCatalog(catalog: TenderCatalog): void {
       record.currency !== tender.currency ||
       record.blueprintId !== tender.blueprint.id ||
       record.blueprintHash !== tender.blueprint.hash ||
-      record.importSavingsMinor !== tender.importQuoteMinor - tender.localBomMinor ||
+      record.assetBuildCostMinor !== tender.assetBuildCostMinor ||
       record.anchorSignOff.crewMemberId !== tender.crew.find(member => member.role === 'anchor')?.id ||
       record.anchorSignOff.blueprintId !== tender.blueprint.id ||
       record.anchorSignOff.blueprintHash !== tender.blueprint.hash
@@ -245,6 +298,11 @@ export function fundedPercent(tender: Tender): number {
   return Math.min(100, Math.floor((allocated / tender.fundingTargetMinor) * 100));
 }
 
+export function capitalEfficiencyPercent(tender: Pick<Tender, 'assetBuildCostMinor' | 'projectedAnnualYieldMinor'>): number | null {
+  if (tender.projectedAnnualYieldMinor === null || tender.assetBuildCostMinor <= 0) return null;
+  return Math.round((tender.projectedAnnualYieldMinor / tender.assetBuildCostMinor) * 1000) / 10;
+}
+
 export function transitionTender(
   tender: Tender,
   nextStatus: TenderStatus,
@@ -255,7 +313,9 @@ export function transitionTender(
   if (!actor) throw new TenderInvariantError('Only assigned crew may advance an Assembly.');
 
   const allowed: Partial<Record<TenderStatus, TenderStatus>> = {
-    open: 'materials',
+    open: tender.currentSettledAmountMinor >= tender.fundingTargetMinor && tender.fundingTargetMinor > 0
+      ? 'materials'
+      : undefined,
     materials: 'fabrication',
     fabrication: 'anchor_signed',
     anchor_signed: 'deployed',
@@ -299,7 +359,7 @@ export function transitionTender(
         id: `roll:${tender.id}`,
         tenderId: tender.id,
         assetName: tender.assetName,
-        importSavingsMinor: tender.importQuoteMinor - tender.localBomMinor,
+        assetBuildCostMinor: tender.assetBuildCostMinor,
         currency: tender.currency,
         crew: tender.crew.map(member => ({ ...member })),
         blueprintLines: tender.blueprint.lines.map(line => ({ ...line })),

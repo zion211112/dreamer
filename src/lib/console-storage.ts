@@ -5,8 +5,11 @@ export interface SchoolTenderDraft {
   id: string;
   assetName: string;
   need: string;
-  importQuote: string;
-  localQuote: string;
+  assetBuildCost: string;
+  projectedAnnualYield: string;
+  localSpendPercentage: string;
+  crewWageAllocation: { anchor: string; builder: string; apprentice: string };
+  economicModelNote: string;
   blueprintLines: SchoolTenderBOMLineDraft[];
   createdAt: string;
 }
@@ -67,8 +70,16 @@ export async function loadConsoleSnapshot(): Promise<ConsoleSnapshot> {
           ...initialConsoleSnapshot,
           ...snapshot,
           tenderDrafts: (snapshot.tenderDrafts ?? []).map(draft => ({
-            ...draft,
+            id: draft.id,
+            assetName: draft.assetName,
+            need: draft.need,
+            assetBuildCost: draft.assetBuildCost ?? '',
+            projectedAnnualYield: draft.projectedAnnualYield ?? '',
+            localSpendPercentage: draft.localSpendPercentage ?? '',
+            crewWageAllocation: draft.crewWageAllocation ?? { anchor: '', builder: '', apprentice: '' },
+            economicModelNote: draft.economicModelNote ?? '',
             blueprintLines: Array.isArray(draft.blueprintLines) ? draft.blueprintLines : [],
+            createdAt: draft.createdAt,
           })),
         });
       };

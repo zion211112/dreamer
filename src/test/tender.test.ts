@@ -1,14 +1,37 @@
 import { tenders } from '@/lib/tender-data';
-import { TenderInvariantError, transitionTender, validateCatalog } from '@/lib/tender';
+import { capitalAllocationState, TenderInvariantError, transitionTender, validateCatalog } from '@/lib/tender';
 
 describe('Tender invariants', () => {
+  it('distinguishes intent from verified settlement in the capital allocation state', () => {
+    const sample = tenders[0];
+    expect(capitalAllocationState(sample)).toBe('unfunded');
+    expect(capitalAllocationState({
+      ...sample,
+      currentSignaledAmountMinor: 1,
+    })).toBe('soft_committed');
+    expect(capitalAllocationState({
+      ...sample,
+      currentSignaledAmountMinor: sample.fundingTargetMinor,
+    })).toBe('awaiting_settlement');
+    expect(capitalAllocationState({
+      ...sample,
+      currentSignaledAmountMinor: sample.fundingTargetMinor,
+      currentSettledAmountMinor: 1,
+    })).toBe('partially_settled');
+    expect(capitalAllocationState({
+      ...sample,
+      currentSignaledAmountMinor: sample.fundingTargetMinor,
+      currentSettledAmountMinor: sample.fundingTargetMinor,
+    })).toBe('fully_capitalized');
+  });
+
   it('rejects duplicate identifiers and mismatched BOM totals', () => {
     const sample = tenders[0];
     expect(() => validateCatalog({ tenders: [sample, sample], roll: [] })).toThrow('Duplicate Tender id');
     expect(() => validateCatalog({
-      tenders: [{ ...sample, localBomMinor: sample.localBomMinor + 1 }],
+      tenders: [{ ...sample, assetBuildCostMinor: sample.assetBuildCostMinor + 1 }],
       roll: [],
-    })).toThrow('Blueprint total does not match local quote');
+    })).toThrow('Blueprint total does not match asset build cost');
   });
 
   it('does not allow deployment without the assigned Anchor sign-off', () => {
@@ -35,7 +58,7 @@ describe('Tender invariants', () => {
     expect(deployment.tender.status).toBe('deployed');
     expect(deployment.rollRecord).toMatchObject({
       tenderId: build.id,
-      importSavingsMinor: build.importQuoteMinor - build.localBomMinor,
+      assetBuildCostMinor: build.assetBuildCostMinor,
       blueprintLines: build.blueprint.lines,
       blueprintId: build.blueprint.id,
       blueprintHash: build.blueprint.hash,

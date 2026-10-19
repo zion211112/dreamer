@@ -17,7 +17,7 @@ describe('school Tender Blueprint validation', () => {
     expect(parseKesMinorUnits('Infinity')).toBeUndefined();
   });
 
-  it('requires itemized quantities and costs to total exactly to the local quote', () => {
+  it('requires itemized quantities and costs to total exactly to the asset build cost', () => {
     expect(compileSchoolTenderBOM([line(), line({
       id: 'line-2',
       item: 'Fasteners',

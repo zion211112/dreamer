@@ -17,11 +17,13 @@ client-selected role.
 - The School Console's lesson, assessment and other school records stay in
   browser IndexedDB. Moving between Console and Workspace never syncs those
   records or describes local storage as encrypted or multi-user.
-- Funding intent remains contact-only. There is no authenticated Funder
-  entitlement, escrow, payment, yield or deposit action in the current model.
-- No SBTs, token balances, chat, CAD uploads or shared Demand inbox are
-  implied by the cockpit. A capability that lacks a real persistence and
-  authorization path is an explicitly labeled boundary, not a demo record.
+- Authenticated members can record non-binding Capital Intent Signals.
+  Signals are not funds, escrow, payment, yield rights or deposits; authorized
+  school issuers verify offline settlement before Assembly.
+- The Roll and Capability Badge present attributable proof of completed
+  physical work. They are not transferable assets or claims to yield. A
+  capability without a real persistence and authorization path remains an
+  explicit boundary, not a demo record.
 
 ## Context model
 
@@ -36,9 +38,9 @@ The server returns a small catalog of contexts for the signed-in account:
 - **School Console · Local Device** is a product entry, not a shared role. It
   is always shown as a separate local tool and is never presented as a
   synchronized organization workspace.
-- **Funder** is not an available role context until the data model binds a
-  funder identity to an account. The existing public funding-intent flow
-  remains contact-only.
+- **Funder** remains an action context only where an authenticated identity
+  and recorded Capital Intent are available. It does not imply a payment
+  integration, escrow balance, or yield entitlement.
 
 The active context can be selected in a URL parameter for navigation. The
 server resolves that value only against the current account's eligible
@@ -76,19 +78,19 @@ selection are distinct operations.
 ## Console-to-network bridge
 
 The Console remains local. The cockpit may link into its existing school
-Tender drafting/publishing path, which already requires import/local quotes,
-an itemized Blueprint and assigned crew. It must not imply that an arbitrary
+Tender drafting/publishing path, which requires the asset economics, an
+itemized Blueprint and assigned crew. It must not imply that an arbitrary
 local deficit is already a shared Demand or that student data is sent. A
 future shared Demand inbox needs its own persistence, membership, privacy,
 moderation and escalation contract.
 
 ## Explicitly deferred
 
-This release does not add new roles/invites, funder-account linkage, shared
-Demand persistence, Tender bidding, escrow, payment, yield, token/SBT
-issuance, or Assembly chat/uploads. Where a requested stage has no current
-implementation, show a clear empty or read-only state and link only to an
-existing safe workflow.
+This release does not add new roles/invites, shared Demand persistence,
+Tender bidding, escrow, payment processing, yield-right issuance,
+contribution-weighted governance, or Assembly chat/uploads. Where a requested
+stage has no current implementation, show a clear empty or read-only state
+and link only to an existing safe workflow.
 
 ## Validation
 

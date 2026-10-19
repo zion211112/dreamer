@@ -73,8 +73,11 @@ export function SchoolConsole({ header }: { header: ReactNode }) {
   const [feeAmount, setFeeAmount] = useState('');
   const [assetName, setAssetName] = useState('');
   const [tenderNeed, setTenderNeed] = useState('');
-  const [importQuote, setImportQuote] = useState('');
-  const [localQuote, setLocalQuote] = useState('');
+  const [assetBuildCost, setAssetBuildCost] = useState('');
+  const [projectedAnnualYield, setProjectedAnnualYield] = useState('');
+  const [localSpendPercentage, setLocalSpendPercentage] = useState('');
+  const [crewWageAllocation, setCrewWageAllocation] = useState({ anchor: '0', builder: '0', apprentice: '0' });
+  const [economicModelNote, setEconomicModelNote] = useState('');
   const [blueprintLines, setBlueprintLines] = useState<SchoolTenderBOMLineDraft[]>([emptyBOMLine]);
   const [commsRecipient, setCommsRecipient] = useState('');
   const [commsText, setCommsText] = useState('');
@@ -163,15 +166,33 @@ export function SchoolConsole({ header }: { header: ReactNode }) {
 
   function createTenderDraft(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const importAmountMinor = parseKesMinorUnits(importQuote);
-    const localAmountMinor = parseKesMinorUnits(localQuote);
-    if (!assetName.trim() || !tenderNeed.trim() || importAmountMinor === undefined || localAmountMinor === undefined || importAmountMinor <= localAmountMinor || localAmountMinor <= 0) {
-      setMessage('Enter a need and valid KES quotes; the import quote must be higher than the positive local quote.');
+    const buildCostMinor = parseKesMinorUnits(assetBuildCost);
+    const yieldMinor = projectedAnnualYield.trim() ? parseKesMinorUnits(projectedAnnualYield) : undefined;
+    const wageMinor = {
+      anchor: parseKesMinorUnits(crewWageAllocation.anchor),
+      builder: parseKesMinorUnits(crewWageAllocation.builder),
+      apprentice: parseKesMinorUnits(crewWageAllocation.apprentice),
+    };
+    const localSpend = Number(localSpendPercentage);
+    if (
+      !assetName.trim() ||
+      !tenderNeed.trim() ||
+      buildCostMinor === undefined ||
+      buildCostMinor <= 0 ||
+      !Number.isFinite(localSpend) ||
+      localSpend < 0 ||
+      localSpend > 100 ||
+      Object.values(wageMinor).some(value => value === undefined) ||
+      Object.values(wageMinor).reduce<number>((sum, value) => sum + (value ?? 0), 0) > buildCostMinor ||
+      (projectedAnnualYield.trim() !== '' && yieldMinor === undefined) ||
+      (yieldMinor !== undefined && !economicModelNote.trim())
+    ) {
+      setMessage('Enter the asset cost, a 0–100% local retention estimate, crew compensation within the build cost, and a model note if you add projected yield.');
       return;
     }
     let verifiedBlueprintLines: SchoolTenderBOMLineDraft[];
     try {
-      compileSchoolTenderBOM(blueprintLines, localAmountMinor);
+      compileSchoolTenderBOM(blueprintLines, buildCostMinor);
       verifiedBlueprintLines = blueprintLines.map(line => ({ ...line }));
     } catch (error) {
       setMessage(errorMessage(error));
@@ -181,16 +202,26 @@ export function SchoolConsole({ header }: { header: ReactNode }) {
       id: crypto.randomUUID(),
       assetName: assetName.trim(),
       need: tenderNeed.trim(),
-      importQuote: (importAmountMinor / 100).toFixed(2),
-      localQuote: (localAmountMinor / 100).toFixed(2),
+      assetBuildCost: (buildCostMinor / 100).toFixed(2),
+      projectedAnnualYield: yieldMinor === undefined ? '' : (yieldMinor / 100).toFixed(2),
+      localSpendPercentage: localSpend.toFixed(2),
+      crewWageAllocation: {
+        anchor: ((wageMinor.anchor ?? 0) / 100).toFixed(2),
+        builder: ((wageMinor.builder ?? 0) / 100).toFixed(2),
+        apprentice: ((wageMinor.apprentice ?? 0) / 100).toFixed(2),
+      },
+      economicModelNote: economicModelNote.trim(),
       blueprintLines: verifiedBlueprintLines,
       createdAt: new Date().toISOString(),
     };
     void persist({ ...snapshot, tenderDrafts: [draft, ...snapshot.tenderDrafts] }, 'Tender draft saved on this device only. It is not published or shared.');
     setAssetName('');
     setTenderNeed('');
-    setImportQuote('');
-    setLocalQuote('');
+    setAssetBuildCost('');
+    setProjectedAnnualYield('');
+    setLocalSpendPercentage('');
+    setCrewWageAllocation({ anchor: '0', builder: '0', apprentice: '0' });
+    setEconomicModelNote('');
     setBlueprintLines([{ ...emptyBOMLine }]);
   }
 
@@ -409,14 +440,23 @@ export function SchoolConsole({ header }: { header: ReactNode }) {
           </div>}
 
           {selected === 'Issue Tender' && <div className="tool-content" id="issue-tender">
-            <p className="tool-lede">Turn a school need into a public Tender draft. Itemized Blueprint lines must total exactly to the local quote. No roster, marks or student data are attached.</p>
+            <p className="tool-lede">Compute an infrastructure deficit and prepare its asset profile. Itemized Blueprint lines must total exactly to the build cost. Student records never attach to a Tender.</p>
             <form className="issue-form" onSubmit={createTenderDraft}>
               <label>What needs building?<input onChange={event => setAssetName(event.target.value)} placeholder="e.g. Repairable classroom desks" value={assetName} /></label>
               <label>Why is this needed?<textarea onChange={event => setTenderNeed(event.target.value)} placeholder="Describe the asset and who it serves, without including student details." value={tenderNeed} /></label>
-              <div className="quote-inputs"><label>Import quote (KES)<input min="0.01" onChange={event => setImportQuote(event.target.value)} placeholder="0" step="0.01" type="number" value={importQuote} /></label><label>Proposed local quote (KES)<input min="0.01" onChange={event => setLocalQuote(event.target.value)} placeholder="0" step="0.01" type="number" value={localQuote} /></label></div>
+              <div className="quote-inputs"><label>Asset build cost (KES)<input min="0.01" onChange={event => setAssetBuildCost(event.target.value)} placeholder="0" required step="0.01" type="number" value={assetBuildCost} /></label><label>Projected annual yield (KES, optional)<input min="0" onChange={event => setProjectedAnnualYield(event.target.value)} placeholder="Leave blank if not modeled" step="0.01" type="number" value={projectedAnnualYield} /></label></div>
+              <label>Local capital retention (%)<input max="100" min="0" onChange={event => setLocalSpendPercentage(event.target.value)} placeholder="0–100" required step="0.01" type="number" value={localSpendPercentage} /></label>
+              <fieldset className="bom-editor crew-compensation-editor">
+                <legend>Proposed crew compensation / KES</legend>
+                <div className="quote-inputs">
+                  {(['anchor', 'builder', 'apprentice'] as const).map(role => <label key={role}>{role}<input min="0" onChange={event => setCrewWageAllocation(previous => ({ ...previous, [role]: event.target.value }))} required step="0.01" type="number" value={crewWageAllocation[role]} /></label>)}
+                </div>
+                <p>Allocation totals cannot exceed the asset build cost. These are proposed figures, not payments made.</p>
+              </fieldset>
+              {projectedAnnualYield && <label>Yield model basis and assumptions<textarea onChange={event => setEconomicModelNote(event.target.value)} placeholder="State the evidence and operating assumptions behind the projection." required value={economicModelNote} /></label>}
               <fieldset className="bom-editor">
                 <legend>Blueprint / bill of materials</legend>
-                <p>List every build item, quantity and unit cost. The exact line total must equal the local quote.</p>
+                <p>List every build item, quantity and unit cost. The exact line total must equal the asset build cost.</p>
                 {blueprintLines.map((line, index) => <div className="bom-draft-row" key={line.id}>
                   <label>Item {index + 1}<input maxLength={240} onChange={event => updateBlueprintLine(line.id, 'item', event.target.value)} placeholder="e.g. Treated timber" required value={line.item} /></label>
                   <label>Quantity<input max="999999999.999" min="0.001" onChange={event => updateBlueprintLine(line.id, 'quantity', event.target.value)} required step="0.001" type="number" value={line.quantity} /></label>
@@ -428,7 +468,7 @@ export function SchoolConsole({ header }: { header: ReactNode }) {
               </fieldset>
               <Button className="button button-primary" type="submit">Save a local draft <Check size={15} /></Button>
             </form>
-            {snapshot.tenderDrafts.length > 0 && <div className="draft-list"><p className="eyebrow">THIS DEVICE / UNPUBLISHED</p>{snapshot.tenderDrafts.map(draft => <article key={draft.id}><div><strong>{draft.assetName}</strong><p>{draft.need}</p><small>{draft.blueprintLines.length} itemized Blueprint lines</small></div><span>KES {Number(draft.localQuote).toLocaleString('en-KE')} local <small>Draft only</small></span>{draft.blueprintLines.length > 0 && <Button className="button button-outline button-small" disabled={loadingCrew || publishing} onClick={() => void preparePublication(draft)} type="button">Review crew <ArrowUpRight size={13} /></Button>}<Button aria-label={`Discard ${draft.assetName} draft`} className="button button-outline button-small" disabled={publishing} onClick={() => discardTenderDraft(draft.id)} type="button">Discard</Button></article>)}</div>}
+            {snapshot.tenderDrafts.length > 0 && <div className="draft-list"><p className="eyebrow">THIS DEVICE / UNPUBLISHED</p>{snapshot.tenderDrafts.map(draft => <article key={draft.id}><div><strong>{draft.assetName}</strong><p>{draft.need}</p><small>{draft.blueprintLines.length} itemized Blueprint lines</small></div><span>KES {Number(draft.assetBuildCost).toLocaleString('en-KE')} build <small>Draft only</small></span>{draft.blueprintLines.length > 0 && <Button className="button button-outline button-small" disabled={loadingCrew || publishing} onClick={() => void preparePublication(draft)} type="button">Review crew <ArrowUpRight size={13} /></Button>}<Button aria-label={`Discard ${draft.assetName} draft`} className="button button-outline button-small" disabled={publishing} onClick={() => discardTenderDraft(draft.id)} type="button">Discard</Button></article>)}</div>}
             {publishDraftId && snapshot.tenderDrafts.find(draft => draft.id === publishDraftId) && <div className="crew-publish-panel">
               <p className="eyebrow">REVIEW THE ASSIGNED CREW</p>
               <p>All three people must be named members of this school account. Public names appear only when each member has chosen to share their name.</p>
@@ -441,7 +481,7 @@ export function SchoolConsole({ header }: { header: ReactNode }) {
                   ['builder', 'Builder'],
                   ['apprentice', 'Apprentice / Youth'],
                 ] as const).map(([roleName, label]) => <label key={roleName}>{label}<select onChange={event => setCrewAssignments(previous => ({ ...previous, [roleName]: event.target.value }))} value={crewAssignments[roleName]}><option value="">Choose a school member</option>{crewCandidates.map(candidate => <option key={candidate.userId} value={candidate.userId}>{candidate.displayName}</option>)}</select></label>)}
-                <p className="fine-print">Publication opens the Tender only when every BOM line totals exactly to the local quote, the Blueprint and quote match, and one distinct school member is assigned to each crew role.</p>
+                <p className="fine-print">Publication opens the Tender only when the Blueprint totals exactly to the build cost and one distinct, authorized school member is assigned to each crew role. Yield remains a projection, not realized income.</p>
                 <Button className="button button-primary" disabled={publishing || new Set(Object.values(crewAssignments)).size !== 3 || Object.values(crewAssignments).some(value => !value)} onClick={() => {
                   const draft = snapshot.tenderDrafts.find(item => item.id === publishDraftId);
                   if (draft) void submitPublication(draft);

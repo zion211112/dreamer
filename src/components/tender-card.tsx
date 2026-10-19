@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowUpRight, Compass, GraduationCap, Leaf, Radio, Sun } from 'lucide-react';
 import { categoryLabels, formatMoney } from '@/lib/tender-data';
+import { capitalAllocationState, capitalEfficiencyPercent } from '@/lib/tender';
 import type { Tender } from '@/lib/tender';
 
 const icons = {
@@ -14,17 +15,18 @@ const icons = {
 
 export function TenderCard({ tender }: { tender: Tender }) {
   const Icon = icons[tender.category];
-  const funded = tender.fundingTargetMinor > 0
-    ? Math.min(100, Math.floor(tender.funders.reduce((sum, funder) => sum + funder.amountMinor, 0) / tender.fundingTargetMinor * 100))
+  const signaledPercent = tender.fundingTargetMinor > 0
+    ? Math.min(100, Math.floor(tender.currentSignaledAmountMinor / tender.fundingTargetMinor * 100))
     : 0;
-  const signalDescription = tender.funders.length === 0
-    ? 'No funding signal recorded · no funds collected'
-    : tender.funders.every(funder => funder.basis === 'illustrative')
-      ? 'Illustrative interest only · no funds collected'
-      : tender.funders.some(funder => funder.basis === 'illustrative')
-        ? 'Includes illustrative interest · no funds collected'
-        : 'Verified signals only · no payment processed';
-  const savings = tender.importQuoteMinor - tender.localBomMinor;
+  const efficiency = capitalEfficiencyPercent(tender);
+  const allocationState = capitalAllocationState(tender);
+  const allocationNote = {
+    unfunded: 'No capital intent recorded',
+    soft_committed: 'Non-binding intent · not settled',
+    awaiting_settlement: 'Target signaled · awaiting offline settlement verification',
+    partially_settled: 'Partially settled offline · balance outstanding',
+    fully_capitalized: 'Fully capitalized · verified offline',
+  }[allocationState];
   return (
     <article className="tender-card">
       <div className="tender-card-top">
@@ -35,17 +37,17 @@ export function TenderCard({ tender }: { tender: Tender }) {
       <h3><Link href={`/tenders/${tender.slug}`}>{tender.assetName}</Link></h3>
       <p className="tender-summary">{tender.summary}</p>
       <p className="tender-location">{tender.issuer} <span>·</span> {tender.location}</p>
-      <div className="quote-pair">
-        <div><span>Import quote</span><strong className="import-quote">{formatMoney(tender.importQuoteMinor, tender.currency)}</strong></div>
-        <div><span>Local build</span><strong>{formatMoney(tender.localBomMinor, tender.currency)}</strong></div>
-        <div><span>Potential saved</span><strong className="saved-value">{formatMoney(savings, tender.currency)}</strong></div>
+      <div className="quote-pair asset-economics-compact">
+        <div><span>Asset build cost</span><strong>{formatMoney(tender.assetBuildCostMinor, tender.currency)}</strong></div>
+        <div><span>Projected annual yield</span><strong>{tender.projectedAnnualYieldMinor === null ? 'Not modeled' : formatMoney(tender.projectedAnnualYieldMinor, tender.currency)}</strong></div>
+        <div><span>Capital efficiency</span><strong className="saved-value">{efficiency === null ? 'Evidence pending' : `${efficiency}% / year`}</strong></div>
       </div>
-      <div className="funding-line">
-        <div className="funding-label"><span>Funding signal</span><strong>{funded}%</strong></div>
-        <div aria-label={`${funded}% of target represented by public funding signals`} className="funding-track" role="img">
-          <span style={{ width: `${funded}%` }} />
+      <div className="funding-line capital-signal-line">
+        <div className="funding-label"><span>Capital intent · non-binding</span><strong>{signaledPercent}% signaled</strong></div>
+        <div aria-label={`${signaledPercent}% of the capital target signaled; no funds are held`} className="funding-track" role="img">
+          <span style={{ width: `${signaledPercent}%` }} />
         </div>
-        <small>{signalDescription}</small>
+        <small>{tender.isIllustrative ? 'Scenario only · no live capital signal' : allocationNote}</small>
       </div>
       <Link className="card-link" href={`/tenders/${tender.slug}`}>
         Read the Tender <ArrowUpRight aria-hidden="true" size={15} />
