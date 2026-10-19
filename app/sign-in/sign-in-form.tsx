@@ -18,7 +18,7 @@ export function SignInForm({ next, mode = 'sign-in' }: { next: string; mode?: 's
       if (result.confirmationRequired) setConfirmationRequired(true);
       if (result.authenticated) router.push(next);
     })} className="sign-in-form">
-      <label>Login<input autoComplete="username" name="email" required type="text" /></label>
+      <label>Login<input autoComplete="username" name="email" required type="email" /></label>
       <label>Password<input autoComplete={mode === 'sign-up' ? 'new-password' : 'current-password'} maxLength={128} minLength={mode === 'sign-up' ? 12 : 1} name="password" required type="password" /></label>
       <input name="intent" type="hidden" value={mode} />
       <input name="next" type="hidden" value={next} />

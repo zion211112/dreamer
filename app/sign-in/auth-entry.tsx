@@ -21,11 +21,13 @@ export function AuthEntry({
   configured,
   next,
   callbackError,
+  configStatus = 'ready',
   mode = 'sign-in',
 }: {
   configured: boolean;
   next: string;
   callbackError?: string;
+  configStatus?: 'ready' | 'missing' | 'placeholder' | 'invalid';
   mode?: 'sign-in' | 'sign-up';
 }) {
   const [error, setError] = useState('');
@@ -61,14 +63,23 @@ export function AuthEntry({
         <button className="auth-provider-button" disabled={!configured || pending} onClick={() => beginOAuth('github')} type="button">
           <Github aria-hidden="true" size={17} /> Continue with GitHub
         </button>
-        {!configured && <p className="auth-provider-note" role="status">OAuth and email/password authentication need Supabase URL and public key settings on this deployment.</p>}
+        {!configured && (
+          <div className="setup-notice" role="status">
+            <strong>Account access is not configured.</strong>
+            <p>{configStatus === 'placeholder'
+              ? 'The Supabase public key is still a placeholder value. Set NEXT_PUBLIC_SUPABASE_ANON_KEY to the real anon (public) key from Project Settings → API.'
+              : configStatus === 'invalid'
+                ? 'The Supabase URL is not a valid project URL. It must look like https://<20-character-project-ref>.supabase.co.'
+                : 'Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY on this deployment, then restart the server.'}</p>
+          </div>
+        )}
         {error && <p className="inline-error" role="alert">{error}</p>}
       </div>
       <details className="auth-email-option">
         <summary>Use email and password <span aria-hidden="true">+</span></summary>
         {configured
           ? <SignInForm mode={mode} next={next} />
-          : <div className="setup-notice" role="status"><strong>Authentication is not configured.</strong><p>Set Supabase URL and public key settings before enabling account access.</p></div>}
+          : <p className="auth-provider-note" role="status">Email and password sign-in stays disabled until the Supabase settings above are supplied.</p>}
       </details>
       <p className="auth-account-switch">
         {mode === 'sign-up'

@@ -18,6 +18,12 @@ export interface WorkspaceContext {
   defaultContextKey: string;
 }
 
+// Supabase reports "Auth session missing!" when a visitor simply has no
+// session. That is the normal anonymous case, not a verification failure.
+function isMissingSessionError(error: { message: string }): boolean {
+  return error.message.toLowerCase().includes('auth session missing');
+}
+
 function parseWorkspaceContexts(value: unknown): WorkspaceContextOption[] {
   if (!Array.isArray(value)) throw new Error('Workspace contexts returned an invalid response.');
   const contexts: WorkspaceContextOption[] = [];
@@ -91,7 +97,9 @@ export async function getWorkspaceContext(): Promise<WorkspaceContext> {
 
   const supabase = await createSupabaseServerClient();
   const { data: auth, error: authError } = await supabase.auth.getUser();
-  if (authError) throw new Error(`Workspace identity could not be verified: ${authError.message}`);
+  if (authError && !isMissingSessionError(authError)) {
+    throw new Error(`Workspace identity could not be verified: ${authError.message}`);
+  }
   if (!auth.user) {
     return {
       configured: true,

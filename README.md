@@ -17,7 +17,7 @@ Anchor signs the active Blueprint.
 - `/workspace` — the context-aware Demand → Tender → Assembly → Roll cockpit.
 - `/commons` — public activity with a separate searchable `/commons/library`,
   contribution flow and moderator desk.
-- `/sign-up` and `/sign-in` — basic account creation and email-link sign-in.
+- `/sign-up` and `/sign-in` — basic account creation and email/password sign-in.
 
 The checked-in market examples are explicitly illustrative. Without Supabase
 configuration, the public market uses those local examples and the Roll is
@@ -43,28 +43,59 @@ npm run build
 ## Supabase setup
 
 1. Create a Supabase project and copy `.env.example` to `.env.local`.
-2. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
-   Set `NEXT_PUBLIC_SITE_URL` to the exact HTTPS origin used for deployment.
-   Never expose a service-role key to the application.
-3. Apply `supabase/migrations/20261019000000_tender_engine.sql`,
-   `supabase/migrations/20261019010000_workspace_commons.sql`, then
-   `supabase/migrations/20261019020000_workspace_contexts.sql` to the
-   project's Postgres database.
-4. Enable email-link authentication and allow the deployed
-   `/auth/callback` URL in Supabase Auth redirect settings.
-5. Provision each school's `organizations` row and its
+2. Set `NEXT_PUBLIC_SUPABASE_URL` — Project Settings → API → Project URL.
+   It looks like `https://<20-character-project-ref>.supabase.co`. The project
+   ref is exactly 20 characters; a longer string is not a valid ref and its
+   hostname will not resolve.
+3. Set `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Project Settings → API → the `anon`
+   "public" key. Never use the `service_role` key here; it must never reach
+   the browser bundle or the app.
+4. Set `NEXT_PUBLIC_SITE_URL` to the exact HTTPS origin used for deployment.
+   In production this must be `https://` or the app refuses to build OAuth
+   redirect URLs.
+
+   A placeholder value (anything containing `placeholder`, `replace-with`,
+   etc.) is detected at runtime and reported on `/sign-in` instead of being
+   silently treated as configured.
+5. Apply the migrations in order in the Supabase SQL Editor:
+   `20261019000000_tender_engine.sql`,
+   `20261019010000_workspace_commons.sql`,
+   `20261019020000_workspace_contexts.sql`,
+   `20261019030000_capitalized_tender_state.sql`,
+   `20261019040000_sovereign_asset_capital.sql`, then
+   `20261019050000_commons_opportunities_and_roll_badges.sql`.
+   Without these, `get_workspace_contexts()` does not exist and an
+   authenticated user sees an error instead of the workspace.
+6. In Authentication → URL Configuration, set the Site URL to the deployed
+   origin and allow the deployed `/auth/callback` URL, plus
+   `http://localhost:3000/auth/callback` for local development.
+7. In Authentication → Providers, enable Email. Decide whether to require
+   email confirmation:
+
+   - **Confirm email off** — the fastest path for a prototype. Accounts are
+     usable immediately after sign-up, and `auth/callback` can complete a
+     session without an inbox round-trip.
+   - **Confirm email on** — sign-up returns "check your email" and the user
+     must click the link before `signInWithPassword` will succeed.
+
+   The Google and GitHub buttons additionally require those providers to be
+   configured with OAuth client credentials pointing back at `/auth/callback`.
+8. Verify sign-in: sign in at `/sign-in`, confirm the redirect to
+   `/workspace` shows the account email and a **Sign out** control, then use
+   **Sign out** and sign in again to confirm the round trip.
+9. Provision each school's `organizations` row and its
    `organization_memberships` using a trusted administrative workflow. Set
    member display names and `public_name_consent` only with the member's
    explicit consent. The app does not offer public school-account
    registration or privileged membership creation.
-6. For a school Tender to open, an authorized Principal/Tender issuer selects
+10. For a school Tender to open, an authorized Principal/Tender issuer selects
    three distinct active school members as Anchor, Builder and Apprentice.
    The local draft must include itemized Blueprint lines whose same-currency
    total exactly matches the proposed local quote. The server transaction
    creates the Tender and Blueprint, records only opt-in crew names publicly,
    verifies the totals and then opens it. Opt-out changes mask names in public
    Market and Roll views.
-7. Ensure each selected school member has an Auth identity. Crew assignments
+11. Ensure each selected school member has an Auth identity. Crew assignments
    are created atomically when the Principal publishes; an assigned person
    must sign in with that identity to open Assembly. The deployment-to-Roll
    transaction is enforced by a database function and row-level security.

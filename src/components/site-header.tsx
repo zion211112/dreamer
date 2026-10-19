@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
-import { ArrowUpRight, Orbit } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { WorkspaceSwitcher } from '@/components/workspace-switcher';
 import { getWorkspaceContext } from '@/lib/workspace-access';
+import { signOut } from '@/lib/supabase/sign-out';
 
 export async function SiteHeader({ frontDoor = false }: { frontDoor?: boolean }) {
   const context = await getWorkspaceContext();
@@ -39,7 +40,12 @@ export async function SiteHeader({ frontDoor = false }: { frontDoor?: boolean })
               <Link className="header-issue" href={signedIn ? '/workspace' : '/sign-in?next=%2Fworkspace'}>{signedIn ? 'Open studio' : 'Sign in to studio'} <ArrowUpRight aria-hidden="true" size={14} /></Link>
             </>
           : signedIn
-          ? <span className="header-account">{context.email ?? 'Signed in'}</span>
+          ? <>
+              <span className="header-account">{context.email ?? 'Signed in'}</span>
+              <form action={signOut}>
+                <button className="header-sign-in" type="submit">Sign out</button>
+              </form>
+            </>
           : <>
               <Link className="header-sign-in" href="/sign-in">Sign in</Link>
               <Link className="header-issue" href="/sign-in">Try studio <ArrowUpRight aria-hidden="true" size={14} /></Link>

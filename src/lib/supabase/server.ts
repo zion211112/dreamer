@@ -1,9 +1,13 @@
 import 'server-only';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { getSupabaseConfigurationStatus } from '@/lib/supabase/configuration';
+
+export { getSupabaseConfigurationStatus };
+export type { SupabaseConfigurationStatus } from '@/lib/supabase/configuration';
 
 export function hasSupabaseConfiguration(): boolean {
-  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  return getSupabaseConfigurationStatus() === 'ready';
 }
 
 export async function createSupabaseServerClient() {
@@ -11,6 +15,9 @@ export async function createSupabaseServerClient() {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) {
     throw new Error('Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.');
+  }
+  if (getSupabaseConfigurationStatus(url, key) !== 'ready') {
+    throw new Error('Supabase configuration is present but not usable. Check the project URL and public key.');
   }
   const cookieStore = await cookies();
   return createServerClient(url, key, {
