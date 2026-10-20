@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { authenticateWithPassword } from './actions';
+import { useRouter } from 'next/navigation';
+import { SignInForm } from './sign-in-form';
 
 export function AuthEntry({
   next,
