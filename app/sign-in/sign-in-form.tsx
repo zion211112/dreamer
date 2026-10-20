@@ -16,7 +16,7 @@ export function SignInForm({ next, mode = 'sign-in' }: { next: string; mode?: 's
       const result = await authenticateWithPassword(formData);
       if (result.error) setError(result.error);
       if (result.confirmationRequired) setConfirmationRequired(true);
-      if (result.authenticated) router.push(next);
+      if (result.authenticated) { onSuccess?.(); router.push(next); }
     })} className="sign-in-form">
       <label>Email<input autoComplete="username" name="email" required type="email" /></label>
       <label>Password<input autoComplete={mode === 'sign-up' ? 'new-password' : 'current-password'} name="password" required type="password" /></label>
