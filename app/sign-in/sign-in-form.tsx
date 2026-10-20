@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { authenticateWithPassword } from './actions';
 
-export function SignInForm({ next, mode = 'sign-in' }: { next: string; mode?: 'sign-in' | 'sign-up' }) {
+export function SignInForm({ next, mode = 'sign-in', onSuccess }: { next: string; mode?: 'sign-in' | 'sign-up'; onSuccess?: () => void; }) {
   const router = useRouter();
   const [error, setError] = useState('');
   const [confirmationRequired, setConfirmationRequired] = useState(false);
