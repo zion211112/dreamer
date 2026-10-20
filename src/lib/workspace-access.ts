@@ -1,5 +1,7 @@
 import 'server-only';
 import { createSupabaseServerClient, hasSupabaseConfiguration } from '@/lib/supabase/server';
+import { isLocalAuthEnabled } from '@/lib/auth-mode';
+import { getLocalIdentity, localWorkspaceContexts } from '@/lib/local-auth';
 import {
   getDefaultContextKey,
   getDefaultWorkspace,
@@ -11,6 +13,7 @@ import { isTenderStatus } from '@/lib/tender';
 export interface WorkspaceContext {
   configured: boolean;
   authenticated: boolean;
+  localMode: boolean;
   email: string | null;
   defaultWorkspace: WorkspaceKey;
   hasSchoolMembership: boolean;
@@ -83,10 +86,40 @@ function parseWorkspaceContexts(value: unknown): WorkspaceContextOption[] {
 }
 
 export async function getWorkspaceContext(): Promise<WorkspaceContext> {
+  if (isLocalAuthEnabled()) {
+    const configured = hasSupabaseConfiguration();
+    const identity = await getLocalIdentity();
+    if (!identity) {
+      return {
+        configured,
+        authenticated: false,
+        localMode: true,
+        email: null,
+        defaultWorkspace: 'apt',
+        hasSchoolMembership: false,
+        contexts: [],
+        defaultContextKey: 'network',
+      };
+    }
+    const contexts = localWorkspaceContexts();
+    const defaultWorkspace = getDefaultWorkspace([], undefined);
+    return {
+      configured,
+      authenticated: true,
+      localMode: true,
+      email: identity.email,
+      defaultWorkspace,
+      hasSchoolMembership: false,
+      contexts,
+      defaultContextKey: getDefaultContextKey(contexts, defaultWorkspace),
+    };
+  }
+
   if (!hasSupabaseConfiguration()) {
     return {
       configured: false,
       authenticated: false,
+      localMode: false,
       email: null,
       defaultWorkspace: 'apt',
       hasSchoolMembership: false,
@@ -104,6 +137,7 @@ export async function getWorkspaceContext(): Promise<WorkspaceContext> {
     return {
       configured: true,
       authenticated: false,
+      localMode: false,
       email: null,
       defaultWorkspace: 'apt',
       hasSchoolMembership: false,
@@ -136,6 +170,7 @@ export async function getWorkspaceContext(): Promise<WorkspaceContext> {
   return {
     configured: true,
     authenticated: true,
+    localMode: false,
     email: auth.user.email ?? null,
     defaultWorkspace,
     hasSchoolMembership,

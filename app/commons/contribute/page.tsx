@@ -5,6 +5,7 @@ import { CommonsActionForm, CommonsTextField } from '@/components/commons-forms'
 import { SiteHeader } from '@/components/site-header';
 import { submitCommonsPoll, submitCommonsPost, submitCommonsResource } from '../actions';
 import { getCommonsIdentityState, getCommonsLibrary } from '@/lib/commons';
+import { isLocalAuthEnabled } from '@/lib/auth-mode';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -15,8 +16,9 @@ export const metadata = {
 
 export default async function CommonsContributePage({ searchParams }: { searchParams: Promise<{ mode?: string }> }) {
   const { mode } = await searchParams;
+  const localMode = isLocalAuthEnabled();
   const [identity, library] = await Promise.all([getCommonsIdentityState(), getCommonsLibrary()]);
-  if (!identity.authenticated) redirect('/sign-in?next=%2Fcommons%2Fcontribute');
+  if (!localMode && !identity.authenticated) redirect('/sign-in?next=%2Fcommons%2Fcontribute');
 
   return (
     <main className="site-shell commons-shell">
@@ -27,21 +29,28 @@ export default async function CommonsContributePage({ searchParams }: { searchPa
         <h1>Leave a useful trace.</h1>
         <p>Posts, polls and resource links enter a private review queue. They become public only after a moderator approves them.</p>
       </section>
+      {localMode && (
+        <div className="commons-gate">
+          <CircleAlert aria-hidden="true" size={19} />
+          <div><strong>Commons is not connected to this deployment.</strong><p>Contributing needs a connected Supabase project. The local development identity opens the Studio but cannot publish to the shared Commons.</p></div>
+          <Link className="text-link" href="/commons">Return to Commons <ArrowLeft aria-hidden="true" size={14} /></Link>
+        </div>
+      )}
       {identity.error && <div className="commons-alert" role="alert">{identity.error}</div>}
-      {!identity.error && !identity.contributor && (
+      {!localMode && !identity.error && !identity.contributor && (
         <div className="commons-gate">
           <CircleAlert aria-hidden="true" size={19} />
           <div><strong>Contributor access is required.</strong><p>Return to Commons to request access. Sign-in alone does not grant contribution rights.</p></div>
           <Link className="text-link" href="/commons">Access status <ArrowLeft aria-hidden="true" size={14} /></Link>
         </div>
       )}
-      {!identity.error && identity.contributor && !identity.contributorRequestsOpen && (
+      {!localMode && !identity.error && identity.contributor && !identity.contributorRequestsOpen && (
         <div className="commons-gate">
           <CircleAlert aria-hidden="true" size={19} />
           <div><strong>Commons is read-only at this deployment.</strong><p>No active human moderator is available to review new submissions.</p></div>
         </div>
       )}
-      {!identity.error && identity.contributor && identity.contributorRequestsOpen && (
+      {!localMode && !identity.error && identity.contributor && identity.contributorRequestsOpen && (
         <>
           <div className="commons-review-notice"><BookOpen aria-hidden="true" size={16} /><p>Review is human-led. Submitting does not promise publication. No files are uploaded or hosted, and license metadata is not independently certified.</p></div>
           <section className="commons-compose-grid" aria-label="Contribution types">

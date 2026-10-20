@@ -1,5 +1,6 @@
 import 'server-only';
 import { createSupabaseServerClient, hasSupabaseConfiguration } from '@/lib/supabase/server';
+import { isLocalAuthEnabled } from '@/lib/auth-mode';
 
 export interface CommonsPost {
   id: string;
@@ -176,6 +177,9 @@ export async function getCommonsIdentityState(): Promise<CommonsIdentityState> {
     publicNameConsent: false,
     error: null,
   };
+  // A local development identity has no verified Commons membership, so the
+  // Commons stays read-only until a server-verified account is used.
+  if (isLocalAuthEnabled()) return { ...empty, configured: false };
   if (!empty.configured) return empty;
 
   const supabase = await createSupabaseServerClient();

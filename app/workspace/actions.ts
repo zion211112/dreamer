@@ -1,12 +1,17 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { localAuthActionBlock } from '@/lib/auth-mode';
 import { createSupabaseServerClient, hasSupabaseConfiguration } from '@/lib/supabase/server';
 import type { WorkspaceKey } from '@/lib/workspace';
 
 export async function saveWorkspaceDefault(value: string): Promise<{ error?: string; saved?: true }> {
   if (value !== 'apt' && value !== 'school') {
     return { error: 'Choose one of the available workspaces.' };
+  }
+  const localBlock = localAuthActionBlock();
+  if (localBlock) {
+    return { error: localBlock };
   }
   if (!hasSupabaseConfiguration()) {
     return { error: 'Workspace preferences are unavailable because sign-in is not configured.' };

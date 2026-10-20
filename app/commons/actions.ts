@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { localAuthActionBlock } from '@/lib/auth-mode';
 import { createSupabaseServerClient, hasSupabaseConfiguration } from '@/lib/supabase/server';
 import type { CommonsActionState } from '@/lib/commons-action-types';
 
@@ -19,6 +20,8 @@ function actionError(error: unknown): CommonsActionState {
 }
 
 async function signedInClient() {
+  const localBlock = localAuthActionBlock();
+  if (localBlock) throw new Error(localBlock);
   if (!hasSupabaseConfiguration()) throw new Error('Commons contributions are unavailable because Supabase is not configured.');
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.getUser();

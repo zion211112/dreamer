@@ -10,6 +10,7 @@ import {
   setCommonsContributorActive,
 } from '../actions';
 import { getCommonsIdentityState } from '@/lib/commons';
+import { isLocalAuthEnabled } from '@/lib/auth-mode';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 export const metadata = {
@@ -23,17 +24,20 @@ function formatDate(value: string): string {
 
 export default async function CommonsModerationPage({ searchParams }: { searchParams: Promise<{ mode?: string }> }) {
   const { mode } = await searchParams;
+  const localMode = isLocalAuthEnabled();
   const identity = await getCommonsIdentityState();
-  if (!identity.authenticated) redirect('/sign-in?next=%2Fcommons%2Fmoderation');
+  if (!localMode && !identity.authenticated) redirect('/sign-in?next=%2Fcommons%2Fmoderation');
 
-  if (identity.error || !identity.moderator) {
+  if (localMode || identity.error || !identity.moderator) {
     return (
       <main className="site-shell commons-shell">
         <SiteHeader />
         <section className="commons-detail">
           <p className="eyebrow">COMMONS / MODERATOR DESK</p>
           <h1>Restricted workspace.</h1>
-          <p>{identity.error ?? 'Moderator access is provisioned separately from account creation and contributor approval.'}</p>
+          <p>{localMode
+            ? 'Moderation needs a connected Supabase project. The local development identity cannot review or publish shared Commons records.'
+            : identity.error ?? 'Moderator access is provisioned separately from account creation and contributor approval.'}</p>
           <Link className="text-link" href="/commons">Return to Commons <ArrowLeft aria-hidden="true" size={14} /></Link>
         </section>
       </main>

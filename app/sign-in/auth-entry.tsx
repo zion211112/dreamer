@@ -1,19 +1,18 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { SignInForm } from './sign-in-form';
 
 export function AuthEntry({
   next,
   callbackError,
   mode = 'sign-in',
+  localMode = false,
 }: {
   next: string;
   callbackError?: string;
   mode?: 'sign-in' | 'sign-up';
+  localMode?: boolean;
 }) {
-  const router = useRouter();
-
   return (
     <section className="auth-entry">
       <div className="auth-entry-brand">
@@ -28,7 +27,7 @@ export function AuthEntry({
 
       <div className="auth-entry-actions">
         <div className="local-auth-card">
-          <SignInForm next={next} mode={mode} onSuccess={() => router.push(next)} />
+          <SignInForm localMode={localMode} next={next} mode={mode} />
         </div>
       </div>
 
@@ -38,6 +37,11 @@ export function AuthEntry({
           : <>New to the network? <a href={`/sign-up?next=${encodeURIComponent(next)}`}>Create a basic account</a></>}
       </p>
 
+      {localMode && (
+        <p className="auth-entry-boundary" role="note">
+          Local development identity. It opens the Studio for this browser only. It is not a verified account, it is not stored on a server, and it grants no school, crew or publishing permission.
+        </p>
+      )}
       <p className="auth-entry-boundary">Identity does not grant school, crew, or publishing permissions. Those are verified separately on the server.</p>
       <div className="auth-entry-foot"><span>DEMO PROTOTYPE</span><span>LOCAL DEV ONLY — NO REMOTE SYNCHRONIZATION</span></div>
     </section>

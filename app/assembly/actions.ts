@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { localAuthActionBlock } from '@/lib/auth-mode';
 import { createSupabaseServerClient, hasSupabaseConfiguration } from '@/lib/supabase/server';
 import type { TenderStatus } from '@/lib/tender';
 
@@ -13,6 +14,10 @@ export async function transitionAssembly(
 ): Promise<{ rollId?: string; error?: string }> {
   if (!uuidPattern.test(tenderId) || !transitionTargets.includes(nextStatus)) {
     return { error: 'Invalid Tender reference or Assembly transition.' };
+  }
+  const localBlock = localAuthActionBlock();
+  if (localBlock) {
+    return { error: localBlock };
   }
   if (!hasSupabaseConfiguration()) {
     return { error: 'Private Assembly is not configured for this deployment.' };

@@ -40,6 +40,44 @@ npm run lint
 npm run build
 ```
 
+## Local development identity (sign-in without Supabase)
+
+The prototype is still in development and has no connected backend, so sign-in
+runs on a **local development identity**:
+
+- `/sign-in` accepts any email and password. Nothing is sent to a server and no
+  account is created.
+- The session is a signed, `httpOnly` cookie held by the browser only. It
+  expires after seven days and is cleared by **Sign out**.
+- `/workspace` (the Network Studio) opens for that identity and shows the
+  checked-in demo Market and Roll records.
+- The identity is **not** a verified account. It grants no school, crew,
+  funder or publishing permission, and the Studio shows only the base network
+  context.
+- Every action that would write a shared record stays disabled: school Tender
+  publication, Capital Intent, Assembly transitions, Commons contributions and
+  workspace preferences all report that a connected Supabase project is
+  required.
+- While the local identity is enabled the app does not read from Supabase at
+  all, so the Studio never depends on a remote project being reachable or
+  migrated.
+
+Configuration:
+
+| Variable | Meaning |
+| --- | --- |
+| `DEV_AUTH_ENABLED` | `true` (default) runs the local identity. `false` hands sign-in back to Supabase Auth and re-enables the shared backend. |
+| `DEV_AUTH_SECRET` | Optional. Signs the local session cookie. Set a long random value on shared deployments. When it is unset a development fallback secret is used, so the local session is not a secret. |
+
+Set `DEV_AUTH_ENABLED=false` to switch the whole app back to Supabase: sign-in
+then uses `signInWithPassword`, workspace contexts are resolved from
+`get_workspace_contexts()`, and the database row-level security rules apply as
+they do now.
+
+> The local identity lets any visitor open the Studio. It is acceptable while
+> the deployment only shows demo records. Enable `DEV_AUTH_ENABLED=false`
+> before the app holds anything private.
+
 ## Supabase setup
 
 1. Create a Supabase project and copy `.env.example` to `.env.local`.

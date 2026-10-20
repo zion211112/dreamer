@@ -7,6 +7,11 @@ export async function refreshSupabaseSession(request: NextRequest) {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) return NextResponse.next({ request });
   if (getSupabaseConfigurationStatus(url, key) !== 'ready') return NextResponse.next({ request });
+  // Without a Supabase session cookie there is nothing to refresh, so the
+  // request is passed straight through without touching the network.
+  if (!request.cookies.getAll().some(cookie => cookie.name.startsWith('sb-'))) {
+    return NextResponse.next({ request });
+  }
 
   let response = NextResponse.next({ request });
   const supabase = createServerClient(url, key, {

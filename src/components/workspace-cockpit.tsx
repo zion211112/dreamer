@@ -77,7 +77,7 @@ function CommonsSurface({ posts, error }: { posts: CommonsPost[]; error: string 
   );
 }
 
-function StateRail({ context, configured, tenders }: { context: WorkspaceContextOption | null; configured: boolean; tenders: Tender[] }) {
+function StateRail({ context, configured, localMode, tenders }: { context: WorkspaceContextOption | null; configured: boolean; localMode: boolean; tenders: Tender[] }) {
   const role = context?.kind === 'crew' ? context.role : null;
 
   if (role) {
@@ -139,11 +139,13 @@ function StateRail({ context, configured, tenders }: { context: WorkspaceContext
     <>
       <section className="cockpit-rail-card cockpit-rail-primary">
         <p className="eyebrow">YOUR NETWORK STATE</p>
-        <h2>{configured ? 'Basic network member' : 'Public preview'}</h2>
+        <h2>{localMode ? 'Local developer session' : configured ? 'Basic network member' : 'Public preview'}</h2>
         <div className="cockpit-state-line"><Compass aria-hidden="true" size={14} /><strong>No work role is assigned</strong></div>
         <p>Read the public Market and Roll. School and crew contexts appear only after trusted administrators assign membership; there is no open-role signup or self-serve invitation workflow.</p>
         <Link className="button button-primary" href="/tenders">Explore public Tenders <ArrowRight aria-hidden="true" size={14} /></Link>
-        {!configured && <p className="cockpit-caution">Account-backed actions are unavailable until Supabase is configured.</p>}
+        {localMode
+          ? <p className="cockpit-caution">This is a local development identity held in this browser. Publishing, Capital Intent and Assembly transitions stay disabled until a Supabase project is connected.</p>
+          : !configured && <p className="cockpit-caution">Account-backed actions are unavailable until Supabase is configured.</p>}
       </section>
       <section className="cockpit-rail-card">
         <p className="eyebrow">CAPITAL / INTENT SIGNAL</p>
@@ -267,6 +269,7 @@ export function WorkspaceCockpit({
   configured,
   invalidContext,
   email,
+  localMode = false,
 }: {
   context: WorkspaceContextOption | null;
   view: WorkspaceLane;
@@ -277,6 +280,7 @@ export function WorkspaceCockpit({
   configured: boolean;
   invalidContext: boolean;
   email: string | null;
+  localMode?: boolean;
 }) {
   const title = contextTitle(context);
   const lane = lanes.find(item => item.key === view) ?? lanes[0];
@@ -289,6 +293,13 @@ export function WorkspaceCockpit({
         <div><p className="eyebrow"><span className="signal-dot" /> APT-LABS / NETWORK STUDIO</p><h1>Where the work moves.</h1></div>
         <div className="cockpit-topline-context"><span>ACTIVE CONTEXT</span><strong>{title}</strong><small>{email ?? 'Signed in'}</small></div>
       </div>
+
+      {localMode && (
+        <div className="cockpit-context-alert" role="status">
+          <CircleAlert aria-hidden="true" size={15} />
+          Local development identity. It opens this Studio for this browser only. It is not a verified account and grants no school, crew or publishing permission.
+        </div>
+      )}
 
       {invalidContext && (
         <div className="cockpit-context-alert" role="status">
@@ -331,7 +342,7 @@ export function WorkspaceCockpit({
           <div className="cockpit-center-heading">
             <div className="cockpit-center-icon"><LaneIcon aria-hidden="true" size={18} /></div>
             <div><p className="eyebrow">THE NETWORK / {String(lanes.findIndex(item => item.key === view) + 1).padStart(2, '0')}</p><h2 id="cockpit-lane-title">{lane.label}</h2></div>
-            <span className="cockpit-context-pill">{context?.kind === 'crew' ? context.role.toUpperCase() : context?.kind === 'school' ? 'SCHOOL CONTEXT' : 'NETWORK VIEW'}</span>
+            <span className="cockpit-context-pill">{context?.kind === 'crew' ? context.role.toUpperCase() : context?.kind === 'school' ? 'SCHOOL CONTEXT' : localMode ? 'LOCAL SESSION' : 'NETWORK VIEW'}</span>
           </div>
           <div className="network-pane-tabs" aria-label="Selected network pane">
             {lanes.map(item => <span aria-current={item.key === view ? 'page' : undefined} className={item.key === view ? 'current' : ''} key={item.key}>{item.label}</span>)}
@@ -345,7 +356,7 @@ export function WorkspaceCockpit({
 
         <aside className="cockpit-right" aria-label="Profile and current state">
           <div className="cockpit-rail-heading"><p className="eyebrow">STATE / NEXT ACTION</p><span>LIVE PERMISSIONS</span></div>
-          <StateRail configured={configured} context={context} tenders={tenders} />
+          <StateRail configured={configured} context={context} localMode={localMode} tenders={tenders} />
           <section className="cockpit-rail-card cockpit-rail-limits">
             <p className="eyebrow">PROOF / CURRENT RULE</p>
             <ul>

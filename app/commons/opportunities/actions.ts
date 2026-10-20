@@ -1,11 +1,14 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { localAuthActionBlock } from '@/lib/auth-mode';
 import { createSupabaseServerClient, hasSupabaseConfiguration } from '@/lib/supabase/server';
 
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 async function requireMember(): Promise<{ supabase?: Awaited<ReturnType<typeof createSupabaseServerClient>>; error?: string }> {
+  const localBlock = localAuthActionBlock();
+  if (localBlock) return { error: localBlock };
   if (!hasSupabaseConfiguration()) return { error: 'Live Commons actions are unavailable until network services are configured.' };
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.getUser();

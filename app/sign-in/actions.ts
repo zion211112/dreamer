@@ -1,35 +1,41 @@
 'use server';
 
-import { safeReturnPath } from '@/lib/supabase/urls';
 import { redirect } from 'next/navigation';
+import { isLocalAuthEnabled } from '@/lib/auth-mode';
+import { createLocalSession } from '@/lib/local-auth';
+import { describeSignInFailure, readCredentialFormData } from '@/lib/supabase/credentials';
+import { createSupabaseServerClient, hasSupabaseConfiguration } from '@/lib/supabase/server';
 
-export async function authenticateWithPassword(formData: FormData): Promise<{
+export interface AuthActionState {
   error?: string;
-  authenticated?: true;
-  confirmationRequired?: true;
-}> {
+}
+
+export async function authenticateWithPassword(
+  _previousState: AuthActionState,
+  formData: FormData,
+): Promise<AuthActionState> {
   const { email, password, next } = readCredentialFormData(formData);
 
-  // Local prototype sign-in: any email and password accepted.
-  // The workspace grants/crews are still enforced server-side.
-  if (!next) {
-    return { error: 'Redirect path is missing.' };
-  }
-
-  const authenticated = Boolean(email.trim()) && Boolean(password);
-
-  if (!authenticated) {
+  if (!email || !password) {
     return { error: 'Please enter both an email and a password.' };
   }
 
-  const nextPath = safeReturnPath(next);
-  redirect(nextPath);
-}
+  // The prototype has no connected backend yet. A local development identity
+  // is signed into the browser only, so the Studio opens without a server
+  // session. It grants no shared permission.
+  if (isLocalAuthEnabled()) {
+    await createLocalSession(email);
+    redirect(next);
+  }
 
-function readCredentialFormData(formData: FormData): { email: string; password: string; next: string } {
-  return {
-    email: String(formData.get('email') ?? '').trim(),
-    password: String(formData.get('password') ?? ''),
-    next: safeReturnPath(String(formData.get('next') ?? '/workspace')),
-  };
+  if (!hasSupabaseConfiguration()) {
+    return { error: 'Sign-in is not configured for this deployment.' };
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) return { error: describeSignInFailure(error.message) };
+  if (!data.user) return { error: 'Sign-in did not return an account session.' };
+
+  redirect(next);
 }

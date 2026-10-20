@@ -18,6 +18,7 @@ interface WorkspaceSwitcherProps {
   defaultWorkspace: WorkspaceKey;
   contexts: WorkspaceContextOption[];
   defaultContextKey: string;
+  canPersistPreference?: boolean;
 }
 
 function contextRoleLabel(context: WorkspaceContextOption): string {
@@ -29,7 +30,7 @@ function contextRoleLabel(context: WorkspaceContextOption): string {
   return context.role.charAt(0).toUpperCase() + context.role.slice(1);
 }
 
-export function WorkspaceSwitcher({ defaultWorkspace, contexts, defaultContextKey }: WorkspaceSwitcherProps) {
+export function WorkspaceSwitcher({ defaultWorkspace, contexts, defaultContextKey, canPersistPreference = true }: WorkspaceSwitcherProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [preference, setPreference] = useState(defaultWorkspace);
@@ -104,18 +105,20 @@ export function WorkspaceSwitcher({ defaultWorkspace, contexts, defaultContextKe
                   {active && <Check aria-label="Current context" className="workspace-menu-check" size={14} />}
                 </a>
               </DropdownMenuItem>
-              <DropdownMenuItem
-                aria-label={`Set ${roleLabel} as your default context`}
-                className="workspace-menu-pin"
-                disabled={pending || preference === workspacePreference}
-                onSelect={event => {
-                  event.preventDefault();
-                  saveDefault(workspacePreference);
-                }}
-              >
-                <Pin aria-hidden="true" size={13} />
-                <span>{preference === workspacePreference ? 'Default' : 'Set default'}</span>
-              </DropdownMenuItem>
+              {canPersistPreference && (
+                <DropdownMenuItem
+                  aria-label={`Set ${roleLabel} as your default context`}
+                  className="workspace-menu-pin"
+                  disabled={pending || preference === workspacePreference}
+                  onSelect={event => {
+                    event.preventDefault();
+                    saveDefault(workspacePreference);
+                  }}
+                >
+                  <Pin aria-hidden="true" size={13} />
+                  <span>{preference === workspacePreference ? 'Default' : 'Set default'}</span>
+                </DropdownMenuItem>
+              )}
             </div>
           );
         })}

@@ -32,6 +32,7 @@ export default async function WorkspacePage({
       context={active.context}
       email={workspace.email}
       invalidContext={active.invalid}
+      localMode={workspace.localMode}
       roll={roll}
       tenders={tenders}
       view={isWorkspaceLane(view) ? view : 'assets'}

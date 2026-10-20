@@ -1,12 +1,18 @@
 import 'server-only';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { isLocalAuthEnabled } from '@/lib/auth-mode';
 import { getSupabaseConfigurationStatus } from '@/lib/supabase/configuration';
 
 export { getSupabaseConfigurationStatus };
 export type { SupabaseConfigurationStatus } from '@/lib/supabase/configuration';
 
+// The shared Supabase backend is only active when the deployment is not
+// running on the local development identity. With that identity enabled the
+// prototype stays on its own demo records, so the Studio never depends on a
+// remote project being reachable or migrated.
 export function hasSupabaseConfiguration(): boolean {
+  if (isLocalAuthEnabled()) return false;
   return getSupabaseConfigurationStatus() === 'ready';
 }
 

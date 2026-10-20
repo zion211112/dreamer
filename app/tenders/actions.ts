@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { localAuthActionBlock } from '@/lib/auth-mode';
 import { createSupabaseServerClient, hasSupabaseConfiguration } from '@/lib/supabase/server';
 import { parseKesMinorUnits } from '@/lib/school-tender';
 
@@ -11,6 +12,8 @@ export async function signalTenderCapital(
   amount: string,
 ): Promise<{ intentId?: string; error?: string }> {
   if (!uuidPattern.test(tenderId)) return { error: 'Tender reference is invalid.' };
+  const localBlock = localAuthActionBlock();
+  if (localBlock) return { error: localBlock };
   if (!hasSupabaseConfiguration()) return { error: 'Capital Intent is unavailable until authenticated network services are configured.' };
   const amountMinor = parseKesMinorUnits(amount);
   if (amountMinor === undefined || amountMinor <= 0) return { error: 'Enter a positive amount in KES.' };

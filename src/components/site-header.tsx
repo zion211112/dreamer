@@ -19,6 +19,7 @@ export async function SiteHeader({ frontDoor = false }: { frontDoor?: boolean })
         {signedIn && (
           <Suspense fallback={<span className="workspace-switcher workspace-switcher-loading">Loading context…</span>}>
             <WorkspaceSwitcher
+              canPersistPreference={!context.localMode}
               contexts={context.contexts}
               defaultContextKey={context.defaultContextKey}
               defaultWorkspace={context.defaultWorkspace}
@@ -37,6 +38,7 @@ export async function SiteHeader({ frontDoor = false }: { frontDoor?: boolean })
         {signedIn
           ? <>
               <span className="header-account">{context.email ?? 'Signed in'}</span>
+              {context.localMode && <span className="local-badge">LOCAL</span>}
               <Link className="header-issue" href="/workspace">User dashboard <ArrowUpRight aria-hidden="true" size={14} /></Link>
               <form action={signOut}>
                 <button className="header-sign-in" type="submit">Sign out</button>

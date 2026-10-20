@@ -2,6 +2,7 @@
 
 import { randomUUID } from 'node:crypto';
 import { revalidatePath } from 'next/cache';
+import { localAuthActionBlock } from '@/lib/auth-mode';
 import { createSupabaseServerClient, hasSupabaseConfiguration } from '@/lib/supabase/server';
 import type { SchoolTenderDraft } from '@/lib/console-storage';
 import { compileSchoolTenderBOM, parseKesMinorUnits } from '@/lib/school-tender';
@@ -21,6 +22,10 @@ export async function getSchoolCrewCandidates(): Promise<{
   candidates?: SchoolCrewCandidate[];
   error?: string;
 }> {
+  const localBlock = localAuthActionBlock();
+  if (localBlock) {
+    return { error: localBlock };
+  }
   if (!hasSupabaseConfiguration()) {
     return { error: 'School publishing is not configured for this deployment.' };
   }
@@ -62,6 +67,10 @@ export async function publishSchoolTender(input: {
 }): Promise<{ slug?: string; error?: string }> {
   if (typeof input !== 'object' || input === null || typeof input.draft !== 'object' || input.draft === null) {
     return { error: 'The Tender draft is missing or invalid.' };
+  }
+  const localBlock = localAuthActionBlock();
+  if (localBlock) {
+    return { error: localBlock };
   }
   if (!hasSupabaseConfiguration()) {
     return { error: 'School publishing is not configured for this deployment.' };

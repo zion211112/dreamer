@@ -1,5 +1,6 @@
 import { SiteHeader } from '@/components/site-header';
 import { AuthEntry } from './auth-entry';
+import { isLocalAuthEnabled } from '@/lib/auth-mode';
 import { safeReturnPath } from '@/lib/supabase/urls';
 
 export const metadata = {
@@ -10,6 +11,7 @@ export const metadata = {
 export default async function SignInPage({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
   const params = await searchParams;
   const next = safeReturnPath(params.next ?? '/workspace');
+  const localMode = isLocalAuthEnabled();
   const callbackError = params.error === 'missing-code'
     ? 'The sign-in link was incomplete. Request a new link.'
     : params.error === 'exchange-failed'
@@ -22,7 +24,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
   return (
     <main className="site-shell auth-shell">
       <SiteHeader />
-      <AuthEntry callbackError={callbackError} next={next} />
+      <AuthEntry callbackError={callbackError} localMode={localMode} next={next} />
       <footer className="page-footer"><span>APT-LABS / ACCESS</span><span>Membership and crew permissions are checked on the server.</span></footer>
     </main>
   );
