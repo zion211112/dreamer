@@ -24,8 +24,8 @@ export function SignInForm({ next, mode = 'sign-in' }: { next: string; mode?: 's
       <input name="next" type="hidden" value={next} />
       <button className="button button-primary" disabled={pending} type="submit">{pending ? 'Verifying…' : mode === 'sign-up' ? 'Create account' : 'Sign in'}</button>
       {error && <p className="inline-error" role="alert">{error}</p>}
-      {confirmationRequired && <p className="console-message" role="status">Local development account credentials are set in the .env file (DEV_SIGN_IN_EMAIL / DEV_SIGN_IN_PASSWORD).</p>}
-      {mode === 'sign-up' && <p className="auth-provider-note">Local dev accounts are created by the site administrator. Contact your admin for credentials.</p>}
+      {confirmationRequired && <p className="console-message" role="status">Authenticated. Redirecting...</p>}
+      {mode === 'sign-up' && <p className="auth-provider-note">Local development account. Any email and password are accepted.</p>}
     </form>
   );
 }
