@@ -79,8 +79,8 @@ export function AuthEntry({
         {error && <p className="inline-error" role="alert">{error}</p>}
       </div>
       <DevSignInButton enabled={devSignInEnabled} next={next} />
-      <details className="auth-email-option">
-        <summary>Use email and password <span aria-hidden="true">+</span></summary>
+      <details className="auth-email-option" open={configured}>
+        <summary>Email and password <span aria-hidden="true">+</span></summary>
         {configured
           ? <SignInForm mode={mode} next={next} />
           : <p className="auth-provider-note" role="status">Email and password sign-in stays disabled until the Supabase settings above are supplied.</p>}
