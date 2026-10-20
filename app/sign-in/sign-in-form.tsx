@@ -18,14 +18,14 @@ export function SignInForm({ next, mode = 'sign-in' }: { next: string; mode?: 's
       if (result.confirmationRequired) setConfirmationRequired(true);
       if (result.authenticated) router.push(next);
     })} className="sign-in-form">
-      <label>Login<input autoComplete="username" name="email" required type="email" /></label>
-      <label>Password<input autoComplete={mode === 'sign-up' ? 'new-password' : 'current-password'} maxLength={128} minLength={mode === 'sign-up' ? 12 : 1} name="password" required type="password" /></label>
+      <label>Email<input autoComplete="username" name="email" required type="email" /></label>
+      <label>Password<input autoComplete={mode === 'sign-up' ? 'new-password' : 'current-password'} name="password" required type="password" /></label>
       <input name="intent" type="hidden" value={mode} />
       <input name="next" type="hidden" value={next} />
-      <button className="button button-primary" disabled={pending} type="submit">{pending ? 'Verifying…' : mode === 'sign-up' ? 'Create account' : 'Sign in with email'}</button>
+      <button className="button button-primary" disabled={pending} type="submit">{pending ? 'Verifying…' : mode === 'sign-up' ? 'Create account' : 'Sign in'}</button>
       {error && <p className="inline-error" role="alert">{error}</p>}
-      {confirmationRequired && <p className="console-message" role="status">Account created. Check your email to confirm the address, then sign in. An account does not grant school, crew, or Commons contributor access.</p>}
-      {mode === 'sign-up' && <p className="auth-provider-note">Use a unique password of at least 12 characters.</p>}
+      {confirmationRequired && <p className="console-message" role="status">Local development account credentials are set in the .env file (DEV_SIGN_IN_EMAIL / DEV_SIGN_IN_PASSWORD).</p>}
+      {mode === 'sign-up' && <p className="auth-provider-note">Local dev accounts are created by the site administrator. Contact your admin for credentials.</p>}
     </form>
   );
 }

@@ -2,46 +2,19 @@
 
 import { useState, useTransition } from 'react';
 import Link from 'next/link';
-import { Github } from 'lucide-react';
-import { requestOAuth } from './actions';
 import { SignInForm } from './sign-in-form';
-
-function GoogleMark() {
-  return (
-    <svg aria-hidden="true" height="17" viewBox="0 0 48 48" width="17">
-      <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.5 5.4 2.5 13.3l7.8 6.1C12.2 13.6 17.6 9.5 24 9.5Z" />
-      <path fill="#4285F4" d="M46.1 24.5c0-1.6-.2-3.2-.5-4.7H24v9h12.4c-.5 2.9-2.1 5.4-4.5 7.1l7.2 5.6c4.3-4 7-9.9 7-17Z" />
-      <path fill="#FBBC05" d="M10.3 28.6a14.7 14.7 0 0 1 0-9.2l-7.8-6.1a24 24 0 0 0 0 21.4l7.8-6.1Z" />
-      <path fill="#34A853" d="M24 48c6.5 0 12-2.1 16-5.9l-7.2-5.6c-2 1.4-4.8 2.3-8.8 2.3-6.4 0-11.8-4.1-13.7-9.8l-7.8 6.1C6.5 43.1 14.6 48 24 48Z" />
-    </svg>
-  );
-}
 
 export function AuthEntry({
   next,
   callbackError,
-  configStatus = 'ready',
   mode = 'sign-in',
 }: {
   next: string;
   callbackError?: string;
-  configStatus?: 'ready' | 'missing' | 'placeholder' | 'invalid';
   mode?: 'sign-in' | 'sign-up';
 }) {
   const [error, setError] = useState('');
   const [pending, startTransition] = useTransition();
-
-  function beginOAuth(provider: 'google' | 'github') {
-    setError('');
-    startTransition(async () => {
-      const result = await requestOAuth(provider, next);
-      if (result.error) {
-        setError(result.error);
-      } else if (result.url) {
-        window.location.assign(result.url);
-      }
-    });
-  }
 
   return (
     <section className="auth-entry">
@@ -51,28 +24,26 @@ export function AuthEntry({
       </div>
       <p className="eyebrow">THE SOVEREIGN COORDINATION ENGINE</p>
       <h1>Find your place<br /><em>in the work.</em></h1>
-      <p className="auth-entry-intro">Sign in to enter your APT-LABS workspace. A verified account is required for private workspace access.</p>
+      <p className="auth-entry-intro">Sign in to enter your local APT-LABS workspace. Local development accounts are provisioned by the site administrator.</p>
 
       {callbackError && <p className="inline-error" role="alert">{callbackError}</p>}
+
       <div className="auth-entry-actions">
-        <button className="auth-provider-button" disabled={pending} onClick={() => beginOAuth('google')} type="button">
-          <GoogleMark /> Continue with Google
-        </button>
-        <button className="auth-provider-button" disabled={pending} onClick={() => beginOAuth('github')} type="button">
-          <Github aria-hidden="true" size={17} /> Continue with GitHub
-        </button>
-        <details className="auth-email-option" open>
-          <summary>Email and password <span aria-hidden="true">+</span></summary>
+        <div className="local-auth-card">
+          <p className="local-auth-label">Local development account</p>
+          <p className="local-auth-note">Credentials are set in the .env file (DEV_SIGN_IN_EMAIL / DEV_SIGN_IN_PASSWORD).</p>
           <SignInForm mode={mode} next={next} />
-        </details>
+        </div>
       </div>
+
       <p className="auth-account-switch">
         {mode === 'sign-up'
           ? <>Already have an account? <Link href={`/sign-in?next=${encodeURIComponent(next)}`}>Sign in</Link></>
           : <>New to the network? <Link href={`/sign-up?next=${encodeURIComponent(next)}`}>Create a basic account</Link></>}
       </p>
+
       <p className="auth-entry-boundary">Identity does not grant school, crew, or publishing permissions. Those are verified separately on the server.</p>
-      <div className="auth-entry-foot"><span>DEMO PROTOTYPE</span><span>IDENTITY ≠ ENTITLEMENT</span></div>
+      <div className="auth-entry-foot"><span>DEMO PROTOTYPE</span><span>LOCAL DEV ONLY — NO REMOTE SYNCHRONIZATION</span></div>
     </section>
   );
 }
