@@ -283,12 +283,10 @@ export function WorkspaceCockpit({
   localMode?: boolean;
 }) {
   const title = contextTitle(context);
-  const lane = lanes.find(item => item.key === view) ?? lanes[0];
-  const LaneIcon = lane.icon;
 
   return (
     <main className="site-shell workspace-shell cockpit-shell">
-      <SiteHeader />
+      <SiteHeader hideNav />
       <div className="cockpit-topline">
         <div><p className="eyebrow"><span className="signal-dot" /> APT-LABS / NETWORK STUDIO</p><h1>Where the work moves.</h1></div>
         <div className="cockpit-topline-context"><span>ACTIVE CONTEXT</span><strong>{title}</strong><small>{email ?? 'Signed in'}</small></div>
@@ -338,15 +336,7 @@ export function WorkspaceCockpit({
           <div className="cockpit-left-footer"><ShieldCheck aria-hidden="true" size={14} /><span>Contexts show relationships. Server permissions decide actions.</span></div>
         </aside>
 
-        <section className="cockpit-center" aria-labelledby="cockpit-lane-title">
-          <div className="cockpit-center-heading">
-            <div className="cockpit-center-icon"><LaneIcon aria-hidden="true" size={18} /></div>
-            <div><p className="eyebrow">THE NETWORK / {String(lanes.findIndex(item => item.key === view) + 1).padStart(2, '0')}</p><h2 id="cockpit-lane-title">{lane.label}</h2></div>
-            <span className="cockpit-context-pill">{context?.kind === 'crew' ? context.role.toUpperCase() : context?.kind === 'school' ? 'SCHOOL CONTEXT' : localMode ? 'LOCAL SESSION' : 'NETWORK VIEW'}</span>
-          </div>
-          <div className="network-pane-tabs" aria-label="Selected network pane">
-            {lanes.map(item => <span aria-current={item.key === view ? 'page' : undefined} className={item.key === view ? 'current' : ''} key={item.key}>{item.label}</span>)}
-          </div>
+        <section className="cockpit-center" aria-label="Network studio pane">
           <div className="cockpit-lane-content">
             {view === 'assets' && <TenderSurface context={context} tenders={tenders} />}
             {view === 'commons' && <CommonsSurface error={commonsError} posts={commonsPosts} />}

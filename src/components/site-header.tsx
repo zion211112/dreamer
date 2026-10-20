@@ -5,7 +5,7 @@ import { WorkspaceSwitcher } from '@/components/workspace-switcher';
 import { getWorkspaceContext } from '@/lib/workspace-access';
 import { signOut } from '@/lib/supabase/sign-out';
 
-export async function SiteHeader({ frontDoor = false }: { frontDoor?: boolean }) {
+export async function SiteHeader({ frontDoor = false, hideNav = false }: { frontDoor?: boolean; hideNav?: boolean }) {
   const context = await getWorkspaceContext();
   const signedIn = context.authenticated;
 
@@ -27,7 +27,7 @@ export async function SiteHeader({ frontDoor = false }: { frontDoor?: boolean })
           </Suspense>
         )}
       </div>
-      {!frontDoor && signedIn && (
+      {!frontDoor && !hideNav && signedIn && (
         <nav aria-label="Main navigation" className="site-nav">
           <Link href="/tenders">Assets</Link>
           <Link href="/commons">Commons</Link>

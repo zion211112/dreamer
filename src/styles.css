@@ -1310,8 +1310,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .cockpit-shell .site-header { min-height: 70px; border-color: var(--color-line); }
 .cockpit-shell .wordmark { color: #dbd3cc; }
 .cockpit-shell .wordmark-symbol { border-color: #b8a290; color: #b8a290; }
-.cockpit-shell .site-nav { color: #a39c8f; }
-.cockpit-shell .site-nav a:hover { color: #c8b2a0; }
 .cockpit-shell .header-account { color: #999082; }
 .cockpit-shell .workspace-switcher { background: #272520; color: #cbc0b8; }
 .cockpit-shell .workspace-switcher-copy strong { color: #ccc1b8; }
@@ -1354,11 +1352,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .cockpit-left-footer { display: flex; align-items: flex-start; gap: 7px; margin-top: 28px; padding: 10px 7px; border-top: 1px solid #413d35; color: #8b8172; font-size: 8px; line-height: 1.55; }
 .cockpit-left-footer svg { flex: 0 0 auto; color: #9d8b7c; }
 .cockpit-center { min-height: 600px; padding: 20px 20px 23px; }
-.cockpit-center-heading { display: flex; align-items: center; gap: 11px; }
-.cockpit-center-icon { display: grid; width: 36px; height: 36px; place-items: center; border: 1px solid #4b3d31; background: #3c2e21; color: #b8a290; }
-.cockpit-center-heading .eyebrow { color: #8f8576; font-size: 7px; }
-.cockpit-center-heading h2 { margin: 2px 0 0; color: #d5ccc4; font-size: 21px; font-weight: 550; letter-spacing: -.045em; }
-.cockpit-context-pill { margin-left: auto; padding: 5px 7px; border: 1px solid #453b33; color: #978e80; font: 7px var(--font-code); letter-spacing: .06em; }
 .cockpit-loop-track { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 20px 0 19px; padding: 11px 9px; border-block: 1px solid #3f3b34; }
 .cockpit-loop-track span { display: flex; align-items: center; gap: 6px; color: #7f7668; font: 7px var(--font-code); text-transform: uppercase; }
 .cockpit-loop-track i { width: 5px; height: 5px; border-radius: 50%; background: #504a41; }
@@ -1459,7 +1452,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .cockpit-left-divider, .cockpit-left > .eyebrow, .cockpit-left-footer, .cockpit-tool-link { display: none; }
   .cockpit-right { order: 2; width: 100%; grid-template-columns: 1fr; }
   .cockpit-rail-heading { grid-column: auto; }
-  .cockpit-context-pill { max-width: 95px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 6px; }
   .cockpit-loop-track { margin: 15px 0; padding-inline: 2px; }
   .cockpit-loop-track span { gap: 4px; font-size: 6px; }
   .cockpit-loop-track i { width: 4px; height: 4px; }
@@ -1473,12 +1465,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .cockpit-roll-card > a { grid-column: auto; }
 }
 @media (max-width: 390px) {
-  .cockpit-shell .site-header .site-nav { gap: 12px; font-size: 10px; }
   .cockpit-loop-link { padding: 5px 4px; }
   .cockpit-loop-copy small { display: none; }
   .cockpit-loop-track span { font-size: 5px; }
   .cockpit-tender-main h3 { font-size: 12px; }
-  .cockpit-context-pill { display: none; }
 }
 
 @media (max-width: 920px) {
@@ -1666,7 +1656,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   color: var(--color-ink);
 }
 .cockpit-shell .cockpit-rail-primary { border-color: var(--color-line); background: var(--color-panel-soft); }
-.cockpit-shell :is(.cockpit-loop-label, .cockpit-loop-copy, .cockpit-center-heading, .cockpit-context-pill, .cockpit-rail-card, .cockpit-tender-topline, .cockpit-tender-main, .cockpit-tender-footer, .cockpit-math, .cockpit-assignment-card, .cockpit-roll-card, .cockpit-roll-heading, .cockpit-roll-details, .cockpit-topline-context, .cockpit-left-footer, .cockpit-right, .cockpit-rail-heading, .cockpit-loop-track) { color: var(--color-ink); }
+.cockpit-shell :is(.cockpit-loop-label, .cockpit-loop-copy, .cockpit-rail-card, .cockpit-tender-topline, .cockpit-tender-main, .cockpit-tender-footer, .cockpit-math, .cockpit-assignment-card, .cockpit-roll-card, .cockpit-roll-heading, .cockpit-roll-details, .cockpit-topline-context, .cockpit-left-footer, .cockpit-right, .cockpit-rail-heading, .cockpit-loop-track) { color: var(--color-ink); }
 .cockpit-shell :is(.cockpit-loop-current, .cockpit-state-dot) { background: var(--color-kiln); box-shadow: 0 0 0 3px var(--color-jade-dim); }
 .cockpit-shell .cockpit-loop-link.active { border-color: var(--color-kiln); background: var(--color-jade-dim); color: var(--color-ink); }
 .cockpit-shell :is(.cockpit-loop-copy small, .cockpit-rail-card > p:not(.eyebrow), .cockpit-tender-main p, .cockpit-assignment-card > p, .cockpit-roll-details, .cockpit-note) { color: var(--color-muted-ink); }
@@ -1949,10 +1939,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .auth-entry-foot { display: flex; justify-content: space-between; gap: 10px; margin-top: 23px; padding-top: 12px; border-top: 1px solid var(--color-line); color: var(--color-muted-ink); font: 7px var(--font-code); letter-spacing: .08em; }
 .header-demo-pill { display: inline-flex; align-items: center; gap: 6px; padding: 7px 9px; border: 1px solid rgb(201 87 42 / 35%); color: var(--color-kiln); font: 8px var(--font-code); }
 .header-account { max-width: 160px; overflow: hidden; color: var(--color-muted-ink); font: 8px var(--font-code); text-overflow: ellipsis; white-space: nowrap; }
-
-.cockpit-shell .network-pane-tabs { display: flex; gap: 5px; margin: 17px 0 13px; padding-bottom: 9px; border-bottom: 1px solid var(--color-line); }
-.network-pane-tabs span { padding: 5px 8px; color: var(--color-muted-ink); font: 8px var(--font-code); }
-.network-pane-tabs span.current { border-bottom: 2px solid var(--color-kiln); color: var(--color-ink); }
 .cockpit-commons { display: grid; gap: 13px; }
 .commons-opportunity-callout { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 17px; padding: 15px; border: 1px solid rgb(44 102 135 / 30%); background: rgb(44 102 135 / 5%); }
 .commons-opportunity-callout h3 { margin: 5px 0; font: 500 20px/1.15 var(--font-editorial); }
