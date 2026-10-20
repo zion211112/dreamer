@@ -2,6 +2,7 @@ import {
   getDefaultContextKey,
   getDefaultWorkspace,
   isWorkspaceLane,
+  parseWorkspaceFocus,
   resolveWorkspaceContext,
   type WorkspaceContextOption,
 } from '@/lib/workspace';
@@ -99,5 +100,53 @@ describe('workspace selection', () => {
       context: contexts[0],
       invalid: true,
     });
+  });
+});
+
+describe('workspace focus parsing', () => {
+  it('parses a record focus into its kind and identifier', () => {
+    expect(parseWorkspaceFocus('asset:abc')).toEqual({
+      kind: 'record',
+      key: 'asset:abc',
+      recordKind: 'asset',
+      recordId: 'abc',
+      queueId: null,
+    });
+  });
+
+  it('parses a queue focus into its queue identifier', () => {
+    expect(parseWorkspaceFocus('queue:my-applications')).toEqual({
+      kind: 'queue',
+      key: 'queue:my-applications',
+      recordKind: null,
+      recordId: null,
+      queueId: 'my-applications',
+    });
+  });
+
+  it('splits a record focus on the first colon only', () => {
+    expect(parseWorkspaceFocus('capital_intent:xyz')).toEqual({
+      kind: 'record',
+      key: 'capital_intent:xyz',
+      recordKind: 'capital_intent',
+      recordId: 'xyz',
+      queueId: null,
+    });
+  });
+
+  it('refuses empty and missing focus values', () => {
+    expect(parseWorkspaceFocus(null)).toBeNull();
+    expect(parseWorkspaceFocus(undefined)).toBeNull();
+    expect(parseWorkspaceFocus('')).toBeNull();
+    expect(parseWorkspaceFocus('   ')).toBeNull();
+  });
+
+  it('refuses a focus without a kind separator', () => {
+    expect(parseWorkspaceFocus('nonsense')).toBeNull();
+  });
+
+  it('refuses a focus without an identifier', () => {
+    expect(parseWorkspaceFocus('asset:')).toBeNull();
+    expect(parseWorkspaceFocus('queue:')).toBeNull();
   });
 });

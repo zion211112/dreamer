@@ -303,6 +303,42 @@ export function capitalEfficiencyPercent(tender: Pick<Tender, 'assetBuildCostMin
   return Math.round((tender.projectedAnnualYieldMinor / tender.assetBuildCostMinor) * 1000) / 10;
 }
 
+export interface TenderLifecycle {
+  status: TenderStatus;
+  permitted: TenderStatus[];
+  gate: string | null;
+  awaitingSettlement: boolean;
+}
+
+// The lifecycle is owned by the domain, not by any surface that renders it.
+// `transitionTender` and the Studio read this one description so the interface
+// can never advertise a transition the engine would refuse.
+export function tenderLifecycle(
+  tender: Pick<Tender, 'status' | 'currentSettledAmountMinor' | 'fundingTargetMinor'>,
+): TenderLifecycle {
+  const settlementReached = tender.fundingTargetMinor > 0
+    && tender.currentSettledAmountMinor >= tender.fundingTargetMinor;
+  switch (tender.status) {
+    case 'open':
+      return {
+        status: tender.status,
+        permitted: settlementReached ? ['materials'] : [],
+        gate: settlementReached
+          ? null
+          : 'Settled capital must reach the funding target before materials are released.',
+        awaitingSettlement: !settlementReached,
+      };
+    case 'materials':
+      return { status: tender.status, permitted: ['fabrication'], gate: null, awaitingSettlement: false };
+    case 'fabrication':
+      return { status: tender.status, permitted: ['anchor_signed'], gate: null, awaitingSettlement: false };
+    case 'anchor_signed':
+      return { status: tender.status, permitted: ['deployed'], gate: null, awaitingSettlement: false };
+    default:
+      return { status: tender.status, permitted: [], gate: null, awaitingSettlement: false };
+  }
+}
+
 export function transitionTender(
   tender: Tender,
   nextStatus: TenderStatus,
@@ -312,15 +348,7 @@ export function transitionTender(
   const actor = tender.crew.find(member => member.id === actorCrewMemberId);
   if (!actor) throw new TenderInvariantError('Only assigned crew may advance an Assembly.');
 
-  const allowed: Partial<Record<TenderStatus, TenderStatus>> = {
-    open: tender.currentSettledAmountMinor >= tender.fundingTargetMinor && tender.fundingTargetMinor > 0
-      ? 'materials'
-      : undefined,
-    materials: 'fabrication',
-    fabrication: 'anchor_signed',
-    anchor_signed: 'deployed',
-  };
-  if (allowed[tender.status] !== nextStatus) {
+  if (!tenderLifecycle(tender).permitted.includes(nextStatus)) {
     throw new TenderInvariantError(`Cannot transition Tender from ${tender.status} to ${nextStatus}.`);
   }
   if (nextStatus === 'anchor_signed') {

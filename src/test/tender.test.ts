@@ -1,5 +1,12 @@
 import { tenders } from '@/lib/tender-data';
-import { capitalAllocationState, TenderInvariantError, transitionTender, validateCatalog } from '@/lib/tender';
+import {
+  capitalAllocationState,
+  tenderLifecycle,
+  TenderInvariantError,
+  tenderStatuses,
+  transitionTender,
+  validateCatalog,
+} from '@/lib/tender';
 
 describe('Tender invariants', () => {
   it('distinguishes intent from verified settlement in the capital allocation state', () => {
@@ -86,5 +93,91 @@ describe('Tender invariants', () => {
     if (!builder) throw new Error('Fixture requires a Builder.');
     expect(() => transitionTender({ ...sample, status: 'fabrication' }, 'anchor_signed', builder.id, '2026-10-19T00:00:00.000Z'))
       .toThrow('Only the assigned Anchor can sign off');
+  });
+});
+
+describe('Tender lifecycle', () => {
+  it('permits materials once the funding target is fully settled', () => {
+    const lifecycle = tenderLifecycle({
+      status: 'open',
+      fundingTargetMinor: 100,
+      currentSettledAmountMinor: 100,
+    });
+    expect(lifecycle.status).toBe('open');
+    expect(lifecycle.permitted).toEqual(['materials']);
+    expect(lifecycle.gate).toBeNull();
+    expect(lifecycle.awaitingSettlement).toBe(false);
+  });
+
+  it('holds materials behind the settlement gate until capital settles', () => {
+    const lifecycle = tenderLifecycle({
+      status: 'open',
+      fundingTargetMinor: 100,
+      currentSettledAmountMinor: 0,
+    });
+    expect(lifecycle.permitted).toEqual([]);
+    expect(lifecycle.gate).not.toBeNull();
+    expect(lifecycle.gate?.toLowerCase()).toContain('settl');
+    expect(lifecycle.awaitingSettlement).toBe(true);
+  });
+
+  it('never unlocks materials for a zero funding target', () => {
+    const lifecycle = tenderLifecycle({
+      status: 'open',
+      fundingTargetMinor: 0,
+      currentSettledAmountMinor: 0,
+    });
+    expect(lifecycle.permitted).toEqual([]);
+    expect(lifecycle.awaitingSettlement).toBe(true);
+  });
+
+  it('advances materials, fabrication and the Anchor sign-off in order', () => {
+    const settled = { fundingTargetMinor: 100, currentSettledAmountMinor: 100 };
+    expect(tenderLifecycle({ status: 'materials', ...settled }).permitted).toEqual(['fabrication']);
+    expect(tenderLifecycle({ status: 'fabrication', ...settled }).permitted).toEqual(['anchor_signed']);
+    expect(tenderLifecycle({ status: 'anchor_signed', ...settled }).permitted).toEqual(['deployed']);
+  });
+
+  it('permits no further transition from a closed, pre-open or settled status', () => {
+    const settled = { fundingTargetMinor: 100, currentSettledAmountMinor: 100 };
+    for (const status of ['draft', 'capitalized_pending_settlement', 'deployed', 'cancelled'] as const) {
+      expect(tenderLifecycle({ status, ...settled }).permitted).toEqual([]);
+    }
+  });
+
+  it('refuses every transition the lifecycle does not permit', () => {
+    const sample = tenders.find(tender => tender.slug === 'community-radio-studio');
+    if (!sample) throw new Error('Missing radio Tender fixture.');
+    const anchor = sample.crew.find(member => member.role === 'anchor');
+    if (!anchor) throw new Error('Fixture requires an Anchor.');
+
+    for (const status of tenderStatuses) {
+      const candidate = { ...sample, status };
+      const lifecycle = tenderLifecycle(candidate);
+      for (const next of tenderStatuses) {
+        if (lifecycle.permitted.includes(next)) continue;
+        expect(() => transitionTender(candidate, next, anchor.id, '2026-10-20T00:00:00.000Z'))
+          .toThrow('Cannot transition Tender');
+      }
+    }
+  });
+
+  it('keeps the settlement gate aligned with the transition engine', () => {
+    const sample = tenders.find(tender => tender.slug === 'community-radio-studio');
+    if (!sample) throw new Error('Missing radio Tender fixture.');
+    const anchor = sample.crew.find(member => member.role === 'anchor');
+    if (!anchor) throw new Error('Fixture requires an Anchor.');
+
+    const settled = {
+      ...sample,
+      status: 'open' as const,
+      fundingTargetMinor: 100,
+      currentSignaledAmountMinor: 100,
+      currentSettledAmountMinor: 100,
+    };
+    expect(() => transitionTender(settled, 'materials', anchor.id, '2026-10-20T00:00:00.000Z'))
+      .not.toThrow();
+    expect(() => transitionTender({ ...settled, currentSettledAmountMinor: 0 }, 'materials', anchor.id, '2026-10-20T00:00:00.000Z'))
+      .toThrow('Cannot transition Tender');
   });
 });

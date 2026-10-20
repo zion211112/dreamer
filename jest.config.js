@@ -7,6 +7,7 @@ const customJestConfig = {
   testEnvironment: 'jest-environment-jsdom',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^server-only$': '<rootDir>/src/test/server-only-stub.ts',
   },
   testMatch: ['**/src/**/*.test.{ts,tsx}'],
 };

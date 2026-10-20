@@ -1,41 +1,49 @@
 import { redirect } from 'next/navigation';
-import { WorkspaceCockpit } from '@/components/workspace-cockpit';
-import { getMarketTenders, getPublicRoll } from '@/lib/tender-repository';
+import { SiteHeader } from '@/components/site-header';
+import { StudioShell } from '@/components/studio/studio-shell';
+import { assembleStudioDataset } from '@/lib/workbench/dataset';
+import { deriveStudio } from '@/lib/workbench/derive';
 import { isWorkspaceLane, resolveWorkspaceContext } from '@/lib/workspace';
 import { getWorkspaceContext } from '@/lib/workspace-access';
-import { getCommonsActivity } from '@/lib/commons';
 
 export const metadata = {
-  title: 'APT-LABS Execution Cockpit',
-  description: 'A role-aware studio connecting investable Assets, Commons teams and Roll-verified work.',
+  title: 'APT-LABS Network Studio',
+  description:
+    'A role-aware studio connecting investable Assets, Commons teams and Roll-verified work. It shows only what the server returned to the signed-in account.',
 };
 
 export default async function WorkspacePage({
   searchParams,
 }: {
-  searchParams: Promise<{ context?: string; view?: string }>;
+  searchParams: Promise<{ context?: string; view?: string; focus?: string }>;
 }) {
-  const [{ context: requestedContext, view }, workspace] = await Promise.all([
+  const [{ context: requestedContext, view, focus }, workspace] = await Promise.all([
     searchParams,
     getWorkspaceContext(),
   ]);
   if (!workspace.authenticated) redirect('/sign-in?next=%2Fworkspace');
 
   const active = resolveWorkspaceContext(workspace.contexts, requestedContext, workspace.defaultContextKey);
-  const [tenders, roll, commons] = await Promise.all([getMarketTenders(), getPublicRoll(), getCommonsActivity()]);
+  const lane = isWorkspaceLane(view) ? view : 'assets';
+
+  const dataset = await assembleStudioDataset({
+    context: active.context,
+    invalidContext: active.invalid,
+    email: workspace.email,
+    localMode: workspace.localMode,
+    configured: workspace.configured,
+  });
+  const derivation = deriveStudio(dataset, focus);
 
   return (
-    <WorkspaceCockpit
-      commonsPosts={commons.data ?? []}
-      commonsError={commons.error}
-      configured={workspace.configured}
-      context={active.context}
-      email={workspace.email}
-      invalidContext={active.invalid}
-      localMode={workspace.localMode}
-      roll={roll}
-      tenders={tenders}
-      view={isWorkspaceLane(view) ? view : 'assets'}
-    />
+    <main className="site-shell studio-shell">
+      <SiteHeader hideNav />
+      <StudioShell
+        contextKey={active.context?.key ?? 'network'}
+        dataset={dataset}
+        derivation={derivation}
+        view={lane}
+      />
+    </main>
   );
 }

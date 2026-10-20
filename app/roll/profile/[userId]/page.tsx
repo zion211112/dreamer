@@ -41,7 +41,7 @@ export default async function RollProfilePage({
       </section>
       <section className="roll-profile-ledger">
         <div className="section-heading"><div><p className="eyebrow">APPEND-ONLY / DEPLOYMENT PROOF</p><h2>Work that made it into the world.</h2></div><ShieldCheck aria-hidden="true" size={19} /></div>
-        {!badges.length ? <div className="cockpit-empty-state"><BadgeCheck aria-hidden="true" size={19} /><h3>No badge yet.</h3><p>New builders are welcome in the network. A Capability Badge appears only after an assigned, non-illustrative Asset is deployed.</p><Link className="text-link" href={guest ? '/commons/opportunities?mode=guest' : '/commons/opportunities'}>Find a role <ArrowLeft aria-hidden="true" size={13} /></Link></div> : (
+        {!badges.length ? <div className="ledger-empty-state"><BadgeCheck aria-hidden="true" size={19} /><h3>No badge yet.</h3><p>New builders are welcome in the network. A Capability Badge appears only after an assigned, non-illustrative Asset is deployed.</p><Link className="text-link" href={guest ? '/commons/opportunities?mode=guest' : '/commons/opportunities'}>Find a role <ArrowLeft aria-hidden="true" size={13} /></Link></div> : (
           <div className="roll-profile-badges">
             {badges.map(badge => <article className="roll-profile-badge" key={badge.id}>
               <div><p className="eyebrow">CAPABILITY BADGE / {badge.role.toUpperCase()}</p><h3><Link href={`/tenders/${badge.asset_slug}${guest ? '?mode=guest' : ''}`}>{badge.asset_name}</Link></h3><span>Anchor-verified deployment · {dateLabel(badge.issued_at)}</span></div>
