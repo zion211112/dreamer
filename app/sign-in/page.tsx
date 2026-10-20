@@ -1,5 +1,6 @@
 import { SiteHeader } from '@/components/site-header';
 import { AuthEntry } from './auth-entry';
+import { DevSignInButton } from './dev-sign-in-button';
 import { getSupabaseConfigurationStatus, hasSupabaseConfiguration } from '@/lib/supabase/server';
 import { safeReturnPath } from '@/lib/supabase/urls';
 
@@ -13,6 +14,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
   const next = safeReturnPath(params.next ?? '/workspace');
   const configured = hasSupabaseConfiguration();
   const configStatus = getSupabaseConfigurationStatus();
+  const directDevSignInAvailable = Boolean(process.env.DEV_SIGN_IN_EMAIL);
   const callbackError = params.error === 'missing-code'
     ? 'The sign-in link was incomplete. Request a new link.'
     : params.error === 'exchange-failed'
@@ -25,6 +27,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
   return (
     <main className="site-shell auth-shell">
       <SiteHeader />
+      {directDevSignInAvailable && <DevSignInButton next={next} />}
       <AuthEntry callbackError={callbackError} configStatus={configStatus} configured={configured} next={next} />
       <footer className="page-footer"><span>APT-LABS / ACCESS</span><span>Membership and crew permissions are checked on the server.</span></footer>
     </main>

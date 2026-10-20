@@ -2,6 +2,7 @@
 
 import { createSupabaseServerClient, hasSupabaseConfiguration } from '@/lib/supabase/server';
 import { getSiteOrigin, safeReturnPath } from '@/lib/supabase/urls';
+import { redirect } from 'next/navigation';
 import { describeSignInFailure, readCredentialFormData, validateCredentials } from '@/lib/supabase/credentials';
 
 export async function requestOAuth(
@@ -70,4 +71,21 @@ export async function authenticateWithPassword(formData: FormData): Promise<{
   }
   if (!data.session) return { error: 'A verified account session could not be established.' };
   return { authenticated: true };
+}
+
+export async function requestDirectDevSignIn(formData: FormData): Promise<never> {
+  const next = safeReturnPath(String(formData.get('next') ?? '/workspace'));
+  // Prototype sign-in by email address (no password): the Google account used for
+  // development, e.g. aptlabske@gmail.com. DEV_SIGN_IN_EMAIL must be set for the
+  // direct sign-in to be available on this deployment.
+  const email = process.env.DEV_SIGN_IN_EMAIL;
+  if (!email || !hasSupabaseConfiguration()) {
+    throw new Error('Development sign-in is unavailable.');
+  }
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password: '' });
+  if (error || !data.session) {
+    throw new Error('Direct development sign-in failed. Check DEV_SIGN_IN_EMAIL is set correctly.');
+  }
+  redirect(next);
 }

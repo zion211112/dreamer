@@ -34,3 +34,11 @@ yarn-error.log*
 # throwaway migration tooling output
 /scripts/.build/
 /scripts/.verify/
+
+# throwaway sign-in/script scratch
+.tmp-*.mjs
+.tmp-*.sql
+.tmp-*.json
+.tmp-*.log
+.tmp-*.out
+.tmp-*.key
