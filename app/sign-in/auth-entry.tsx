@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Github } from 'lucide-react';
 import { requestOAuth } from './actions';
 import { SignInForm } from './sign-in-form';
+import { DevSignInButton } from './dev-sign-in-button';
 
 function GoogleMark() {
   return (
@@ -23,12 +24,14 @@ export function AuthEntry({
   callbackError,
   configStatus = 'ready',
   mode = 'sign-in',
+  devSignInEnabled = false,
 }: {
   configured: boolean;
   next: string;
   callbackError?: string;
   configStatus?: 'ready' | 'missing' | 'placeholder' | 'invalid';
   mode?: 'sign-in' | 'sign-up';
+  devSignInEnabled?: boolean;
 }) {
   const [error, setError] = useState('');
   const [pending, startTransition] = useTransition();
@@ -75,6 +78,7 @@ export function AuthEntry({
         )}
         {error && <p className="inline-error" role="alert">{error}</p>}
       </div>
+      <DevSignInButton enabled={devSignInEnabled} next={next} />
       <details className="auth-email-option">
         <summary>Use email and password <span aria-hidden="true">+</span></summary>
         {configured
