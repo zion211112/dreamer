@@ -4,6 +4,10 @@ import { useRouter } from 'next/navigation';
 import { SignInForm } from './sign-in-form';
 
 export function AuthEntry({
+  next,
+  callbackError,
+  mode = 'sign-in',
+}: {
   next: string;
   callbackError?: string;
   mode?: 'sign-in' | 'sign-up';
