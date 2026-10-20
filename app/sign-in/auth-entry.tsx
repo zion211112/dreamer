@@ -1,21 +1,19 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useRouter } from 'next/navigation';
 import { SignInForm } from './sign-in-form';
 
 export function AuthEntry({
   next,
   callbackError,
   mode = 'sign-in',
-}: {
+: {
   next: string;
   callbackError?: string;
   mode?: 'sign-in' | 'sign-up';
-}) {
+}
+) {
   const router = useRouter();
-  const [error, setError] = useState('');
-  const [pending, startTransition] = useTransition();
 
   return (
     <section className="auth-entry">
