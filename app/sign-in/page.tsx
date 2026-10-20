@@ -13,9 +13,6 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
   const next = safeReturnPath(params.next ?? '/workspace');
   const configured = hasSupabaseConfiguration();
   const configStatus = getSupabaseConfigurationStatus();
-  const devSignInEnabled =
-    process.env.NODE_ENV === 'development' &&
-    Boolean(process.env.DEV_SIGN_IN_EMAIL && process.env.DEV_SIGN_IN_PASSWORD);
   const callbackError = params.error === 'missing-code'
     ? 'The sign-in link was incomplete. Request a new link.'
     : params.error === 'exchange-failed'
@@ -28,7 +25,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
   return (
     <main className="site-shell auth-shell">
       <SiteHeader />
-      <AuthEntry callbackError={callbackError} configStatus={configStatus} configured={configured} devSignInEnabled={devSignInEnabled} next={next} />
+      <AuthEntry callbackError={callbackError} configStatus={configStatus} configured={configured} next={next} />
       <footer className="page-footer"><span>APT-LABS / ACCESS</span><span>Membership and crew permissions are checked on the server.</span></footer>
     </main>
   );

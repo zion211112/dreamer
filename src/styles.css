@@ -1941,8 +1941,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .auth-email-option { margin-top: 18px; border-top: 1px solid var(--color-line); }
 .auth-email-option summary { display: flex; justify-content: space-between; padding: 13px 0 0; color: var(--color-blueprint); cursor: pointer; font: 9px var(--font-code); list-style: none; }
 .auth-email-option summary::-webkit-details-marker { display: none; }
-.dev-sign-in { display: grid; gap: 9px; margin: 0 0 17px; }
-.dev-sign-in .button { width: fit-content; }
 .auth-email-option[open] summary span { transform: rotate(45deg); }
 .auth-email-option .sign-in-form { margin-top: 15px; }
 .auth-account-switch { margin: 13px 0 0; color: var(--color-muted-ink); font-size: 9px; }

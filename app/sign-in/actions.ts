@@ -71,38 +71,3 @@ export async function authenticateWithPassword(formData: FormData): Promise<{
   if (!data.session) return { error: 'A verified account session could not be established.' };
   return { authenticated: true };
 }
-
-/**
- * One-click sign-in for local development only.
- *
- * Deliberately not compiled into a production session: the action refuses unless the
- * server is running `next dev`, and the credentials come from environment variables
- * rather than source control. This replaces the earlier hard-coded admin login that
- * had to be reverted because the password shipped with the code.
- */
-export async function devSignIn(nextPath: string): Promise<{ error?: string; authenticated?: true }> {
-  if (process.env.NODE_ENV !== 'development') {
-    return { error: 'Development sign-in is unavailable in this environment.' };
-  }
-  const email = process.env.DEV_SIGN_IN_EMAIL;
-  const password = process.env.DEV_SIGN_IN_PASSWORD;
-  if (!email || !password) {
-    return { error: 'Development sign-in is not configured. Set DEV_SIGN_IN_EMAIL and DEV_SIGN_IN_PASSWORD.' };
-  }
-  if (!hasSupabaseConfiguration()) {
-    return { error: 'Account access is not configured for this deployment.' };
-  }
-  const next = safeReturnPath(nextPath);
-  try {
-    const supabase = await createSupabaseServerClient();
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      console.error(`Development sign-in failed: ${error.message}`);
-      return { error: 'Development sign-in failed. Check DEV_SIGN_IN_EMAIL and DEV_SIGN_IN_PASSWORD.' };
-    }
-    if (!data.session) return { error: 'A verified account session could not be established.' };
-    return { authenticated: true };
-  } catch (error) {
-    return { error: error instanceof Error ? error.message : 'Development sign-in could not be started.' };
-  }
-}
