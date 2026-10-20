@@ -10,7 +10,6 @@ export const metadata = {
 export default async function SignInPage({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
   const params = await searchParams;
   const next = safeReturnPath(params.next ?? '/workspace');
-  const directDevSignInAvailable = Boolean(process.env.DEV_SIGN_IN_EMAIL);
   const callbackError = params.error === 'missing-code'
     ? 'The sign-in link was incomplete. Request a new link.'
     : params.error === 'exchange-failed'
