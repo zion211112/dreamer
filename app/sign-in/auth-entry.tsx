@@ -28,7 +28,7 @@ export function AuthEntry({
 
       <div className="auth-entry-actions">
         <div className="local-auth-card">
-          <SignInForm mode={mode} onSuccess={() => router.push(next)} />
+          <SignInForm next={next} mode={mode} onSuccess={() => router.push(next)} />
         </div>
       </div>
 
