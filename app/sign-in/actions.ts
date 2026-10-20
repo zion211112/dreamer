@@ -1,6 +1,6 @@
 'use server';
 
-import { getSiteOrigin, safeReturnPath } from '@/lib/supabase/urls';
+import { safeReturnPath } from '@/lib/supabase/urls';
 import { redirect } from 'next/navigation';
 
 export async function authenticateWithPassword(formData: FormData): Promise<{
