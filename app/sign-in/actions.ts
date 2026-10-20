@@ -9,9 +9,6 @@ export async function requestOAuth(
   provider: 'google' | 'github',
   nextPath: string,
 ): Promise<{ url?: string; error?: string }> {
-  if (!hasSupabaseConfiguration()) {
-    return { error: 'Social sign-in is unavailable until account services are configured.' };
-  }
   const siteOrigin = getSiteOrigin();
   if (!siteOrigin) return { error: 'The site URL is missing or invalid. Contact the site administrator.' };
   try {
@@ -40,9 +37,6 @@ export async function authenticateWithPassword(formData: FormData): Promise<{
 }> {
   const { email, password, intent, next } = readCredentialFormData(formData);
 
-  if (!hasSupabaseConfiguration()) {
-    return { error: 'Account access is not configured for this deployment. The local School Console remains available.' };
-  }
   const siteOrigin = getSiteOrigin();
   const invalid = validateCredentials({ email, password, intent });
   if (invalid) return { error: invalid };

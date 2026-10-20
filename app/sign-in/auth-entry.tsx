@@ -18,13 +18,11 @@ function GoogleMark() {
 }
 
 export function AuthEntry({
-  configured,
   next,
   callbackError,
   configStatus = 'ready',
   mode = 'sign-in',
 }: {
-  configured: boolean;
   next: string;
   callbackError?: string;
   configStatus?: 'ready' | 'missing' | 'placeholder' | 'invalid';
@@ -57,30 +55,17 @@ export function AuthEntry({
 
       {callbackError && <p className="inline-error" role="alert">{callbackError}</p>}
       <div className="auth-entry-actions">
-        <button className="auth-provider-button" disabled={!configured || pending} onClick={() => beginOAuth('google')} type="button">
+        <button className="auth-provider-button" disabled={pending} onClick={() => beginOAuth('google')} type="button">
           <GoogleMark /> Continue with Google
         </button>
-        <button className="auth-provider-button" disabled={!configured || pending} onClick={() => beginOAuth('github')} type="button">
+        <button className="auth-provider-button" disabled={pending} onClick={() => beginOAuth('github')} type="button">
           <Github aria-hidden="true" size={17} /> Continue with GitHub
         </button>
-        {!configured && (
-          <div className="setup-notice" role="status">
-            <strong>Account access is not configured.</strong>
-            <p>{configStatus === 'placeholder'
-              ? 'The Supabase public key is still a placeholder value. Set NEXT_PUBLIC_SUPABASE_ANON_KEY to the real anon (public) key from Project Settings → API.'
-              : configStatus === 'invalid'
-                ? 'The Supabase URL is not a valid project URL. It must look like https://<20-character-project-ref>.supabase.co.'
-                : 'Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY on this deployment, then restart the server.'}</p>
-          </div>
-        )}
-        {error && <p className="inline-error" role="alert">{error}</p>}
+        <details className="auth-email-option" open>
+          <summary>Email and password <span aria-hidden="true">+</span></summary>
+          <SignInForm mode={mode} next={next} />
+        </details>
       </div>
-      <details className="auth-email-option" open={configured}>
-        <summary>Email and password <span aria-hidden="true">+</span></summary>
-        {configured
-          ? <SignInForm mode={mode} next={next} />
-          : <p className="auth-provider-note" role="status">Email and password sign-in stays disabled until the Supabase settings above are supplied.</p>}
-      </details>
       <p className="auth-account-switch">
         {mode === 'sign-up'
           ? <>Already have an account? <Link href={`/sign-in?next=${encodeURIComponent(next)}`}>Sign in</Link></>
