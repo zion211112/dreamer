@@ -826,8 +826,7 @@ select
   r.anchor_sign_off_id,
   r.anchor_crew_member_id,
   r.anchor_signed_at,
-  r.deployed_at,
-  t.asset_build_cost_minor
+  r.deployed_at
 from public.roll_records r
 join public.tenders t on t.id = r.tender_id;
 

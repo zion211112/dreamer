@@ -27,3 +27,10 @@ yarn-error.log*
 
 # os
 *~
+
+# supabase local artifacts
+/supabase/.temp/
+
+# throwaway migration tooling output
+/scripts/.build/
+/scripts/.verify/
