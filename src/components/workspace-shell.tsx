@@ -8,7 +8,6 @@ import { WorkspaceSwitcher } from '@/components/workspace-switcher';
 import type { WorkspaceContextOption } from '@/lib/workspace';
 import type { WorkspaceKey } from '@/lib/workspace';
 import { signOut } from '@/lib/supabase/sign-out';
-import Link from 'next/link';
 
 interface WorkspaceShellProps {
   initialTenders: Tender[];
@@ -81,11 +80,6 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
           <div className="ws-sigil"><span>A</span></div>
           APT-LABS <small>network workspace</small>
         </div>
-        <nav className="ws-top-nav" aria-label="Primary">
-          <Link href="/tenders">Assets</Link>
-          <Link href="/commons">Commons</Link>
-          <Link href="/roll">Roll</Link>
-        </nav>
         <div className="ws-top-right">
           {contexts.length > 0 && (
             <Suspense fallback={<span className="workspace-switcher workspace-switcher-loading">Loading context…</span>}>
