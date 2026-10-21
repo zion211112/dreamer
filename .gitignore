@@ -42,3 +42,6 @@ yarn-error.log*
 .tmp-*.log
 .tmp-*.out
 .tmp-*.key
+
+# agent tooling
+.kilo/

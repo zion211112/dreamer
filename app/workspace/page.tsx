@@ -19,18 +19,16 @@ export default async function WorkspacePage() {
   ]);
 
   return (
-    <main className="site-shell studio-shell">
-      <WorkspaceShell
-        initialTenders={tenders}
-        initialBriefs={briefsResult.briefs ?? []}
-        userEmail={workspace.email ?? ''}
-        localMode={workspace.localMode}
-        defaultWorkspace={workspace.defaultWorkspace}
-        contexts={workspace.contexts}
-        defaultContextKey={workspace.defaultContextKey}
-        canPersistPreference={!workspace.localMode}
-      />
-    </main>
+    <WorkspaceShell
+      initialTenders={tenders}
+      initialBriefs={briefsResult.briefs ?? []}
+      userEmail={workspace.email ?? ''}
+      localMode={workspace.localMode}
+      defaultWorkspace={workspace.defaultWorkspace}
+      contexts={workspace.contexts}
+      defaultContextKey={workspace.defaultContextKey}
+      canPersistPreference={!workspace.localMode}
+    />
   );
 }
 

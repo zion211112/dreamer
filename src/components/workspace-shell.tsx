@@ -20,43 +20,38 @@ interface WorkspaceShellProps {
   canPersistPreference?: boolean;
 }
 
-type Step = { id: string; label: string; sub: string[]; note: string };
-
-const PATH: Step[] = [
-  { id: 'problem', label: 'Problem', sub: ['Observe', 'Measure', 'Name'], note: 'Start with what hurts, not what sells.' },
-  { id: 'evidence', label: 'Evidence', sub: ['Source', 'Timestamp', 'Review'], note: 'A claim is a claim until a source signs it.' },
-  { id: 'host', label: 'Host', sub: ['Access', 'Baseline', 'Acceptance'], note: 'No host, no project. Just a pitch.' },
-  { id: 'capability', label: 'Capability', sub: ['Design', 'BOM', 'Review'], note: 'Roles are not people. Verify the person.' },
-  { id: 'capital', label: 'Capital', sub: ['Scope', 'Milestone', 'Reconcile'], note: 'Intent is not a transfer.' },
-  { id: 'build', label: 'Build', sub: ['Fabricate', 'Install', 'Test'], note: 'Cheap is a lie until tested.' },
-  { id: 'roll', label: 'Roll', sub: ['Record', 'Accept', 'Maintain'], note: 'The record outlives the builder.' },
-  { id: 'sovereignty', label: 'Sovereignty', sub: ['Own', 'Operate', 'Improve'], note: 'The goal is not the build. It is who owns it after.' },
+const MODULES = [
+  { id: 'asset', label: 'Asset Topology', icon: '◈' },
+  { id: 'problem', label: 'Problem Briefs', icon: '◻' },
+  { id: 'sequence', label: 'Work Sequence', icon: '▶' },
+  { id: 'capability', label: 'Crew & Capability', icon: '◉' },
+  { id: 'commons', label: 'Commons', icon: '≡' },
 ];
 
-const THOTH: Record<string, string> = {
-  problem: 'Thoth 1.0: before solutions, measure. A pump is not a problem; a bill is.',
-  evidence: 'Thoth 1.0: if you cannot source it, timestamp it, and name who reviewed it, it is gossip.',
-  host: 'Thoth 1.0: find the person who pays the bill and the person who fixes it. Often different.',
-  capability: 'Thoth 1.0: a capability is a category until a credential and a quotation exist.',
-  capital: 'Thoth 1.0: money follows evidence, not enthusiasm. Define the milestone first.',
-  build: 'Thoth 1.0: the cheapest quote is the most expensive surprise.',
-  roll: 'Thoth 1.0: if it is not recorded, it did not happen. If it is not accepted, it is not done.',
-  sovereignty: 'Thoth 1.0: sovereignty is not independence. It is the right to refuse and the capacity to maintain.',
-};
+const SEQUENCE = [
+  { id: 'problem', label: 'Problem', sub: ['Observe', 'Measure', 'Name'] },
+  { id: 'evidence', label: 'Evidence', sub: ['Source', 'Timestamp', 'Review'] },
+  { id: 'host', label: 'Host', sub: ['Access', 'Baseline', 'Acceptance'] },
+  { id: 'capability', label: 'Capability', sub: ['Design', 'BOM', 'Review'] },
+  { id: 'capital', label: 'Capital', sub: ['Scope', 'Milestone', 'Reconcile'] },
+  { id: 'build', label: 'Build', sub: ['Fabricate', 'Install', 'Test'] },
+  { id: 'roll', label: 'Roll', sub: ['Record', 'Accept', 'Maintain'] },
+  { id: 'sovereignty', label: 'Sovereignty', sub: ['Own', 'Operate', 'Improve'] },
+];
 
 export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, localMode = false, defaultWorkspace = 'apt', contexts = [], defaultContextKey = '', canPersistPreference = true }: WorkspaceShellProps) {
   const [briefs, setBriefs] = useState<ProblemBrief[]>(initialBriefs);
-  const [selected, setSelected] = useState('problem');
-  const [open, setOpen] = useState<string | null>('problem');
-  const [zoom, setZoom] = useState(1);
+  const [active, setActive] = useState('asset');
   const [modalOpen, setModalOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [place, setPlace] = useState('');
   const [description, setDescription] = useState('');
   const [saving, setSaving] = useState(false);
-  const [activity, setActivity] = useState<string[]>(['Workspace loaded. Live records where available; the rest is marked.']);
+  const [kemetInput, setKemetInput] = useState('');
+  const [kemetMsgs, setKemetMsgs] = useState<{ role: 'sys' | 'user'; text: string }[]>([
+    { role: 'sys', text: 'Kemet-OS initialized. Ready to iterate on network topology.' },
+  ]);
 
-  const step = PATH.find(s => s.id === selected) ?? PATH[0];
   const tenders = initialTenders;
 
   async function saveProblem() {
@@ -68,160 +63,236 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
       if (result.error) { toast(result.error); return; }
       if (result.brief) {
         setBriefs(prev => [result.brief!, ...prev]);
-        setActivity(prev => ['Problem draft persisted to your account.', ...prev]);
         toast('Problem brief saved.');
       }
       setTitle(''); setPlace(''); setDescription(''); setModalOpen(false);
     } finally { setSaving(false); }
   }
 
+  function sendKemet() {
+    const v = kemetInput.trim();
+    if (!v) return;
+    setKemetMsgs(prev => [...prev, { role: 'user', text: `> ${v}` }]);
+    setKemetInput('');
+    setTimeout(() => setKemetMsgs(prev => [...prev, { role: 'sys', text: `Acknowledged. Processing "${v}" against network ledger... Action queued.` }]), 800);
+  }
+
+  const activeModule = MODULES.find(m => m.id === active) ?? MODULES[0];
+
   return (
-    <div className="workspace-dark">
-      <header className="ws-topbar">
-        <div className="ws-brand">
-          <div className="ws-sigil"><span>A</span></div>
-          APT-LABS <small>network workspace</small>
+    <div className="km-root">
+      <header className="sys-header">
+        <div className="brand">
+          <div className="brand-icon">A</div>
+          APT-LABS
         </div>
-        <div className="ws-top-right">
+        <div className="sys-vitals">
+          <div className="vital-item"><span className="vital-lbl">DID:</span><span className="vital-val">{userEmail ? userEmail.slice(0, 8) + '...' + userEmail.slice(-4) : '0x4a2f...8b1c'}</span></div>
+          <div className="vital-item"><span className="vital-lbl">Rank:</span><span className="vital-val blue">TIER 1</span></div>
+          <div className="vital-item"><span className="vital-lbl">Decay:</span><span className="vital-val warn">64%</span></div>
+        </div>
+        <div className="header-extras">
           {contexts.length > 0 && (
-            <Suspense fallback={<span className="workspace-switcher workspace-switcher-loading">Loading context…</span>}>
+            <Suspense fallback={<span className="km-chip">Loading context…</span>}>
               <WorkspaceSwitcher defaultWorkspace={defaultWorkspace} contexts={contexts} defaultContextKey={defaultContextKey} canPersistPreference={canPersistPreference} />
             </Suspense>
           )}
-          <span><span className="ws-state-dot" />{userEmail || 'signed in'}</span>
           {localMode && <span className="local-badge">LOCAL</span>}
-          <span className="ws-honest-badge">prototype - honest</span>
           <form action={signOut}><button className="ws-signout" type="submit">Sign out</button></form>
         </div>
       </header>
 
-      <div className="ws-layout">
-        <aside className="ws-rail">
-          <div className="ws-workspace-label">Thoth Agent 1.0</div>
-          <div className="ws-thoth">
-            <div className="ws-thoth-head">agent / online</div>
-            <p className="ws-thoth-msg">{THOTH[selected]}</p>
-            <div className="ws-thoth-foot">hint, not authority</div>
-          </div>
-          <div className="ws-workspace-label" style={{ marginTop: 16 }}>Workspace</div>
-          <nav className="ws-nav">
-            {PATH.map(s => (
-              <button key={s.id} type="button" className={selected === s.id ? 'active' : ''} onClick={() => { setSelected(s.id); setOpen(s.id); toast(s.label + ' selected.'); }}>
-                <span className="ws-nav-ico">{s.label[0]}</span>
-                <span>{s.label}</span>
-              </button>
+      <div className="app-grid">
+        <div className="nav-pane">
+          <div className="nav-header">Modules</div>
+          <div className="nav-list">
+            {MODULES.map(m => (
+              <div key={m.id} className={`nav-item ${active === m.id ? 'active' : ''}`} onClick={() => { setActive(m.id); toast(m.label + ' selected.'); }}>
+                <div className="icon">{m.icon}</div>
+                <div className="nav-label">{m.label}</div>
+                {m.id === 'problem' && briefs.length > 0 && <div className="nav-badge">{briefs.length}</div>}
+              </div>
             ))}
-          </nav>
-          <div className="ws-workspace-label" style={{ marginTop: 16 }}>Network</div>
-          <div style={{ padding: '0 9px', fontSize: 10, color: 'var(--ws-dim)', lineHeight: 1.5 }}>community layer: planned, not live. The end state is a superior network, not a feed.</div>
-          <div className="ws-rail-foot">
-            <button className="ws-btn primary" type="button" onClick={() => setModalOpen(true)}>+ New problem</button>
           </div>
-        </aside>
+        </div>
 
-        <main className="ws-center">
-          <div className="ws-center-head">
-            <div>
-              <div className="ws-tiny-label">sovereignty path / recursive</div>
-              <h1>The path to ownership.</h1>
-              <p className="ws-center-sub">Each step opens into smaller steps. Nothing is marked done until evidence exists. The end is not a build; it is who maintains it.</p>
-            </div>
-            <div className="ws-zoom-controls">
-              <button type="button" onClick={() => setZoom(z => Math.max(0.8, z - 0.1))}>−</button>
-              <button type="button" onClick={() => setZoom(1)}>reset</button>
-              <button type="button" onClick={() => setZoom(z => Math.min(1.3, z + 0.1))}>+</button>
-            </div>
+        <div className="center-pane">
+          <div className="center-head">
+            <span>{activeModule.label}</span>
+            <span>STATUS: ACTIVE</span>
           </div>
 
-          <div className="ws-path" style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }}>
-            {PATH.map((s, i) => {
-              const active = selected === s.id;
-              const expanded = open === s.id;
-              return (
-                <div key={s.id} className={`ws-step ${active ? 'active' : ''}`}>
-                  <button type="button" className="ws-step-head" onClick={() => { setSelected(s.id); setOpen(expanded ? null : s.id); }}>
-                    <span className="ws-step-num">{String(i + 1).padStart(2, '0')}</span>
-                    <span className="ws-step-label">{s.label}</span>
-                    <span className="ws-step-note">{s.note}</span>
-                    <span className="ws-step-toggle">{expanded ? '−' : '+'}</span>
-                  </button>
-                  {expanded && (
-                    <div className="ws-step-body">
-                      <div className="ws-step-subs">
-                        {s.sub.map((sub, j) => (
-                          <div key={sub} className="ws-sub">
-                            <span className="ws-sub-num">{i + 1}.{j + 1}</span>
-                            <span>{sub}</span>
-                            <span className="ws-sub-state">open</span>
-                          </div>
-                        ))}
-                      </div>
-                      {s.id === 'problem' && briefs.length > 0 && (
-                        <div className="ws-briefs">
-                          <div className="ws-tiny-label">your briefs ({briefs.length})</div>
-                          {briefs.slice(0, 4).map(b => (
-                            <div key={b.id} className="ws-brief">
-                              <strong>{b.title}</strong>
-                              <small>{b.place || 'no place'} · {b.status}</small>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      {s.id === 'problem' && tenders.length > 0 && (
-                        <div className="ws-tiny-label" style={{ marginTop: 8 }}>live tenders: {tenders.length}</div>
-                      )}
-                    </div>
-                  )}
-                  {i < PATH.length - 1 && <div className="ws-step-connector" />}
+          {active === 'asset' && (
+            <div className="node-tree">
+              <div className="tree-node">
+                <div className="node-card">
+                  <div>
+                    <div className="node-title">Kirinyaga Secondary Tower</div>
+                    <div className="node-meta">Host Chassis · 4 Floors Operational</div>
+                  </div>
+                  <div className="node-status status-built">Active</div>
                 </div>
-              );
-            })}
-          </div>
-        </main>
+                <div className="node-tree" style={{ marginTop: 16 }}>
+                  <div className="tree-node">
+                    <div className="node-card">
+                      <div>
+                        <div className="node-title">Mwea Animation Box</div>
+                        <div className="node-meta">Acoustic Paneling · TND-KRG-2026-088</div>
+                      </div>
+                      <div className="node-status status-build">In Assembly</div>
+                    </div>
+                    <div className="sub-tasks">
+                      <div className="sub-task"><div className="st-dot done" /><div className="st-title">Capital Intent Verified</div><div className="st-meta">KES 120K</div></div>
+                      <div className="sub-task"><div className="st-dot done" /><div className="st-title">Materials Acquired</div><div className="st-meta">Timber + Steel</div></div>
+                      <div className="sub-task"><div className="st-dot active" /><div className="st-title">Fabrication Phase</div><div className="st-meta">You are here</div></div>
+                    </div>
+                  </div>
+                  <div className="tree-node" style={{ marginTop: 16 }}>
+                    <div className="node-card">
+                      <div>
+                        <div className="node-title">Solar Crop Dehydrator</div>
+                        <div className="node-meta">Agri-Compute · TND-KRG-2026-014</div>
+                      </div>
+                      <div className="node-status status-built">Built</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {tenders.length > 0 && <div className="km-section-title">Live tenders: {tenders.length}</div>}
+              {briefs.length > 0 && <div className="km-section-title">Problem briefs: {briefs.length}</div>}
+            </div>
+          )}
 
-        <aside className="ws-inspector">
-          <div className="ws-tiny-label">{step.label} / selected</div>
-          <h2>{step.label}</h2>
-          <p>{step.note}</p>
-          <div className="ws-kv">
-            <div><span>current state</span><strong>unverified</strong></div>
-            <div><span>next gate</span><strong>{step.sub[0]}</strong></div>
-            <div><span>evidence</span><strong>0 verified</strong></div>
-            <div><span>risk</span><strong>misrepresentation</strong></div>
+          {active === 'problem' && (
+            <div>
+              <div className="km-section-title">Problem Briefs</div>
+              {briefs.length === 0 ? (
+                <div className="km-empty">No problem briefs yet. Add a Problem Node.</div>
+              ) : (
+                <div className="km-list">
+                  {briefs.map(b => (
+                    <div key={b.id} className="km-row">
+                      <strong>{b.title}</strong>
+                      <small>{b.place || 'no place'} · {b.status}</small>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div style={{ marginTop: 16 }}>
+                <button className="km-btn primary" type="button" onClick={() => setModalOpen(true)}>+ Add Problem Node</button>
+              </div>
+            </div>
+          )}
+
+          {active === 'sequence' && (
+            <div className="km-list">
+              {SEQUENCE.map((s, i) => (
+                <div key={s.id} className="km-card">
+                  <h3>{i + 1}. {s.label}</h3>
+                  <small>{s.sub.join(' · ')}</small>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {active === 'capability' && (
+            <div>
+              <div className="km-section-title">Suggested Actions</div>
+              <div className="suggest-item">
+                <div className="suggest-title">Join Solar Dehydrator Assembly</div>
+                <div className="suggest-meta">Role: Tier 1 Welder · 88% Match</div>
+              </div>
+              <div className="suggest-item">
+                <div className="suggest-title">Review Land Tenure Covenant</div>
+                <div className="suggest-meta">Role: Legal Mind · 94% Match</div>
+              </div>
+            </div>
+          )}
+
+          {active === 'commons' && (
+            <div className="km-empty">Commons module — shared records surface. Connect to live data to populate.</div>
+          )}
+        </div>
+
+        <div className="right-pane">
+          <div className="right-scroll">
+            <div className="profile-block">
+              <div className="avatar">
+                {(userEmail?.[0] || 'W').toUpperCase()}
+                <div className="decay-ring" />
+              </div>
+              <div className="profile-name">{userEmail?.split('@')[0] || 'Wanjiru M.'}</div>
+              <div className="profile-did">did:apt:0x4a2f...8b1c</div>
+              <div className="decay-alert">
+                Execution Signal: 64%<br />
+                <span style={{ color: 'var(--km-ink-muted)', fontSize: 9 }}>Log milestone to reset.</span>
+              </div>
+            </div>
+            <div className="action-block">
+              <div className="sec-title">Suggested Actions</div>
+              <div className="suggest-item">
+                <div className="suggest-title">Join Solar Dehydrator Assembly</div>
+                <div className="suggest-meta">Role: Tier 1 Welder · 88% Match</div>
+              </div>
+              <div className="suggest-item">
+                <div className="suggest-title">Review Land Tenure Covenant</div>
+                <div className="suggest-meta">Role: Legal Mind · 94% Match</div>
+              </div>
+            </div>
+            <div className="action-block">
+              <div className="sec-title">System Overrides</div>
+              <button className="btn-add-node" onClick={() => setModalOpen(true)}>
+                <span style={{ fontSize: 16 }}>+</span> Add Problem Node
+              </button>
+            </div>
           </div>
-          <div className="ws-tiny-label" style={{ marginTop: 12 }}>what must be established</div>
-          <ul className="ws-checklist">
-            {step.sub.map(sub => <li key={sub}>{sub}</li>)}
-          </ul>
-          <div className="ws-evidence-contract">
-            A claim becomes verified only when a traceable source, responsible person, timestamp and review outcome are recorded.
+
+          <div className="kemet-os">
+            <div className="kemet-header">
+              <div className="kemet-title">
+                <div className="kemet-dot" />
+                KEMET-OS 1.0
+              </div>
+              <div style={{ fontFamily: 'var(--km-font-mono)', fontSize: 9, color: 'var(--km-ink-dim)' }}>ONLINE</div>
+            </div>
+            <div className="kemet-body">
+              {kemetMsgs.map((m, i) => <div key={i} className={`msg ${m.role}`}>{m.text}</div>)}
+            </div>
+            <div className="kemet-input-wrap">
+              <input className="kemet-input" value={kemetInput} onChange={e => setKemetInput(e.target.value)} placeholder="Type command or query..." onKeyDown={e => { if (e.key === 'Enter') sendKemet(); }} />
+              <button className="kemet-send" onClick={sendKemet}>↵</button>
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-            <button className="ws-btn" type="button" onClick={() => { toast('Evidence capture is a prototype action.'); setActivity(prev => ['Evidence action requested. No evidence attached.', ...prev]); }}>+ Record evidence</button>
-            <button className="ws-btn" type="button" onClick={() => { toast('Next task: ' + step.sub[0] + '.'); setActivity(prev => ['Next task identified: ' + step.sub[0] + '.', ...prev]); }}>Create task</button>
-          </div>
-        </aside>
+        </div>
       </div>
 
-      <div className="ws-activity">
-        <h3>Activity</h3>
-        {activity.map((a, i) => <div key={i} className="ws-activity-row"><b>{a.split('.')[0]}.</b> {a.split('.').slice(1).join('.')}</div>)}
-      </div>
+      <footer className="sys-footer">
+        <div className="f-left">
+          <div className="f-item" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><div className="f-dot" /> NETWORK CONNECTED</div>
+          <div className="f-item">NODE: KIRINYAGA</div>
+        </div>
+        <div className="f-right">
+          <div className="f-item">SOVEREIGN LEDGER: ACTIVE</div>
+          <div className="f-item">v1.0.4</div>
+          {briefs.length > 0 && <div className="f-item">BRIEFS: {briefs.length}</div>}
+          {tenders.length > 0 && <div className="f-item">TENDERS: {tenders.length}</div>}
+        </div>
+      </footer>
 
       {modalOpen && (
-        <div className="ws-modal-backdrop open" onClick={(e) => { if (e.target === e.currentTarget) setModalOpen(false); }}>
-          <div className="ws-modal" role="dialog" aria-modal="true">
+        <div className="km-modal-backdrop" onClick={(e) => { if (e.target === e.currentTarget) setModalOpen(false); }}>
+          <div className="km-modal" role="dialog" aria-modal="true">
             <h2>Create a problem brief</h2>
-            <p style={{ fontSize: 12, color: 'var(--ws-muted)' }}>Capture a field problem without presuming the solution. Saved to your account.</p>
+            <p>Capture a field problem without presuming the solution. Saved to your account.</p>
             <label>Title</label>
             <input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Water pump operating cost" autoFocus />
             <label>Place</label>
             <input value={place} onChange={e => setPlace(e.target.value)} placeholder="Location" />
             <label>Description</label>
             <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="What is observed, and what evidence exists?" />
-            <div className="ws-modal-actions">
-              <button className="ws-btn subtle" type="button" onClick={() => setModalOpen(false)}>Cancel</button>
-              <button className="ws-btn primary" type="button" onClick={saveProblem} disabled={saving}>{saving ? 'Saving...' : 'Save problem'}</button>
+            <div className="km-modal-actions">
+              <button className="km-btn subtle" type="button" onClick={() => setModalOpen(false)}>Cancel</button>
+              <button className="km-btn primary" type="button" onClick={saveProblem} disabled={saving}>{saving ? 'Saving...' : 'Save problem'}</button>
             </div>
           </div>
         </div>
