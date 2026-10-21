@@ -1,5 +1,4 @@
 import { redirect } from 'next/navigation';
-import { SiteHeader } from '@/components/site-header';
 import { WorkspaceShell } from '@/components/workspace-shell';
 import { getWorkspaceContext } from '@/lib/workspace-access';
 import { getMarketTenders } from '@/lib/tender-repository';
@@ -21,11 +20,15 @@ export default async function WorkspacePage() {
 
   return (
     <main className="site-shell studio-shell">
-      <SiteHeader hideNav />
       <WorkspaceShell
         initialTenders={tenders}
         initialBriefs={briefsResult.briefs ?? []}
         userEmail={workspace.email ?? ''}
+        localMode={workspace.localMode}
+        defaultWorkspace={workspace.defaultWorkspace}
+        contexts={workspace.contexts}
+        defaultContextKey={workspace.defaultContextKey}
+        canPersistPreference={!workspace.localMode}
       />
     </main>
   );

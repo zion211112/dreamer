@@ -1,14 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { toast } from 'sonner';
 import { createProblemBrief, type ProblemBrief } from '../../app/workspace/actions';
 import type { Tender } from '@/lib/tender';
+import { WorkspaceSwitcher } from '@/components/workspace-switcher';
+import type { WorkspaceContextOption } from '@/lib/workspace';
+import type { WorkspaceKey } from '@/lib/workspace';
+import { signOut } from '@/lib/supabase/sign-out';
+import Link from 'next/link';
 
 interface WorkspaceShellProps {
   initialTenders: Tender[];
   initialBriefs: ProblemBrief[];
   userEmail: string;
+  localMode?: boolean;
+  defaultWorkspace?: WorkspaceKey;
+  contexts?: WorkspaceContextOption[];
+  defaultContextKey?: string;
+  canPersistPreference?: boolean;
 }
 
 const INSPECTOR: Record<string, { kicker: string; title: string; description: string; state: string; owner: string; gate: string; evidence: string; risk: string; check: string; warning: string }> = {
@@ -21,7 +31,7 @@ INSPECTOR.host = { kicker: 'Institution / host', title: 'Host institution', desc
 INSPECTOR.capital = { kicker: 'Capital / conditional support', title: 'Funding intent', description: 'Potential support should attach to a defined scope, credible budget and acceptance gates.', state: 'No funder, pledge, escrow, budget approval or transfer is recorded.', owner: 'None', gate: 'Cost a validated option', evidence: '0 verified', risk: 'Misrepresentation / misuse', check: 'Validate the need\nObtain comparable quotations\nDefine milestone-based release\nAgree controls and reporting\nReconcile funds and actual costs', warning: 'No capital is committed. Do not represent the illustrative panel as a real funding offer.' };
 INSPECTOR.roll = { kicker: 'The Roll / evidence', title: 'Project evidence record', description: 'The record links people, work, materials, cost, technical documents, tests, acceptance and maintenance.', state: 'This is a UI demonstration, not a live or immutable ledger.', owner: 'Record steward TBD', gate: 'Define evidence schema', evidence: '3 sample entries', risk: 'Privacy / provenance', check: 'Source and timestamp each claim\nIdentify author and reviewer\nAttach permitted evidence\nPreserve corrections and state changes\nRestrict sensitive personal / institutional data', warning: 'The prototype does not provide cryptographic guarantees, access control, or persistent storage.' };
 
-export function WorkspaceShell({ initialTenders, initialBriefs, userEmail }: WorkspaceShellProps) {
+export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, localMode = false, defaultWorkspace = 'apt', contexts = [], defaultContextKey = '', canPersistPreference = true }: WorkspaceShellProps) {
   const [briefs, setBriefs] = useState<ProblemBrief[]>(initialBriefs);
   const [selected, setSelected] = useState('problem');
   const [zoom, setZoom] = useState(1);
@@ -66,14 +76,33 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail }: Wor
 
   return (
     <div className="workspace-dark" style={{ width: '100%' }}>
-      <header className="ws-topbar">
+<header className="ws-topbar">
         <div className="ws-brand">
           <div className="ws-sigil"><span>A</span></div>
           APT-LABS <small>network workspace</small>
         </div>
+        <nav className="ws-top-nav" aria-label="Primary">
+          <Link href="/tenders">Assets</Link>
+          <Link href="/commons">Commons</Link>
+          <Link href="/roll">Roll</Link>
+        </nav>
         <div className="ws-top-right">
+          {contexts.length > 0 && (
+            <Suspense fallback={<span className="workspace-switcher workspace-switcher-loading">Loading context…</span>}>
+              <WorkspaceSwitcher
+                defaultWorkspace={defaultWorkspace}
+                contexts={contexts}
+                defaultContextKey={defaultContextKey}
+                canPersistPreference={canPersistPreference}
+              />
+            </Suspense>
+          )}
           <span><span className="ws-state-dot" />{userEmail || 'signed in'}</span>
-          <span>prototype - honest</span>
+          {localMode && <span className="local-badge">LOCAL</span>}
+          <span className="ws-honest-badge">prototype - honest</span>
+          <form action={signOut}>
+            <button className="ws-signout" type="submit">Sign out</button>
+          </form>
         </div>
       </header>
       <div className="ws-layout">
