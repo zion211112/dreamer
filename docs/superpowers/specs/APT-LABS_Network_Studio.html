@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#f5f3ec" />
+<title>APT-LABS — Network Studio</title>
+<style>
+  :root{
+    --paper:#f5f3ec; --paper-2:#fbfaf6; --paper-3:#eeece3; --white:#fffefa;
+    --ink:#252923; --ink-2:#4c5149; --muted:#777b70; --faint:#9b9d92;
+    --line:#dcdacf; --line-strong:#c9c8bb; --green:#3b5c49; --green-soft:#e7eee7;
+    --blue:#436b7c; --blue-soft:#e8eff0; --ochre:#8a6b35; --ochre-soft:#f3ecdc;
+    --red:#945e50; --red-soft:#f4e9e4; --shadow:0 12px 32px rgba(38,40,31,.055);
+    --radius:8px; --sans:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --serif:Georgia, "Times New Roman", serif; --mono:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{font-family:var(--sans); color:var(--ink); background:var(--paper); font-size:13px; -webkit-font-smoothing:antialiased}
+  button,input,textarea,select{font:inherit}
+  button{color:inherit}
+  button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  button:disabled{opacity:.48;cursor:not-allowed}
+  .app{min-height:100%;display:flex;flex-direction:column}
+  .topbar{height:62px;flex:0 0 62px;display:flex;align-items:center;gap:24px;padding:0 27px;border-bottom:1px solid var(--line);background:rgba(251,250,246,.94);position:relative;z-index:5}
+  .brand{display:flex;align-items:center;gap:10px;min-width:225px}
+  .brand-mark{width:25px;height:25px;border:1px solid var(--green);border-radius:50%;display:grid;place-items:center;color:var(--green);font-family:var(--serif);font-size:16px;line-height:1}
+  .brand-name{font-size:12px;letter-spacing:.16em;font-weight:750}.brand-sub{font-size:10px;color:var(--muted);letter-spacing:.04em;margin-top:3px}
+  .top-divider{height:27px;width:1px;background:var(--line)}
+  .product-label{font-size:13px;font-weight:620;letter-spacing:-.015em}.product-label span{color:var(--muted);font-weight:400;margin-left:9px}
+  .top-spacer{flex:1}
+  .context-pill,.proto-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);padding:7px 9px;border-radius:5px;background:var(--white);font-size:10px;color:var(--ink-2);white-space:nowrap}
+  .context-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+  .avatar{width:30px;height:30px;border:1px solid var(--line-strong);border-radius:50%;display:grid;place-items:center;color:var(--muted);font-size:11px;background:var(--paper-2)}
+  .proto-banner{display:flex;align-items:center;gap:10px;min-height:34px;padding:7px 27px;border-bottom:1px solid #e1d4b6;background:#f3eddf;color:#645637;font-size:11px;line-height:1.45}
+  .proto-banner strong{font-size:10px;letter-spacing:.085em;text-transform:uppercase;font-weight:750;white-space:nowrap}
+  .proto-banner .banner-dot{height:5px;width:5px;border-radius:50%;background:var(--ochre);flex-shrink:0}
+  .banner-close{margin-left:auto;background:none;border:0;color:#786c51;cursor:pointer;padding:3px;font-size:17px;line-height:1}
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;padding:24px 27px 18px;gap:18px}
+  .eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700}
+  h1{font-family:var(--serif);font-size:30px;line-height:1.07;font-weight:400;letter-spacing:-.04em;margin:7px 0 7px}
+  .page-subtitle{color:var(--muted);font-size:12px;line-height:1.5;max-width:680px}
+  .page-actions{display:flex;align-items:center;gap:8px}
+  .button{min-height:32px;border:1px solid var(--line-strong);background:var(--white);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:7px 11px;cursor:pointer;font-size:11px;font-weight:620;transition:background .14s,border-color .14s,transform .14s;text-decoration:none;white-space:nowrap}
+  .button:hover:not(:disabled){background:#f6f4ed;border-color:#aeb2a5}
+  .button:active:not(:disabled){transform:translateY(1px)}
+  .button-primary{background:var(--green);color:#fffefa;border-color:var(--green)}.button-primary:hover:not(:disabled){background:#2d4938;border-color:#2d4938}
+  .button-quiet{background:transparent;border-color:transparent;color:var(--ink-2)}.button-quiet:hover:not(:disabled){border-color:var(--line);background:var(--paper-2)}
+  .button-small{min-height:27px;padding:5px 8px;font-size:10px}
+  .button-icon{width:31px;height:31px;padding:0;min-height:31px}
+  .icon{width:14px;height:14px;display:block;flex-shrink:0}
+  .main-shell{flex:1;min-height:650px;margin:0 18px 18px;border:1px solid var(--line);border-radius:9px;background:var(--paper-2);display:grid;grid-template-columns:290px minmax(380px,1fr) 322px;overflow:hidden;box-shadow:var(--shadow)}
+  .radar{border-right:1px solid var(--line);display:flex;flex-direction:column;min-width:0;background:#f9f8f2}
+  .pane-head{height:57px;flex:0 0 57px;display:flex;align-items:center;justify-content:space-between;padding:0 17px;border-bottom:1px solid var(--line)}
+  .pane-title{font-size:12px;font-weight:700;letter-spacing:-.01em}.pane-kicker{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.035em}
+  .search-wrap{position:relative;margin:15px 14px 10px}
+  .search-wrap .icon{position:absolute;left:10px;top:10px;color:var(--muted);width:13px;height:13px}
+  .search{width:100%;height:34px;border:1px solid var(--line);border-radius:5px;background:var(--white);padding:0 11px 0 31px;color:var(--ink);font-size:11px;outline-offset:1px}
+  .search::placeholder{color:#93968c}
+  .scope-tabs{display:flex;gap:2px;padding:0 13px 12px;border-bottom:1px solid var(--line)}
+  .scope-tab{border:1px solid transparent;background:transparent;border-radius:4px;color:var(--muted);font-size:10px;padding:6px 8px;cursor:pointer;flex:1}
+  .scope-tab:hover{color:var(--ink);background:var(--paper-3)}.scope-tab.active{background:#e9e8df;color:var(--ink);border-color:#deddd1;font-weight:650}
+  .radar-info{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 7px;color:var(--muted);font-size:10px}
+  .record-list{overflow:auto;padding:0 8px 12px;flex:1;min-height:170px}
+  .record-row{width:100%;display:flex;align-items:flex-start;gap:10px;text-align:left;background:transparent;border:1px solid transparent;border-radius:6px;padding:11px 8px;cursor:pointer;margin:2px 0}
+  .record-row:hover{background:#f3f2eb}.record-row.active{background:#eeefe7;border-color:#d7ddcf}
+  .record-icon{width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--line);border-radius:5px;background:#fffefa;color:var(--green);flex-shrink:0}
+  .record-icon.blue{color:var(--blue)}.record-icon.gold{color:var(--ochre)}.record-icon.red{color:var(--red)}
+  .record-body{min-width:0;flex:1}.record-line{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:4px}
+  .record-type{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+  .record-title{font-size:11px;line-height:1.4;font-weight:650;color:#30342d;letter-spacing:-.012em}
+  .record-sub{font-size:10px;color:var(--muted);line-height:1.45;margin-top:3px}
+  .mini-tag{display:inline-flex;font-size:8px;line-height:1.6;padding:1px 5px;border:1px solid #d8c9a9;border-radius:3px;color:#7a6130;background:#f8f2e5;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+  .radar-footer{padding:12px 15px;border-top:1px solid var(--line);font-size:10px;color:var(--muted);display:flex;align-items:flex-start;gap:8px;line-height:1.55}
+  .center-pane{min-width:0;display:flex;flex-direction:column;background:var(--paper-2)}
+  .workbench-head{height:57px;flex:0 0 57px;display:flex;align-items:center;justify-content:space-between;padding:0 17px;border-bottom:1px solid var(--line);gap:12px}
+  .workbench-label{display:flex;align-items:center;gap:9px;min-width:0}.workbench-label .pane-kicker{white-space:nowrap}
+  .view-toggle{display:flex;border:1px solid var(--line);border-radius:5px;padding:2px;gap:2px;background:#f0efe8}
+  .view-btn{display:flex;align-items:center;gap:5px;border:0;background:transparent;color:var(--muted);padding:5px 7px;border-radius:3px;font-size:10px;cursor:pointer}
+  .view-btn.active{color:var(--ink);background:var(--white);box-shadow:0 1px 2px rgba(0,0,0,.06);font-weight:650}
+  .canvas-toolbar{display:flex;align-items:center;gap:5px;padding:10px 14px 8px;border-bottom:1px solid #e8e6dc}
+  .canvas-toolbar .toolbar-note{margin-right:auto;font-size:10px;color:var(--muted);display:flex;align-items:center;gap:7px;min-width:0}
+  .status-dot{height:6px;width:6px;border-radius:50%;background:var(--ochre);flex-shrink:0}
+  .graph-viewport{position:relative;overflow:hidden;flex:1;min-height:425px;background-color:#f7f6f0;background-image:radial-gradient(#d8d8cb .8px,transparent .8px);background-size:18px 18px;isolation:isolate;touch-action:pan-y}
+  .graph-viewport:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(247,246,240,.22),transparent 25%,transparent 75%,rgba(247,246,240,.2));z-index:2}
+  .graph-world{position:absolute;left:0;top:0;width:930px;height:600px;transform-origin:top left;will-change:transform}
+  .edge-layer{position:absolute;left:0;top:0;width:930px;height:600px;overflow:visible;pointer-events:none}
+  .edge-path{fill:none;stroke:#bbbeb2;stroke-width:1.25;stroke-dasharray:4 5;vector-effect:non-scaling-stroke}
+  .edge-label{font:10px var(--sans);fill:#777b70;letter-spacing:.01em}
+  .graph-node{position:absolute;width:178px;min-height:78px;border:1px solid #d5d5c9;background:rgba(255,254,250,.97);border-radius:7px;box-shadow:0 3px 8px rgba(44,47,38,.035);padding:11px 12px;text-align:left;cursor:pointer;z-index:1;transition:border-color .15s,box-shadow .15s,background .15s;}
+  .graph-node:hover{border-color:#9aa996;box-shadow:0 5px 13px rgba(44,47,38,.075)}
+  .graph-node.selected{border-color:var(--green);box-shadow:0 0 0 2px rgba(59,92,73,.13);background:#fffefa}
+  .graph-node.center{width:202px;min-height:94px;border-color:#79917d}
+  .node-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+  .node-type{font-size:8px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-weight:750}
+  .node-glyph{width:20px;height:20px;display:grid;place-items:center;color:var(--green);background:var(--green-soft);border-radius:4px}
+  .node-name{font-family:var(--serif);font-size:15px;letter-spacing:-.025em;line-height:1.2;margin-bottom:5px}
+  .node-sub{font-size:9px;line-height:1.4;color:var(--muted)}
+  .node-state{margin-top:8px;padding-top:7px;border-top:1px solid #ecebe3;display:flex;align-items:center;gap:5px;font-size:8px;text-transform:uppercase;letter-spacing:.06em;color:#8a6b35;font-weight:750}
+  .node-state .state-square{height:5px;width:5px;border:1px solid currentColor}
+  .graph-legend{position:absolute;left:13px;bottom:12px;display:flex;align-items:center;gap:11px;z-index:3;padding:7px 9px;background:rgba(251,250,246,.92);border:1px solid var(--line);border-radius:5px;color:var(--muted);font-size:9px;backdrop-filter:blur(5px)}
+  .legend-mark{width:18px;height:0;border-top:1px dashed #aeb3a7;display:inline-block;vertical-align:middle;margin-right:4px}
+  .legend-box{width:8px;height:8px;border:1px solid #cbb98f;display:inline-block;vertical-align:middle;margin-right:4px;background:#f8f2e5}
+  .canvas-caption{height:38px;flex:0 0 38px;border-top:1px solid var(--line);padding:0 15px;display:flex;align-items:center;justify-content:space-between;font-size:9px;color:var(--muted);gap:10px}
+  .canvas-caption strong{color:#696d63;font-weight:650}
+  .list-view{flex:1;min-height:425px;overflow:auto;padding:20px 22px;background:#f7f6f0}
+  .list-intro{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;padding-bottom:17px;border-bottom:1px solid var(--line)}
+  .list-intro h2{font-family:var(--serif);font-weight:400;font-size:23px;letter-spacing:-.03em;margin:4px 0 6px}
+  .list-intro p{margin:0;max-width:450px;font-size:11px;line-height:1.6;color:var(--muted)}
+  .relation-list{margin-top:14px;display:flex;flex-direction:column;gap:7px}
+  .relation-row{display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:center;gap:12px;padding:11px;border:1px solid var(--line);border-radius:6px;background:var(--white);cursor:pointer;text-align:left}
+  .relation-row:hover,.relation-row.active{border-color:#a8b3a3;background:#fbfcf7}
+  .relation-index{font-family:var(--mono);font-size:10px;color:var(--muted)}
+  .relation-title{font-size:11px;font-weight:650}.relation-detail{margin-top:4px;color:var(--muted);font-size:10px;line-height:1.45}
+  .relation-kind{font-size:9px;color:var(--muted);white-space:nowrap}
+  .inspector{border-left:1px solid var(--line);min-width:0;display:flex;flex-direction:column;background:#fbfaf6}
+  .inspector .pane-head{padding:0 16px}
+  .inspect-scroll{overflow:auto;flex:1;padding:18px 17px 14px}
+  .inspect-type{display:flex;align-items:center;gap:7px;margin-bottom:11px}
+  .type-badge{font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--green);font-weight:800}
+  .type-sep{width:3px;height:3px;border-radius:50%;background:#b0b1a7}
+  .inspect-title{font-family:var(--serif);font-size:25px;line-height:1.08;font-weight:400;letter-spacing:-.04em;margin:0 0 9px;overflow-wrap:anywhere}
+  .inspect-summary{color:var(--muted);line-height:1.6;font-size:11px;margin:0 0 13px}
+  .truth-stamp{display:flex;align-items:flex-start;gap:8px;padding:9px 10px;border:1px solid #e2d5b9;border-radius:5px;background:#f8f2e5;color:#715b31;font-size:10px;line-height:1.5;margin:12px 0 18px}
+  .truth-stamp .icon{margin-top:1px;flex-shrink:0}
+  .inspect-tabs{display:flex;gap:13px;border-bottom:1px solid var(--line);margin-bottom:14px}
+  .inspect-tab{border:0;background:none;padding:0 0 8px;font-size:10px;color:var(--muted);cursor:pointer;position:relative}
+  .inspect-tab.active{color:var(--ink);font-weight:700}.inspect-tab.active:after{content:"";position:absolute;height:2px;bottom:-1px;left:0;right:0;background:var(--green)}
+  .section{margin-bottom:18px}.section-head{font-size:9px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-weight:800;margin:0 0 10px}
+  .fact-list{border-top:1px solid var(--line)}
+  .fact{display:grid;grid-template-columns:98px minmax(0,1fr);gap:9px;padding:9px 0;border-bottom:1px solid var(--line);align-items:start}
+  .fact-label{font-size:10px;color:var(--muted);line-height:1.45}.fact-value{font-size:10px;line-height:1.5;color:var(--ink-2);overflow-wrap:anywhere}.fact-value strong{color:var(--ink);font-weight:650}
+  .note-box{padding:11px 11px 10px;border-left:2px solid #b9c7b7;background:#eff2eb;font-size:10px;line-height:1.6;color:#495a4a;border-radius:0 4px 4px 0}
+  .relation-inspector-item{display:flex;align-items:flex-start;gap:9px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+  .relation-inspector-item:last-child{border-bottom:0}.relation-dot{width:7px;height:7px;border:1px solid var(--green);border-radius:50%;margin-top:4px;flex-shrink:0}
+  .relation-inspector-title{font-size:10px;font-weight:650;line-height:1.5}.relation-inspector-sub{font-size:9px;color:var(--muted);line-height:1.5;margin-top:2px}
+  .inspector-actions{border-top:1px solid var(--line);padding:13px 16px 15px;display:flex;flex-direction:column;gap:7px;background:#f7f6f0}
+  .inspector-actions .button{width:100%}.action-note{font-size:9px;line-height:1.5;color:var(--muted);text-align:center;margin-top:1px}
+  .empty-state{padding:30px 14px;text-align:center;color:var(--muted);font-size:11px;line-height:1.6}
+  .empty-state strong{display:block;color:var(--ink-2);font-size:12px;margin-bottom:4px}
+  .footerbar{display:flex;align-items:center;justify-content:space-between;padding:0 27px 15px;color:var(--muted);font-size:9px;gap:12px}
+  .footer-left,.footer-right{display:flex;align-items:center;gap:8px}.footer-sep{height:3px;width:3px;border-radius:50%;background:#b9baaf}
+  .kbd{font-family:var(--mono);font-size:9px;border:1px solid var(--line-strong);border-radius:3px;padding:2px 4px;background:var(--white);color:var(--muted)}
+  .modal-backdrop{position:fixed;inset:0;z-index:30;background:rgba(28,31,26,.25);display:none;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(3px)}
+  .modal-backdrop.open{display:flex}
+  .modal{width:min(510px,100%);max-height:min(88vh,760px);overflow:auto;background:var(--paper-2);border:1px solid var(--line-strong);border-radius:9px;box-shadow:0 22px 70px rgba(31,34,28,.22)}
+  .modal-head{padding:19px 21px 15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;align-items:flex-start}
+  .modal-head h2{font-family:var(--serif);font-size:24px;line-height:1.12;font-weight:400;letter-spacing:-.035em;margin:5px 0 0}
+  .modal-body{padding:18px 21px}.modal-foot{padding:13px 21px 18px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}.field label{font-size:10px;font-weight:700;color:var(--ink-2)}.field textarea,.field input{width:100%;border:1px solid var(--line-strong);background:var(--white);border-radius:5px;padding:10px;font-size:11px;line-height:1.5;color:var(--ink);resize:vertical}.field textarea{min-height:95px}.field small{color:var(--muted);font-size:9px;line-height:1.5}
+  .check-row{display:flex;align-items:flex-start;gap:9px;font-size:10px;line-height:1.55;color:var(--ink-2);margin:11px 0}.check-row input{margin-top:2px;accent-color:var(--green)}
+  .modal-warning{background:#f8f2e5;border:1px solid #e2d5b9;color:#6e5a34;border-radius:5px;padding:10px;font-size:10px;line-height:1.55;margin-bottom:14px}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,12px);background:#2f4234;color:#fffefa;padding:10px 14px;border-radius:5px;font-size:11px;box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:40;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:min(580px,calc(100vw - 28px));text-align:center;line-height:1.5}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+  @media(min-width:1500px){.main-shell{grid-template-columns:306px minmax(500px,1fr) 344px}.page-head{padding-top:28px}.graph-viewport{min-height:520px}.inspect-title{font-size:27px}}
+  @media(max-width:1190px){.main-shell{grid-template-columns:255px minmax(320px,1fr) 285px;margin:0 12px 14px}.topbar{padding:0 18px}.page-head{padding:20px 18px 16px}.proto-banner{padding-left:18px;padding-right:18px}.brand{min-width:200px}.graph-node{width:166px}.graph-node.center{width:194px}.inspector .pane-head{padding:0 12px}.inspect-scroll{padding:16px 12px}.inspector-actions{padding:12px}.fact{grid-template-columns:86px minmax(0,1fr)}}
+  @media(max-width:930px){.topbar{gap:13px}.brand{min-width:auto}.brand-sub{display:none}.top-divider{display:none}.main-shell{grid-template-columns:1fr;min-height:0;overflow:visible}.radar{border-right:0;border-bottom:1px solid var(--line);min-height:0}.radar .record-list{max-height:270px}.center-pane{min-height:590px}.inspector{border-left:0;border-top:1px solid var(--line);min-height:430px}.inspect-scroll{max-height:none}.graph-viewport,.list-view{min-height:500px}.footerbar{padding:0 14px 14px}.proto-banner{align-items:flex-start}.page-head{align-items:flex-start}.page-actions{padding-top:5px}}
+  @media(max-width:600px){.topbar{height:55px;flex-basis:55px;padding:0 13px}.brand-name{font-size:10px}.brand-mark{width:23px;height:23px}.product-label{font-size:11px}.product-label span{display:none}.context-pill{display:none}.proto-pill{font-size:9px;padding:6px}.avatar{width:27px;height:27px}.proto-banner{font-size:10px;padding:8px 13px}.proto-banner strong{white-space:normal}.page-head{padding:19px 14px 15px;display:block}h1{font-size:27px}.page-subtitle{font-size:11px}.page-actions{margin-top:13px}.main-shell{margin:0 8px 11px;border-radius:6px}.pane-head{height:50px;flex-basis:50px}.workbench-head{height:50px;flex-basis:50px;padding:0 10px}.workbench-label .pane-kicker{font-size:8px}.view-btn{padding:5px}.canvas-toolbar{padding:8px 9px}.canvas-toolbar .toolbar-note{font-size:9px}.graph-viewport,.list-view{min-height:440px}.graph-world{transform-origin:top left}.graph-legend{max-width:calc(100% - 24px);gap:7px;font-size:8px;left:8px;bottom:8px}.canvas-caption{padding:0 9px;font-size:8px}.canvas-caption span:last-child{display:none}.inspector .pane-head{padding:0 13px}.inspect-scroll{padding:16px 13px}.inspector-actions{padding:12px 13px}.footerbar{padding:0 10px 12px;align-items:flex-start}.footer-right{display:none}.scope-tabs{padding-left:8px;padding-right:8px}.scope-tab{padding:6px 5px}.record-list{padding-left:5px;padding-right:5px}}
+  @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand" aria-label="APT-LABS"><div class="brand-mark" aria-hidden="true">a</div><div><div class="brand-name">APT-LABS</div><div class="brand-sub">LOCAL CAPABILITY SYSTEMS</div></div></div>
+    <div class="top-divider" aria-hidden="true"></div>
+    <div class="product-label">Network Studio <span>/ Workspace</span></div>
+    <div class="top-spacer"></div>
+    <div class="context-pill"><span class="context-dot"></span><span>Context: network</span></div>
+    <div class="proto-pill"><span class="status-dot"></span>LOCAL PROTOTYPE</div>
+    <div class="avatar" aria-label="No connected account">—</div>
+  </header>
+  <div class="proto-banner" id="prototypeBanner" role="status">
+    <span class="banner-dot" aria-hidden="true"></span><strong>Illustrative workspace</strong><span>This standalone file uses scenario data only. It is not connected to APT-LABS, Supabase, real people, funding, or verified work. Nothing submitted here reaches a server.</span>
+    <button class="banner-close" id="bannerClose" aria-label="Dismiss prototype notice" title="Dismiss notice">×</button>
+  </div>
+  <section class="page-head">
+    <div><div class="eyebrow">Network / Studio</div><h1>Make the next step visible.</h1><div class="page-subtitle">Explore how a real-world problem, the people needed to solve it, the work, and its evidence fit together.</div></div>
+    <div class="page-actions"><button class="button" id="howButton"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M9.7 9a2.4 2.4 0 1 1 4.1 1.7c-1.2 1-1.8 1.2-1.8 2.8M12 17.1v.1" stroke-linecap="round"/></svg>How this works</button><button class="button button-primary" id="exportButton"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4" stroke-linecap="round" stroke-linejoin="round"/></svg>Export scenario</button></div>
+  </section>
+  <main class="main-shell" aria-label="Network Studio workspace">
+    <aside class="radar" aria-label="Opportunity radar">
+      <div class="pane-head"><div class="pane-title">Opportunity radar</div><div class="pane-kicker">EXPLORE</div></div>
+      <div class="search-wrap"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5" stroke-linecap="round"/></svg><label for="searchInput" class="visually-hidden">Search illustrative records</label><input class="search" id="searchInput" placeholder="Search records, roles, assets…" autocomplete="off" /></div>
+      <div class="scope-tabs" role="tablist" aria-label="Filter records by area">
+        <button class="scope-tab active" data-scope="all" role="tab" aria-selected="true">All</button>
+        <button class="scope-tab" data-scope="assets" role="tab" aria-selected="false">Assets</button>
+        <button class="scope-tab" data-scope="roles" role="tab" aria-selected="false">Roles</button>
+        <button class="scope-tab" data-scope="roll" role="tab" aria-selected="false">Roll</button>
+      </div>
+      <div class="radar-info"><span id="radarLabel">Scenario records</span><span class="mini-tag">EXAMPLE ONLY</span></div>
+      <div class="record-list" id="recordList" aria-label="Records"></div>
+      <div class="radar-footer"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8v.2" stroke-linecap="round"/></svg><span>These records illustrate the interface. The live workspace must be populated from permission-checked sources.</span></div>
+    </aside>
+    <section class="center-pane" aria-label="Relationship workbench">
+      <div class="workbench-head"><div class="workbench-label"><div class="pane-title">Relationship workbench</div><div class="pane-kicker">/ <span id="focusShort">CROP-LOSS SCENARIO</span></div></div>
+        <div class="view-toggle" role="group" aria-label="Choose relationship view"><button class="view-btn active" id="mapMode" aria-pressed="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="7" r="2"/><circle cx="11" cy="18" r="2"/><path d="m8 7 8-0.2M7.1 8l2.8 8M16.7 9l-4.1 7"/></svg>Map</button><button class="view-btn" id="listMode" aria-pressed="false"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 6h12M8 12h12M8 18h12" stroke-linecap="round"/><circle cx="4" cy="6" r=".7" fill="currentColor"/><circle cx="4" cy="12" r=".7" fill="currentColor"/><circle cx="4" cy="18" r=".7" fill="currentColor"/></svg>List</button></div>
+      </div>
+      <div class="canvas-toolbar" id="canvasToolbar"><div class="toolbar-note"><span class="status-dot"></span><span id="canvasContext">Scenario relationships · not database edges</span></div><button class="button button-small button-icon" id="zoomOut" aria-label="Zoom out" title="Zoom out">−</button><button class="button button-small button-icon" id="zoomIn" aria-label="Zoom in" title="Zoom in">+</button><button class="button button-small" id="fitView">Fit view</button><button class="button button-small button-quiet" id="centerFocus">Center focus</button></div>
+      <div class="graph-viewport" id="graphViewport" aria-label="Illustrative relationship map">
+        <div class="graph-world" id="graphWorld">
+          <svg class="edge-layer" id="edgeLayer" aria-hidden="true" viewBox="0 0 930 600">
+            <path class="edge-path" d="M365 277 C320 227 270 172 238 134"/><text class="edge-label" x="269" y="203">host context</text>
+            <path class="edge-path" d="M560 268 C608 218 630 173 670 133"/><text class="edge-label" x="601" y="198">specifies</text>
+            <path class="edge-path" d="M365 320 C319 350 283 377 238 390"/><text class="edge-label" x="276" y="352">role needed</text>
+            <path class="edge-path" d="M560 320 C603 348 632 369 670 388"/><text class="edge-label" x="604" y="351">role needed</text>
+            <path class="edge-path" d="M462 365 C462 403 462 430 462 463"/><text class="edge-label" x="474" y="420">evidence path</text>
+          </svg>
+          <button class="graph-node" data-node="site" style="left:60px;top:66px" aria-label="Inspect illustrative host institution">
+            <div class="node-top"><span class="node-type">Host context</span><span class="node-glyph"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 20h18M5 20V8l7-4 7 4v12M9 11h2m2 0h2M9 15h2m2 0h2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div><div class="node-name">Host institution</div><div class="node-sub">Site details not specified</div><div class="node-state"><span class="state-square"></span>Illustrative</div>
+          </button>
+          <button class="graph-node" data-node="blueprint" style="left:670px;top:66px" aria-label="Inspect illustrative blueprint">
+            <div class="node-top"><span class="node-type">Blueprint</span><span class="node-glyph" style="color:var(--blue);background:var(--blue-soft)"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 3h10l4 4v14H5zM15 3v5h4M8 12h8M8 16h8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div><div class="node-name">Dehydrator concept</div><div class="node-sub">Early specification · v0.1</div><div class="node-state"><span class="state-square"></span>Illustrative</div>
+          </button>
+          <button class="graph-node" data-node="fabrication" style="left:60px;top:350px" aria-label="Inspect illustrative fabrication role">
+            <div class="node-top"><span class="node-type">Commons role</span><span class="node-glyph" style="color:var(--ochre);background:var(--ochre-soft)"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m14 6 4 4M3 21l6-1 10-10a2.8 2.8 0 0 0-4-4L5 16zM13 7l4 4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div><div class="node-name">Fabrication capability</div><div class="node-sub">Frame design and assembly</div><div class="node-state"><span class="state-square"></span>Example role</div>
+          </button>
+          <button class="graph-node" data-node="electrical" style="left:670px;top:350px" aria-label="Inspect illustrative electrical role">
+            <div class="node-top"><span class="node-type">Commons role</span><span class="node-glyph" style="color:var(--blue);background:var(--blue-soft)"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2 5 13h6l-1 9 9-13h-6z" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div><div class="node-name">Electrical &amp; controls</div><div class="node-sub">Power and operating design</div><div class="node-state"><span class="state-square"></span>Example role</div>
+          </button>
+          <button class="graph-node" data-node="roll" style="left:373px;top:463px" aria-label="Inspect illustrative Roll evidence path">
+            <div class="node-top"><span class="node-type">The Roll</span><span class="node-glyph"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3h9l4 4v14H6zM15 3v5h4M9 12h6M9 16h6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div><div class="node-name">Evidence record</div><div class="node-sub">Intended proof trail, not submitted evidence</div><div class="node-state"><span class="state-square"></span>Not verified</div>
+          </button>
+          <button class="graph-node center selected" data-node="tender" style="left:360px;top:254px" aria-label="Inspect illustrative tender Crop-loss reduction">
+            <div class="node-top"><span class="node-type">Tender / problem</span><span class="node-glyph"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 20V8l8-5 8 5v12H4zM9 20v-6h6v6M8 9h.1M12 9h.1M16 9h.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div><div class="node-name">Crop-loss reduction</div><div class="node-sub">Explore a solar dehydrator concept</div><div class="node-state"><span class="state-square"></span>Illustrative scenario</div>
+          </button>
+        </div>
+        <div class="graph-legend"><span><i class="legend-mark"></i>Scenario relationship</span><span><i class="legend-box"></i>Illustrative record</span><span>Click a node to inspect</span></div>
+      </div>
+      <div class="list-view" id="listView" hidden>
+        <div class="list-intro"><div><div class="eyebrow">Relationship index</div><h2>What connects to this problem?</h2><p>A text-first view of the same illustrative relationships. Use it when spatial navigation is unnecessary or inaccessible.</p></div><span class="mini-tag">EXAMPLE ONLY</span></div>
+        <div class="relation-list" id="relationList"></div>
+      </div>
+      <div class="canvas-caption"><span><strong id="viewStatus">Focused on the problem brief</strong> <span>· illustrative scenario</span></span><span><span class="kbd">Tab</span> navigate <span class="kbd">Enter</span> inspect</span></div>
+    </section>
+    <aside class="inspector" aria-label="Context inspector">
+      <div class="pane-head"><div class="pane-title">Context inspector</div><div class="pane-kicker" id="inspectorCode">NODE / 01</div></div>
+      <div class="inspect-scroll" id="inspectScroll"></div>
+      <div class="inspector-actions" id="inspectorActions"></div>
+    </aside>
+  </main>
+  <footer class="footerbar"><div class="footer-left"><span>APT-LABS</span><span class="footer-sep"></span><span>Network Studio concept</span><span class="footer-sep"></span><span>Offline demo</span></div><div class="footer-right"><span>Relationships shown are illustrative, not persisted database edges.</span><span class="footer-sep"></span><span>v0.1</span></div></footer>
+</div>
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal"><div class="modal-head"><div><div class="eyebrow" id="modalEyebrow">STUDIO NOTE</div><h2 id="modalTitle">How this workspace works</h2></div><button class="button button-icon button-quiet" id="modalClose" aria-label="Close dialog">×</button></div><div class="modal-body" id="modalBody"></div><div class="modal-foot" id="modalFoot"><button class="button" id="modalCancel">Close</button></div></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+  const records = {
+    tender: {id:'tender', type:'Tender / problem', title:'Crop-loss reduction', sub:'Explore a solar dehydrator concept', scope:'assets', state:'ILLUSTRATIVE', icon:'asset', summary:'A scenario showing how an institutional problem could connect to a design, the capabilities needed to build it, and a record of what was tested.', facts:[['Record type','Tender / problem brief'],['Data basis','Illustrative scenario fixture'],['Current state','Not a live tender'],['Economic basis','No budget or savings verified'],['Next useful step','Establish the problem baseline and acceptance criteria']], note:'Start with the loss being measured and its cause. A machine is one possible intervention—not a conclusion.', related:['site','blueprint','fabrication','electrical','roll'], action:'scenario', actionLabel:'Inspect related records'},
+    site: {id:'site', type:'Host context', title:'Host institution', sub:'Site details not specified', scope:'assets', state:'UNKNOWN', icon:'site', summary:'A placeholder for the institution that owns or operates the real-world problem. A production workspace would show only authorized site details.', facts:[['Institution','Not specified'],['Location','Not verified'],['Authorization','No host consent recorded in this prototype'],['Operating baseline','Not supplied'],['Next useful step','Identify an authorized host and document the problem']], note:'Do not attach a real school or institution to this scenario without permission and verified context.', related:['tender'], action:'scenario', actionLabel:'Return to problem'},
+    blueprint: {id:'blueprint', type:'Blueprint', title:'Dehydrator concept', sub:'Early specification · v0.1', scope:'assets', state:'ILLUSTRATIVE', icon:'blueprint', summary:'An example design artifact connected to the problem brief. This prototype contains no engineering drawing, bill of materials, tested specification, or content hash.', facts:[['Version','Concept v0.1 (example)'],['Drawing','Not attached'],['Bill of materials','Not defined'],['Technical review','Not performed'],['Next useful step','Define requirements, safety limits and test method']], note:'A content hash can help identify a file version. It is not a technical approval, a signature, or proof that a design works.', related:['tender'], action:'scenario', actionLabel:'Inspect problem brief'},
+    fabrication: {id:'fabrication', type:'Commons role', title:'Fabrication capability', sub:'Frame design and assembly', scope:'roles', state:'EXAMPLE ROLE', icon:'fabrication', summary:'An illustrative capability requirement, not a published vacancy or a verified opportunity. A live role should include scope, conditions, safety requirements and acceptance criteria.', facts:[['Role','Fabrication and assembly'],['Status','Not published'],['Budget / terms','Not specified'],['Applications','No application data connected'],['Next useful step','Write a scoped work package and define the assessment']], note:'A good role brief makes the work and its conditions legible before asking anyone to apply.', related:['tender','blueprint'], action:'application', actionLabel:'Prepare a sample application'},
+    electrical: {id:'electrical', type:'Commons role', title:'Electrical & controls', sub:'Power and operating design', scope:'roles', state:'EXAMPLE ROLE', icon:'electrical', summary:'An illustrative requirement for electrical design and operating controls. It is not a job listing, and no candidate or credential is represented here.', facts:[['Role','Electrical design and controls'],['Status','Not published'],['Safety review','Not defined'],['Applications','No application data connected'],['Next useful step','Define electrical requirements and reviewer competence']], note:'Safety-critical work needs appropriate qualification and review. Practical evidence complements rather than automatically replaces required licensing.', related:['tender','blueprint'], action:'application', actionLabel:'Prepare a sample application'},
+    roll: {id:'roll', type:'The Roll / evidence', title:'Evidence record', sub:'Intended proof trail, not submitted evidence', scope:'roll', state:'NOT VERIFIED', icon:'roll', summary:'The Roll is the intended evidence and provenance layer. Here, the node illustrates where evidence could be connected; it is not an existing or accepted record.', facts:[['Record','No persisted Roll record'],['Test results','None supplied'],['Acceptance','No acceptance recorded'],['Verifier','Not assigned'],['Next useful step','Define evidence requirements before work begins']], note:'Photographs, measurements or signatures become meaningful only in context: what was tested, against which requirement, by whom, and with what outcome.', related:['tender','blueprint'], action:'evidence', actionLabel:'View evidence requirements'}
+  };
+  const relationshipLabels = {site:'host context',blueprint:'specifies',fabrication:'capability needed',electrical:'capability needed',roll:'evidence path',tender:'problem brief'};
+  const state = {scope:'all', query:'', active:'tender', mode:window.innerWidth <= 930 ? 'list' : 'map', inspectorTab:'overview', zoom:1, panX:0, panY:0, fitDone:false, manualTransform:false, appDraft:null, toastTimer:null};
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const iconSvg = (name) => {
+    const paths = {
+      asset:'<path d="M4 20V8l8-5 8 5v12H4zM9 20v-6h6v6"/><path d="M8 9h.1M12 9h.1M16 9h.1"/>',
+      site:'<path d="M3 20h18M5 20V8l7-4 7 4v12M9 11h2m2 0h2M9 15h2m2 0h2"/>',
+      blueprint:'<path d="M5 3h10l4 4v14H5zM15 3v5h4M8 12h8M8 16h8"/>',
+      fabrication:'<path d="m14 6 4 4M3 21l6-1 10-10a2.8 2.8 0 0 0-4-4L5 16zM13 7l4 4"/>',
+      electrical:'<path d="M13 2 5 13h6l-1 9 9-13h-6z"/>',
+      roll:'<path d="M6 3h9l4 4v14H6zM15 3v5h4M9 12h6M9 16h6"/>',
+      search:'<circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/>',
+      arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>',
+      info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8v.2"/>',
+      check:'<path d="m5 12 4 4L19 6"/>',
+      link:'<path d="M10 13a5 5 0 0 0 7.1 0l2-2A5 5 0 0 0 12 3.9l-1.1 1.1M14 11a5 5 0 0 0-7.1 0l-2 2A5 5 0 0 0 12 20.1l1.1-1.1"/>',
+      download:'<path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/>'
+    };
+    return `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name]||paths.info}</svg>`;
+  };
+  function getRecord(id){ return records[id] || records.tender; }
+  function filteredRecords(){
+    const query=state.query.trim().toLowerCase();
+    return Object.values(records).filter(r=>{
+      const scopeOk=state.scope==='all'||r.scope===state.scope;
+      const queryOk=!query||[r.title,r.type,r.sub,r.summary,r.state,r.facts.map(f=>f.join(' ')).join(' ')].join(' ').toLowerCase().includes(query);
+      return scopeOk&&queryOk;
+    });
+  }
+  function renderRadar(){
+    const list=filteredRecords();
+    $('radarLabel').textContent = list.length ? `${list.length} scenario ${list.length===1?'record':'records'}` : 'No matching records';
+    if(!list.length){$('recordList').innerHTML='<div class="empty-state"><strong>No records match this view.</strong>Clear the search or choose another scope. In a live workspace, empty and unavailable sources would be distinguished.</div>';return;}
+    $('recordList').innerHTML=list.map(r=>{
+      const tint=r.icon==='blueprint'||r.icon==='electrical'?'blue':r.icon==='fabrication'?'gold':r.icon==='roll'?'red':'';
+      return `<button class="record-row ${state.active===r.id?'active':''}" data-open="${r.id}" aria-current="${state.active===r.id?'true':'false'}"><span class="record-icon ${tint}">${iconSvg(r.icon)}</span><span class="record-body"><span class="record-line"><span class="record-type">${esc(r.type)}</span><span class="mini-tag">Example</span></span><span class="record-title">${esc(r.title)}</span><span class="record-sub">${esc(r.sub)}</span></span></button>`;
+    }).join('');
+  }
+  function renderNodeSelection(){
+    document.querySelectorAll('.graph-node').forEach(n=>{const active=n.dataset.node===state.active;n.classList.toggle('selected',active);if(active)n.setAttribute('aria-pressed','true');else n.setAttribute('aria-pressed','false');});
+  }
+  function renderList(){
+    const r=getRecord(state.active); const linked=r.related.map(getRecord);
+    $('relationList').innerHTML=linked.map((x,i)=>`<button class="relation-row ${state.active===x.id?'active':''}" data-open="${x.id}"><span class="relation-index">${String(i+1).padStart(2,'0')}</span><span><span class="relation-title">${esc(x.title)}</span><div class="relation-detail">${esc(relationshipLabels[x.id]||'related scenario record')} · ${esc(x.type)}</div></span>${iconSvg('arrow')}</button>`).join('') || '<div class="empty-state"><strong>No linked records in this view.</strong>This scenario has no relationship to display.</div>';
+  }
+  function renderGraphMode(){
+    const map=state.mode==='map'; $('graphViewport').hidden=!map; $('canvasToolbar').hidden=!map; $('listView').hidden=map;
+    $('mapMode').classList.toggle('active',map);$('mapMode').setAttribute('aria-pressed',String(map));$('listMode').classList.toggle('active',!map);$('listMode').setAttribute('aria-pressed',String(!map));
+    if(!map)renderList();
+  }
+  function renderInspector(){
+    const r=getRecord(state.active); $('inspectorCode').textContent=`NODE / ${String(Object.keys(records).indexOf(r.id)+1).padStart(2,'0')}`;
+    const tab=state.inspectorTab;
+    const head=`<div class="inspect-type"><span class="type-badge">${esc(r.type)}</span><span class="type-sep"></span><span class="mini-tag">${esc(r.state)}</span></div><h2 class="inspect-title">${esc(r.title)}</h2><p class="inspect-summary">${esc(r.summary)}</p><div class="truth-stamp">${iconSvg('info')}<span><strong>Scenario data.</strong> This record and its relationships are illustrative. They are not backed by the application database.</span></div><div class="inspect-tabs" role="tablist" aria-label="Inspector detail"><button class="inspect-tab ${tab==='overview'?'active':''}" data-inspect-tab="overview" role="tab" aria-selected="${tab==='overview'}">Overview</button><button class="inspect-tab ${tab==='relations'?'active':''}" data-inspect-tab="relations" role="tab" aria-selected="${tab==='relations'}">Relationships (${r.related.length})</button><button class="inspect-tab ${tab==='evidence'?'active':''}" data-inspect-tab="evidence" role="tab" aria-selected="${tab==='evidence'}">Evidence</button></div>`;
+    let body='';
+    if(tab==='overview'){
+      body=`<section class="section"><h3 class="section-head">Record particulars</h3><div class="fact-list">${r.facts.map(f=>`<div class="fact"><div class="fact-label">${esc(f[0])}</div><div class="fact-value">${esc(f[1])}</div></div>`).join('')}</div></section><section class="section"><h3 class="section-head">Working principle</h3><div class="note-box">${esc(r.note)}</div></section>`;
+    }else if(tab==='relations'){
+      body=`<section class="section"><h3 class="section-head">Scenario relationships</h3><div class="fact-list">${r.related.map(id=>{const x=getRecord(id);return `<div class="relation-inspector-item" role="button" tabindex="0" data-open="${x.id}"><span class="relation-dot"></span><span><div class="relation-inspector-title">${esc(x.title)}</div><div class="relation-inspector-sub">${esc(relationshipLabels[x.id]||'related record')} · illustrative only</div></span></div>`}).join('')}</div></section><div class="note-box">In the live product, relationship labels must disclose their basis. Persisted records, computed associations and navigation links must not be conflated.</div>`;
+    }else{
+      const items = r.id==='roll' ? [['Submission','No proof submitted'],['Test result','Not available'],['Acceptance','Not recorded'],['Provenance','No verifier or source attached']] : r.id==='blueprint' ? [['Drawing','Not attached'],['Version identity','No real file hash'],['Review','Not performed'],['Approval','Not recorded']] : [['Evidence available','None connected in this prototype'],['Verification','Not performed'],['Source','Illustrative content only'],['Acceptance','Not recorded']];
+      body=`<section class="section"><h3 class="section-head">Evidence status</h3><div class="fact-list">${items.map(f=>`<div class="fact"><div class="fact-label">${esc(f[0])}</div><div class="fact-value">${esc(f[1])}</div></div>`).join('')}</div></section><div class="note-box">Evidence should state what was tested, against which requirement, when, and by whom. A file, badge or hash alone does not establish successful performance.</div>`;
+    }
+    $('inspectScroll').innerHTML=head+body;
+    let actions='';
+    if(r.action==='application') actions=`<button class="button button-primary" id="primaryInspectorAction">${iconSvg('check')}${esc(state.appDraft&&state.appDraft.record===r.id?'View local draft':r.actionLabel)}</button><button class="button" id="relatedAction">View related problem</button><div class="action-note">Drafts stay in this page session. They are not submitted to an issuer.</div>`;
+    else if(r.id==='roll') actions=`<button class="button button-primary" id="primaryInspectorAction">${iconSvg('info')}${esc(r.actionLabel)}</button><button class="button" id="relatedAction">Open linked problem brief</button><div class="action-note">No evidence upload or verification is available in this standalone file.</div>`;
+    else actions=`<button class="button button-primary" id="primaryInspectorAction">${iconSvg('link')}${esc(r.actionLabel)}</button><button class="button" id="relatedAction">Show relationships</button><div class="action-note">Navigation is simulated locally. No server action is connected.</div>`;
+    $('inspectorActions').innerHTML=actions;
+    $('viewStatus').textContent = `Focused on ${r.type.toLowerCase()}`;
+    $('focusShort').textContent = r.id==='tender'?'CROP-LOSS SCENARIO':r.type.toUpperCase();
+    $('canvasContext').textContent = 'Scenario relationships · not database edges';
+    renderNodeSelection();
+  }
+  function renderAll(){renderRadar();renderGraphMode();renderInspector();}
+  function focus(id, opts={}){if(!records[id])return;state.active=id;state.inspectorTab=opts.tab||'overview';renderAll();if(opts.ensureRadar){const row=document.querySelector(`[data-open="${id}"]`);if(row)row.scrollIntoView({block:'nearest'});} }
+  function setScope(scope){state.scope=scope;document.querySelectorAll('.scope-tab').forEach(b=>{const on=b.dataset.scope===scope;b.classList.toggle('active',on);b.setAttribute('aria-selected',String(on));});renderRadar();}
+  function switchMode(mode){state.mode=mode;renderGraphMode();}
+  function applyTransform(){const world=$('graphWorld');world.style.transform=`translate(${state.panX}px, ${state.panY}px) scale(${state.zoom})`;}
+  function fitView(){
+    const viewport=$('graphViewport');if(!viewport||viewport.hidden)return;
+    const rect=viewport.getBoundingClientRect();const s=Math.min((rect.width-28)/930,(rect.height-28)/600,1.05);state.zoom=Math.max(.42,Math.min(1.05,s));state.panX=(rect.width-930*state.zoom)/2;state.panY=(rect.height-600*state.zoom)/2;state.fitDone=true;applyTransform();
+  }
+  function centerFocus(){const node=document.querySelector(`.graph-node[data-node="${state.active}"]`);if(!node)return;const rect=$('graphViewport').getBoundingClientRect();const left=parseFloat(node.style.left)||0;const top=parseFloat(node.style.top)||0;const cx=left+node.offsetWidth/2,cy=top+node.offsetHeight/2;state.panX=rect.width/2-cx*state.zoom;state.panY=rect.height/2-cy*state.zoom;state.manualTransform=true;applyTransform();}
+  function zoom(delta){const old=state.zoom;state.zoom=Math.max(.45,Math.min(1.5,old+delta));const vp=$('graphViewport').getBoundingClientRect();const cx=vp.width/2,cy=vp.height/2;state.panX=cx-(cx-state.panX)*(state.zoom/old);state.panY=cy-(cy-state.panY)*(state.zoom/old);state.manualTransform=true;applyTransform();}
+  function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>el.classList.remove('show'),3200);}
+  function openModal({eyebrow='STUDIO NOTE',title,body,buttons}={}){
+    $('modalEyebrow').textContent=eyebrow;$('modalTitle').textContent=title;$('modalBody').innerHTML=body||'';$('modalFoot').innerHTML=buttons||'<button class="button" id="modalCancel">Close</button>';$('modalBackdrop').classList.add('open');
+    const close=$('modalFoot').querySelector('#modalCancel');if(close)close.addEventListener('click',closeModal);$('modalClose').focus();
+  }
+  function closeModal(){$('modalBackdrop').classList.remove('open');}
+  function showHow(){openModal({eyebrow:'READ THE INTERFACE',title:'One problem. Connected work.',body:`<div class="section"><h3 class="section-head">01 / Find</h3><p style="font-size:11px;line-height:1.65;color:var(--ink-2);margin:0 0 12px">Use the radar to explore records by type, or search for a specific brief, role, asset or evidence record.</p><h3 class="section-head">02 / Understand</h3><p style="font-size:11px;line-height:1.65;color:var(--ink-2);margin:0 0 12px">Select a node to inspect its known facts, current state, relationships and next useful step. Switch to List when a text-first view is clearer.</p><h3 class="section-head">03 / Verify</h3><p style="font-size:11px;line-height:1.65;color:var(--ink-2);margin:0">A production Studio would source records through permission-checked application services. Evidence and funding would retain their actual status; visual connections would never substitute for proof.</p></div><div class="modal-warning">This file is a standalone interface prototype. Sample content and graph edges are illustrative; no database, account, application, funding intent or evidence service is connected.</div>`});}
+  function prepareApplication(){
+    const r=getRecord(state.active);const previous=state.appDraft&&state.appDraft.record===r.id?state.appDraft:null;
+    openModal({eyebrow:'LOCAL DRAFT ONLY',title:previous?'Review your sample draft':'Prepare an application',body:`<div class="modal-warning">This is an interaction demo, not a real opportunity. Saving creates a temporary draft in this page only. It will not be submitted, saved to an account or shared with anyone.</div><div class="field"><label for="appSummary">Why is your experience relevant?</label><textarea id="appSummary" maxlength="2000" placeholder="Describe relevant work, what you can demonstrate, and any limits…">${esc(previous?.summary||'')}</textarea><small>Keep claims specific. In a live application, evidence and consent would follow the actual Commons workflow.</small></div><label class="check-row"><input type="checkbox" id="appConsent" ${previous?.consent?'checked':''}/><span>I understand this is an illustrative local draft, not a submission or a real consent to share a Roll profile.</span></label>` ,buttons:`<button class="button" id="modalCancel">Cancel</button><button class="button button-primary" id="saveDraft">Save local draft</button>`});
+    $('saveDraft').addEventListener('click',()=>{const summary=$('appSummary').value.trim(),consent=$('appConsent').checked;if(!summary){toast('Add a short explanation before saving the draft.');$('appSummary').focus();return;}if(!consent){toast('Acknowledge the local-only draft notice to continue.');return;}state.appDraft={record:r.id,summary,consent:true,savedAt:new Date().toISOString()};closeModal();renderInspector();toast('Local draft saved in this page session. Nothing was submitted.');});
+  }
+  function primaryAction(){const r=getRecord(state.active);if(r.action==='application'){prepareApplication();return;}if(r.id==='roll'){state.inspectorTab='evidence';renderInspector();return;}state.inspectorTab='relations';renderInspector();if(state.mode==='list')renderList();}
+  function relatedAction(){const r=getRecord(state.active);if(r.id==='tender'){state.inspectorTab='relations';renderInspector();return;}if(r.related.length){focus(r.related[0],{ensureRadar:true});}else toast('No related scenario records are defined.');}
+  function exportScenario(){
+    const out={title:'APT-LABS Network Studio — illustrative scenario',notice:'Illustrative prototype data only. This export does not contain real APT-LABS records, people, funding, or verified work.',generated_at:new Date().toISOString(),records:Object.values(records).map(r=>({id:r.id,type:r.type,title:r.title,state:r.state,illustrative:true,facts:r.facts,related:r.related.map(id=>({id,label:relationshipLabels[id]||'related scenario record',basis:'illustrative scenario fixture — not database-backed'}))})),local_application_draft:state.appDraft?{record:state.appDraft.record,summary:state.appDraft.summary,consent_acknowledged:state.appDraft.consent,submitted:false}:null};
+    const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='apt-labs-studio-illustrative-scenario.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500);toast('Illustrative scenario exported as JSON.');
+  }
+  document.addEventListener('click',(e)=>{
+    const open=e.target.closest('[data-open]');if(open){focus(open.dataset.open,{ensureRadar:true});return;}
+    const graphNode=e.target.closest('.graph-node');if(graphNode){focus(graphNode.dataset.node);return;}
+    const scope=e.target.closest('[data-scope]');if(scope){setScope(scope.dataset.scope);return;}
+    const tab=e.target.closest('[data-inspect-tab]');if(tab){state.inspectorTab=tab.dataset.inspectTab;renderInspector();return;}
+  });
+  $('searchInput').addEventListener('input',e=>{state.query=e.target.value;renderRadar();});
+  $('mapMode').addEventListener('click',()=>{switchMode('map');requestAnimationFrame(fitView);});$('listMode').addEventListener('click',()=>switchMode('list'));
+  $('zoomIn').addEventListener('click',()=>zoom(.12));$('zoomOut').addEventListener('click',()=>zoom(-.12));$('fitView').addEventListener('click',fitView);$('centerFocus').addEventListener('click',centerFocus);
+  $('howButton').addEventListener('click',showHow);$('exportButton').addEventListener('click',exportScenario);$('bannerClose').addEventListener('click',()=>$('prototypeBanner').remove());$('modalClose').addEventListener('click',closeModal);$('modalBackdrop').addEventListener('click',e=>{if(e.target===$('modalBackdrop'))closeModal();});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='+'||e.key==='='){if(state.mode==='map')zoom(.12);}if(e.key==='-'&&state.mode==='map')zoom(-.12);});
+  $('inspectorActions').addEventListener('click',e=>{if(e.target.closest('#primaryInspectorAction'))primaryAction();if(e.target.closest('#relatedAction'))relatedAction();});
+  // Pointer panning is limited to the empty canvas so selecting a node remains reliable.
+  const vp=$('graphViewport');let pan=null;
+  vp.addEventListener('pointerdown',e=>{if(e.target.closest('.graph-node')||e.target.closest('.graph-legend'))return;pan={x:e.clientX,y:e.clientY,px:state.panX,py:state.panY,moved:false};vp.setPointerCapture?.(e.pointerId);});
+  vp.addEventListener('pointermove',e=>{if(!pan)return;const dx=e.clientX-pan.x,dy=e.clientY-pan.y;if(Math.abs(dx)+Math.abs(dy)>3)pan.moved=true;state.panX=pan.px+dx;state.panY=pan.py+dy;state.manualTransform=true;applyTransform();});
+  vp.addEventListener('pointerup',()=>{pan=null;});vp.addEventListener('pointercancel',()=>{pan=null;});
+  vp.addEventListener('wheel',e=>{if(state.mode!=='map')return;e.preventDefault();zoom(e.deltaY<0?.06:-.06);},{passive:false});
+  // Graph keyboard navigation: arrow keys move among scenario nodes; Enter/Space keeps normal button semantics.
+  document.querySelectorAll('.graph-node').forEach((node)=>node.addEventListener('keydown',e=>{if(!['ArrowRight','ArrowDown','ArrowLeft','ArrowUp'].includes(e.key))return;e.preventDefault();const nodes=[...document.querySelectorAll('.graph-node')];const idx=nodes.indexOf(node);const next=nodes[(idx+(e.key==='ArrowRight'||e.key==='ArrowDown'?1:nodes.length-1))%nodes.length];next.focus();}));
+  window.addEventListener('resize',()=>{if(state.mode==='map'&&!state.manualTransform)fitView();});
+  renderAll();if(state.mode==='map')requestAnimationFrame(()=>{fitView();});
+})();
+</script>
+</body>
+</html>
