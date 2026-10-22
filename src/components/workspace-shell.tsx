@@ -14,7 +14,6 @@ import {
   Network,
   Plus,
   ScrollText,
-  UserRound,
   UsersRound,
   X,
 } from 'lucide-react';
@@ -52,6 +51,18 @@ interface ProblemDraft {
   place: string;
   detail: string;
   measure: string;
+  isFriction?: boolean;
+  parentTitle?: string;
+}
+
+interface FrictionPoint {
+  id: string;
+  title: string;
+  signal: string;
+  detail: string;
+  collectiveResponse: string[];
+  firstQuestion: string;
+  origin: string;
 }
 
 interface TopologyRecord {
@@ -103,6 +114,48 @@ const FLOORS: { key: Floor; label: string; short: string }[] = [
   { key: 'basement', label: 'Basement', short: 'B' },
   { key: 'ground', label: 'Ground', short: 'G' },
   { key: 'first', label: 'First', short: '1' },
+];
+
+const FRICTION_POINTS: FrictionPoint[] = [
+  {
+    id: 'proof-of-work',
+    title: 'Skill without trusted proof',
+    signal: 'Capable people are screened out before they can show the work.',
+    detail: 'A welder, repairer, fabricator or developer may have practical ability but little recognized evidence of it. The gap is not solved by another profile alone: people need real tasks, clear expectations and fair, human verification.',
+    collectiveResponse: [
+      'Start with a small, scoped task and agreed acceptance criteria.',
+      'Record the artifact, contribution, reviewer and limitations.',
+      'Let verified work accumulate into a portable record—not an automatic credential.',
+    ],
+    firstQuestion: 'Which practical skill is blocked by missing proof, and what safe first task could demonstrate it?',
+    origin: 'Kenya · adaptable anywhere',
+  },
+  {
+    id: 'idle-equipment',
+    title: 'Useful equipment left idle',
+    signal: 'A small repair or unclear access can keep valuable tools out of use.',
+    detail: 'Workshops, training institutions and community spaces may have useful equipment that is unavailable because maintenance, authorized access and responsibility are not coordinated. The actual condition and access rules need to be confirmed locally.',
+    collectiveResponse: [
+      'Ask the equipment owner to confirm condition, access and safety requirements.',
+      'Scope the repair, parts, responsible people and acceptance test before work.',
+      'Document the return to service and agree on supervised ongoing access.',
+    ],
+    firstQuestion: 'What tool is unavailable, who controls access, and what evidence would establish a safe repair?',
+    origin: 'Kenya · adaptable anywhere',
+  },
+  {
+    id: 'harvest-loss',
+    title: 'Harvest value lost before market',
+    signal: 'Perishable produce can lose value when handling and local processing do not connect.',
+    detail: 'Growers and local groups may lack suitable preservation, storage or reliable routes to buyers. Loss varies by crop, season and place; measure it with the people affected before choosing equipment or claiming a solution.',
+    collectiveResponse: [
+      'Record crop, season, volumes, handling steps and observed loss with growers.',
+      'Compare practical options such as shared processing, drying or cold storage.',
+      'Pilot one measurable step and document food-safety, maintenance and market results.',
+    ],
+    firstQuestion: 'Which crop and handling step create the clearest locally verified loss?',
+    origin: 'Kenya · adaptable anywhere',
+  },
 ];
 
 const RECORDS: Record<string, TopologyRecord> = {
@@ -216,13 +269,15 @@ export function WorkspaceShell({
   contexts = [],
 }: WorkspaceShellProps) {
   const [view, setView] = useState<WorkspaceView>('topology');
-  const [floor, setFloor] = useState<Floor>('ground');
+  const [floor, setFloor] = useState<Floor>('basement');
   const [ledgerSection, setLedgerSection] = useState<LedgerSection>('roll');
+  const [selectedFrictionId, setSelectedFrictionId] = useState(FRICTION_POINTS[0].id);
   const [selectedRecordId, setSelectedRecordId] = useState('site');
   const [selectedDraftId, setSelectedDraftId] = useState<string | null>(null);
   const [topologyMode, setTopologyMode] = useState<'graph' | 'index'>('graph');
   const [drafts, setDrafts] = useState<ProblemDraft[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [composerMode, setComposerMode] = useState<'problem' | 'friction'>('problem');
   const [form, setForm] = useState({ title: '', place: '', detail: '', measure: '' });
   const titleInput = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -231,11 +286,28 @@ export function WorkspaceShell({
   const selectedDraft = selectedDraftId
     ? drafts.find(draft => draft.id === selectedDraftId)
     : undefined;
+  const selectedFriction = FRICTION_POINTS.find(point => point.id === selectedFrictionId) ?? FRICTION_POINTS[0];
+  const selectedFrictionDraft = drafts.find(draft => draft.id === selectedFrictionId);
 
   const notify = useCallback((message: string) => toast(message), []);
 
-  const openModal = useCallback(() => setModalOpen(true), []);
+  const openModal = useCallback(() => {
+    setComposerMode('problem');
+    setModalOpen(true);
+  }, []);
   const closeModal = useCallback(() => setModalOpen(false), []);
+
+  function openFrictionComposer(point?: FrictionPoint) {
+    setSelectedFrictionId(point?.id ?? '');
+    setComposerMode('friction');
+    setForm({
+      title: point ? `Local adaptation: ${point.title}` : '',
+      place: '',
+      detail: point ? `${point.signal}\n\nWhat is different in your place?` : '',
+      measure: '',
+    });
+    setModalOpen(true);
+  }
 
   useEffect(() => {
     if (modalOpen) titleInput.current?.focus();
@@ -274,6 +346,20 @@ export function WorkspaceShell({
       detail: form.detail.trim(),
       measure: form.measure.trim(),
     };
+    if (composerMode === 'friction') {
+      const frictionDraft = {
+        ...draft,
+        isFriction: true,
+        ...(selectedFrictionId && FRICTION_POINTS.some(point => point.id === selectedFrictionId)
+          ? { parentTitle: selectedFriction.title }
+          : {}),
+      };
+      setDrafts(current => [frictionDraft, ...current]);
+      setSelectedFrictionId(frictionDraft.id);
+      closeModal();
+      notify('Saved locally. Commons submission is not connected.');
+      return;
+    }
     setDrafts(current => [draft, ...current]);
     setForm({ title: '', place: '', detail: '', measure: '' });
     setSelectedDraftId(null);
@@ -319,6 +405,7 @@ export function WorkspaceShell({
   const inspectorActions: [string, string][] = selectedDraft
     ? [['Open work sequence', 'sequence'], ['Export JSON', 'export']]
     : selectedRecord.actions;
+  const currentFloor = FLOORS.find(item => item.key === floor) ?? FLOORS[0];
 
   return (
     <div className="workspace-atlas">
@@ -328,20 +415,29 @@ export function WorkspaceShell({
             <span className="atlas-brand-mark"><Boxes aria-hidden="true" size={17} strokeWidth={1.5} /></span>
             <span>APT<span>—</span>LABS</span>
           </a>
-          <nav className="atlas-floor-switch" aria-label="Workspace floor">
-            {FLOORS.map(item => (
-              <button
-                key={item.key}
-                className={floor === item.key ? 'is-active' : ''}
-                type="button"
-                aria-pressed={floor === item.key}
-                onClick={() => setFloor(item.key)}
-              >
-                <span className="atlas-floor-short">{item.short}</span>
-                <span>{item.label}</span>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="atlas-floor-trigger" type="button" aria-label={`Current floor: ${currentFloor.label}`}>
+                <span className="atlas-floor-short">{currentFloor.short}</span>
+                <span>{currentFloor.label}</span>
+                <ChevronDown aria-hidden="true" size={13} />
               </button>
-            ))}
-          </nav>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="atlas-floor-menu">
+              <DropdownMenuLabel className="atlas-floor-menu-label">CHOOSE A FLOOR</DropdownMenuLabel>
+              {FLOORS.map(item => (
+                <DropdownMenuItem
+                  key={item.key}
+                  className={`atlas-floor-menu-item${floor === item.key ? ' is-active' : ''}`}
+                  onSelect={() => setFloor(item.key)}
+                >
+                  <span className="atlas-floor-short">{item.short}</span>
+                  <span>{item.label}</span>
+                  {floor === item.key && <span className="atlas-floor-current">CURRENT</span>}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -365,7 +461,15 @@ export function WorkspaceShell({
         </DropdownMenu>
       </header>
 
-      <div className={`atlas-layout${floor !== 'ground' ? ' atlas-layout-unconfigured' : ''}${view === 'commons' ? ' atlas-layout-wide' : ''}`}>
+      <div className={`atlas-layout${floor !== 'ground' ? ' atlas-layout-unconfigured' : ''}${floor === 'basement' ? ' atlas-layout-basement' : ''}${view === 'commons' ? ' atlas-layout-wide' : ''}`}>
+        {floor === 'basement' && (
+          <aside className="atlas-friction-rail">
+            <button className="atlas-friction-rail-item is-active" type="button" aria-current="page">
+              <Focus aria-hidden="true" size={18} strokeWidth={1.6} />
+              <span>Friction</span>
+            </button>
+          </aside>
+        )}
         {floor === 'ground' && <aside className="atlas-rail">
           <div className="atlas-rail-label">Workspace index</div>
           <nav className="atlas-nav" aria-label="Workspace modules">
@@ -397,11 +501,67 @@ export function WorkspaceShell({
         </aside>}
 
         <main className={`atlas-main${floor !== 'ground' ? ' atlas-main-unconfigured' : ''}${view === 'commons' ? ' atlas-main-wide' : ''}`}>
-          {floor !== 'ground' ? (
+          {floor === 'basement' ? (
+            <div className="atlas-friction-main">
+              <div className="atlas-friction-heading">
+                <div>
+                  <span className="atlas-kicker">BASEMENT / FRICTION SIGNALS</span>
+                  <h1>Problems worth solving together.</h1>
+                  <p>Signals for coordinated work—not verified findings. Start with people closest to the problem.</p>
+                </div>
+                <button className="atlas-button atlas-button-primary" type="button" onClick={() => openFrictionComposer()}>
+                  <Plus aria-hidden="true" size={14} /> Add friction
+                </button>
+              </div>
+
+              <div className="atlas-friction-list" aria-label="Featured friction points">
+                {FRICTION_POINTS.map((point, index) => (
+                  <button
+                    key={point.id}
+                    className={`atlas-friction-card${selectedFrictionId === point.id ? ' is-selected' : ''}`}
+                    type="button"
+                    aria-pressed={selectedFrictionId === point.id}
+                    onClick={() => setSelectedFrictionId(point.id)}
+                  >
+                    <span className="atlas-friction-number">{String(index + 1).padStart(2, '0')}</span>
+                    <span className="atlas-friction-card-copy">
+                      <span className="atlas-friction-card-meta"><span>FIELD SIGNAL</span><span>{point.origin}</span></span>
+                      <strong>{point.title}</strong>
+                      <span className="atlas-friction-signal">{point.signal}</span>
+                      <span className="atlas-friction-card-foot">Explore the friction <ArrowUpRight aria-hidden="true" size={13} /></span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {drafts.some(draft => draft.isFriction) && (
+                <section className="atlas-friction-drafts" aria-label="Local friction drafts">
+                  <div className="atlas-friction-drafts-head"><span>YOUR SESSION DRAFTS</span><span>{String(drafts.filter(draft => draft.isFriction).length).padStart(2, '0')}</span></div>
+                  {drafts.filter(draft => draft.isFriction).map(draft => (
+                    <button
+                      className={`atlas-friction-draft${selectedFrictionId === draft.id ? ' is-selected' : ''}`}
+                      key={draft.id}
+                      type="button"
+                      aria-pressed={selectedFrictionId === draft.id}
+                      onClick={() => setSelectedFrictionId(draft.id)}
+                    >
+                      <span><strong>{draft.title}</strong><small>{draft.place || 'Place not specified'} · local only</small></span>
+                      <span className="atlas-state atlas-state-draft">SESSION DRAFT</span>
+                    </button>
+                  ))}
+                </section>
+              )}
+
+              <div className="atlas-friction-note">
+                <span className="atlas-friction-note-mark"><Boxes aria-hidden="true" size={14} /></span>
+                <p><strong>From signal to shared work.</strong> A future Commons review can help people test and prioritize a problem. This prototype does not submit, publish or collect votes.</p>
+              </div>
+            </div>
+          ) : floor === 'first' ? (
             <section className="atlas-floor-empty">
-              <span className="atlas-kicker">{FLOORS.find(item => item.key === floor)?.short} / FLOOR</span>
+              <span className="atlas-kicker">{currentFloor.short} / FLOOR</span>
               <span className="atlas-floor-empty-icon"><Boxes aria-hidden="true" size={22} /></span>
-              <h1>{FLOORS.find(item => item.key === floor)?.label} floor</h1>
+              <h1>{currentFloor.label} floor</h1>
               <p>This floor is not configured yet.</p>
               <span>Workspace content will appear here when this floor is defined.</span>
             </section>
@@ -645,6 +805,55 @@ export function WorkspaceShell({
           )}
         </main>
 
+        {floor === 'basement' && (
+          <aside className="atlas-friction-inspector">
+            <div className="atlas-friction-inspector-head">
+              <span className="atlas-kicker">{selectedFrictionDraft ? 'SESSION DRAFT' : `FRICTION / ${String(FRICTION_POINTS.findIndex(point => point.id === selectedFriction.id) + 1).padStart(2, '0')}`}</span>
+              <span className={`atlas-state${selectedFrictionDraft ? ' atlas-state-draft' : ''}`}>{selectedFrictionDraft ? 'LOCAL ONLY' : 'SIGNAL · UNVERIFIED'}</span>
+              <h2>{selectedFrictionDraft?.title ?? selectedFriction.title}</h2>
+              <span className="atlas-friction-origin">{selectedFrictionDraft?.place || selectedFriction.origin}</span>
+            </div>
+            <div className="atlas-friction-inspector-scroll">
+              <section className="atlas-friction-detail">
+                <h3>The friction</h3>
+                <p>{selectedFrictionDraft?.detail ?? selectedFriction.detail}</p>
+              </section>
+              <section className="atlas-friction-detail">
+                <h3>Collective response</h3>
+                {selectedFrictionDraft ? (
+                  <p>This local adaptation has not been assessed or connected to a coordinated project.</p>
+                ) : (
+                  <ol>
+                    {selectedFriction.collectiveResponse.map((step, index) => (
+                      <li key={step}><span>{String(index + 1).padStart(2, '0')}</span><p>{step}</p></li>
+                    ))}
+                  </ol>
+                )}
+              </section>
+              <section className="atlas-friction-detail">
+                <h3>Start with a question</h3>
+                <p className="atlas-friction-question">{selectedFrictionDraft
+                  ? 'What local evidence, people and constraints need to be added?'
+                  : selectedFriction.firstQuestion}</p>
+              </section>
+              <section className="atlas-friction-detail atlas-friction-evidence">
+                <h3>People & proof</h3>
+                <div><span>Active builders</span><strong>No linked roster</strong><small>There are no live builder assignments for this signal.</small></div>
+                <div><span>Related assets</span><strong>No linked assets</strong><small>Asset work and assignments belong on Ground floor.</small></div>
+                <div><span>Roll / SBTs</span><strong>No verified records linked</strong><small>No SBTs are issued by this prototype.</small></div>
+              </section>
+            </div>
+            <div className="atlas-friction-inspector-actions">
+              {!selectedFrictionDraft && (
+                <button className="atlas-button atlas-button-primary" type="button" onClick={() => openFrictionComposer(selectedFriction)}>
+                  <Plus aria-hidden="true" size={14} /> Adapt locally
+                </button>
+              )}
+              <span>Commons review, endorsement and voting are not connected.</span>
+            </div>
+          </aside>
+        )}
+
         {floor === 'ground' && view !== 'commons' && <aside className="atlas-inspector">
           <div className="atlas-inspector-head">
             <div className="atlas-inspector-top"><span>01 — Record inspector</span><span className="atlas-inspector-icon">{selectedDraft ? '+' : selectedRecord.icon}</span></div>
@@ -699,15 +908,21 @@ export function WorkspaceShell({
         <div className="atlas-modal-backdrop" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) closeModal(); }}>
           <section className="atlas-modal" role="dialog" aria-modal="true" aria-labelledby="atlas-modal-title">
             <div className="atlas-modal-head">
-              <div><span className="atlas-kicker">Intake / local draft</span><h2 id="atlas-modal-title">New problem brief</h2><p>A local note. No network submission.</p></div>
+              <div>
+                <span className="atlas-kicker">{composerMode === 'friction' ? 'Basement / friction draft' : 'Intake / local draft'}</span>
+                <h2 id="atlas-modal-title">{composerMode === 'friction' ? 'Add a friction point' : 'New problem brief'}</h2>
+                <p>{composerMode === 'friction'
+                  ? 'This stays in the current session. It is not sent to Commons.'
+                  : 'A local note. No network submission.'}</p>
+              </div>
               <button className="atlas-icon-button" type="button" aria-label="Close dialog" onClick={closeModal}><X aria-hidden="true" size={16} /></button>
             </div>
             <form className="atlas-form" onSubmit={saveDraft}>
-              <label>Brief title<input ref={titleInput} required maxLength={100} placeholder="e.g. Produce loss during storage" value={form.title} onChange={event => setForm(current => ({ ...current, title: event.target.value }))} /></label>
-              <label>Site / context<input maxLength={100} placeholder="Where does this occur?" value={form.place} onChange={event => setForm(current => ({ ...current, place: event.target.value }))} /></label>
-              <label>Observed condition<textarea required maxLength={1200} rows={4} placeholder="What happens? Who is affected? What is known?" value={form.detail} onChange={event => setForm(current => ({ ...current, detail: event.target.value }))} /></label>
-              <label>Measure of improvement<input maxLength={240} placeholder="What would a useful change look like?" value={form.measure} onChange={event => setForm(current => ({ ...current, measure: event.target.value }))} /></label>
-              <div className="atlas-form-foot"><span>Stored in this page session only.</span><div><button className="atlas-button atlas-button-quiet" type="button" onClick={closeModal}>Cancel</button><button className="atlas-button atlas-button-primary" type="submit">Save local draft</button></div></div>
+              <label>{composerMode === 'friction' ? 'Friction title' : 'Brief title'}<input ref={titleInput} required maxLength={100} placeholder="What is the friction?" value={form.title} onChange={event => setForm(current => ({ ...current, title: event.target.value }))} /></label>
+              <label>{composerMode === 'friction' ? 'Place / country' : 'Site / context'}<input maxLength={100} placeholder="Where does this occur?" value={form.place} onChange={event => setForm(current => ({ ...current, place: event.target.value }))} /></label>
+              <label>{composerMode === 'friction' ? 'What do people experience?' : 'Observed condition'}<textarea required maxLength={1200} rows={4} placeholder="What happens? Who is affected? What is known or still uncertain?" value={form.detail} onChange={event => setForm(current => ({ ...current, detail: event.target.value }))} /></label>
+              <label>{composerMode === 'friction' ? 'Evidence or first measure to gather' : 'Measure of improvement'}<input maxLength={240} placeholder={composerMode === 'friction' ? 'What should people verify first?' : 'What would a useful change look like?'} value={form.measure} onChange={event => setForm(current => ({ ...current, measure: event.target.value }))} /></label>
+              <div className="atlas-form-foot"><span>{composerMode === 'friction' ? 'Session-only draft · not submitted to Commons.' : 'Stored in this page session only.'}</span><div><button className="atlas-button atlas-button-quiet" type="button" onClick={closeModal}>Cancel</button><button className="atlas-button atlas-button-primary" type="submit">Save local draft</button></div></div>
             </form>
           </section>
         </div>

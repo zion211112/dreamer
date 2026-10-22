@@ -4034,7 +4034,147 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .workspace-atlas .atlas-header { padding: 0 8px; }
   .workspace-atlas .atlas-brand { gap: 6px; font-size: 10px; letter-spacing: .08em; }
   .workspace-atlas .atlas-brand-mark { width: 23px; height: 23px; }
-  .workspace-atlas .atlas-floor-switch button { gap: 3px; padding: 0 4px; }
-  .workspace-atlas .atlas-floor-switch button > span:last-child { font-size: 8px; }
+  .workspace-atlas .atlas-floor-trigger { gap: 5px; padding: 0 8px; font-size: 9px; }
+  .workspace-atlas .atlas-floor-trigger .atlas-floor-short { width: 17px; height: 17px; }
   .workspace-atlas .atlas-main-wide { grid-column: 1; }
+}
+.workspace-atlas .atlas-floor-trigger {
+  min-height: 35px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 11px 0 7px;
+  border: 1px solid var(--atlas-line);
+  border-radius: 9px;
+  color: #465b45;
+  background: rgba(255, 255, 252, .62);
+  font-size: 10px;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
+}
+.workspace-atlas .atlas-floor-trigger:hover,
+.workspace-atlas .atlas-floor-trigger[data-state="open"] { border-color: #b9c9b4; background: #fffefa; }
+.workspace-atlas .atlas-floor-trigger .atlas-floor-short,
+.workspace-atlas .atlas-floor-menu-item .atlas-floor-short {
+  width: 21px;
+  height: 21px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  color: #5c755a;
+  background: #e7eee3;
+  font: 9px "IBM Plex Mono", Consolas, monospace;
+}
+.workspace-atlas .atlas-floor-menu { z-index: 60; min-width: 190px; padding: 5px; border: 1px solid var(--atlas-line-strong); border-radius: 10px; background: #fbfbf6; box-shadow: 0 12px 32px rgba(37, 41, 35, .13); }
+.workspace-atlas .atlas-floor-menu-label { padding: 9px 10px 7px; color: #92998e; font: 8px "IBM Plex Mono", Consolas, monospace; letter-spacing: .1em; }
+.workspace-atlas .atlas-floor-menu-item { min-height: 37px; display: flex; align-items: center; gap: 9px; padding: 6px 8px; border-radius: 6px; color: #657361; font-size: 10px; cursor: pointer; }
+.workspace-atlas .atlas-floor-menu-item[data-highlighted] { outline: none; color: #415641; background: #e9eee5; }
+.workspace-atlas .atlas-floor-menu-item.is-active { color: #415641; }
+.workspace-atlas .atlas-floor-current { margin-left: auto; color: #889783; font: 7px "IBM Plex Mono", Consolas, monospace; letter-spacing: .06em; }
+.workspace-atlas .atlas-layout-basement { grid-template-columns: 72px minmax(0, 1fr) 330px; }
+.workspace-atlas .atlas-friction-rail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--atlas-line);
+  background: rgba(249, 249, 244, .32);
+}
+.workspace-atlas .atlas-friction-rail-item {
+  width: 54px;
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid rgba(142, 163, 137, .25);
+  border-radius: 11px;
+  color: #52694f;
+  background: rgba(226, 234, 220, .65);
+  font-size: 9px;
+  cursor: default;
+}
+.workspace-atlas .atlas-friction-rail-item > svg { color: #71886e; }
+.workspace-atlas .atlas-layout-basement .atlas-main { min-width: 0; overflow: auto; scrollbar-width: thin; scrollbar-color: #cbd2c5 transparent; }
+.workspace-atlas .atlas-friction-main { width: min(100%, 940px); margin: 0 auto; padding: clamp(26px, 4vh, 46px) clamp(20px, 3vw, 42px) 34px; }
+.workspace-atlas .atlas-friction-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 22px; margin-bottom: 24px; }
+.workspace-atlas .atlas-friction-heading .atlas-kicker { margin-bottom: 12px; }
+.workspace-atlas .atlas-friction-heading h1 { max-width: 540px; margin: 0; color: #252923; font: normal clamp(29px, 3vw, 40px)/1.08 Georgia, "Times New Roman", serif; letter-spacing: -.045em; }
+.workspace-atlas .atlas-friction-heading p { max-width: 520px; margin: 10px 0 0; color: #788075; font-size: 11px; line-height: 1.65; }
+.workspace-atlas .atlas-friction-heading .atlas-button { flex: 0 0 auto; }
+.workspace-atlas .atlas-friction-list { display: grid; gap: 9px; }
+.workspace-atlas .atlas-friction-card {
+  width: 100%;
+  min-height: 132px;
+  display: grid;
+  grid-template-columns: 43px minmax(0, 1fr);
+  gap: 14px;
+  padding: 15px 17px;
+  border: 1px solid var(--atlas-line);
+  border-radius: 11px;
+  color: var(--atlas-ink);
+  background: rgba(255, 255, 252, .53);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .17s ease, background .17s ease, transform .17s ease, box-shadow .17s ease;
+}
+.workspace-atlas .atlas-friction-card:hover { transform: translateY(-1px); border-color: #c4d0bf; background: rgba(255, 255, 252, .82); }
+.workspace-atlas .atlas-friction-card.is-selected { border-color: #9daf97; background: rgba(255, 255, 252, .82); box-shadow: inset 2px 0 #81977c, 0 4px 15px rgba(56, 72, 52, .035); }
+.workspace-atlas .atlas-friction-number { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--atlas-line); border-radius: 9px; color: #778e73; background: #edf1e8; font: 10px "IBM Plex Mono", Consolas, monospace; }
+.workspace-atlas .atlas-friction-card-copy { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
+.workspace-atlas .atlas-friction-card-meta { width: 100%; display: flex; justify-content: space-between; gap: 10px; color: #969d92; font: 7px "IBM Plex Mono", Consolas, monospace; letter-spacing: .08em; text-transform: uppercase; }
+.workspace-atlas .atlas-friction-card-copy > strong { margin-top: 8px; color: #344033; font: 18px/1.2 Georgia, "Times New Roman", serif; letter-spacing: -.02em; }
+.workspace-atlas .atlas-friction-signal { margin-top: 5px; color: #788075; font-size: 10px; line-height: 1.5; }
+.workspace-atlas .atlas-friction-card-foot { display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; color: #71886e; font-size: 9px; }
+.workspace-atlas .atlas-friction-drafts { margin-top: 19px; border-top: 1px solid var(--atlas-line); }
+.workspace-atlas .atlas-friction-drafts-head { display: flex; justify-content: space-between; padding: 11px 2px 7px; color: #92998e; font: 8px "IBM Plex Mono", Consolas, monospace; letter-spacing: .09em; }
+.workspace-atlas .atlas-friction-draft { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px; border: 1px solid transparent; border-radius: 8px; color: #566553; background: transparent; text-align: left; cursor: pointer; }
+.workspace-atlas .atlas-friction-draft.is-selected,
+.workspace-atlas .atlas-friction-draft:hover { border-color: var(--atlas-line); background: rgba(255, 255, 252, .7); }
+.workspace-atlas .atlas-friction-draft > span:first-child { min-width: 0; display: grid; gap: 3px; }
+.workspace-atlas .atlas-friction-draft strong { overflow: hidden; font-size: 10px; font-weight: 550; text-overflow: ellipsis; white-space: nowrap; }
+.workspace-atlas .atlas-friction-draft small { color: #858b81; font-size: 9px; }
+.workspace-atlas .atlas-friction-note { display: flex; align-items: flex-start; gap: 10px; margin-top: 18px; padding: 12px; border: 1px solid rgba(127, 149, 126, .18); border-radius: 9px; background: rgba(226, 234, 220, .36); }
+.workspace-atlas .atlas-friction-note-mark { width: 24px; height: 24px; display: grid; flex: 0 0 auto; place-items: center; border-radius: 7px; color: #71886e; background: #e5ece1; }
+.workspace-atlas .atlas-friction-note p { margin: 0; color: #737c70; font-size: 9px; line-height: 1.6; }
+.workspace-atlas .atlas-friction-note strong { color: #52694f; font-weight: 550; }
+.workspace-atlas .atlas-friction-inspector { min-height: 0; display: flex; flex-direction: column; overflow: hidden; border-left: 1px solid var(--atlas-line); background: rgba(249, 249, 244, .42); }
+.workspace-atlas .atlas-friction-inspector-head { padding: 19px 19px 16px; border-bottom: 1px solid var(--atlas-line); background: rgba(255, 255, 252, .36); }
+.workspace-atlas .atlas-friction-inspector-head > .atlas-kicker { display: inline-block; margin: 0 0 9px; }
+.workspace-atlas .atlas-friction-inspector-head > .atlas-state { float: right; margin-top: 0; font-size: 7px; }
+.workspace-atlas .atlas-friction-inspector-head h2 { clear: both; margin: 4px 0 7px; color: #283027; font: 23px/1.12 Georgia, "Times New Roman", serif; letter-spacing: -.035em; }
+.workspace-atlas .atlas-friction-origin { color: #899186; font: 8px "IBM Plex Mono", Consolas, monospace; letter-spacing: .04em; text-transform: uppercase; }
+.workspace-atlas .atlas-friction-inspector-scroll { flex: 1; min-height: 0; overflow: auto; scrollbar-width: thin; scrollbar-color: #cbd2c5 transparent; }
+.workspace-atlas .atlas-friction-detail { padding: 15px 19px; border-bottom: 1px solid var(--atlas-line); }
+.workspace-atlas .atlas-friction-detail h3 { margin: 0 0 8px; color: #788075; font: 8px "IBM Plex Mono", Consolas, monospace; letter-spacing: .1em; text-transform: uppercase; }
+.workspace-atlas .atlas-friction-detail > p { margin: 0; color: #6e786b; font-size: 10px; line-height: 1.65; }
+.workspace-atlas .atlas-friction-detail .atlas-friction-question { padding: 9px 10px; border-left: 2px solid #b9c9b4; color: #5e6d5b; background: rgba(226, 234, 220, .42); }
+.workspace-atlas .atlas-friction-detail ol { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.workspace-atlas .atlas-friction-detail li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 8px; align-items: start; }
+.workspace-atlas .atlas-friction-detail li > span { padding-top: 2px; color: #92998e; font: 8px "IBM Plex Mono", Consolas, monospace; }
+.workspace-atlas .atlas-friction-detail li > p { margin: 0; color: #6e786b; font-size: 9px; line-height: 1.55; }
+.workspace-atlas .atlas-friction-evidence > div { display: grid; gap: 3px; padding: 8px 0; border-top: 1px solid rgba(53, 65, 54, .08); }
+.workspace-atlas .atlas-friction-evidence > div > span { color: #92998e; font-size: 8px; }
+.workspace-atlas .atlas-friction-evidence > div > strong { color: #596657; font-size: 10px; font-weight: 550; }
+.workspace-atlas .atlas-friction-evidence > div > small { color: #858b81; font-size: 8px; line-height: 1.45; }
+.workspace-atlas .atlas-friction-inspector-actions { display: grid; gap: 8px; padding: 13px 16px; border-top: 1px solid var(--atlas-line); background: rgba(255, 255, 252, .44); }
+.workspace-atlas .atlas-friction-inspector-actions > span { color: #92998e; font-size: 8px; line-height: 1.5; text-align: center; }
+@media (max-width: 1120px) {
+  .workspace-atlas .atlas-layout-basement { grid-template-columns: 58px minmax(0, 1fr); }
+  .workspace-atlas .atlas-friction-inspector { min-height: 360px; grid-column: 2; grid-row: 2; border-top: 1px solid var(--atlas-line); border-left: 0; }
+  .workspace-atlas .atlas-friction-inspector-scroll { overflow: visible; }
+}
+@media (max-width: 720px) {
+  .workspace-atlas .atlas-layout-basement { grid-template-columns: minmax(0, 1fr); }
+  .workspace-atlas .atlas-friction-rail { min-height: 54px; grid-column: 1; border-right: 0; border-bottom: 1px solid var(--atlas-line); }
+  .workspace-atlas .atlas-friction-rail-item { width: auto; min-height: 34px; flex-direction: row; gap: 7px; padding: 0 12px; }
+  .workspace-atlas .atlas-friction-main { padding: 24px 14px; }
+  .workspace-atlas .atlas-friction-heading { align-items: flex-start; flex-direction: column; gap: 14px; margin-bottom: 17px; }
+  .workspace-atlas .atlas-friction-heading h1 { font-size: 31px; }
+  .workspace-atlas .atlas-friction-card { min-height: 0; grid-template-columns: 31px minmax(0, 1fr); gap: 10px; padding: 13px 11px; }
+  .workspace-atlas .atlas-friction-number { width: 29px; height: 29px; }
+  .workspace-atlas .atlas-friction-card-meta { font-size: 6px; }
+  .workspace-atlas .atlas-friction-card-copy > strong { font-size: 16px; }
+  .workspace-atlas .atlas-friction-inspector { min-height: 0; grid-column: 1; grid-row: auto; }
+  .workspace-atlas .atlas-friction-inspector-scroll { max-height: none; }
 }
