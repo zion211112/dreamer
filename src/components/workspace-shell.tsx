@@ -6,18 +6,27 @@ import {
   ArrowRight,
   ArrowUpRight,
   Boxes,
+  ChevronDown,
   FileText,
   Focus,
   List,
   ListChecks,
   Network,
   Plus,
-  RotateCcw,
   ScrollText,
+  UserRound,
   UsersRound,
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import type { Tender } from '@/lib/tender';
 import type { WorkspaceContextOption, WorkspaceKey } from '@/lib/workspace';
 import { signOut } from '@/lib/supabase/sign-out';
@@ -33,7 +42,9 @@ interface WorkspaceShellProps {
   canPersistPreference?: boolean;
 }
 
-type WorkspaceView = 'topology' | 'problems' | 'sequence' | 'capability' | 'roll';
+type WorkspaceView = 'topology' | 'problems' | 'ledger' | 'commons';
+type LedgerSection = 'sequence' | 'capability' | 'roll';
+type Floor = 'basement' | 'ground' | 'first';
 
 interface ProblemDraft {
   id: string;
@@ -58,41 +69,41 @@ interface TopologyRecord {
   actions: [string, string][];
 }
 
-const VIEWS: { key: WorkspaceView; label: string; icon: typeof Network }[] = [
-  { key: 'topology', label: 'Topology', icon: Network },
-  { key: 'problems', label: 'Problem briefs', icon: FileText },
-  { key: 'sequence', label: 'Work sequence', icon: ListChecks },
-  { key: 'capability', label: 'Crew & capability', icon: UsersRound },
-  { key: 'roll', label: 'The Roll', icon: ScrollText },
+const MODULES: { key: WorkspaceView; label: string; icon: typeof Network }[] = [
+  { key: 'topology', label: 'Asset Topology', icon: Network },
+  { key: 'problems', label: 'Problem', icon: FileText },
+  { key: 'ledger', label: 'Ledger / Capability', icon: ScrollText },
+  { key: 'commons', label: 'Commons', icon: Boxes },
 ];
 
 const VIEW_COPY: Record<WorkspaceView, { kicker: string; title: string; subtitle: string }> = {
   topology: {
-    kicker: '01 / RELATIONSHIP FIELD',
-    title: 'Commons',
-    subtitle: 'People · assets · work · evidence',
+    kicker: '01 / ASSET FIELD',
+    title: 'Asset Topology',
+    subtitle: 'Hosts · assets · work · evidence',
   },
   problems: {
-    kicker: '02 / INTAKE REGISTER',
-    title: 'Problem briefs',
+    kicker: '02 / FIELD INTAKE',
+    title: 'Problem',
     subtitle: 'Observed friction, before prescribed solutions.',
   },
-  sequence: {
-    kicker: '03 / DELIVERY LOGIC',
-    title: 'Work sequence',
-    subtitle: 'Six gates. No implied progress.',
+  ledger: {
+    kicker: '03 / PROOF & DELIVERY',
+    title: 'Ledger / Capability',
+    subtitle: 'Work sequence · capability evidence · provenance.',
   },
-  capability: {
-    kicker: '04 / PEOPLE & PROOF',
-    title: 'Crew & capability',
-    subtitle: 'Claims become useful when their scope is clear.',
-  },
-  roll: {
-    kicker: '05 / EVIDENCE & PROVENANCE',
-    title: 'The Roll',
-    subtitle: 'A record trail, not a truth machine.',
+  commons: {
+    kicker: '04 / SHARED RECORDS',
+    title: 'Commons',
+    subtitle: 'Published Tender records and illustrative scenarios, clearly distinguished.',
   },
 };
+
+const FLOORS: { key: Floor; label: string; short: string }[] = [
+  { key: 'basement', label: 'Basement', short: 'B' },
+  { key: 'ground', label: 'Ground', short: 'G' },
+  { key: 'first', label: 'First', short: '1' },
+];
 
 const RECORDS: Record<string, TopologyRecord> = {
   site: {
@@ -199,11 +210,14 @@ const ROLL_FIELDS = [
 ];
 
 export function WorkspaceShell({
+  initialTenders = [],
   userEmail,
   localMode = false,
   contexts = [],
 }: WorkspaceShellProps) {
   const [view, setView] = useState<WorkspaceView>('topology');
+  const [floor, setFloor] = useState<Floor>('ground');
+  const [ledgerSection, setLedgerSection] = useState<LedgerSection>('roll');
   const [selectedRecordId, setSelectedRecordId] = useState('site');
   const [selectedDraftId, setSelectedDraftId] = useState<string | null>(null);
   const [topologyMode, setTopologyMode] = useState<'graph' | 'index'>('graph');
@@ -219,14 +233,6 @@ export function WorkspaceShell({
     : undefined;
 
   const notify = useCallback((message: string) => toast(message), []);
-
-  const resetView = useCallback(() => {
-    setView('topology');
-    setSelectedRecordId('site');
-    setSelectedDraftId(null);
-    setTopologyMode('graph');
-    notify('View reset.');
-  }, [notify]);
 
   const openModal = useCallback(() => setModalOpen(true), []);
   const closeModal = useCallback(() => setModalOpen(false), []);
@@ -293,8 +299,9 @@ export function WorkspaceShell({
       openModal();
     } else if (action === 'export' && selectedDraft) {
       exportDraft(selectedDraft);
-    } else if (action === 'sequence' || action === 'capability') {
-      setView(action);
+    } else if (action === 'sequence' || action === 'capability' || action === 'roll') {
+      setView('ledger');
+      setLedgerSection(action);
     }
   }
 
@@ -316,32 +323,53 @@ export function WorkspaceShell({
   return (
     <div className="workspace-atlas">
       <header className="atlas-header">
-        <a className="atlas-brand" href="/workspace" aria-label="APT-LABS workspace">
-          <span className="atlas-brand-mark"><Boxes aria-hidden="true" size={17} strokeWidth={1.5} /></span>
-          <span>APT<span>—</span>LABS</span>
-        </a>
-        <div className="atlas-header-context" aria-label="Workspace location">
-          <span>FIELD ATLAS</span>
-          <i />
-          <span>WORKSPACE <b>{String(VIEWS.findIndex(item => item.key === view) + 1).padStart(2, '0')} / 05</b></span>
-          <i />
-          <span>{localMode ? 'LOCAL SESSION' : 'WORKSPACE'}</span>
+        <div className="atlas-header-left">
+          <a className="atlas-brand" href="/workspace" aria-label="APT-LABS workspace">
+            <span className="atlas-brand-mark"><Boxes aria-hidden="true" size={17} strokeWidth={1.5} /></span>
+            <span>APT<span>—</span>LABS</span>
+          </a>
+          <nav className="atlas-floor-switch" aria-label="Workspace floor">
+            {FLOORS.map(item => (
+              <button
+                key={item.key}
+                className={floor === item.key ? 'is-active' : ''}
+                type="button"
+                aria-pressed={floor === item.key}
+                onClick={() => setFloor(item.key)}
+              >
+                <span className="atlas-floor-short">{item.short}</span>
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </nav>
         </div>
-        <div className="atlas-header-actions">
-          <span className={`atlas-session-pill ${localMode ? 'is-local' : ''}`}>
-            <i />{localMode ? 'Local session' : 'Signed in'}
-          </span>
-          <button className="atlas-icon-button" type="button" onClick={resetView} aria-label="Reset workspace view" title="Reset view">
-            <RotateCcw aria-hidden="true" size={15} />
-          </button>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="atlas-user-menu-trigger" type="button">
+              <span className="atlas-avatar" aria-hidden="true">{(userEmail[0] || 'O').toUpperCase()}</span>
+              <span className="atlas-user-menu-copy"><strong>{userEmail.split('@')[0] || 'operator'}</strong><small>{localMode ? 'Local session' : 'Dashboard'}</small></span>
+              <ChevronDown aria-hidden="true" size={14} />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="atlas-user-menu">
+            <DropdownMenuLabel className="atlas-user-menu-label">
+              <span>{userEmail.split('@')[0] || 'operator'}</span>
+              <small>{userEmail || 'Local session'}</small>
+              <small>{localMode ? 'Local session' : `${contexts.length} verified contexts`}</small>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="atlas-user-menu-signout" onSelect={() => signOut()}>
+              Sign out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </header>
 
-      <div className="atlas-layout">
-        <aside className="atlas-rail">
+      <div className={`atlas-layout${floor !== 'ground' ? ' atlas-layout-unconfigured' : ''}${view === 'commons' ? ' atlas-layout-wide' : ''}`}>
+        {floor === 'ground' && <aside className="atlas-rail">
           <div className="atlas-rail-label">Workspace index</div>
           <nav className="atlas-nav" aria-label="Workspace modules">
-            {VIEWS.map((item, index) => {
+            {MODULES.map((item, index) => {
               const Icon = item.icon;
               const active = item.key === view;
               return (
@@ -366,17 +394,18 @@ export function WorkspaceShell({
             <span className="atlas-rail-label">Field note / 01</span>
             <p>Observe before designing.</p>
           </div>
-          <div className="atlas-account">
-            <span className="atlas-avatar" aria-hidden="true">{(userEmail[0] || 'O').toUpperCase()}</span>
-            <span className="atlas-account-copy">
-              <strong>{userEmail.split('@')[0] || 'operator'}</strong>
-              <span>{userEmail || 'Local session'}</span>
-            </span>
-            <button className="atlas-signout" type="button" onClick={() => signOut()}>Sign out</button>
-          </div>
-        </aside>
+        </aside>}
 
-        <main className="atlas-main">
+        <main className={`atlas-main${floor !== 'ground' ? ' atlas-main-unconfigured' : ''}${view === 'commons' ? ' atlas-main-wide' : ''}`}>
+          {floor !== 'ground' ? (
+            <section className="atlas-floor-empty">
+              <span className="atlas-kicker">{FLOORS.find(item => item.key === floor)?.short} / FLOOR</span>
+              <span className="atlas-floor-empty-icon"><Boxes aria-hidden="true" size={22} /></span>
+              <h1>{FLOORS.find(item => item.key === floor)?.label} floor</h1>
+              <p>This floor is not configured yet.</p>
+              <span>Workspace content will appear here when this floor is defined.</span>
+            </section>
+          ) : (
           <div className="atlas-main-scroll">
             <div className="atlas-main-top">
               <div>
@@ -518,55 +547,105 @@ export function WorkspaceShell({
               </section>
             )}
 
-            {view === 'sequence' && (
-              <section className="atlas-block">
-                <div className="atlas-block-head">
-                  <div><h2>Operating sequence</h2><p>Each gate needs evidence before transition.</p></div>
-                  <span className="atlas-state">NOT STARTED</span>
-                </div>
-                <div className="atlas-block-body">
-                  {SEQUENCE.map(step => (
-                    <div className="atlas-sequence-step" key={step.number}>
-                      <span className="atlas-step-number">{step.number}</span>
-                      <div><strong>{step.title}</strong><p>{step.description}</p></div>
-                      <span className={`atlas-state${step.first ? ' atlas-state-open' : ''}`}>{step.state}</span>
+            {view === 'ledger' && (
+              <>
+                <nav className="atlas-ledger-tabs" aria-label="Ledger and capability sections">
+                  {([
+                    ['roll', 'The Roll', ScrollText],
+                    ['capability', 'Capability', UsersRound],
+                    ['sequence', 'Work sequence', ListChecks],
+                  ] as const).map(([section, label, Icon]) => (
+                    <button
+                      className={ledgerSection === section ? 'is-active' : ''}
+                      key={section}
+                      type="button"
+                      aria-pressed={ledgerSection === section}
+                      onClick={() => setLedgerSection(section)}
+                    >
+                      <Icon aria-hidden="true" size={14} />{label}
+                    </button>
+                  ))}
+                </nav>
+                {ledgerSection === 'roll' && (
+                  <section className="atlas-block">
+                    <div className="atlas-block-head">
+                      <div><h2>Provenance ledger</h2><p>Proposed structure · no live ledger connected</p></div>
+                      <span className="atlas-state atlas-state-open">CONCEPT</span>
                     </div>
-                  ))}
-                </div>
-              </section>
+                    <div className="atlas-block-body">
+                      {ROLL_FIELDS.map(([label, description]) => (
+                        <div className="atlas-schema-row" key={label}><strong>{label}</strong><span>{description}</span></div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+                {ledgerSection === 'capability' && (
+                  <section className="atlas-block">
+                    <div className="atlas-block-head">
+                      <div><h2>Capability record</h2><p>Suggested fields · no people connected</p></div>
+                      <span className="atlas-state atlas-state-open">SCHEMA</span>
+                    </div>
+                    <div className="atlas-block-body">
+                      {CAPABILITY_FIELDS.map(([label, description]) => (
+                        <div className="atlas-schema-row" key={label}><strong>{label}</strong><span>{description}</span></div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+                {ledgerSection === 'sequence' && (
+                  <section className="atlas-block">
+                    <div className="atlas-block-head">
+                      <div><h2>Operating sequence</h2><p>Each gate needs evidence before transition.</p></div>
+                      <span className="atlas-state">NOT STARTED</span>
+                    </div>
+                    <div className="atlas-block-body">
+                      {SEQUENCE.map(step => (
+                        <div className="atlas-sequence-step" key={step.number}>
+                          <span className="atlas-step-number">{step.number}</span>
+                          <div><strong>{step.title}</strong><p>{step.description}</p></div>
+                          <span className={`atlas-state${step.first ? ' atlas-state-open' : ''}`}>{step.state}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+              </>
             )}
 
-            {view === 'capability' && (
-              <section className="atlas-block">
+            {view === 'commons' && (
+              <section className="atlas-block atlas-commons">
                 <div className="atlas-block-head">
-                  <div><h2>Capability record</h2><p>Suggested fields · no people connected</p></div>
-                  <span className="atlas-state atlas-state-open">SCHEMA</span>
+                  <div><h2>Shared Tender records</h2><p>Published records and illustrative scenarios are identified separately.</p></div>
+                  <span className="atlas-state">{String(initialTenders.length).padStart(2, '0')} RECORDS</span>
                 </div>
-                <div className="atlas-block-body">
-                  {CAPABILITY_FIELDS.map(([label, description]) => (
-                    <div className="atlas-schema-row" key={label}><strong>{label}</strong><span>{description}</span></div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {view === 'roll' && (
-              <section className="atlas-block">
-                <div className="atlas-block-head">
-                  <div><h2>Provenance ledger</h2><p>Proposed structure · no live ledger connected</p></div>
-                  <span className="atlas-state atlas-state-open">CONCEPT</span>
-                </div>
-                <div className="atlas-block-body">
-                  {ROLL_FIELDS.map(([label, description]) => (
-                    <div className="atlas-schema-row" key={label}><strong>{label}</strong><span>{description}</span></div>
-                  ))}
+                <div className="atlas-block-body atlas-commons-list">
+                  {initialTenders.length ? initialTenders.map(tender => (
+                    <article className="atlas-commons-card" key={tender.id}>
+                      <div className="atlas-commons-card-head">
+                        <span className="atlas-commons-category">{tender.category}</span>
+                        <span className={`atlas-state${tender.isIllustrative ? ' atlas-state-draft' : ' atlas-state-open'}`}>
+                          {tender.isIllustrative ? 'ILLUSTRATIVE SCENARIO' : 'PUBLISHED RECORD'}
+                        </span>
+                      </div>
+                      <h3>{tender.assetName}</h3>
+                      <p>{tender.summary}</p>
+                      <div className="atlas-commons-meta"><span>{tender.location}</span><span>{tender.status.replaceAll('_', ' ')}</span></div>
+                    </article>
+                  )) : (
+                    <div className="atlas-empty">
+                      <span><Boxes aria-hidden="true" size={16} /></span>
+                      <strong>No shared records available.</strong>
+                      <p>Published Commons records will appear here when available.</p>
+                    </div>
+                  )}
                 </div>
               </section>
             )}
           </div>
+          )}
         </main>
 
-        <aside className="atlas-inspector">
+        {floor === 'ground' && view !== 'commons' && <aside className="atlas-inspector">
           <div className="atlas-inspector-head">
             <div className="atlas-inspector-top"><span>01 — Record inspector</span><span className="atlas-inspector-icon">{selectedDraft ? '+' : selectedRecord.icon}</span></div>
             <h2>{inspectorTitle}</h2>
@@ -607,7 +686,7 @@ export function WorkspaceShell({
             </section>
           </div>
           <div className="atlas-inspector-foot"><span><i />SESSION ONLY</span><span>NO SHARED WRITES</span></div>
-        </aside>
+        </aside>}
       </div>
 
       <footer className="atlas-footer">
