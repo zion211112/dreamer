@@ -26,11 +26,20 @@ const ASSETS = [
   { id: 'tender', label: 'Tender System', meta: 'commons · live' },
 ];
 
-export function WorkspaceShell({ userEmail, localMode = false, contexts = [] }: WorkspaceShellProps) {
+const MODULES = [
+  { key: 'asset', label: 'Asset Topology', icon: Boxes, blurb: 'Hosts, builds and the assets they carry.' },
+  { key: 'problem', label: 'Problem Briefs', icon: 'ClipboardList' as const, blurb: 'Observed problems, stated without a presumed answer.' },
+  { key: 'sequence', label: 'Work Sequence', icon: 'Layers' as const, blurb: 'The order that moves an idea into the world.' },
+  { key: 'capability', label: 'Crew & Capability', icon: 'Users' as const, blurb: 'Who is available, and what they are trusted to do.' },
+  { key: 'commons', label: 'Commons', icon: 'Layers' as const, blurb: 'Shared records that outlive any single actor.' },
+];
+
+export function WorkspaceShell({ userEmail, localMode = false, contexts = [], canPersistPreference = true }: WorkspaceShellProps) {
   const [notes, setNotes] = useState<{ role: 'sys' | 'user'; text: string }[]>([
     { role: 'sys', text: 'Agent 1.0 ready.' },
   ]);
   const [notesInput, setNotesInput] = useState('');
+  const [activeModule, setActiveModule] = useState<string>('asset');
 
   function addNote() {
     const t = notesInput.trim();
@@ -54,11 +63,17 @@ export function WorkspaceShell({ userEmail, localMode = false, contexts = [] }: 
             {localMode && <div className="local-badge">Local</div>}
           </div>
           <div className="nav-list">
-            <div className="nav-item active">
-              <div className="nav-index">01</div>
-              <div className="nav-label">Asset Topology</div>
-              <div className="nav-badge">4</div>
-            </div>
+            {MODULES.map((m, i) => (
+              <div
+                key={m.key}
+                className={`nav-item ${activeModule === m.key ? 'active' : ''}`}
+                onClick={() => setActiveModule(m.key)}
+              >
+                <div className="nav-index">{String(i + 1).padStart(2, '0')}</div>
+                <div className="nav-label">{m.label}</div>
+                <div className="nav-badge">{activeModule === m.key ? '4' : ''}</div>
+              </div>
+            ))}
           </div>
           <div className="profile-block">
             <div className="profile-name">{userEmail.split('@')[0] || 'operator'}</div>
