@@ -37,29 +37,24 @@ function selectFloor(floor: 'Basement' | 'Ground' | 'First') {
 }
 
 describe('workspace shell navigation', () => {
-  it('shows four modules on the ground floor and leaves other floors unconfigured', () => {
+  it('shows two Ground modules and keeps Governance locked', () => {
     render(<WorkspaceShell userEmail="operator@example.com" />);
     selectFloor('Ground');
 
-    const navigation = screen.getByRole('navigation', { name: 'Workspace modules' });
-    expect(within(navigation).getAllByRole('button')).toHaveLength(4);
+    const navigation = screen.getByRole('navigation', { name: 'Ground floor modules' });
+    expect(within(navigation).getAllByRole('button')).toHaveLength(2);
     expect(within(navigation).getByRole('button', { name: /Asset Topology/ })).toBeInTheDocument();
-    expect(within(navigation).getByRole('button', { name: /Problem/ })).toBeInTheDocument();
-    expect(within(navigation).getByRole('button', { name: /Ledger \/ Capability/ })).toBeInTheDocument();
-    expect(within(navigation).getByRole('button', { name: /Commons/ })).toBeInTheDocument();
+    expect(within(navigation).getByRole('button', { name: /Work Engines/ })).toBeInTheDocument();
 
-    selectFloor('First');
-    expect(screen.getByText('This floor is not configured yet.')).toBeInTheDocument();
-    expect(screen.queryByRole('navigation', { name: 'Workspace modules' })).not.toBeInTheDocument();
-
-    selectFloor('Ground');
-    expect(screen.getByRole('navigation', { name: 'Workspace modules' })).toBeInTheDocument();
+    fireEvent.keyDown(screen.getByRole('button', { name: /^Current floor:/ }), { key: 'ArrowDown' });
+    expect(screen.getByRole('menuitem', { name: /First.*Governance.*Verified capability required/ })).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('groups ledger, capability and sequence screens under one module', () => {
     render(<WorkspaceShell userEmail="operator@example.com" />);
     selectFloor('Ground');
-    fireEvent.click(screen.getByRole('button', { name: /Ledger \/ Capability/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Work Engines/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Delivery & proof' }));
 
     expect(screen.getByRole('heading', { name: 'Provenance ledger' })).toBeInTheDocument();
     const sections = screen.getByRole('navigation', { name: 'Ledger and capability sections' });
@@ -72,54 +67,60 @@ describe('workspace shell navigation', () => {
   it('distinguishes illustrative Commons records from published records', () => {
     render(<WorkspaceShell userEmail="operator@example.com" initialTenders={[tender]} />);
     selectFloor('Ground');
-    fireEvent.click(screen.getByRole('button', { name: /Commons/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Work Engines/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Tenders' }));
 
     expect(screen.getByRole('heading', { name: 'Community solar dryer' })).toBeInTheDocument();
     expect(screen.getByText('ILLUSTRATIVE SCENARIO')).toBeInTheDocument();
     expect(screen.getByText(/illustrative scenarios, clearly distinguished/i)).toBeInTheDocument();
   });
 
-  it('opens on Basement with three friction signals and updates the inspector', () => {
+  it('opens on Basement with Radar panes, nested rooms, posts and local signal voting', () => {
     render(<WorkspaceShell userEmail="operator@example.com" />);
 
     expect(screen.getByRole('button', { name: 'Current floor: Basement' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Friction' })).toHaveAttribute('aria-current', 'page');
-    expect(screen.getByRole('heading', { name: 'Problems worth solving together.' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Skill without trusted proof/ })).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByRole('heading', { name: 'Skill without trusted proof' })).toBeInTheDocument();
-    expect(screen.getByText('No linked roster')).toBeInTheDocument();
-    expect(screen.getByText('No linked assets')).toBeInTheDocument();
-    expect(screen.getByText('No verified records linked')).toBeInTheDocument();
+    expect(screen.getByText('Radar')).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Basement modules' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Signals from the field' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Which stories get to become infrastructure?' })).toBeInTheDocument();
+    expect(screen.getByText(/Mwea story worlds/)).toBeInTheDocument();
+    expect(screen.getByText(/Wallet not connected/)).toBeInTheDocument();
+    expect(screen.getByText('RESTING')).toBeInTheDocument();
+    expect(screen.getAllByText(/Example conversation rhythm · not live activity/)).toHaveLength(3);
 
-    fireEvent.click(screen.getByRole('button', { name: /Useful equipment left idle/ }));
-    expect(screen.getByRole('heading', { name: 'Useful equipment left idle' })).toBeInTheDocument();
-    expect(screen.getByText(/actual condition and access rules need to be confirmed locally/i)).toBeInTheDocument();
+    const vote = screen.getByRole('button', { name: /Signal relevance for Which stories get to become infrastructure/ });
+    fireEvent.click(vote);
+    expect(vote).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByText('1', { selector: '.atlas-radar-vote span' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /Education & systems/ }));
+    expect(screen.getByRole('heading', { name: 'Learning & infrastructure' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'What is blocking learning—and where does infrastructure fit?' })).toBeInTheDocument();
   });
 
   it('keeps new friction points in local session drafts without claiming Commons submission', () => {
     render(<WorkspaceShell userEmail="operator@example.com" />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Add friction' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Add a thought' }));
     fireEvent.change(screen.getByLabelText('Friction title'), { target: { value: 'Unreliable community workshop power' } });
     fireEvent.change(screen.getByLabelText('What do people experience?'), { target: { value: 'Shared tools cannot run consistently.' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save local draft' }));
 
-    expect(screen.getByRole('region', { name: 'Local friction drafts' })).toHaveTextContent('Unreliable community workshop power');
-    expect(screen.getByRole('heading', { name: 'Unreliable community workshop power' })).toBeInTheDocument();
-    expect(screen.getByText('LOCAL ONLY')).toBeInTheDocument();
-    expect(screen.getByText('Commons review, endorsement and voting are not connected.')).toBeInTheDocument();
+    expect(screen.getByText('Unreliable community workshop power')).toBeInTheDocument();
+    expect(screen.getByText('SESSION NOTE · NOT SHARED')).toBeInTheDocument();
+    expect(screen.getByText(/Signal votes are local to this view/)).toBeInTheDocument();
   });
 
   it('saves an adaptation as a local-only session draft', () => {
     render(<WorkspaceShell userEmail="operator@example.com" />);
 
+    fireEvent.click(screen.getByRole('button', { name: 'Which stories get to become infrastructure?' }));
     fireEvent.click(screen.getByRole('button', { name: 'Adapt locally' }));
     fireEvent.change(screen.getByLabelText('Friction title'), { target: { value: 'Mwea workshop access' } });
     fireEvent.change(screen.getByLabelText('What do people experience?'), { target: { value: 'Tools are unavailable after class.' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save local draft' }));
 
-    expect(screen.getByRole('region', { name: 'Local friction drafts' })).toHaveTextContent('Mwea workshop access');
-    expect(screen.getByRole('heading', { name: 'Mwea workshop access' })).toBeInTheDocument();
-    expect(screen.getByText('This local adaptation has not been assessed or connected to a coordinated project.')).toBeInTheDocument();
+    expect(screen.getByText('Mwea workshop access')).toBeInTheDocument();
+    expect(screen.getByText('A local adaptation of “Which stories get to become infrastructure?”')).toBeInTheDocument();
   });
 });

@@ -1,9 +1,9 @@
 # APT-LABS Tower Workspace
 
-- **Status:** Draft for user review
+- **Status:** Approved architecture; visual Workspace shell implemented
 - **Date:** 2026-10-22
 - **Product:** APT-LABS
-- **Scope:** Conceptual architecture and workspace experience; no implementation in this change
+- **Scope:** Tower architecture and aesthetic-only Workspace implementation; no new backend workflows
 
 ## 1. Purpose
 
@@ -39,8 +39,9 @@ system, SBT issuer, AI provider, new authorization, or new Tender lifecycle.
   qualify.
 - Hermes is a future agent slot, not a connected AI.
 - Use the approved front-room editorial visual language across the Workspace.
-- This first deliverable is an architecture map, not a backend or UI
-  implementation.
+- The visual shell may present these roles and boundaries before the related
+  backend workflows exist; all unavailable actions and sample data must remain
+  explicit.
 
 ## 3. Product invariants
 
@@ -73,7 +74,7 @@ system, SBT issuer, AI provider, new authorization, or new Tender lifecycle.
 | Floor | Purpose | Modules | Entry model |
 |---|---|---|---|
 | Basement | Sense lived friction, ideate, and abstract social-to-systemic problems | Radar | Entry to the room does not imply access to Ground or Governance data. Posting and voting must follow the eventual moderation and safeguarding policy. |
-| Ground | Inspect assets and their intersections; discover or operate work engines | Asset Topology; Work Engines | **Assumption for this draft:** general entry, consistent with the user's open asset-onboarding direction. A Basement-only view still does not render Ground records. Asset-specific actions require their own authorization. |
+| Ground | Inspect assets and their intersections; discover or operate work engines | Asset Topology; Work Engines | General entry is the current UI assumption. A Basement-only view still does not render Ground records. Asset-specific actions require their own authorization. |
 | First | Make scoped Commons-priority decisions | Governance | Restricted to users whose qualifying capability is verified server-side for the decision scope. A verified Roll-derived badge is not automatically a governance credential. |
 
 The floor switch is the only cross-floor navigation control and remains adjacent
@@ -165,9 +166,11 @@ The selected design is a restrained three-pane room:
    Animation Box” must be qualified as a discussion room if the separate
    proposed Asset/Work Engine shares that name.
 2. **Center — friction feed and room discussion.** Posts, answers, perspectives,
-   signal-only votes, filters, and activity bars. The activity indicator is a
-   measured engagement window (for example, contributions in the last seven
-   days), not a solution-progress meter, truth score, or consensus claim.
+   signal-only votes, filters, and activity bars. A live activity indicator
+   requires measured engagement data (for example, contributions in the last
+   seven days), not a solution-progress meter, truth score, or consensus claim.
+   Without that data, an activity shape must be clearly labeled illustrative
+   and must not imply real participation.
 3. **Right — personal standing and tools.** Profile, context-specific
    community standing, verified capability records, wallet connection state,
    badge/credential state, and a small Hermes dock at the bottom. Do not merge
@@ -240,7 +243,9 @@ consent, provenance, and whether it operates a Work Engine.
 
 The graph is an index over authoritative records. Existing Tender and Roll
 records keep their current lifecycle and source of truth. It must not synthesize
-connections from matching names, category, or geography.
+connections from matching names, category, or geography. In the current visual
+shell, asset onboarding is an unavailable action; the CTA must not imply that
+a listing or access request was created.
 
 ### 7.2 Work Engines
 
@@ -363,22 +368,16 @@ roles while retaining floor-specific information architecture.
 | AI / Hermes | No connected AI provider | Future source-grounded research companion |
 | Cross-asset graph | No universal graph contract | Typed, provenance-bearing relationships across floor projections |
 
-## 12. Delivery sequence after design approval
+## 12. Visual shell implementation boundary
 
-1. Confirm this map, the Ground entry assumption, and the privacy/public-summary
-   rule for cross-floor relationships.
-2. Define graph entity/edge contracts that reference existing Tender, Assembly,
-   Roll, Commons, and School Console boundaries without duplicating their
-   lifecycles.
-3. Build the Workspace visual shell and per-floor projections using illustrative
-   data only; keep the public front door and sign-in unchanged.
-4. Design and implement moderated Radar contribution/room workflows with
-   safeguarding and provenance.
-5. Design asset onboarding, topology relationships, Work Engine membership and
-   non-Tender opportunities.
-6. Separately approve credential issuance, on-chain wallet integration, First
-   floor governance authorization, and Hermes provider grounding before those
-   capabilities are exposed.
+The approved visual shell presents Basement Radar, the two Ground modules,
+Work Engine subsections, and a locked Governance destination. Radar voting and
+new friction notes are local to the current session; neither submits to Commons
+nor carries governance weight. Its bars and seeded friction cards are
+illustrative, not live activity. The wallet, personal standing, credential
+issuance, Hermes, and asset onboarding flows are not connected.
 
-No implementation plan or code should begin until the user reviews and approves
-this architecture document.
+The First-floor lock is a navigation affordance only, not an authorization
+mechanism. Any future Governance data or action requires server-side eligibility
+checks in addition to row-level security. The public front page and sign-in
+remain outside this visual change.

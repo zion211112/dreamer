@@ -5,15 +5,22 @@ import {
   ArrowDownToLine,
   ArrowRight,
   ArrowUpRight,
+  ArrowUp,
+  BadgeCheck,
   Boxes,
   ChevronDown,
+  ChevronRight,
   FileText,
   Focus,
   List,
   ListChecks,
+  LockKeyhole,
+  MessageCircle,
   Network,
   Plus,
+  Radio,
   ScrollText,
+  Sparkles,
   UsersRound,
   X,
 } from 'lucide-react';
@@ -44,6 +51,7 @@ interface WorkspaceShellProps {
 type WorkspaceView = 'topology' | 'problems' | 'ledger' | 'commons';
 type LedgerSection = 'sequence' | 'capability' | 'roll';
 type Floor = 'basement' | 'ground' | 'first';
+type RadarRoom = 'all' | 'culture' | 'education' | 'work';
 
 interface ProblemDraft {
   id: string;
@@ -57,6 +65,7 @@ interface ProblemDraft {
 
 interface FrictionPoint {
   id: string;
+  room: Exclude<RadarRoom, 'all'>;
   title: string;
   signal: string;
   detail: string;
@@ -80,11 +89,9 @@ interface TopologyRecord {
   actions: [string, string][];
 }
 
-const MODULES: { key: WorkspaceView; label: string; icon: typeof Network }[] = [
+const GROUND_MODULES: { key: 'topology' | 'engines'; label: string; icon: typeof Network }[] = [
   { key: 'topology', label: 'Asset Topology', icon: Network },
-  { key: 'problems', label: 'Problem', icon: FileText },
-  { key: 'ledger', label: 'Ledger / Capability', icon: ScrollText },
-  { key: 'commons', label: 'Commons', icon: Boxes },
+  { key: 'engines', label: 'Work Engines', icon: Boxes },
 ];
 
 const VIEW_COPY: Record<WorkspaceView, { kicker: string; title: string; subtitle: string }> = {
@@ -94,18 +101,18 @@ const VIEW_COPY: Record<WorkspaceView, { kicker: string; title: string; subtitle
     subtitle: 'Hosts · assets · work · evidence',
   },
   problems: {
-    kicker: '02 / FIELD INTAKE',
-    title: 'Problem',
+    kicker: 'WORK ENGINES / INTAKE',
+    title: 'Local briefs',
     subtitle: 'Observed friction, before prescribed solutions.',
   },
   ledger: {
-    kicker: '03 / PROOF & DELIVERY',
-    title: 'Ledger / Capability',
+    kicker: 'WORK ENGINES / PROOF & DELIVERY',
+    title: 'Delivery & proof',
     subtitle: 'Work sequence · capability evidence · provenance.',
   },
   commons: {
-    kicker: '04 / SHARED RECORDS',
-    title: 'Commons',
+    kicker: 'WORK ENGINES / SHARED RECORDS',
+    title: 'Tenders & Commons',
     subtitle: 'Published Tender records and illustrative scenarios, clearly distinguished.',
   },
 };
@@ -118,43 +125,46 @@ const FLOORS: { key: Floor; label: string; short: string }[] = [
 
 const FRICTION_POINTS: FrictionPoint[] = [
   {
-    id: 'proof-of-work',
-    title: 'Skill without trusted proof',
-    signal: 'Capable people are screened out before they can show the work.',
-    detail: 'A welder, repairer, fabricator or developer may have practical ability but little recognized evidence of it. The gap is not solved by another profile alone: people need real tasks, clear expectations and fair, human verification.',
+    id: 'mwea-story-worlds',
+    room: 'culture',
+    title: 'Which stories get to become infrastructure?',
+    signal: 'Who can author, own, distribute, and earn from stories rooted in local life?',
+    detail: 'The concern is larger than representation in any one film or platform. It may involve who gets to shape cultural memory, who controls rights and distribution, and whether local creators can sustain the work. The Mwea context and the people most affected need to define the signal; an animation initiative is one possible response, not an established solution.',
     collectiveResponse: [
-      'Start with a small, scoped task and agreed acceptance criteria.',
-      'Record the artifact, contribution, reviewer and limitations.',
-      'Let verified work accumulate into a portable record—not an automatic credential.',
+      'Invite creators, elders, educators and audiences to describe what is missing—and where they disagree.',
+      'Map authorship, language, rights, distribution and livelihood constraints before choosing a medium.',
+      'Treat any Mwea Animation Box as a proposed asset until its stewards, scope and community relationships are established.',
     ],
-    firstQuestion: 'Which practical skill is blocked by missing proof, and what safe first task could demonstrate it?',
-    origin: 'Kenya · adaptable anywhere',
+    firstQuestion: 'Whose account is missing, and who should hold authorship and rights if new story work is created?',
+    origin: 'Mwea · context to establish with participants',
   },
   {
-    id: 'idle-equipment',
-    title: 'Useful equipment left idle',
-    signal: 'A small repair or unclear access can keep valuable tools out of use.',
-    detail: 'Workshops, training institutions and community spaces may have useful equipment that is unavailable because maintenance, authorized access and responsibility are not coordinated. The actual condition and access rules need to be confirmed locally.',
+    id: 'learning-infrastructure',
+    room: 'education',
+    title: 'What is blocking learning—and where does infrastructure fit?',
+    signal: 'Education friction can be systemic; a project idea is not yet evidence of the cause.',
+    detail: 'A learning challenge may involve access, teaching conditions, energy, materials, language, or institutional constraints. A proposed response such as Nyamindi Hydro must remain distinct from the friction until affected learners and educators establish a credible connection.',
     collectiveResponse: [
-      'Ask the equipment owner to confirm condition, access and safety requirements.',
-      'Scope the repair, parts, responsible people and acceptance test before work.',
-      'Document the return to service and agree on supervised ongoing access.',
+      'Listen to learners, teachers, families and local education stewards separately.',
+      'Record the barriers, existing responses and evidence gaps without assuming a technology fix.',
+      'Test any infrastructure link against educational outcomes, ownership, maintenance and alternatives.',
     ],
-    firstQuestion: 'What tool is unavailable, who controls access, and what evidence would establish a safe repair?',
-    origin: 'Kenya · adaptable anywhere',
+    firstQuestion: 'Which learning outcome is constrained, for whom, and what evidence links that constraint to infrastructure?',
+    origin: 'Nyamindi · proposed connection, not verified',
   },
   {
-    id: 'harvest-loss',
-    title: 'Harvest value lost before market',
-    signal: 'Perishable produce can lose value when handling and local processing do not connect.',
-    detail: 'Growers and local groups may lack suitable preservation, storage or reliable routes to buyers. Loss varies by crop, season and place; measure it with the people affected before choosing equipment or claiming a solution.',
+    id: 'capability-to-work',
+    room: 'work',
+    title: 'Why does useful capability fail to become trusted work?',
+    signal: 'People may have practical ability without a fair path to demonstrate it.',
+    detail: 'A skill-to-work gap can reflect who controls access to tools, contracts, references, proof and payment—not just a missing certificate. A local work engine could connect people to real tasks, but only with clear acceptance, attribution, safety and fair reward.',
     collectiveResponse: [
-      'Record crop, season, volumes, handling steps and observed loss with growers.',
-      'Compare practical options such as shared processing, drying or cold storage.',
-      'Pilot one measurable step and document food-safety, maintenance and market results.',
+      'Ask workers and prospective clients which evidence is trusted and whose standards dominate.',
+      'Scope a small real task with transparent criteria, review, attribution and payment terms.',
+      'Record verified outcomes through the appropriate work engine and existing Roll path where applicable.',
     ],
-    firstQuestion: 'Which crop and handling step create the clearest locally verified loss?',
-    origin: 'Kenya · adaptable anywhere',
+    firstQuestion: 'Who decides whether work counts as proof, and what prevents a fair first opportunity?',
+    origin: 'Local evidence needed',
   },
 ];
 
@@ -271,7 +281,9 @@ export function WorkspaceShell({
   const [view, setView] = useState<WorkspaceView>('topology');
   const [floor, setFloor] = useState<Floor>('basement');
   const [ledgerSection, setLedgerSection] = useState<LedgerSection>('roll');
-  const [selectedFrictionId, setSelectedFrictionId] = useState(FRICTION_POINTS[0].id);
+  const [selectedFrictionId, setSelectedFrictionId] = useState('');
+  const [radarRoom, setRadarRoom] = useState<RadarRoom>('all');
+  const [localVotes, setLocalVotes] = useState<string[]>([]);
   const [selectedRecordId, setSelectedRecordId] = useState('site');
   const [selectedDraftId, setSelectedDraftId] = useState<string | null>(null);
   const [topologyMode, setTopologyMode] = useState<'graph' | 'index'>('graph');
@@ -286,9 +298,6 @@ export function WorkspaceShell({
   const selectedDraft = selectedDraftId
     ? drafts.find(draft => draft.id === selectedDraftId)
     : undefined;
-  const selectedFriction = FRICTION_POINTS.find(point => point.id === selectedFrictionId) ?? FRICTION_POINTS[0];
-  const selectedFrictionDraft = drafts.find(draft => draft.id === selectedFrictionId);
-
   const notify = useCallback((message: string) => toast(message), []);
 
   const openModal = useCallback(() => {
@@ -337,6 +346,12 @@ export function WorkspaceShell({
     setSelectedDraftId(null);
   }
 
+  function toggleLocalVote(id: string) {
+    setLocalVotes(current => current.includes(id)
+      ? current.filter(voteId => voteId !== id)
+      : [...current, id]);
+  }
+
   function saveDraft(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const draft: ProblemDraft = {
@@ -347,11 +362,12 @@ export function WorkspaceShell({
       measure: form.measure.trim(),
     };
     if (composerMode === 'friction') {
+      const parentFriction = FRICTION_POINTS.find(point => point.id === selectedFrictionId);
       const frictionDraft = {
         ...draft,
         isFriction: true,
-        ...(selectedFrictionId && FRICTION_POINTS.some(point => point.id === selectedFrictionId)
-          ? { parentTitle: selectedFriction.title }
+        ...(parentFriction
+          ? { parentTitle: parentFriction.title }
           : {}),
       };
       setDrafts(current => [frictionDraft, ...current]);
@@ -406,6 +422,15 @@ export function WorkspaceShell({
     ? [['Open work sequence', 'sequence'], ['Export JSON', 'export']]
     : selectedRecord.actions;
   const currentFloor = FLOORS.find(item => item.key === floor) ?? FLOORS[0];
+  const visibleFriction = radarRoom === 'all'
+    ? FRICTION_POINTS
+    : FRICTION_POINTS.filter(point => point.room === radarRoom);
+  const radarRoomTitle: Record<RadarRoom, string> = {
+    all: 'Signals from the field',
+    culture: 'Stories, authorship & belonging',
+    education: 'Learning & infrastructure',
+    work: 'Capability & trusted work',
+  };
 
   return (
     <div className="workspace-atlas">
@@ -428,12 +453,17 @@ export function WorkspaceShell({
               {FLOORS.map(item => (
                 <DropdownMenuItem
                   key={item.key}
-                  className={`atlas-floor-menu-item${floor === item.key ? ' is-active' : ''}`}
-                  onSelect={() => setFloor(item.key)}
+                  className={`atlas-floor-menu-item${floor === item.key ? ' is-active' : ''}${item.key === 'first' ? ' is-locked' : ''}`}
+                  disabled={item.key === 'first'}
+                  onSelect={() => { if (item.key !== 'first') setFloor(item.key); }}
                 >
                   <span className="atlas-floor-short">{item.short}</span>
-                  <span>{item.label}</span>
+                  <span className="atlas-floor-option-copy">
+                    <span>{item.key === 'first' ? 'First floor · Governance' : item.label}</span>
+                    {item.key === 'first' && <small>Verified capability required</small>}
+                  </span>
                   {floor === item.key && <span className="atlas-floor-current">CURRENT</span>}
+                  {item.key === 'first' && <LockKeyhole aria-hidden="true" size={12} />}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -461,34 +491,81 @@ export function WorkspaceShell({
         </DropdownMenu>
       </header>
 
-      <div className={`atlas-layout${floor !== 'ground' ? ' atlas-layout-unconfigured' : ''}${floor === 'basement' ? ' atlas-layout-basement' : ''}${view === 'commons' ? ' atlas-layout-wide' : ''}`}>
+      <div className={`atlas-layout${floor !== 'ground' ? ' atlas-layout-unconfigured' : ''}${floor === 'basement' ? ' atlas-layout-basement atlas-layout-radar' : ''}${view === 'commons' ? ' atlas-layout-wide' : ''}`}>
         {floor === 'basement' && (
-          <aside className="atlas-friction-rail">
-            <button className="atlas-friction-rail-item is-active" type="button" aria-current="page">
-              <Focus aria-hidden="true" size={18} strokeWidth={1.6} />
-              <span>Friction</span>
+          <aside className="atlas-radar-nav">
+            <div className="atlas-radar-module">
+              <span className="atlas-radar-live-mark"><Radio aria-hidden="true" size={14} /></span>
+              <div><span className="atlas-radar-overline">ACTIVE MODULE</span><strong>Radar</strong></div>
+            </div>
+            <nav className="atlas-radar-rooms" aria-label="Basement modules">
+            <button
+              className={`atlas-radar-room${radarRoom === 'all' ? ' is-active' : ''}`}
+              type="button"
+              aria-pressed={radarRoom === 'all'}
+              onClick={() => setRadarRoom('all')}
+            >
+              <span>All signals</span><small>Overview</small>
             </button>
+            <span className="atlas-radar-room-label">Community rooms</span>
+            <button
+              className={`atlas-radar-room${radarRoom === 'culture' ? ' is-active' : ''}`}
+              type="button"
+              aria-pressed={radarRoom === 'culture'}
+              onClick={() => setRadarRoom('culture')}
+            >
+              <span>Culture & stories</span><ChevronRight aria-hidden="true" size={13} />
+            </button>
+            <div className="atlas-radar-room-nested">
+              <button
+                className={`atlas-radar-room atlas-radar-room-child${radarRoom === 'culture' ? ' is-active' : ''}`}
+                type="button"
+                aria-pressed={radarRoom === 'culture'}
+                onClick={() => { setRadarRoom('culture'); setSelectedFrictionId('mwea-story-worlds'); }}
+              >
+                <span>Mwea story worlds</span>
+              </button>
+              <span className="atlas-radar-room-note">Discussion room · not an asset listing</span>
+            </div>
+            <button
+              className={`atlas-radar-room${radarRoom === 'education' ? ' is-active' : ''}`}
+              type="button"
+              aria-pressed={radarRoom === 'education'}
+              onClick={() => setRadarRoom('education')}
+            >
+              <span>Education & systems</span><ChevronRight aria-hidden="true" size={13} />
+            </button>
+            <button
+              className={`atlas-radar-room${radarRoom === 'work' ? ' is-active' : ''}`}
+              type="button"
+              aria-pressed={radarRoom === 'work'}
+              onClick={() => setRadarRoom('work')}
+            >
+              <span>Work & capability</span><ChevronRight aria-hidden="true" size={13} />
+            </button>
+            </nav>
+            <div className="atlas-radar-nav-foot">
+              Rooms hold discussion around friction. They are not work engines or proof that work is underway.
+            </div>
           </aside>
         )}
         {floor === 'ground' && <aside className="atlas-rail">
-          <div className="atlas-rail-label">Workspace index</div>
-          <nav className="atlas-nav" aria-label="Workspace modules">
-            {MODULES.map((item, index) => {
+          <div className="atlas-rail-label">Ground floor</div>
+          <nav className="atlas-nav" aria-label="Ground floor modules">
+            {GROUND_MODULES.map((item, index) => {
               const Icon = item.icon;
-              const active = item.key === view;
+              const active = item.key === 'topology' ? view === 'topology' : view !== 'topology';
               return (
                 <button
                   key={item.key}
                   className={`atlas-nav-item${active ? ' is-active' : ''}`}
                   type="button"
                   aria-current={active ? 'page' : undefined}
-                  onClick={() => setView(item.key)}
+                  onClick={() => setView(item.key === 'topology' ? 'topology' : view === 'topology' ? 'commons' : view)}
                 >
                   <Icon aria-hidden="true" size={16} strokeWidth={1.6} />
                   <span>{item.label}</span>
-                  {item.key === 'problems'
-                    ? <span className="atlas-nav-count">{String(drafts.length).padStart(2, '0')}</span>
-                    : <span className="atlas-nav-index">{String(index + 1).padStart(2, '0')}</span>}
+                  <span className="atlas-nav-index">{String(index + 1).padStart(2, '0')}</span>
                 </button>
               );
             })}
@@ -500,70 +577,104 @@ export function WorkspaceShell({
           </div>
         </aside>}
 
-        <main className={`atlas-main${floor !== 'ground' ? ' atlas-main-unconfigured' : ''}${view === 'commons' ? ' atlas-main-wide' : ''}`}>
+        <main className={`atlas-main${floor !== 'ground' ? ' atlas-main-unconfigured' : ''}${floor === 'basement' ? ' atlas-main-radar' : ''}${view === 'commons' ? ' atlas-main-wide' : ''}`}>
           {floor === 'basement' ? (
-            <div className="atlas-friction-main">
-              <div className="atlas-friction-heading">
+            <div className="atlas-radar-feed">
+              <div className="atlas-radar-feed-head">
                 <div>
-                  <span className="atlas-kicker">BASEMENT / FRICTION SIGNALS</span>
-                  <h1>Problems worth solving together.</h1>
-                  <p>Signals for coordinated work—not verified findings. Start with people closest to the problem.</p>
+                  <span className="atlas-kicker">BASEMENT / RADAR</span>
+                  <h1>{radarRoomTitle[radarRoom]}</h1>
+                  <p>What is keeping people stuck—and what would it take to change it together?</p>
                 </div>
                 <button className="atlas-button atlas-button-primary" type="button" onClick={() => openFrictionComposer()}>
-                  <Plus aria-hidden="true" size={14} /> Add friction
+                  <Plus aria-hidden="true" size={14} /> Add a thought
                 </button>
               </div>
-
-              <div className="atlas-friction-list" aria-label="Featured friction points">
-                {FRICTION_POINTS.map((point, index) => (
-                  <button
-                    key={point.id}
-                    className={`atlas-friction-card${selectedFrictionId === point.id ? ' is-selected' : ''}`}
-                    type="button"
-                    aria-pressed={selectedFrictionId === point.id}
-                    onClick={() => setSelectedFrictionId(point.id)}
-                  >
-                    <span className="atlas-friction-number">{String(index + 1).padStart(2, '0')}</span>
-                    <span className="atlas-friction-card-copy">
-                      <span className="atlas-friction-card-meta"><span>FIELD SIGNAL</span><span>{point.origin}</span></span>
-                      <strong>{point.title}</strong>
-                      <span className="atlas-friction-signal">{point.signal}</span>
-                      <span className="atlas-friction-card-foot">Explore the friction <ArrowUpRight aria-hidden="true" size={13} /></span>
-                    </span>
-                  </button>
+              <div className="atlas-radar-feed-tools" aria-label="Signal feed controls">
+                <span className="is-active">EDITORIAL SIGNALS</span>
+                <small>Three open questions · no live community feed is connected</small>
+              </div>
+              <div className="atlas-radar-post-list" aria-label="Radar friction posts">
+                {visibleFriction.map((point, index) => {
+                  const hasVoted = localVotes.includes(point.id);
+                  const expanded = selectedFrictionId === point.id;
+                  return (
+                    <article className={`atlas-radar-post${expanded ? ' is-expanded' : ''}`} key={point.id}>
+                      <button
+                        className={`atlas-radar-vote${hasVoted ? ' is-selected' : ''}`}
+                        type="button"
+                        aria-label={`${hasVoted ? 'Remove local signal from' : 'Signal relevance for'} ${point.title}`}
+                        aria-pressed={hasVoted}
+                        onClick={() => toggleLocalVote(point.id)}
+                      >
+                        <ArrowUp aria-hidden="true" size={15} />
+                        <span>{hasVoted ? '1' : '·'}</span>
+                      </button>
+                      <div className="atlas-radar-post-copy">
+                        <div className="atlas-radar-post-meta">
+                          <span>{point.room === 'culture' ? 'CULTURE & STORIES' : point.room === 'education' ? 'EDUCATION & SYSTEMS' : 'WORK & CAPABILITY'}</span>
+                          <span>{point.origin}</span>
+                        </div>
+                        <h2 className="atlas-radar-post-heading">
+                          <button className="atlas-radar-post-title" type="button" aria-expanded={expanded} onClick={() => setSelectedFrictionId(expanded ? '' : point.id)}>
+                            {point.title}
+                          </button>
+                        </h2>
+                        <p>{point.signal}</p>
+                        <div className="atlas-radar-post-foot">
+                          <span><MessageCircle aria-hidden="true" size={12} /> Open discussion</span>
+                          <span>{index === 0 ? 'Hypothesis' : 'Open question'}</span>
+                        </div>
+                        <div className="atlas-radar-activity" aria-hidden="true">
+                          <i style={{ width: `${[68, 42, 24][index]}%` }} />
+                        </div>
+                        <div className="atlas-radar-activity-label">Example conversation rhythm · not live activity</div>
+                        {expanded && (
+                          <div className="atlas-radar-expanded">
+                            <span className="atlas-kicker">THE FRICTION · UNVERIFIED</span>
+                            <p>{point.detail}</p>
+                            <strong>Investigate together</strong>
+                            <ol className="atlas-radar-investigation">
+                              {point.collectiveResponse.map(step => <li key={step}>{step}</li>)}
+                            </ol>
+                            <strong>Begin with</strong>
+                            <p className="atlas-radar-question">{point.firstQuestion}</p>
+                            <div className="atlas-radar-links">
+                              <div><span>Builders</span><strong>No contributor roster linked</strong></div>
+                              <div><span>Related asset</span><strong>{point.room === 'culture' ? 'Mwea Animation Box · proposed context' : point.room === 'education' ? 'Nyamindi Hydro · proposed connection' : 'A local Work Engine · not linked'}</strong></div>
+                              <div><span>Verified contribution</span><strong>No capability record linked</strong></div>
+                            </div>
+                            <span className="atlas-radar-contribution-boundary">Replies and votes are not capability credentials. Verified contribution requires scoped evidence and review.</span>
+                            <button className="atlas-radar-adapt" type="button" onClick={() => openFrictionComposer(point)}>
+                              <Plus aria-hidden="true" size={13} /> Adapt locally
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
+                {drafts.filter(draft => draft.isFriction).map(draft => (
+                  <article className="atlas-radar-post atlas-radar-post-draft" key={draft.id}>
+                    <span className="atlas-radar-draft-mark">YOURS</span>
+                    <div className="atlas-radar-post-copy">
+                      <div className="atlas-radar-post-meta"><span>SESSION NOTE · NOT SHARED</span><span>{draft.place || 'Place not specified'}</span></div>
+                      <strong className="atlas-radar-post-title-text">{draft.title}</strong>
+                      {draft.parentTitle && <p className="atlas-radar-draft-parent">A local adaptation of “{draft.parentTitle}”</p>}
+                      <p>{draft.detail}</p>
+                    </div>
+                  </article>
                 ))}
               </div>
-
-              {drafts.some(draft => draft.isFriction) && (
-                <section className="atlas-friction-drafts" aria-label="Local friction drafts">
-                  <div className="atlas-friction-drafts-head"><span>YOUR SESSION DRAFTS</span><span>{String(drafts.filter(draft => draft.isFriction).length).padStart(2, '0')}</span></div>
-                  {drafts.filter(draft => draft.isFriction).map(draft => (
-                    <button
-                      className={`atlas-friction-draft${selectedFrictionId === draft.id ? ' is-selected' : ''}`}
-                      key={draft.id}
-                      type="button"
-                      aria-pressed={selectedFrictionId === draft.id}
-                      onClick={() => setSelectedFrictionId(draft.id)}
-                    >
-                      <span><strong>{draft.title}</strong><small>{draft.place || 'Place not specified'} · local only</small></span>
-                      <span className="atlas-state atlas-state-draft">SESSION DRAFT</span>
-                    </button>
-                  ))}
-                </section>
-              )}
-
-              <div className="atlas-friction-note">
-                <span className="atlas-friction-note-mark"><Boxes aria-hidden="true" size={14} /></span>
-                <p><strong>From signal to shared work.</strong> A future Commons review can help people test and prioritize a problem. This prototype does not submit, publish or collect votes.</p>
-              </div>
+              <div className="atlas-radar-feed-note">Signal votes are local to this view. Activity bars are visual examples, not live community data.</div>
             </div>
           ) : floor === 'first' ? (
             <section className="atlas-floor-empty">
-              <span className="atlas-kicker">{currentFloor.short} / FLOOR</span>
-              <span className="atlas-floor-empty-icon"><Boxes aria-hidden="true" size={22} /></span>
-              <h1>{currentFloor.label} floor</h1>
-              <p>This floor is not configured yet.</p>
-              <span>Workspace content will appear here when this floor is defined.</span>
+              <span className="atlas-floor-empty-icon"><LockKeyhole aria-hidden="true" size={22} /></span>
+              <span className="atlas-kicker">FIRST FLOOR / GOVERNANCE</span>
+              <h1>Decision rights are earned and scoped.</h1>
+              <p>Entry requires verified capability for Commons-priority decisions.</p>
+              <span>No governance credential is connected to this workspace.</span>
             </section>
           ) : (
           <div className="atlas-main-scroll">
@@ -579,8 +690,8 @@ export function WorkspaceShell({
               <div className="atlas-main-tools">
                 {view === 'topology' && (
                   <>
-                    <button className="atlas-button atlas-button-quiet" type="button" onClick={openModal}>
-                      <Plus aria-hidden="true" size={14} /> New brief
+                    <button className="atlas-button atlas-button-quiet" type="button" onClick={() => notify('Asset onboarding is not connected in this workspace yet.')}>
+                      <Plus aria-hidden="true" size={14} /> Onboard an asset
                     </button>
                     <button className="atlas-icon-button" type="button" aria-label="Focus relationship field" title="Focus relationship field" onClick={() => canvasRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>
                       <Focus aria-hidden="true" size={15} />
@@ -594,6 +705,26 @@ export function WorkspaceShell({
                 )}
               </div>
             </div>
+
+            {floor === 'ground' && view !== 'topology' && (
+              <nav className="atlas-engine-tabs" aria-label="Work Engine sections">
+                {([
+                  ['problems', 'Local notes'],
+                  ['ledger', 'Delivery & proof'],
+                  ['commons', 'Tenders'],
+                ] as const).map(([section, label]) => (
+                  <button
+                    className={view === section ? 'is-active' : ''}
+                    key={section}
+                    type="button"
+                    aria-current={view === section ? 'page' : undefined}
+                    onClick={() => setView(section)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </nav>
+            )}
 
             {view === 'topology' && (
               <>
@@ -806,51 +937,40 @@ export function WorkspaceShell({
         </main>
 
         {floor === 'basement' && (
-          <aside className="atlas-friction-inspector">
-            <div className="atlas-friction-inspector-head">
-              <span className="atlas-kicker">{selectedFrictionDraft ? 'SESSION DRAFT' : `FRICTION / ${String(FRICTION_POINTS.findIndex(point => point.id === selectedFriction.id) + 1).padStart(2, '0')}`}</span>
-              <span className={`atlas-state${selectedFrictionDraft ? ' atlas-state-draft' : ''}`}>{selectedFrictionDraft ? 'LOCAL ONLY' : 'SIGNAL · UNVERIFIED'}</span>
-              <h2>{selectedFrictionDraft?.title ?? selectedFriction.title}</h2>
-              <span className="atlas-friction-origin">{selectedFrictionDraft?.place || selectedFriction.origin}</span>
-            </div>
-            <div className="atlas-friction-inspector-scroll">
-              <section className="atlas-friction-detail">
-                <h3>The friction</h3>
-                <p>{selectedFrictionDraft?.detail ?? selectedFriction.detail}</p>
-              </section>
-              <section className="atlas-friction-detail">
-                <h3>Collective response</h3>
-                {selectedFrictionDraft ? (
-                  <p>This local adaptation has not been assessed or connected to a coordinated project.</p>
-                ) : (
-                  <ol>
-                    {selectedFriction.collectiveResponse.map((step, index) => (
-                      <li key={step}><span>{String(index + 1).padStart(2, '0')}</span><p>{step}</p></li>
-                    ))}
-                  </ol>
-                )}
-              </section>
-              <section className="atlas-friction-detail">
-                <h3>Start with a question</h3>
-                <p className="atlas-friction-question">{selectedFrictionDraft
-                  ? 'What local evidence, people and constraints need to be added?'
-                  : selectedFriction.firstQuestion}</p>
-              </section>
-              <section className="atlas-friction-detail atlas-friction-evidence">
-                <h3>People & proof</h3>
-                <div><span>Active builders</span><strong>No linked roster</strong><small>There are no live builder assignments for this signal.</small></div>
-                <div><span>Related assets</span><strong>No linked assets</strong><small>Asset work and assignments belong on Ground floor.</small></div>
-                <div><span>Roll / SBTs</span><strong>No verified records linked</strong><small>No SBTs are issued by this prototype.</small></div>
-              </section>
-            </div>
-            <div className="atlas-friction-inspector-actions">
-              {!selectedFrictionDraft && (
-                <button className="atlas-button atlas-button-primary" type="button" onClick={() => openFrictionComposer(selectedFriction)}>
-                  <Plus aria-hidden="true" size={14} /> Adapt locally
-                </button>
-              )}
-              <span>Commons review, endorsement and voting are not connected.</span>
-            </div>
+          <aside className="atlas-radar-profile" aria-label="Personal standing and tools">
+            <section className="atlas-radar-profile-section">
+              <span className="atlas-kicker">YOUR PLACE IN THE WORK</span>
+              <div className="atlas-radar-identity">
+                <span className="atlas-avatar atlas-radar-profile-avatar">{(userEmail[0] || 'O').toUpperCase()}</span>
+                <div>
+                  <strong>{userEmail.split('@')[0] || 'Operator'}</strong>
+                  <small>Wallet not connected</small>
+                </div>
+              </div>
+              <div className="atlas-radar-profile-row"><span>Community standing</span><strong>Not calculated</strong></div>
+              <div className="atlas-radar-profile-row"><span>Verified capability</span><strong>From Roll records</strong></div>
+            </section>
+            <section className="atlas-radar-profile-section">
+              <span className="atlas-kicker">CREDENTIALS</span>
+              <div className="atlas-radar-credential">
+                <BadgeCheck aria-hidden="true" size={17} />
+                <div><strong>Capability proof</strong><small>Connects to verified work in Roll</small></div>
+              </div>
+              <div className="atlas-radar-sbt-note">
+                <span>Contribution SBT · not issued</span>
+                <p>Requires scoped evidence, asset-owner review and a qualified peer. Votes and replies alone do not qualify.</p>
+              </div>
+              <button className="atlas-radar-roll-link" type="button" onClick={() => { setFloor('ground'); setView('ledger'); setLedgerSection('roll'); }}>
+                <span>Explore verified work</span><ArrowUpRight aria-hidden="true" size={13} />
+              </button>
+            </section>
+            <section className="atlas-radar-hermes">
+              <div className="atlas-radar-hermes-head">
+                <span><Sparkles aria-hidden="true" size={14} /> Hermes</span>
+                <small>RESTING</small>
+              </div>
+              <p>A future research companion. No agent is connected.</p>
+            </section>
           </aside>
         )}
 
