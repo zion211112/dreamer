@@ -106,8 +106,9 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
         <div className="nav-pane">
           <div className="nav-header">Modules</div>
           <div className="nav-list">
-            {MODULES.map(m => (
+            {MODULES.map((m, i) => (
               <div key={m.id} className={`nav-item ${active === m.id ? 'active' : ''}`} onClick={() => { setActive(m.id); toast(m.label + ' selected.'); }}>
+                <div className="nav-index">{String(i + 1).padStart(2, '0')}</div>
                 <div className="icon">{m.icon}</div>
                 <div className="nav-label">{m.label}</div>
                 {m.id === 'problem' && briefs.length > 0 && <div className="nav-badge">{briefs.length}</div>}
@@ -122,6 +123,7 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
             <span>STATUS: ACTIVE</span>
           </div>
 
+          <div className="center-scroll">
           {active === 'asset' && (
             <div className="node-tree">
               <div className="tree-node">
@@ -170,9 +172,12 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
                 <div className="km-empty">No problem briefs yet. Add a Problem Node.</div>
               ) : (
                 <div className="km-list">
-                  {briefs.map(b => (
+                  {briefs.map((b, i) => (
                     <div key={b.id} className="km-row">
-                      <strong>{b.title}</strong>
+                      <div className="km-row-head">
+                        <span className="km-row-index">{String(i + 1).padStart(2, '0')}</span>
+                        <strong>{b.title}</strong>
+                      </div>
                       <small>{b.place || 'no place'} · {b.status}</small>
                     </div>
                   ))}
@@ -212,6 +217,7 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
           {active === 'commons' && (
             <div className="km-empty">Commons module — shared records surface. Connect to live data to populate.</div>
           )}
+          </div>
         </div>
 
         <div className="right-pane">
