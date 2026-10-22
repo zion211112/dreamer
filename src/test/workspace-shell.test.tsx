@@ -36,6 +36,12 @@ function selectFloor(floor: 'Basement' | 'Ground' | 'First') {
   fireEvent.click(screen.getByRole('menuitem', { name: new RegExp(floor) }));
 }
 
+function inspectAsset(title: string) {
+  const card = screen.getByRole('heading', { name: title }).closest('article');
+  if (!card) throw new Error(`Missing asset card for ${title}`);
+  return within(card);
+}
+
 describe('workspace shell navigation', () => {
   it('shows two Ground modules and keeps Governance locked', () => {
     render(<WorkspaceShell userEmail="operator@example.com" />);
@@ -70,24 +76,56 @@ describe('workspace shell navigation', () => {
     expect(screen.getByText('Proposed')).toBeInTheDocument();
   });
 
-  it('groups ledger, capability and sequence screens under one module', () => {
+  it('shows only three recruiting assets and keeps interest notes local to the session', () => {
     render(<WorkspaceShell userEmail="operator@example.com" />);
     selectFloor('Ground');
     fireEvent.click(screen.getByRole('button', { name: /Work Engines/ }));
-    fireEvent.click(screen.getByRole('button', { name: 'Delivery & proof' }));
 
-    expect(screen.getByRole('heading', { name: 'Provenance ledger' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Where would you like to contribute?' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'School Console' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Mwea Animation' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Tender System' })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Apply for a job' })).toHaveLength(3);
+    expect(screen.queryByRole('navigation', { name: 'Work Engine sections' })).not.toBeInTheDocument();
+
+    for (const asset of ['School Console', 'Mwea Animation', 'Tender System']) {
+      fireEvent.click(inspectAsset(asset).getByRole('button', { name: 'Apply for a job' }));
+      const dialog = screen.getByRole('dialog', { name: 'Apply for a job' });
+      expect(dialog).toHaveTextContent(asset);
+      expect(dialog).toHaveTextContent(/not sent to the asset/i);
+      fireEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+    }
+
+    fireEvent.click(inspectAsset('Mwea Animation').getByRole('button', { name: 'Apply for a job' }));
+    fireEvent.change(screen.getByLabelText('Work you are interested in'), { target: { value: 'Story illustration' } });
+    fireEvent.change(screen.getByLabelText('What can you contribute or would you like to learn?'), {
+      target: { value: 'I can illustrate short educational stories and collaborate with local writers.' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Save local interest' }));
+
+    expect(screen.getByRole('region', { name: 'Your session-only interests' })).toHaveTextContent('Mwea Animation');
+    expect(screen.getByRole('region', { name: 'Your session-only interests' })).toHaveTextContent('Not sent · not an application to an open role');
+  });
+
+  it('keeps delivery and capability screens reachable from a topology asset', () => {
+    render(<WorkspaceShell userEmail="operator@example.com" />);
+    selectFloor('Ground');
+    fireEvent.click(screen.getByRole('button', { name: 'Open work sequence' }));
+
+    expect(screen.getByRole('heading', { name: 'Operating sequence' })).toBeInTheDocument();
+    const moduleSections = screen.getByRole('navigation', { name: 'Work Engine sections' });
+    fireEvent.click(within(moduleSections).getByRole('button', { name: 'Delivery & proof' }));
     const sections = screen.getByRole('navigation', { name: 'Ledger and capability sections' });
+    fireEvent.click(within(sections).getByRole('button', { name: 'The Roll' }));
+    expect(screen.getByRole('heading', { name: 'Provenance ledger' })).toBeInTheDocument();
     fireEvent.click(within(sections).getByRole('button', { name: 'Capability' }));
     expect(screen.getByRole('heading', { name: 'Capability record' })).toBeInTheDocument();
-    fireEvent.click(within(sections).getByRole('button', { name: /Work sequence/ }));
-    expect(screen.getByRole('heading', { name: 'Operating sequence' })).toBeInTheDocument();
   });
 
   it('distinguishes illustrative Commons records from published records', () => {
     render(<WorkspaceShell userEmail="operator@example.com" initialTenders={[tender]} />);
     selectFloor('Ground');
-    fireEvent.click(screen.getByRole('button', { name: /Work Engines/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Open work sequence' }));
     fireEvent.click(screen.getByRole('button', { name: 'Tenders' }));
 
     expect(screen.getByRole('heading', { name: 'Community solar dryer' })).toBeInTheDocument();

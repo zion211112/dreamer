@@ -47,7 +47,7 @@ interface WorkspaceShellProps {
   canPersistPreference?: boolean;
 }
 
-type WorkspaceView = 'topology' | 'problems' | 'ledger' | 'commons';
+type WorkspaceView = 'topology' | 'engines' | 'problems' | 'ledger' | 'commons';
 type LedgerSection = 'sequence' | 'capability' | 'roll';
 type Floor = 'basement' | 'ground' | 'first';
 type RadarRoom = 'all' | 'culture' | 'education' | 'work';
@@ -98,6 +98,11 @@ const VIEW_COPY: Record<WorkspaceView, { kicker: string; title: string; subtitle
     kicker: '01 / ASSET FIELD',
     title: 'Asset Topology',
     subtitle: 'Hosts · assets · work · evidence',
+  },
+  engines: {
+    kicker: '02 / ASSET RECRUITMENT',
+    title: 'Work Engines',
+    subtitle: 'Find an asset. Offer your capability. Start with the work.',
   },
   problems: {
     kicker: 'WORK ENGINES / INTAKE',
@@ -212,6 +217,26 @@ const RECORDS: Record<string, TopologyRecord> = {
   },
 };
 
+const RECRUITING_ASSET_IDS = ['school-console', 'mwea-animation', 'tender-system'] as const;
+
+const RECRUITING_COPY: Record<(typeof RECRUITING_ASSET_IDS)[number], { discipline: string; focus: string; invitation: string }> = {
+  'school-console': {
+    discipline: 'EDUCATION / LOCAL-FIRST SOFTWARE',
+    focus: 'School operations, teacher workflows, accessible interfaces',
+    invitation: 'Help improve a school tool while keeping student and lesson records on the device.',
+  },
+  'mwea-animation': {
+    discipline: 'CULTURE / CREATIVE PRODUCTION',
+    focus: 'Story, illustration, animation, sound, production',
+    invitation: 'Offer creative capability for locally rooted stories. Asset scope and community mandate remain to be established.',
+  },
+  'tender-system': {
+    discipline: 'APT-LABS / BUILD EXECUTION',
+    focus: 'Tender operations, field delivery, verification, documentation',
+    invitation: 'Contribute to the accountable build workflow from scoped Tender through Assembly and Roll.',
+  },
+};
+
 const SEQUENCE = [
   { number: '01', title: 'Discover', description: 'Observe the work with the people affected.', state: 'Open', first: true },
   { number: '02', title: 'Diagnose', description: 'Separate symptoms, causes and assumptions.', state: 'Waiting' },
@@ -253,6 +278,10 @@ export function WorkspaceShell({
   const [selectedRecordId, setSelectedRecordId] = useState('school-console');
   const [selectedDraftId, setSelectedDraftId] = useState<string | null>(null);
   const [drafts, setDrafts] = useState<ProblemDraft[]>([]);
+  const [interestAssetId, setInterestAssetId] = useState<string | null>(null);
+  const [interestRole, setInterestRole] = useState('');
+  const [interestDetail, setInterestDetail] = useState('');
+  const [interestNotes, setInterestNotes] = useState<{ id: string; assetId: string; role: string; detail: string }[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [composerMode, setComposerMode] = useState<'problem' | 'friction'>('problem');
   const [form, setForm] = useState({ title: '', place: '', detail: '', measure: '' });
@@ -270,6 +299,11 @@ export function WorkspaceShell({
     setModalOpen(true);
   }, []);
   const closeModal = useCallback(() => setModalOpen(false), []);
+  const closeInterestForm = useCallback(() => {
+    setInterestAssetId(null);
+    setInterestRole('');
+    setInterestDetail('');
+  }, []);
 
   function openFrictionComposer(point?: FrictionPoint) {
     setSelectedFrictionId(point?.id ?? '');
@@ -289,8 +323,9 @@ export function WorkspaceShell({
 
   useEffect(() => {
     function handleKeydown(event: KeyboardEvent) {
-      if (event.key === 'Escape' && modalOpen) {
-        closeModal();
+      if (event.key === 'Escape' && (modalOpen || interestAssetId)) {
+        if (modalOpen) closeModal();
+        else closeInterestForm();
         return;
       }
       const target = event.target;
@@ -304,7 +339,7 @@ export function WorkspaceShell({
 
     document.addEventListener('keydown', handleKeydown);
     return () => document.removeEventListener('keydown', handleKeydown);
-  }, [closeModal, modalOpen, openModal]);
+  }, [closeInterestForm, closeModal, interestAssetId, modalOpen, openModal]);
 
   function selectRecord(id: string) {
     setSelectedRecordId(id);
@@ -315,6 +350,27 @@ export function WorkspaceShell({
     setLocalVotes(current => current.includes(id)
       ? current.filter(voteId => voteId !== id)
       : [...current, id]);
+  }
+
+  function saveInterest(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!interestAssetId) return;
+    setInterestNotes(current => [{
+      id: `interest-${Date.now()}-${current.length}`,
+      assetId: interestAssetId,
+      role: interestRole.trim(),
+      detail: interestDetail.trim(),
+    }, ...current]);
+    setInterestAssetId(null);
+    setInterestRole('');
+    setInterestDetail('');
+    notify('Interest saved in this session only. No application was sent.');
+  }
+
+  function openInterestForm(assetId: string) {
+    setInterestRole('');
+    setInterestDetail('');
+    setInterestAssetId(assetId);
   }
 
   function selectRadarRoom(room: RadarRoom) {
@@ -465,7 +521,7 @@ export function WorkspaceShell({
         </DropdownMenu>
       </header>
 
-      <div className={`atlas-layout${floor !== 'ground' ? ' atlas-layout-unconfigured' : ''}${floor === 'basement' ? ' atlas-layout-basement atlas-layout-radar' : ''}${view === 'commons' ? ' atlas-layout-wide' : ''}`}>
+      <div className={`atlas-layout${floor !== 'ground' ? ' atlas-layout-unconfigured' : ''}${floor === 'basement' ? ' atlas-layout-basement atlas-layout-radar' : ''}${view === 'commons' ? ' atlas-layout-wide' : ''}${floor === 'ground' && view === 'engines' ? ' atlas-layout-engines' : ''}`}>
         {floor === 'basement' && (
           <aside className="atlas-radar-nav">
             <div className="atlas-radar-module">
@@ -535,7 +591,7 @@ export function WorkspaceShell({
                   className={`atlas-nav-item${active ? ' is-active' : ''}`}
                   type="button"
                   aria-current={active ? 'page' : undefined}
-                  onClick={() => setView(item.key === 'topology' ? 'topology' : view === 'topology' ? 'commons' : view)}
+                  onClick={() => setView(item.key === 'topology' ? 'topology' : 'engines')}
                 >
                   <Icon aria-hidden="true" size={16} strokeWidth={1.6} />
                   <span>{item.label}</span>
@@ -659,7 +715,7 @@ export function WorkspaceShell({
                 <div className="atlas-kicker">{currentCopy.kicker}</div>
                 <div className="atlas-title-row">
                   <h1>{currentCopy.title}</h1>
-                  <span className="atlas-title-state"><i />{view === 'topology' ? 'In view' : view === 'problems' ? 'Local' : 'Schema'}</span>
+                  <span className="atlas-title-state"><i />{view === 'topology' ? 'In view' : view === 'problems' ? 'Local' : view === 'engines' ? 'Interest only' : 'Schema'}</span>
                 </div>
                 <p className="atlas-subtitle">{currentCopy.subtitle}</p>
               </div>
@@ -682,7 +738,7 @@ export function WorkspaceShell({
               </div>
             </div>
 
-            {floor === 'ground' && view !== 'topology' && (
+            {floor === 'ground' && view !== 'topology' && view !== 'engines' && (
               <nav className="atlas-engine-tabs" aria-label="Work Engine sections">
                 {([
                   ['problems', 'Local notes'],
@@ -700,6 +756,54 @@ export function WorkspaceShell({
                   </button>
                 ))}
               </nav>
+            )}
+
+            {view === 'engines' && (
+              <section className="atlas-engine-recruitment" aria-labelledby="atlas-engine-title">
+                <div className="atlas-engine-intro">
+                  <div>
+                    <span className="atlas-kicker">ASSETS / OPEN TO CAPABILITY</span>
+                    <h2 id="atlas-engine-title">Where would you like to contribute?</h2>
+                    <p>Three assets. One clear first step: offer what you can do, or what you want to learn.</p>
+                  </div>
+                  <span className="atlas-engine-count">03 <small>ASSETS</small></span>
+                </div>
+                <div className="atlas-engine-assets">
+                  {RECRUITING_ASSET_IDS.map(id => {
+                    const asset = RECORDS[id];
+                    const copy = RECRUITING_COPY[id];
+                    return (
+                      <article className={`atlas-engine-asset atlas-engine-asset-${id}`} key={id}>
+                        <div className="atlas-engine-asset-top">
+                          <span className="atlas-engine-asset-glyph">{asset.icon}</span>
+                          <span className="atlas-engine-asset-status">{asset.state}</span>
+                        </div>
+                        <span className="atlas-engine-asset-discipline">{copy.discipline}</span>
+                        <h3>{asset.title}</h3>
+                        <p>{copy.invitation}</p>
+                        <div className="atlas-engine-asset-focus"><span>Useful in</span><strong>{copy.focus}</strong></div>
+                        <button className="atlas-engine-apply" type="button" onClick={() => openInterestForm(id)}>
+                          Apply for a job <ArrowRight aria-hidden="true" size={14} />
+                        </button>
+                        <small className="atlas-engine-asset-boundary">Interest only · no open role is connected</small>
+                      </article>
+                    );
+                  })}
+                </div>
+                {interestNotes.length > 0 && (
+                  <section className="atlas-engine-interest-notes" aria-label="Your session-only interests">
+                    <div className="atlas-engine-notes-head"><strong>Your interests</strong><span>Saved in this session only</span></div>
+                    {interestNotes.map(note => (
+                      <article key={note.id}>
+                        <strong>{note.role}</strong>
+                        <span>{RECORDS[note.assetId]?.title ?? 'Asset'}</span>
+                        <p>{note.detail}</p>
+                        <small>Not sent · not an application to an open role</small>
+                      </article>
+                    ))}
+                  </section>
+                )}
+              </section>
             )}
 
             {view === 'topology' && (
@@ -899,7 +1003,7 @@ export function WorkspaceShell({
           </aside>
         )}
 
-        {floor === 'ground' && view !== 'commons' && <aside className="atlas-inspector">
+        {floor === 'ground' && view !== 'commons' && view !== 'engines' && <aside className="atlas-inspector">
           <div className="atlas-inspector-head">
             <div className="atlas-inspector-top"><span>01 — Record inspector</span><span className="atlas-inspector-icon">{selectedDraft ? '+' : selectedRecord.icon}</span></div>
             <h2>{inspectorTitle}</h2>
@@ -968,6 +1072,32 @@ export function WorkspaceShell({
               <label>{composerMode === 'friction' ? 'What do people experience?' : 'Observed condition'}<textarea required maxLength={1200} rows={4} placeholder="What happens? Who is affected? What is known or still uncertain?" value={form.detail} onChange={event => setForm(current => ({ ...current, detail: event.target.value }))} /></label>
               <label>{composerMode === 'friction' ? 'Evidence or first measure to gather' : 'Measure of improvement'}<input maxLength={240} placeholder={composerMode === 'friction' ? 'What should people verify first?' : 'What would a useful change look like?'} value={form.measure} onChange={event => setForm(current => ({ ...current, measure: event.target.value }))} /></label>
               <div className="atlas-form-foot"><span>{composerMode === 'friction' ? 'Session-only draft · not submitted to Commons.' : 'Stored in this page session only.'}</span><div><button className="atlas-button atlas-button-quiet" type="button" onClick={closeModal}>Cancel</button><button className="atlas-button atlas-button-primary" type="submit">Save local draft</button></div></div>
+            </form>
+          </section>
+        </div>
+      )}
+      {interestAssetId && (
+        <div className="atlas-modal-backdrop" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) closeInterestForm(); }}>
+          <section className="atlas-modal atlas-engine-interest-dialog" role="dialog" aria-modal="true" aria-labelledby="atlas-interest-title">
+            <div className="atlas-modal-head">
+              <div>
+                <span className="atlas-kicker">ASSET / INTEREST NOTE</span>
+                <h2 id="atlas-interest-title">Apply for a job</h2>
+                <p>{RECORDS[interestAssetId]?.title}</p>
+              </div>
+              <button className="atlas-icon-button" type="button" aria-label="Close interest form" onClick={closeInterestForm}><X aria-hidden="true" size={16} /></button>
+            </div>
+            <p className="atlas-engine-interest-boundary">No open role is connected yet. This note stays in your current session and is not sent to the asset.</p>
+            <form className="atlas-form" onSubmit={saveInterest}>
+              <label>Work you are interested in<input required maxLength={100} placeholder="e.g. illustration, field testing" value={interestRole} onChange={event => setInterestRole(event.target.value)} /></label>
+              <label>What can you contribute or would you like to learn?<textarea required maxLength={1200} minLength={10} rows={4} placeholder="A brief introduction to your capability or learning goal." value={interestDetail} onChange={event => setInterestDetail(event.target.value)} /></label>
+              <div className="atlas-form-foot">
+                <span>Session-only · not submitted</span>
+                <div>
+                  <button className="atlas-button atlas-button-quiet" type="button" onClick={closeInterestForm}>Cancel</button>
+                  <button className="atlas-button atlas-button-primary" type="submit">Save local interest</button>
+                </div>
+              </div>
             </form>
           </section>
         </div>
