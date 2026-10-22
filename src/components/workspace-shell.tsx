@@ -3,15 +3,18 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Boxes, Plus, Wallet, Send, User } from 'lucide-react';
+import type { Tender } from '@/lib/tender';
+import type { WorkspaceContextOption } from '@/lib/workspace';
+import type { WorkspaceKey } from '@/lib/workspace';
 import { signOut } from '@/lib/supabase/sign-out';
 
 interface WorkspaceShellProps {
-  initialTenders?: any[];
-  initialBriefs?: any[];
+  initialTenders?: Tender[];
+  initialBriefs?: unknown[];
   userEmail: string;
   localMode?: boolean;
-  defaultWorkspace?: any;
-  contexts?: any[];
+  defaultWorkspace?: WorkspaceKey;
+  contexts?: WorkspaceContextOption[];
   defaultContextKey?: string;
   canPersistPreference?: boolean;
 }
