@@ -78,8 +78,8 @@ system, SBT issuer, AI provider, new authorization, or new Tender lifecycle.
 | First | Make scoped Commons-priority decisions | Governance | Restricted to users whose qualifying capability is verified server-side for the decision scope. A verified Roll-derived badge is not automatically a governance credential. |
 
 The floor switch is the only cross-floor navigation control and remains adjacent
-to APT-LABS in the top header. It shows the current floor and compact entries
-for the other floors. An inaccessible entry may show its name, lock state, and
+to APT-LABS in the top header. Keep it as a lean current-floor trigger with a
+compact nested list; an inaccessible entry may show its name, lock state, and
 eligibility requirement. It must not show protected room content, private
 record names, membership, activity counts, or graph previews.
 
@@ -252,6 +252,13 @@ records keep their current lifecycle and source of truth. It must not synthesize
 connections from matching names, category, or geography. In the current visual
 shell, asset onboarding is an unavailable action; the CTA must not imply that
 a listing or access request was created.
+
+The current topology view is a deliberately small illustrative selection:
+School Console (product description only; school records stay device-local),
+Mwea Animation (proposed), and Tender System (APT-LABS product). Any visual
+intersections are explicitly unconfirmed and are not inferred relationships.
+Use restrained, soft raised surfaces rather than adding more graph controls or
+decorative data.
 
 ### 7.2 Work Engines
 

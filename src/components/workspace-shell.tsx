@@ -12,7 +12,6 @@ import {
   ChevronRight,
   FileText,
   Focus,
-  List,
   ListChecks,
   LockKeyhole,
   MessageCircle,
@@ -169,80 +168,47 @@ const FRICTION_POINTS: FrictionPoint[] = [
 ];
 
 const RECORDS: Record<string, TopologyRecord> = {
-  site: {
-    icon: '⌂',
-    title: 'Host institution',
-    short: 'Institutional context',
-    type: 'Context',
-    state: 'Illustrative',
-    meta: 'CONTEXT / UNCONFIRMED',
-    source: 'Prototype example',
-    description: 'Operational context, awaiting confirmation.',
-    evidence: [
-      'No site confirmation or authorised host is attached.',
-      'No baseline or acceptance criteria are recorded.',
-    ],
-    hint: 'Confirm the host and baseline before scoping equipment.',
-    relations: [
-      'Solar crop dehydrator · conceptual association.',
-      'The Roll · intended evidence destination.',
-    ],
-    actions: [['Draft a problem brief', 'draft'], ['Open work sequence', 'sequence']],
-  },
-  dryer: {
-    icon: '◔',
-    title: 'Solar crop dehydrator',
-    short: 'Asset hypothesis',
-    type: 'Conceptual asset proposal',
-    state: 'Proposed',
-    meta: 'HYPOTHESIS / UNTESTED',
-    source: 'Illustrative brief',
-    description: 'A drying concept with an unvalidated need and design.',
-    evidence: [
-      'Crop-loss baseline is unknown.',
-      'No validated design, cost or performance test.',
-      'No funding commitment or host acceptance.',
-    ],
-    hint: 'Measure crop, volume, season, current loss and food-safety needs first.',
-    relations: [
-      'Host institution · not confirmed.',
-      'Fabrication package · possible dependency.',
-    ],
-    actions: [['Draft a problem brief', 'draft'], ['Open work sequence', 'sequence']],
-  },
-  fab: {
-    icon: '⌁',
-    title: 'Fabrication package',
-    short: 'Potential work package',
-    type: 'Potential work package',
-    state: 'Unscoped',
-    meta: 'WORK / UNSCOPED',
-    source: 'Illustrative decomposition',
-    description: 'Possible frame-and-assembly work. No job is approved.',
-    evidence: ['No drawing or specification.', 'No crew, quotation or completion record.'],
-    hint: 'Define requirements, materials, safety and acceptance before a quote.',
-    relations: ['Solar crop dehydrator · potential parent concept.'],
-    actions: [['Define work sequence', 'sequence'], ['Draft a problem brief', 'draft']],
-  },
-  roll: {
+  'school-console': {
     icon: '▤',
-    title: 'The Roll',
-    short: 'Evidence & provenance',
-    type: 'Evidence layer',
-    state: 'No evidence',
-    meta: 'PROVENANCE / CONCEPT',
-    source: 'Product concept',
-    description: 'A proposed record trail for artifacts, tests and acceptance.',
-    evidence: [
-      'No verified project evidence is connected.',
-      'Review and acceptance must remain distinct from submission.',
-    ],
-    hint: 'A file or badge is not, by itself, proof that a build works.',
-    relations: [
-      'Host institution · possible verifier if authorised.',
-      'Fabrication · possible contribution record.',
-    ],
-    actions: [['Review capability schema', 'capability'], ['Open work sequence', 'sequence']],
+    title: 'School Console',
+    short: 'Education tool',
+    type: 'Local-first school utility',
+    state: 'Device-local',
+    meta: 'LOCAL / DEVICE',
+    source: 'APT-LABS product',
+    description: 'A school utility whose student and lesson records stay on the device.',
+    evidence: ['Student and lesson records are not represented in this graph.'],
+    hint: 'This node describes the product only; school records remain local to the device.',
+    relations: ['Possible creative supply relationship · not established.'],
+    actions: [['Open work sequence', 'sequence']],
+  },
+  'mwea-animation': {
+    icon: '✳',
+    title: 'Mwea Animation',
+    short: 'Proposed creative asset',
+    type: 'Illustrative asset hypothesis',
+    state: 'Proposed',
+    meta: 'PROPOSED / UNVERIFIED',
+    source: 'Illustrative concept',
+    description: 'A possible creative work engine arising from local cultural storytelling needs.',
+    evidence: ['Ownership, contributors, scope and community mandate are unconfirmed.'],
+    hint: 'Treat this as a proposal, not an operating studio or verified community asset.',
+    relations: ['Possible school content relationship · needs consent and agreement.'],
+    actions: [['Draft a problem brief', 'draft']],
+  },
+  'tender-system': {
+    icon: '⌘',
+    title: 'Tender System',
+    short: 'APT-LABS platform',
+    type: 'Execution system',
+    state: 'Operational product',
+    meta: 'APT-LABS / SYSTEM',
+    source: 'APT-LABS product',
+    description: 'The Tender, Assembly and Roll workflow for scoped, accountable builds.',
+    evidence: ['Tender state and execution follow the existing application and database lifecycle.'],
+    hint: 'Tender records remain governed by the existing Tender and Assembly workflow.',
+    relations: ['Workflow links are not inferred in this topology view.'],
+    actions: [['Open work sequence', 'sequence']],
   },
 };
 
@@ -284,9 +250,8 @@ export function WorkspaceShell({
   const [selectedFrictionId, setSelectedFrictionId] = useState(FRICTION_POINTS[0].id);
   const [radarRoom, setRadarRoom] = useState<RadarRoom>('all');
   const [localVotes, setLocalVotes] = useState<string[]>([]);
-  const [selectedRecordId, setSelectedRecordId] = useState('site');
+  const [selectedRecordId, setSelectedRecordId] = useState('school-console');
   const [selectedDraftId, setSelectedDraftId] = useState<string | null>(null);
-  const [topologyMode, setTopologyMode] = useState<'graph' | 'index'>('graph');
   const [drafts, setDrafts] = useState<ProblemDraft[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [composerMode, setComposerMode] = useState<'problem' | 'friction'>('problem');
@@ -739,82 +704,31 @@ export function WorkspaceShell({
 
             {view === 'topology' && (
               <>
-                <div className="atlas-metrics">
-                  <div className="atlas-metric"><span>⌘</span><div><small>Nodes in model</small><strong>04</strong></div></div>
-                  <div className="atlas-metric"><span>⌁</span><div><small>Verified links</small><strong>00</strong></div></div>
-                  <div className="atlas-metric"><span>◌</span><div><small>Open evidence</small><strong>04</strong></div></div>
-                </div>
                 <div className="atlas-section-head">
-                  <h2>Relationship field</h2><span>ILLUSTRATIVE MODEL / NOT LIVE</span>
+                  <h2>Three assets. One shared field.</h2><span>ILLUSTRATIVE / NO VERIFIED LINKS</span>
                 </div>
                 <div className="atlas-canvas" ref={canvasRef}>
-                  <div className="atlas-canvas-bar">
-                    <div className="atlas-filetab"><i /><strong>commons</strong><span>/</span><span>topology.graph</span></div>
-                    <div className="atlas-view-switch" role="group" aria-label="Topology view">
-                      <button type="button" className={topologyMode === 'graph' ? 'is-active' : ''} aria-pressed={topologyMode === 'graph'} onClick={() => setTopologyMode('graph')}>
-                        <Network aria-hidden="true" size={13} /> Graph
+                  <div className="atlas-graph" role="region" aria-label="Three illustrative asset relationships">
+                    <svg className="atlas-edges" viewBox="0 0 1000 420" preserveAspectRatio="none" aria-hidden="true">
+                      <path className="atlas-edge-desktop" d="M210 132 C350 184 390 242 500 276" />
+                      <path className="atlas-edge-desktop is-soft" d="M790 132 C650 184 610 242 500 276" />
+                      <path className="atlas-edge-mobile" d="M500 76 L500 178" />
+                      <path className="atlas-edge-mobile is-soft" d="M500 226 L500 328" />
+                    </svg>
+                    {Object.entries(RECORDS).map(([id, record]) => (
+                      <button
+                        key={id}
+                        className={`atlas-node atlas-node-${id}${!selectedDraftId && selectedRecordId === id ? ' is-selected' : ''}`}
+                        type="button"
+                        aria-label={`Inspect ${record.title}`}
+                        onClick={() => selectRecord(id)}
+                      >
+                        <i className="atlas-node-marker" />
+                        <span className="atlas-node-glyph">{record.icon}</span>
+                        <span className="atlas-node-copy"><strong>{record.title}</strong><small>{record.meta}</small></span>
                       </button>
-                      <button type="button" className={topologyMode === 'index' ? 'is-active' : ''} aria-pressed={topologyMode === 'index'} onClick={() => setTopologyMode('index')}>
-                        <List aria-hidden="true" size={13} /> Index
-                      </button>
-                    </div>
-                  </div>
-                  {topologyMode === 'graph' ? (
-                    <div className="atlas-graph" aria-label="Illustrative asset relationships">
-                      <svg className="atlas-edges" viewBox="0 0 1000 420" preserveAspectRatio="none" aria-hidden="true">
-                        <path d="M165 90 C255 55 390 52 500 78" />
-                        <path className="is-soft" d="M500 78 C620 105 690 190 825 258" />
-                        <path d="M825 258 C760 330 585 362 400 342" />
-                        <path className="is-soft" d="M400 342 C280 310 180 220 165 90" />
-                        <circle cx="315" cy="65" r="3" /><circle cx="660" cy="160" r="3" />
-                        <circle cx="615" cy="350" r="3" /><circle cx="230" cy="260" r="3" />
-                      </svg>
-                      {Object.entries(RECORDS).map(([id, record]) => (
-                        <button
-                          key={id}
-                          className={`atlas-node atlas-node-${id}${!selectedDraftId && selectedRecordId === id ? ' is-selected' : ''}`}
-                          type="button"
-                          aria-label={`Inspect ${record.title}`}
-                          onClick={() => selectRecord(id)}
-                        >
-                          <i className="atlas-node-marker" />
-                          <span className="atlas-node-glyph">{record.icon}</span>
-                          <span className="atlas-node-copy"><strong>{record.title}</strong><small>{record.meta}</small></span>
-                        </button>
-                      ))}
-                      <div className="atlas-graph-caption"><span><i />Connections are hypotheses</span><span>04 NODES · 00 VERIFIED LINKS</span></div>
-                    </div>
-                  ) : (
-                    <div className="atlas-index-list">
-                      {Object.entries(RECORDS).map(([id, record]) => (
-                        <button key={id} type="button" className={`atlas-index-row${!selectedDraftId && selectedRecordId === id ? ' is-selected' : ''}`} onClick={() => selectRecord(id)}>
-                          <span className="atlas-index-glyph">{record.icon}</span>
-                          <span className="atlas-index-copy"><strong>{record.title}</strong><small>{record.type} · {record.state}</small></span>
-                          <span className="atlas-state">{record.state}</span>
-                          <ArrowUpRight aria-hidden="true" size={14} />
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <div className="atlas-node-foot"><span>Select a node to inspect its record</span><span>{topologyMode.toUpperCase()} / 01.05</span></div>
-                <div className="atlas-underfield">
-                  <div><small>Model state</small><strong>Illustrative structure</strong></div>
-                  <div><small>Evidence</small><strong className="atlas-no-evidence">None verified</strong></div>
-                  <div><small>Next transition</small><strong>Confirm the host</strong></div>
-                </div>
-                <div className="atlas-below">
-                  <div className="atlas-mini">
-                    <h3>Field conditions</h3>
-                    <div><span>Site confirmation</span><strong>Pending</strong></div>
-                    <div><span>Baseline</span><strong>Unknown</strong></div>
-                    <div><span>Capital</span><strong>Unestablished</strong></div>
-                  </div>
-                  <div className="atlas-mini">
-                    <h3>Sequence gates</h3>
-                    <div><span>Observe → diagnose</span><strong>01 / 06</strong></div>
-                    <div><span>Scope → build</span><strong>Not entered</strong></div>
-                    <div><span>Test → maintain</span><strong>Not entered</strong></div>
+                    ))}
+                    <div className="atlas-graph-caption"><span>Possible intersections · unconfirmed</span><span>03 ASSETS</span></div>
                   </div>
                 </div>
               </>

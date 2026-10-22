@@ -50,6 +50,26 @@ describe('workspace shell navigation', () => {
     expect(screen.getByRole('menuitem', { name: /First.*Governance.*Verified capability required/ })).toHaveAttribute('aria-disabled', 'true');
   });
 
+  it('shows only the three named assets in the simplified topology graph', () => {
+    render(<WorkspaceShell userEmail="operator@example.com" />);
+    selectFloor('Ground');
+
+    const graph = screen.getByRole('region', { name: 'Three illustrative asset relationships' });
+    expect(within(graph).getAllByRole('button')).toHaveLength(3);
+    expect(within(graph).getByRole('button', { name: 'Inspect School Console' })).toBeInTheDocument();
+    expect(within(graph).getByRole('button', { name: 'Inspect Mwea Animation' })).toBeInTheDocument();
+    expect(within(graph).getByRole('button', { name: 'Inspect Tender System' })).toBeInTheDocument();
+    expect(screen.queryByText('Field conditions')).not.toBeInTheDocument();
+
+    fireEvent.click(within(graph).getByRole('button', { name: 'Inspect School Console' }));
+    expect(screen.getByRole('heading', { name: 'School Console' })).toBeInTheDocument();
+    expect(screen.getByText(/student and lesson records stay on the device/i)).toBeInTheDocument();
+
+    fireEvent.click(within(graph).getByRole('button', { name: 'Inspect Mwea Animation' }));
+    expect(screen.getByRole('heading', { name: 'Mwea Animation' })).toBeInTheDocument();
+    expect(screen.getByText('Proposed')).toBeInTheDocument();
+  });
+
   it('groups ledger, capability and sequence screens under one module', () => {
     render(<WorkspaceShell userEmail="operator@example.com" />);
     selectFloor('Ground');
