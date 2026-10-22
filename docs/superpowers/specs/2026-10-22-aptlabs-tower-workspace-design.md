@@ -165,12 +165,12 @@ The selected design is a restrained three-pane room:
    conversations, not Ground assets or job engines. A name such as “Mwea
    Animation Box” must be qualified as a discussion room if the separate
    proposed Asset/Work Engine shares that name.
-2. **Center — friction feed and room discussion.** Posts, answers, perspectives,
-   signal-only votes, filters, and activity bars. A live activity indicator
-   requires measured engagement data (for example, contributions in the last
-   seven days), not a solution-progress meter, truth score, or consensus claim.
-   Without that data, an activity shape must be clearly labeled illustrative
-   and must not imply real participation.
+2. **Center — friction dossier.** Give one signal room to be understood:
+   situated context, affected perspectives, what is known or uncertain, a
+   strong first question, and a path for collective inquiry. Keep adjacent
+   signals discoverable without reducing them to a busy feed. A local relevance
+   mark is not a governance vote. Do not show engagement bars without measured
+   data.
 3. **Right — personal standing and tools.** Profile, context-specific
    community standing, verified capability records, wallet connection state,
    badge/credential state, and a small Hermes dock at the bottom. Do not merge
@@ -178,6 +178,12 @@ The selected design is a restrained three-pane room:
 
 The header retains the compact tower floor selector. It is not repeated as a
 sidebar or a floor overview.
+
+The visual interaction borrows the general brief-to-feedback-to-refinement
+rhythm of collaborative design workspaces such as OpenDesign, while retaining
+Radar's problem-sensing purpose, APT-LABS design tokens, and existing data
+boundaries. It does not imply that an AI agent, live discussion, or shared
+artifact workflow is connected.
 
 ### 6.2 Signal and discussion lifecycle
 

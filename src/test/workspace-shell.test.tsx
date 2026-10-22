@@ -75,23 +75,24 @@ describe('workspace shell navigation', () => {
     expect(screen.getByText(/illustrative scenarios, clearly distinguished/i)).toBeInTheDocument();
   });
 
-  it('opens on Basement with Radar panes, nested rooms, posts and local signal voting', () => {
+  it('opens on Basement with an editorial Radar dossier and local signal voting', () => {
     render(<WorkspaceShell userEmail="operator@example.com" />);
 
     expect(screen.getByRole('button', { name: 'Current floor: Basement' })).toBeInTheDocument();
     expect(screen.getByText('Radar')).toBeInTheDocument();
     expect(screen.getByRole('navigation', { name: 'Basement modules' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Signals from the field' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Look closer at the friction.' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Which stories get to become infrastructure?' })).toBeInTheDocument();
     expect(screen.getByText(/Mwea story worlds/)).toBeInTheDocument();
     expect(screen.getByText(/Wallet not connected/)).toBeInTheDocument();
     expect(screen.getByText('RESTING')).toBeInTheDocument();
-    expect(screen.getAllByText(/Example conversation rhythm · not live activity/)).toHaveLength(3);
+    expect(screen.getByText(/Curated examples · no live community feed/)).toBeInTheDocument();
+    expect(screen.getByText(/No builders, active asset, or verified contribution record is linked/)).toBeInTheDocument();
 
-    const vote = screen.getByRole('button', { name: /Signal relevance for Which stories get to become infrastructure/ });
+    const vote = screen.getByRole('button', { name: 'Mark relevance · local only' });
     fireEvent.click(vote);
     expect(vote).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByText('1', { selector: '.atlas-radar-vote span' })).toBeInTheDocument();
+    expect(vote).toHaveTextContent('Marked relevant · local only');
 
     fireEvent.click(screen.getByRole('button', { name: /Education & systems/ }));
     expect(screen.getByRole('heading', { name: 'Learning & infrastructure' })).toBeInTheDocument();
@@ -101,26 +102,25 @@ describe('workspace shell navigation', () => {
   it('keeps new friction points in local session drafts without claiming Commons submission', () => {
     render(<WorkspaceShell userEmail="operator@example.com" />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Add a thought' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Surface friction' }));
     fireEvent.change(screen.getByLabelText('Friction title'), { target: { value: 'Unreliable community workshop power' } });
     fireEvent.change(screen.getByLabelText('What do people experience?'), { target: { value: 'Shared tools cannot run consistently.' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save local draft' }));
 
     expect(screen.getByText('Unreliable community workshop power')).toBeInTheDocument();
-    expect(screen.getByText('SESSION NOTE · NOT SHARED')).toBeInTheDocument();
-    expect(screen.getByText(/Signal votes are local to this view/)).toBeInTheDocument();
+    expect(screen.getByText('LOCAL NOTE · NOT SHARED')).toBeInTheDocument();
+    expect(screen.getByText(/Only visible in this session/)).toBeInTheDocument();
   });
 
   it('saves an adaptation as a local-only session draft', () => {
     render(<WorkspaceShell userEmail="operator@example.com" />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Which stories get to become infrastructure?' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Adapt locally' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Add a local perspective' }));
     fireEvent.change(screen.getByLabelText('Friction title'), { target: { value: 'Mwea workshop access' } });
     fireEvent.change(screen.getByLabelText('What do people experience?'), { target: { value: 'Tools are unavailable after class.' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save local draft' }));
 
     expect(screen.getByText('Mwea workshop access')).toBeInTheDocument();
-    expect(screen.getByText('A local adaptation of “Which stories get to become infrastructure?”')).toBeInTheDocument();
+    expect(screen.getByText('A perspective on “Which stories get to become infrastructure?”')).toBeInTheDocument();
   });
 });
