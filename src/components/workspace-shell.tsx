@@ -64,15 +64,16 @@ export function WorkspaceShell({ userEmail, localMode = false, contexts = [], ca
           </div>
           <div className="nav-list">
             {MODULES.map((m, i) => (
-              <div
+              <button
                 key={m.key}
-                className={`nav-item ${activeModule === m.key ? 'active' : ''}`}
+                className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${activeModule === m.key ? "bg-jade" : "hover:bg-jade-dim"} text-ink data-[state=active]:bg-jade data-[state=active]:text-bg`}
                 onClick={() => setActiveModule(m.key)}
+                style={{ color: "#25231f" }}
               >
-                <div className="nav-index">{String(i + 1).padStart(2, '0')}</div>
-                <div className="nav-label">{m.label}</div>
-                <div className="nav-badge">{activeModule === m.key ? '4' : ''}</div>
-              </div>
+                <span className="nav-index" style={{ color: "#c9572a" }}>{String(i + 1).padStart(2, "0")}</span>
+                <span className="nav-label" style={{ color: "#25231f" }}>{m.label}</span>
+                <span className="nav-badge" style={{ background: activeModule === m.key ? "#f2dfd2" : "transparent", color: "#c9572a" }}>{activeModule === m.key ? "4" : ""}</span>
+              </button>
             ))}
           </div>
           <div className="profile-block">
@@ -96,15 +97,21 @@ export function WorkspaceShell({ userEmail, localMode = false, contexts = [], ca
               </button>
             </div>
 
-            <div className="node-tree">
+            <div className="space-y-4" style={{ background: "#faf6ec", borderRadius: "xl", padding: "1.5rem" }}>
               {ASSETS.map((a, i) => (
-                <div key={a.id} className="tree-node">
-                  <div className="node-card">
-                    <div className="node-status" />
-                    <div className="node-title">{a.label}</div>
-                    <div className="node-meta">{a.meta}</div>
+                <div key={a.id} className="flex items-start gap-4">
+                  <div className="w-14 h-14 rounded-xl flex-shrink-0" style={{ background: "#fff", boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}>
+                    <div className="flex items-center justify-center" style={{ width: "100", height: "100" }}>
+                      <Boxes size={28} className="text-jade" />
+                    </div>
                   </div>
-                  {i < ASSETS.length - 1 && <div className="node-connector" aria-hidden="true" />}
+                  <div className="flex-1">
+                    <div className="font-medium" style={{ color: "#c9572a" }}>{a.label}</div>
+                    <div className="text-xs opacity-60" style={{ color: "#716b60" }}>{a.meta}</div>
+                  </div>
+                  {i < ASSETS.length - 1 && (
+                    <div className="w-1 h-6 rounded-full bg-jade dim flex-shrink-0" style={{ background: "#f2dfd2" }} />
+                  )}
                 </div>
               ))}
             </div>
