@@ -2,6 +2,16 @@
 
 import { useState, Suspense } from 'react';
 import { toast } from 'sonner';
+import {
+  Boxes,
+  ClipboardList,
+  GitBranch,
+  Layers,
+  MessageSquare,
+  Plus,
+  Send,
+  Users,
+} from 'lucide-react';
 import { createProblemBrief, type ProblemBrief } from '../../app/workspace/actions';
 import type { Tender } from '@/lib/tender';
 import { WorkspaceSwitcher } from '@/components/workspace-switcher';
@@ -21,11 +31,11 @@ interface WorkspaceShellProps {
 }
 
 const MODULES = [
-  { id: 'asset', label: 'Asset Topology', icon: '◈' },
-  { id: 'problem', label: 'Problem Briefs', icon: '◻' },
-  { id: 'sequence', label: 'Work Sequence', icon: '▶' },
-  { id: 'capability', label: 'Crew & Capability', icon: '◉' },
-  { id: 'commons', label: 'Commons', icon: '≡' },
+  { id: 'asset', label: 'Asset Topology', icon: Boxes, blurb: 'Hosts, builds and the assets they carry.' },
+  { id: 'problem', label: 'Problem Briefs', icon: ClipboardList, blurb: 'Observed problems, stated without a presumed answer.' },
+  { id: 'sequence', label: 'Work Sequence', icon: GitBranch, blurb: 'The order that moves an idea into the world.' },
+  { id: 'capability', label: 'Crew & Capability', icon: Users, blurb: 'Who is available, and what they are trusted to do.' },
+  { id: 'commons', label: 'Commons', icon: Layers, blurb: 'Shared records that outlive any single actor.' },
 ];
 
 const SEQUENCE = [
@@ -47,9 +57,9 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
   const [place, setPlace] = useState('');
   const [description, setDescription] = useState('');
   const [saving, setSaving] = useState(false);
-  const [kemetInput, setKemetInput] = useState('');
-  const [kemetMsgs, setKemetMsgs] = useState<{ role: 'sys' | 'user'; text: string }[]>([
-    { role: 'sys', text: 'Kemet-OS initialized. Ready to iterate on network topology.' },
+  const [notesInput, setNotesInput] = useState('');
+  const [notes, setNotes] = useState<{ role: 'sys' | 'user'; text: string }[]>([
+    { role: 'sys', text: 'Studio notes. Drafts stay in this browser tab until you save them to a problem brief.' },
   ]);
 
   const tenders = initialTenders;
@@ -69,12 +79,11 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
     } finally { setSaving(false); }
   }
 
-  function sendKemet() {
-    const v = kemetInput.trim();
+  function addNote() {
+    const v = notesInput.trim();
     if (!v) return;
-    setKemetMsgs(prev => [...prev, { role: 'user', text: `> ${v}` }]);
-    setKemetInput('');
-    setTimeout(() => setKemetMsgs(prev => [...prev, { role: 'sys', text: `Acknowledged. Processing "${v}" against network ledger... Action queued.` }]), 800);
+    setNotes(prev => [...prev, { role: 'user', text: v }]);
+    setNotesInput('');
   }
 
   const activeModule = MODULES.find(m => m.id === active) ?? MODULES[0];
@@ -84,12 +93,12 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
       <header className="sys-header">
         <div className="brand">
           <div className="brand-icon">A</div>
-          APT-LABS
+          <span>APT<span className="brand-dash">—</span>LABS</span>
         </div>
         <div className="sys-vitals">
-          <div className="vital-item"><span className="vital-lbl">DID:</span><span className="vital-val">{userEmail ? userEmail.slice(0, 8) + '...' + userEmail.slice(-4) : '0x4a2f...8b1c'}</span></div>
-          <div className="vital-item"><span className="vital-lbl">Rank:</span><span className="vital-val blue">TIER 1</span></div>
-          <div className="vital-item"><span className="vital-lbl">Decay:</span><span className="vital-val warn">64%</span></div>
+          <div className="vital-item"><span className="vital-lbl">Signed in</span><span className="vital-val">{userEmail || 'Local session'}</span></div>
+          <div className="vital-item"><span className="vital-lbl">Context</span><span className="vital-val blue">{contexts.length > 0 ? `${contexts.length} verified` : 'Local'}</span></div>
+          <div className="vital-item"><span className="vital-lbl">Briefs</span><span className="vital-val">{briefs.length}</span></div>
         </div>
         <div className="header-extras">
           {contexts.length > 0 && (
@@ -97,35 +106,50 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
               <WorkspaceSwitcher defaultWorkspace={defaultWorkspace} contexts={contexts} defaultContextKey={defaultContextKey} canPersistPreference={canPersistPreference} />
             </Suspense>
           )}
-          {localMode && <span className="local-badge">LOCAL</span>}
+          {localMode && <span className="local-badge">Local session</span>}
           <form action={signOut}><button className="ws-signout" type="submit">Sign out</button></form>
         </div>
       </header>
 
       <div className="app-grid">
         <div className="nav-pane">
-          <div className="nav-header">Modules</div>
+          <div className="nav-header">Studio modules</div>
           <div className="nav-list">
-            {MODULES.map((m, i) => (
-              <div key={m.id} className={`nav-item ${active === m.id ? 'active' : ''}`} onClick={() => { setActive(m.id); toast(m.label + ' selected.'); }}>
-                <div className="nav-index">{String(i + 1).padStart(2, '0')}</div>
-                <div className="icon">{m.icon}</div>
-                <div className="nav-label">{m.label}</div>
-                {m.id === 'problem' && briefs.length > 0 && <div className="nav-badge">{briefs.length}</div>}
-              </div>
-            ))}
+            {MODULES.map((m, i) => {
+              const Icon = m.icon;
+              return (
+                <button
+                  key={m.id}
+                  type="button"
+                  aria-current={active === m.id ? 'page' : undefined}
+                  className={`nav-item ${active === m.id ? 'active' : ''}`}
+                  onClick={() => { setActive(m.id); toast(m.label + ' opened.'); }}
+                >
+                  <span className="nav-index">{String(i + 1).padStart(2, '0')}</span>
+                  <Icon aria-hidden="true" className="icon" size={15} strokeWidth={1.6} />
+                  <span className="nav-label">{m.label}</span>
+                  {m.id === 'problem' && briefs.length > 0 && <span className="nav-badge">{briefs.length}</span>}
+                </button>
+              );
+            })}
           </div>
         </div>
 
         <div className="center-pane">
           <div className="center-head">
-            <span>{activeModule.label}</span>
-            <span>STATUS: ACTIVE</span>
+            <div className="center-head-title">
+              <span className="center-head-index">{String(MODULES.findIndex(m => m.id === active) + 1).padStart(2, '0')}</span>
+              <span>{activeModule.label}</span>
+            </div>
+            <span className="center-head-status">Active module</span>
           </div>
 
           <div className="center-scroll">
+            <p className="center-lede">{activeModule.blurb}</p>
           {active === 'asset' && (
             <div className="node-tree">
+              <div className="km-section-title">Illustrative preview</div>
+              <p className="center-note">The topology below is sample structure for this prototype. Live tenders and briefs are loaded from the shared record layer and listed beneath.</p>
               <div className="tree-node">
                 <div className="node-card">
                   <div>
@@ -134,7 +158,7 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
                   </div>
                   <div className="node-status status-built">Active</div>
                 </div>
-                <div className="node-tree" style={{ marginTop: 16 }}>
+                <div className="node-tree">
                   <div className="tree-node">
                     <div className="node-card">
                       <div>
@@ -144,12 +168,12 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
                       <div className="node-status status-build">In Assembly</div>
                     </div>
                     <div className="sub-tasks">
-                      <div className="sub-task"><div className="st-dot done" /><div className="st-title">Capital Intent Verified</div><div className="st-meta">KES 120K</div></div>
-                      <div className="sub-task"><div className="st-dot done" /><div className="st-title">Materials Acquired</div><div className="st-meta">Timber + Steel</div></div>
-                      <div className="sub-task"><div className="st-dot active" /><div className="st-title">Fabrication Phase</div><div className="st-meta">You are here</div></div>
+                      <div className="sub-task"><div className="st-dot done" /><div className="st-title">Capital intent verified</div><div className="st-meta">Sample figure</div></div>
+                      <div className="sub-task"><div className="st-dot done" /><div className="st-title">Materials acquired</div><div className="st-meta">Timber + steel</div></div>
+                      <div className="sub-task"><div className="st-dot active" /><div className="st-title">Fabrication phase</div><div className="st-meta">Current stage</div></div>
                     </div>
                   </div>
-                  <div className="tree-node" style={{ marginTop: 16 }}>
+                  <div className="tree-node">
                     <div className="node-card">
                       <div>
                         <div className="node-title">Solar Crop Dehydrator</div>
@@ -160,16 +184,16 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
                   </div>
                 </div>
               </div>
-              {tenders.length > 0 && <div className="km-section-title">Live tenders: {tenders.length}</div>}
-              {briefs.length > 0 && <div className="km-section-title">Problem briefs: {briefs.length}</div>}
+              {tenders.length > 0 && <div className="km-section-title">Live tenders · {tenders.length}</div>}
+              {briefs.length > 0 && <div className="km-section-title">Problem briefs · {briefs.length}</div>}
             </div>
           )}
 
           {active === 'problem' && (
             <div>
-              <div className="km-section-title">Problem Briefs</div>
+              <div className="km-section-title">Problem briefs</div>
               {briefs.length === 0 ? (
-                <div className="km-empty">No problem briefs yet. Add a Problem Node.</div>
+                <div className="km-empty">No problem briefs yet. Add one to begin.</div>
               ) : (
                 <div className="km-list">
                   {briefs.map((b, i) => (
@@ -178,13 +202,13 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
                         <span className="km-row-index">{String(i + 1).padStart(2, '0')}</span>
                         <strong>{b.title}</strong>
                       </div>
-                      <small>{b.place || 'no place'} · {b.status}</small>
+                      <small>{b.place || 'No place recorded'} · {b.status}</small>
                     </div>
                   ))}
                 </div>
               )}
-              <div style={{ marginTop: 16 }}>
-                <button className="km-btn primary" type="button" onClick={() => setModalOpen(true)}>+ Add Problem Node</button>
+              <div className="center-action">
+                <button className="km-btn primary" type="button" onClick={() => setModalOpen(true)}><Plus aria-hidden="true" size={14} /> Add problem brief</button>
               </div>
             </div>
           )}
@@ -193,7 +217,7 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
             <div className="km-list">
               {SEQUENCE.map((s, i) => (
                 <div key={s.id} className="km-card">
-                  <h3>{i + 1}. {s.label}</h3>
+                  <div className="km-row-head"><span className="km-row-index">{String(i + 1).padStart(2, '0')}</span><h3>{s.label}</h3></div>
                   <small>{s.sub.join(' · ')}</small>
                 </div>
               ))}
@@ -202,20 +226,20 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
 
           {active === 'capability' && (
             <div>
-              <div className="km-section-title">Suggested Actions</div>
+              <div className="km-section-title">Suggested actions</div>
               <div className="suggest-item">
                 <div className="suggest-title">Join Solar Dehydrator Assembly</div>
-                <div className="suggest-meta">Role: Tier 1 Welder · 88% Match</div>
+                <div className="suggest-meta">Welder · 88% match</div>
               </div>
               <div className="suggest-item">
                 <div className="suggest-title">Review Land Tenure Covenant</div>
-                <div className="suggest-meta">Role: Legal Mind · 94% Match</div>
+                <div className="suggest-meta">Legal review · 94% match</div>
               </div>
             </div>
           )}
 
           {active === 'commons' && (
-            <div className="km-empty">Commons module — shared records surface. Connect to live data to populate.</div>
+            <div className="km-empty">Commons records surface here once the shared record layer is connected for this context.</div>
           )}
           </div>
         </div>
@@ -224,31 +248,30 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
           <div className="right-scroll">
             <div className="profile-block">
               <div className="avatar">
-                {(userEmail?.[0] || 'W').toUpperCase()}
-                <div className="decay-ring" />
+                {(userEmail?.[0] || 'L').toUpperCase()}
               </div>
-              <div className="profile-name">{userEmail?.split('@')[0] || 'Wanjiru M.'}</div>
-              <div className="profile-did">did:apt:0x4a2f...8b1c</div>
+              <div className="profile-name">{userEmail?.split('@')[0] || 'Local session'}</div>
+              <div className="profile-did">{localMode ? 'This device only' : 'Verified account'}</div>
               <div className="decay-alert">
-                Execution Signal: 64%<br />
-                <span style={{ color: 'var(--km-ink-muted)', fontSize: 9 }}>Log milestone to reset.</span>
+                Execution signal is not yet recorded for this account.
+                <span> Log a milestone to begin tracking it.</span>
               </div>
             </div>
             <div className="action-block">
-              <div className="sec-title">Suggested Actions</div>
+              <div className="sec-title">Suggested actions</div>
               <div className="suggest-item">
                 <div className="suggest-title">Join Solar Dehydrator Assembly</div>
-                <div className="suggest-meta">Role: Tier 1 Welder · 88% Match</div>
+                <div className="suggest-meta">Welder · 88% match</div>
               </div>
               <div className="suggest-item">
                 <div className="suggest-title">Review Land Tenure Covenant</div>
-                <div className="suggest-meta">Role: Legal Mind · 94% Match</div>
+                <div className="suggest-meta">Legal review · 94% match</div>
               </div>
             </div>
             <div className="action-block">
-              <div className="sec-title">System Overrides</div>
+              <div className="sec-title">Create</div>
               <button className="btn-add-node" onClick={() => setModalOpen(true)}>
-                <span style={{ fontSize: 16 }}>+</span> Add Problem Node
+                <Plus aria-hidden="true" size={15} /> Add problem brief
               </button>
             </div>
           </div>
@@ -256,17 +279,24 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
           <div className="kemet-os">
             <div className="kemet-header">
               <div className="kemet-title">
-                <div className="kemet-dot" />
-                KEMET-OS 1.0
+                <MessageSquare aria-hidden="true" size={13} strokeWidth={1.6} />
+                Studio notes
               </div>
-              <div style={{ fontFamily: 'var(--km-font-mono)', fontSize: 9, color: 'var(--km-ink-dim)' }}>ONLINE</div>
+              <div>Local draft</div>
             </div>
             <div className="kemet-body">
-              {kemetMsgs.map((m, i) => <div key={i} className={`msg ${m.role}`}>{m.text}</div>)}
+              {notes.map((m, i) => <div key={i} className={`msg ${m.role}`}>{m.text}</div>)}
             </div>
             <div className="kemet-input-wrap">
-              <input className="kemet-input" value={kemetInput} onChange={e => setKemetInput(e.target.value)} placeholder="Type command or query..." onKeyDown={e => { if (e.key === 'Enter') sendKemet(); }} />
-              <button className="kemet-send" onClick={sendKemet}>↵</button>
+              <input
+                className="kemet-input"
+                value={notesInput}
+                onChange={e => setNotesInput(e.target.value)}
+                placeholder="Draft a note for this session…"
+                aria-label="Draft a studio note"
+                onKeyDown={e => { if (e.key === 'Enter') addNote(); }}
+              />
+              <button className="kemet-send" aria-label="Add studio note" onClick={addNote}><Send aria-hidden="true" size={13} strokeWidth={1.6} /></button>
             </div>
           </div>
         </div>
@@ -274,14 +304,13 @@ export function WorkspaceShell({ initialTenders, initialBriefs, userEmail, local
 
       <footer className="sys-footer">
         <div className="f-left">
-          <div className="f-item" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><div className="f-dot" /> NETWORK CONNECTED</div>
-          <div className="f-item">NODE: KIRINYAGA</div>
+          <div className="f-item"><div className="f-dot" /> {localMode ? 'Local session' : 'Signed in'}</div>
+          <div className="f-item">{contexts.length > 0 ? `${contexts.length} verified contexts` : 'No verified contexts'}</div>
         </div>
         <div className="f-right">
-          <div className="f-item">SOVEREIGN LEDGER: ACTIVE</div>
-          <div className="f-item">v1.0.4</div>
-          {briefs.length > 0 && <div className="f-item">BRIEFS: {briefs.length}</div>}
-          {tenders.length > 0 && <div className="f-item">TENDERS: {tenders.length}</div>}
+          <div className="f-item">Prototype · 001</div>
+          {briefs.length > 0 && <div className="f-item">Briefs · {briefs.length}</div>}
+          {tenders.length > 0 && <div className="f-item">Tenders · {tenders.length}</div>}
         </div>
       </footer>
 
