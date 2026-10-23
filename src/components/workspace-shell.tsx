@@ -1,8 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
+
 import {
   ArrowDownToLine,
+  Minimize2,
   ArrowRight,
   ArrowUpRight,
   ArrowUp,
@@ -288,6 +290,7 @@ export function WorkspaceShell({
   const [profileAssetContext, setProfileAssetContext] = useState<string | null>(null);
   const [liftTrip, setLiftTrip] = useState<{ floor: Floor; direction: 'up' | 'down' } | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [minimal, setMinimal] = useState(false);
   const [composerMode, setComposerMode] = useState<'problem' | 'friction'>('problem');
   const [form, setForm] = useState({ title: '', place: '', detail: '', measure: '' });
   const titleInput = useRef<HTMLInputElement>(null);
@@ -302,7 +305,7 @@ export function WorkspaceShell({
   const notify = useCallback((message: string) => toast(message), []);
   useEffect(() => {
     if (!liftTrip) return;
-    const timeout = window.setTimeout(() => setLiftTrip(null), 680);
+    const timeout = window.setTimeout(() => setLiftTrip(null), 950);
     return () => window.clearTimeout(timeout);
   }, [liftTrip]);
 
@@ -331,7 +334,9 @@ export function WorkspaceShell({
     setForm({
       title: point ? `Local adaptation: ${point.title}` : '',
       place: '',
-      detail: point ? `${point.signal}\n\nWhat is different in your place?` : '',
+      detail: point ? `${point.signal}
+
+What is different in your place?` : '',
       measure: '',
     });
     setModalOpen(true);
@@ -461,7 +466,7 @@ export function WorkspaceShell({
   };
 
   return (
-    <div className="workspace-atlas">
+    <div className="workspace-atlas" data-minimal={minimal} data-floor={floor}>
       <header className="atlas-header">
         <div className="atlas-header-left">
           <a className="atlas-brand" href="/workspace" aria-label="APT-LABS workspace">
@@ -509,7 +514,69 @@ export function WorkspaceShell({
           initialSection={profileSection}
           assetContext={profileAssetContext}
         />
-      </header>
+        <button
+          className="atlas-icon-button"
+          type="button"
+          aria-label={minimal ? "Expand workspace" : "Minimal mode"}
+          aria-pressed={minimal}
+          onClick={() => setMinimal(m => !m)}
+        >
+          <Minimize2 size={16} />
+        </button>
+        <button
+          className="atlas-icon-button"
+          type="button"
+          aria-label={minimal ? "Expand workspace" : "Minimal mode"}
+          aria-pressed={minimal}
+          onClick={() => setMinimal(m => !m)}
+        >
+          <Minimize2 size={16} />
+        </button>
+        <button
+          className="atlas-icon-button"
+          type="button"
+          aria-label={minimal ? "Expand workspace" : "Minimal mode"}
+          aria-pressed={minimal}
+          onClick={() => setMinimal(m => !m)}
+        >
+          <Minimize2 size={16} />
+        </button>
+        <button
+          className="atlas-icon-button"
+          type="button"
+          aria-label={minimal ? "Expand workspace" : "Minimal mode"}
+          aria-pressed={minimal}
+          onClick={() => setMinimal(m => !m)}
+        >
+          <Minimize2 size={16} />
+        </button>
+        <button
+          className="atlas-icon-button"
+          type="button"
+          aria-label={minimal ? "Expand workspace" : "Minimal mode"}
+          aria-pressed={minimal}
+          onClick={() => setMinimal(m => !m)}
+        >
+          <Minimize2 size={16} />
+        </button>
+        <button
+          className="atlas-icon-button"
+          type="button"
+          aria-label={minimal ? "Expand workspace" : "Minimal mode"}
+          aria-pressed={minimal}
+          onClick={() => setMinimal(m => !m)}
+        >
+          <Minimize2 size={16} />
+        </button>
+        <button
+          className="atlas-icon-button"
+          type="button"
+          aria-label={minimal ? "Expand workspace" : "Minimal mode"}
+          aria-pressed={minimal}
+          onClick={() => setMinimal(m => !m)}
+        >
+          <Minimize2 size={16} />
+        </button></header>
 
       <div className={`atlas-layout${floor === 'first' ? ' atlas-layout-unconfigured atlas-layout-first' : ''}${floor === 'second' ? ' atlas-layout-school' : ''}${floor === 'basement' ? ' atlas-layout-basement atlas-layout-radar' : ''}${view === 'commons' ? ' atlas-layout-wide' : ''}${floor === 'ground' && view === 'engines' ? ' atlas-layout-engines' : ''}`}>
         {floor === 'basement' && (
@@ -1058,3 +1125,32 @@ export function WorkspaceShell({
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
