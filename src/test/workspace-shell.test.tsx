@@ -144,10 +144,13 @@ describe('workspace shell navigation', () => {
     expect(screen.getByRole('heading', { name: 'Look closer at the friction.' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Which stories get to become infrastructure?' })).toBeInTheDocument();
     expect(screen.getByText(/Mwea story worlds/)).toBeInTheDocument();
-    expect(screen.getByText(/Wallet not connected/)).toBeInTheDocument();
-    expect(screen.getByText('RESTING')).toBeInTheDocument();
+    expect(screen.queryByRole('complementary', { name: 'Personal standing and tools' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Open profile menu/ })).toBeInTheDocument();
     expect(screen.getByText(/Curated examples · no live community feed/)).toBeInTheDocument();
     expect(screen.getByText(/No builders, active asset, or verified contribution record is linked/)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /Open profile menu/ }));
+    expect(screen.getByRole('dialog', { name: 'User profile' })).toBeInTheDocument();
 
     const vote = screen.getByRole('button', { name: 'Mark relevance · local only' });
     fireEvent.click(vote);

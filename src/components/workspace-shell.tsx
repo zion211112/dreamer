@@ -6,7 +6,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   ArrowUp,
-  BadgeCheck,
   Boxes,
   ChevronDown,
   ChevronRight,
@@ -19,7 +18,6 @@ import {
   Plus,
   Radio,
   ScrollText,
-  Sparkles,
   UsersRound,
   X,
 } from 'lucide-react';
@@ -924,44 +922,6 @@ export function WorkspaceShell({
           </div>
           )}
         </main>
-
-        {floor === 'basement' && (
-          <aside className="atlas-radar-profile" aria-label="Personal standing and tools">
-            <section className="atlas-radar-profile-section">
-              <span className="atlas-kicker">YOUR PLACE IN THE WORK</span>
-              <div className="atlas-radar-identity">
-                <span className="atlas-avatar atlas-radar-profile-avatar">{(userEmail[0] || 'O').toUpperCase()}</span>
-                <div>
-                  <strong>{userEmail.split('@')[0] || 'Operator'}</strong>
-                  <small>Wallet not connected</small>
-                </div>
-              </div>
-              <div className="atlas-radar-profile-row"><span>Community standing</span><strong>Not calculated</strong></div>
-              <div className="atlas-radar-profile-row"><span>Verified capability</span><strong>From Roll records</strong></div>
-            </section>
-            <section className="atlas-radar-profile-section">
-              <span className="atlas-kicker">CREDENTIALS</span>
-              <div className="atlas-radar-credential">
-                <BadgeCheck aria-hidden="true" size={17} />
-                <div><strong>Capability proof</strong><small>Connects to verified work in Roll</small></div>
-              </div>
-              <div className="atlas-radar-sbt-note">
-                <span>Contribution SBT · not issued</span>
-                <p>Requires scoped evidence, asset-owner review and a qualified peer. Votes and replies alone do not qualify.</p>
-              </div>
-              <button className="atlas-radar-roll-link" type="button" onClick={() => { setFloor('ground'); setView('ledger'); setLedgerSection('roll'); }}>
-                <span>Explore verified work</span><ArrowUpRight aria-hidden="true" size={13} />
-              </button>
-            </section>
-            <section className="atlas-radar-hermes">
-              <div className="atlas-radar-hermes-head">
-                <span><Sparkles aria-hidden="true" size={14} /> Hermes</span>
-                <small>RESTING</small>
-              </div>
-              <p>A future research companion. No agent is connected.</p>
-            </section>
-          </aside>
-        )}
 
         {floor === 'ground' && view !== 'commons' && view !== 'engines' && <aside className="atlas-inspector">
           <div className="atlas-inspector-head">
