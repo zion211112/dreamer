@@ -76,7 +76,7 @@ describe('workspace shell navigation', () => {
     expect(screen.getByText('Proposed')).toBeInTheDocument();
   });
 
-  it('shows only three recruiting assets and keeps interest notes local to the session', () => {
+  it('opens the session capability profile with the selected asset context', () => {
     render(<WorkspaceShell userEmail="operator@example.com" />);
     selectFloor('Ground');
     fireEvent.click(screen.getByRole('button', { name: /Work Engines/ }));
@@ -90,21 +90,17 @@ describe('workspace shell navigation', () => {
 
     for (const asset of ['School Console', 'Mwea Animation', 'Tender System']) {
       fireEvent.click(inspectAsset(asset).getByRole('button', { name: 'Apply for a job' }));
-      const dialog = screen.getByRole('dialog', { name: 'Apply for a job' });
-      expect(dialog).toHaveTextContent(asset);
-      expect(dialog).toHaveTextContent(/not sent to the asset/i);
-      fireEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+      expect(screen.getByRole('heading', { name: 'Capability & interests' })).toBeInTheDocument();
+      const profileMenu = screen.getByRole('dialog', { name: 'User profile' });
+      expect(profileMenu).toHaveTextContent(asset);
+      expect(profileMenu).toHaveTextContent(/does not submit an application/i);
+      fireEvent.click(within(profileMenu).getByRole('button', { name: 'Profile overview' }));
+      fireEvent.click(within(profileMenu).getByRole('button', { name: 'Settings' }));
+      fireEvent.click(within(profileMenu).getByRole('button', { name: /Capability & interests/ }));
+      fireEvent.keyDown(document, { key: 'Escape' });
     }
 
-    fireEvent.click(inspectAsset('Mwea Animation').getByRole('button', { name: 'Apply for a job' }));
-    fireEvent.change(screen.getByLabelText('Work you are interested in'), { target: { value: 'Story illustration' } });
-    fireEvent.change(screen.getByLabelText('What can you contribute or would you like to learn?'), {
-      target: { value: 'I can illustrate short educational stories and collaborate with local writers.' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'Save local interest' }));
-
-    expect(screen.getByRole('region', { name: 'Your session-only interests' })).toHaveTextContent('Mwea Animation');
-    expect(screen.getByRole('region', { name: 'Your session-only interests' })).toHaveTextContent('Not sent · not an application to an open role');
+    expect(screen.queryByRole('dialog', { name: 'User profile' })).not.toBeInTheDocument();
   });
 
   it('keeps delivery and capability screens reachable from a topology asset', () => {

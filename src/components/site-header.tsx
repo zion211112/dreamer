@@ -2,12 +2,17 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { WorkspaceSwitcher } from '@/components/workspace-switcher';
+import { UserProfileMenu } from '@/components/user-profile-menu';
+import { getAuthenticatedUserProfileData } from '@/lib/user-profile';
 import { getWorkspaceContext } from '@/lib/workspace-access';
 import { signOut } from '@/lib/supabase/sign-out';
 
 export async function SiteHeader({ frontDoor = false, hideNav = false }: { frontDoor?: boolean; hideNav?: boolean }) {
   const context = await getWorkspaceContext();
   const signedIn = context.authenticated;
+  const profileData = signedIn && !context.localMode && !frontDoor
+    ? await getAuthenticatedUserProfileData()
+    : null;
 
   return (
     <header className={`site-header ${signedIn ? 'site-header-signed-in' : ''}`}>
@@ -37,12 +42,24 @@ export async function SiteHeader({ frontDoor = false, hideNav = false }: { front
       <div className="header-actions">
         {signedIn
           ? <>
-              <span className="header-account">{context.email ?? 'Signed in'}</span>
-              {context.localMode && <span className="local-badge">LOCAL</span>}
-              <Link className="header-issue" href="/workspace">User dashboard <ArrowUpRight aria-hidden="true" size={14} /></Link>
-              <form action={signOut}>
-                <button className="header-sign-in" type="submit">Sign out</button>
-              </form>
+              {frontDoor
+                ? <>
+                    <span className="header-account">{context.email ?? 'Signed in'}</span>
+                    {context.localMode && <span className="local-badge">LOCAL</span>}
+                    <Link className="header-issue" href="/workspace">User dashboard <ArrowUpRight aria-hidden="true" size={14} /></Link>
+                    <form action={signOut}>
+                      <button className="header-sign-in" type="submit">Sign out</button>
+                    </form>
+                  </>
+                : <>
+                    <Link className="header-issue" href="/workspace">User dashboard <ArrowUpRight aria-hidden="true" size={14} /></Link>
+                    {context.localMode && <span className="local-badge">LOCAL</span>}
+                    <UserProfileMenu
+                      userEmail={context.email ?? ''}
+                      localMode={context.localMode}
+                      profileData={profileData}
+                    />
+                  </>}
             </>
           : <Link
               className="header-issue"

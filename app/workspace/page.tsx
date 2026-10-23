@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { WorkspaceShell } from '@/components/workspace-shell';
 import { getWorkspaceContext } from '@/lib/workspace-access';
 import { getMarketTenders } from '@/lib/tender-repository';
+import { getAuthenticatedUserProfileData } from '@/lib/user-profile';
 import { listProblemBriefs } from './actions';
 
 export const metadata = {
@@ -13,9 +14,10 @@ export default async function WorkspacePage() {
   const workspace = await getWorkspaceContext();
   if (!workspace.authenticated) redirect('/sign-in?next=%2Fworkspace');
 
-  const [tenders, briefsResult] = await Promise.all([
+  const [tenders, briefsResult, profileData] = await Promise.all([
     getMarketTenders().catch(() => []),
     listProblemBriefs(),
+    getAuthenticatedUserProfileData(),
   ]);
 
   return (
@@ -23,6 +25,7 @@ export default async function WorkspacePage() {
       initialTenders={tenders}
       initialBriefs={briefsResult.briefs ?? []}
       userEmail={workspace.email ?? ''}
+      profileData={profileData}
       localMode={workspace.localMode}
       defaultWorkspace={workspace.defaultWorkspace}
       contexts={workspace.contexts}
@@ -31,4 +34,3 @@ export default async function WorkspacePage() {
     />
   );
 }
-
