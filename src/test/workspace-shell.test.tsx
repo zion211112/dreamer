@@ -87,15 +87,20 @@ describe('workspace shell navigation', () => {
     selectFloor('Ground');
     fireEvent.click(screen.getByRole('button', { name: /Work Engines/ }));
 
-    expect(screen.getByRole('heading', { name: 'Where would you like to contribute?' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Choose a place to contribute.' })).toBeInTheDocument();
+    const assets = screen.getByRole('navigation', { name: 'Work Engine assets' });
+    expect(within(assets).getAllByRole('button')).toHaveLength(3);
     expect(screen.getByRole('heading', { name: 'School Console' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Mwea Animation' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Tender System' })).toBeInTheDocument();
-    expect(screen.getAllByRole('button', { name: 'Apply for a job' })).toHaveLength(3);
+    expect(screen.getAllByRole('button', { name: 'Offer capability' })).toHaveLength(1);
     expect(screen.queryByRole('navigation', { name: 'Work Engine sections' })).not.toBeInTheDocument();
 
     for (const asset of ['School Console', 'Mwea Animation', 'Tender System']) {
-      fireEvent.click(inspectAsset(asset).getByRole('button', { name: 'Apply for a job' }));
+      const assetOption = within(assets).getByRole('button', { name: `Select ${asset}` });
+      fireEvent.click(assetOption);
+      expect(assetOption).toHaveAttribute('aria-pressed', 'true');
+      const assetCard = inspectAsset(asset);
+      expect(assetCard.getByText('Interest only · no open role is connected')).toBeInTheDocument();
+      fireEvent.click(assetCard.getByRole('button', { name: 'Offer capability' }));
       expect(screen.getByRole('heading', { name: 'Capability & interests' })).toBeInTheDocument();
       const profileMenu = screen.getByRole('dialog', { name: 'User profile' });
       expect(profileMenu).toHaveTextContent(asset);

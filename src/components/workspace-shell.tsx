@@ -217,8 +217,9 @@ const RECORDS: Record<string, TopologyRecord> = {
 };
 
 const RECRUITING_ASSET_IDS = ['school-console', 'mwea-animation', 'tender-system'] as const;
+type RecruitingAssetId = (typeof RECRUITING_ASSET_IDS)[number];
 
-const RECRUITING_COPY: Record<(typeof RECRUITING_ASSET_IDS)[number], { discipline: string; focus: string; invitation: string }> = {
+const RECRUITING_COPY: Record<RecruitingAssetId, { discipline: string; focus: string; invitation: string }> = {
   'school-console': {
     discipline: 'EDUCATION / LOCAL-FIRST SOFTWARE',
     focus: 'School operations, teacher workflows, accessible interfaces',
@@ -275,6 +276,7 @@ export function WorkspaceShell({
   const [selectedFrictionId, setSelectedFrictionId] = useState(FRICTION_POINTS[0].id);
   const [radarRoom, setRadarRoom] = useState<RadarRoom>('all');
   const [localVotes, setLocalVotes] = useState<string[]>([]);
+  const [selectedRecruitingAssetId, setSelectedRecruitingAssetId] = useState<RecruitingAssetId>(RECRUITING_ASSET_IDS[0]);
   const [selectedRecordId, setSelectedRecordId] = useState('school-console');
   const [selectedDraftId, setSelectedDraftId] = useState<string | null>(null);
   const [drafts, setDrafts] = useState<ProblemDraft[]>([]);
@@ -287,6 +289,8 @@ export function WorkspaceShell({
   const titleInput = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const currentCopy = VIEW_COPY[view];
+  const selectedRecruitingAsset = RECORDS[selectedRecruitingAssetId];
+  const selectedRecruitingCopy = RECRUITING_COPY[selectedRecruitingAssetId];
   const selectedRecord = RECORDS[selectedRecordId] ?? RECORDS.site;
   const selectedDraft = selectedDraftId
     ? drafts.find(draft => draft.id === selectedDraftId)
@@ -725,41 +729,57 @@ export function WorkspaceShell({
               <section className="atlas-engine-recruitment" aria-labelledby="atlas-engine-title">
                 <div className="atlas-engine-intro">
                   <div>
-                    <span className="atlas-kicker">ASSETS / OPEN TO CAPABILITY</span>
-                    <h2 id="atlas-engine-title">Where would you like to contribute?</h2>
-                    <p>Three assets. One clear first step: offer what you can do, or what you want to learn.</p>
+                    <span className="atlas-kicker">ASSETS / CAPABILITY</span>
+                    <h2 id="atlas-engine-title">Choose a place to contribute.</h2>
+                    <p>Select an asset to focus your capability interest.</p>
                   </div>
                   <span className="atlas-engine-count">03 <small>ASSETS</small></span>
                 </div>
                 <div className="atlas-engine-assets">
-                  {RECRUITING_ASSET_IDS.map(id => {
-                    const asset = RECORDS[id];
-                    const copy = RECRUITING_COPY[id];
-                    return (
-                      <article className={`atlas-engine-asset atlas-engine-asset-${id}`} key={id}>
-                        <div className="atlas-engine-asset-top">
-                          <span className="atlas-engine-asset-glyph">{asset.icon}</span>
-                          <span className="atlas-engine-asset-status">{asset.state}</span>
-                        </div>
-                        <span className="atlas-engine-asset-discipline">{copy.discipline}</span>
-                        <h3>{asset.title}</h3>
-                        <p>{copy.invitation}</p>
-                        <div className="atlas-engine-asset-focus"><span>Useful in</span><strong>{copy.focus}</strong></div>
+                  <nav className="atlas-engine-asset-list" aria-label="Work Engine assets">
+                    {RECRUITING_ASSET_IDS.map(id => {
+                      const asset = RECORDS[id];
+                      return (
                         <button
-                          className="atlas-engine-apply"
+                          className="atlas-engine-asset-option"
                           type="button"
-                          onClick={() => {
-                            setProfileSection('capability');
-                            setProfileAssetContext(asset.title);
-                            setProfileOpen(true);
-                          }}
+                          key={id}
+                          aria-label={`Select ${asset.title}`}
+                          aria-pressed={selectedRecruitingAssetId === id}
+                          onClick={() => setSelectedRecruitingAssetId(id)}
                         >
-                          Apply for a job <ArrowRight aria-hidden="true" size={14} />
+                          <span className="atlas-engine-asset-glyph">{asset.icon}</span>
+                          <span className="atlas-engine-asset-option-copy">
+                            <strong>{asset.title}</strong>
+                            <small>{asset.state}</small>
+                          </span>
+                          <ChevronRight aria-hidden="true" size={14} />
                         </button>
-                        <small className="atlas-engine-asset-boundary">Interest only · no open role is connected</small>
-                      </article>
-                    );
-                  })}
+                      );
+                    })}
+                  </nav>
+                  <article className={`atlas-engine-asset atlas-engine-asset-${selectedRecruitingAssetId}`}>
+                    <div className="atlas-engine-asset-top">
+                      <span className="atlas-engine-asset-glyph">{selectedRecruitingAsset.icon}</span>
+                      <span className="atlas-engine-asset-status">{selectedRecruitingAsset.state}</span>
+                    </div>
+                    <span className="atlas-engine-asset-discipline">{selectedRecruitingCopy.discipline}</span>
+                    <h3>{selectedRecruitingAsset.title}</h3>
+                    <p>{selectedRecruitingCopy.invitation}</p>
+                    <div className="atlas-engine-asset-focus"><span>Useful in</span><strong>{selectedRecruitingCopy.focus}</strong></div>
+                    <button
+                      className="atlas-engine-apply"
+                      type="button"
+                      onClick={() => {
+                        setProfileSection('capability');
+                        setProfileAssetContext(selectedRecruitingAsset.title);
+                        setProfileOpen(true);
+                      }}
+                    >
+                      Offer capability <ArrowRight aria-hidden="true" size={14} />
+                    </button>
+                    <small className="atlas-engine-asset-boundary">Interest only · no open role is connected</small>
+                  </article>
                 </div>
               </section>
             )}
