@@ -43,7 +43,7 @@ function inspectAsset(title: string) {
 }
 
 describe('workspace shell navigation', () => {
-  it('shows two Ground modules and keeps Governance locked', () => {
+  it('shows two Ground modules and keeps the First floor open to explore', () => {
     render(<WorkspaceShell userEmail="operator@example.com" />);
     selectFloor('Ground');
 
@@ -53,7 +53,13 @@ describe('workspace shell navigation', () => {
     expect(within(navigation).getByRole('button', { name: /Work Engines/ })).toBeInTheDocument();
 
     fireEvent.keyDown(screen.getByRole('button', { name: /^Current floor:/ }), { key: 'ArrowDown' });
-    expect(screen.getByRole('menuitem', { name: /First.*Governance.*Verified capability required/ })).toHaveAttribute('aria-disabled', 'true');
+    const firstFloor = screen.getByRole('menuitem', { name: /First.*Governance/ });
+    expect(firstFloor).not.toHaveAttribute('aria-disabled', 'true');
+    fireEvent.click(firstFloor);
+
+    expect(screen.getByRole('button', { name: 'Current floor: First' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Governance starts with clear decision rights.' })).toBeInTheDocument();
+    expect(screen.getByText(/open to explore.*scoped to verified capability/i)).toBeInTheDocument();
   });
 
   it('shows only the three named assets in the simplified topology graph', () => {

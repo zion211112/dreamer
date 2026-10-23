@@ -10,10 +10,10 @@ import {
   Boxes,
   ChevronDown,
   ChevronRight,
+  Building2,
   FileText,
   Focus,
   ListChecks,
-  LockKeyhole,
   MessageCircle,
   Network,
   Plus,
@@ -452,21 +452,18 @@ export function WorkspaceShell({
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="atlas-floor-menu">
-              <DropdownMenuLabel className="atlas-floor-menu-label">CHOOSE A FLOOR</DropdownMenuLabel>
+              <DropdownMenuLabel className="atlas-floor-menu-label">FLOORS</DropdownMenuLabel>
               {FLOORS.map(item => (
                 <DropdownMenuItem
                   key={item.key}
-                  className={`atlas-floor-menu-item${floor === item.key ? ' is-active' : ''}${item.key === 'first' ? ' is-locked' : ''}`}
-                  disabled={item.key === 'first'}
-                  onSelect={() => { if (item.key !== 'first') setFloor(item.key); }}
+                  className={`atlas-floor-menu-item${floor === item.key ? ' is-active' : ''}`}
+                  onSelect={() => setFloor(item.key)}
                 >
                   <span className="atlas-floor-short">{item.short}</span>
                   <span className="atlas-floor-option-copy">
-                    <span>{item.key === 'first' ? 'First floor · Governance' : item.label}</span>
-                    {item.key === 'first' && <small>Verified capability required</small>}
+                    <span>{item.key === 'first' ? 'First · Governance' : item.label}</span>
                   </span>
                   {floor === item.key && <span className="atlas-floor-current">CURRENT</span>}
-                  {item.key === 'first' && <LockKeyhole aria-hidden="true" size={12} />}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -489,7 +486,7 @@ export function WorkspaceShell({
         />
       </header>
 
-      <div className={`atlas-layout${floor !== 'ground' ? ' atlas-layout-unconfigured' : ''}${floor === 'basement' ? ' atlas-layout-basement atlas-layout-radar' : ''}${view === 'commons' ? ' atlas-layout-wide' : ''}${floor === 'ground' && view === 'engines' ? ' atlas-layout-engines' : ''}`}>
+      <div className={`atlas-layout${floor === 'first' ? ' atlas-layout-unconfigured atlas-layout-first' : ''}${floor === 'basement' ? ' atlas-layout-basement atlas-layout-radar' : ''}${view === 'commons' ? ' atlas-layout-wide' : ''}${floor === 'ground' && view === 'engines' ? ' atlas-layout-engines' : ''}`}>
         {floor === 'basement' && (
           <aside className="atlas-radar-nav">
             <div className="atlas-radar-module">
@@ -670,10 +667,10 @@ export function WorkspaceShell({
             </div>
           ) : floor === 'first' ? (
             <section className="atlas-floor-empty">
-              <span className="atlas-floor-empty-icon"><LockKeyhole aria-hidden="true" size={22} /></span>
+              <span className="atlas-floor-empty-icon"><Building2 aria-hidden="true" size={22} /></span>
               <span className="atlas-kicker">FIRST FLOOR / GOVERNANCE</span>
-              <h1>Decision rights are earned and scoped.</h1>
-              <p>Entry requires verified capability for Commons-priority decisions.</p>
+              <h1>Governance starts with clear decision rights.</h1>
+              <p>This floor is open to explore. Decision rights remain scoped to verified capability.</p>
               <span>No governance credential is connected to this workspace.</span>
             </section>
           ) : (
