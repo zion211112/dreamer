@@ -1,9 +1,14 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { WorkspaceShell } from '@/components/workspace-shell';
 import type { Tender } from '@/lib/tender';
 
 jest.mock('@/lib/supabase/sign-out', () => ({
   signOut: jest.fn(),
+}));
+
+jest.mock('next/cache', () => ({
+  revalidatePath: jest.fn(),
+  revalidateTag: jest.fn(),
 }));
 
 const tender: Tender = {
@@ -31,7 +36,7 @@ const tender: Tender = {
   funders: [],
 };
 
-function selectFloor(floor: 'Basement' | 'Ground' | 'First') {
+function selectFloor(floor: 'Basement' | 'Ground' | 'First' | 'Second') {
   fireEvent.keyDown(screen.getByRole('button', { name: /^Current floor:/ }), { key: 'ArrowDown' });
   fireEvent.click(screen.getByRole('menuitem', { name: new RegExp(floor) }));
 }
@@ -60,6 +65,47 @@ describe('workspace shell navigation', () => {
     expect(screen.getByRole('button', { name: 'Current floor: First' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Governance starts with clear decision rights.' })).toBeInTheDocument();
     expect(screen.getByText(/open to explore.*scoped to verified capability/i)).toBeInTheDocument();
+  });
+
+  it('opens the local teacher and school-admin console on Second after a lift transition', async () => {
+    render(<WorkspaceShell userEmail="operator@example.com" />);
+    selectFloor('Second');
+
+    expect(screen.getByRole('status', { name: 'Traveling to Second · School' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Current floor: Second · School' })).toBeInTheDocument();
+    await screen.findByText(/Ready on this device/);
+    expect(screen.getByRole('heading', { name: /School Console/ })).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'teacher Console tools' })).toBeInTheDocument();
+    expect(screen.getByRole('note')).toHaveTextContent(/Demo data only/i);
+    expect(screen.getByRole('note')).toHaveTextContent(/not encrypted multi-user school storage/i);
+
+    await waitFor(() => {
+      expect(screen.queryByRole('status', { name: 'Traveling to Second · School' })).not.toBeInTheDocument();
+    });
+  });
+
+  it('skips the lift animation when reduced motion is preferred', () => {
+    const matchMediaDescriptor = Object.getOwnPropertyDescriptor(window, 'matchMedia');
+    Object.defineProperty(window, 'matchMedia', {
+      configurable: true,
+      value: () => ({ matches: true }),
+    });
+
+    try {
+      const { unmount } = render(<WorkspaceShell userEmail="operator@example.com" />);
+      selectFloor('Second');
+
+      expect(screen.queryByRole('status', { name: 'Traveling to Second · School' })).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Current floor: Second · School' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /School Console/ })).toBeInTheDocument();
+      unmount();
+    } finally {
+      if (matchMediaDescriptor) {
+        Object.defineProperty(window, 'matchMedia', matchMediaDescriptor);
+      } else {
+        Reflect.deleteProperty(window, 'matchMedia');
+      }
+    }
   });
 
   it('shows only the three named assets in the simplified topology graph', () => {

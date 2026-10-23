@@ -10,6 +10,7 @@ import {
   ChevronDown,
   ChevronRight,
   Building2,
+  Bot,
   FileText,
   Focus,
   ListChecks,
@@ -33,6 +34,7 @@ import type { Tender } from '@/lib/tender';
 import type { WorkspaceContextOption, WorkspaceKey } from '@/lib/workspace';
 import { UserProfileMenu, type ProfileSection } from '@/components/user-profile-menu';
 import type { UserProfileData } from '@/lib/user-profile';
+import { SchoolConsole } from '@/components/school-console';
 
 interface WorkspaceShellProps {
   initialTenders?: Tender[];
@@ -48,7 +50,7 @@ interface WorkspaceShellProps {
 
 type WorkspaceView = 'topology' | 'engines' | 'problems' | 'ledger' | 'commons';
 type LedgerSection = 'sequence' | 'capability' | 'roll';
-type Floor = 'basement' | 'ground' | 'first';
+type Floor = 'basement' | 'ground' | 'first' | 'second';
 type RadarRoom = 'all' | 'culture' | 'education' | 'work';
 
 interface ProblemDraft {
@@ -124,6 +126,7 @@ const FLOORS: { key: Floor; label: string; short: string }[] = [
   { key: 'basement', label: 'Basement', short: 'B' },
   { key: 'ground', label: 'Ground', short: 'G' },
   { key: 'first', label: 'First', short: '1' },
+  { key: 'second', label: 'Second · School', short: '2' },
 ];
 
 const FRICTION_POINTS: FrictionPoint[] = [
@@ -283,6 +286,7 @@ export function WorkspaceShell({
   const [profileOpen, setProfileOpen] = useState(false);
   const [profileSection, setProfileSection] = useState<ProfileSection>('overview');
   const [profileAssetContext, setProfileAssetContext] = useState<string | null>(null);
+  const [liftTrip, setLiftTrip] = useState<{ floor: Floor; direction: 'up' | 'down' } | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [composerMode, setComposerMode] = useState<'problem' | 'friction'>('problem');
   const [form, setForm] = useState({ title: '', place: '', detail: '', measure: '' });
@@ -296,6 +300,25 @@ export function WorkspaceShell({
     ? drafts.find(draft => draft.id === selectedDraftId)
     : undefined;
   const notify = useCallback((message: string) => toast(message), []);
+  useEffect(() => {
+    if (!liftTrip) return;
+    const timeout = window.setTimeout(() => setLiftTrip(null), 680);
+    return () => window.clearTimeout(timeout);
+  }, [liftTrip]);
+
+  function changeFloor(nextFloor: Floor) {
+    if (nextFloor === floor) return;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      setFloor(nextFloor);
+      setLiftTrip(null);
+      return;
+    }
+    const direction = FLOORS.findIndex(item => item.key === nextFloor) > FLOORS.findIndex(item => item.key === floor)
+      ? 'up'
+      : 'down';
+    setFloor(nextFloor);
+    setLiftTrip({ floor: nextFloor, direction });
+  }
 
   const openModal = useCallback(() => {
     setComposerMode('problem');
@@ -459,7 +482,7 @@ export function WorkspaceShell({
                 <DropdownMenuItem
                   key={item.key}
                   className={`atlas-floor-menu-item${floor === item.key ? ' is-active' : ''}`}
-                  onSelect={() => setFloor(item.key)}
+                  onSelect={() => changeFloor(item.key)}
                 >
                   <span className="atlas-floor-short">{item.short}</span>
                   <span className="atlas-floor-option-copy">
@@ -488,7 +511,7 @@ export function WorkspaceShell({
         />
       </header>
 
-      <div className={`atlas-layout${floor === 'first' ? ' atlas-layout-unconfigured atlas-layout-first' : ''}${floor === 'basement' ? ' atlas-layout-basement atlas-layout-radar' : ''}${view === 'commons' ? ' atlas-layout-wide' : ''}${floor === 'ground' && view === 'engines' ? ' atlas-layout-engines' : ''}`}>
+      <div className={`atlas-layout${floor === 'first' ? ' atlas-layout-unconfigured atlas-layout-first' : ''}${floor === 'second' ? ' atlas-layout-school' : ''}${floor === 'basement' ? ' atlas-layout-basement atlas-layout-radar' : ''}${view === 'commons' ? ' atlas-layout-wide' : ''}${floor === 'ground' && view === 'engines' ? ' atlas-layout-engines' : ''}`}>
         {floor === 'basement' && (
           <aside className="atlas-radar-nav">
             <div className="atlas-radar-module">
@@ -574,7 +597,7 @@ export function WorkspaceShell({
           </div>
         </aside>}
 
-        <main className={`atlas-main${floor !== 'ground' ? ' atlas-main-unconfigured' : ''}${floor === 'basement' ? ' atlas-main-radar' : ''}${view === 'commons' ? ' atlas-main-wide' : ''}`}>
+        <main className={`atlas-main${floor !== 'ground' && floor !== 'second' ? ' atlas-main-unconfigured' : ''}${floor === 'second' ? ' atlas-main-school' : ''}${floor === 'basement' ? ' atlas-main-radar' : ''}${view === 'commons' ? ' atlas-main-wide' : ''}`}>
           {floor === 'basement' ? (
             <div className="atlas-radar-feed">
               <div className="atlas-radar-feed-head">
@@ -667,6 +690,8 @@ export function WorkspaceShell({
                 </section>
               )}
             </div>
+          ) : floor === 'second' ? (
+            <SchoolConsole embedded />
           ) : floor === 'first' ? (
             <section className="atlas-floor-empty">
               <span className="atlas-floor-empty-icon"><Building2 aria-hidden="true" size={22} /></span>
@@ -1014,6 +1039,20 @@ export function WorkspaceShell({
               <div className="atlas-form-foot"><span>{composerMode === 'friction' ? 'Session-only draft · not submitted to Commons.' : 'Stored in this page session only.'}</span><div><button className="atlas-button atlas-button-quiet" type="button" onClick={closeModal}>Cancel</button><button className="atlas-button atlas-button-primary" type="submit">Save local draft</button></div></div>
             </form>
           </section>
+        </div>
+      )}
+      {liftTrip && (
+        <div className="atlas-lift-overlay" role="status" aria-live="polite" aria-label={`Traveling to ${FLOORS.find(item => item.key === liftTrip.floor)?.label ?? 'another floor'}`}>
+          <div className="atlas-lift-scene" data-direction={liftTrip.direction} aria-hidden="true">
+            <div className="atlas-lift-shaft">
+              <span className="atlas-lift-floor atlas-lift-floor-top" />
+              <span className="atlas-lift-floor atlas-lift-floor-middle" />
+              <span className="atlas-lift-floor atlas-lift-floor-bottom" />
+              <div className="atlas-lift-car"><Bot size={19} strokeWidth={1.6} /></div>
+            </div>
+          </div>
+          <span className="atlas-lift-caption">APT—LABS · LIFT</span>
+          <strong>{FLOORS.find(item => item.key === liftTrip.floor)?.label}</strong>
         </div>
       )}
     </div>

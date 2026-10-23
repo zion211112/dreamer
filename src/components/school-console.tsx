@@ -59,7 +59,7 @@ function saveDownload(name: string, content: string, mimeType: string) {
   URL.revokeObjectURL(url);
 }
 
-export function SchoolConsole({ header }: { header: ReactNode }) {
+export function SchoolConsole({ header, embedded = false }: { header?: ReactNode; embedded?: boolean }) {
   const [role, setRole] = useState<'teacher' | 'principal'>('teacher');
   const [activeModule, setActiveModule] = useState<string>('Auto-Marking');
   const [snapshot, setSnapshot] = useState<ConsoleSnapshot>(initialConsoleSnapshot);
@@ -307,9 +307,10 @@ export function SchoolConsole({ header }: { header: ReactNode }) {
   const selected = visibleModules.some(module => module.id === activeModule)
     ? activeModule
     : visibleModules[0].id;
+  const Root = embedded ? 'div' : 'main';
 
   return (
-    <main className="site-shell console-shell">
+    <Root className={`site-shell console-shell${embedded ? ' console-embedded' : ''}`}>
       {header}
       <section className="console-intro">
         <div>
@@ -493,6 +494,6 @@ export function SchoolConsole({ header }: { header: ReactNode }) {
         </section>
       </div>
       <footer className="page-footer"><span>APT-LABS / SCHOOL CONSOLE</span><span>Local browser storage · no server sync · {snapshot.markedPapers.length} practice results on this device</span></footer>
-    </main>
+    </Root>
   );
 }
