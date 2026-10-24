@@ -2,7 +2,6 @@ import type { ComponentProps } from 'react';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { WorkspaceShell } from '@/components/workspace-shell';
 import type { Tender } from '@/lib/tender';
-import type { WorkspaceContextOption } from '@/lib/workspace';
 
 jest.mock('@/lib/supabase/sign-out', () => ({
   signOut: jest.fn(),
@@ -11,10 +10,6 @@ jest.mock('@/lib/supabase/sign-out', () => ({
 jest.mock('next/cache', () => ({
   revalidatePath: jest.fn(),
   revalidateTag: jest.fn(),
-}));
-
-jest.mock('@/components/workspace-switcher', () => ({
-  WorkspaceSwitcher: () => null,
 }));
 
 const tender: Tender = {
@@ -42,47 +37,23 @@ const tender: Tender = {
   funders: [],
 };
 
-const networkContext: WorkspaceContextOption = {
-  key: 'network',
-  kind: 'network',
-  label: 'APT-LABS Network',
-  role: 'member',
-  organizationId: null,
-  tenderId: null,
-  tenderSlug: null,
-  tenderStatus: null,
-  assetName: null,
-  isIllustrative: false,
-};
-
-const schoolContext: WorkspaceContextOption = {
-  ...networkContext,
-  key: 'school:example',
-  kind: 'school',
-  label: 'Example School',
-  role: 'teacher',
-  organizationId: 'school-example',
-};
-
 function renderWorkspace(props: Partial<ComponentProps<typeof WorkspaceShell>> = {}) {
-  const { contexts = [networkContext], ...rest } = props;
-  return render(<WorkspaceShell userEmail="operator@example.com" contexts={contexts} {...rest} />);
+  return render(<WorkspaceShell userEmail="operator@example.com" {...props} />);
 }
 
-function openFloorBranch(branch: 'Commons' | 'Membership') {
+function openFloorSelector() {
   fireEvent.keyDown(screen.getByRole('button', { name: /^Current floor:/ }), { key: 'ArrowDown' });
-  fireEvent.keyDown(screen.getByRole('menuitem', { name: new RegExp(branch) }), { key: 'ArrowRight' });
 }
 
 function selectFloor(floor: 'Basement' | 'Ground' | 'First' | 'Second') {
-  const memberFloor = floor === 'First' || floor === 'Second';
-  openFloorBranch(memberFloor ? 'Membership' : 'Commons');
-  if (floor === 'First' || floor === 'Second') {
-    fireEvent.keyDown(screen.getByRole('menuitem', { name: floor === 'First' ? /Governance/ : /^School/ }), { key: 'ArrowRight' });
-  } else {
-    fireEvent.keyDown(screen.getByRole('menuitem', { name: floor === 'Basement' ? /Below ground/ : /Street level/ }), { key: 'ArrowRight' });
-  }
-  fireEvent.click(screen.getByRole('menuitem', { name: new RegExp(floor) }));
+  const menuLabels = {
+    Basement: 'Basement',
+    Ground: 'Ground floor',
+    First: 'Floor 1 · Governance',
+    Second: 'Floor 2 · School Console',
+  };
+  openFloorSelector();
+  fireEvent.click(screen.getByRole('menuitem', { name: menuLabels[floor] }));
 }
 
 function inspectAsset(title: string) {
@@ -92,19 +63,20 @@ function inspectAsset(title: string) {
 }
 
 describe('workspace shell navigation', () => {
-  it('shows a lock state instead of floor content when no verified network context is present', () => {
-    renderWorkspace({ contexts: [] });
+  it('shows all four concise floor stops in one quick-switch shaft', () => {
+    renderWorkspace();
 
-    expect(screen.getByRole('heading', { name: 'This floor needs a verified network context.' })).toBeInTheDocument();
-    expect(screen.queryByRole('navigation', { name: 'Basement modules' })).not.toBeInTheDocument();
-
-    openFloorBranch('Membership');
-    fireEvent.keyDown(screen.getByRole('menuitem', { name: /^School/ }), { key: 'ArrowRight' });
-    expect(screen.getByRole('menuitem', { name: /Second · School, locked: A verified school membership is required/ }))
-      .toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getByRole('navigation', { name: 'Basement modules' })).toBeInTheDocument();
+    openFloorSelector();
+    const stops = screen.getByRole('group', { name: 'Workspace floors' });
+    expect(within(stops).getAllByRole('menuitem')).toHaveLength(4);
+    expect(within(stops).getByRole('menuitem', { name: 'Basement' })).toBeInTheDocument();
+    expect(within(stops).getByRole('menuitem', { name: 'Ground floor' })).toBeInTheDocument();
+    expect(within(stops).getByRole('menuitem', { name: 'Floor 1 · Governance' })).toBeInTheDocument();
+    expect(within(stops).getByRole('menuitem', { name: 'Floor 2 · School Console' })).toBeInTheDocument();
   });
 
-  it('keeps the shared floors available and locks Governance until a verified entitlement exists', () => {
+  it('switches to Governance in one click without changing the shared frame', () => {
     renderWorkspace();
     selectFloor('Ground');
 
@@ -113,30 +85,14 @@ describe('workspace shell navigation', () => {
     expect(within(navigation).getByRole('button', { name: /Asset Topology/ })).toBeInTheDocument();
     expect(within(navigation).getByRole('button', { name: /Work Engines/ })).toBeInTheDocument();
 
-    openFloorBranch('Membership');
-    fireEvent.keyDown(screen.getByRole('menuitem', { name: /Governance/ }), { key: 'ArrowRight' });
-    const firstFloor = screen.getByRole('menuitem', { name: /First, locked:/ });
-    expect(firstFloor).toHaveAttribute('aria-disabled', 'true');
-    expect(firstFloor.getAttribute('title')).toMatch(/no governance entitlement is connected/i);
-    fireEvent.keyDown(document, { key: 'Escape' });
-    expect(screen.getByRole('button', { name: 'Current floor: Ground' })).toBeInTheDocument();
+    selectFloor('First');
+    expect(screen.getByRole('button', { name: 'Current floor: First' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Governance starts with clear decision rights.' })).toBeInTheDocument();
+    expect(screen.getByText(/open to explore.*scoped to verified capability/i)).toBeInTheDocument();
   });
 
-  it('does not open the School floor without a verified school membership', () => {
+  it('opens the device-local School Console from its floor', async () => {
     renderWorkspace();
-    openFloorBranch('Membership');
-    fireEvent.keyDown(screen.getByRole('menuitem', { name: /^School/ }), { key: 'ArrowRight' });
-
-    const schoolFloor = screen.getByRole('menuitem', { name: /Second · School, locked:/ });
-    expect(schoolFloor).toHaveAttribute('aria-disabled', 'true');
-    fireEvent.click(schoolFloor);
-    fireEvent.keyDown(document, { key: 'Escape' });
-    expect(screen.getByRole('button', { name: 'Current floor: Basement' })).toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: /School Console/ })).not.toBeInTheDocument();
-  });
-
-  it('opens the device-local School Console only with a verified school context', async () => {
-    renderWorkspace({ contexts: [networkContext, schoolContext] });
     selectFloor('Second');
 
     expect(screen.getByRole('status', { name: 'Traveling to Second · School' })).toBeInTheDocument();
@@ -152,6 +108,10 @@ describe('workspace shell navigation', () => {
     });
   });
 
+  it('removes the workspace context selector from the IDE header', () => {
+    expect(screen.queryByRole('button', { name: /Current context:/ })).not.toBeInTheDocument();
+  });
+
   it('skips the lift animation when reduced motion is preferred', () => {
     const matchMediaDescriptor = Object.getOwnPropertyDescriptor(window, 'matchMedia');
     Object.defineProperty(window, 'matchMedia', {
@@ -160,7 +120,7 @@ describe('workspace shell navigation', () => {
     });
 
     try {
-      const { unmount } = renderWorkspace({ contexts: [networkContext, schoolContext] });
+      const { unmount } = renderWorkspace();
       selectFloor('Second');
 
       expect(screen.queryByRole('status', { name: 'Traveling to Second · School' })).not.toBeInTheDocument();

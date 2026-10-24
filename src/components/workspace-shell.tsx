@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 
 import {
   ArrowDownToLine,
@@ -20,17 +20,14 @@ import {
   Radio,
   ScrollText,
   UsersRound,
-  LockKeyhole,
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Tender } from '@/lib/tender';
-import type { WorkspaceContextOption, WorkspaceKey } from '@/lib/workspace';
 import { UserProfileMenu, type ProfileSection } from '@/components/user-profile-menu';
 import type { UserProfileData } from '@/lib/user-profile';
 import { SchoolConsole } from '@/components/school-console';
-import { WorkspaceSwitcher } from '@/components/workspace-switcher';
-import { WorkspaceFloorSwitcher, type FloorAccess, type WorkspaceFloor } from '@/components/workspace-floor-switcher';
+import { WorkspaceFloorSwitcher, type WorkspaceFloor } from '@/components/workspace-floor-switcher';
 
 interface WorkspaceShellProps {
   initialTenders?: Tender[];
@@ -38,10 +35,6 @@ interface WorkspaceShellProps {
   userEmail: string;
   profileData?: UserProfileData | null;
   localMode?: boolean;
-  defaultWorkspace?: WorkspaceKey;
-  contexts?: WorkspaceContextOption[];
-  defaultContextKey?: string;
-  canPersistPreference?: boolean;
 }
 
 type WorkspaceView = 'topology' | 'engines' | 'problems' | 'ledger' | 'commons';
@@ -124,29 +117,6 @@ const FLOOR_NAMES: Record<WorkspaceFloor, string> = {
   first: 'First',
   second: 'Second · School',
 };
-
-function getFloorAccess(contexts: WorkspaceContextOption[]): Record<WorkspaceFloor, FloorAccess> {
-  const hasNetworkContext = contexts.some(context => context.kind === 'network');
-  const hasSchoolContext = contexts.some(context => context.kind === 'school');
-  return {
-    basement: {
-      allowed: hasNetworkContext,
-      reason: 'A verified network context is required.',
-    },
-    ground: {
-      allowed: hasNetworkContext,
-      reason: 'A verified network context is required.',
-    },
-    first: {
-      allowed: false,
-      reason: 'No governance entitlement is connected to verified membership yet.',
-    },
-    second: {
-      allowed: hasSchoolContext,
-      reason: 'A verified school membership is required.',
-    },
-  };
-}
 
 const FRICTION_POINTS: FrictionPoint[] = [
   {
@@ -290,10 +260,6 @@ export function WorkspaceShell({
   userEmail,
   profileData = null,
   localMode = false,
-  contexts = [],
-  defaultWorkspace = 'apt',
-  defaultContextKey = 'network',
-  canPersistPreference = true,
 }: WorkspaceShellProps) {
   const [view, setView] = useState<WorkspaceView>('topology');
   const [floor, setFloor] = useState<WorkspaceFloor>('basement');
@@ -322,8 +288,6 @@ export function WorkspaceShell({
   const selectedDraft = selectedDraftId
     ? drafts.find(draft => draft.id === selectedDraftId)
     : undefined;
-  const floorAccess = getFloorAccess(contexts);
-  const canAccessCurrentFloor = floorAccess[floor].allowed;
   const notify = useCallback((message: string) => toast(message), []);
   useEffect(() => {
     if (!liftTrip) return;
@@ -333,7 +297,6 @@ export function WorkspaceShell({
 
   function changeFloor(nextFloor: WorkspaceFloor) {
     if (nextFloor === floor) return;
-    if (!floorAccess[nextFloor].allowed) return;
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
       setFloor(nextFloor);
       setLiftTrip(null);
@@ -495,17 +458,9 @@ What is different in your place?` : '',
             <span className="atlas-brand-mark"><Boxes aria-hidden="true" size={17} strokeWidth={1.5} /></span>
             <span>APT<span>—</span>LABS</span>
           </a>
-          <WorkspaceFloorSwitcher access={floorAccess} currentFloor={floor} onSelect={changeFloor} />
+          <WorkspaceFloorSwitcher currentFloor={floor} onSelect={changeFloor} />
         </div>
         <div className="atlas-header-actions">
-          <Suspense fallback={<span className="workspace-switcher workspace-switcher-loading">Loading context…</span>}>
-            <WorkspaceSwitcher
-              canPersistPreference={canPersistPreference}
-              contexts={contexts}
-              defaultContextKey={defaultContextKey}
-              defaultWorkspace={defaultWorkspace}
-            />
-          </Suspense>
           <UserProfileMenu
             userEmail={userEmail}
             localMode={localMode}
@@ -535,7 +490,7 @@ What is different in your place?` : '',
       </header>
 
       <div className={`atlas-layout${floor === 'first' ? ' atlas-layout-unconfigured atlas-layout-first' : ''}${floor === 'second' ? ' atlas-layout-school' : ''}${floor === 'basement' ? ' atlas-layout-basement atlas-layout-radar' : ''}${view === 'commons' ? ' atlas-layout-wide' : ''}${floor === 'ground' && view === 'engines' ? ' atlas-layout-engines' : ''}`}>
-        {floor === 'basement' && canAccessCurrentFloor && (
+        {floor === 'basement' && (
           <aside className="atlas-radar-nav">
             <div className="atlas-radar-module">
               <span className="atlas-radar-live-mark"><Radio aria-hidden="true" size={14} /></span>
@@ -592,7 +547,7 @@ What is different in your place?` : '',
             </div>
           </aside>
         )}
-        {floor === 'ground' && canAccessCurrentFloor && <aside className="atlas-rail">
+        {floor === 'ground' && <aside className="atlas-rail">
           <div className="atlas-rail-label">Ground floor</div>
           <nav className="atlas-nav" aria-label="Ground floor modules">
             {GROUND_MODULES.map((item, index) => {
@@ -623,36 +578,18 @@ What is different in your place?` : '',
           <aside aria-label={`${floor === 'first' ? 'Governance' : 'School'} floor information`} className="atlas-rail atlas-floor-rail">
             <span className="atlas-rail-label">{floor === 'first' ? 'First · Governance' : 'Second · School'}</span>
             <div className="atlas-floor-rail-card">
-              <span className="atlas-floor-rail-icon">
-                {canAccessCurrentFloor
-                  ? <Building2 aria-hidden="true" size={16} />
-                  : <LockKeyhole aria-hidden="true" size={16} />}
-              </span>
+              <span className="atlas-floor-rail-icon"><Building2 aria-hidden="true" size={16} /></span>
               <strong>{floor === 'first' ? 'Decision rights' : 'School Console'}</strong>
-              <span>{canAccessCurrentFloor ? 'Verified membership' : floorAccess[floor].reason}</span>
+              <span>{floor === 'first' ? 'Governance and decision rights' : 'Device-local school tools'}</span>
             </div>
-            {floor === 'second' && canAccessCurrentFloor && (
+            {floor === 'second' && (
               <p className="atlas-floor-rail-note">Student and lesson records stay on this device.</p>
             )}
           </aside>
         )}
 
         <main className={`atlas-main${floor !== 'ground' && floor !== 'second' ? ' atlas-main-unconfigured' : ''}${floor === 'second' ? ' atlas-main-school' : ''}${floor === 'basement' ? ' atlas-main-radar' : ''}${view === 'commons' ? ' atlas-main-wide' : ''}`}>
-          {!canAccessCurrentFloor ? (
-            <section aria-labelledby="atlas-floor-gate-title" className="atlas-floor-gate">
-              <span className="atlas-floor-gate-icon"><LockKeyhole aria-hidden="true" size={20} /></span>
-              <span className="atlas-kicker">ACCESS NOT VERIFIED</span>
-              <h1 id="atlas-floor-gate-title">
-                {floor === 'first'
-                  ? 'Governance access is not configured.'
-                  : floor === 'second'
-                    ? 'This floor needs a verified school context.'
-                    : 'This floor needs a verified network context.'}
-              </h1>
-              <p>{floorAccess[floor].reason}</p>
-              <span>Changing the floor never grants membership or permission.</span>
-            </section>
-          ) : floor === 'basement' ? (
+          {floor === 'basement' ? (
             <div className="atlas-radar-feed">
               <div className="atlas-radar-feed-head">
                 <div>
@@ -1063,7 +1000,7 @@ What is different in your place?` : '',
       <footer className="atlas-footer">
         <span><i /> {localMode ? 'LOCAL SESSION' : 'SIGNED-IN SESSION'} <span className="atlas-footer-muted">/ EXAMPLE DATA</span></span>
         <span>APT—LABS <span className="atlas-footer-muted">· FIELD ATLAS</span> <b>01.1</b></span>
-        <span className="atlas-footer-contexts">{contexts.length > 0 ? `${contexts.length} contexts available` : 'No verified contexts'}</span>
+        <span className="atlas-footer-contexts">FLOORS CHANGE VIEW · ACCESS STAYS SERVER-VERIFIED</span>
       </footer>
 
       {modalOpen && (
@@ -1106,9 +1043,6 @@ What is different in your place?` : '',
     </div>
   );
 }
-
-
-
 
 
 

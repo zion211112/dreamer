@@ -27,10 +27,6 @@ export default async function WorkspacePage() {
       userEmail={workspace.email ?? ''}
       profileData={profileData}
       localMode={workspace.localMode}
-      defaultWorkspace={workspace.defaultWorkspace}
-      contexts={workspace.contexts}
-      defaultContextKey={workspace.defaultContextKey}
-      canPersistPreference={!workspace.localMode}
     />
   );
 }

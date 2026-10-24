@@ -5317,43 +5317,79 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .workspace-atlas .atlas-floor-rail-card strong { color: var(--atlas-ink); font-size: 11px; font-weight: 550; }
 .workspace-atlas .atlas-floor-rail-card > span:last-child,
 .workspace-atlas .atlas-floor-rail-note { margin: 0; color: var(--atlas-muted); font-size: 9px; line-height: 1.55; }
-.workspace-atlas .atlas-floor-gate { display: grid; justify-items: center; align-content: center; min-height: 100%; padding: 38px clamp(18px, 4vw, 52px); text-align: center; }
-.workspace-atlas .atlas-floor-gate-icon { display: grid; width: 44px; height: 44px; margin-bottom: 17px; place-items: center; border: 1px solid var(--atlas-line-strong); border-radius: 14px; color: #7e786b; background: rgb(255 255 252 / 55%); box-shadow: 0 8px 24px rgb(45 41 34 / 6%); }
-.workspace-atlas .atlas-floor-gate .atlas-kicker { color: var(--atlas-muted); }
-.workspace-atlas .atlas-floor-gate h1 { max-width: 540px; margin: 12px 0 7px; color: var(--atlas-ink); font: 500 clamp(25px, 3vw, 36px)/1.12 var(--font-editorial); letter-spacing: -.035em; }
-.workspace-atlas .atlas-floor-gate p { max-width: 420px; margin: 0; color: var(--atlas-muted); font-size: 11px; line-height: 1.6; }
-.workspace-atlas .atlas-floor-gate > span:last-child { margin-top: 13px; color: var(--atlas-faint); font-size: 9px; }
-.workspace-atlas .atlas-floor-menu,
-.workspace-atlas .atlas-floor-submenu {
-  min-width: 238px;
+.workspace-atlas .atlas-floor-trigger {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 8px;
+  border: 1px solid var(--atlas-line);
+  border-radius: 6px;
+  color: var(--atlas-ink);
+  background: rgb(255 255 252 / 46%);
+  font: 8px var(--font-code);
+  letter-spacing: .08em;
+  cursor: pointer;
+}
+.workspace-atlas .atlas-floor-trigger:hover,
+.workspace-atlas .atlas-floor-trigger[data-state="open"] {
+  border-color: var(--atlas-line-strong);
+  background: rgb(255 255 252 / 84%);
+}
+.workspace-atlas .atlas-floor-menu {
+  min-width: 142px;
   padding: 6px;
   border: 1px solid rgb(76 76 65 / 16%);
-  border-radius: 11px;
+  border-radius: 8px;
   color: var(--atlas-ink);
-  background: rgb(250 249 243 / 94%);
-  box-shadow: 0 18px 48px rgb(39 38 32 / 15%), inset 0 1px rgb(255 255 255 / 85%);
-  backdrop-filter: blur(18px) saturate(1.12);
+  background: rgb(250 249 243 / 96%);
+  box-shadow: 0 12px 32px rgb(39 38 32 / 14%), inset 0 1px rgb(255 255 255 / 85%);
+  backdrop-filter: blur(14px) saturate(1.08);
 }
-.workspace-atlas .atlas-floor-menu-label { padding: 8px 10px 6px; color: var(--atlas-muted); font: 8px var(--font-code); letter-spacing: .11em; }
-.workspace-atlas .atlas-floor-menu-foot { max-width: 238px; padding: 8px 10px 5px; color: var(--atlas-muted); font-size: 8px; font-weight: 400; line-height: 1.5; white-space: normal; }
-.workspace-atlas .atlas-floor-branch { min-height: 38px; gap: 8px; padding: 6px 9px; border-radius: 7px; color: var(--atlas-ink); font-size: 10px; }
-.workspace-atlas .atlas-floor-branch[data-highlighted],
-.workspace-atlas .atlas-floor-menu-item[data-highlighted] { color: var(--atlas-ink); background: var(--atlas-floor-glow); }
-.workspace-atlas .atlas-floor-branch > svg:first-child { color: var(--atlas-muted); }
-.workspace-atlas .atlas-floor-branch small { margin-left: auto; color: var(--atlas-muted); font-size: 8px; }
-.workspace-atlas .atlas-floor-branch-chevron { margin-left: 2px; color: var(--atlas-faint); }
-.workspace-atlas .atlas-floor-menu-item { min-height: 48px; gap: 9px; padding: 6px 8px; border-radius: 7px; }
-.workspace-atlas .atlas-floor-option-copy { display: grid; min-width: 0; gap: 2px; }
-.workspace-atlas .atlas-floor-option-copy > span { color: var(--atlas-ink); font-size: 10px; }
-.workspace-atlas .atlas-floor-option-copy small { color: var(--atlas-muted); font-size: 8px; line-height: 1.4; }
-.workspace-atlas .atlas-floor-menu-item.is-locked { cursor: not-allowed; }
-.workspace-atlas .atlas-floor-menu-item.is-locked .atlas-floor-option-copy > span { color: #77766f; }
-.workspace-atlas .atlas-floor-lock { flex: 0 0 auto; margin-left: auto; color: #9a8b74; }
-.workspace-atlas .atlas-floor-current { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; color: #6f866c; font: 7px var(--font-code); letter-spacing: .06em; }
-.workspace-atlas .atlas-floor-menu-item .atlas-floor-short { flex: 0 0 21px; }
+.workspace-atlas .atlas-floor-menu-label { padding: 5px 8px 7px; color: var(--atlas-muted); font: 7px var(--font-code); letter-spacing: .1em; }
+.workspace-atlas .atlas-floor-stops { position: relative; display: grid; gap: 2px; padding: 0 0 2px; }
+.workspace-atlas .atlas-floor-stops::before {
+  position: absolute;
+  top: 11px;
+  bottom: 11px;
+  left: 15px;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--atlas-line-strong) 10%, var(--atlas-line-strong) 90%, transparent);
+  content: "";
+}
+.workspace-atlas .atlas-floor-stop {
+  position: relative;
+  min-height: 30px;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 5px;
+  color: var(--atlas-muted);
+  font: 8px var(--font-code);
+  letter-spacing: .06em;
+}
+.workspace-atlas .atlas-floor-stop[data-highlighted] { color: var(--atlas-ink); background: var(--atlas-floor-glow); }
+.workspace-atlas .atlas-floor-stop.is-current { color: var(--atlas-ink); }
+.workspace-atlas .atlas-floor-stop-marker {
+  position: relative;
+  z-index: 1;
+  width: 15px;
+  height: 15px;
+  display: grid;
+  flex: 0 0 15px;
+  place-items: center;
+  border: 1px solid var(--atlas-line-strong);
+  border-radius: 50%;
+  color: #8b6444;
+  background: var(--atlas-paper-raised);
+}
+.workspace-atlas .atlas-floor-stop.is-current .atlas-floor-stop-marker {
+  border-color: #b89871;
+  background: #f1e8d8;
+  box-shadow: 0 0 0 3px rgb(184 152 113 / 12%);
+}
+.workspace-atlas .atlas-floor-current { margin-left: auto; color: #8b6444; font: 6px var(--font-code); letter-spacing: .08em; }
 .workspace-atlas[data-minimal="true"] { --inspector-width: 0px; }
 .workspace-atlas[data-minimal="true"] .atlas-inspector { display: none; }
-.workspace-atlas[data-minimal="true"] .atlas-floor-trigger span:not(.atlas-floor-short) { display: inline; }
 @media (max-width: 1120px) and (min-width: 721px) {
   .workspace-atlas { --rail-width: 200px; --inspector-width: 250px; }
 }
