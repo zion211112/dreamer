@@ -1,6 +1,8 @@
+import type { ComponentProps } from 'react';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { WorkspaceShell } from '@/components/workspace-shell';
 import type { Tender } from '@/lib/tender';
+import type { WorkspaceContextOption } from '@/lib/workspace';
 
 jest.mock('@/lib/supabase/sign-out', () => ({
   signOut: jest.fn(),
@@ -9,6 +11,10 @@ jest.mock('@/lib/supabase/sign-out', () => ({
 jest.mock('next/cache', () => ({
   revalidatePath: jest.fn(),
   revalidateTag: jest.fn(),
+}));
+
+jest.mock('@/components/workspace-switcher', () => ({
+  WorkspaceSwitcher: () => null,
 }));
 
 const tender: Tender = {
@@ -36,8 +42,46 @@ const tender: Tender = {
   funders: [],
 };
 
-function selectFloor(floor: 'Basement' | 'Ground' | 'First' | 'Second') {
+const networkContext: WorkspaceContextOption = {
+  key: 'network',
+  kind: 'network',
+  label: 'APT-LABS Network',
+  role: 'member',
+  organizationId: null,
+  tenderId: null,
+  tenderSlug: null,
+  tenderStatus: null,
+  assetName: null,
+  isIllustrative: false,
+};
+
+const schoolContext: WorkspaceContextOption = {
+  ...networkContext,
+  key: 'school:example',
+  kind: 'school',
+  label: 'Example School',
+  role: 'teacher',
+  organizationId: 'school-example',
+};
+
+function renderWorkspace(props: Partial<ComponentProps<typeof WorkspaceShell>> = {}) {
+  const { contexts = [networkContext], ...rest } = props;
+  return render(<WorkspaceShell userEmail="operator@example.com" contexts={contexts} {...rest} />);
+}
+
+function openFloorBranch(branch: 'Commons' | 'Membership') {
   fireEvent.keyDown(screen.getByRole('button', { name: /^Current floor:/ }), { key: 'ArrowDown' });
+  fireEvent.keyDown(screen.getByRole('menuitem', { name: new RegExp(branch) }), { key: 'ArrowRight' });
+}
+
+function selectFloor(floor: 'Basement' | 'Ground' | 'First' | 'Second') {
+  const memberFloor = floor === 'First' || floor === 'Second';
+  openFloorBranch(memberFloor ? 'Membership' : 'Commons');
+  if (floor === 'First' || floor === 'Second') {
+    fireEvent.keyDown(screen.getByRole('menuitem', { name: floor === 'First' ? /Governance/ : /^School/ }), { key: 'ArrowRight' });
+  } else {
+    fireEvent.keyDown(screen.getByRole('menuitem', { name: floor === 'Basement' ? /Below ground/ : /Street level/ }), { key: 'ArrowRight' });
+  }
   fireEvent.click(screen.getByRole('menuitem', { name: new RegExp(floor) }));
 }
 
@@ -48,8 +92,20 @@ function inspectAsset(title: string) {
 }
 
 describe('workspace shell navigation', () => {
-  it('shows two Ground modules and keeps the First floor open to explore', () => {
-    render(<WorkspaceShell userEmail="operator@example.com" />);
+  it('shows a lock state instead of floor content when no verified network context is present', () => {
+    renderWorkspace({ contexts: [] });
+
+    expect(screen.getByRole('heading', { name: 'This floor needs a verified network context.' })).toBeInTheDocument();
+    expect(screen.queryByRole('navigation', { name: 'Basement modules' })).not.toBeInTheDocument();
+
+    openFloorBranch('Membership');
+    fireEvent.keyDown(screen.getByRole('menuitem', { name: /^School/ }), { key: 'ArrowRight' });
+    expect(screen.getByRole('menuitem', { name: /Second · School, locked: A verified school membership is required/ }))
+      .toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it('keeps the shared floors available and locks Governance until a verified entitlement exists', () => {
+    renderWorkspace();
     selectFloor('Ground');
 
     const navigation = screen.getByRole('navigation', { name: 'Ground floor modules' });
@@ -57,18 +113,30 @@ describe('workspace shell navigation', () => {
     expect(within(navigation).getByRole('button', { name: /Asset Topology/ })).toBeInTheDocument();
     expect(within(navigation).getByRole('button', { name: /Work Engines/ })).toBeInTheDocument();
 
-    fireEvent.keyDown(screen.getByRole('button', { name: /^Current floor:/ }), { key: 'ArrowDown' });
-    const firstFloor = screen.getByRole('menuitem', { name: /First.*Governance/ });
-    expect(firstFloor).not.toHaveAttribute('aria-disabled', 'true');
-    fireEvent.click(firstFloor);
-
-    expect(screen.getByRole('button', { name: 'Current floor: First' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Governance starts with clear decision rights.' })).toBeInTheDocument();
-    expect(screen.getByText(/open to explore.*scoped to verified capability/i)).toBeInTheDocument();
+    openFloorBranch('Membership');
+    fireEvent.keyDown(screen.getByRole('menuitem', { name: /Governance/ }), { key: 'ArrowRight' });
+    const firstFloor = screen.getByRole('menuitem', { name: /First, locked:/ });
+    expect(firstFloor).toHaveAttribute('aria-disabled', 'true');
+    expect(firstFloor.getAttribute('title')).toMatch(/no governance entitlement is connected/i);
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.getByRole('button', { name: 'Current floor: Ground' })).toBeInTheDocument();
   });
 
-  it('opens the local teacher and school-admin console on Second after a lift transition', async () => {
-    render(<WorkspaceShell userEmail="operator@example.com" />);
+  it('does not open the School floor without a verified school membership', () => {
+    renderWorkspace();
+    openFloorBranch('Membership');
+    fireEvent.keyDown(screen.getByRole('menuitem', { name: /^School/ }), { key: 'ArrowRight' });
+
+    const schoolFloor = screen.getByRole('menuitem', { name: /Second · School, locked:/ });
+    expect(schoolFloor).toHaveAttribute('aria-disabled', 'true');
+    fireEvent.click(schoolFloor);
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.getByRole('button', { name: 'Current floor: Basement' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /School Console/ })).not.toBeInTheDocument();
+  });
+
+  it('opens the device-local School Console only with a verified school context', async () => {
+    renderWorkspace({ contexts: [networkContext, schoolContext] });
     selectFloor('Second');
 
     expect(screen.getByRole('status', { name: 'Traveling to Second · School' })).toBeInTheDocument();
@@ -92,7 +160,7 @@ describe('workspace shell navigation', () => {
     });
 
     try {
-      const { unmount } = render(<WorkspaceShell userEmail="operator@example.com" />);
+      const { unmount } = renderWorkspace({ contexts: [networkContext, schoolContext] });
       selectFloor('Second');
 
       expect(screen.queryByRole('status', { name: 'Traveling to Second · School' })).not.toBeInTheDocument();
@@ -109,7 +177,7 @@ describe('workspace shell navigation', () => {
   });
 
   it('shows only the three named assets in the simplified topology graph', () => {
-    render(<WorkspaceShell userEmail="operator@example.com" />);
+    renderWorkspace();
     selectFloor('Ground');
 
     const graph = screen.getByRole('region', { name: 'Three illustrative asset relationships' });
@@ -129,7 +197,7 @@ describe('workspace shell navigation', () => {
   });
 
   it('opens the session capability profile with the selected asset context', () => {
-    render(<WorkspaceShell userEmail="operator@example.com" />);
+    renderWorkspace();
     selectFloor('Ground');
     fireEvent.click(screen.getByRole('button', { name: /Work Engines/ }));
 
@@ -161,7 +229,7 @@ describe('workspace shell navigation', () => {
   });
 
   it('keeps delivery and capability screens reachable from a topology asset', () => {
-    render(<WorkspaceShell userEmail="operator@example.com" />);
+    renderWorkspace();
     selectFloor('Ground');
     fireEvent.click(screen.getByRole('button', { name: 'Open work sequence' }));
 
@@ -176,7 +244,7 @@ describe('workspace shell navigation', () => {
   });
 
   it('distinguishes illustrative Commons records from published records', () => {
-    render(<WorkspaceShell userEmail="operator@example.com" initialTenders={[tender]} />);
+    renderWorkspace({ initialTenders: [tender] });
     selectFloor('Ground');
     fireEvent.click(screen.getByRole('button', { name: 'Open work sequence' }));
     fireEvent.click(screen.getByRole('button', { name: 'Tenders' }));
@@ -186,13 +254,13 @@ describe('workspace shell navigation', () => {
     expect(screen.getByText(/illustrative scenarios, clearly distinguished/i)).toBeInTheDocument();
   });
 
-  it('opens on Basement with an editorial Radar dossier and local signal voting', () => {
-    render(<WorkspaceShell userEmail="operator@example.com" />);
+  it('opens on Basement with a compact Radar signal and local voting', () => {
+    renderWorkspace();
 
     expect(screen.getByRole('button', { name: 'Current floor: Basement' })).toBeInTheDocument();
     expect(screen.getByText('Radar')).toBeInTheDocument();
     expect(screen.getByRole('navigation', { name: 'Basement modules' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Look closer at the friction.' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Field signals' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Which stories get to become infrastructure?' })).toBeInTheDocument();
     expect(screen.getByText(/Mwea story worlds/)).toBeInTheDocument();
     expect(screen.queryByRole('complementary', { name: 'Personal standing and tools' })).not.toBeInTheDocument();
@@ -214,7 +282,7 @@ describe('workspace shell navigation', () => {
   });
 
   it('keeps new friction points in local session drafts without claiming Commons submission', () => {
-    render(<WorkspaceShell userEmail="operator@example.com" />);
+    renderWorkspace();
 
     fireEvent.click(screen.getByRole('button', { name: 'Surface friction' }));
     fireEvent.change(screen.getByLabelText('Friction title'), { target: { value: 'Unreliable community workshop power' } });
@@ -227,7 +295,7 @@ describe('workspace shell navigation', () => {
   });
 
   it('saves an adaptation as a local-only session draft', () => {
-    render(<WorkspaceShell userEmail="operator@example.com" />);
+    renderWorkspace();
 
     fireEvent.click(screen.getByRole('button', { name: 'Add a local perspective' }));
     fireEvent.change(screen.getByLabelText('Friction title'), { target: { value: 'Mwea workshop access' } });

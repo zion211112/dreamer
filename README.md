@@ -151,6 +151,13 @@ selected context against this account's current assignments; changing the URL
 or switcher cannot grant access. The School Console remains a separate
 `Local Device` product entry.
 
+The workspace floor map keeps a shared pane layout and reflects verified
+contexts: Basement and Ground require the network context, while School
+requires an active school membership. Governance stays locked until a
+server-verified governance entitlement is defined. Floor-menu state is a
+navigation cue, not an authorization boundary; server checks and row-level
+security remain authoritative for protected data and actions.
+
 Demand is an explicit local-Console boundary, not a shared inbox in this
 release. School Tender publication uses the existing quote, itemized
 Blueprint and crew-assignment workflow. There is no Funder account binding,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 
 import {
   ArrowDownToLine,
@@ -9,11 +9,9 @@ import {
   ArrowUpRight,
   ArrowUp,
   Boxes,
-  ChevronDown,
   ChevronRight,
   Building2,
   Bot,
-  FileText,
   Focus,
   ListChecks,
   MessageCircle,
@@ -22,21 +20,17 @@ import {
   Radio,
   ScrollText,
   UsersRound,
+  LockKeyhole,
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import type { Tender } from '@/lib/tender';
 import type { WorkspaceContextOption, WorkspaceKey } from '@/lib/workspace';
 import { UserProfileMenu, type ProfileSection } from '@/components/user-profile-menu';
 import type { UserProfileData } from '@/lib/user-profile';
 import { SchoolConsole } from '@/components/school-console';
+import { WorkspaceSwitcher } from '@/components/workspace-switcher';
+import { WorkspaceFloorSwitcher, type FloorAccess, type WorkspaceFloor } from '@/components/workspace-floor-switcher';
 
 interface WorkspaceShellProps {
   initialTenders?: Tender[];
@@ -52,7 +46,6 @@ interface WorkspaceShellProps {
 
 type WorkspaceView = 'topology' | 'engines' | 'problems' | 'ledger' | 'commons';
 type LedgerSection = 'sequence' | 'capability' | 'roll';
-type Floor = 'basement' | 'ground' | 'first' | 'second';
 type RadarRoom = 'all' | 'culture' | 'education' | 'work';
 
 interface ProblemDraft {
@@ -124,12 +117,36 @@ const VIEW_COPY: Record<WorkspaceView, { kicker: string; title: string; subtitle
   },
 };
 
-const FLOORS: { key: Floor; label: string; short: string }[] = [
-  { key: 'basement', label: 'Basement', short: 'B' },
-  { key: 'ground', label: 'Ground', short: 'G' },
-  { key: 'first', label: 'First', short: '1' },
-  { key: 'second', label: 'Second · School', short: '2' },
-];
+const FLOOR_ORDER: WorkspaceFloor[] = ['basement', 'ground', 'first', 'second'];
+const FLOOR_NAMES: Record<WorkspaceFloor, string> = {
+  basement: 'Basement',
+  ground: 'Ground',
+  first: 'First',
+  second: 'Second · School',
+};
+
+function getFloorAccess(contexts: WorkspaceContextOption[]): Record<WorkspaceFloor, FloorAccess> {
+  const hasNetworkContext = contexts.some(context => context.kind === 'network');
+  const hasSchoolContext = contexts.some(context => context.kind === 'school');
+  return {
+    basement: {
+      allowed: hasNetworkContext,
+      reason: 'A verified network context is required.',
+    },
+    ground: {
+      allowed: hasNetworkContext,
+      reason: 'A verified network context is required.',
+    },
+    first: {
+      allowed: false,
+      reason: 'No governance entitlement is connected to verified membership yet.',
+    },
+    second: {
+      allowed: hasSchoolContext,
+      reason: 'A verified school membership is required.',
+    },
+  };
+}
 
 const FRICTION_POINTS: FrictionPoint[] = [
   {
@@ -274,9 +291,12 @@ export function WorkspaceShell({
   profileData = null,
   localMode = false,
   contexts = [],
+  defaultWorkspace = 'apt',
+  defaultContextKey = 'network',
+  canPersistPreference = true,
 }: WorkspaceShellProps) {
   const [view, setView] = useState<WorkspaceView>('topology');
-  const [floor, setFloor] = useState<Floor>('basement');
+  const [floor, setFloor] = useState<WorkspaceFloor>('basement');
   const [ledgerSection, setLedgerSection] = useState<LedgerSection>('roll');
   const [selectedFrictionId, setSelectedFrictionId] = useState(FRICTION_POINTS[0].id);
   const [radarRoom, setRadarRoom] = useState<RadarRoom>('all');
@@ -288,7 +308,7 @@ export function WorkspaceShell({
   const [profileOpen, setProfileOpen] = useState(false);
   const [profileSection, setProfileSection] = useState<ProfileSection>('overview');
   const [profileAssetContext, setProfileAssetContext] = useState<string | null>(null);
-  const [liftTrip, setLiftTrip] = useState<{ floor: Floor; direction: 'up' | 'down' } | null>(null);
+  const [liftTrip, setLiftTrip] = useState<{ floor: WorkspaceFloor; direction: 'up' | 'down' } | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [minimal, setMinimal] = useState(false);
   const [composerMode, setComposerMode] = useState<'problem' | 'friction'>('problem');
@@ -302,6 +322,8 @@ export function WorkspaceShell({
   const selectedDraft = selectedDraftId
     ? drafts.find(draft => draft.id === selectedDraftId)
     : undefined;
+  const floorAccess = getFloorAccess(contexts);
+  const canAccessCurrentFloor = floorAccess[floor].allowed;
   const notify = useCallback((message: string) => toast(message), []);
   useEffect(() => {
     if (!liftTrip) return;
@@ -309,14 +331,15 @@ export function WorkspaceShell({
     return () => window.clearTimeout(timeout);
   }, [liftTrip]);
 
-  function changeFloor(nextFloor: Floor) {
+  function changeFloor(nextFloor: WorkspaceFloor) {
     if (nextFloor === floor) return;
+    if (!floorAccess[nextFloor].allowed) return;
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
       setFloor(nextFloor);
       setLiftTrip(null);
       return;
     }
-    const direction = FLOORS.findIndex(item => item.key === nextFloor) > FLOORS.findIndex(item => item.key === floor)
+    const direction = FLOOR_ORDER.indexOf(nextFloor) > FLOOR_ORDER.indexOf(floor)
       ? 'up'
       : 'down';
     setFloor(nextFloor);
@@ -453,7 +476,6 @@ What is different in your place?` : '',
   const inspectorActions: [string, string][] = selectedDraft
     ? [['Open work sequence', 'sequence'], ['Export JSON', 'export']]
     : selectedRecord.actions;
-  const currentFloor = FLOORS.find(item => item.key === floor) ?? FLOORS[0];
   const visibleFriction = radarRoom === 'all'
     ? FRICTION_POINTS
     : FRICTION_POINTS.filter(point => point.room === radarRoom);
@@ -473,113 +495,47 @@ What is different in your place?` : '',
             <span className="atlas-brand-mark"><Boxes aria-hidden="true" size={17} strokeWidth={1.5} /></span>
             <span>APT<span>—</span>LABS</span>
           </a>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="atlas-floor-trigger" type="button" aria-label={`Current floor: ${currentFloor.label}`}>
-                <span className="atlas-floor-short">{currentFloor.short}</span>
-                <span>{currentFloor.label}</span>
-                <ChevronDown aria-hidden="true" size={13} />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="atlas-floor-menu">
-              <DropdownMenuLabel className="atlas-floor-menu-label">FLOORS</DropdownMenuLabel>
-              {FLOORS.map(item => (
-                <DropdownMenuItem
-                  key={item.key}
-                  className={`atlas-floor-menu-item${floor === item.key ? ' is-active' : ''}`}
-                  onSelect={() => changeFloor(item.key)}
-                >
-                  <span className="atlas-floor-short">{item.short}</span>
-                  <span className="atlas-floor-option-copy">
-                    <span>{item.key === 'first' ? 'First · Governance' : item.label}</span>
-                  </span>
-                  {floor === item.key && <span className="atlas-floor-current">CURRENT</span>}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <WorkspaceFloorSwitcher access={floorAccess} currentFloor={floor} onSelect={changeFloor} />
         </div>
-        <UserProfileMenu
-          userEmail={userEmail}
-          localMode={localMode}
-          profileData={profileData}
-          open={profileOpen}
-          onOpenChange={nextOpen => {
-            setProfileOpen(nextOpen);
-            if (!nextOpen) {
-              setProfileSection('overview');
-              setProfileAssetContext(null);
-            }
-          }}
-          initialSection={profileSection}
-          assetContext={profileAssetContext}
-        />
-        <button
-          className="atlas-icon-button"
-          type="button"
-          aria-label={minimal ? "Expand workspace" : "Minimal mode"}
-          aria-pressed={minimal}
-          onClick={() => setMinimal(m => !m)}
-        >
-          <Minimize2 size={16} />
-        </button>
-        <button
-          className="atlas-icon-button"
-          type="button"
-          aria-label={minimal ? "Expand workspace" : "Minimal mode"}
-          aria-pressed={minimal}
-          onClick={() => setMinimal(m => !m)}
-        >
-          <Minimize2 size={16} />
-        </button>
-        <button
-          className="atlas-icon-button"
-          type="button"
-          aria-label={minimal ? "Expand workspace" : "Minimal mode"}
-          aria-pressed={minimal}
-          onClick={() => setMinimal(m => !m)}
-        >
-          <Minimize2 size={16} />
-        </button>
-        <button
-          className="atlas-icon-button"
-          type="button"
-          aria-label={minimal ? "Expand workspace" : "Minimal mode"}
-          aria-pressed={minimal}
-          onClick={() => setMinimal(m => !m)}
-        >
-          <Minimize2 size={16} />
-        </button>
-        <button
-          className="atlas-icon-button"
-          type="button"
-          aria-label={minimal ? "Expand workspace" : "Minimal mode"}
-          aria-pressed={minimal}
-          onClick={() => setMinimal(m => !m)}
-        >
-          <Minimize2 size={16} />
-        </button>
-        <button
-          className="atlas-icon-button"
-          type="button"
-          aria-label={minimal ? "Expand workspace" : "Minimal mode"}
-          aria-pressed={minimal}
-          onClick={() => setMinimal(m => !m)}
-        >
-          <Minimize2 size={16} />
-        </button>
-        <button
-          className="atlas-icon-button"
-          type="button"
-          aria-label={minimal ? "Expand workspace" : "Minimal mode"}
-          aria-pressed={minimal}
-          onClick={() => setMinimal(m => !m)}
-        >
-          <Minimize2 size={16} />
-        </button></header>
+        <div className="atlas-header-actions">
+          <Suspense fallback={<span className="workspace-switcher workspace-switcher-loading">Loading context…</span>}>
+            <WorkspaceSwitcher
+              canPersistPreference={canPersistPreference}
+              contexts={contexts}
+              defaultContextKey={defaultContextKey}
+              defaultWorkspace={defaultWorkspace}
+            />
+          </Suspense>
+          <UserProfileMenu
+            userEmail={userEmail}
+            localMode={localMode}
+            profileData={profileData}
+            open={profileOpen}
+            onOpenChange={nextOpen => {
+              setProfileOpen(nextOpen);
+              if (!nextOpen) {
+                setProfileSection('overview');
+                setProfileAssetContext(null);
+              }
+            }}
+            initialSection={profileSection}
+            assetContext={profileAssetContext}
+          />
+          <button
+            className="atlas-icon-button"
+            type="button"
+            aria-label={minimal ? 'Exit focus mode' : 'Focus workspace'}
+            aria-pressed={minimal}
+            title={minimal ? 'Restore workspace panels' : 'Focus on the current floor'}
+            onClick={() => setMinimal(value => !value)}
+          >
+            <Minimize2 aria-hidden="true" size={16} />
+          </button>
+        </div>
+      </header>
 
       <div className={`atlas-layout${floor === 'first' ? ' atlas-layout-unconfigured atlas-layout-first' : ''}${floor === 'second' ? ' atlas-layout-school' : ''}${floor === 'basement' ? ' atlas-layout-basement atlas-layout-radar' : ''}${view === 'commons' ? ' atlas-layout-wide' : ''}${floor === 'ground' && view === 'engines' ? ' atlas-layout-engines' : ''}`}>
-        {floor === 'basement' && (
+        {floor === 'basement' && canAccessCurrentFloor && (
           <aside className="atlas-radar-nav">
             <div className="atlas-radar-module">
               <span className="atlas-radar-live-mark"><Radio aria-hidden="true" size={14} /></span>
@@ -632,11 +588,11 @@ What is different in your place?` : '',
             </button>
             </nav>
             <div className="atlas-radar-nav-foot">
-              Rooms hold discussion around friction. They are not work engines or proof that work is underway.
+              Illustrative signals · verify before acting.
             </div>
           </aside>
         )}
-        {floor === 'ground' && <aside className="atlas-rail">
+        {floor === 'ground' && canAccessCurrentFloor && <aside className="atlas-rail">
           <div className="atlas-rail-label">Ground floor</div>
           <nav className="atlas-nav" aria-label="Ground floor modules">
             {GROUND_MODULES.map((item, index) => {
@@ -663,15 +619,46 @@ What is different in your place?` : '',
             <p>Observe before designing.</p>
           </div>
         </aside>}
+        {(floor === 'first' || floor === 'second') && (
+          <aside aria-label={`${floor === 'first' ? 'Governance' : 'School'} floor information`} className="atlas-rail atlas-floor-rail">
+            <span className="atlas-rail-label">{floor === 'first' ? 'First · Governance' : 'Second · School'}</span>
+            <div className="atlas-floor-rail-card">
+              <span className="atlas-floor-rail-icon">
+                {canAccessCurrentFloor
+                  ? <Building2 aria-hidden="true" size={16} />
+                  : <LockKeyhole aria-hidden="true" size={16} />}
+              </span>
+              <strong>{floor === 'first' ? 'Decision rights' : 'School Console'}</strong>
+              <span>{canAccessCurrentFloor ? 'Verified membership' : floorAccess[floor].reason}</span>
+            </div>
+            {floor === 'second' && canAccessCurrentFloor && (
+              <p className="atlas-floor-rail-note">Student and lesson records stay on this device.</p>
+            )}
+          </aside>
+        )}
 
         <main className={`atlas-main${floor !== 'ground' && floor !== 'second' ? ' atlas-main-unconfigured' : ''}${floor === 'second' ? ' atlas-main-school' : ''}${floor === 'basement' ? ' atlas-main-radar' : ''}${view === 'commons' ? ' atlas-main-wide' : ''}`}>
-          {floor === 'basement' ? (
+          {!canAccessCurrentFloor ? (
+            <section aria-labelledby="atlas-floor-gate-title" className="atlas-floor-gate">
+              <span className="atlas-floor-gate-icon"><LockKeyhole aria-hidden="true" size={20} /></span>
+              <span className="atlas-kicker">ACCESS NOT VERIFIED</span>
+              <h1 id="atlas-floor-gate-title">
+                {floor === 'first'
+                  ? 'Governance access is not configured.'
+                  : floor === 'second'
+                    ? 'This floor needs a verified school context.'
+                    : 'This floor needs a verified network context.'}
+              </h1>
+              <p>{floorAccess[floor].reason}</p>
+              <span>Changing the floor never grants membership or permission.</span>
+            </section>
+          ) : floor === 'basement' ? (
             <div className="atlas-radar-feed">
               <div className="atlas-radar-feed-head">
                 <div>
                   <span className="atlas-kicker">BASEMENT / RADAR FIELDNOTE</span>
-                  <h1>{radarRoom === 'all' ? 'Look closer at the friction.' : radarRoomTitle[radarRoom]}</h1>
-                  <p>Start with lived experience. Separate the constraint from the solution people hope will fix it.</p>
+                  <h1>{radarRoom === 'all' ? 'Field signals' : radarRoomTitle[radarRoom]}</h1>
+                  <p>Observe the condition before choosing a response.</p>
                 </div>
                 <button className="atlas-button atlas-button-primary" type="button" onClick={() => openFrictionComposer()}>
                   <Plus aria-hidden="true" size={14} /> Surface friction
@@ -701,23 +688,17 @@ What is different in your place?` : '',
                   <span><MessageCircle aria-hidden="true" size={13} /> Discussion not connected</span>
                 </div>
                 <div className="atlas-radar-dossier-body">
-                  <section className="atlas-radar-section">
-                    <span className="atlas-radar-section-index">01 / THE FRICTION</span>
-                    <p>{selectedFriction.detail}</p>
-                  </section>
                   <section className="atlas-radar-inquiry">
-                    <span className="atlas-radar-section-index">02 / START WITH A QUESTION</span>
+                    <span className="atlas-radar-section-index">START HERE</span>
                     <h3>{selectedFriction.firstQuestion}</h3>
-                    <p>Hold the proposed answer lightly. First establish whose experience is missing, what is known, and where perspectives differ.</p>
                   </section>
-                  <section className="atlas-radar-section atlas-radar-collective">
-                    <span className="atlas-radar-section-index">03 / A PATH TO UNDERSTANDING</span>
+                  <details className="atlas-radar-context">
+                    <summary>Context &amp; suggested next steps</summary>
+                    <p>{selectedFriction.detail}</p>
                     <ol>
-                      {selectedFriction.collectiveResponse.map((step, index) => (
-                        <li key={step}><span>{String(index + 1).padStart(2, '0')}</span><p>{step}</p></li>
-                      ))}
+                      {selectedFriction.collectiveResponse.map(step => <li key={step}>{step}</li>)}
                     </ol>
-                  </section>
+                  </details>
                 </div>
                 <div className="atlas-radar-dossier-boundary">
                   <span>UNVERIFIED SIGNAL</span>
@@ -1109,7 +1090,7 @@ What is different in your place?` : '',
         </div>
       )}
       {liftTrip && (
-        <div className="atlas-lift-overlay" role="status" aria-live="polite" aria-label={`Traveling to ${FLOORS.find(item => item.key === liftTrip.floor)?.label ?? 'another floor'}`}>
+        <div className="atlas-lift-overlay" role="status" aria-live="polite" aria-label={`Traveling to ${FLOOR_NAMES[liftTrip.floor]}`}>
           <div className="atlas-lift-scene" data-direction={liftTrip.direction} aria-hidden="true">
             <div className="atlas-lift-shaft">
               <span className="atlas-lift-floor atlas-lift-floor-top" />
@@ -1119,22 +1100,12 @@ What is different in your place?` : '',
             </div>
           </div>
           <span className="atlas-lift-caption">APT—LABS · LIFT</span>
-          <strong>{FLOORS.find(item => item.key === liftTrip.floor)?.label}</strong>
+          <strong>{FLOOR_NAMES[liftTrip.floor]}</strong>
         </div>
       )}
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
