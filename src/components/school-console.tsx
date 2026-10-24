@@ -518,7 +518,7 @@ export function SchoolConsole({ header, embedded = false }: { header?: ReactNode
                 }} type="button">{publishing ? 'Publishing…' : 'Publish reviewed Tender'} <ArrowRight size={15} /></Button>
               </div>}
             </div>}
-            <div className="publish-boundary"><p className="eyebrow">SCHOOL-ISSUED TENDERS</p><p>A local draft is private to this browser. Publishing requires a configured Supabase deployment, a Principal or issuer membership, three named school members assigned to the crew, and an active matching Blueprint. No student information is sent.</p><Link className="text-link" href="/sign-in?next=%2Fconsole%3Frole%3Dprincipal%23issue-tender">School account access <ArrowUpRight size={14} /></Link></div>
+            {<div className="publish-boundary"><p className="eyebrow">SCHOOL-ISSUED TENDERS</p><p>A local draft is private to this browser. Publishing requires a configured Supabase deployment, a Principal or issuer membership, three named school members assigned to the crew, and an active matching Blueprint. No student information is sent.</p><Link className="text-link" href="/sign-in?next=%2Fconsole%3Frole%3Dprincipal%23issue-tender">School account access <ArrowUpRight size={14} /></Link></div>}
           </div>}
         </section>
       </div>
