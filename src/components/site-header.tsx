@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { ArrowUpRight } from 'lucide-react';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { WorkspaceSwitcher } from '@/components/workspace-switcher';
 import { UserProfileMenu } from '@/components/user-profile-menu';
 import { getAuthenticatedUserProfileData } from '@/lib/user-profile';
@@ -47,6 +48,7 @@ export async function SiteHeader({ frontDoor = false, hideNav = false }: { front
                     <span className="header-account">{context.email ?? 'Signed in'}</span>
                     {context.localMode && <span className="local-badge">LOCAL</span>}
                     <Link className="header-issue" href="/workspace">User dashboard <ArrowUpRight aria-hidden="true" size={14} /></Link>
+                    <ThemeToggle />
                     <form action={signOut}>
                       <button className="header-sign-in" type="submit">Sign out</button>
                     </form>
@@ -54,6 +56,7 @@ export async function SiteHeader({ frontDoor = false, hideNav = false }: { front
                 : <>
                     <Link className="header-issue" href="/workspace">User dashboard <ArrowUpRight aria-hidden="true" size={14} /></Link>
                     {context.localMode && <span className="local-badge">LOCAL</span>}
+                    <ThemeToggle />
                     <UserProfileMenu
                       userEmail={context.email ?? ''}
                       localMode={context.localMode}
@@ -61,12 +64,12 @@ export async function SiteHeader({ frontDoor = false, hideNav = false }: { front
                     />
                   </>}
             </>
-          : <Link
-              className="header-issue"
-              href={frontDoor ? '/sign-in?next=%2Fworkspace' : '/sign-in'}
-            >
-              User dashboard <ArrowUpRight aria-hidden="true" size={14} />
-            </Link>}
+          : <>
+              <Link className="header-issue" href={frontDoor ? '/sign-in?next=%2Fworkspace' : '/sign-in'}>
+                User dashboard <ArrowUpRight aria-hidden="true" size={14} />
+              </Link>
+              <ThemeToggle />
+            </>}
       </div>
     </header>
   );

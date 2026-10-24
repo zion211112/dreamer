@@ -37,9 +37,11 @@ interface WorkspaceShellProps {
   localMode?: boolean;
 }
 
-type WorkspaceView = 'topology' | 'engines' | 'problems' | 'ledger' | 'commons';
-type LedgerSection = 'sequence' | 'capability' | 'roll';
-type RadarRoom = 'all' | 'culture' | 'education' | 'work';
+type Mode = 'field' | 'proof' | 'local';
+
+type StudioView = 'local' | 'shared';
+
+type WorkspaceView = 'field' | 'proof' | 'local';
 
 interface ProblemDraft {
   id: string;
@@ -83,39 +85,26 @@ const GROUND_MODULES: { key: 'topology' | 'engines'; label: string; icon: typeof
 ];
 
 const VIEW_COPY: Record<WorkspaceView, { kicker: string; title: string; subtitle: string }> = {
-  topology: {
+  field: {
     kicker: '01 / ASSET FIELD',
-    title: 'Asset Topology',
+    title: 'Asset Field',
     subtitle: 'Hosts · assets · work · evidence',
   },
-  engines: {
-    kicker: '02 / ASSET RECRUITMENT',
-    title: 'Work Engines',
-    subtitle: 'Find an asset. Offer your capability. Start with the work.',
+  proof: {
+    kicker: '02 / PROOF & DELIVERY',
+    title: 'Delivery & proof',
+    subtitle: 'Work sequence · capability evidence · provenance',
   },
-  problems: {
+  local: {
     kicker: 'WORK ENGINES / INTAKE',
     title: 'Local briefs',
     subtitle: 'Observed friction, before prescribed solutions.',
   },
-  ledger: {
-    kicker: 'WORK ENGINES / PROOF & DELIVERY',
-    title: 'Delivery & proof',
-    subtitle: 'Work sequence · capability evidence · provenance.',
-  },
-  commons: {
-    kicker: 'WORK ENGINES / SHARED RECORDS',
-    title: 'Tenders & Commons',
+};
     subtitle: 'Published Tender records and illustrative scenarios, clearly distinguished.',
   },
 };
 
-const FLOOR_ORDER: WorkspaceFloor[] = ['basement', 'ground', 'first', 'second'];
-const FLOOR_NAMES: Record<WorkspaceFloor, string> = {
-  basement: 'Basement',
-  ground: 'Ground',
-  first: 'First',
-  second: 'Second · School',
 };
 
 const FRICTION_POINTS: FrictionPoint[] = [
@@ -261,12 +250,11 @@ export function WorkspaceShell({
   profileData = null,
   localMode = false,
 }: WorkspaceShellProps) {
-  const [view, setView] = useState<WorkspaceView>('topology');
-  const [floor, setFloor] = useState<WorkspaceFloor>('basement');
-  const [ledgerSection, setLedgerSection] = useState<LedgerSection>('roll');
+  const [view, setView] = useState<WorkspaceView>('field');
+  const [mode, setMode] = useState<Mode>('field');
+  const [studioView, setStudioView] = useState<StudioView>('local');
+  const [ledgerSection, setLedgerSection] = useState<StudioView>('local');
   const [selectedFrictionId, setSelectedFrictionId] = useState(FRICTION_POINTS[0].id);
-  const [radarRoom, setRadarRoom] = useState<RadarRoom>('all');
-  const [localVotes, setLocalVotes] = useState<string[]>([]);
   const [selectedRecruitingAssetId, setSelectedRecruitingAssetId] = useState<RecruitingAssetId>(RECRUITING_ASSET_IDS[0]);
   const [selectedRecordId, setSelectedRecordId] = useState('school-console');
   const [selectedDraftId, setSelectedDraftId] = useState<string | null>(null);
@@ -274,7 +262,6 @@ export function WorkspaceShell({
   const [profileOpen, setProfileOpen] = useState(false);
   const [profileSection, setProfileSection] = useState<ProfileSection>('overview');
   const [profileAssetContext, setProfileAssetContext] = useState<string | null>(null);
-  const [liftTrip, setLiftTrip] = useState<{ floor: WorkspaceFloor; direction: 'up' | 'down' } | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [minimal, setMinimal] = useState(false);
   const [composerMode, setComposerMode] = useState<'problem' | 'friction'>('problem');
@@ -290,10 +277,6 @@ export function WorkspaceShell({
     : undefined;
   const notify = useCallback((message: string) => toast(message), []);
   useEffect(() => {
-    if (!liftTrip) return;
-    const timeout = window.setTimeout(() => setLiftTrip(null), 950);
-    return () => window.clearTimeout(timeout);
-  }, [liftTrip]);
 
   function changeFloor(nextFloor: WorkspaceFloor) {
     if (nextFloor === floor) return;
@@ -1024,20 +1007,6 @@ What is different in your place?` : '',
               <div className="atlas-form-foot"><span>{composerMode === 'friction' ? 'Session-only draft · not submitted to Commons.' : 'Stored in this page session only.'}</span><div><button className="atlas-button atlas-button-quiet" type="button" onClick={closeModal}>Cancel</button><button className="atlas-button atlas-button-primary" type="submit">Save local draft</button></div></div>
             </form>
           </section>
-        </div>
-      )}
-      {liftTrip && (
-        <div className="atlas-lift-overlay" role="status" aria-live="polite" aria-label={`Traveling to ${FLOOR_NAMES[liftTrip.floor]}`}>
-          <div className="atlas-lift-scene" data-direction={liftTrip.direction} aria-hidden="true">
-            <div className="atlas-lift-shaft">
-              <span className="atlas-lift-floor atlas-lift-floor-top" />
-              <span className="atlas-lift-floor atlas-lift-floor-middle" />
-              <span className="atlas-lift-floor atlas-lift-floor-bottom" />
-              <div className="atlas-lift-car"><Bot size={19} strokeWidth={1.6} /></div>
-            </div>
-          </div>
-          <span className="atlas-lift-caption">APT—LABS · LIFT</span>
-          <strong>{FLOOR_NAMES[liftTrip.floor]}</strong>
         </div>
       )}
     </div>
