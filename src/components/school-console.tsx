@@ -344,8 +344,37 @@ export function SchoolConsole({ header, embedded = false }: { header?: ReactNode
           })}
           <div className="console-sidebar-foot"><span className="local-dot" /> SAVED ON THIS DEVICE WHEN AVAILABLE</div>
         </nav>
+        <nav aria-label={`${role} Console tools`} className="console-sidebar">
+          <span className="eyebrow">{principalView ? 'SCHOOL LEAD' : 'TEACHER DESK'}</span>
+          {visibleModules.map(module => {
+            const Icon = module.icon;
+            return <button aria-current={selected === module.id ? 'page' : undefined} className={`console-nav-item ${selected === module.id ? 'active' : ''}`} key={module.id} onClick={() => setActiveModule(module.id)} type="button">
+              <Icon aria-hidden="true" size={16} /><span>{module.id}</span><ArrowRight aria-hidden="true" className="nav-arrow" size={13} />
+            </button>;
+          })}
+          <div className="console-sidebar-foot"><span className="local-dot" /> SAVED ON THIS DEVICE WHEN AVAILABLE</div>
+        </nav>
+        <nav aria-label={`${role} Console tools`} className="console-sidebar">
+          <span className="eyebrow">{principalView ? 'SCHOOL LEAD' : 'TEACHER DESK'}</span>
+          {visibleModules.map(module => {
+            const Icon = module.icon;
+            return <button aria-current={selected === module.id ? 'page' : undefined} className={`console-nav-item ${selected === module.id ? 'active' : ''}`} key={module.id} onClick={() => setActiveModule(module.id)} type="button">
+              <Icon aria-hidden="true" size={16} /><span>{module.id}</span><ArrowRight aria-hidden="true" className="nav-arrow" size={13} />
+            </button>;
+          })}
+          <div className="console-sidebar-foot"><span className="local-dot" /> SAVED ON THIS DEVICE WHEN AVAILABLE</div>
+        </nav>
 
-        <section aria-label={`${selected} workspace`} className="console-panel">
+          <div className="console-panel">
+            <div className="console-panel-head">
+              <div><p className="eyebrow">{principalView ? 'PRINCIPAL VIEW' : 'TEACHER VIEW'} / LOCAL TOOL</p><h2>{selected}</h2></div>
+              <span className="local-badge">LOCAL ONLY</span>
+            </div>
+            {message && <p className="console-message" role="status"><span>{message}{publishedSlug && <> <Link href={`/tenders/${publishedSlug}`}>View Tender ↗</Link></>}</span><button aria-label="Dismiss message" onClick={() => { setMessage(''); setPublishedSlug(''); }} type="button"><X size={14} /></button></p>}
+            {storageError && <p className="storage-warning" role="alert"><ShieldAlert aria-hidden="true" size={15} />{storageError}</p>}
+            {!loaded && <p className="console-loading">Opening this device’s local school workspace…</p>}
+
+            {selected === 'Auto-Marking' && <div className="tool-content">
           <div className="console-panel-head">
             <div><p className="eyebrow">{principalView ? 'PRINCIPAL VIEW' : 'TEACHER VIEW'} / LOCAL TOOL</p><h2>{selected}</h2></div>
             <span className="local-badge">LOCAL ONLY</span>
