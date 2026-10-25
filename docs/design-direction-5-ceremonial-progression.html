@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APT-LABS — Ceremonial Progression Direction</title>
+<style>
+:root {
+  --parchment: #fdfbf5;
+  --parchment-2: #f3efe6;
+  --ink: #1a1815;
+  --muted: #6d6860;
+  --faint: #9d988f;
+  --line: rgba(40,35,30,.08);
+  --line-strong: rgba(40,35,30,.15);
+  --ochre: #b8860b;
+  --ochre-pale: #faf3dc;
+  --sage: #6b8e6b;
+  --sage-pale: #e8f0e8;
+  --crimson: #8b3a3a;
+  --crimson-pale: #f5e0e0;
+  --indigo: #3a4b8b;
+  --indigo-pale: #e0e4f5;
+  --gold: #c8a030;
+  --serif: "Literata", Georgia, "Times New Roman", serif;
+  --sans: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  --gutter: clamp(24px, 4vw, 72px);
+  --measure: 72ch;
+  --rhythm: 1.8rem;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background: var(--parchment);
+  font: 15px/1.8 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.ceremony {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: calc(var(--gutter) * 2) var(--gutter);
+  position: relative;
+}
+.ceremony::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .02;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
+  z-index: -1;
+}
+.ceremony::after {
+  content: "";
+  position: fixed;
+  top: 0; bottom: 0; left: 50%;
+  width: 1px;
+  background: repeating-linear-gradient(var(--line) 0, var(--line) 1px, transparent 1px, transparent calc(var(--rhythm) - 1px));
+  z-index: -1;
+}
+header.ceremony-head {
+  text-align: center;
+  padding: 48px 0 32px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 48px;
+  position: relative;
+}
+.ceremony-head::before {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--ochre), transparent);
+}
+.ceremony-brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 16px;
+  font-family: var(--serif);
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 200;
+  letter-spacing: -.01em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.ceremony-brand mark {
+  background: transparent;
+  color: var(--ochre);
+  font-weight: 300;
+  font-style: italic;
+}
+.ceremony-kicker {
+  display: block;
+  margin-top: 16px;
+  font: 500 12px/1 var(--mono);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.rite {
+  margin-bottom: 64px;
+  padding-bottom: 48px;
+  border-bottom: 1px dashed var(--line);
+  position: relative;
+}
+.rite:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.rite::before {
+  content: counter(rite);
+  counter-increment: rite;
+  position: absolute;
+  left: calc(var(--gutter) * -1.5);
+  top: 0;
+  font: 500 11px/1 var(--mono);
+  color: var(--faint);
+  text-align: right;
+  width: calc(var(--gutter) * 1.2);
+}
+.rite-title {
+  font: 300 clamp(28px, 4vw, 40px)/1.2 var(--serif);
+  letter-spacing: -.02em;
+  margin: 0 0 16px;
+  color: var(--ink);
+}
+.rite-subtitle {
+  font: 400 16px/1.7 var(--serif);
+  font-style: italic;
+  color: var(--muted);
+  margin: 0 0 24px;
+  max-width: var(--measure);
+}
+.rite-body { max-width: var(--measure); }
+.rite-body p { margin: 0 0 16px; }
+.oath { 
+  margin: 24px 0; 
+  padding: 24px 32px; 
+  border-left: 3px solid var(--ochre); 
+  background: var(--ochre-pale); 
+  font: 400 1.1em/1.8 var(--serif); 
+  color: var(--ink); 
+  font-style: italic;
+  border-radius: 0 8px 8px 0;
+}
+.oath strong { font-style: normal; font-weight: 500; }
+.glyph-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin: 32px 0;
+  flex-wrap: wrap;
+}
+.glyph {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  min-width: 120px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--parchment-2);
+  transition: all .2s;
+}
+.glyph:hover { border-color: var(--ochre); transform: translateY(-2px); }
+.glyph-mark {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: linear-gradient(145deg, #fff, var(--parchment-2));
+  font-size: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+.glyph-label {
+  font: 500 11px/1 var(--mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+}
+.glyph-desc {
+  font: 12px/1.5 var(--sans);
+  color: var(--faint);
+  text-align: center;
+  max-width: 140px;
+}
+.progression-bar {
+  position: relative;
+  height: 60px;
+  margin: 32px 0;
+}
+.progression-track {
+  position: absolute;
+  top: 50%;
+  left: 0; right: 0;
+  transform: translateY(-50%);
+  height: 2px;
+  background: var(--line);
+}
+.progression-fill {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  height: 2px;
+  background: linear-gradient(90deg, var(--sage), var(--ochre), var(--crimson), var(--indigo));
+  width: var(--progress, 0%);
+  transition: width .6s ease-out;
+}
+.progression-steps {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  justify-content: space-between;
+}
+.progression-step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.progression-step::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  background: var(--parchment);
+  z-index: 2;
+  transition: all .3s;
+}
+.progression-step.complete::before { border-color: var(--sage); background: var(--sage); }
+.progression-step.active::before { border-color: var(--ochre); background: var(--parchment); box-shadow: 0 0 0 4px var(--ochre-pale); }
+.progression-step.future::before { opacity: .4; }
+.progression-step-label {
+  margin-top: 32px;
+  font: 500 10px/1 var(--mono);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--faint);
+  text-align: center;
+  white-space: nowrap;
+}
+.progression-step.complete .progression-step-label { color: var(--sage); }
+.progression-step.active .progression-step-label { color: var(--ochre); font-weight: 600; }
+.ledger-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 13px;
+}
+.ledger-table th,
+.ledger-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+.ledger-table th {
+  font: 500 11px/1 var(--mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--faint);
+  background: var(--parchment-2);
+}
+.ledger-table tbody tr:hover td { background: var(--ochre-pale); }
+.ledger-table .seal {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid;
+  border-radius: 99px;
+  font: 500 10px/1 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.ledger-table .seal.verified { border-color: var(--sage); color: var(--sage); background: var(--sage-pale); }
+.ledger-table .seal.pending { border-color: var(--ochre); color: var(--ochre); background: var(--ochre-pale); }
+.ledger-table .seal.void { border-color: var(--crimson); color: var(--crimson); background: var(--crimson-pale); }
+.floor-indicator {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  background: rgba(253,251,245,.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  font: 500 11px/1 var(--mono);
+  color: var(--muted);
+  z-index: 100;
+}
+.floor-indicator mark { background: var(--ochre-pale); color: var(--ochre); padding: 2px 10px; border-radius: 99px; font-style: normal; }
+.floor-station {
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font: inherit;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  transition: all .15s;
+}
+.floor-station.active { background: var(--ink); border-color: var(--ink); color: var(--parchment); }
+.floor-station:hover:not(.active) { border-color: var(--ochre); color: var(--ochre); }
+footer.ceremony-foot {
+  margin-top: 64px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+  font: 12px/1.6 var(--sans);
+  color: var(--faint);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  text-align: center;
+}
+@media (max-width: 760px) {
+  .ceremony { padding: var(--gutter); }
+  .rite::before { display: none; }
+  .glyph-row { gap: 16px; }
+  .glyph { min-width: 100px; padding: 16px; }
+  .glyph-mark { width: 48px; height: 48px; font-size: 20px; }
+  .floor-indicator { left: var(--gutter); right: var(--gutter); transform: none; bottom: 16px; }
+}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Literata:ital,wght@0,200;0,300;0,400;1,300&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="ceremony" style="counter-reset: rite;">
+<header class="ceremony-head">
+<a href="#" class="ceremony-brand">APT\u2014LABS<mark>Ceremony</mark></a>
+<span class="ceremony-kicker">Design Direction 5 of 5 \u2014 Ceremonial Progression</span>
+</header>
+<main>
+<article class="rite" id="rite-call">
+<h2 class="rite-title">The Call</h2>
+<p class="rite-subtitle">Every Tender begins with a summons \u2014 a Principal names the work, the place, and the need.</p>
+<div class="rite-body">
+<p>The <strong>Call</strong> is not a form submission. It is a deliberate act: a Principal or Tender Issuer from a school or community organization declares an asset that must be built. The Call carries weight \u2014 it commits the issuer to scoping a Blueprint, assembling a three-person Crew, and standing for the result.</p>
+<div class="oath">
+<strong>I name this work.</strong> I define the asset, the place, and the measure of its completion. I accept responsibility for the Blueprint\u2019s truth.
+</div>
+<p>No Tender exists without a Call. No Call proceeds without an organization, a category, and a location. The ontology enforces this at the database level \u2014 <code>organizations</code>, <code>tender_category</code>, and <code>location</code> are all required, non-nullable fields.</p>
+</div>
+</article>
+<article class="rite" id="rite-assembly">
+<h2 class="rite-title">The Assembly</h2>
+<p class="rite-subtitle">Three distinct persons. Three distinct roles. One shared Blueprint.</p>
+<div class="rite-body">
+<p>The <strong>Assembly</strong> is the moment the Crew is constituted. Exactly one Anchor, one Builder, one Apprentice \u2014 enforced by unique indexes on <code>crew_members</code>. Each role carries specific authority and no more:</p>
+<div class="glyph-row">
+<div class="glyph" data-role="anchor">
+<div class="glyph-mark">\u263E</div>
+<span class="glyph-label">Anchor</span>
+<p class="glyph-desc">Signs the Blueprint hash. Authorizes deployment to the Roll. Holds final accountability.</p>
+</div>
+<div class="glyph" data-role="builder">
+<div class="glyph-mark">\u2692</div>
+<span class="glyph-label">Builder</span>
+<p class="glyph-desc">Advances through Materials and Fabrication. Receives, logs, constructs. Reports evidence.</p>
+</div>
+<div class="glyph" data-role="apprentice">
+<div class="glyph-mark">\u270D</div>
+<span class="glyph-label">Apprentice</span>
+<p class="glyph-desc">Observes, documents, contributes capability evidence. Learns the craft of accountable building.</p>
+</div>
+</div>
+<p>The Assembly is recorded in <code>crew_members</code> with <code>show_publicly</code> defaulting to <code>false</code>. Names enter the public record only with explicit consent. The database enforces: one active Anchor per Tender, no duplicate user-role pairs.</p>
+</div>
+</article>
+<article class="rite" id="rite-capital">
+<h2 class="rite-title">The Capital Rite</h2>
+<p class="rite-subtitle">Settled capital must reach the target before materials release. No simulation. No optimism.</p>
+<div class="rite-body">
+<p>The transition <code>open \u2192 materials</code> is the only gate the system enforces automatically. <code>tenderLifecycle()</code> in <code>tender.ts</code> computes <code>settlementReached</code> as <code>currentSettledAmountMinor \u2265 fundingTargetMinor</code>. Until this is true, <code>permitted</code> is empty. The Builder cannot advance. The Anchor cannot sign. The work waits.</p>
+<div class="progression-bar" role="img" aria-label="Capital progression: 55% settled">
+<div class="progression-track"></div>
+<div class="progression-fill" style="--progress: 55%;"></div>
+<div class="progression-steps">
+<div class="progression-step complete"><span class="progression-step-label">Signaled</span></div>
+<div class="progression-step active"><span class="progression-step-label">Settling</span></div>
+<div class="progression-step future"><span class="progression-step-label">Target Met</span></div>
+<div class="progression-step future"><span class="progression-step-label">Materials Released</span></div>
+</div>
+</div>
+<p style="text-align:center; font:500 13px/1 var(--mono); color:var(--muted);">KES 8,250,000 / 15,000,000 settled (55%)</p>
+<div class="oath">
+<strong>Capital is not a number.</strong> It is a covenant between funders and the Crew. Each allocation carries <code>basis: 'illustrative' | 'verified'</code>. Illustrative scenarios cannot carry verified funding. The Roll records only verified settlements.
+</div>
+</div>
+</article>
+<article class="rite" id="rite-signoff">
+<h2 class="rite-title">The Sign-Off</h2>
+<p class="rite-subtitle">The Anchor signs the active Blueprint hash. The work becomes immutable.</p>
+<div class="rite-body">
+<p>The <strong>Sign-Off</strong> is a cryptographic ceremony. The Anchor signs:</p>
+<ul style="margin: 16px 0 0 24px; line-height: 2;">
+<li><code>crewMemberId</code> \u2014 their identity</li>
+<li><code>blueprintId</code> \u2014 the specific Blueprint version</li>
+<li><code>blueprintHash</code> \u2014 the content hash of that Blueprint</li>
+<li><code>signedAt</code> \u2014 the timestamp</li>
+</ul>
+<p>This record lives in <code>anchor_sign_offs</code> with a unique constraint on <code>(tender_id, blueprint_id)</code>. The <code>deploy_tender()</code> database function verifies the signature matches the active Blueprint before allowing deployment. No signature, no Roll entry. No hash match, no Roll entry.</p>
+<div class="oath">
+<strong>I have seen the work.</strong> The artifact matches the Blueprint. The evidence is sufficient. I affix my seal.
+</div>
+</div>
+</article>
+<article class="rite" id="rite-roll">
+<h2 class="rite-title">The Roll</h2>
+<p class="rite-subtitle">Immutable provenance. Six fields. No edits. No deletions.</p>
+<div class="rite-body">
+<p>When <code>deploy_tender()</code> succeeds, a <strong>RollRecord</strong> is created atomically. It captures:</p>
+<table class="ledger-table" role="table">
+<thead><tr><th>Field</th><th>Meaning</th><th>Source</th></tr></thead>
+<tbody>
+<tr><td>contribution</td><td>Who did what (role, hours, scope)</td><td>Crew attestation</td></tr>
+<tr><td>artifact</td><td>What was produced (source, version, hash)</td><td>Builder delivery</td></tr>
+<tr><td>test</td><td>Method, conditions, result, limitations</td><td>Builder evidence</td></tr>
+<tr><td>acceptance</td><td>Who accepted/rejected/deferred \u2014 and why</td><td>Anchor judgement</td></tr>
+<tr><td>maintenance</td><td>Failure, repair, operating state, next review</td><td>Ongoing stewardship</td></tr>
+<tr><td>integrity</td><td>Submitted evidence distinct from reviewed</td><td>System guarantee</td></tr>
+</tbody>
+</table>
+<p>Illustrative tenders <em>never</em> enter the Roll. The migration <code>20261019050000</code> enforces this via <code>is_illustrative</code> checks. The Roll is the only surface where <code>verified</code> funding appears without qualification.</p>
+<div class="glyph-row">
+<div class="glyph"><div class="glyph-mark" style="background:var(--sage-pale); border-color:var(--sage);">\u2713</div><span class="glyph-label">Verified</span><p class="glyph-desc">Roll entry confirmed</p></div>
+<div class="glyph"><div class="glyph-mark" style="background:var(--ochre-pale); border-color:var(--ochre);">\u23F3</div><span class="glyph-label">Pending</span><p class="glyph-desc">Awaiting sign-off</p></div>
+<div class="glyph"><div class="glyph-mark" style="background:var(--crimson-pale); border-color:var(--crimson);">\u2717</div><span class="glyph-label">Void</span><p class="glyph-desc">Illustrative / cancelled</p></div>
+</div>
+</div>
+</article>
+<article class="rite" id="rite-return">
+<h2 class="rite-title">The Return</h2>
+<p class="rite-subtitle">The cycle completes. The asset serves. The Crew disperses. The knowledge remains.</p>
+<div class="rite-body">
+<p>The <strong>Return</strong> is not an end \u2014 it is the moment the deployed asset enters service and the Crew\u2019s work becomes part of the collective record. The School Console on the Second Floor operates on the same principle: local records, local accountability, no external dependency.</p>
+<div class="oath">
+<strong>The work speaks.</strong> The Roll does not advocate. It testifies. Future builders read the evidence and decide what to trust.
+</div>
+<p style="margin-top: 24px; font-style: italic; color: var(--muted);">
+Four floors. One frame. The lift moves between them, but the ceremony is the same: Call \u2192 Assembly \u2192 Capital \u2192 Sign-Off \u2192 Roll \u2192 Return.
+</p>
+</div>
+</article>
+</main>
+<footer class="ceremony-foot">
+<span>APT-LABS \u00b7 Ceremonial Progression Direction \u00b7 v0.1</span>
+<span>Design tokens from <code>src/styles.css</code> \u00b7 Ontology from <code>src/lib/tender.ts</code></span>
+</footer>
+</div>
+<div class="floor-indicator" aria-live="polite">
+<span>Station:</span>
+<mark>GROUND</mark>
+<button class="floor-station" data-floor="basement">BASEMENT</button>
+<button class="floor-station active" data-floor="ground">GROUND</button>
+<button class="floor-station" data-floor="first">FIRST</button>
+<button class="floor-station" data-floor="second">SECOND</button>
+</div>
+<script>
+const stations = document.querySelectorAll('.floor-station');
+stations.forEach(s => {
+  s.addEventListener('click', () => {
+    stations.forEach(t => t.classList.remove('active'));
+    s.classList.add('active');
+    document.querySelector('.floor-indicator mark').textContent = s.dataset.floor.toUpperCase();
+  });
+});
+
+const progressionBar = document.querySelector('.progression-bar');
+if (progressionBar) {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelector('.progression-fill').style.width = '55%';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  observer.observe(progressionBar);
+}
+
+const glyphs = document.querySelectorAll('.glyph[data-role]');
+glyphs.forEach(g => {
+  g.addEventListener('click', () => {
+    glyphs.forEach(x => x.style.borderColor = '');
+    g.style.borderColor = 'var(--ochre)';
+  });
+});
+</script>
+</body>
+</html>

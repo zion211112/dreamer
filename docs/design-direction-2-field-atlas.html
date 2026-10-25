@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APT-LABS — Field Atlas Direction</title>
+<style>
+:root {
+  --paper: #f5f4ef;
+  --paper-dark: #e8e6df;
+  --ink: #1c1f1a;
+  --muted: #6a7065;
+  --faint: #969b90;
+  --line: rgba(38,46,36,.12);
+  --line-strong: rgba(38,46,36,.2);
+  --terrain: #5d7a5c;
+  --terrain-pale: #e4ebe3;
+  --water: #3a6b8c;
+  --water-pale: #dceef5;
+  --contour: #c8b89a;
+  --contour-pale: #f5f1e8;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  --gutter: clamp(16px, 3vw, 40px);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background: var(--paper);
+  font: 13px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+.atlas-shell {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+  background: 
+    radial-gradient(ellipse at 30% 20%, rgba(93,122,92,.08), transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(58,107,140,.06), transparent 50%),
+    var(--paper);
+}
+.atlas-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.1'/%3E%3C/svg%3E");
+  z-index: 0;
+}
+header.atlas-header {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px var(--gutter);
+  border-bottom: 1px solid var(--line);
+  background: rgba(245,244,239,.85);
+  backdrop-filter: blur(12px);
+}
+.atlas-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--serif);
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 300;
+  letter-spacing: -.01em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.atlas-brand mark { background: var(--terrain-pale); color: var(--terrain); font-style: italic; font-weight: 400; padding: 0 4px; }
+.atlas-nav { display: flex; gap: 4px; }
+.atlas-nav a {
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: 500 11px/1 var(--mono);
+  color: var(--muted);
+  text-decoration: none;
+  transition: all .15s;
+}
+.atlas-nav a:hover { border-color: var(--terrain); color: var(--terrain); }
+.atlas-nav a.active { background: var(--terrain-pale); border-color: var(--terrain); color: var(--terrain); }
+.atlas-main {
+  position: relative;
+  z-index: 5;
+  padding: 24px var(--gutter) 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+.map-canvas {
+  position: relative;
+  aspect-ratio: 16/9;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--paper-dark);
+  margin-bottom: 24px;
+}
+.map-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.map-grid {
+  background-image: 
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: .4;
+}
+.map-contours {
+  background-image: 
+    radial-gradient(ellipse at 25% 35%, rgba(200,184,154,.15) 0%, transparent 40%),
+    radial-gradient(ellipse at 75% 65%, rgba(200,184,154,.1) 0%, transparent 35%),
+    radial-gradient(ellipse at 50% 50%, rgba(93,122,92,.08) 0%, transparent 45%);
+}
+.asset-node {
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+  z-index: 10;
+}
+.asset-node:hover { transform: scale(1.05); z-index: 20; }
+.asset-node.selected .node-marker { border-color: var(--terrain); box-shadow: 0 0 0 3px var(--terrain-pale); }
+.node-marker {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--line-strong);
+  background: var(--paper);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  font-size: 20px;
+}
+.asset-node.illustrative .node-marker { border-style: dashed; }
+.node-label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 6px;
+  padding: 4px 10px;
+  background: var(--ink);
+  color: var(--paper);
+  font: 500 10px/1 var(--mono);
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s;
+}
+.asset-node:hover .node-label { opacity: 1; }
+.legend {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background: rgba(245,244,239,.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 11px;
+  z-index: 5;
+}
+.legend-item { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+.legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid;
+}
+.legend-swatch.published { background: var(--paper); border-color: var(--terrain); }
+.legend-swatch.illustrative { background: transparent; border-color: var(--contour); border-style: dashed; }
+.legend-swatch.friction { background: var(--water-pale); border-color: var(--water); }
+.scale-bar {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(245,244,239,.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font: 500 10px/1 var(--mono);
+  color: var(--muted);
+  z-index: 5;
+}
+.coordinates {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(245,244,239,.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font: 500 10px/1 var(--mono);
+  color: var(--muted);
+  z-index: 5;
+}
+.panel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+.panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  overflow: hidden;
+}
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-dark);
+}
+.panel-title { font: 400 14px/1 var(--serif); color: var(--ink); margin: 0; }
+.panel-badge {
+  font: 500 9px/1 var(--mono);
+  padding: 3px 8px;
+  border-radius: 99px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.panel-badge.published { background: var(--terrain-pale); color: var(--terrain); }
+.panel-badge.illustrative { background: var(--contour-pale); color: var(--contour); }
+.panel-badge.friction { background: var(--water-pale); color: var(--water); }
+.panel-body { padding: 16px; }
+.fact-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--line); font-size: 12px; }
+.fact-row:last-child { border-bottom: none; }
+.fact-label { color: var(--faint); }
+.fact-value { color: var(--ink); font-weight: 500; }
+.layer-toggle {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-dark);
+  flex-wrap: wrap;
+}
+.layer-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: 500 11px/1 var(--mono);
+  color: var(--muted);
+  background: var(--paper);
+  cursor: pointer;
+  transition: all .15s;
+}
+.layer-btn.active { background: var(--terrain-pale); border-color: var(--terrain); color: var(--terrain); }
+.layer-btn:hover:not(.active) { border-color: var(--terrain); color: var(--terrain); }
+.floor-indicator {
+  position: fixed;
+  bottom: 20px;
+  left: var(--gutter);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: rgba(245,244,239,.9);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  font: 500 11px/1 var(--mono);
+  color: var(--muted);
+  z-index: 100;
+}
+.floor-indicator mark { background: var(--terrain-pale); color: var(--terrain); padding: 2px 8px; border-radius: 99px; font-style: normal; }
+.floor-btn {
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font: 500 10px/1 var(--mono);
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  transition: all .15s;
+}
+.floor-btn.active { background: var(--terrain); border-color: var(--terrain); color: #fff; }
+.floor-btn:hover:not(.active) { border-color: var(--terrain); color: var(--terrain); }
+footer.atlas-footer {
+  position: relative;
+  z-index: 5;
+  border-top: 1px solid var(--line);
+  padding: 16px var(--gutter);
+  font: 11px/1.5 var(--sans);
+  color: var(--faint);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+@media (max-width: 760px) {
+  .atlas-main { padding: 16px; }
+  .map-canvas { aspect-ratio: 4/3; }
+  .panel-grid { grid-template-columns: 1fr; }
+}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="atlas-shell">
+<header class="atlas-header">
+<a href="#" class="atlas-brand">APT\u2014LABS<mark>Field Atlas</mark></a>
+<nav class="atlas-nav" aria-label="Atlas sections">
+<a href="#topology" class="active">Topology</a>
+<a href="#recruitment">Recruitment</a>
+<a href="#radar">Radar</a>
+<a href="#ledger">Ledger</a>
+<a href="#commons">Commons</a>
+</nav>
+</header>
+<main class="atlas-main">
+<div class="map-canvas" id="mapCanvas" role="application" aria-label="Asset topology map">
+<div class="map-layer map-grid" aria-hidden="true"></div>
+<div class="map-layer map-contours" aria-hidden="true"></div>
+<div class="coordinates" id="coords" aria-live="polite">LAT: -0.4167, LNG: 37.3833</div>
+<div class="scale-bar">1 cm = 5 km  <span style="color:var(--contour);">|</span>  Grid: 60px = 5km</div>
+<div class="legend" aria-label="Map legend">
+<div class="legend-item"><span class="legend-swatch published" aria-hidden="true"></span><span>Published Tender</span></div>
+<div class="legend-item"><span class="legend-swatch illustrative" aria-hidden="true"></span><span>Illustrative Scenario</span></div>
+<div class="legend-item"><span class="legend-swatch friction" aria-hidden="true"></span><span>Friction Signal</span></div>
+</div>
+<div class="asset-node published" id="node-nyamindi" style="top: 28%; left: 38%;" data-name="Nyamindi Hydro" data-status="Published" data-category="energy" data-coords="-0.4167, 37.3833" tabindex="0" role="button" aria-label="Nyamindi Hydro Mini-Grid">
+<div class="node-marker">\u26A1</div>
+<div class="node-label">Nyamindi Hydro</div>
+</div>
+<div class="asset-node published" id="node-tender" style="top: 52%; left: 55%;" data-name="Tender System" data-status="Published" data-category="software" data-coords="-1.2921, 36.8219" tabindex="0" role="button" aria-label="Tender System">
+<div class="node-marker">\u24C8</div>
+<div class="node-label">Tender System</div>
+</div>
+<div class="asset-node illustrative" id="node-mwea" style="top: 68%; left: 22%;" data-name="Mwea Animation" data-status="Illustrative" data-category="media" data-coords="-0.7000, 37.6333" tabindex="0" role="button" aria-label="Mwea Animation Box">
+<div class="node-marker">\u2743</div>
+<div class="node-label">Mwea Animation</div>
+</div>
+<div class="asset-node friction" id="friction-culture" style="top: 42%; left: 18%;" data-name="Culture Friction" data-status="Signal" data-category="culture" data-coords="-0.7000, 37.6333" tabindex="0" role="button" aria-label="Culture friction signal">
+<div class="node-marker" style="background:var(--water-pale); border-color:var(--water);">\u26A0</div>
+<div class="node-label">Culture Friction</div>
+</div>
+<div class="asset-node friction" id="friction-education" style="top: 35%; left: 62%;" data-name="Education Friction" data-status="Signal" data-category="education" data-coords="-0.4167, 37.3833" tabindex="0" role="button" aria-label="Education friction signal">
+<div class="node-marker" style="background:var(--water-pale); border-color:var(--water);">\u26A0</div>
+<div class="node-label">Education Friction</div>
+</div>
+<div class="asset-node friction" id="friction-work" style="top: 60%; left: 72%;" data-name="Work Friction" data-status="Signal" data-category="work" data-coords="-1.2921, 36.8219" tabindex="0" role="button" aria-label="Work friction signal">
+<div class="node-marker" style="background:var(--water-pale); border-color:var(--water);">\u26A0</div>
+<div class="node-label">Work Friction</div>
+</div>
+</div>
+<div class="layer-toggle" role="group" aria-label="Map layers">
+<button class="layer-btn active" data-layer="published" aria-pressed="true">Published Tenders</button>
+<button class="layer-btn active" data-layer="illustrative" aria-pressed="true">Illustrative Scenarios</button>
+<button class="layer-btn active" data-layer="friction" aria-pressed="true">Friction Signals</button>
+<button class="layer-btn" data-layer="contours" aria-pressed="false">Contours</button>
+<button class="layer-btn" data-layer="grid" aria-pressed="true">Grid</button>
+</div>
+<div class="panel-grid" id="panelGrid">
+<article class="panel" id="panel-nyamindi" aria-labelledby="panel-nyamindi-title">
+<div class="panel-head">
+<h3 id="panel-nyamindi-title" class="panel-title">Nyamindi Hydro Mini-Grid</h3>
+<span class="panel-badge published">Published</span>
+</div>
+<div class="panel-body">
+<div class="fact-row"><span class="fact-label">Category</span><span class="fact-value">Energy</span></div>
+<div class="fact-row"><span class="fact-label">Location</span><span class="fact-value">Nyamindi, Embu County</span></div>
+<div class="fact-row"><span class="fact-label">Coordinates</span><span class="fact-value">-0.4167\u00b0, 37.3833\u00b0</span></div>
+<div class="fact-row"><span class="fact-label">Asset Build Cost</span><span class="fact-value">KES 18,750,000</span></div>
+<div class="fact-row"><span class="fact-label">Funding Target</span><span class="fact-value">KES 15,000,000</span></div>
+<div class="fact-row"><span class="fact-label">Settled</span><span class="fact-value">KES 8,250,000 (55%)</span></div>
+<div class="fact-row"><span class="fact-label">Status</span><span class="fact-value">Materials</span></div>
+<div class="fact-row"><span class="fact-label">Blueprint</span><span class="fact-value">v3 Active (hash: 7f3a2e...)</span></div>
+<div class="fact-row"><span class="fact-label">Crew</span><span class="fact-value">Anchor: W. Mbau; Builder: J. Koome; Apprentice: K. Njeri</span></div>
+</div>
+</article>
+<article class="panel" id="panel-tender" aria-labelledby="panel-tender-title">
+<div class="panel-head">
+<h3 id="panel-tender-title" class="panel-title">Tender System</h3>
+<span class="panel-badge published">Published</span>
+</div>
+<div class="panel-body">
+<div class="fact-row"><span class="fact-label">Category</span><span class="fact-value">Software</span></div>
+<div class="fact-row"><span class="fact-label">Location</span><span class="fact-value">Nairobi, Kenya (APT-LABS HQ)</span></div>
+<div class="fact-row"><span class="fact-label">Coordinates</span><span class="fact-value">-1.2921\u00b0, 36.8219\u00b0</span></div>
+<div class="fact-row"><span class="fact-label">Asset Build Cost</span><span class="fact-value">KES 12,400,000</span></div>
+<div class="fact-row"><span class="fact-label">Funding Target</span><span class="fact-value">KES 10,000,000</span></div>
+<div class="fact-row"><span class="fact-label">Settled</span><span class="fact-value">KES 10,000,000 (100%)</span></div>
+<div class="fact-row"><span class="fact-label">Status</span><span class="fact-value">Deployed</span></div>
+<div class="fact-row"><span class="fact-label">Roll Entry</span><span class="fact-value">roll:tender-system (2026-10-15)</span></div>
+<div class="fact-row"><span class="fact-label">Crew</span><span class="fact-value">Anchor: S. Otieno; Builder: M. Wambui; Apprentice: L. Kimani</span></div>
+</div>
+</article>
+<article class="panel" id="panel-mwea" aria-labelledby="panel-mwea-title">
+<div class="panel-head">
+<h3 id="panel-mwea-title" class="panel-title">Mwea Animation Box</h3>
+<span class="panel-badge illustrative">Illustrative</span>
+</div>
+<div class="panel-body">
+<div class="fact-row"><span class="fact-label">Category</span><span class="fact-value">Media</span></div>
+<div class="fact-row"><span class="fact-label">Location</span><span class="fact-value">Mwea, Kirinyaga County</span></div>
+<div class="fact-row"><span class="fact-label">Coordinates</span><span class="fact-value">-0.7000\u00b0, 37.6333\u00b0</span></div>
+<div class="fact-row"><span class="fact-label">Asset Build Cost</span><span class="fact-value">KES 2,400,000</span></div>
+<div class="fact-row"><span class="fact-label">Funding Target</span><span class="fact-value">KES 2,400,000</span></div>
+<div class="fact-row"><span class="fact-label">Settled</span><span class="fact-value">KES 0 (0%)</span></div>
+<div class="fact-row"><span class="fact-label">Status</span><span class="fact-value">Draft</span></div>
+<div class="fact-row"><span class="fact-label">Blueprint</span><span class="fact-value">v1 Proposed (unverified)</span></div>
+<div class="fact-row"><span class="fact-label">Crew</span><span class="fact-value">Unassigned \u2014 requires community mandate</span></div>
+</div>
+</article>
+<article class="panel" id="panel-friction" aria-labelledby="panel-friction-title">
+<div class="panel-head">
+<h3 id="panel-friction-title" class="panel-title">Friction Radar \u2014 Culture</h3>
+<span class="panel-badge friction">Signal</span>
+</div>
+<div class="panel-body">
+<div class="fact-row"><span class="fact-label">Room</span><span class="fact-value">Culture / Stories & Authorship</span></div>
+<div class="fact-row"><span class="fact-label">Signal</span><span class="fact-value">Who can author, own, distribute, and earn from stories rooted in local life?</span></div>
+<div class="fact-row"><span class="fact-label">Origin</span><span class="fact-value">Mwea \u00b7 Context to establish with participants</span></div>
+<div class="fact-row"><span class="fact-label">First Question</span><span class="fact-value">Whose account is missing, and who should hold authorship and rights if new story work is created?</span></div>
+<div class="fact-row"><span class="fact-label">Collective Response</span><span class="fact-value">Map authorship, language, rights, distribution & livelihood constraints before choosing a medium</span></div>
+</div>
+</article>
+</div>
+</main>
+<footer class="atlas-footer">
+<span>APT-LABS \u00b7 Field Atlas Direction \u00b7 v0.1</span>
+<span>Design tokens from <code>src/styles.css</code> \u00b7 Ontology from <code>src/lib/tender.ts</code></span>
+</footer>
+</div>
+<div class="floor-indicator" aria-live="polite">
+<span>Floor:</span>
+<mark>Basement</mark>
+<button class="floor-btn" data-floor="basement">Basement</button>
+<button class="floor-btn active" data-floor="ground">Ground</button>
+<button class="floor-btn" data-floor="first">First</button>
+<button class="floor-btn" data-floor="second">Second</button>
+</div>
+<script>
+const map = document.getElementById('mapCanvas');
+const coords = document.getElementById('coords');
+const panels = document.querySelectorAll('.panel');
+const nodes = document.querySelectorAll('.asset-node');
+const layerBtns = document.querySelectorAll('.layer-btn');
+const floorBtns = document.querySelectorAll('.floor-btn');
+
+let selectedNode = null;
+
+nodes.forEach(node => {
+  node.addEventListener('click', () => selectNode(node));
+  node.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectNode(node); } });
+});
+
+function selectNode(node) {
+  if (selectedNode) selectedNode.classList.remove('selected');
+  node.classList.add('selected');
+  selectedNode = node;
+  coords.textContent = `LAT: ${node.dataset.coords}`;
+  panels.forEach(p => p.style.display = 'none');
+  const panelId = 'panel-' + node.id.replace('node-', '').replace('friction-', '');
+  const panel = document.getElementById(panelId);
+  if (panel) panel.style.display = 'block';
+}
+
+layerBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const layer = btn.dataset.layer;
+    const isActive = btn.classList.toggle('active');
+    btn.setAttribute('aria-pressed', isActive);
+    document.querySelectorAll(`.asset-node.${layer}, .map-layer.${layer}`).forEach(el => {
+      el.style.display = isActive ? '' : 'none';
+    });
+  });
+});
+
+floorBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    floorBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelector('.floor-indicator mark').textContent = btn.dataset.floor.charAt(0).toUpperCase() + btn.dataset.floor.slice(1);
+  });
+});
+
+selectNode(document.getElementById('node-nyamindi'));
+</script>
+</body>
+</html>

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APT-LABS — Editorial Manuscript Direction</title>
+<style>
+:root {
+  --paper: #faf9f4;
+  --paper-2: #f0efe8;
+  --ink: #1a1d19;
+  --muted: #6d7368;
+  --faint: #9a9f94;
+  --line: rgba(40,50,38,.1);
+  --line-strong: rgba(40,50,38,.18);
+  --sage: #6b846a;
+  --sage-pale: #e8efe7;
+  --rust: #b87a4d;
+  --rust-pale: #f5ebe3;
+  --charcoal: #2d2f2b;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  --measure: 68ch;
+  --gutter: clamp(24px, 4vw, 64px);
+  --baseline: 4px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background: var(--paper);
+  font: 14px/1.7 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: calc(var(--gutter) * 2) var(--gutter);
+  position: relative;
+}
+.page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.15'/%3E%3C/svg%3E");
+  z-index: -1;
+}
+header.manuscript-head {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 32px;
+  margin-bottom: 48px;
+  position: relative;
+}
+header.manuscript-head::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--sage), var(--rust));
+}
+.manuscript-brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+  font-family: var(--serif);
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 300;
+  letter-spacing: -.02em;
+  color: var(--charcoal);
+  text-decoration: none;
+}
+.manuscript-brand mark {
+  background: transparent;
+  color: var(--sage);
+  font-weight: 400;
+  font-style: italic;
+}
+.manuscript-kicker {
+  display: block;
+  font: 500 11px/1 var(--mono);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 8px;
+}
+main article {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 48px;
+  align-items: start;
+}
+@media (max-width: 820px) {
+  main article { grid-template-columns: 1fr; }
+}
+.manuscript-body { min-width: 0; }
+.marginalia {
+  position: sticky;
+  top: calc(var(--gutter) * 2);
+  font: 12px/1.6 var(--sans);
+  color: var(--muted);
+  padding-left: 20px;
+  border-left: 1px solid var(--line);
+}
+.marginalia h4 {
+  font: 500 10px/1 var(--mono);
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0 0 16px;
+}
+.marginalia nav { display: flex; flex-direction: column; gap: 8px; }
+.marginalia a {
+  color: inherit;
+  text-decoration: none;
+  padding: 4px 0;
+  border-bottom: 1px solid transparent;
+  transition: color .15s, border-color .15s;
+}
+.marginalia a:hover,
+.marginalia a[aria-current="page"] {
+  color: var(--ink);
+  border-color: var(--sage);
+}
+.section {
+  margin-bottom: 56px;
+  padding-bottom: 32px;
+  border-bottom: 1px dashed var(--line);
+}
+.section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.section-label {
+  font: 500 10px/1 var(--mono);
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0 0 16px;
+}
+h1 {
+  font: 300 clamp(36px, 5vw, 56px)/1.1 var(--serif);
+  letter-spacing: -.03em;
+  margin: 0 0 20px;
+  color: var(--charcoal);
+}
+h2 {
+  font: 400 clamp(24px, 3.5vw, 34px)/1.25 var(--serif);
+  letter-spacing: -.02em;
+  margin: 40px 0 16px;
+  color: var(--ink);
+}
+p { margin: 0 0 16px; max-width: var(--measure); }
+p.lead {
+  font-size: 1.125em;
+  line-height: 1.8;
+  color: var(--muted);
+  font-style: italic;
+}
+blockquote {
+  margin: 24px 0;
+  padding: 16px 0 16px 24px;
+  border-left: 3px solid var(--sage);
+  font: 400 1.05em/1.7 var(--serif);
+  color: var(--ink);
+  font-style: italic;
+}
+blockquote footer {
+  margin-top: 12px;
+  font: 500 12px/1 var(--sans);
+  color: var(--muted);
+  font-style: normal;
+}
+.sidenote {
+  position: relative;
+  display: inline-block;
+}
+.sidenote::after {
+  content: attr(data-note);
+  position: absolute;
+  left: 100%;
+  top: 0;
+  width: 180px;
+  margin-left: 16px;
+  padding: 8px 12px;
+  font: 11px/1.5 var(--sans);
+  color: var(--muted);
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-8px);
+  transition: all .2s;
+  z-index: 10;
+  pointer-events: none;
+}
+.sidenote:hover::after,
+.sidenote:focus::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+.manuscript-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 13px;
+}
+.manuscript-table th,
+.manuscript-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+.manuscript-table th {
+  font: 500 11px/1 var(--mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--faint);
+  background: var(--paper-2);
+}
+.manuscript-table tbody tr:hover td { background: var(--rust-pale); }
+.manuscript-table .status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font: 500 10px/1 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.manuscript-table .status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.manuscript-table .status.draft { background: var(--rust-pale); color: var(--rust); }
+.manuscript-table .status.draft::before { background: var(--rust); }
+.manuscript-table .status.open { background: var(--sage-pale); color: var(--sage); }
+.manuscript-table .status.open::before { background: var(--sage); }
+.manuscript-table .status.deployed { background: #e8f0e8; color: #4a6b49; }
+.manuscript-table .status.deployed::before { background: #5a7d59; }
+.pill-group { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  font: 500 11px/1 var(--mono);
+  color: var(--muted);
+  background: var(--paper);
+  transition: all .15s;
+}
+.pill:hover { border-color: var(--sage); color: var(--sage); }
+.pill.primary { background: var(--sage); border-color: var(--sage); color: #fff; }
+.pill.primary:hover { background: #5a7259; }
+.cta-row { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  font: 500 13px/1 var(--sans);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-primary {
+  background: var(--charcoal);
+  color: var(--paper);
+  border-color: var(--charcoal);
+}
+.btn-primary:hover { background: #1a1c18; transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+}
+.btn-ghost:hover { background: var(--paper-2); border-color: var(--sage); color: var(--sage); }
+.footer-note {
+  margin-top: 64px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+  font: 12px/1.6 var(--sans);
+  color: var(--faint);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.footer-note a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.footer-note a:hover { color: var(--sage); }
+.tender-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  background: var(--paper);
+  transition: border-color .15s, box-shadow .15s;
+}
+.tender-card:hover { border-color: var(--sage); box-shadow: 0 4px 20px rgba(40,50,38,.06); }
+.tender-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+.tender-card-title { font: 400 1.25em/1.3 var(--serif); margin: 0; color: var(--charcoal); }
+.tender-card-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+.tender-card-body { font-size: 13px; line-height: 1.7; color: var(--muted); }
+.tender-card-body strong { color: var(--ink); }
+.tender-card-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12px; color: var(--faint); }
+.lifecycle-bar {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+}
+.lifecycle-step {
+  flex: 1;
+  position: relative;
+  padding-top: 24px;
+}
+.lifecycle-step::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  background: var(--paper);
+  z-index: 1;
+}
+.lifecycle-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  right: 0;
+  height: 2px;
+  background: var(--line);
+  z-index: 0;
+}
+.lifecycle-step.active::before { border-color: var(--sage); background: var(--sage); }
+.lifecycle-step.active::after { background: var(--sage); }
+.lifecycle-step.complete::before { border-color: var(--sage); background: var(--paper); }
+.lifecycle-step.complete::after { background: var(--sage); }
+.lifecycle-step-label {
+  font: 500 9px/1 var(--mono);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--faint);
+  white-space: nowrap;
+}
+.lifecycle-step.active .lifecycle-step-label { color: var(--sage); }
+.lifecycle-step.complete .lifecycle-step-label { color: var(--sage); }
+.marginal-figure {
+  margin: 24px -20px 24px 0;
+  padding: 16px;
+  background: var(--paper-2);
+  border-left: 3px solid var(--sage);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.marginal-figure code { font: 11px var(--mono); background: var(--paper); padding: 2px 6px; border-radius: 3px; }
+.page-number {
+  position: fixed;
+  bottom: 24px;
+  right: var(--gutter);
+  font: 500 11px/1 var(--mono);
+  color: var(--faint);
+  letter-spacing: .1em;
+}
+.page-number::before { content: "\u2014 "; }
+.page-number::after { content: " \u2014"; }
+.floor-indicator {
+  position: fixed;
+  bottom: 24px;
+  left: var(--gutter);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(250,249,244,.9);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  font: 500 11px/1 var(--mono);
+  color: var(--muted);
+  z-index: 100;
+}
+.floor-indicator mark { background: var(--sage-pale); color: var(--sage); padding: 2px 8px; border-radius: 99px; font-style: normal; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="page">
+<header class="manuscript-head">
+<a href="#" class="manuscript-brand">APT\u2014LABS<mark>Tender Engine</mark></a>
+<span class="manuscript-kicker">Design Direction 1 of 5 \u2014 Editorial Manuscript</span>
+</header>
+<main>
+<article>
+<aside class="marginalia" aria-label="Section navigation">
+<h4>Contents</h4>
+<nav>
+<a href="#ontology" aria-current="page">Ontology</a>
+<a href="#lifecycle">Lifecycle</a>
+<a href="#tender">Tender Record</a>
+<a href="#crew">Crew & Roll</a>
+<a href="#boundaries">Boundaries</a>
+<a href="#floor-map">Floor Map</a>
+</nav>
+</aside>
+<div class="manuscript-body">
+<section class="section" id="ontology">
+<p class="section-label">01 / Core Ontology</p>
+<h1>The Tender as Primary Entity</h1>
+<p class="lead">Every surface in APT-LABS derives from a single domain object: the <strong>Tender</strong>. Not a listing, not a project \u2014 a <em>tender</em>: a scoped, accountable build with a verifiable bill of materials, a three-person crew, and a capital target that must settle before material release.</p>
+<p>The ontology is deliberately narrow. Six categories. Three crew roles. Eight lifecycle states. One immutable Roll. This constraint is the design \u2014 it makes every interface decision traceable to a domain rule.</p>
+<blockquote>
+APT-LABS connects local demand, capital and execution through open Tenders. The market compares an imported alternative with a proposed local bill of materials; completed builds enter the public Roll only after an assigned Anchor signs the active Blueprint.
+<footer>\u2014 README.md, Product Manifesto</footer>
+</blockquote>
+<div class="marginal-figure">
+<strong>Domain invariants</strong> (enforced in <code>tender.ts</code> & SQL):
+<ul style="margin:8px 0 0 18px; padding:0; font-size:12px; line-height:1.8;">
+<li>Exactly one Anchor, Builder, Apprentice per Tender</li>
+<li>Blueprint line totals must equal <code>assetBuildCostMinor</code></li>
+<li>Illustrative tenders cannot carry verified funding</li>
+<li>Roll records only reference <code>deployed</code>, non-illustrative tenders</li>
+<li>School Console records never leave the device</li>
+</ul>
+</div>
+</section>
+<section class="section" id="lifecycle">
+<p class="section-label">02 / Lifecycle Gates</p>
+<h2>State as a Contract</h2>
+<p>The lifecycle is not a UI convenience \u2014 it is owned by the domain. <code>tenderLifecycle()</code> in <code>tender.ts</code> is the single source of truth; no surface may advertise a transition the engine would refuse.</p>
+<div class="lifecycle-bar" role="list" aria-label="Tender lifecycle progression">
+<div class="lifecycle-step complete" role="listitem"><span class="lifecycle-step-label">Draft</span></div>
+<div class="lifecycle-step complete" role="listitem"><span class="lifecycle-step-label">Open</span></div>
+<div class="lifecycle-step active" role="listitem"><span class="lifecycle-step-label">Materials</span></div>
+<div class="lifecycle-step" role="listitem"><span class="lifecycle-step-label">Fabrication</span></div>
+<div class="lifecycle-step" role="listitem"><span class="lifecycle-step-label">Anchor Signed</span></div>
+<div class="lifecycle-step" role="listitem"><span class="lifecycle-step-label">Deployed</span></div>
+</div>
+<p><strong>Gate:</strong> <code>open \u2192 materials</code> requires <code>currentSettledAmountMinor \u2265 fundingTargetMinor</code>. No simulated progress. No optimistic UI. The settled capital <em>must</em> reach the target before materials release.</p>
+<div class="manuscript-table" role="table">
+<thead><tr><th>State</th><th>Permitted Next</th><th>Gate</th><th>Actor</th></tr></thead>
+<tbody>
+<tr><td>draft</td><td>open</td><td>Blueprint totals verified; crew assigned</td><td>Principal / Tender Issuer</td></tr>
+<tr><td>open</td><td>materials</td><td>Settled capital \u2265 funding target</td><td>\u2014 (system)</td></tr>
+<tr><td>materials</td><td>fabrication</td><td>Materials received & logged</td><td>Builder</td></tr>
+<tr><td>fabrication</td><td>anchor_signed</td><td>Build complete per Blueprint</td><td>Builder</td></tr>
+<tr><td>anchor_signed</td><td>deployed</td><td>Anchor sign-off on active Blueprint hash</td><td>Anchor</td></tr>
+<tr><td>deployed</td><td>\u2014</td><td>Enters Roll immutably</td><td>Anchor</td></tr>
+<tr><td>cancelled</td><td>\u2014</td><td>Terminal</td><td>Anchor / Principal</td></tr>
+</tbody>
+</table>
+</section>
+<section class="section" id="tender">
+<p class="section-label">03 / Tender Record</p>
+<h2>Illustrative vs Published \u2014 A Visual Boundary</h2>
+<p>Every Tender carries <code>isIllustrative: boolean</code>. This is not a filter \u2014 it is a semantic boundary. The UI must never blur it.</p>
+<div class="tender-card" role="article" aria-labelledby="tender-1-title">
+<div class="tender-card-head">
+<h3 id="tender-1-title" class="tender-card-title">Mwea Animation Box</h3>
+<div class="tender-card-meta">
+<span class="pill">media</span>
+<span class="pill">KES</span>
+<span class="status draft">Illustrative Scenario</span>
+</div>
+</div>
+<div class="tender-card-body">
+<p><strong>Asset build cost:</strong> KES 2,400,000 &nbsp;|&nbsp; <strong>Funding target:</strong> KES 2,400,000 &nbsp;|&nbsp; <strong>Signaled:</strong> KES 0 &nbsp;|&nbsp; <strong>Settled:</strong> KES 0</p>
+<p><strong>Location:</strong> Mwea, Kirinyaga &nbsp;|&nbsp; <strong>Issuer:</strong> APT-LABS Demo</p>
+<p>A proposed creative work engine arising from local cultural storytelling needs. Ownership, contributors, scope and community mandate are unconfirmed. Treat this as a proposal, not an operating studio or verified community asset.</p>
+</div>
+<div class="tender-card-foot">
+<span>Created 2026-10-15 \u00b7 Session only</span>
+<span><a href="#" style="color:inherit; text-decoration:underline; text-underline-offset:2px;">Inspect draft \u2192</a></span>
+</div>
+</div>
+<div class="tender-card" role="article" aria-labelledby="tender-2-title">
+<div class="tender-card-head">
+<h3 id="tender-2-title" class="tender-card-title">Nyamindi Hydro Mini-Grid</h3>
+<div class="tender-card-meta">
+<span class="pill">energy</span>
+<span class="pill">KES</span>
+<span class="status open">Published Record</span>
+</div>
+</div>
+<div class="tender-card-body">
+<p><strong>Asset build cost:</strong> KES 18,750,000 &nbsp;|&nbsp; <strong>Funding target:</strong> KES 15,000,000 &nbsp;|&nbsp; <strong>Signaled:</strong> KES 15,000,000 &nbsp;|&nbsp; <strong>Settled:</strong> KES 8,250,000</p>
+<p><strong>Location:</strong> Nyamindi, Embu &nbsp;|&nbsp; <strong>Issuer:</strong> Nyamindi Community Energy Org</p>
+<p>Local bill of materials for a 45kW hydro mini-grid. Blueprint v3 active. Anchor: Wanjiku M. (consented public). Builder: Koome J. Apprentice: Njeri K. Funding: 3 verified allocators, 2 illustrative.</p>
+</div>
+<div class="tender-card-foot">
+<span>Updated 2026-10-22 \u00b7 <a href="#" style="color:inherit; text-decoration:underline; text-underline-offset:2px;">Open Assembly \u2192</a></span>
+<span>55% funded</span>
+</div>
+</div>
+</section>
+<section class="section" id="crew">
+<p class="section-label">04 / Crew & The Roll</p>
+<h2>Three Roles. One Signature. Immutable Proof.</h2>
+<p>The <strong>Roll</strong> is not a log \u2014 it is a <em>provenance ledger</em>. A record enters only when: (1) Tender is <code>deployed</code>, (2) non-illustrative, (3) Anchor signs the <em>active</em> Blueprint hash, (4) all blueprint lines match. The database function <code>deploy_tender()</code> enforces this atomically.</p>
+<div class="manuscript-table" role="table">
+<thead><tr><th>Role</th><th>Authority</th><th>Transition</th><th>Public Name</th></tr></thead>
+<tbody>
+<tr><td>Anchor</td><td>Signs Blueprint hash; deploys to Roll</td><td>fabrication \u2192 anchor_signed \u2192 deployed</td><td>Opt-in only</td></tr>
+<tr><td>Builder</td><td>Advances through materials & fabrication</td><td>open \u2192 materials \u2192 fabrication</td><td>Opt-in only</td></tr>
+<tr><td>Apprentice</td><td>Observes; contributes capability evidence</td><td>\u2014 (no state transitions)</td><td>Opt-in only</td></tr>
+</tbody>
+</table>
+<div class="marginal-figure">
+<strong>Roll record fields</strong> (from migration <code>20261019050000</code>):
+<pre style="margin:8px 0 0; font:11px/1.6 var(--mono); overflow:auto;"><code>contribution, artifact, test, acceptance, maintenance, integrity</code></pre>
+</div>
+</section>
+<section class="section" id="boundaries">
+<p class="section-label">05 / Hard Boundaries</p>
+<h2>What This System Does Not Do</h2>
+<p>The design must make these limits visible, not hidden:</p>
+<ul style="margin: 16px 0 0 24px; line-height: 2;">
+<li><strong>No payment processing</strong> \u2014 Funding is contact-intent only until an approved payment/compliance design exists</li>
+<li><strong>No connected AI / OCR</strong> \u2014 Auto-Marking is deterministic keyword matching on teacher-supplied CSV/JSON</li>
+<li><strong>No message delivery</strong> \u2014 Communication links require explicit user click; no delivery claim</li>
+<li><strong>No encrypted multi-user school storage</strong> \u2014 School Console is local-first IndexedDB only</li>
+<li><strong>No funder accounts, bidding, escrow, yield, SBT issuance</strong> \u2014 The cockpit shows these limits instead of simulated balances</li>
+</ul>
+<blockquote>
+The checked-in market examples are explicitly illustrative. Without Supabase configuration, the public market uses those local examples and the Roll is empty. No sample funding or completion figure represents money received or work delivered.
+<footer>\u2014 README.md</footer>
+</blockquote>
+</section>
+<section class="section" id="floor-map">
+<p class="section-label">06 / Workspace Floors</p>
+<h2>Four Floors. One Frame.</h2>
+<p>The workspace shell persists; only the floor content changes. The lift animation (950ms) provides spatial continuity. Server checks and RLS remain authoritative \u2014 floor navigation grants no permissions.</p>
+<div class="pill-group" role="group" aria-label="Workspace floors">
+<span class="pill" data-floor="basement">Basement \u00b7 Radar / Fieldwork</span>
+<span class="pill primary" data-floor="ground">Ground \u00b7 Asset Topology / Work Engines</span>
+<span class="pill" data-floor="first">First \u00b7 Delivery & Proof</span>
+<span class="pill" data-floor="second">Second \u00b7 School Console</span>
+</div>
+<p style="margin-top: 16px; font-size: 13px; color: var(--muted);">
+<strong>Basement:</strong> Friction Radar \u2014 culture, education, work signals from the field. Local drafts only.<br>
+<strong>Ground:</strong> Asset Topology graph (3 nodes, illustrative) + Work Engines recruitment panel.<br>
+<strong>First:</strong> Ledger \u2014 Roll schema, Capability fields, Work Sequence (6 gates).<br>
+<strong>Second:</strong> School Console \u2014 Teacher/Principal views, local lesson drafts, fee notes, auto-marking.
+</p>
+</section>
+<div class="cta-row">
+<a href="design-direction-2-field-atlas.html" class="btn btn-ghost">\u2190 Previous: Concept</a>
+<a href="design-direction-2-field-atlas.html" class="btn btn-primary">Next: Field Atlas Direction \u2192</a>
+</div>
+<footer class="footer-note">
+<span>APT-LABS \u00b7 Editorial Manuscript Direction \u00b7 v0.1</span>
+<span>Design tokens from <code>src/styles.css</code> \u00b7 Ontology from <code>src/lib/tender.ts</code></span>
+</footer>
+</div>
+</article>
+</main>
+<div class="floor-indicator" aria-live="polite">
+<span>Floor:</span>
+<mark>Ground</mark>
+</div>
+<div class="page-number">1 / 6</div>
+</div>
+<script>
+document.querySelectorAll('[data-floor]').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('[data-floor]').forEach(p => p.classList.remove('primary'));
+    pill.classList.add('primary');
+    document.querySelector('.floor-indicator mark').textContent = pill.dataset.floor.charAt(0).toUpperCase() + pill.dataset.floor.slice(1);
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APT-LABS — Workshop Constructivist Direction</title>
+<style>
+:root {
+  --paper: #f7f5f0;
+  --paper-raw: #ebe7e0;
+  --ink: #1d1f1b;
+  --muted: #6b6f66;
+  --faint: #989c92;
+  --line: rgba(45,48,42,.15);
+  --line-strong: rgba(45,48,42,.25);
+  --steel: #4a5a6a;
+  --steel-pale: #dce3e8;
+  --brass: #b8955a;
+  --brass-pale: #f2eadc;
+  --oxide: #a85a3a;
+  --oxide-pale: #efe3de;
+  --concrete: #c8c4bd;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  --gutter: clamp(20px, 3vw, 48px);
+  --module: 8px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background: var(--paper);
+  font: 13px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+.workshop {
+  min-height: 100vh;
+  background: 
+    repeating-linear-gradient(0deg, transparent, transparent 39px, var(--line) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, var(--line) 40px),
+    var(--paper);
+  background-size: 40px 40px;
+}
+.workshop::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .02;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.1'/%3E%3C/svg%3E");
+}
+header.work-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px var(--gutter);
+  border-bottom: 2px solid var(--ink);
+  background: rgba(247,245,240,.95);
+  backdrop-filter: blur(8px);
+}
+.work-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: clamp(18px, 2.5vw, 24px);
+  letter-spacing: .1em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.work-brand mark { background: var(--brass-pale); color: var(--brass); font-style: normal; font-weight: 400; padding: 0 6px; }
+.work-nav { display: flex; gap: 4px; }
+.work-nav a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font: 500 11px/1 var(--mono);
+  color: var(--muted);
+  text-decoration: none;
+  transition: all .1s;
+}
+.work-nav a:hover { border-color: var(--brass); color: var(--brass); }
+.work-nav a.active { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.work-main {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: calc(var(--gutter) * 1.5) var(--gutter) calc(var(--gutter) * 2);
+  position: relative;
+  z-index: 10;
+}
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: calc(var(--module) * 2);
+}
+.module {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+  position: relative;
+}
+.module::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--module-color, var(--steel));
+}
+.module.steel { --module-color: var(--steel); }
+.module.brass { --module-color: var(--brass); }
+.module.oxide { --module-color: var(--oxide); }
+.module.concrete { --module-color: var(--concrete); }
+.module-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-raw);
+}
+.module-title { font: 400 13px/1 var(--serif); color: var(--ink); margin: 0; }
+.module-meta { display: flex; gap: 6px; }
+.module-tag {
+  font: 500 9px/1 var(--mono);
+  padding: 2px 8px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.tag-published { background: var(--steel-pale); color: var(--steel); }
+.tag-illustrative { background: var(--brass-pale); color: var(--brass); }
+.tag-friction { background: var(--oxide-pale); color: var(--oxide); }
+.tag-schema { background: var(--concrete); color: #fff; }
+.module-body { flex: 1; padding: 14px; overflow: auto; }
+.spec-row { display: grid; grid-template-columns: 100px 1fr; gap: 8px 12px; padding: 6px 0; border-bottom: 1px dashed var(--line); font-size: 12px; align-items: start; }
+.spec-row:last-child { border-bottom: none; }
+.spec-label { color: var(--faint); font-family: var(--mono); font-size: 11px; }
+.spec-value { color: var(--ink); word-break: break-word; }
+.spec-value.mono { font-family: var(--mono); }
+.spec-value.ok { color: var(--steel); }
+.spec-value.warn { color: var(--brass); }
+.spec-value.err { color: var(--oxide); }
+.connection-map {
+  position: relative;
+  height: 180px;
+  background: var(--paper-raw);
+}
+.connection-node {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+.connection-node.published { background: var(--paper); border-color: var(--steel); }
+.connection-node.illustrative { background: transparent; border-color: var(--brass); border-style: dashed; }
+.connection-node.friction { background: var(--oxide-pale); border-color: var(--oxide); }
+.connection-line {
+  position: absolute;
+  height: 1px;
+  background: var(--line);
+  transform-origin: 0 0;
+  z-index: 1;
+}
+.connection-line.active { background: var(--brass); }
+.module-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-top: 1px solid var(--line);
+  background: var(--paper-raw);
+  font-size: 11px;
+  color: var(--faint);
+}
+.module-footer .actions { display: flex; gap: 8px; }
+.module-footer button {
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  font: 500 10px/1 var(--mono);
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  transition: all .1s;
+}
+.module-footer button:hover { border-color: var(--brass); color: var(--brass); }
+.module-footer button.primary { background: var(--brass); border-color: var(--brass); color: #fff; }
+.module-footer button.primary:hover { background: var(--brass-dim, #a08048); }
+.floor-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px var(--gutter);
+  background: rgba(247,245,240,.98);
+  backdrop-filter: blur(8px);
+  border-top: 2px solid var(--ink);
+}
+.floor-tabs { display: flex; gap: 4px; }
+.floor-tab {
+  padding: 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: 4px 4px 0 0;
+  font: 500 11px/1 var(--mono);
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  margin-bottom: -2px;
+}
+.floor-tab:hover { border-color: var(--brass); color: var(--brass); }
+.floor-tab.active { background: var(--ink); border-color: var(--ink); color: var(--paper); border-bottom-color: transparent; }
+.floor-status { display: flex; align-items: center; gap: 16px; font: 500 11px/1 var(--mono); color: var(--faint); }
+.floor-status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--brass); }
+.legend-bar {
+  display: flex;
+  gap: 24px;
+  padding: 12px var(--gutter);
+  background: var(--paper-raw);
+  border-bottom: 1px solid var(--line);
+  font-size: 11px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-swatch {
+  width: 14px; height: 14px; border-radius: 3px; border: 1px solid;
+}
+.legend-swatch.published { background: var(--paper); border-color: var(--steel); }
+.legend-swatch.illustrative { background: transparent; border-color: var(--brass); border-style: dashed; }
+.legend-swatch.friction { background: var(--oxide-pale); border-color: var(--oxide); }
+.legend-swatch.schema { background: var(--concrete); }
+@media (max-width: 1000px) {
+  .module-grid { grid-template-columns: repeat(6, 1fr); }
+}
+@media (max-width: 640px) {
+  .module-grid { grid-template-columns: 1fr; }
+  .work-header { flex-wrap: wrap; }
+  .work-nav { order: 3; width: 100%; justify-content: center; margin-top: 8px; }
+  .floor-bar { flex-wrap: wrap; gap: 10px; }
+}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="workshop">
+<header class="work-header">
+<a href="#" class="work-brand">APT\u2014LABS<mark>WORKSHOP</mark></a>
+<nav class="work-nav" aria-label="Workshop modules">
+<a href="#topology" class="active">TOPOLOGY</a>
+<a href="#engines">ENGINES</a>
+<a href="#intake">INTAKE</a>
+<a href="#ledger">LEDGER</a>
+<a href="#commons">COMMONS</a>
+</nav>
+</header>
+<div class="legend-bar" aria-label="Legend">
+<span class="legend-item"><span class="legend-swatch published" aria-hidden="true"></span><span>Published Tender</span></span>
+<span class="legend-item"><span class="legend-swatch illustrative" aria-hidden="true"></span><span>Illustrative Scenario</span></span>
+<span class="legend-item"><span class="legend-swatch friction" aria-hidden="true"></span><span>Friction Signal</span></span>
+<span class="legend-item"><span class="legend-swatch schema" aria-hidden="true"></span><span>Schema / Spec</span></span>
+<span style="margin-left:auto; color:var(--faint); font:500 10px/1 var(--mono);">GRID: 40px = 1 UNIT</span>
+</div>
+<main class="work-main">
+<div class="module-grid">
+<article class="module steel" style="grid-column: span 5; grid-row: span 2;" aria-labelledby="mod-nyamindi-title">
+<div class="module-header"><h3 id="mod-nyamindi-title" class="module-title">Nyamindi Hydro Mini-Grid</h3><div class="module-meta"><span class="module-tag tag-published">ENERGY</span><span class="module-tag tag-published">DEPLOYED</span></div></div>
+<div class="module-body">
+<div class="spec-row"><span class="spec-label">Asset ID</span><span class="spec-value mono">nyamindi-hydro</span></div>
+<div class="spec-row"><span class="spec-label">Location</span><span class="spec-value">Nyamindi, Embu County</span></div>
+<div class="spec-row"><span class="spec-label">Coordinates</span><span class="spec-value mono">-0.4167\u00b0, 37.3833\u00b0</span></div>
+<div class="spec-row"><span class="spec-label">Build Cost</span><span class="spec-value mono">KES 18,750,000</span></div>
+<div class="spec-row"><span class="spec-label">Funding Target</span><span class="spec-value mono">KES 15,000,000</span></div>
+<div class="spec-row"><span class="spec-label">Settled</span><span class="spec-value mono warn">KES 8,250,000 (55%)</span></div>
+<div class="spec-row"><span class="spec-label">Status</span><span class="spec-value warn">MATERIALS</span></div>
+<div class="spec-row"><span class="spec-label">Blueprint</span><span class="spec-value mono">v3 \u2014 7f3a2e91c4d8...</span></div>
+<div class="spec-row"><span class="spec-label">Lines</span><span class="spec-value">12 items</span></div>
+<div class="spec-row"><span class="spec-label">Crew</span><span class="spec-value">Anchor: W. Mbau | Builder: J. Koome | Apprentice: K. Njeri</span></div>
+</div>
+<div class="module-footer"><span>Last sync: 2026-10-22 09:14</span><div class="actions"><button>INSPECT</button><button class="primary">OPEN ASSEMBLY</button></div></div>
+</article>
+<article class="module steel" style="grid-column: span 4; grid-row: span 2;" aria-labelledby="mod-tender-title">
+<div class="module-header"><h3 id="mod-tender-title" class="module-title">Tender System</h3><div class="module-meta"><span class="module-tag tag-published">SOFTWARE</span><span class="module-tag tag-published">DEPLOYED</span></div></div>
+<div class="module-body">
+<div class="spec-row"><span class="spec-label">Asset ID</span><span class="spec-value mono">tender-system</span></div>
+<div class="spec-row"><span class="spec-label">Location</span><span class="spec-value">Nairobi, Kenya (APT-LABS HQ)</span></div>
+<div class="spec-row"><span class="spec-label">Coordinates</span><span class="spec-value mono">-1.2921\u00b0, 36.8219\u00b0</span></div>
+<div class="spec-row"><span class="spec-label">Build Cost</span><span class="spec-value mono">KES 12,400,000</span></div>
+<div class="spec-row"><span class="spec-label">Funding Target</span><span class="spec-value mono">KES 10,000,000</span></div>
+<div class="spec-row"><span class="spec-label">Settled</span><span class="spec-value mono ok">KES 10,000,000 (100%)</span></div>
+<div class="spec-row"><span class="spec-label">Status</span><span class="spec-value ok">DEPLOYED</span></div>
+<div class="spec-row"><span class="spec-label">Roll Entry</span><span class="spec-value mono ok">roll:tender-system (2026-10-15)</span></div>
+<div class="spec-row"><span class="spec-label">Crew</span><span class="spec-value">Anchor: S. Otieno | Builder: M. Wambui | Apprentice: L. Kimani</span></div>
+</div>
+<div class="module-footer"><span>Deployed: 2026-10-15</span><div class="actions"><button>VIEW ROLL</button><button class="primary">RECRUIT</button></div></div>
+</article>
+<article class="module brass" style="grid-column: span 3; grid-row: span 2;" aria-labelledby="mod-mwea-title">
+<div class="module-header"><h3 id="mod-mwea-title" class="module-title">Mwea Animation Box</h3><div class="module-meta"><span class="module-tag tag-illustrative">MEDIA</span><span class="module-tag tag-illustrative">DRAFT</span></div></div>
+<div class="module-body">
+<div class="spec-row"><span class="spec-label">Asset ID</span><span class="spec-value mono">mwea-animation</span></div>
+<div class="spec-row"><span class="spec-label">Location</span><span class="spec-value">Mwea, Kirinyaga County</span></div>
+<div class="spec-row"><span class="spec-label">Coordinates</span><span class="spec-value mono">-0.7000\u00b0, 37.6333\u00b0</span></div>
+<div class="spec-row"><span class="spec-label">Build Cost</span><span class="spec-value mono">KES 2,400,000</span></div>
+<div class="spec-row"><span class="spec-label">Funding Target</span><span class="spec-value mono">KES 2,400,000</span></div>
+<div class="spec-row"><span class="spec-label">Settled</span><span class="spec-value mono err">KES 0 (0%)</span></div>
+<div class="spec-row"><span class="spec-label">Status</span><span class="spec-value err">DRAFT</span></div>
+<div class="spec-row"><span class="spec-label">Blueprint</span><span class="spec-value mono err">v1 proposed (unverified)</span></div>
+<div class="spec-row"><span class="spec-label">Crew</span><span class="spec-value err">Unassigned \u2014 requires community mandate</span></div>
+</div>
+<div class="module-footer"><span>Illustrative scenario</span><div class="actions"><button>DRAFT BRIEF</button><button class="primary">RECRUIT</button></div></div>
+</article>
+<article class="module oxide" style="grid-column: span 6; grid-row: span 2;" aria-labelledby="mod-radar-title">
+<div class="module-header"><h3 id="mod-radar-title" class="module-title">Friction Radar \u2014 Active Signals</h3><div class="module-meta"><span class="module-tag tag-friction">CULTURE</span><span class="module-tag tag-friction">EDUCATION</span><span class="module-tag tag-friction">WORK</span></div></div>
+<div class="module-body" style="padding: 0;">
+<div class="connection-map" id="radarMap" role="img" aria-label="Friction signal connections">
+<div class="connection-node published" style="top: 25%; left: 20%;" title="Tender System"></div>
+<div class="connection-node illustrative" style="top: 75%; left: 15%;" title="Mwea Animation"></div>
+<div class="connection-node published" style="top: 35%; left: 70%;" title="Nyamindi Hydro"></div>
+<div class="connection-node friction" style="top: 50%; left: 10%;" title="Culture: Authorship"></div>
+<div class="connection-node friction" style="top: 30%; left: 55%;" title="Education: Infrastructure"></div>
+<div class="connection-node friction" style="top: 65%; left: 80%;" title="Work: Capability"></div>
+<div class="connection-line" style="top: 25%; left: 20%; width: 50%; transform: rotate(-15deg);"></div>
+<div class="connection-line" style="top: 35%; left: 70%; width: 30%; transform: rotate(25deg);"></div>
+<div class="connection-line" style="top: 75%; left: 15%; width: 40%; transform: rotate(-35deg);"></div>
+<div class="connection-line active" style="top: 50%; left: 10%; width: 25%; transform: rotate(10deg);"></div>
+<div class="connection-line active" style="top: 30%; left: 55%; width: 35%; transform: rotate(-20deg);"></div>
+<div class="connection-line active" style="top: 65%; left: 80%; width: 20%; transform: rotate(5deg);"></div>
+</div>
+</div>
+<div class="module-footer"><span>3 active signals \u00b7 0 local adaptations</span><div class="actions"><button>LOG FRICTION</button><button class="primary">ADAPT</button></div></div>
+</article>
+<article class="module concrete" style="grid-column: span 6; grid-row: span 2;" aria-labelledby="mod-ledger-title">
+<div class="module-header"><h3 id="mod-ledger-title" class="module-title">Ledger Schema \u2014 Roll Fields</h3><div class="module-meta"><span class="module-tag tag-schema">SPEC</span></div></div>
+<div class="module-body">
+<div class="spec-row"><span class="spec-label">contribution</span><span class="spec-value">Who did what (role, hours, scope)</span></div>
+<div class="spec-row"><span class="spec-label">artifact</span><span class="spec-value">What was produced (source, version, hash)</span></div>
+<div class="spec-row"><span class="spec-label">test</span><span class="spec-value">Method, conditions, result, limitations</span></div>
+<div class="spec-row"><span class="spec-label">acceptance</span><span class="spec-value">Who accepted/rejected/deferred \u2014 and why</span></div>
+<div class="spec-row"><span class="spec-label">maintenance</span><span class="spec-value">Failure, repair, operating state, next review</span></div>
+<div class="spec-row"><span class="spec-label">integrity</span><span class="spec-value">Submitted evidence distinct from reviewed</span></div>
+</div>
+<div class="module-footer"><span>From migration 20261019050000</span><div class="actions"><button>EXPORT SPEC</button></div></div>
+</article>
+<article class="module concrete" style="grid-column: span 6; grid-row: span 2;" aria-labelledby="mod-capability-title">
+<div class="module-header"><h3 id="mod-capability-title" class="module-title">Capability Record \u2014 Fields</h3><div class="module-meta"><span class="module-tag tag-schema">SPEC</span></div></div>
+<div class="module-body">
+<div class="spec-row"><span class="spec-label">claim</span><span class="spec-value">The work a person says they can do</span></div>
+<div class="spec-row"><span class="spec-label">work_sample</span><span class="spec-value">Artifact, task or demonstration</span></div>
+<div class="spec-row"><span class="spec-label">verifier</span><span class="spec-value">Who checked it, and how</span></div>
+<div class="spec-row"><span class="spec-label">scope</span><span class="spec-value">What the evidence does\u2014and does not\u2014establish</span></div>
+<div class="spec-row"><span class="spec-label">recency</span><span class="spec-value">Only where freshness matters to the work</span></div>
+</div>
+<div class="module-footer"><span>From tender.ts CAPABILITY_FIELDS</span><div class="actions"><button>EXPORT SPEC</button></div></div>
+</article>
+<article class="module steel" style="grid-column: span 4; grid-row: span 3;" aria-labelledby="mod-sequence-title">
+<div class="module-header"><h3 id="mod-sequence-title" class="module-title">Work Sequence \u2014 6 Gates</h3><div class="module-meta"><span class="module-tag tag-published">PROCESS</span></div></div>
+<div class="module-body">
+<div class="spec-row"><span class="spec-label">01</span><span class="spec-value ok">DISCOVER \u2014 Observe the work with the people affected</span></div>
+<div class="spec-row"><span class="spec-label">02</span><span class="spec-value ok">DIAGNOSE \u2014 Separate symptoms, causes and assumptions</span></div>
+<div class="spec-row"><span class="spec-label">03</span><span class="spec-value warn">SCOPE \u2014 Requirements \u00b7 alternatives \u00b7 cost \u00b7 acceptance</span></div>
+<div class="spec-row"><span class="spec-label">04</span><span class="spec-value">BUILD \u2014 Inputs, responsibilities, safety, revisions</span></div>
+<div class="spec-row"><span class="spec-label">05</span><span class="spec-value">TEST & ACCEPT \u2014 Compare results with agreed criteria</span></div>
+<div class="spec-row"><span class="spec-label">06</span><span class="spec-value">MAINTAIN & LEARN \u2014 Repairs, failures, repeatable lessons</span></div>
+</div>
+<div class="module-footer"><span>Each gate needs evidence before transition</span><div class="actions"><button>VIEW GATE 03</button></div></div>
+</article>
+<article class="module oxide" style="grid-column: span 4; grid-row: span 3;" aria-labelledby="mod-boundaries-title">
+<div class="module-header"><h3 id="mod-boundaries-title" class="module-title">Hard Boundaries</h3><div class="module-meta"><span class="module-tag tag-friction">LIMITS</span></div></div>
+<div class="module-body" style="font-size: 12px; line-height: 1.8;">
+<ul style="margin:0; padding-left:18px;">
+<li>No payment processing</li>
+<li>No connected AI / OCR</li>
+<li>No message delivery</li>
+<li>No encrypted multi-user school storage</li>
+<li>No funder accounts, bidding, escrow</li>
+<li>No yield, SBT issuance</li>
+<li>School Console = local-only IndexedDB</li>
+<li>Illustrative \u2260 Published (enforced)</li>
+</ul>
+</div>
+<div class="module-footer"><span>README.md \u00b7 AGENTS.md</span><div class="actions"></div></div>
+</article>
+<article class="module brass" style="grid-column: span 4; grid-row: span 3;" aria-labelledby="mod-commons-title">
+<div class="module-header"><h3 id="mod-commons-title" class="module-title">Commons \u2014 Shared Records</h3><div class="module-meta"><span class="module-tag tag-illustrative">PUBLIC</span></div></div>
+<div class="module-body">
+<div class="spec-row"><span class="spec-label">Published</span><span class="spec-value ok">2 tenders</span></div>
+<div class="spec-row"><span class="spec-label">Illustrative</span><span class="spec-value warn">1 scenario</span></div>
+<div class="spec-row"><span class="spec-label">Roll entries</span><span class="spec-value ok">1 (tender-system)</span></div>
+<div class="spec-row"><span class="spec-label">Access</span><span class="spec-value">Moderated \u2014 requires active moderator</span></div>
+<div class="spec-row"><span class="spec-label">Contributions</span><span class="spec-value">Disabled until moderator provisioned</span></div>
+</div>
+<div class="module-footer"><span>Read-only until moderator active</span><div class="actions"><button class="primary">REQUEST ACCESS</button></div></div>
+</article>
+</div>
+</main>
+<div class="floor-bar" role="navigation" aria-label="Floor switcher">
+<div class="floor-tabs">
+<button class="floor-tab" data-floor="basement">BASEMENT</button>
+<button class="floor-tab active" data-floor="ground">GROUND</button>
+<button class="floor-tab" data-floor="first">FIRST</button>
+<button class="floor-tab" data-floor="second">SECOND</button>
+</div>
+<div class="floor-status">
+<span><span class="dot" aria-hidden="true"></span> GROUND FLOOR</span>
+<span>ASSETS: 3 | ROLL: 1 | SIGNALS: 3</span>
+<span>SERVER: <mark style="background:var(--steel-pale);color:var(--steel);padding:1px 6px;border-radius:3px;">VERIFIED</mark></span>
+</div>
+</div>
+<script>
+const floorTabs = document.querySelectorAll('.floor-tab');
+floorTabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    floorTabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+
+const workNav = document.querySelectorAll('.work-nav a');
+workNav.forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    workNav.forEach(n => n.classList.remove('active'));
+    a.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

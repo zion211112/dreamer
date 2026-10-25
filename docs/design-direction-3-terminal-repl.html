@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APT-LABS — Terminal REPL Direction</title>
+<style>
+:root {
+  --bg: #0d110e;
+  --bg-elevated: #141a15;
+  --bg-panel: #1a221c;
+  --ink: #e8ebe5;
+  --muted: #6d7d6e;
+  --faint: #4a554b;
+  --line: rgba(109,125,110,.3);
+  --line-strong: rgba(109,125,110,.5);
+  --phosphor: #8fd98f;
+  --phosphor-dim: #5ab55a;
+  --amber: #e8b84d;
+  --amber-dim: #b88d3a;
+  --rust: #d87a4d;
+  --rust-dim: #a85a3a;
+  --error: #e85d5d;
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  --serif: Georgia, "Times New Roman", serif;
+  --cell-h: 22px;
+  --prompt: "\u25b6";
+}
+* { box-sizing: border-box; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 13px/1.6 var(--mono);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+.term-shell {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+  background: 
+    radial-gradient(ellipse at 50% 0%, rgba(143,217,143,.03), transparent 60%),
+    var(--bg);
+}
+.term-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.15'/%3E%3C/svg%3E");
+}
+.term-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(20,26,21,.9);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+}
+.term-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-weight: 600;
+  letter-spacing: .05em;
+  color: var(--phosphor);
+}
+.term-brand span { color: var(--muted); }
+.term-status { display: flex; align-items: center; gap: 12px; font-size: 11px; color: var(--muted); }
+.term-status .dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--phosphor);
+  box-shadow: 0 0 8px var(--phosphor);
+  animation: pulse 2s ease-in-out infinite;
+}
+.term-status .dot.idle { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+.term-status .dot.error { background: var(--error); box-shadow: 0 0 8px var(--error); }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+.term-tabs { display: flex; gap: 2px; }
+.term-tab {
+  padding: 6px 14px;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  font: 500 11px/1 var(--mono);
+  color: var(--faint);
+  background: transparent;
+  cursor: pointer;
+  transition: all .1s;
+}
+.term-tab:hover { color: var(--ink); }
+.term-tab.active { color: var(--phosphor); border-color: var(--line); background: var(--bg-panel); }
+.term-main {
+  display: grid;
+  grid-template-columns: 260px 1fr 320px;
+  gap: 8px;
+  padding: 8px;
+  overflow: hidden;
+  position: relative;
+  z-index: 5;
+}
+@media (max-width: 1100px) {
+  .term-main { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; }
+}
+.term-pane {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  min-height: 0;
+}
+.pane-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-elevated);
+  font: 500 11px/1 var(--mono);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+.pane-title { display: flex; align-items: center; gap: 8px; }
+.pane-title .icon { color: var(--phosphor); }
+.pane-actions { display: flex; gap: 4px; }
+.pane-btn {
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font: 500 10px/1 var(--mono);
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+}
+.pane-btn:hover { border-color: var(--phosphor); color: var(--phosphor); }
+.pane-content {
+  flex: 1;
+  overflow: auto;
+  padding: 12px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.pane-content::-webkit-scrollbar { width: 8px; }
+.pane-content::-webkit-scrollbar-track { background: transparent; }
+.pane-content::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 4px; }
+.tree-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background .1s;
+  user-select: none;
+}
+.tree-item:hover { background: var(--bg-elevated); }
+.tree-item.selected { background: rgba(143,217,143,.1); border-left: 2px solid var(--phosphor); padding-left: 6px; }
+.tree-item .twistie { width: 14px; text-align: center; color: var(--faint); }
+.tree-item .label { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tree-item .badge { font: 500 9px/1 var(--mono); padding: 1px 6px; border-radius: 3px; }
+.badge-ok { background: rgba(143,217,143,.15); color: var(--phosphor); }
+.badge-warn { background: rgba(232,184,77,.15); color: var(--amber); }
+.badge-err { background: rgba(232,93,93,.15); color: var(--error); }
+.badge-info { background: rgba(109,125,110,.15); color: var(--muted); }
+.console-output {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--mono);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.console-line { display: flex; gap: 8px; }
+.console-line .prompt { color: var(--phosphor); flex-shrink: 0; }
+.console-line .cmd { color: var(--ink); }
+.console-line .output { color: var(--muted); }
+.console-line .error { color: var(--error); }
+.console-line .success { color: var(--phosphor); }
+.console-line .warn { color: var(--amber); }
+.console-line .meta { color: var(--faint); }
+.repl-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--line);
+  background: var(--bg-elevated);
+}
+.repl-input .prompt { color: var(--phosphor); flex-shrink: 0; }
+.repl-input input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  outline: none;
+}
+.repl-input input::placeholder { color: var(--faint); }
+.inspector-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 16px;
+  font-size: 12px;
+}
+.inspector-grid .label { color: var(--faint); }
+.inspector-grid .value { color: var(--ink); word-break: break-word; }
+.inspector-grid .value.ok { color: var(--phosphor); }
+.inspector-grid .value.warn { color: var(--amber); }
+.inspector-grid .value.err { color: var(--error); }
+.inspector-grid .section { grid-column: 1 / -1; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: .05em; font-size: 10px; }
+.history-list { display: flex; flex-direction: column; gap: 4px; }
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all .1s;
+}
+.history-item:hover { border-color: var(--phosphor); background: var(--bg-elevated); }
+.history-item .time { color: var(--faint); flex-shrink: 0; }
+.history-item .action { color: var(--phosphor); font-weight: 500; }
+.history-item .target { color: var(--muted); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.history-item .status { font: 500 9px/1 var(--mono); padding: 2px 6px; border-radius: 3px; }
+.term-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border-top: 1px solid var(--line);
+  background: rgba(13,17,14,.9);
+  backdrop-filter: blur(8px);
+  font: 500 10px/1 var(--mono);
+  color: var(--faint);
+  z-index: 10;
+}
+.term-footer mark { background: rgba(143,217,143,.15); color: var(--phosphor); padding: 1px 6px; border-radius: 3px; }
+.floor-switcher { display: flex; gap: 4px; }
+.floor-btn {
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font: inherit;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+}
+.floor-btn.active { background: var(--phosphor); border-color: var(--phosphor); color: var(--bg); }
+.floor-btn:hover:not(.active) { border-color: var(--phosphor); color: var(--phosphor); }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="term-shell">
+<header class="term-header">
+<div class="term-brand">APT\u2014LABS <span>\u2014</span> TERMINAL <span class="version">v0.1.0</span></div>
+<div class="term-status">
+<span class="dot" id="statusDot"></span>
+<span id="statusText">READY</span>
+<span class="divider" aria-hidden="true">|</span>
+<span id="floorDisplay">FLOOR: GROUND</span>
+<span class="divider" aria-hidden="true">|</span>
+<span id="timeDisplay">2026-10-24 14:32:17</span>
+</div>
+<nav class="term-tabs" role="tablist" aria-label="Terminal tabs">
+<button class="term-tab active" role="tab" aria-selected="true" data-tab="topology">TOPOLOGY</button>
+<button class="term-tab" role="tab" aria-selected="false" data-tab="recruitment">RECRUITMENT</button>
+<button class="term-tab" role="tab" aria-selected="false" data-tab="radar">RADAR</button>
+<button class="term-tab" role="tab" aria-selected="false" data-tab="ledger">LEDGER</button>
+<button class="term-tab" role="tab" aria-selected="false" data-tab="commons">COMMONS</button>
+</nav>
+</header>
+<main class="term-main">
+<aside class="term-pane" role="complementary" aria-label="Navigation tree">
+<div class="pane-header">
+<span class="pane-title"><span class="icon">\u25b6</span> ASSETS</span>
+<div class="pane-actions">
+<button class="pane-btn" title="Refresh">\u21bb</button>
+<button class="pane-btn" title="New">+</button>
+</div>
+</div>
+<div class="pane-content" id="treeView">
+<div class="tree-item selected" data-id="nyamindi" tabindex="0" role="treeitem" aria-selected="true">
+<span class="twistie">\u25bc</span>
+<span class="label">nyamindi-hydro</span>
+<span class="badge badge-ok">ENERGY</span>
+<span class="badge badge-ok">DEPLOYED</span>
+</div>
+<div class="tree-item" data-id="tender-system" tabindex="0" role="treeitem" aria-selected="false">
+<span class="twistie">\u25bc</span>
+<span class="label">tender-system</span>
+<span class="badge badge-ok">SOFTWARE</span>
+<span class="badge badge-ok">DEPLOYED</span>
+</div>
+<div class="tree-item" data-id="mwea" tabindex="0" role="treeitem" aria-selected="false">
+<span class="twistie">\u25b6</span>
+<span class="label">mwea-animation</span>
+<span class="badge badge-warn">MEDIA</span>
+<span class="badge badge-warn">DRAFT</span>
+</div>
+<div class="tree-item" style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--faint); font-size: 10px; text-transform: uppercase; letter-spacing: .05em;">FRICTION SIGNALS</div>
+<div class="tree-item" data-id="friction-culture" tabindex="0" role="treeitem" aria-selected="false">
+<span class="twistie">\u2022</span>
+<span class="label">culture:authorship</span>
+<span class="badge badge-info">SIGNAL</span>
+</div>
+<div class="tree-item" data-id="friction-education" tabindex="0" role="treeitem" aria-selected="false">
+<span class="twistie">\u2022</span>
+<span class="label">education:infrastructure</span>
+<span class="badge badge-info">SIGNAL</span>
+</div>
+<div class="tree-item" data-id="friction-work" tabindex="0" role="treeitem" aria-selected="false">
+<span class="twistie">\u2022</span>
+<span class="label">work:capability</span>
+<span class="badge badge-info">SIGNAL</span>
+</div>
+</div>
+</aside>
+<section class="term-pane" aria-label="Console output">
+<div class="pane-header">
+<span class="pane-title"><span class="icon">\u25b6</span> CONSOLE</span>
+<div class="pane-actions">
+<button class="pane-btn" title="Clear">CLR</button>
+<button class="pane-btn" title="Export">EXP</button>
+</div>
+</div>
+<div class="pane-content console-output" id="consoleOutput" role="log" aria-live="polite">
+<div class="console-line"><span class="prompt">\u25b6</span><span class="cmd"> aptlabs topology list</span></div>
+<div class="console-line"><span class="output">  Found 3 assets in registry</span></div>
+<div class="console-line"><span class="output">  \u251c\u2500 nyamindi-hydro     ENERGY   DEPLOYED   roll:nyamindi-hydro</span></div>
+<div class="console-line"><span class="output">  \u251c\u2500 tender-system       SOFTWARE DEPLOYED   roll:tender-system</span></div>
+<div class="console-line"><span class="output">  \u2514\u2500 mwea-animation      MEDIA    DRAFT      (illustrative)</span></div>
+<div class="console-line"><span class="meta">  \u2014</span></div>
+<div class="console-line"><span class="prompt">\u25b6</span><span class="cmd"> aptlabs tender inspect nyamindi-hydro</span></div>
+<div class="console-line"><span class="output">  asset_name:     Nyamindi Hydro Mini-Grid</span></div>
+<div class="console-line"><span class="output">  category:       energy</span></div>
+<div class="console-line"><span class="output">  location:       Nyamindi, Embu (-0.4167, 37.3833)</span></div>
+<div class="console-line"><span class="output">  build_cost:     KES 18,750,000</span></div>
+<div class="console-line"><span class="output">  funding_target: KES 15,000,000</span></div>
+<div class="console-line"><span class="output">  settled:        KES 8,250,000 (55%)</span></div>
+<div class="console-line"><span class="output">  status:         MATERIALS</span></div>
+<div class="console-line"><span class="output">  blueprint:      v3 (hash: 7f3a2e91...)</span></div>
+<div class="console-line"><span class="output">  crew:</span></div>
+<div class="console-line"><span class="output">    anchor:     W. Mbau (consented public)</span></div>
+<div class="console-line"><span class="output">    builder:    J. Koome</span></div>
+<div class="console-line"><span class="output">    apprentice: K. Njeri</span></div>
+<div class="console-line"><span class="meta">  \u2014</span></div>
+<div class="console-line"><span class="prompt">\u25b6</span><span class="cmd"> aptlabs lifecycle nyamindi-hydro</span></div>
+<div class="console-line"><span class="output">  current:     MATERIALS</span></div>
+<div class="console-line"><span class="output">  permitted:   FABRICATION</span></div>
+<div class="console-line"><span class="output">  gate:        Materials received & logged</span></div>
+<div class="console-line"><span class="output">  actor:       Builder (J. Koome)</span></div>
+<div class="console-line"><span class="meta">  \u2014</span></div>
+<div class="console-line"><span class="prompt">\u25b6</span><span class="cmd"> aptlabs radar list --room=culture</span></div>
+<div class="console-line"><span class="output">  friction: culture:authorship</span></div>
+<div class="console-line"><span class="output">  signal:   Who can author, own, distribute, and earn from stories rooted in local life?</span></div>
+<div class="console-line"><span class="output">  origin:   Mwea \u00b7 Context to establish with participants</span></div>
+<div class="console-line"><span class="output">  question: Whose account is missing, and who should hold authorship and rights?</span></div>
+<div class="console-line"><span class="meta">  \u2014</span></div>
+<div class="console-line"><span class="prompt">\u25b6</span><span class="cmd"> _</span></div>
+</div>
+<div class="repl-input">
+<span class="prompt">\u25b6</span>
+<input type="text" id="replInput" placeholder="aptlabs <command> [args]..." autocomplete="off" spellcheck="false" aria-label="Command input">
+</div>
+</section>
+<aside class="term-pane" role="complementary" aria-label="Inspector">
+<div class="pane-header">
+<span class="pane-title"><span class="icon">\u25b6</span> INSPECTOR</span>
+<div class="pane-actions">
+<button class="pane-btn" title="Export JSON">JSON</button>
+</div>
+</div>
+<div class="pane-content" id="inspectorView">
+<div class="inspector-grid">
+<span class="section">ASSET: nyamindi-hydro</span>
+<span class="label">asset_id</span><span class="value">nyamindi-hydro</span>
+<span class="label">asset_name</span><span class="value">Nyamindi Hydro Mini-Grid</span>
+<span class="label">category</span><span class="value">energy</span>
+<span class="label">is_illustrative</span><span class="value ok">false</span>
+<span class="label">location</span><span class="value">Nyamindi, Embu County</span>
+<span class="label">coordinates</span><span class="value">-0.416667, 37.383333</span>
+<span class="label">currency</span><span class="value">KES</span>
+<span class="section">BLUEPRINT</span>
+<span class="label">blueprint_id</span><span class="value">bp:nyamindi:v3</span>
+<span class="label">version</span><span class="value">3</span>
+<span class="label">hash</span><span class="value">7f3a2e91c4d8...</span>
+<span class="label">is_active</span><span class="value ok">true</span>
+<span class="label">lines</span><span class="value">12 items</span>
+<span class="label">total_minor</span><span class="value">1875000000</span>
+<span class="section">CAPITAL</span>
+<span class="label">build_cost_minor</span><span class="value">1875000000</span>
+<span class="label">funding_target_minor</span><span class="value">1500000000</span>
+<span class="label">signaled_minor</span><span class="value">1500000000</span>
+<span class="label">settled_minor</span><span class="value warn">825000000</span>
+<span class="label">funded_pct</span><span class="value warn">55%</span>
+<span class="label">allocation_state</span><span class="value warn">partially_settled</span>
+<span class="section">LIFECYCLE</span>
+<span class="label">status</span><span class="value warn">MATERIALS</span>
+<span class="label">permitted_next</span><span class="value">FABRICATION</span>
+<span class="label">gate</span><span class="value">Materials received & logged</span>
+<span class="label">awaiting_settlement</span><span class="value warn">true</span>
+<span class="section">CREW</span>
+<span class="label">anchor</span><span class="value">W. Mbau (id: crew:anchor:1)</span>
+<span class="label">builder</span><span class="value">J. Koome (id: crew:builder:1)</span>
+<span class="label">apprentice</span><span class="value">K. Njeri (id: crew:apprentice:1)</span>
+<span class="label">anchor_signoff</span><span class="value">pending</span>
+<span class="section">ROLL</span>
+<span class="label">roll_id</span><span class="value">none (not deployed)</span>
+<span class="label">deployed_at</span><span class="value">n/a</span>
+</div>
+</div>
+</aside>
+</main>
+<footer class="term-footer">
+<div class="floor-switcher" role="group" aria-label="Floor switcher">
+<button class="floor-btn" data-floor="basement">BASEMENT</button>
+<button class="floor-btn active" data-floor="ground">GROUND</button>
+<button class="floor-btn" data-floor="first">FIRST</button>
+<button class="floor-btn" data-floor="second">SECOND</button>
+</div>
+<span>APT-LABS \u00b7 Terminal REPL Direction \u00b7 v0.1</span>
+<span><mark>CTRL+/</mark> for command palette</span>
+</footer>
+</div>
+<script>
+const tabs = document.querySelectorAll('.term-tab');
+const treeItems = document.querySelectorAll('.tree-item[data-id]');
+const replInput = document.getElementById('replInput');
+const consoleOutput = document.getElementById('consoleOutput');
+const inspectorView = document.getElementById('inspectorView');
+const statusDot = document.getElementById('statusDot');
+const statusText = document.getElementById('statusText');
+const floorBtns = document.querySelectorAll('.floor-btn');
+const floorDisplay = document.getElementById('floorDisplay');
+
+const assetData = {
+  nyamindi: {
+    title: 'ASSET: nyamindi-hydro',
+    grid: [
+      ['asset_id', 'nyamindi-hydro', ''],
+      ['asset_name', 'Nyamindi Hydro Mini-Grid', ''],
+      ['category', 'energy', ''],
+      ['is_illustrative', 'false', 'ok'],
+      ['location', 'Nyamindi, Embu County', ''],
+      ['coordinates', '-0.416667, 37.383333', ''],
+      ['currency', 'KES', ''],
+      ['SECTION', 'BLUEPRINT', ''],
+      ['blueprint_id', 'bp:nyamindi:v3', ''],
+      ['version', '3', ''],
+      ['hash', '7f3a2e91c4d8...', ''],
+      ['is_active', 'true', 'ok'],
+      ['lines', '12 items', ''],
+      ['total_minor', '1875000000', ''],
+      ['SECTION', 'CAPITAL', ''],
+      ['build_cost_minor', '1875000000', ''],
+      ['funding_target_minor', '1500000000', ''],
+      ['signaled_minor', '1500000000', ''],
+      ['settled_minor', '825000000', 'warn'],
+      ['funded_pct', '55%', 'warn'],
+      ['allocation_state', 'partially_settled', 'warn'],
+      ['SECTION', 'LIFECYCLE', ''],
+      ['status', 'MATERIALS', 'warn'],
+      ['permitted_next', 'FABRICATION', ''],
+      ['gate', 'Materials received & logged', ''],
+      ['awaiting_settlement', 'true', 'warn'],
+      ['SECTION', 'CREW', ''],
+      ['anchor', 'W. Mbau (id: crew:anchor:1)', ''],
+      ['builder', 'J. Koome (id: crew:builder:1)', ''],
+      ['apprentice', 'K. Njeri (id: crew:apprentice:1)', ''],
+      ['anchor_signoff', 'pending', ''],
+      ['SECTION', 'ROLL', ''],
+      ['roll_id', 'none (not deployed)', ''],
+      ['deployed_at', 'n/a', ''],
+    ]
+  },
+  'tender-system': {
+    title: 'ASSET: tender-system',
+    grid: [
+      ['asset_id', 'tender-system', ''],
+      ['asset_name', 'Tender System', ''],
+      ['category', 'software', ''],
+      ['is_illustrative', 'false', 'ok'],
+      ['location', 'Nairobi, Kenya', ''],
+      ['coordinates', '-1.2921, 36.8219', ''],
+      ['currency', 'KES', ''],
+      ['SECTION', 'BLUEPRINT', ''],
+      ['blueprint_id', 'bp:tender:v5', ''],
+      ['version', '5', ''],
+      ['hash', 'a1b2c3d4e5f6...', ''],
+      ['is_active', 'true', 'ok'],
+      ['lines', '8 items', ''],
+      ['total_minor', '1240000000', ''],
+      ['SECTION', 'CAPITAL', ''],
+      ['build_cost_minor', '1240000000', ''],
+      ['funding_target_minor', '1000000000', ''],
+      ['signaled_minor', '1000000000', ''],
+      ['settled_minor', '1000000000', 'ok'],
+      ['funded_pct', '100%', 'ok'],
+      ['allocation_state', 'fully_capitalized', 'ok'],
+      ['SECTION', 'LIFECYCLE', ''],
+      ['status', 'DEPLOYED', 'ok'],
+      ['permitted_next', 'none', ''],
+      ['gate', 'n/a', ''],
+      ['awaiting_settlement', 'false', 'ok'],
+      ['SECTION', 'CREW', ''],
+      ['anchor', 'S. Otieno (id: crew:anchor:2)', ''],
+      ['builder', 'M. Wambui (id: crew:builder:2)', ''],
+      ['apprentice', 'L. Kimani (id: crew:apprentice:2)', ''],
+      ['anchor_signoff', '2026-10-15T10:30:00Z', 'ok'],
+      ['SECTION', 'ROLL', ''],
+      ['roll_id', 'roll:tender-system', 'ok'],
+      ['deployed_at', '2026-10-15T10:30:00Z', 'ok'],
+    ]
+  },
+  mwea: {
+    title: 'ASSET: mwea-animation',
+    grid: [
+      ['asset_id', 'mwea-animation', ''],
+      ['asset_name', 'Mwea Animation Box', ''],
+      ['category', 'media', ''],
+      ['is_illustrative', 'true', 'warn'],
+      ['location', 'Mwea, Kirinyaga County', ''],
+      ['coordinates', '-0.7000, 37.6333', ''],
+      ['currency', 'KES', ''],
+      ['SECTION', 'BLUEPRINT', ''],
+      ['blueprint_id', 'bp:mwea:v1', ''],
+      ['version', '1', ''],
+      ['hash', 'proposed (unverified)', 'warn'],
+      ['is_active', 'false', 'warn'],
+      ['lines', '5 items (proposed)', 'warn'],
+      ['total_minor', '240000000', 'warn'],
+      ['SECTION', 'CAPITAL', ''],
+      ['build_cost_minor', '240000000', ''],
+      ['funding_target_minor', '240000000', ''],
+      ['signaled_minor', '0', 'warn'],
+      ['settled_minor', '0', 'warn'],
+      ['funded_pct', '0%', 'warn'],
+      ['allocation_state', 'unfunded', 'warn'],
+      ['SECTION', 'LIFECYCLE', ''],
+      ['status', 'DRAFT', 'warn'],
+      ['permitted_next', 'OPEN', ''],
+      ['gate', 'Blueprint totals verified; crew assigned', 'warn'],
+      ['awaiting_settlement', 'false', ''],
+      ['SECTION', 'CREW', ''],
+      ['anchor', 'unassigned', 'err'],
+      ['builder', 'unassigned', 'err'],
+      ['apprentice', 'unassigned', 'err'],
+      ['anchor_signoff', 'n/a', ''],
+      ['SECTION', 'ROLL', ''],
+      ['roll_id', 'none (illustrative)', 'warn'],
+      ['deployed_at', 'n/a', ''],
+    ]
+  }
+};
+
+const history = [
+  { time: '14:30:12', action: 'inspect', target: 'nyamindi-hydro', status: 'ok' },
+  { time: '14:30:45', action: 'lifecycle', target: 'nyamindi-hydro', status: 'ok' },
+  { time: '14:31:02', action: 'radar list', target: 'culture', status: 'ok' },
+  { time: '14:31:28', action: 'topology list', target: '', status: 'ok' },
+];
+
+let activeTab = 'topology';
+let selectedAsset = 'nyamindi';
+
+function renderInspector(assetId) {
+  const data = assetData[assetId];
+  if (!data) return;
+  let html = `<div class="inspector-grid"><span class="section">${data.title}</span>`;
+  data.grid.forEach(([label, value, cls]) => {
+    if (label === 'SECTION') {
+      html += `<span class="section">${value}</span>`;
+    } else {
+      html += `<span class="label">${label}</span><span class="value${cls ? ' ' + cls : ''}">${value}</span>`;
+    }
+  });
+  html += '</div>';
+  inspectorView.innerHTML = html;
+}
+
+treeItems.forEach(item => {
+  item.addEventListener('click', () => selectAsset(item.dataset.id));
+  item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectAsset(item.dataset.id); } });
+});
+
+function selectAsset(id) {
+  selectedAsset = id;
+  treeItems.forEach(item => {
+    item.classList.toggle('selected', item.dataset.id === id);
+    item.setAttribute('aria-selected', item.dataset.id === id);
+  });
+  renderInspector(id);
+  appendConsole(`\u25b6 aptlabs tender inspect ${id.replace('-', '-')}`, 'cmd');
+}
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+    tab.classList.add('active');
+    tab.setAttribute('aria-selected', 'true');
+    activeTab = tab.dataset.tab;
+    statusText.textContent = activeTab.toUpperCase();
+  });
+});
+
+floorBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    floorBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    floorDisplay.textContent = `FLOOR: ${btn.dataset.floor.toUpperCase()}`;
+  });
+});
+
+function appendConsole(text, type = 'output') {
+  const line = document.createElement('div');
+  line.className = 'console-line';
+  if (type === 'cmd') {
+    line.innerHTML = `<span class="prompt">\u25b6</span><span class="cmd">${escapeHtml(text)}</span>`;
+  } else {
+    line.innerHTML = `<span class="prompt"></span><span class="${type}">${escapeHtml(text)}</span>`;
+  }
+  consoleOutput.insertBefore(line, consoleOutput.lastChild);
+  consoleOutput.scrollTop = consoleOutput.scrollHeight;
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+const commands = {
+  'topology list': () => { appendConsole('  Found 3 assets in registry', 'output'); appendConsole('  \u251c\u2500 nyamindi-hydro     ENERGY   DEPLOYED   roll:nyamindi-hydro', 'output'); appendConsole('  \u251c\u2500 tender-system       SOFTWARE DEPLOYED   roll:tender-system', 'output'); appendConsole('  \u2514\u2500 mwea-animation      MEDIA    DRAFT      (illustrative)', 'output'); },
+  'tender inspect nyamindi-hydro': () => { appendConsole('  asset_name:     Nyamindi Hydro Mini-Grid', 'output'); appendConsole('  category:       energy', 'output'); appendConsole('  location:       Nyamindi, Embu (-0.4167, 37.3833)', 'output'); appendConsole('  build_cost:     KES 18,750,000', 'output'); appendConsole('  funding_target: KES 15,000,000', 'output'); appendConsole('  settled:        KES 8,250,000 (55%)', 'output'); appendConsole('  status:         MATERIALS', 'output'); appendConsole('  blueprint:      v3 (hash: 7f3a2e91...)', 'output'); },
+  'lifecycle nyamindi-hydro': () => { appendConsole('  current:     MATERIALS', 'output'); appendConsole('  permitted:   FABRICATION', 'output'); appendConsole('  gate:        Materials received & logged', 'output'); appendConsole('  actor:       Builder (J. Koome)', 'output'); },
+  'radar list --room=culture': () => { appendConsole('  friction: culture:authorship', 'output'); appendConsole('  signal:   Who can author, own, distribute, and earn from stories rooted in local life?', 'output'); appendConsole('  origin:   Mwea \u00b7 Context to establish with participants', 'output'); appendConsole('  question: Whose account is missing, and who should hold authorship and rights?', 'output'); },
+  'help': () => { appendConsole('  Available commands:', 'output'); appendConsole('    topology list                 \u2014 List all assets', 'output'); appendConsole('    tender inspect <id>           \u2014 Inspect tender details', 'output'); appendConsole('    lifecycle <id>                \u2014 Show lifecycle state', 'output'); appendConsole('    radar list [--room=X]         \u2014 List friction signals', 'output'); appendConsole('    help                          \u2014 Show this help', 'output'); },
+};
+
+replInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const cmd = replInput.value.trim();
+    if (!cmd) return;
+    appendConsole(cmd, 'cmd');
+    replInput.value = '';
+    const handler = commands[cmd];
+    if (handler) {
+      handler();
+    } else {
+      appendConsole(`  Unknown command: ${cmd}. Type 'help' for available commands.`, 'error');
+    }
+    statusDot.className = 'dot';
+    statusText.textContent = 'READY';
+  }
+});
+
+function updateTime() {
+  const now = new Date();
+  document.getElementById('timeDisplay').textContent = now.toISOString().slice(0, 19).replace('T', ' ');
+}
+setInterval(updateTime, 1000);
+updateTime();
+
+renderInspector('nyamindi');
+</script>
+</body>
+</html>
