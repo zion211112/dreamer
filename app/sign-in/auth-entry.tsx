@@ -42,7 +42,6 @@ export function AuthEntry({
           Local development identity. It opens the Studio for this browser only. It is not a verified account, it is not stored on a server, and it grants no school, crew or publishing permission.
         </p>
       )}
-      <p className="auth-entry-boundary">Identity does not grant school, crew, or publishing permissions. Those are verified separately on the server.</p>
       <div className="auth-entry-foot"><span>DEMO PROTOTYPE</span><span>LOCAL DEV ONLY — NO REMOTE SYNCHRONIZATION</span></div>
     </section>
   );
