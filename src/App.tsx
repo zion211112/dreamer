@@ -9,8 +9,8 @@ export function App() {
   return (
     <Switch>
       <Route path="/"><Landing /></Route>
-      <Route path="/sign-in"><Auth mode="sign-in" /></Route>
-      <Route path="/sign-up"><Auth mode="sign-up" /></Route>
+      <Route path="/sign-in"><Auth /></Route>
+      <Route path="/sign-up"><Auth /></Route>
       <Route path="/workspace/people"><People /></Route>
       <Route path="/workspace/institutions"><Institutions /></Route>
       <Route path="/workspace/commons"><Commons /></Route>
