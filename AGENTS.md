@@ -15,3 +15,5 @@
 - Preserve server-side authentication and authorization checks alongside database row-level security for school publication and crew Assembly.
 - Keep design tokens and visual roles in `src/styles.css`; use shared controls for interactive UI.
 - Funding remains contact-only until an approved payment and compliance design exists. Do not imply connected AI, OCR, or message delivery without an implemented provider.
+
+- **NEVER STOP UNTIL DONE IS DONE** — This is a long-horizon task. Continue working through all implementation steps (component creation, integration, styling, testing, commit, push) without pausing or asking for confirmation unless genuinely blocked. The task is complete only when the new Field Desk workspace is live, verified, and pushed to the remote repository.

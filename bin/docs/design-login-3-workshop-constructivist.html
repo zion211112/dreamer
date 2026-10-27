@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APT-LABS — Login Direction 3: Workshop Constructivist</title>
+<style>
+:root {
+  --paper: #f7f5f0;
+  --paper-raw: #ebe7e0;
+  --ink: #1d1f1b;
+  --muted: #6b6f66;
+  --faint: #989c92;
+  --line: rgba(45,48,42,.15);
+  --line-strong: rgba(45,48,42,.25);
+  --steel: #4a5a6a;
+  --steel-pale: #dce3e8;
+  --brass: #b8955a;
+  --brass-pale: #f2eadc;
+  --oxide: #a85a3a;
+  --oxide-pale: #efe3de;
+  --concrete: #c8c4bd;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  --gutter: clamp(20px, 3vw, 48px);
+  --module: 8px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background: var(--paper);
+  font: 13px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+}
+.workshop {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: 
+    repeating-linear-gradient(0deg, transparent, transparent 39px, var(--line) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, var(--line) 40px),
+    var(--paper);
+  background-size: 40px 40px;
+}
+.workshop::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .02;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.1'/%3E%3C/svg%3E");
+}
+header.work-header {
+  position: relative;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px var(--gutter);
+  border-bottom: 2px solid var(--ink);
+  background: rgba(247,245,240,.95);
+  backdrop-filter: blur(8px);
+}
+.work-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: clamp(18px, 2.5vw, 24px);
+  letter-spacing: .1em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.work-brand mark { background: var(--brass-pale); color: var(--brass); font-style: normal; font-weight: 400; padding: 0 6px; }
+.work-nav { display: flex; gap: 4px; }
+.work-nav a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font: 500 11px/1 var(--mono);
+  color: var(--muted);
+  text-decoration: none;
+  transition: all .1s;
+}
+.work-nav a:hover { border-color: var(--brass); color: var(--brass); }
+.work-nav a.active { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.work-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--gutter) * 1.5) var(--gutter) calc(var(--gutter) * 2);
+  position: relative;
+  z-index: 10;
+}
+.auth-module {
+  width: 100%;
+  max-width: 440px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.auth-module::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--brass);
+}
+.module-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-raw);
+}
+.module-title { font: 400 16px/1 var(--serif); color: var(--ink); margin: 0; }
+.module-meta { display: flex; gap: 6px; }
+.module-tag {
+  font: 500 9px/1 var(--mono);
+  padding: 2px 8px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.tag-auth { background: var(--brass-pale); color: var(--brass); }
+.module-body { padding: 24px; }
+.spec-row { display: grid; grid-template-columns: 100px 1fr; gap: 8px 12px; padding: 6px 0; border-bottom: 1px dashed var(--line); font-size: 12px; align-items: start; }
+.spec-row:last-child { border-bottom: none; }
+.spec-label { color: var(--faint); font-family: var(--mono); font-size: 11px; }
+.spec-value { color: var(--ink); word-break: break-word; }
+.field-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.field-label {
+  font: 500 10px/1 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+}
+.field-input {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 12px 14px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  transition: border .1s, background .1s;
+}
+.field-input:hover { border-color: var(--line-strong); }
+.field-input:focus {
+  border-color: var(--brass);
+  background: var(--paper);
+  outline: none;
+}
+.field-input::placeholder { color: var(--faint); }
+.field-input:disabled { opacity: .4; cursor: not-allowed; background: var(--paper-raw); }
+.field-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6f66' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 32px; }
+.module-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-top: 1px solid var(--line);
+  background: var(--paper-raw);
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font: 500 11px/1 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  cursor: pointer;
+  transition: all .1s;
+}
+.btn-primary {
+  background: var(--brass);
+  border-color: var(--brass);
+  color: #fff;
+  width: 100%;
+}
+.btn-primary:hover { background: #a08048; border-color: #a08048; }
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+  width: 100%;
+}
+.btn-ghost:hover { border-color: var(--brass); color: var(--brass); }
+.divider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.divider-row::before,
+.divider-row::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.divider-row span {
+  font: 500 9px/1 var(--mono);
+  color: var(--faint);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.boundary-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  background: var(--oxide-pale);
+  border: 1px solid var(--oxide);
+  border-radius: 3px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--oxide);
+}
+.boundary-glyph { flex-shrink: 0; font-size: 14px; margin-top: 1px; }
+.foot-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--faint);
+}
+.foot-row a { color: var(--ink); text-decoration: none; border-bottom: 1px solid transparent; }
+.foot-row a:hover { border-color: var(--brass); color: var(--brass); }
+.floor-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px var(--gutter);
+  background: rgba(247,245,240,.98);
+  backdrop-filter: blur(8px);
+  border-top: 2px solid var(--ink);
+}
+.floor-tabs { display: flex; gap: 4px; }
+.floor-tab {
+  padding: 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: 4px 4px 0 0;
+  font: 500 11px/1 var(--mono);
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  margin-bottom: -2px;
+}
+.floor-tab:hover { border-color: var(--brass); color: var(--brass); }
+.floor-tab.active { background: var(--ink); border-color: var(--ink); color: var(--paper); border-bottom-color: transparent; }
+.floor-status { display: flex; align-items: center; gap: 16px; font: 500 11px/1 var(--mono); color: var(--faint); }
+.floor-status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--brass); }
+.legend-bar {
+  display: flex;
+  gap: 24px;
+  padding: 12px var(--gutter);
+  background: var(--paper-raw);
+  border-bottom: 1px solid var(--line);
+  font-size: 11px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-swatch { width: 14px; height: 14px; border-radius: 3px; border: 1px solid; }
+.legend-swatch.auth { background: var(--brass-pale); border-color: var(--brass); }
+.legend-swatch.illustrative { background: transparent; border-color: var(--brass); border-style: dashed; }
+.legend-swatch.local { background: var(--oxide-pale); border-color: var(--oxide); }
+@media (max-width: 640px) {
+  .work-header { flex-wrap: wrap; }
+  .work-nav { order: 3; width: 100%; justify-content: center; margin-top: 8px; }
+  .floor-bar { flex-wrap: wrap; gap: 10px; }
+  .auth-module { margin: 0 12px; }
+}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="workshop">
+<header class="work-header">
+<a href="/" class="work-brand">APT\u2014LABS<mark>WORKSHOP</mark></a>
+<nav class="work-nav" aria-label="Workshop modules">
+<a href="/">FRONT DOOR</a>
+<a href="/sign-in" class="active">SIGN IN</a>
+<a href="/sign-up">SIGN UP</a>
+</nav>
+</header>
+<div class="legend-bar" aria-label="Legend">
+<span class="legend-item"><span class="legend-swatch auth" aria-hidden="true"></span><span>Authentication</span></span>
+<span class="legend-item"><span class="legend-swatch local" aria-hidden="true"></span><span>Local Dev Only</span></span>
+<span style="margin-left:auto; color:var(--faint); font:500 10px/1 var(--mono);">GRID: 40px = 1 UNIT</span>
+</div>
+<main class="work-main">
+<article class="auth-module" role="main" aria-labelledby="auth-title">
+<div class="module-header">
+<h3 id="auth-title" class="module-title">Access Module</h3>
+<div class="module-meta"><span class="module-tag tag-auth">SIGN IN</span></div>
+</div>
+<div class="module-body">
+<div class="spec-row"><span class="spec-label">Purpose</span><span class="spec-value">Enter the APT-LABS Field Desk</span></div>
+<div class="spec-row"><span class="spec-label">Method</span><span class="spec-value">Magic link \u2014 no password stored</span></div>
+<div class="spec-row"><span class="spec-label">Context</span><span class="spec-value">Network or School Console</span></div>
+<div class="field-row">
+<label class="field-label" for="email">Email</label>
+<input type="email" id="email" class="field-input" placeholder="you@domain.org" autocomplete="email" aria-describedby="email-hint">
+</div>
+<div class="field-row">
+<label class="field-label" for="context">Workspace Context</label>
+<select id="context" class="field-input field-select" aria-label="Select workspace context">
+<option value="">SELECT CONTEXT</option>
+<option value="network">APT-LABS Network</option>
+<option value="school">School Console</option>
+</select>
+</div>
+</div>
+<div class="module-footer">
+<button class="btn btn-primary" type="button">REQUEST ACCESS</button>
+<div class="divider-row"><span>OR</span></div>
+<button class="btn btn-ghost" type="button">CONTINUE WITH GOOGLE</button>
+<div class="boundary-row">
+<span class="boundary-glyph" aria-hidden="true">\u26A0</span>
+<div><strong>Local Development Mode.</strong> No Supabase configured. Creates local session only. No network requests. No messages sent.</div>
+</div>
+<div class="foot-row">
+<a href="/">\u2190 Return to Front Door</a>
+<a href="/sign-up">Create Account \u2192</a>
+</div>
+</div>
+</article>
+</main>
+<div class="floor-bar" role="navigation" aria-label="Floor switcher">
+<div class="floor-tabs">
+<button class="floor-tab" data-floor="basement">BASEMENT</button>
+<button class="floor-tab active" data-floor="ground">GROUND</button>
+<button class="floor-tab" data-floor="first">FIRST</button>
+<button class="floor-tab" data-floor="second">SECOND</button>
+</div>
+<div class="floor-status">
+<span><span class="dot" aria-hidden="true"></span> GROUND FLOOR \u00b7 AUTH MODULE</span>
+<span>MODE: <mark style="background:var(--oxide-pale);color:var(--oxide);padding:1px 6px;border-radius:3px;">LOCAL DEV</mark></span>
+</div>
+</div>
+<script>
+document.querySelectorAll('.floor-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.floor-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
