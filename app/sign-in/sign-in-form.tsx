@@ -45,9 +45,7 @@ export function SignInForm({
     [intent],
   );
 
-  const handleSubmit = (event: React.FormAction<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+  const handleSubmit = (formData: FormData) => {
     if (!validateOnSubmit(formData)) return;
     void formAction(formData);
   };
@@ -112,7 +110,9 @@ export function SignInForm({
         <p className="auth-provider-note auth-note">
           {mode === 'sign-up'
             ? 'Local development account. Any email and password are accepted.'
-            : <>Forgot your password? <a href={`/sign-in?next=${encodeURIComponent(next)}&error=reset`}>Request a reset link</a></>}
+            : <>
+                Forgot your password? <a href={`/sign-in?next=${encodeURIComponent(next)}&error=reset`}>Request a reset link</a>
+              </>}
         </p>
       )}
 
