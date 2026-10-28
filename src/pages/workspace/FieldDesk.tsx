@@ -72,6 +72,12 @@ function getCommonsName(id: string) {
   return COMMONS.find(c => c.id === id)?.name || id;
 }
 
+const progressSteps = [
+  { id: 'issuer' as Step, label: 'Issuer' },
+  { id: 'crew' as Step, label: 'Crew' },
+  { id: 'tender' as Step, label: 'Tender' },
+];
+
 export function FieldDesk() {
   const [, navigate] = useLocation();
   const [step, setStep] = useState<Step>('issuer');
@@ -147,11 +153,7 @@ export function FieldDesk() {
     );
   }
 
-  const progressSteps: Array<{ id: Step; label: string }> = [
-    { id: 'issuer', label: 'Issuer' },
-    { id: 'crew', label: 'Crew' },
-    { id: 'tender', label: 'Tender' },
-  ];
+  const currentStepIndex = progressSteps.findIndex(s => s.id === step);
 
   return (
     <WorkspaceLayout currentContext="field-desk">
@@ -180,7 +182,7 @@ export function FieldDesk() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '4px',
-                color: progressSteps.indexOf(step) >= i ? 'var(--terrain)' : 'var(--text-faint)',
+                color: currentStepIndex >= i ? 'var(--terrain)' : 'var(--text-faint)',
                 fontWeight: step === s.id ? 600 : 400,
               }}
             >
@@ -189,14 +191,14 @@ export function FieldDesk() {
                 height: '20px',
                 borderRadius: '50%',
                 border: '2px solid',
-                borderColor: progressSteps.indexOf(step) >= i ? 'var(--terrain)' : 'var(--border)',
-                background: progressSteps.indexOf(step) > i ? 'var(--terrain)' : 'transparent',
+                borderColor: currentStepIndex >= i ? 'var(--terrain)' : 'var(--border)',
+                background: currentStepIndex > i ? 'var(--terrain)' : 'transparent',
                 display: 'grid',
                 placeItems: 'center',
                 fontSize: '10px',
-                color: progressSteps.indexOf(step) > i ? 'var(--bg)' : 'inherit',
+                color: currentStepIndex > i ? 'var(--bg)' : 'inherit',
               }}>
-                {progressSteps.indexOf(step) > i ? '✓' : (i + 1)}
+                {currentStepIndex > i ? '✓' : (i + 1)}
               </span>
               {s.label}
             </span>
@@ -213,7 +215,7 @@ export function FieldDesk() {
                     <label style={{ display: 'block', fontSize: 'var(--step--2)', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--text-muted)', marginBottom: 'var(--space-2)' }}>Issuing Institution</label>
                     <select
                       value={data.issuer}
-                      onChange={e => setData({...data, issuer: e.target.value})}
+                      onChange={(e: Event) => setData({...data, issuer: (e.target as HTMLSelectElement).value})}
                       style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', border: '1px solid var(--border)', borderRadius: 'var(--radius-3)', background: 'var(--bg-elev)', color: 'var(--text)', fontSize: 'var(--step-0)' }}
                     >
                       <option value="">Choose issuer…</option>
@@ -225,7 +227,7 @@ export function FieldDesk() {
                     <label style={{ display: 'block', fontSize: 'var(--step--2)', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--text-muted)', marginBottom: 'var(--space-2)' }}>Commons Reference (optional)</label>
                     <select
                       value={data.commonsRef}
-                      onChange={e => setData({...data, commonsRef: e.target.value})}
+                      onChange={(e: Event) => setData({...data, commonsRef: (e.target as HTMLSelectElement).value})}
                       style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', border: '1px solid var(--border)', borderRadius: 'var(--radius-3)', background: 'var(--bg-elev)', color: 'var(--text)', fontSize: 'var(--step-0)' }}
                     >
                       <option value="">No reference — start fresh</option>
@@ -244,7 +246,7 @@ export function FieldDesk() {
                       <label style={{ display: 'block', fontSize: 'var(--step--1)', marginBottom: '4px', textTransform: 'capitalize', fontWeight: 500 }}>{role}</label>
                       <select
                         value={data.crew[role]}
-                        onChange={e => setData({...data, crew: {...data.crew, [role]: e.target.value}})}
+                        onChange={(e: Event) => setData({...data, crew: {...data.crew, [role]: (e.target as HTMLSelectElement).value}})}
                         style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', border: '1px solid var(--border)', borderRadius: 'var(--radius-3)', background: 'var(--bg-elev)', color: 'var(--text)', fontSize: 'var(--step-0)' }}
                       >
                         <option value="">Select {role}…</option>
@@ -267,16 +269,16 @@ export function FieldDesk() {
                     <Input placeholder="A local-first toolkit for the week teachers actually have." value={data.tender.summary} onChange={v => setData({...data, tender: {...data.tender, summary: v}})} required />
                     <select
                       value={data.tender.category}
-                      onChange={e => setData({...data, tender: {...data.tender, category: e.target.value}})}
+                      onChange={(e: Event) => setData({...data, tender: {...data.tender, category: (e.target as HTMLSelectElement).value}})}
                       style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', border: '1px solid var(--border)', borderRadius: 'var(--radius-3)', background: 'var(--bg-elev)', color: 'var(--text)', fontSize: 'var(--step-0)' }}
                     >
                       {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                     <Input placeholder="Nairobi, Kenya" value={data.tender.location} onChange={v => setData({...data, tender: {...data.tender, location: v}})} />
                     <Input
-                      type="number"
+                      type="text"
                       placeholder="2400000 (minor units = 24,000 KES)"
-                      value={data.tender.local_bom_minor}
+                      value={String(data.tender.local_bom_minor)}
                       onChange={v => setData({...data, tender: {...data.tender, local_bom_minor: parseInt(v) || 0}})}
                       required
                     />
