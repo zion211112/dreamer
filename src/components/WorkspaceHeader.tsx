@@ -1,12 +1,12 @@
 import { useState } from 'preact/hooks';
-import { useLocation, Link } from 'wouter';
+import { useLocation } from 'wouter';
 import { BrandMark } from './BrandMark';
 
 const CONTEXTS = [
-  { id: 'people', label: 'People', subtitle: 'Skill in motion' },
-  { id: 'institutions', label: 'Institutions', subtitle: 'Purposeful backing' },
-  { id: 'commons', label: 'Commons', subtitle: 'Work that stands' },
-  { id: 'field-desk', label: 'Field Desk', subtitle: 'Atlas in hand' },
+  { id: 'people', label: 'People' },
+  { id: 'institutions', label: 'Institutions' },
+  { id: 'commons', label: 'Commons' },
+  { id: 'field-desk', label: 'Field Desk' },
 ] as const;
 
 function getContext() {
@@ -27,10 +27,11 @@ function getUser() {
 }
 
 export function WorkspaceHeader() {
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  
-  const currentContext = getContext();
+
+  const currentContext = CONTEXTS.find((context) => location === `/workspace/${context.id}`)?.id
+    ?? getContext();
   const user = getUser();
   const initials = user?.email?.split('@')[0]?.slice(0, 2).toUpperCase() || '??';
 
@@ -42,87 +43,40 @@ export function WorkspaceHeader() {
   };
 
   return (
-    <header className="ws-header" style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: 'var(--space-3)',
-      height: '40px',
-      padding: '0 var(--space-3)',
-      background: 'color-mix(in srgb, var(--bg-elev) 90%, transparent)',
-      backdropFilter: 'blur(8px)',
-      borderBottom: '1px solid var(--border)',
-      position: 'relative',
-      zIndex: 10,
-    }}>
-      {/* Brand */}
-      <Link href="/workspace/people" style={{ flex: 'none', textDecoration: 'none' }}>
+    <header className="ws-header">
+      <div className="ws-brand">
         <BrandMark size="sm" />
-      </Link>
+        <span className="ws-brand-divider" aria-hidden="true" />
+        <span className="ws-brand-label">STUDIO</span>
+      </div>
 
-      {/* Contexts - inline segmented */}
-      <nav className="ws-contexts" style={{
-        display: 'flex',
-        gap: 'var(--space-1)',
-        fontSize: 'var(--step--1)',
-        fontFamily: 'var(--mono)',
-        fontWeight: 500,
-      }} aria-label="Workspace contexts">
+      <nav className="ws-contexts" aria-label="Workspace contexts">
         {CONTEXTS.map((ctx) => (
           <button
             key={ctx.id}
             onClick={() => handleContextChange(ctx.id)}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'flex-start',
-              gap: '1px',
-              padding: 'var(--space-1) var(--space-2)',
-              border: 'none',
-              background: 'transparent',
-              color: currentContext === ctx.id ? 'var(--terrain)' : 'var(--text-muted)',
-              borderBottom: currentContext === ctx.id ? '2px solid var(--terrain)' : '2px solid transparent',
-              cursor: 'pointer',
-              transition: 'color var(--fast), border-color var(--fast)',
-              lineHeight: '1.2',
-            }}
+            className={`ws-context${currentContext === ctx.id ? ' is-active' : ''}`}
             aria-current={currentContext === ctx.id ? 'page' : undefined}
           >
-            <span style={{ fontWeight: 600 }}>{ctx.label}</span>
-            <span style={{
-              fontSize: 'var(--step--2)',
-              color: currentContext === ctx.id ? 'var(--terrain)' : 'var(--text-faint)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.06em',
-            }}>
-              {ctx.subtitle}
-            </span>
+            <span className="ws-context-dot" aria-hidden="true" />
+            <span>{ctx.label}</span>
           </button>
         ))}
       </nav>
 
-      {/* User menu */}
-      <div className="ws-user-menu" style={{ position: 'relative', flex: 'none' }}>
+      <div className="ws-user-menu">
         <button
           onClick={() => setUserMenuOpen(!userMenuOpen)}
+          className="ws-user-trigger"
+          aria-label="Open account menu"
           aria-expanded={userMenuOpen}
           aria-haspopup="true"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '32px',
-            height: '32px',
-            borderRadius: '50%',
-            border: '1px solid var(--border)',
-            background: 'var(--terrain-pale)',
-            color: 'var(--terrain)',
-            font: '600 var(--step--2) var(--mono)',
-            cursor: 'pointer',
-            transition: 'background var(--fast), border-color var(--fast)',
-          }}
         >
-          {initials}
+          <span className="ws-user-avatar">{initials}</span>
+          <span className="ws-user-caption">Account</span>
+          <svg className="ws-user-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+            <path d="m3 4.5 3 3 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </button>
 
         {userMenuOpen && (
@@ -130,34 +84,14 @@ export function WorkspaceHeader() {
             <div
               className="ws-user-menu-backdrop"
               onClick={() => setUserMenuOpen(false)}
-              style={{
-                position: 'fixed',
-                inset: 0,
-                zIndex: 99,
-              }}
+              aria-hidden="true"
             />
-            <div style={{
-              position: 'absolute',
-              top: 'calc(100% + 6px)',
-              right: 0,
-              zIndex: 100,
-              minWidth: '180px',
-              background: 'var(--bg-elev)',
-              border: '1px solid var(--border)',
-              borderRadius: 'var(--radius-3)',
-              boxShadow: 'var(--shadow-3)',
-              overflow: 'hidden',
-              animation: 'slideDown var(--fast) ease',
-            }}>
-              <div style={{
-                padding: 'var(--space-3)',
-                borderBottom: '1px solid var(--border)',
-                fontSize: 'var(--step--1)',
-              }}>
-                <div style={{ color: 'var(--text)', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <div className="ws-user-popover">
+              <div className="ws-user-details">
+                <div className="ws-user-email">
                   {user?.email || 'Guest'}
                 </div>
-                <div style={{ color: 'var(--text-muted)', fontSize: 'var(--step--2)', marginTop: '2px' }}>
+                <div className="ws-user-context">
                   {user?.context ? `Workspace: ${user.context}` : 'Demo mode'}
                 </div>
               </div>
@@ -169,18 +103,7 @@ export function WorkspaceHeader() {
                   }
                   navigate('/sign-in');
                 }}
-                style={{
-                  width: '100%',
-                  padding: 'var(--space-2) var(--space-3)',
-                  textAlign: 'left',
-                  color: 'var(--err)',
-                  fontSize: 'var(--step--1)',
-                  fontFamily: 'var(--sans)',
-                  background: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'background var(--fast)',
-                }}
+                className="ws-sign-out"
               >
                 Sign out
               </button>
