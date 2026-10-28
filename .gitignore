@@ -1,47 +1,10 @@
-# dependencies
-/node_modules
-/.next
-*.tsbuildinfo
-
-# build
-/dist
-
-# environment
+node_modules/
+dist/
+.vercel/
 .env
 .env.*
-
-# logs
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# local
+*.tsbuildinfo
+.tmp-*
 .DS_Store
-.superpowers/
-
-# IDE
-.vscode/**
-.idea/**
-
-
-# os
-*~
-
-# supabase local artifacts
-/supabase/.temp/
-
-# throwaway migration tooling output
-/scripts/.build/
-/scripts/.verify/
-
-# throwaway sign-in/script scratch
-.tmp-*.mjs
-.tmp-*.sql
-.tmp-*.json
-.tmp-*.log
-.tmp-*.out
-.tmp-*.key
-
-# agent tooling
-.kilo/
+Thumbs.db
