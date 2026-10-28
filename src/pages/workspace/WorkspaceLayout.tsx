@@ -1,9 +1,8 @@
-import { BrandMark } from '../../components/BrandMark';
-import { WorkspaceContextSwitcher } from '../../components/WorkspaceContextSwitcher';
+import { WorkspaceHeader } from '../../components/WorkspaceHeader';
 
 interface WorkspaceLayoutProps {
   children: any;
-  currentContext: 'people' | 'institutions' | 'commons';
+  currentContext: 'people' | 'institutions' | 'commons' | 'field-desk';
 }
 
 export function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
@@ -17,36 +16,7 @@ export function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
         var(--bg)
       `,
     }}>
-      {/* Header */}
-      <header className="atlas-header" style={{
-        position: 'relative',
-        zIndex: 2,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 'var(--space-3)',
-        padding: '0 clamp(14px, 2vw, 28px)',
-        height: '54px',
-        background: 'color-mix(in srgb, var(--bg-elev) 88%, transparent)',
-        backdropFilter: 'blur(14px)',
-        borderBottom: '1px solid var(--border)',
-      }}>
-        <div className="atlas-header-left" style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'var(--space-3)',
-        }}>
-          <BrandMark size="md" />
-        </div>
-        
-        <div className="atlas-header-actions" style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'var(--space-3)',
-        }}>
-          <WorkspaceContextSwitcher />
-        </div>
-      </header>
+      <WorkspaceHeader />
 
       {/* Main content */}
       <main className="atlas-main" style={{
