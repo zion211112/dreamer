@@ -1,4 +1,5 @@
 export type EntityType = 'person' | 'crew' | 'asset' | 'work' | 'institution' | 'evidence';
+export type PrimaryEntityType = 'person' | 'crew' | 'asset';
 
 export type RelationshipKind =
   | 'membership'
@@ -37,22 +38,24 @@ export const ENTITY_TYPES: Array<{ id: EntityType; label: string; plural: string
   { id: 'evidence', label: 'Evidence', plural: 'Evidence' },
 ];
 
-export const RELATIONSHIP_KINDS: Array<{ id: RelationshipKind; label: string }> = [
-  { id: 'membership', label: 'Membership' },
-  { id: 'affiliation', label: 'Institution' },
-  { id: 'work', label: 'Work' },
-  { id: 'stewardship', label: 'Stewardship' },
-  { id: 'contribution', label: 'Commons' },
-  { id: 'evidence', label: 'Evidence' },
+export const PEOPLE_ROOT_LENSES: Array<{ id: PrimaryEntityType; label: string }> = [
+  { id: 'person', label: 'People' },
+  { id: 'crew', label: 'Crews' },
+  { id: 'asset', label: 'Assets' },
 ];
 
-export const ROOT_ENTITY_BY_TYPE: Record<EntityType, string> = {
+export const PRIMARY_ENTITY_TYPES: PrimaryEntityType[] = ['person', 'crew', 'asset'];
+
+export function isPrimaryEntity(
+  entity: NetworkEntity,
+): entity is NetworkEntity & { type: PrimaryEntityType } {
+  return entity.type === 'person' || entity.type === 'crew' || entity.type === 'asset';
+}
+
+export const ROOT_ENTITY_BY_TYPE: Record<PrimaryEntityType, string> = {
   person: 'person-nia',
   crew: 'crew-field-systems',
   asset: 'asset-microgrid',
-  work: 'work-microgrid',
-  institution: 'institution-solar-commons',
-  evidence: 'evidence-load-test',
 };
 
 export const PEOPLE_NETWORK: NetworkEntity[] = [

@@ -1,49 +1,75 @@
 import {
   ENTITY_BY_ID,
   ENTITY_TYPES,
+  isPrimaryEntity,
   PEOPLE_RELATIONSHIPS,
   type NetworkEntity,
 } from '../../lib/people-network';
 
 interface EntityInspectorProps {
   entity: NetworkEntity | null;
+  mobileOpen: boolean;
   onSelect: (entity: NetworkEntity) => void;
   onClose: () => void;
 }
 
-export function EntityInspector({ entity, onSelect, onClose }: EntityInspectorProps) {
+export function EntityInspector({ entity, mobileOpen, onSelect, onClose }: EntityInspectorProps) {
   if (!entity) {
     return (
-      <aside className="people-inspector people-inspector--empty" aria-label="Entity details">
-        <div className="people-inspector-empty-mark" aria-hidden="true">+</div>
-        <p>Choose any point in the network to inspect the work and relationships around it.</p>
+      <aside className="people-inspector people-inspector--empty" aria-label="Network details">
+        <p>Select a person, crew, or asset to see its relationships.</p>
       </aside>
     );
   }
 
   const typeLabel = ENTITY_TYPES.find((type) => type.id === entity.type)?.label ?? entity.type;
-  const connections = PEOPLE_RELATIONSHIPS.flatMap((relationship) => {
+  const relationships = PEOPLE_RELATIONSHIPS.flatMap((relationship) => {
     if (relationship.sourceId !== entity.id && relationship.targetId !== entity.id) return [];
     const isSource = relationship.sourceId === entity.id;
-    const otherId = isSource ? relationship.targetId : relationship.sourceId;
-    const other = ENTITY_BY_ID.get(otherId);
-    if (!other) return [];
+    const related = ENTITY_BY_ID.get(isSource ? relationship.targetId : relationship.sourceId);
+    if (!related) return [];
     return [{
       id: relationship.id,
-      entity: other,
-      kind: relationship.kind,
+      entity: related,
       verb: relationship.verb,
       direction: isSource ? '→' : '←',
     }];
   });
+  const connections = relationships.filter((item) => isPrimaryEntity(item.entity));
+
+  const contextById = new Map<string, { entity: NetworkEntity; detail: string }>();
+  for (const relationship of relationships.filter((item) => !isPrimaryEntity(item.entity))) {
+    contextById.set(relationship.entity.id, {
+      entity: relationship.entity,
+      detail: relationship.direction === '→'
+        ? `→ ${relationship.verb}`
+        : `← ${relationship.verb}`,
+    });
+
+    for (const supporting of PEOPLE_RELATIONSHIPS) {
+      if (supporting.sourceId !== relationship.entity.id && supporting.targetId !== relationship.entity.id) continue;
+      const supportingId = supporting.sourceId === relationship.entity.id ? supporting.targetId : supporting.sourceId;
+      const supportingEntity = ENTITY_BY_ID.get(supportingId);
+      if (!supportingEntity || isPrimaryEntity(supportingEntity) || supportingEntity.id === entity.id) continue;
+      const direction = supporting.sourceId === relationship.entity.id ? '→' : '←';
+      const detail = `${direction} ${supporting.verb} · via ${relationship.entity.name}`;
+      if (!contextById.has(supportingEntity.id)) {
+        contextById.set(supportingEntity.id, { entity: supportingEntity, detail });
+      }
+    }
+  }
+
+  const context = [...contextById.values()].sort((a, b) => (
+    a.entity.type.localeCompare(b.entity.type) || a.entity.name.localeCompare(b.entity.name)
+  ));
 
   return (
-    <aside className="people-inspector" aria-label={`${typeLabel} details`}>
+    <aside className={`people-inspector${mobileOpen ? '' : ' is-mobile-closed'}`} aria-label={`${typeLabel} details`}>
       <header className="people-inspector-header">
         <div className="people-inspector-heading">
           <span className={`people-type-mark people-type-mark--${entity.type}`} aria-hidden="true" />
           <div>
-            <p className="people-inspector-eyebrow">{typeLabel} / illustrative record</p>
+            <p className="people-inspector-eyebrow">{typeLabel} · illustrative</p>
             <h2>{entity.name}</h2>
           </div>
         </div>
@@ -58,19 +84,15 @@ export function EntityInspector({ entity, onSelect, onClose }: EntityInspectorPr
         <section className="people-inspector-summary">
           <span className="people-inspector-role">{entity.role}</span>
           <p>{entity.summary}</p>
-          {(entity.location || entity.context) && (
-            <div className="people-context-tags">
-              {entity.location && <span className="people-context-tag">{entity.location}</span>}
-              {entity.context && <span className="people-context-tag">{entity.context}</span>}
-              {entity.commonsContribution && <span className="people-context-tag people-context-tag--commons">Commons contribution</span>}
-            </div>
-          )}
+          <div className="people-context-tags">
+            {entity.location && <span className="people-context-tag">{entity.location}</span>}
+            {entity.commonsContribution && <span className="people-context-tag people-context-tag--commons">Commons contribution</span>}
+          </div>
         </section>
 
         <section className="people-inspector-section" aria-labelledby="people-capability-heading">
           <div className="people-inspector-section-heading">
-            <h3 id="people-capability-heading">Capability</h3>
-            <span>{entity.capabilities.length.toString().padStart(2, '0')}</span>
+            <h3 id="people-capability-heading">Capabilities</h3>
           </div>
           <div className="people-capability-list">
             {entity.capabilities.map((capability) => (
@@ -81,10 +103,10 @@ export function EntityInspector({ entity, onSelect, onClose }: EntityInspectorPr
 
         <section className="people-inspector-section" aria-labelledby="people-connections-heading">
           <div className="people-inspector-section-heading">
-            <h3 id="people-connections-heading">Connected through</h3>
+            <h3 id="people-connections-heading">Network</h3>
             <span>{connections.length.toString().padStart(2, '0')}</span>
           </div>
-          {connections.length > 0 ? (
+          {connections.length ? (
             <ul className="people-connection-list">
               {connections.map((connection) => {
                 const connectedType = ENTITY_TYPES.find((type) => type.id === connection.entity.type)?.label ?? connection.entity.type;
@@ -110,14 +132,32 @@ export function EntityInspector({ entity, onSelect, onClose }: EntityInspectorPr
               })}
             </ul>
           ) : (
-            <p className="people-no-connections">No sample relationships are attached to this record.</p>
+            <p className="people-no-connections">No direct sample links.</p>
           )}
         </section>
+
+        {context.length > 0 && (
+          <section className="people-inspector-section people-inspector-context" aria-labelledby="people-context-heading">
+            <div className="people-inspector-section-heading">
+              <h3 id="people-context-heading">Work &amp; provenance</h3>
+              <span>{context.length.toString().padStart(2, '0')}</span>
+            </div>
+            <ul className="people-context-list">
+              {context.map(({ entity: related, detail }) => (
+                <li key={related.id}>
+                  <span>{related.type}</span>
+                  <strong>{related.name}</strong>
+                  <small>{detail}</small>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </div>
 
       <footer className="people-inspector-footer">
         <span className="people-sample-indicator" />
-        Illustrative record · not a live profile
+        Local sample · not a live profile
       </footer>
     </aside>
   );

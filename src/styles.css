@@ -725,31 +725,24 @@ a:focus-visible {
   --people-person: #d3a76a;
   --people-crew: #9ac28a;
   --people-asset: #6ec1ae;
-  --people-work: #a6b9df;
-  --people-institution: #d5927d;
-  --people-evidence: #c1a8da;
-  --people-membership: #9ac28a;
-  --people-affiliation: #d5927d;
-  --people-work-link: #a6b9df;
-  --people-stewardship: #6ec1ae;
-  --people-contribution: #d3a76a;
-  --people-evidence-link: #c1a8da;
   width: 100%;
   max-width: 1540px;
   margin: 0 auto;
-  padding-bottom: 16px;
+  padding-bottom: 8px;
 }
 
 .people-page-header {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 26px;
+  gap: 16px;
+  min-height: 38px;
+  margin-bottom: 16px;
 }
 
-.people-page-overline,
-.people-section-label,
+.people-page-caption,
+.people-page-status,
+.people-page-divider,
 .people-map-kicker,
 .people-inspector-eyebrow,
 .people-inspector-section-heading,
@@ -758,22 +751,6 @@ a:focus-visible {
   font-family: var(--mono);
 }
 
-.people-page-overline {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-  color: var(--text-faint);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: .12em;
-}
-
-.people-page-overline > span:not(.people-page-overline-mark) {
-  color: var(--border-strong);
-}
-
-.people-page-overline-mark,
 .people-page-status-dot,
 .people-map-live-dot,
 .people-sample-indicator {
@@ -789,95 +766,78 @@ a:focus-visible {
   margin: 0;
   color: var(--text);
   font-family: var(--serif);
-  font-size: clamp(29px, 3.2vw, 42px);
+  font-size: 20px;
   font-weight: 400;
-  letter-spacing: -.045em;
-  line-height: 1.08;
+  letter-spacing: -.025em;
+  line-height: 1;
 }
 
-.people-page-title > p {
-  margin: 9px 0 0;
+.people-page-title {
+  display: flex;
+  align-items: baseline;
+  gap: 11px;
+  min-width: 0;
+}
+
+.people-page-divider {
   color: var(--text-muted);
-  font-size: 13px;
-  line-height: 1.55;
+  font-size: 14px;
+}
+
+.people-page-caption {
+  color: var(--text-muted);
+  font-size: 11px;
 }
 
 .people-page-status {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-width: 190px;
-  padding: 11px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-3);
-  background: color-mix(in srgb, var(--bg-elev) 70%, transparent);
+  gap: 7px;
+  color: var(--text-faint);
+  font-size: 9px;
+  font-family: var(--mono);
+  letter-spacing: .025em;
+  white-space: nowrap;
 }
 
 .people-page-status-dot {
+  width: 5px;
+  height: 5px;
+  flex-basis: 5px;
   background: var(--brass);
-  box-shadow: 0 0 0 4px var(--brass-pale);
 }
 
-.people-page-status strong,
-.people-page-status small {
-  display: block;
-}
-
-.people-page-status strong {
-  color: var(--text);
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.people-page-status small {
-  margin-top: 3px;
-  color: var(--text-faint);
-  font-family: var(--mono);
-  font-size: 9px;
-}
-
-.people-root-section {
-  margin-bottom: 19px;
-}
-
-.people-section-label {
+.people-controls {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-between;
-  margin-bottom: 9px;
-  color: var(--text-faint);
-  font-size: 9px;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-
-.people-section-label h2 {
-  margin: 0;
-  color: var(--text-muted);
-  font: inherit;
+  gap: 20px;
+  margin-bottom: 12px;
 }
 
 .people-root-lenses {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 8px;
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-3);
+  background: color-mix(in srgb, var(--bg-subtle) 55%, transparent);
 }
 
 .people-root-lens {
-  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-width: 0;
-  min-height: 47px;
-  padding: 0 13px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-3);
-  background: color-mix(in srgb, var(--bg-elev) 72%, transparent);
+  gap: 8px;
+  min-width: 112px;
+  min-height: 34px;
+  padding: 0 11px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
   color: var(--text-muted);
-  font: 500 11px var(--sans);
-  text-align: left;
+  font: 500 10px var(--sans);
+  text-align: center;
   cursor: pointer;
   transition: border-color var(--fast), color var(--fast), background var(--fast), transform var(--fast);
 }
@@ -889,16 +849,16 @@ a:focus-visible {
 }
 
 .people-root-lens.is-active {
-  border-color: color-mix(in srgb, var(--terrain) 48%, var(--border));
-  background: color-mix(in srgb, var(--terrain-pale) 64%, var(--bg-elev));
-  color: var(--terrain-ink);
+  border-color: var(--border);
+  background: var(--bg-elev);
+  color: var(--text);
+  box-shadow: var(--shadow-1);
 }
 
-.people-root-lens-index {
+.people-root-lens-count {
   margin-left: auto;
-  color: var(--terrain);
-  font: 600 8px var(--mono);
-  letter-spacing: .04em;
+  color: var(--text-faint);
+  font: 8px var(--mono);
 }
 
 .people-type-mark {
@@ -929,60 +889,18 @@ a:focus-visible {
   transform: rotate(45deg) scale(.78);
 }
 
-.people-type-mark--work {
-  width: 12px;
-  flex-basis: 12px;
-  border-radius: 3px;
-  background: var(--people-work);
-  color: var(--people-work);
-}
-
-.people-type-mark--institution {
-  border-radius: 2px 2px 0 0;
-  background: var(--people-institution);
-  color: var(--people-institution);
-}
-
-.people-type-mark--evidence {
-  border-radius: 1px;
-  background: var(--people-evidence);
-  color: var(--people-evidence);
-  clip-path: polygon(0 0, 70% 0, 100% 30%, 100% 100%, 0 100%);
-}
-
-.people-tools {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 18px;
-  margin-bottom: 12px;
-}
-
-.people-search-wrap,
-.people-filter-wrap {
+.people-search-wrap {
   position: relative;
   min-width: 0;
-}
-
-.people-search-wrap {
-  width: min(100%, 350px);
-  flex: 0 0 350px;
-}
-
-.people-search-label {
-  display: block;
-  margin-bottom: 7px;
-  color: var(--text-faint);
-  font: 9px var(--mono);
-  letter-spacing: .04em;
+  width: min(100%, 320px);
 }
 
 .people-search-control {
   display: flex;
   align-items: center;
   gap: 9px;
-  height: 39px;
-  padding: 0 11px;
+  height: 40px;
+  padding: 0 12px;
   border: 1px solid var(--border);
   border-radius: var(--radius-3);
   background: var(--bg-elev);
@@ -1008,7 +926,7 @@ a:focus-visible {
   outline: 0;
   background: transparent;
   color: var(--text);
-  font: 11px var(--sans);
+  font: 10px var(--sans);
 }
 
 .people-search-control input::placeholder {
@@ -1021,11 +939,11 @@ a:focus-visible {
 
 .people-search-clear {
   flex: 0 0 auto;
-  padding: 4px 0 4px 8px;
+  padding: 2px 0 4px 8px;
   border: 0;
   background: transparent;
   color: var(--text-faint);
-  font: 9px var(--mono);
+  font: 18px/1 var(--sans);
   cursor: pointer;
 }
 
@@ -1095,65 +1013,14 @@ a:focus-visible {
 .people-search-result-type {
   flex: 0 0 auto;
   margin: 0;
+  text-transform: capitalize;
 }
 
 .people-search-empty {
-  position: absolute;
-  z-index: 20;
-  top: calc(100% + 6px);
-  left: 0;
-  right: 0;
   margin: 0;
   padding: 13px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-3);
-  background: var(--bg-elev);
   color: var(--text-muted);
   font-size: 11px;
-  box-shadow: var(--shadow-2);
-}
-
-.people-filter-wrap {
-  flex: 1;
-  min-width: 0;
-}
-
-.people-filter-list {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  min-height: 39px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.people-filter-list::-webkit-scrollbar {
-  display: none;
-}
-
-.people-filter {
-  min-height: 30px;
-  padding: 0 9px;
-  border: 1px solid transparent;
-  border-radius: var(--radius-pill);
-  background: transparent;
-  color: var(--text-muted);
-  font: 10px var(--sans);
-  white-space: nowrap;
-  cursor: pointer;
-  transition: all var(--fast);
-}
-
-.people-filter:hover {
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.people-filter.is-active {
-  border-color: var(--border);
-  background: var(--bg-elev);
-  color: var(--text);
-  box-shadow: var(--shadow-1);
 }
 
 .people-workbench {
@@ -1198,6 +1065,24 @@ a:focus-visible {
   letter-spacing: .11em;
 }
 
+.people-map-lanes {
+  fill: #81907f;
+  font-family: var(--mono);
+}
+
+.people-map-lanes text:first-child {
+  fill: #c5d0c0;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .14em;
+}
+
+.people-map-lanes text:last-child {
+  fill: #697768;
+  font-size: 8px;
+  letter-spacing: .06em;
+}
+
 .people-map-focus {
   overflow: hidden;
   color: #e2e8de;
@@ -1215,7 +1100,7 @@ a:focus-visible {
 .people-map {
   display: block;
   width: 100%;
-  height: clamp(380px, 48vw, 620px);
+  height: clamp(430px, 40vw, 560px);
   background: #101713;
 }
 
@@ -1233,10 +1118,10 @@ a:focus-visible {
   fill: #101713;
 }
 
-.people-map-grid-line {
+.people-map-divider {
   fill: none;
-  stroke: rgba(195, 212, 188, .055);
-  stroke-width: .8;
+  stroke: rgba(195, 212, 188, .08);
+  stroke-width: 1;
 }
 
 .people-map-arrowhead {
@@ -1255,33 +1140,9 @@ a:focus-visible {
   transition: opacity var(--base), stroke-width var(--base);
 }
 
-.people-relationship--membership {
-  color: var(--people-membership);
-}
-
-.people-relationship--affiliation {
-  color: var(--people-affiliation);
-}
-
-.people-relationship--work {
-  color: var(--people-work-link);
-}
-
-.people-relationship--stewardship {
-  color: var(--people-stewardship);
-}
-
-.people-relationship--contribution {
-  color: var(--people-contribution);
-}
-
-.people-relationship--evidence {
-  color: var(--people-evidence-link);
-}
-
 .people-relationship-label rect {
   fill: #1c2720;
-  stroke: color-mix(in srgb, currentColor 50%, transparent);
+  stroke: rgba(195, 212, 188, .35);
   stroke-width: .7;
   opacity: .96;
 }
@@ -1329,21 +1190,6 @@ a:focus-visible {
 .people-node--asset .people-node-shape {
   fill: color-mix(in srgb, var(--people-asset) 22%, #19231c);
   stroke: var(--people-asset);
-}
-
-.people-node--work .people-node-shape {
-  fill: color-mix(in srgb, var(--people-work) 20%, #19231c);
-  stroke: var(--people-work);
-}
-
-.people-node--institution .people-node-shape {
-  fill: color-mix(in srgb, var(--people-institution) 21%, #19231c);
-  stroke: var(--people-institution);
-}
-
-.people-node--evidence .people-node-shape {
-  fill: color-mix(in srgb, var(--people-evidence) 20%, #19231c);
-  stroke: var(--people-evidence);
 }
 
 .people-node-core {
@@ -1652,23 +1498,6 @@ a:focus-visible {
   transform: rotate(45deg) scale(.75);
 }
 
-.people-connection-mark--work {
-  width: 11px;
-  flex-basis: 11px;
-  border-radius: 2px;
-  color: var(--people-work);
-}
-
-.people-connection-mark--institution {
-  border-radius: 1px 1px 0 0;
-  color: var(--people-institution);
-}
-
-.people-connection-mark--evidence {
-  border-radius: 1px;
-  color: var(--people-evidence);
-}
-
 .people-connection-copy {
   min-width: 0;
   flex: 1;
@@ -1707,6 +1536,48 @@ a:focus-visible {
   line-height: 1.6;
 }
 
+.people-context-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.people-context-list li {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: 8px;
+  row-gap: 3px;
+  padding: 8px 0;
+  border-top: 1px solid var(--hairline);
+}
+
+.people-context-list li > span {
+  grid-row: span 2;
+  color: var(--text-faint);
+  font: 8px var(--mono);
+  text-transform: uppercase;
+}
+
+.people-context-list li > strong {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 10px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.people-context-list li > small {
+  overflow: hidden;
+  color: var(--text-faint);
+  font: 8px var(--mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .people-inspector-footer {
   display: flex;
   align-items: center;
@@ -1727,46 +1598,24 @@ a:focus-visible {
     grid-template-columns: minmax(0, 1fr) 285px;
   }
 
-  .people-root-lens {
-    padding: 0 10px;
-  }
-
-  .people-root-lens-index {
-    display: none;
-  }
-
-  .people-tools {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 10px;
+  .people-controls {
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
   .people-search-wrap {
-    width: min(100%, 440px);
-    flex-basis: auto;
-  }
-
-  .people-filter-wrap {
-    width: 100%;
+    width: min(100%, 360px);
+    flex: 1 1 240px;
   }
 }
 
 @media (max-width: 760px) {
   .people-page-header {
-    align-items: flex-start;
+    align-items: center;
   }
 
   .people-page-status {
-    min-width: 0;
-    padding: 9px;
-  }
-
-  .people-page-status small {
-    display: none;
-  }
-
-  .people-root-lenses {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    flex: 0 0 auto;
   }
 
   .people-workbench {
@@ -1783,6 +1632,10 @@ a:focus-visible {
     min-height: 0;
     border-color: var(--border-strong);
     box-shadow: 0 -12px 38px rgba(13, 17, 14, .2);
+  }
+
+  .people-inspector.is-mobile-closed {
+    display: none;
   }
 
   .people-inspector--empty {
@@ -1825,26 +1678,38 @@ a:focus-visible {
 
 @media (max-width: 520px) {
   .people-page-header {
-    flex-direction: column;
-    gap: 14px;
-    margin-bottom: 19px;
+    gap: 8px;
+    margin-bottom: 12px;
   }
 
-  .people-page-status {
-    width: 100%;
-  }
-
-  .people-page-status small {
-    display: block;
+  .people-page-caption,
+  .people-page-divider {
+    display: none;
   }
 
   .people-root-lenses {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
+    gap: 2px;
   }
 
   .people-root-lens {
-    min-height: 43px;
+    min-width: 0;
+    flex: 1;
+    justify-content: center;
+    padding: 0 7px;
+  }
+
+  .people-root-lens-count {
+    display: none;
+  }
+
+  .people-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .people-search-wrap {
+    width: 100%;
+    flex-basis: auto;
   }
 
   .people-map-topline {
@@ -1868,8 +1733,9 @@ a:focus-visible {
     flex-direction: column;
     justify-content: center;
     gap: 4px;
-    min-height: 48px;
+    min-height: 42px;
     padding: 7px 12px;
-    font-size: 7px;
+    font-size: 7.5px;
+    line-height: 1.45;
   }
 }
