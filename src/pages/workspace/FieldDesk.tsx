@@ -3,9 +3,11 @@ import { useLocation } from 'wouter';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import {
   createWorkBrief,
+  readCommonsGovernance,
   readFieldSignals,
   readWorkBriefDrafts,
   writeWorkBriefDrafts,
+  type CommonsProposal,
   type FieldSignal,
   type WorkBriefDraft,
 } from '../../lib/local-workflows';
@@ -18,8 +20,9 @@ const fileNames: Record<WorkbenchFile, string> = {
   notes: 'field-notes.md',
 };
 
-function getSignalId(location: string): string | null {
-  return new URLSearchParams(location.split('?')[1] ?? '').get('signal');
+function getWorkbenchQuery(location: string): { signalId: string | null; proposalId: string | null } {
+  const params = new URLSearchParams(location.split('?')[1] ?? '');
+  return { signalId: params.get('signal'), proposalId: params.get('proposal') };
 }
 
 export function Workbench() {
@@ -28,6 +31,7 @@ export function Workbench() {
   const [drafts, setDrafts] = useState<WorkBriefDraft[]>([]);
   const [signals, setSignals] = useState<FieldSignal[]>([]);
   const [sourceSignal, setSourceSignal] = useState<FieldSignal | null>(null);
+  const [approvedProposal, setApprovedProposal] = useState<CommonsProposal | null>(null);
   const [activeFile, setActiveFile] = useState<WorkbenchFile>('brief');
   const [storageError, setStorageError] = useState('');
   const [saved, setSaved] = useState(false);
@@ -36,21 +40,40 @@ export function Workbench() {
     try {
       const localSignals = readFieldSignals();
       const localDrafts = readWorkBriefDrafts();
-      const requestedSignalId = getSignalId(location);
-      const source = localSignals.find(signal => signal.id === requestedSignalId) ?? null;
-      const existing = source
+      const { signalId, proposalId } = getWorkbenchQuery(location);
+      const localProposals = readCommonsGovernance().proposals;
+      const requestedProposal = localProposals.find(item => item.id === proposalId) ?? null;
+      const proposal = requestedProposal?.status === 'approved' ? requestedProposal : null;
+      const source = localSignals.find(signal => signal.id === (signalId ?? proposal?.sourceSignalId)) ?? null;
+      const existing = proposal
+        ? localDrafts.find(item => item.sourceProposalId === proposal.id)
+        : source
         ? localDrafts.find(item => item.sourceSignalId === source.id)
         : localDrafts[0];
+      const proposalDraft = proposal ? {
+        ...createWorkBrief(source),
+        sourceProposalId: proposal.id,
+        title: proposal.title,
+        institutionName: proposal.institutionName,
+        scope: `${proposal.rationale}\n\nRule: ${proposal.rule}`,
+        acceptanceCriteria: '',
+      } : null;
       setSignals(localSignals);
       setDrafts(localDrafts);
       setSourceSignal(source);
-      setDraft(existing ?? createWorkBrief(source));
+      setApprovedProposal(proposal);
+      setDraft(existing ?? proposalDraft ?? createWorkBrief(source));
+      if (proposalId && !proposal) {
+        setStorageError(requestedProposal
+          ? 'This proposal has no steward approval. It cannot seed a linked work brief.'
+          : 'This proposal is not available in the local governance record.');
+      }
     } catch (error) {
       setStorageError(error instanceof Error ? error.message : 'Local work briefs could not be loaded.');
     }
   }, []);
 
-  function updateDraft(field: keyof Omit<WorkBriefDraft, 'id' | 'sourceSignalId' | 'updatedAt'>, value: string) {
+  function updateDraft(field: keyof Omit<WorkBriefDraft, 'id' | 'sourceSignalId' | 'sourceProposalId' | 'updatedAt'>, value: string) {
     setDraft(current => ({ ...current, [field]: value }));
     setSaved(false);
   }
@@ -76,6 +99,7 @@ export function Workbench() {
 
   function startNewDraft() {
     setSourceSignal(null);
+    setApprovedProposal(null);
     setDraft(createWorkBrief(null));
     setActiveFile('brief');
     setSaved(false);
@@ -86,6 +110,9 @@ export function Workbench() {
   function selectDraft(item: WorkBriefDraft) {
     setDraft(item);
     setSourceSignal(signals.find(signal => signal.id === item.sourceSignalId) ?? null);
+    const proposals = readCommonsGovernance().proposals;
+    const proposal = proposals.find(candidate => candidate.id === item.sourceProposalId && candidate.status === 'approved') ?? null;
+    setApprovedProposal(proposal);
     setActiveFile('brief');
     setSaved(true);
     setStorageError('');
@@ -100,7 +127,7 @@ export function Workbench() {
             <h1>Make the work legible.</h1>
           </div>
           <div className="workbench-page-actions">
-            <span className="local-only-stamp">LOCAL DRAFT</span>
+            <span className="local-only-stamp">{approvedProposal ? 'STEWARD-APPROVED DRAFT' : 'LOCAL DRAFT'}</span>
             <button className="workbench-new-button" onClick={startNewDraft} type="button">＋ New brief</button>
           </div>
         </header>
@@ -175,7 +202,11 @@ export function Workbench() {
                     value={draft.title}
                   />
                 </label>
-                <p className="workbench-document-intro">Define the work in observable terms. Nothing here is an approved tender or a funded call sheet.</p>
+                <p className="workbench-document-intro">
+                  {approvedProposal
+                    ? `Linked to an approved local decision: ${approvedProposal.title}. This remains a draft until the institution authorizes execution.`
+                    : 'Define the work in observable terms. A draft is not an assignment, tender, or funded call sheet.'}
+                </p>
                 <div className="workbench-fields">
                   <label>Institution
                     <input onInput={event => updateDraft('institutionName', (event.currentTarget as HTMLInputElement).value)} placeholder="Institution or steward" value={draft.institutionName} />
@@ -195,6 +226,14 @@ export function Workbench() {
                     value={draft.scope}
                   />
                 </label>
+                  <label className="workbench-section-field workbench-acceptance">Acceptance criteria
+                    <textarea
+                      onInput={event => updateDraft('acceptanceCriteria', (event.currentTarget as HTMLTextAreaElement).value)}
+                      placeholder="What observable evidence would show this work is complete?"
+                      rows={3}
+                      value={draft.acceptanceCriteria ?? ''}
+                    />
+                  </label>
               </div>
             )}
 
@@ -252,6 +291,19 @@ export function Workbench() {
                 <p className="workbench-no-source">No signal linked. Start from the Commons Signal Desk to bring an observation into a brief.</p>
               )}
               <button className="workbench-context-link" onClick={() => navigate('/workspace/commons')} type="button">Open Signal Desk ↗</button>
+            </section>
+            <section className="workbench-context-block">
+              <p className="eyebrow">GOVERNANCE DECISION</p>
+              {approvedProposal ? (
+                <>
+                  <strong>{approvedProposal.title}</strong>
+                  <span>{approvedProposal.rule}</span>
+                  <span>Recorded by {approvedProposal.events.at(-1)?.actor ?? 'institution steward'}</span>
+                  <span className="workbench-context-state">APPROVED · LOCAL RECORD</span>
+                </>
+              ) : (
+                <p className="workbench-no-source">No approved proposal linked. This stays an independent local draft.</p>
+              )}
             </section>
             <section className="workbench-context-block">
               <p className="eyebrow">BOUNDARY</p>

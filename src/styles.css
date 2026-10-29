@@ -2299,6 +2299,210 @@ a:focus-visible {
   line-height: 1.6;
 }
 
+.commons-governance {
+  margin: 22px 0;
+  padding: 18px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.commons-governance-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 13px;
+}
+
+.commons-governance-head h2 {
+  margin: 5px 0 0;
+  color: var(--text);
+  font: 400 22px/1.2 var(--serif);
+}
+
+.commons-authority {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 11px 13px;
+  border-left: 2px solid var(--terrain);
+  background: color-mix(in srgb, var(--terrain-pale) 45%, transparent);
+}
+
+.commons-authority > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.commons-authority-label,
+.commons-authority small {
+  color: var(--text-faint);
+  font: 8px/1.5 var(--mono);
+}
+
+.commons-authority strong {
+  overflow-wrap: anywhere;
+  color: var(--text);
+  font-size: 10px;
+  font-weight: 550;
+}
+
+.commons-steward-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 12px;
+  margin: 3px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.commons-steward-list li {
+  color: var(--text-muted);
+  font: 8px var(--mono);
+}
+
+.commons-authority-prompt {
+  color: var(--text-muted);
+  font-size: 9px;
+}
+
+.commons-steward-form,
+.commons-proposal-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 13px;
+  border: 1px solid var(--border);
+  background: var(--bg-elev);
+}
+
+.commons-steward-form {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+}
+
+.commons-steward-form label,
+.commons-proposal-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 9px;
+}
+
+.commons-steward-form input,
+.commons-proposal-form input,
+.commons-proposal-form textarea,
+.commons-decision-controls input {
+  width: 100%;
+  min-width: 0;
+  min-height: 35px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  background: var(--bg);
+  color: var(--text);
+  font: 10px/1.5 var(--sans);
+}
+
+.commons-proposal-form > .eyebrow { margin-bottom: 1px; }
+.commons-proposal-form textarea { resize: vertical; }
+
+.commons-proposal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.commons-proposal-footer > span {
+  color: var(--text-faint);
+  font-size: 9px;
+}
+
+.commons-proposal-list { margin-top: 10px; }
+
+.commons-proposal {
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+}
+
+.commons-proposal-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--text-faint);
+  font: 8px var(--mono);
+  text-transform: uppercase;
+}
+
+.commons-proposal-status {
+  color: var(--brass);
+}
+
+.commons-proposal-status--approved { color: var(--terrain); }
+.commons-proposal-status--rejected { color: var(--danger); }
+.commons-proposal-status--returned { color: var(--water); }
+
+.commons-proposal h3 {
+  margin: 8px 0 4px;
+  color: var(--text);
+  font: 500 14px/1.35 var(--sans);
+}
+
+.commons-proposal > p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.commons-proposal-rule {
+  display: flex;
+  gap: 8px;
+  margin-top: 9px;
+  font-size: 9px;
+}
+
+.commons-proposal-rule span { color: var(--text-faint); }
+.commons-proposal-rule strong { color: var(--text-muted); font-weight: 500; }
+
+.commons-decision-history {
+  display: grid;
+  gap: 4px;
+  margin: 10px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.commons-decision-history li {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  gap: 3px 8px;
+  color: var(--text-muted);
+  font: 8px/1.5 var(--mono);
+}
+
+.commons-decision-history li > span:first-child { color: var(--terrain-ink); text-transform: uppercase; }
+.commons-decision-history small { grid-column: 2; color: var(--text-faint); font: inherit; }
+
+.commons-decision-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: 7px;
+}
+
+.commons-no-proposals {
+  margin: 0;
+  padding: 12px 0 2px;
+  color: var(--text-faint);
+  font-size: 9px;
+  line-height: 1.5;
+}
+
 .signal-report-form {
   margin: 0 0 16px;
   padding: clamp(16px, 3vw, 25px);
@@ -2905,6 +3109,7 @@ a:focus-visible {
 
 .workbench-fields label:last-child { grid-column: 1 / -1; }
 .workbench-section-field textarea { min-height: 145px; }
+.workbench-acceptance textarea { min-height: 82px; }
 .workbench-document > h2 { margin: 0; font: 400 22px var(--serif); }
 
 .workbench-statusbar {
@@ -3013,6 +3218,12 @@ a:focus-visible {
   .institution-open { grid-column: 3; grid-row: 1 / span 2; }
   .institution-name-line h2 { font-size: 18px; }
   .signal-head-actions { justify-content: flex-start; }
+  .commons-governance-head,
+  .commons-authority,
+  .commons-proposal-footer { align-items: flex-start; flex-direction: column; }
+  .commons-steward-form { grid-template-columns: minmax(0, 1fr); }
+  .commons-decision-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .commons-decision-controls input { grid-column: 1 / -1; }
   .signal-workspace { grid-template-columns: minmax(0, 1fr); }
   .signal-queue { max-height: 345px; border-right: 0; border-bottom: 1px solid var(--border); }
   .signal-list { max-height: 190px; }
@@ -3050,6 +3261,9 @@ a:focus-visible {
   .workbench-fields label:last-child { grid-column: auto; }
   .signal-form-heading,
   .signal-form-footer { align-items: flex-start; flex-direction: column; }
+  .commons-decision-controls .signal-primary-action,
+  .commons-decision-controls .signal-secondary-action,
+  .commons-decision-controls .signal-quiet-action { padding: 0 5px; }
   .signal-detail-head { flex-direction: column; gap: 8px; }
   .signal-updated { padding: 0; }
   .signal-next-step > div { flex-basis: 100%; }

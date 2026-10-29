@@ -3,9 +3,16 @@ import { useLocation } from 'wouter';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import {
   createLocalId,
+  assignLocalSteward,
+  createCommonsProposal,
+  decideCommonsProposal,
+  hasLocalStewardRole,
+  readCommonsGovernance,
   readFieldSignals,
   writeFieldSignals,
+  type CommonsGovernanceRecord,
   type FieldSignal,
+  type ProposalStatus,
   type SignalStatus,
 } from '../../lib/local-workflows';
 
@@ -27,6 +34,16 @@ function formatSignalDate(value: string): string {
   return new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(value));
 }
 
+function getCurrentEmail(): string {
+  try {
+    const stored = localStorage.getItem('authUser');
+    const user = stored ? JSON.parse(stored) as { email?: unknown } : null;
+    return typeof user?.email === 'string' ? user.email.trim().toLocaleLowerCase() : '';
+  } catch {
+    return '';
+  }
+}
+
 export function Commons() {
   const [location, navigate] = useLocation();
   const [signals, setSignals] = useState<FieldSignal[]>([]);
@@ -37,21 +54,37 @@ export function Commons() {
   const [note, setNote] = useState('');
   const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
+  const [actorEmail, setActorEmail] = useState('');
+  const [governance, setGovernance] = useState<CommonsGovernanceRecord>({ stewards: [], proposals: [] });
+  const [showProposalForm, setShowProposalForm] = useState(false);
+  const [newStewardEmail, setNewStewardEmail] = useState('');
+  const [decisionNotes, setDecisionNotes] = useState<Record<string, string>>({});
 
   useEffect(() => {
+    setActorEmail(getCurrentEmail());
     try {
       const savedSignals = readFieldSignals();
       const requestedInstitution = new URLSearchParams(location.split('?')[1] ?? '').get('institution');
       setSignals(savedSignals);
       setSelectedId(savedSignals.find(signal => signal.institutionId === requestedInstitution)?.id ?? savedSignals[0]?.id ?? '');
       if (requestedInstitution) setSearch(requestedInstitution);
-      setLoaded(true);
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : 'Local field signals could not be loaded.');
     }
+    try {
+      setGovernance(readCommonsGovernance());
+    } catch (loadError) {
+      setError(loadError instanceof Error ? loadError.message : 'Local governance records could not be loaded.');
+    }
+    setLoaded(true);
   }, []);
 
   const selected = signals.find(signal => signal.id === selectedId) ?? null;
+  const activeInstitutionId = selected?.institutionId ?? '';
+  const activeInstitutionName = selected?.institutionName ?? institutionNames[activeInstitutionId] ?? 'Institution';
+  const activeStewards = governance.stewards.filter(steward => steward.institutionId === activeInstitutionId);
+  const isSteward = hasLocalStewardRole(governance, activeInstitutionId, actorEmail);
+  const institutionProposals = governance.proposals.filter(proposal => proposal.institutionId === activeInstitutionId);
   const visibleSignals = useMemo(() => signals
     .filter(signal => filter === 'all' || signal.status === filter)
     .filter(signal => {
@@ -71,6 +104,64 @@ export function Commons() {
     } catch (saveError) {
       setError(saveError instanceof Error ? saveError.message : 'Local field signals could not be saved.');
       return false;
+    }
+  }
+
+  function registerInitialSteward() {
+    try {
+      setGovernance(assignLocalSteward(activeInstitutionId, actorEmail));
+      setError('');
+    } catch (roleError) {
+      setError(roleError instanceof Error ? roleError.message : 'Steward role could not be recorded.');
+    }
+  }
+
+  function addSteward(event: Event) {
+    event.preventDefault();
+    try {
+      setGovernance(assignLocalSteward(activeInstitutionId, newStewardEmail, actorEmail));
+      setNewStewardEmail('');
+      setError('');
+    } catch (roleError) {
+      setError(roleError instanceof Error ? roleError.message : 'Steward could not be assigned.');
+    }
+  }
+
+  function submitProposal(event: Event) {
+    event.preventDefault();
+    if (!selected) return;
+    const form = event.currentTarget as HTMLFormElement;
+    const values = new FormData(form);
+    try {
+      const updated = createCommonsProposal({
+        institutionId: selected.institutionId,
+        institutionName: selected.institutionName,
+        sourceSignalId: selected.id,
+        title: String(values.get('proposal-title') ?? '').trim(),
+        rationale: String(values.get('proposal-rationale') ?? '').trim(),
+        rule: String(values.get('proposal-rule') ?? '').trim(),
+      }, actorEmail);
+      setGovernance(updated);
+      setShowProposalForm(false);
+      setError('');
+      form.reset();
+    } catch (proposalError) {
+      setError(proposalError instanceof Error ? proposalError.message : 'Proposal could not be recorded.');
+    }
+  }
+
+  function recordDecision(proposalId: string, status: Exclude<ProposalStatus, 'proposed'>) {
+    const noteText = decisionNotes[proposalId]?.trim() ?? '';
+    if (noteText.length < 5) {
+      setError('Add a short reason before recording a steward decision.');
+      return;
+    }
+    try {
+      setGovernance(decideCommonsProposal(proposalId, status, noteText, actorEmail));
+      setDecisionNotes(current => ({ ...current, [proposalId]: '' }));
+      setError('');
+    } catch (decisionError) {
+      setError(decisionError instanceof Error ? decisionError.message : 'Decision could not be recorded.');
     }
   }
 
@@ -118,6 +209,10 @@ export function Commons() {
 
   function changeStatus(status: SignalStatus) {
     if (!selected) return;
+    if (status === 'resolved' && !isSteward) {
+      setError('Only a designated steward can close this observation.');
+      return;
+    }
     const now = new Date().toISOString();
     const update = {
       id: createLocalId('update'),
@@ -213,6 +308,129 @@ export function Commons() {
           </form>
         )}
 
+        <section className="commons-governance" aria-labelledby="commons-governance-title">
+          <div className="commons-governance-head">
+            <div>
+              <p className="eyebrow">GOVERNANCE / {activeInstitutionName.toUpperCase()}</p>
+              <h2 id="commons-governance-title">Decision register</h2>
+            </div>
+            {isSteward && selected && (
+              <button
+                className="signal-secondary-action"
+                onClick={() => setShowProposalForm(value => !value)}
+                type="button"
+              >
+                {showProposalForm ? 'Close proposal' : 'Make proposal'}
+              </button>
+            )}
+          </div>
+
+          <div className="commons-authority">
+            <div>
+              <span className="commons-authority-label">Steward authority</span>
+              <strong>{isSteward ? actorEmail : activeStewards.length ? 'Steward decision required' : 'No steward recorded'}</strong>
+              {activeStewards.length > 0 && (
+                <ul className="commons-steward-list">
+                  {activeStewards.map(steward => <li key={steward.email}>{steward.email}</li>)}
+                </ul>
+              )}
+              <small>Role records are stored in this browser; identity and authority are not independently authenticated.</small>
+            </div>
+            {!activeStewards.length && actorEmail && activeInstitutionId && (
+              <button className="signal-secondary-action" onClick={registerInitialSteward} type="button">
+                Register first steward
+              </button>
+            )}
+            {!actorEmail && <span className="commons-authority-prompt">Sign in to record a steward role.</span>}
+          </div>
+
+          {isSteward && (
+            <form className="commons-steward-form" onSubmit={addSteward}>
+              <label>
+                Add institution steward
+                <input
+                  autoComplete="email"
+                  onInput={event => setNewStewardEmail((event.currentTarget as HTMLInputElement).value)}
+                  placeholder="steward@institution.org"
+                  required
+                  type="email"
+                  value={newStewardEmail}
+                />
+              </label>
+              <button className="signal-quiet-action" disabled={!newStewardEmail.trim()} type="submit">Add steward</button>
+            </form>
+          )}
+
+          {showProposalForm && isSteward && selected && (
+            <form className="commons-proposal-form" onSubmit={submitProposal}>
+              <p className="eyebrow">PROPOSAL / LINKED OBSERVATION</p>
+              <label>Proposed action
+                <input defaultValue={`Respond to: ${selected.title}`} maxLength={120} minLength={5} name="proposal-title" required />
+              </label>
+              <label>Rule or mandate
+                <input maxLength={160} minLength={3} name="proposal-rule" placeholder="Reference the institution's authority or rule" required />
+              </label>
+              <label>Reason and expected outcome
+                <textarea maxLength={1200} minLength={12} name="proposal-rationale" placeholder="What should happen, and how will it help?" required rows={3} />
+              </label>
+              <div className="commons-proposal-footer">
+                <span>Only an authorized decision can open a work brief.</span>
+                <button className="signal-primary-action" type="submit">Record proposal</button>
+              </div>
+            </form>
+          )}
+
+          <div className="commons-proposal-list">
+            {institutionProposals.map(proposal => (
+              <article className="commons-proposal" key={proposal.id}>
+                <div className="commons-proposal-topline">
+                  <span className={`commons-proposal-status commons-proposal-status--${proposal.status}`}>{proposal.status}</span>
+                  <time dateTime={proposal.createdAt}>{formatSignalDate(proposal.createdAt)}</time>
+                </div>
+                <h3>{proposal.title}</h3>
+                <p>{proposal.rationale}</p>
+                <div className="commons-proposal-rule"><span>Rule</span><strong>{proposal.rule}</strong></div>
+                <ol className="commons-decision-history">
+                  {proposal.events.map(event => (
+                    <li key={event.id}>
+                      <span>{event.status}</span>
+                      <span>{event.actor}</span>
+                      <small>{event.note}</small>
+                    </li>
+                  ))}
+                </ol>
+                {proposal.status === 'proposed' && isSteward && (
+                  <div className="commons-decision-controls">
+                    <label className="visually-hidden" htmlFor={`decision-note-${proposal.id}`}>Decision reason</label>
+                    <input
+                      id={`decision-note-${proposal.id}`}
+                      maxLength={280}
+                      onInput={event => setDecisionNotes(current => ({ ...current, [proposal.id]: (event.currentTarget as HTMLInputElement).value }))}
+                      placeholder="Reason for the decision"
+                      value={decisionNotes[proposal.id] ?? ''}
+                    />
+                    <button className="signal-primary-action" onClick={() => recordDecision(proposal.id, 'approved')} type="button">Approve</button>
+                    <button className="signal-secondary-action" onClick={() => recordDecision(proposal.id, 'returned')} type="button">Return</button>
+                    <button className="signal-quiet-action" onClick={() => recordDecision(proposal.id, 'rejected')} type="button">Reject</button>
+                  </div>
+                )}
+                {proposal.status === 'approved' && (
+                  <button
+                    className="signal-primary-action"
+                    onClick={() => navigate(`/workspace/workbench?proposal=${encodeURIComponent(proposal.id)}`)}
+                    type="button"
+                  >
+                    Open approved work brief
+                  </button>
+                )}
+              </article>
+            ))}
+            {institutionProposals.length === 0 && (
+              <p className="commons-no-proposals">No proposals for this institution. Observations stay separate until a steward proposes an action.</p>
+            )}
+          </div>
+        </section>
+
         <section aria-label="Field signal queue" className="signal-workspace">
           <aside className="signal-queue">
             <div className="signal-queue-heading">
@@ -291,7 +509,7 @@ export function Commons() {
                   {selected.status === 'new' && <button className="signal-secondary-action" onClick={() => changeStatus('triaged')} type="button">Move to triage</button>}
                   {selected.status === 'triaged' && <button className="signal-primary-action" onClick={() => { changeStatus('brief'); navigate(`/workspace/workbench?signal=${encodeURIComponent(selected.id)}`); }} type="button">Prepare work brief</button>}
                   {selected.status === 'brief' && <button className="signal-primary-action" onClick={() => navigate(`/workspace/workbench?signal=${encodeURIComponent(selected.id)}`)} type="button">Open in Workbench</button>}
-                  {selected.status !== 'resolved' && <button className="signal-quiet-action" onClick={() => changeStatus('resolved')} type="button">Mark resolved</button>}
+                  {selected.status !== 'resolved' && isSteward && <button className="signal-quiet-action" onClick={() => changeStatus('resolved')} type="button">Close observation</button>}
                   {selected.status === 'resolved' && <button className="signal-secondary-action" onClick={() => changeStatus('new')} type="button">Reopen</button>}
                 </section>
                 <section className="signal-history">
