@@ -5,14 +5,15 @@ import { OpportunityBoard } from '@/components/opportunity-board';
 import { getWorkspaceContext } from '@/lib/workspace-access';
 import { getMarketTenders } from '@/lib/tender-repository';
 import { getCommonsOpportunities, getVisibleOpportunityApplications } from '@/lib/opportunities';
+import { getPublishedInstitutions } from '@/lib/institution-directory';
 
 export const metadata = {
   title: 'Opportunities — APT-LABS Commons',
   description: 'Asset-linked roles for builders, founders and verified execution teams.',
 };
 
-export default async function OpportunitiesPage({ searchParams }: { searchParams: Promise<{ mode?: string }> }) {
-  const [{ mode }, workspace, tenders, listing] = await Promise.all([
+export default async function OpportunitiesPage({ searchParams }: { searchParams: Promise<{ institution?: string }> }) {
+  const [{ institution }, workspace, tenders, listing] = await Promise.all([
     searchParams,
     getWorkspaceContext(),
     getMarketTenders(),
@@ -35,6 +36,14 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
   const canPublish = !guest && workspace.contexts.some(context =>
     context.kind === 'school' && ['principal', 'tender_issuer'].includes(context.role)
   );
+  const opportunities = institution
+    ? listing.opportunities.filter(opportunity => opportunity.organization_id === institution)
+    : listing.opportunities;
+  const scopedDirectory = institution ? await getPublishedInstitutions() : null;
+  const scopeLabel = institution
+    ? scopedDirectory?.institutions.find(profile => profile.id === institution)?.name ?? 'Selected institution'
+    : undefined;
+  const loadError = listing.error ?? scopedDirectory?.error ?? null;
 
   return (
     <main className="site-shell opportunities-shell">
@@ -48,8 +57,9 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
         canPublish={canPublish}
         configured={listing.configured}
         guest={guest}
-        loadError={listing.error}
-        opportunities={listing.opportunities}
+        loadError={loadError}
+        opportunities={opportunities}
+        scopeLabel={scopeLabel}
       />
       <footer className="page-footer"><span>APT-LABS / COMMONS</span><span>Roles attach to Assets · proof comes from deployment</span></footer>
     </main>

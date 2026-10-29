@@ -157,7 +157,7 @@ export default async function TenderDetailPage({
           </section>
         </article>
 
-        <aside className="detail-rail">
+        <aside className="detail-rail" id="capital-intent">
           <div className="rail-sticky capital-rail">
             <p className="eyebrow">CAPITAL ALLOCATION / NON-BINDING SIGNAL</p>
             <h2>{formatMoney(tender.fundingTargetMinor, tender.currency)}</h2>

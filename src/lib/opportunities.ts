@@ -5,6 +5,7 @@ import { createSupabaseServerClient, hasSupabaseConfiguration } from '@/lib/supa
 const opportunitySchema = z.object({
   id: z.string().uuid(),
   tender_id: z.string().uuid(),
+  organization_id: z.string().uuid().nullable(),
   asset_slug: z.string(),
   asset_name: z.string(),
   role_title: z.string(),
@@ -60,7 +61,7 @@ export async function getCommonsOpportunities(): Promise<{
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from('public_commons_opportunities')
-    .select('id,tender_id,asset_slug,asset_name,role_title,description,skill_tags,created_at,application_count')
+    .select('id,tender_id,organization_id,asset_slug,asset_name,role_title,description,skill_tags,created_at,application_count')
     .order('created_at', { ascending: false })
     .limit(50);
   if (error) return { configured: true, opportunities: [], error: `Opportunities could not be loaded: ${error.message}` };

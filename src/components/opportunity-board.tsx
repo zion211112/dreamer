@@ -32,6 +32,7 @@ export function OpportunityBoard({
   opportunities,
   configured,
   loadError,
+  scopeLabel,
 }: {
   applications: CommonsApplication[];
   assets: Tender[];
@@ -41,6 +42,7 @@ export function OpportunityBoard({
   opportunities: CommonsOpportunity[];
   configured: boolean;
   loadError: string | null;
+  scopeLabel?: string;
 }) {
   const [composerOpen, setComposerOpen] = useState(false);
   const [activeApply, setActiveApply] = useState('');
@@ -97,7 +99,7 @@ export function OpportunityBoard({
   return (
     <section className="opportunity-board" aria-labelledby="opportunities-title">
       <div className="opportunity-board-head">
-        <div><p className="eyebrow">COMMONS / ASSET-LINKED WORK</p><h1 id="opportunities-title">Find your people.<br /><em>Put the work in motion.</em></h1><p>Specific roles attached to real Assets. Every application arrives with a Roll profile—earned proof or a clear first page.</p></div>
+        <div><p className="eyebrow">{scopeLabel ? `INSTITUTION / ${scopeLabel}` : 'COMMONS / ASSET-LINKED WORK'}</p><h1 id="opportunities-title">{scopeLabel ? 'Open roles.' : <>Find your people.<br /><em>Put the work in motion.</em></>}</h1><p>{scopeLabel ? 'Work posted for this institution.' : 'Specific roles attached to real Assets. Every application arrives with a Roll profile—earned proof or a clear first page.'}</p></div>
         {canPublish && assets.length > 0 && <Button className="button button-primary" onClick={() => setComposerOpen(value => !value)} type="button"><Plus aria-hidden="true" size={15} /> Post a role</Button>}
       </div>
       {loadError && <div className="opportunity-alert" role="alert"><CircleAlert aria-hidden="true" size={15} />{loadError}</div>}

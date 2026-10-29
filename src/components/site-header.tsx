@@ -35,7 +35,7 @@ export async function SiteHeader({ frontDoor = false, hideNav = false }: { front
       </div>
       {!frontDoor && !hideNav && signedIn && (
         <nav aria-label="Main navigation" className="site-nav">
-          <Link href="/tenders">Assets</Link>
+          <Link href="/tenders">Institutions</Link>
           <Link href="/commons">Commons</Link>
           <Link href="/roll">Roll</Link>
         </nav>
