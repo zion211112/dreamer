@@ -1,28 +1,38 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { EntityInspector } from '../../components/people/EntityInspector';
 import { NetworkMap } from '../../components/people/NetworkMap';
 import {
-  ENTITY_BY_ID,
+  importPortablePeopleRecord,
   isPrimaryEntity,
   PEOPLE_NETWORK,
+  PEOPLE_RELATIONSHIPS,
   PEOPLE_ROOT_LENSES,
+  readPeopleNetworkRecord,
   ROOT_ENTITY_BY_TYPE,
   type NetworkEntity,
+  type PeopleNetworkRecord,
   type PrimaryEntityType,
 } from '../../lib/people-network';
 import { WorkspaceLayout } from './WorkspaceLayout';
 
 export function People() {
+  const [networkRecord, setNetworkRecord] = useState<PeopleNetworkRecord>({
+    entities: PEOPLE_NETWORK,
+    relationships: PEOPLE_RELATIONSHIPS,
+  });
   const [rootId, setRootId] = useState(ROOT_ENTITY_BY_TYPE.person);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [inspectorDismissed, setInspectorDismissed] = useState(false);
-  const rootEntity = ENTITY_BY_ID.get(rootId);
+  const [recordStatus, setRecordStatus] = useState('');
+  const importInput = useRef<HTMLInputElement>(null);
+  const entityById = new Map(networkRecord.entities.map((entity) => [entity.id, entity]));
+  const rootEntity = entityById.get(rootId);
   const selectedEntity = selectedId
-    ? ENTITY_BY_ID.get(selectedId) ?? null
+    ? entityById.get(selectedId) ?? null
     : inspectorDismissed ? null : rootEntity ?? null;
   const normalizedQuery = query.trim().toLowerCase();
-  const visibleEntities = PEOPLE_NETWORK.filter(isPrimaryEntity);
+  const visibleEntities = networkRecord.entities.filter(isPrimaryEntity);
   const searchResults = normalizedQuery
     ? visibleEntities.filter((entity) => (
       entity.name.toLowerCase().includes(normalizedQuery)
@@ -32,6 +42,17 @@ export function People() {
     : [];
 
   useEffect(() => {
+    try {
+      const savedRecord = readPeopleNetworkRecord();
+      setNetworkRecord(savedRecord);
+      if (!savedRecord.entities.some((entity) => entity.id === ROOT_ENTITY_BY_TYPE.person)) {
+        const firstPrimary = savedRecord.entities.find(isPrimaryEntity);
+        if (firstPrimary) setRootId(firstPrimary.id);
+      }
+    } catch (error) {
+      setRecordStatus(error instanceof Error ? error.message : 'Saved People record could not be read.');
+    }
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setSelectedId(null);
@@ -43,6 +64,26 @@ export function People() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  const handleImport = async (event: Event) => {
+    const input = event.currentTarget as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    try {
+      importPortablePeopleRecord(await file.text());
+      const importedRecord = readPeopleNetworkRecord();
+      setNetworkRecord(importedRecord);
+      const firstPrimary = importedRecord.entities.find(isPrimaryEntity);
+      setRootId(firstPrimary?.id ?? '');
+      setSelectedId(firstPrimary?.id ?? null);
+      setInspectorDismissed(!firstPrimary);
+      setRecordStatus('Portable record imported locally.');
+    } catch (error) {
+      setRecordStatus(error instanceof Error ? error.message : 'Record could not be imported.');
+    } finally {
+      input.value = '';
+    }
+  };
+
   const chooseEntity = (entity: NetworkEntity) => {
     if (!isPrimaryEntity(entity)) return;
     setRootId(entity.id);
@@ -52,7 +93,8 @@ export function People() {
   };
 
   const chooseRootType = (type: PrimaryEntityType) => {
-    const nextRootId = ROOT_ENTITY_BY_TYPE[type];
+    const nextRootId = networkRecord.entities.find((entity) => entity.type === type)?.id;
+    if (!nextRootId) return;
     setRootId(nextRootId);
     setSelectedId(nextRootId);
     setInspectorDismissed(false);
@@ -70,7 +112,18 @@ export function People() {
           </div>
           <div className="people-page-status">
             <span className="people-page-status-dot" />
-            Illustrative network
+            APT-LABS record
+            <input
+              ref={importInput}
+              accept="application/json"
+              aria-label="Import portable People record"
+              className="people-import-input"
+              onChange={(event) => void handleImport(event)}
+              type="file"
+            />
+            <button className="people-import-trigger" onClick={() => importInput.current?.click()} type="button">
+              Import record
+            </button>
           </div>
         </header>
 
@@ -103,11 +156,11 @@ export function People() {
               </svg>
               <input
                 type="search"
-                placeholder="Find a person, crew, or asset"
+                placeholder="Find a person, crew, project, or asset"
                 value={query}
                 onInput={(event) => setQuery(event.currentTarget.value)}
                 autoComplete="off"
-                aria-label="Find a person, crew, or asset"
+                aria-label="Find a person, crew, project, or asset"
                 aria-controls="people-search-results"
               />
               {query && (
@@ -146,16 +199,20 @@ export function People() {
           </div>
         </section>
 
-        <section className="people-workbench" aria-label="People, crews, and assets relationship map">
+        <section className="people-workbench" aria-label="People, crews, projects, and assets relationship map">
           <NetworkMap
             rootId={rootId}
             selectedId={selectedEntity?.id ?? ''}
             query={query}
+            entities={networkRecord.entities}
+            relationships={networkRecord.relationships}
             onSelect={chooseEntity}
           />
           <EntityInspector
             entity={selectedEntity}
             mobileOpen={selectedId !== null}
+            entities={networkRecord.entities}
+            relationships={networkRecord.relationships}
             onSelect={chooseEntity}
             onClose={() => {
               setSelectedId(null);
@@ -163,6 +220,7 @@ export function People() {
             }}
           />
         </section>
+        {recordStatus && <p className="people-record-status" role="status">{recordStatus}</p>}
       </div>
     </WorkspaceLayout>
   );

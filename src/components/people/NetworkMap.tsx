@@ -1,12 +1,10 @@
 import { useEffect, useRef } from 'preact/hooks';
 import {
   ENTITY_TYPES,
-  ENTITY_BY_ID,
-  PEOPLE_NETWORK,
-  PEOPLE_RELATIONSHIPS,
   PRIMARY_ENTITY_TYPES,
   isPrimaryEntity,
   type NetworkEntity,
+  type NetworkRelationship,
   type PrimaryEntityType,
 } from '../../lib/people-network';
 
@@ -28,28 +26,25 @@ interface NetworkMapProps {
   rootId: string;
   selectedId: string;
   query: string;
+  entities: NetworkEntity[];
+  relationships: NetworkRelationship[];
   onSelect: (entity: NetworkEntity) => void;
 }
 
 const CENTER = { x: 500, y: 318 };
 const COLUMN_X: Record<PrimaryEntityType, number> = {
-  person: 170,
-  crew: 500,
-  asset: 830,
+  person: 125,
+  crew: 325,
+  project: 560,
+  asset: 820,
 };
 
-const PRIMARY_RELATIONSHIPS = PEOPLE_RELATIONSHIPS.filter((relationship) => {
-  const source = ENTITY_BY_ID.get(relationship.sourceId);
-  const target = ENTITY_BY_ID.get(relationship.targetId);
-  return Boolean(source && target && isPrimaryEntity(source) && isPrimaryEntity(target));
-});
-
-function getVisibleEntities() {
+function getVisibleEntities(entities: NetworkEntity[]) {
   return PRIMARY_ENTITY_TYPES.flatMap((type) => {
-    const entities = PEOPLE_NETWORK.filter(isPrimaryEntity).filter((entity) => entity.type === type);
+    const laneEntities = entities.filter(isPrimaryEntity).filter((entity) => entity.type === type);
     const rowGap = 82;
-    const firstY = CENTER.y - ((entities.length - 1) * rowGap) / 2;
-    return entities.map((entity, index) => ({
+    const firstY = CENTER.y - ((laneEntities.length - 1) * rowGap) / 2;
+    return laneEntities.map((entity, index) => ({
       entity,
       x: COLUMN_X[type],
       y: firstY + index * rowGap,
@@ -57,9 +52,17 @@ function getVisibleEntities() {
   });
 }
 
-function getRelationships(positionedEntities: PositionedEntity[]): PositionedRelationship[] {
+function getRelationships(
+  positionedEntities: PositionedEntity[],
+  entities: NetworkEntity[],
+  relationships: NetworkRelationship[],
+): PositionedRelationship[] {
   const positions = new Map(positionedEntities.map((item) => [item.entity.id, item]));
-  return PRIMARY_RELATIONSHIPS.flatMap((edge, index) => {
+  const entityById = new Map(entities.map((entity) => [entity.id, entity]));
+  return relationships.flatMap((edge, index) => {
+    const sourceEntity = entityById.get(edge.sourceId);
+    const targetEntity = entityById.get(edge.targetId);
+    if (!sourceEntity || !targetEntity || !isPrimaryEntity(sourceEntity) || !isPrimaryEntity(targetEntity)) return [];
     const source = positions.get(edge.sourceId);
     const target = positions.get(edge.targetId);
     if (!source || !target) return [];
@@ -80,6 +83,8 @@ function shapeFor(type: PrimaryEntityType, x: number, y: number, selected: boole
       return <circle className={className} cx={x} cy={y} r={22} />;
     case 'crew':
       return <path className={className} d={`M ${x - 26} ${y - 14} L ${x - 14} ${y - 25} L ${x + 14} ${y - 25} L ${x + 26} ${y - 14} L ${x + 26} ${y + 14} L ${x + 14} ${y + 25} L ${x - 14} ${y + 25} L ${x - 26} ${y + 14} Z`} />;
+    case 'project':
+      return <rect className={className} x={x - 30} y={y - 21} width={60} height={42} rx={12} />;
     case 'asset':
       return <path className={className} d={`M ${x} ${y - 27} L ${x + 27} ${y} L ${x} ${y + 27} L ${x - 27} ${y} Z`} />;
   }
@@ -121,13 +126,15 @@ export function NetworkMap({
   rootId,
   selectedId,
   query,
+  entities,
+  relationships,
   onSelect,
 }: NetworkMapProps) {
   const panRef = useRef<HTMLDivElement>(null);
-  const positionedEntities = getVisibleEntities();
-  const visibleRelationships = getRelationships(positionedEntities);
+  const positionedEntities = getVisibleEntities(entities);
+  const visibleRelationships = getRelationships(positionedEntities, entities, relationships);
   const normalizedQuery = query.trim().toLowerCase();
-  const rootEntity = ENTITY_BY_ID.get(rootId);
+  const rootEntity = entities.find((entity) => entity.id === rootId);
 
   useEffect(() => {
     const mapViewport = panRef.current;
@@ -166,7 +173,7 @@ export function NetworkMap({
         </defs>
         <rect width="1000" height="640" className="people-map-ground" />
         <circle cx={CENTER.x} cy={CENTER.y} r="300" fill="url(#people-map-atmosphere)" />
-        <path d="M 335 38 V 606 M 665 38 V 606" className="people-map-divider" />
+        <path d="M 210 38 V 606 M 440 38 V 606 M 680 38 V 606 M 900 38 V 606" className="people-map-divider" />
         <g className="people-map-lanes" aria-hidden="true">
           {PRIMARY_ENTITY_TYPES.map((type) => {
             const count = positionedEntities.filter((item) => item.entity.type === type).length;
