@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APT-LABS — Field Atlas Command (Design Direction 2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f5f4ef;
+  --paper-dark: #e8e6df;
+  --paper-elev: #fff;
+  --ink: #1c1f1a;
+  --ink-strong: #0f110d;
+  --muted: #6a7065;
+  --faint: #969b90;
+  --line: rgba(38,46,36,.12);
+  --line-strong: rgba(38,46,36,.2);
+  --terrain: #5d7a5c;
+  --terrain-pale: #e4ebe3;
+  --terrain-ink: #2e3d2d;
+  --water: #3a6b8c;
+  --water-pale: #dceef5;
+  --water-ink: #1e3d52;
+  --contour: #c8b89a;
+  --contour-pale: #f5f1e8;
+  --contour-ink: #5d523a;
+  --shadow-1: 0 1px 3px rgba(28,31,26,.06), 0 1px 2px rgba(28,31,26,.04);
+  --shadow-2: 0 4px 12px rgba(28,31,26,.08), 0 2px 6px rgba(28,31,26,.05);
+  --shadow-3: 0 12px 32px rgba(28,31,26,.12), 0 6px 16px rgba(28,31,26,.07);
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  --gutter: clamp(16px, 3vw, 40px);
+  --header-h: 64px;
+  --footer-h: 48px;
+  --sidebar-w: 280px;
+  --inspector-w: 340px;
+  --transition-fast: 100ms ease;
+  --transition-base: 180ms ease;
+  --transition-slow: 300ms ease;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background: var(--paper);
+  font: 13px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+.atlas-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: var(--header-h) 1fr var(--footer-h);
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(93,122,92,.08), transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(58,107,140,.06), transparent 50%),
+    var(--paper);
+  position: relative;
+}
+.atlas-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.1'/%3E%3C/svg%3E");
+  z-index: 0;
+}
+.atlas-header {
+  position: relative;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr var(--inspector-w);
+  align-items: center;
+  gap: 16px;
+  padding: 0 var(--gutter);
+  border-bottom: 1px solid var(--line);
+  background: rgba(245,244,239,.85);
+  backdrop-filter: blur(12px);
+}
+@media (max-width: 1100px) {
+  .atlas-header, .atlas-main { grid-template-columns: 1fr; }
+  .atlas-header { grid-template-rows: auto auto auto; }
+  .atlas-brand { justify-self: center; }
+  .atlas-nav { order: -1; justify-content: center; }
+  .atlas-actions { justify-self: center; }
+}
+.atlas-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--serif);
+  font-size: clamp(20px, 2.5vw, 28px);
+  font-weight: 300;
+  letter-spacing: -.01em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.atlas-brand mark { background: var(--terrain-pale); color: var(--terrain); font-style: italic; font-weight: 400; padding: 0 4px; }
+.atlas-brand::before {
+  content: "";
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px 6px 6px 2px;
+  background: linear-gradient(145deg, #fff, var(--paper-dark));
+  box-shadow: var(--shadow-1);
+}
+.atlas-brand svg { width: 20px; height: 20px; stroke: var(--terrain); }
+.atlas-nav {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+.atlas-nav-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: 500 11px/1 var(--mono);
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.atlas-nav-btn:hover { border-color: var(--terrain); color: var(--terrain); }
+.atlas-nav-btn.active { background: var(--terrain-pale); border-color: var(--terrain); color: var(--terrain); }
+.atlas-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.coords-display {
+  padding: 6px 12px;
+  background: rgba(245,244,239,.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: 500 10px/1 var(--mono);
+  color: var(--muted);
+}
+.scale-display {
+  padding: 6px 12px;
+  background: rgba(245,244,239,.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: 500 10px/1 var(--mono);
+  color: var(--faint);
+}
+.atlas-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-self: end;
+}
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.icon-btn:hover { background: var(--paper-elev); border-color: var(--terrain); color: var(--terrain); }
+.icon-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+.atlas-main {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr var(--inspector-w);
+  min-height: 0;
+}
+.atlas-sidebar {
+  position: relative;
+  min-height: 0;
+  overflow: auto;
+  padding: 16px 12px 16px 16px;
+  border-right: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(245,244,239,.9), rgba(232,230,223,.7));
+  backdrop-filter: blur(8px);
+}
+.sidebar-section { margin-bottom: 24px; }
+.sidebar-label {
+  display: block;
+  margin: 0 0 10px 4px;
+  font: 500 10px/1 var(--mono);
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.layer-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.layer-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: 500 11px/1 var(--mono);
+  color: var(--muted);
+  background: var(--paper);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.layer-btn:hover:not(.active) { border-color: var(--terrain); color: var(--terrain); }
+.layer-btn.active { background: var(--terrain-pale); border-color: var(--terrain); color: var(--terrain); }
+.layer-btn .swatch {
+  width: 10px; height: 10px; border-radius: 50%; border: 2px solid; flex-shrink: 0;
+}
+.layer-btn .swatch.published { background: var(--paper); border-color: var(--terrain); }
+.layer-btn .swatch.illustrative { background: transparent; border-color: var(--contour); border-style: dashed; }
+.layer-btn .swatch.friction { background: var(--water-pale); border-color: var(--water); }
+.layer-btn .swatch.contours { width: 10px; height: 10px; border-radius: 0; border: 1px dashed var(--contour); background: transparent; }
+.layer-btn .swatch.grid { width: 10px; height: 10px; border-radius: 0; border: 1px solid var(--line); background: transparent; }
+.asset-tree { display: flex; flex-direction: column; gap: 2px; }
+.tree-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+.tree-item:hover { background: var(--paper-dark); }
+.tree-item.selected { background: var(--terrain-pale); border-left: 3px solid var(--terrain); padding-left: 7px; }
+.tree-item .twistie { width: 16px; text-align: center; color: var(--faint); font-size: 10px; }
+.tree-item .label { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; }
+.tree-item .badge { font: 500 9px/1 var(--mono); padding: 2px 6px; border-radius: 3px; }
+.badge-pub { background: var(--terrain-pale); color: var(--terrain); }
+.badge-ill { background: var(--contour-pale); color: var(--contour); border: 1px dashed var(--contour); }
+.badge-fric { background: var(--water-pale); color: var(--water); }
+.tree-divider { margin: 8px 4px; border-top: 1px solid var(--line); color: var(--faint); font: 500 9px/1 var(--mono); text-transform: uppercase; letter-spacing: .05em; }
+.sidebar-legend {
+  margin-top: auto;
+  padding: 16px;
+  border-top: 1px solid var(--line);
+  background: var(--paper-dark);
+  border-radius: 8px;
+}
+.legend-item { display: flex; align-items: center; gap: 8px; margin: 6px 0; font-size: 11px; }
+.legend-swatch { width: 12px; height: 12px; border-radius: 50%; border: 2px solid; }
+.legend-swatch.published { background: var(--paper); border-color: var(--terrain); }
+.legend-swatch.illustrative { background: transparent; border-color: var(--contour); border-style: dashed; }
+.legend-swatch.friction { background: var(--water-pale); border-color: var(--water); }
+.atlas-map {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+.map-canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  background: var(--paper-dark);
+  overflow: hidden;
+}
+.map-layer { position: absolute; inset: 0; pointer-events: none; }
+.map-grid {
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: .4;
+}
+.map-contours {
+  background-image:
+    radial-gradient(ellipse at 25% 35%, rgba(200,184,154,.15) 0%, transparent 40%),
+    radial-gradient(ellipse at 75% 65%, rgba(200,184,154,.1) 0%, transparent 35%),
+    radial-gradient(ellipse at 50% 50%, rgba(93,122,92,.08) 0%, transparent 45%);
+}
+.asset-node {
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  z-index: 10;
+}
+.asset-node:hover { transform: scale(1.08); z-index: 20; }
+.asset-node.selected .node-marker { border-color: var(--terrain); box-shadow: 0 0 0 4px var(--terrain-pale); }
+.node-marker {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--line-strong);
+  background: var(--paper);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  font-size: 20px;
+}
+.asset-node.published .node-marker { border-color: var(--terrain); background: var(--terrain-pale); }
+.asset-node.illustrative .node-marker { border-style: dashed; border-color: var(--contour); }
+.asset-node.friction .node-marker { background: var(--water-pale); border-color: var(--water); }
+.node-label {
+  position: absolute;
+  top: 100%; left: 50%;
+  transform: translateX(-50%);
+  margin-top: 6px;
+  padding: 4px 10px;
+  background: var(--ink);
+  color: var(--paper);
+  font: 500 10px/1 var(--mono);
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+}
+.asset-node:hover .node-label { opacity: 1; }
+.map-legend {
+  position: absolute;
+  bottom: 16px; right: 16px;
+  z-index: 5;
+  background: rgba(245,244,239,.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 11px;
+}
+.map-scale {
+  position: absolute;
+  bottom: 16px; left: 16px;
+  z-index: 5;
+  background: rgba(245,244,239,.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font: 500 10px/1 var(--mono);
+  color: var(--muted);
+}
+.map-coords {
+  position: absolute;
+  top: 16px; right: 16px;
+  z-index: 5;
+  background: rgba(245,244,239,.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font: 500 10px/1 var(--mono);
+  color: var(--muted);
+}
+.asset-node .connection-line {
+  position: absolute;
+  height: 1px;
+  background: var(--line);
+  transform-origin: 0 0;
+  z-index: 1;
+  opacity: .6;
+}
+.asset-node .connection-line.active { background: var(--terrain); opacity: 1; }
+.atlas-panel {
+  position: relative;
+  min-height: 0;
+  overflow: auto;
+  padding: 16px 16px 16px 12px;
+  border-left: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(245,244,239,.9), rgba(232,230,223,.7));
+  backdrop-filter: blur(8px);
+}
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-dark);
+  margin: -16px -16px 16px -12px;
+}
+.panel-title { font: 400 14px/1 var(--serif); color: var(--ink); margin: 0; }
+.panel-badge {
+  font: 500 9px/1 var(--mono);
+  padding: 3px 8px;
+  border-radius: 99px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.panel-badge.published { background: var(--terrain-pale); color: var(--terrain); }
+.panel-badge.illustrative { background: var(--contour-pale); color: var(--contour); }
+.panel-badge.friction { background: var(--water-pale); color: var(--water); }
+.panel-body { display: flex; flex-direction: column; gap: 12px; }
+.fact-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--line); font-size: 12px; }
+.fact-row:last-child { border-bottom: none; }
+.fact-label { color: var(--faint); }
+.fact-value { color: var(--ink); font-weight: 500; font-family: var(--mono); }
+.fact-value.mono { font-family: var(--mono); }
+.action-row { display: flex; gap: 8px; margin-top: 8px; padding-top: 12px; border-top: 1px solid var(--line); }
+.action-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: 500 11px/1 var(--sans);
+  color: var(--ink);
+  background: var(--paper);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.action-btn:hover { border-color: var(--terrain); color: var(--terrain); background: var(--terrain-pale); }
+.action-btn.primary { background: var(--terrain); border-color: var(--terrain); color: #fff; }
+.action-btn.primary:hover { background: var(--terrain-ink); border-color: var(--terrain-ink); }
+.atlas-footer {
+  position: relative;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px var(--gutter);
+  border-top: 1px solid var(--line);
+  font: 11px/1.5 var(--sans);
+  color: var(--faint);
+}
+.floor-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.floor-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font: 500 10px/1 var(--mono);
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.floor-btn.active { background: var(--terrain); border-color: var(--terrain); color: #fff; }
+.floor-btn:hover:not(.active) { border-color: var(--terrain); color: var(--terrain); }
+.status-summary { display: flex; align-items: center; gap: 16px; font: 500 10px/1 var(--mono); }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--terrain); }
+.toast {
+  position: fixed;
+  bottom: 70px; left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  z-index: 200;
+  padding: 10px 20px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--ink);
+  color: var(--paper);
+  font: 500 12px/1 var(--sans);
+  box-shadow: var(--shadow-2);
+  opacity: 0;
+  transition: all var(--transition-base);
+}
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.toast.ok { background: var(--terrain); border-color: var(--terrain); }
+.toast.warn { background: #e8b84d; border-color: #e8b84d; }
+.toast.err { background: var(--water); border-color: var(--water); }
+</style>
+</head>
+<body>
+<div class="atlas-shell" id="app">
+<header class="atlas-header">
+<div class="atlas-sidebar" style="padding: 0; border: none; background: transparent;">
+<a href="#" class="atlas-brand" aria-label="APT-LABS Field Atlas">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18.5 12 4l8 14.5M7.1 13h9.8" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLineJoin="round"/><circle cx="12" cy="4" r="1.5" fill="currentColor"/></svg>
+APT—LABS<mark>Field Atlas</mark>
+</a>
+</div>
+<nav class="atlas-nav" aria-label="Atlas sections" role="tablist">
+<button class="atlas-nav-btn active" role="tab" aria-selected="true" data-layer="topology">TOPOLOGY</button>
+<button class="atlas-nav-btn" role="tab" aria-selected="false" data-layer="recruitment">RECRUITMENT</button>
+<button class="atlas-nav-btn" role="tab" aria-selected="false" data-layer="radar">RADAR</button>
+<button class="atlas-nav-btn" role="tab" aria-selected="false" data-layer="ledger">LEDGER</button>
+<button class="atlas-nav-btn" role="tab" aria-selected="false" data-layer="commons">COMMONS</button>
+</nav>
+<div class="atlas-center">
+<div class="coords-display" id="coordsDisplay" aria-live="polite">LAT: -0.4167, LNG: 37.3833</div>
+<div class="scale-display">1 cm = 5 km | Grid: 60px = 5km</div>
+</div>
+<div class="atlas-actions">
+<button class="icon-btn" id="resetMap" title="Reset view" aria-label="Reset view"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/><circle cx="12" cy="12" r="3"/></svg></button>
+<button class="icon-btn" id="newSignal" title="Log friction signal" aria-label="Log friction signal"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/><circle cx="12" cy="12" r="1"/></svg></button>
+</div>
+</header>
+<main class="atlas-main">
+<aside class="atlas-sidebar" aria-label="Asset tree & layers">
+<div class="sidebar-section">
+<span class="sidebar-label">Map Layers</span>
+<div class="layer-toggle" role="group" aria-label="Map layers">
+<button class="layer-btn active" data-layer="published" aria-pressed="true"><span class="swatch published" aria-hidden="true"></span>Published Tenders</button>
+<button class="layer-btn active" data-layer="illustrative" aria-pressed="true"><span class="swatch illustrative" aria-hidden="true"></span>Illustrative</button>
+<button class="layer-btn active" data-layer="friction" aria-pressed="true"><span class="swatch friction" aria-hidden="true"></span>Friction Signals</button>
+<button class="layer-btn" data-layer="contours" aria-pressed="false"><span class="swatch contours" aria-hidden="true"></span>Contours</button>
+<button class="layer-btn active" data-layer="grid" aria-pressed="true"><span class="swatch grid" aria-hidden="true"></span>Grid</button>
+</div>
+</div>
+<div class="sidebar-section">
+<span class="sidebar-label">Assets & Signals</span>
+<div class="asset-tree" id="assetTree" role="tree" aria-label="Asset tree">
+<div class="tree-item selected" data-id="nyamindi" tabindex="0" role="treeitem" aria-selected="true" aria-label="Nyamindi Hydro Mini-Grid">
+<span class="twistie">▼</span>
+<span class="label">nyamindi-hydro</span>
+<span class="badge badge-pub">ENERGY</span>
+<span class="badge badge-pub">DEPLOYED</span>
+</div>
+<div class="tree-item" data-id="tender-system" tabindex="0" role="treeitem" aria-selected="false" aria-label="Tender System">
+<span class="twistie">▼</span>
+<span class="label">tender-system</span>
+<span class="badge badge-pub">SOFTWARE</span>
+<span class="badge badge-pub">DEPLOYED</span>
+</div>
+<div class="tree-item" data-id="mwea" tabindex="0" role="treeitem" aria-selected="false" aria-label="Mwea Animation Box">
+<span class="twistie">▶</span>
+<span class="label">mwea-animation</span>
+<span class="badge badge-ill">MEDIA</span>
+<span class="badge badge-ill">DRAFT</span>
+</div>
+<div class="tree-divider">FRICTION SIGNALS</div>
+<div class="tree-item" data-id="friction-culture" tabindex="0" role="treeitem" aria-selected="false" aria-label="Culture friction signal">
+<span class="twistie">•</span>
+<span class="label">culture:authorship</span>
+<span class="badge badge-fric">SIGNAL</span>
+</div>
+<div class="tree-item" data-id="friction-education" tabindex="0" role="treeitem" aria-selected="false" aria-label="Education friction signal">
+<span class="twistie">•</span>
+<span class="label">education:infrastructure</span>
+<span class="badge badge-fric">SIGNAL</span>
+</div>
+<div class="tree-item" data-id="friction-work" tabindex="0" role="treeitem" aria-selected="false" aria-label="Work friction signal">
+<span class="twistie">•</span>
+<span class="label">work:capability</span>
+<span class="badge badge-fric">SIGNAL</span>
+</div>
+</div>
+</div>
+<div class="sidebar-legend" aria-label="Legend">
+<div class="legend-item"><span class="legend-swatch published" aria-hidden="true"></span>Published Tender</div>
+<div class="legend-item"><span class="legend-swatch illustrative" aria-hidden="true"></span>Illustrative Scenario</div>
+<div class="legend-item"><span class="legend-swatch friction" aria-hidden="true"></span>Friction Signal</div>
+</div>
+</aside>
+<section class="atlas-map" aria-label="Asset topology map">
+<div class="map-canvas" id="mapCanvas" role="application" aria-label="Asset topology map">
+<div class="map-layer map-grid" aria-hidden="true"></div>
+<div class="map-layer map-contours" aria-hidden="true"></div>
+<div class="map-coords" id="mapCoords" aria-live="polite">LAT: -0.4167, LNG: 37.3833</div>
+<div class="map-scale">1 cm = 5 km  <span style="color:var(--contour);">|</span>  Grid: 60px = 5km</div>
+<div class="map-legend" aria-label="Map legend">
+<div class="legend-item"><span class="legend-swatch published" aria-hidden="true"></span>Published Tender</div>
+<div class="legend-item"><span class="legend-swatch illustrative" aria-hidden="true"></span>Illustrative Scenario</div>
+<div class="legend-item"><span class="legend-swatch friction" aria-hidden="true"></span>Friction Signal</div>
+</div>
+<div class="asset-node published" id="node-nyamindi" style="top: 28%; left: 38%;" data-name="Nyamindi Hydro" data-status="Published" data-category="energy" data-coords="-0.4167, 37.3833" tabindex="0" role="button" aria-label="Nyamindi Hydro Mini-Grid">
+<div class="node-marker">⚡</div>
+<div class="node-label">Nyamindi Hydro</div>
+</div>
+<div class="asset-node published" id="node-tender" style="top: 52%; left: 55%;" data-name="Tender System" data-status="Published" data-category="software" data-coords="-1.2921, 36.8219" tabindex="0" role="button" aria-label="Tender System">
+<div class="node-marker">◉</div>
+<div class="node-label">Tender System</div>
+</div>
+<div class="asset-node illustrative" id="node-mwea" style="top: 68%; left: 22%;" data-name="Mwea Animation" data-status="Illustrative" data-category="media" data-coords="-0.7000, 37.6333" tabindex="0" role="button" aria-label="Mwea Animation Box">
+<div class="node-marker">✦</div>
+<div class="node-label">Mwea Animation</div>
+</div>
+<div class="asset-node friction" id="friction-culture" style="top: 42%; left: 18%;" data-name="Culture Friction" data-status="Signal" data-category="culture" data-coords="-0.7000, 37.6333" tabindex="0" role="button" aria-label="Culture friction signal">
+<div class="node-marker" style="background:var(--water-pale); border-color:var(--water);">⚠</div>
+<div class="node-label">Culture Friction</div>
+</div>
+<div class="asset-node friction" id="friction-education" style="top: 35%; left: 62%;" data-name="Education Friction" data-status="Signal" data-category="education" data-coords="-0.4167, 37.3833" tabindex="0" role="button" aria-label="Education friction signal">
+<div class="node-marker" style="background:var(--water-pale); border-color:var(--water);">⚠</div>
+<div class="node-label">Education Friction</div>
+</div>
+<div class="asset-node friction" id="friction-work" style="top: 60%; left: 72%;" data-name="Work Friction" data-status="Signal" data-category="work" data-coords="-1.2921, 36.8219" tabindex="0" role="button" aria-label="Work friction signal">
+<div class="node-marker" style="background:var(--water-pale); border-color:var(--water);">⚠</div>
+<div class="node-label">Work Friction</div>
+</div>
+</div>
+</section>
+<aside class="atlas-panel" aria-label="Asset inspector">
+<article class="panel" id="panel-nyamindi" aria-labelledby="panel-nyamindi-title" style="display: block;">
+<div class="panel-head">
+<h3 id="panel-nyamindi-title" class="panel-title">Nyamindi Hydro Mini-Grid</h3>
+<span class="panel-badge published">PUBLISHED</span>
+</div>
+<div class="panel-body">
+<div class="fact-row"><span class="fact-label">Asset ID</span><span class="fact-value mono">nyamindi-hydro</span></div>
+<div class="fact-row"><span class="fact-label">Category</span><span class="fact-value">Energy</span></div>
+<div class="fact-row"><span class="fact-label">Location</span><span class="fact-value">Nyamindi, Embu County</span></div>
+<div class="fact-row"><span class="fact-label">Coordinates</span><span class="fact-value mono">-0.4167°, 37.3833°</span></div>
+<div class="fact-row"><span class="fact-label">Asset Build Cost</span><span class="fact-value mono">KES 18,750,000</span></div>
+<div class="fact-row"><span class="fact-label">Funding Target</span><span class="fact-value mono">KES 15,000,000</span></div>
+<div class="fact-row"><span class="fact-label">Settled</span><span class="fact-value mono" style="color:var(--water);">KES 8,250,000 (55%)</span></div>
+<div class="fact-row"><span class="fact-label">Status</span><span class="fact-value" style="color:var(--water);">MATERIALS</span></div>
+<div class="fact-row"><span class="fact-label">Blueprint</span><span class="fact-value mono">v3 — 7f3a2e91c4d8...</span></div>
+<div class="fact-row"><span class="fact-label">Lines</span><span class="fact-value">12 items</span></div>
+<div class="fact-row"><span class="fact-label">Crew</span><span class="fact-value">Anchor: W. Mbau | Builder: J. Koome | Apprentice: K. Njeri</span></div>
+<div class="action-row">
+<button class="action-btn primary" data-action="open-assembly">OPEN ASSEMBLY</button>
+<button class="action-btn" data-action="inspect-blueprint">INSPECT BLUEPRINT</button>
+</div>
+</div>
+</article>
+<article class="panel" id="panel-tender" aria-labelledby="panel-tender-title" style="display: none;">
+<div class="panel-head"><h3 id="panel-tender-title" class="panel-title">Tender System</h3><span class="panel-badge published">PUBLISHED</span></div>
+<div class="panel-body">
+<div class="fact-row"><span class="fact-label">Asset ID</span><span class="fact-value mono">tender-system</span></div>
+<div class="fact-row"><span class="fact-label">Category</span><span class="fact-value">Software</span></div>
+<div class="fact-row"><span class="fact-label">Location</span><span class="fact-value">Nairobi, Kenya (APT-LABS HQ)</span></div>
+<div class="fact-row"><span class="fact-label">Coordinates</span><span class="fact-value mono">-1.2921°, 36.8219°</span></div>
+<div class="fact-row"><span class="fact-label">Asset Build Cost</span><span class="fact-value mono">KES 12,400,000</span></div>
+<div class="fact-row"><span class="fact-label">Funding Target</span><span class="fact-value mono">KES 10,000,000</span></div>
+<div class="fact-row"><span class="fact-label">Settled</span><span class="fact-value mono" style="color:var(--terrain);">KES 10,000,000 (100%)</span></div>
+<div class="fact-row"><span class="fact-label">Status</span><span class="fact-value" style="color:var(--terrain);">DEPLOYED</span></div>
+<div class="fact-row"><span class="fact-label">Roll Entry</span><span class="fact-value mono">roll:tender-system (2026-10-15)</span></div>
+<div class="fact-row"><span class="fact-label">Crew</span><span class="fact-value">Anchor: S. Otieno | Builder: M. Wambui | Apprentice: L. Kimani</span></div>
+<div class="action-row">
+<button class="action-btn primary" data-action="view-roll">VIEW ROLL ENTRY</button>
+<button class="action-btn" data-action="recruit">RECRUIT</button>
+</div>
+</div>
+</article>
+<article class="panel" id="panel-mwea" aria-labelledby="panel-mwea-title" style="display: none;">
+<div class="panel-head"><h3 id="panel-mwea-title" class="panel-title">Mwea Animation Box</h3><span class="panel-badge illustrative">ILLUSTRATIVE</span></div>
+<div class="panel-body">
+<div class="fact-row"><span class="fact-label">Asset ID</span><span class="fact-value mono">mwea-animation</span></div>
+<div class="fact-row"><span class="fact-label">Category</span><span class="fact-value">Media</span></div>
+<div class="fact-row"><span class="fact-label">Location</span><span class="fact-value">Mwea, Kirinyaga County</span></div>
+<div class="fact-row"><span class="fact-label">Coordinates</span><span class="fact-value mono">-0.7000°, 37.6333°</span></div>
+<div class="fact-row"><span class="fact-label">Asset Build Cost</span><span class="fact-value mono">KES 2,400,000</span></div>
+<div class="fact-row"><span class="fact-label">Funding Target</span><span class="fact-value mono">KES 2,400,000</span></div>
+<div class="fact-row"><span class="fact-label">Settled</span><span class="fact-value mono" style="color:var(--water);">KES 0 (0%)</span></div>
+<div class="fact-row"><span class="fact-label">Status</span><span class="fact-value" style="color:var(--water);">DRAFT</span></div>
+<div class="fact-row"><span class="fact-label">Blueprint</span><span class="fact-value mono" style="color:var(--water);">v1 proposed (unverified)</span></div>
+<div class="fact-row"><span class="fact-label">Crew</span><span class="fact-value" style="color:var(--water);">Unassigned — requires community mandate</span></div>
+<div class="action-row">
+<button class="action-btn primary" data-action="draft-brief">DRAFT BRIEF</button>
+<button class="action-btn" data-action="recruit">RECRUIT</button>
+</div>
+</div>
+</article>
+<article class="panel" id="panel-friction" aria-labelledby="panel-friction-title" style="display: none;">
+<div class="panel-head"><h3 id="panel-friction-title" class="panel-title">Friction Radar — Culture</h3><span class="panel-badge friction">SIGNAL</span></div>
+<div class="panel-body">
+<div class="fact-row"><span class="fact-label">Room</span><span class="fact-value">Culture / Stories & Authorship</span></div>
+<div class="fact-row"><span class="fact-label">Signal</span><span class="fact-value">Who can author, own, distribute, and earn from stories rooted in local life?</span></div>
+<div class="fact-row"><span class="fact-label">Origin</span><span class="fact-value">Mwea · Context to establish with participants</span></div>
+<div class="fact-row"><span class="fact-label">First Question</span><span class="fact-value">Whose account is missing, and who should hold authorship and rights if new story work is created?</span></div>
+<div class="fact-row"><span class="fact-label">Collective Response</span><span class="fact-value">Map authorship, language, rights, distribution & livelihood constraints before choosing a medium</span></div>
+<div class="action-row">
+<button class="action-btn primary" data-action="log-friction">LOG FRICTION</button>
+<button class="action-btn" data-action="adapt">ADAPT</button>
+</div>
+</div>
+</article>
+</aside>
+</main>
+<footer class="atlas-footer">
+<span>APT-LABS · Field Atlas Command · v0.1</span>
+<div class="floor-bar" role="group" aria-label="Floor switcher">
+<button class="floor-btn" data-floor="basement">BASEMENT</button>
+<button class="floor-btn active" data-floor="ground">GROUND</button>
+<button class="floor-btn" data-floor="first">FIRST</button>
+<button class="floor-btn" data-floor="second">SECOND</button>
+</div>
+<div class="status-summary">
+<span><span class="status-dot" aria-hidden="true"></span> GROUND FLOOR</span>
+<span>ASSETS: 3 | ROLL: 1 | SIGNALS: 3</span>
+<span>SERVER: <mark style="background:var(--terrain-pale);color:var(--terrain);padding:1px 6px;border-radius:3px;">VERIFIED</mark></span>
+</div>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+<script>
+const map = document.getElementById('mapCanvas');
+const mapCoords = document.getElementById('mapCoords');
+const coordsDisplay = document.getElementById('coordsDisplay');
+const panels = document.querySelectorAll('.panel');
+const nodes = document.querySelectorAll('.asset-node');
+const treeItems = document.querySelectorAll('.tree-item[data-id]');
+const layerBtns = document.querySelectorAll('.layer-btn');
+const navBtns = document.querySelectorAll('.atlas-nav-btn');
+const floorBtns = document.querySelectorAll('.floor-btn');
+const resetMapBtn = document.getElementById('resetMap');
+const newSignalBtn = document.getElementById('newSignal');
+const toast = document.getElementById('toast');
+
+let selectedNode = null;
+let activeLayer = 'topology';
+
+function showToast(msg, type = '') {
+  toast.textContent = msg;
+  toast.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+function selectNode(node) {
+  if (selectedNode) selectedNode.classList.remove('selected');
+  node.classList.add('selected');
+  selectedNode = node;
+  const coords = node.dataset.coords;
+  mapCoords.textContent = `LAT: ${coords}`;
+  coordsDisplay.textContent = `LAT: ${coords}`;
+  panels.forEach(p => p.style.display = 'none');
+  const panelId = 'panel-' + node.id.replace('node-', '').replace('friction-', '');
+  const panel = document.getElementById(panelId);
+  if (panel) panel.style.display = 'block';
+  treeItems.forEach(item => {
+    const isSel = item.dataset.id === node.dataset.id.replace('node-', '').replace('friction-', '');
+    item.classList.toggle('selected', isSel);
+    item.setAttribute('aria-selected', isSel);
+  });
+  showToast(`Selected: ${node.dataset.name}`);
+}
+
+function toggleLayer(btn) {
+  const layer = btn.dataset.layer;
+  const isActive = btn.classList.toggle('active');
+  btn.setAttribute('aria-pressed', isActive);
+  document.querySelectorAll(`.asset-node.${layer}, .map-layer.${layer}`).forEach(el => {
+    el.style.display = isActive ? '' : 'none';
+  });
+  showToast(`Layer ${layer}: ${isActive ? 'on' : 'off'}`);
+}
+
+nodes.forEach(node => {
+  node.addEventListener('click', () => selectNode(node));
+  node.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectNode(node); } });
+});
+
+treeItems.forEach(item => {
+  item.addEventListener('click', () => {
+    const nodeId = item.dataset.id;
+    let node;
+    if (nodeId.startsWith('friction')) node = document.getElementById('friction-' + nodeId.split('-')[1]);
+    else node = document.getElementById('node-' + nodeId);
+    if (node) selectNode(node);
+  });
+  item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); item.click(); } });
+});
+
+layerBtns.forEach(btn => btn.addEventListener('click', () => toggleLayer(btn)));
+
+navBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    navBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    activeLayer = btn.dataset.layer;
+    showToast(`Layer: ${activeLayer.toUpperCase()}`);
+  });
+});
+
+floorBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    floorBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    showToast(`Floor: ${btn.dataset.floor.toUpperCase()}`);
+  });
+});
+
+resetMapBtn.addEventListener('click', () => {
+  selectNode(document.getElementById('node-nyamindi'));
+  showToast('View reset to Nyamindi Hydro');
+});
+
+newSignalBtn.addEventListener('click', () => {
+  showToast('Friction signal logger: not implemented in prototype', 'warn');
+});
+
+document.querySelectorAll('.action-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    showToast(`Action: ${btn.dataset.action}`, 'ok');
+  });
+});
+
+selectNode(document.getElementById('node-nyamindi'));
+</script>
+</body>
+</html>

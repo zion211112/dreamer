@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APT-LABS — Login Direction 1: Editorial Manuscript</title>
+<style>
+:root {
+  --paper: #faf9f4;
+  --paper-2: #f0efe8;
+  --ink: #1a1d19;
+  --muted: #6d7368;
+  --faint: #9a9f94;
+  --line: rgba(40,50,38,.1);
+  --line-strong: rgba(40,50,38,.18);
+  --sage: #6b846a;
+  --sage-pale: #e8efe7;
+  --rust: #b87a4d;
+  --rust-pale: #f5ebe3;
+  --charcoal: #2d2f2b;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  --measure: 68ch;
+  --gutter: clamp(24px, 4vw, 64px);
+  --baseline: 4px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background: var(--paper);
+  font: 14px/1.7 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  display: flex;
+  flex-direction: column;
+}
+.page {
+  flex: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: calc(var(--gutter) * 2) var(--gutter);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+header.manuscript-head {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 32px;
+  margin-bottom: 48px;
+  position: relative;
+}
+header.manuscript-head::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--sage), var(--rust));
+}
+.manuscript-brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+  font-family: var(--serif);
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 300;
+  letter-spacing: -.02em;
+  color: var(--charcoal);
+  text-decoration: none;
+}
+.manuscript-brand mark {
+  background: transparent;
+  color: var(--sage);
+  font-weight: 400;
+  font-style: italic;
+}
+.manuscript-kicker {
+  display: block;
+  font: 500 11px/1 var(--mono);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 8px;
+}
+.auth-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 40px;
+  background: var(--paper);
+  max-width: 420px;
+  width: 100%;
+  margin: 0 auto;
+}
+.auth-head {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.auth-title {
+  font: 300 clamp(28px, 4vw, 36px)/1.2 var(--serif);
+  letter-spacing: -.02em;
+  margin: 0 0 8px;
+  color: var(--charcoal);
+}
+.auth-subtitle {
+  font: 400 16px/1.7 var(--serif);
+  font-style: italic;
+  color: var(--muted);
+  margin: 0;
+}
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.form-label {
+  font: 500 11px/1 var(--mono);
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.form-input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px 16px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+.form-input:hover { border-color: var(--line-strong); }
+.form-input:focus {
+  border-color: var(--sage);
+  box-shadow: 0 0 0 3px var(--sage-pale);
+  background: var(--paper);
+  outline: none;
+}
+.form-input::placeholder { color: var(--faint); }
+.form-input:disabled { opacity: .4; cursor: not-allowed; background: var(--paper-2); }
+.form-hint {
+  font: 11px/1.4 var(--sans);
+  color: var(--faint);
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  font: 500 13px/1 var(--sans);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-primary {
+  background: var(--charcoal);
+  color: var(--paper);
+  border-color: var(--charcoal);
+}
+.btn-primary:hover { background: #1a1c18; transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+}
+.btn-ghost:hover { background: var(--paper-2); border-color: var(--sage); color: var(--sage); }
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 8px 0;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.auth-divider span {
+  font: 500 10px/1 var(--mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.auth-footer {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  font: 12px/1.6 var(--sans);
+  color: var(--faint);
+}
+.auth-footer a {
+  color: var(--sage);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color .15s;
+}
+.auth-footer a:hover { border-color: var(--sage); }
+.boundary-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: var(--rust-pale);
+  border: 1px solid var(--rust);
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--rust);
+  margin-top: 16px;
+}
+.boundary-glyph {
+  flex-shrink: 0;
+  font-size: 18px;
+  margin-top: 2px;
+}
+.footer-note {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  font: 12px/1.6 var(--sans);
+  color: var(--faint);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.footer-note a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.footer-note a:hover { color: var(--sage); }
+@media (max-width: 640px) {
+  .auth-card { padding: 24px; }
+  .page { padding: var(--gutter); }
+}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="page">
+<header class="manuscript-head">
+<a href="/" class="manuscript-brand">APT\u2014LABS<mark>Tender Engine</mark></a>
+<span class="manuscript-kicker">Authentication \u2014 Editorial Manuscript</span>
+</header>
+<main>
+<article class="auth-card" role="main">
+<header class="auth-head">
+<h1 class="auth-title">Enter the Studio</h1>
+<p class="auth-subtitle">Your workspace for sovereign coordination. Tenders, assemblies, and the Roll.</p>
+</header>
+<form class="auth-form" id="loginForm">
+<div class="form-group">
+<label class="form-label" for="email">Email</label>
+<input type="email" id="email" name="email" class="form-input" placeholder="you@domain.org" autocomplete="email" required aria-describedby="email-hint">
+<span id="email-hint" class="form-hint">We\u2019ll send a magic link. No password required.</span>
+</div>
+<div class="form-group">
+<label class="form-label" for="workspace">Workspace</label>
+<select id="workspace" name="workspace" class="form-input" required>
+<option value="">Choose a workspace\u2026</option>
+<option value="apt">APT-LABS Network</option>
+<option value="school">School Console</option>
+</select>
+</div>
+<button type="submit" class="btn btn-primary">Send Magic Link</button>
+</form>
+<div class="auth-divider"><span>Or continue with</span></div>
+<div class="auth-form">
+<button type="button" class="btn btn-ghost" style="width:100%;">Continue with Google</button>
+</div>
+<div class="boundary-note">
+<span class="boundary-glyph" aria-hidden="true">\u26A0</span>
+<div><strong>Local development mode.</strong> No Supabase configured. Email sign-in creates a local session only. No messages are sent.</div>
+</div>
+<footer class="auth-footer">
+<p>No account? <a href="/sign-up">Create one</a> \u00b7 <a href="/">Return to front door</a></p>
+</footer>
+</article>
+</main>
+<footer class="footer-note">
+<span>APT-LABS \u00b7 Editorial Manuscript Direction \u2014 Login</span>
+<span>Design tokens from <code>src/styles.css</code> \u00b7 Ontology from <code>src/lib/tender.ts</code></span>
+</footer>
+</div>
+</body>
+</html>

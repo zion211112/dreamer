@@ -1,0 +1,4 @@
+- [Project State](memory/project-state.md) — Current state, structure, ontology, and task goals
+- [Free Resources](memory/free-resources.md) — Curated free tools for design, perf, UX, typography
+- [Commit Analysis](memory/commit-analysis.md) — Evolution of codebase across iterations
+- [Path to 10/10](memory/path-to-10.md) — Analysis of 4.7 rating and concrete improvement plan
