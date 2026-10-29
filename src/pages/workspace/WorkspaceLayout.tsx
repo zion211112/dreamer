@@ -2,10 +2,10 @@ import { WorkspaceHeader } from '../../components/WorkspaceHeader';
 
 interface WorkspaceLayoutProps {
   children: any;
-  currentContext: 'people' | 'institutions' | 'commons' | 'field-desk';
+  currentContext: 'people' | 'institutions' | 'commons' | 'field-desk' | 'workbench';
 }
 
-export function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
+export function WorkspaceLayout({ children, currentContext }: WorkspaceLayoutProps) {
   return (
     <div className="workspace-shell" style={{
       minHeight: '100vh',
@@ -47,7 +47,7 @@ export function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
         font: '9px var(--mono)',
         letterSpacing: '.03em',
       }}>
-        <span>APT-LABS — Field Desk</span>
+        <span>APT-LABS — {currentContext === 'field-desk' ? 'Workbench' : currentContext}</span>
         <span style={{ color: 'var(--text-faint)' }}>PROTOTYPE · 001</span>
       </footer>
     </div>

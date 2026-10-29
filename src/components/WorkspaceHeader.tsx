@@ -6,7 +6,7 @@ const CONTEXTS = [
   { id: 'people', label: 'People' },
   { id: 'institutions', label: 'Institutions' },
   { id: 'commons', label: 'Commons' },
-  { id: 'field-desk', label: 'Field Desk' },
+  { id: 'workbench', label: 'Workbench' },
 ] as const;
 
 function getContext() {
@@ -30,7 +30,8 @@ export function WorkspaceHeader() {
   const [location, navigate] = useLocation();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
-  const currentContext = CONTEXTS.find((context) => location === `/workspace/${context.id}`)?.id
+  const routePath = location.split('?')[0];
+  const currentContext = CONTEXTS.find((context) => routePath === `/workspace/${context.id}`)?.id
     ?? getContext();
   const user = getUser();
   const initials = user?.email?.split('@')[0]?.slice(0, 2).toUpperCase() || '??';

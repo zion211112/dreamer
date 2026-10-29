@@ -5,6 +5,7 @@ const contexts = [
   { id: 'people', label: 'People', subtitle: 'Skill in motion', path: '/workspace/people' },
   { id: 'institutions', label: 'Institutions', subtitle: 'Purposeful backing', path: '/workspace/institutions' },
   { id: 'commons', label: 'Commons', subtitle: 'Work that stands', path: '/workspace/commons' },
+  { id: 'workbench', label: 'Workbench', subtitle: 'Make work legible', path: '/workspace/workbench' },
 ];
 
 export function WorkspaceContextSwitcher() {

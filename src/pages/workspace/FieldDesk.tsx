@@ -1,298 +1,273 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { useLocation } from 'wouter';
 import { WorkspaceLayout } from './WorkspaceLayout';
-import { Button } from '../../components/Button';
-import { Input } from '../../components/Input';
-import { Card, CardBody } from '../../components/Card';
+import {
+  createWorkBrief,
+  readFieldSignals,
+  readWorkBriefDrafts,
+  writeWorkBriefDrafts,
+  type FieldSignal,
+  type WorkBriefDraft,
+} from '../../lib/local-workflows';
 
-const INSTITUTIONS = [
-  { id: 'mwea', name: 'MWEA Animation Studio', kind: 'Creative Collective' },
-  { id: 'housing', name: 'Cooperative Housing Trust', kind: 'Housing Cooperative' },
-  { id: 'solar', name: 'Solar Commons Initiative', kind: 'Energy Cooperative' },
-] as const;
+type WorkbenchFile = 'brief' | 'materials' | 'notes';
 
-const CREW_ROLES = ['anchor', 'builder', 'apprentice'] as const;
-const CATEGORIES = ['education', 'energy', 'media', 'agriculture', 'infrastructure', 'software'] as const;
-
-const PEOPLE = [
-  { id: 'p1', name: 'Aisha Okafor', archetype: 'developer', institution: 'dev2027ke' },
-  { id: 'p2', name: 'Kenji Tanaka', archetype: 'builder', institution: 'Cooperative Housing Trust' },
-  { id: 'p3', name: 'Mara Mensah', archetype: 'organizer', institution: 'MWEA Animation Studio' },
-  { id: 'p4', name: 'Kwame Silva', archetype: 'dropout', institution: 'Solar Commons Initiative' },
-  { id: 'p5', name: 'Yara Hernandez', archetype: 'graduate', institution: 'MWEA Animation Studio' },
-  { id: 'p6', name: 'Takeshi Sato', archetype: 'researcher', institution: 'dev2027ke' },
-  { id: 'p7', name: 'Nia Wanjiru', archetype: 'socializer', institution: 'Nairobi Tech Collective' },
-  { id: 'p8', name: 'Mateo Garcia', archetype: 'builder', institution: 'Berlin Housing Coop' },
-  { id: 'p9', name: 'Leila Patel', archetype: 'organizer', institution: 'Open Design Library' },
-  { id: 'p10', name: 'Omar Ali', archetype: 'researcher', institution: 'Field Desk Labs' },
-] as const;
-
-const COMMONS = [
-  { id: 'design-lib', name: 'Open Design Library', type: 'Shared Resources' },
-  { id: 'land-trust', name: 'Community Land Trust', type: 'Land Commons' },
-  { id: 'knowledge', name: 'Knowledge Repository', type: 'Documentation' },
-] as const;
-
-type Step = 'issuer' | 'crew' | 'tender' | 'done';
-
-interface FormData {
-  issuer: string;
-  commonsRef: string;
-  crew: { anchor: string; builder: string; apprentice: string };
-  tender: {
-    slug: string;
-    asset_name: string;
-    summary: string;
-    category: string;
-    location: string;
-    local_bom_minor: number;
-  };
-}
-
-const initialData: FormData = {
-  issuer: '',
-  commonsRef: '',
-  crew: { anchor: '', builder: '', apprentice: '' },
-  tender: { slug: '', asset_name: '', summary: '', category: 'education', location: '', local_bom_minor: 0 },
+const fileNames: Record<WorkbenchFile, string> = {
+  brief: 'brief.md',
+  materials: 'materials.csv',
+  notes: 'field-notes.md',
 };
 
-function availableForRole(data: FormData, role: string) {
-  return PEOPLE.filter(p => !Object.values(data.crew).includes(p.id) || data.crew[role as keyof typeof data.crew] === p.id);
+function getSignalId(location: string): string | null {
+  return new URLSearchParams(location.split('?')[1] ?? '').get('signal');
 }
 
-function getPersonName(id: string) {
-  return PEOPLE.find(p => p.id === id)?.name || id;
-}
+export function Workbench() {
+  const [location, navigate] = useLocation();
+  const [draft, setDraft] = useState<WorkBriefDraft>(() => createWorkBrief(null));
+  const [drafts, setDrafts] = useState<WorkBriefDraft[]>([]);
+  const [signals, setSignals] = useState<FieldSignal[]>([]);
+  const [sourceSignal, setSourceSignal] = useState<FieldSignal | null>(null);
+  const [activeFile, setActiveFile] = useState<WorkbenchFile>('brief');
+  const [storageError, setStorageError] = useState('');
+  const [saved, setSaved] = useState(false);
 
-function getInstitutionName(id: string) {
-  return INSTITUTIONS.find(i => i.id === id)?.name || id;
-}
-
-function getCommonsName(id: string) {
-  return COMMONS.find(c => c.id === id)?.name || id;
-}
-
-const progressSteps = [
-  { id: 'issuer' as Step, label: 'Issuer' },
-  { id: 'crew' as Step, label: 'Crew' },
-  { id: 'tender' as Step, label: 'Tender' },
-];
-
-export function FieldDesk() {
-  const [, navigate] = useLocation();
-  const [step, setStep] = useState<Step>('issuer');
-  const [data, setData] = useState<FormData>(initialData);
-
-  const handleSubmit = (e: Event) => {
-    e.preventDefault();
-    if (step === 'issuer' && data.issuer) {
-      setStep('crew');
-    } else if (step === 'crew' && data.crew.anchor && data.crew.builder && data.crew.apprentice) {
-      setStep('tender');
-    } else if (step === 'tender' && data.tender.slug && data.tender.asset_name && data.tender.local_bom_minor > 0) {
-      setStep('done');
-      console.log('[FieldDesk] Tender authored:', {
-        issuer: getInstitutionName(data.issuer),
-        commonsRef: data.commonsRef ? getCommonsName(data.commonsRef) : 'none',
-        crew: {
-          anchor: getPersonName(data.crew.anchor),
-          builder: getPersonName(data.crew.builder),
-          apprentice: getPersonName(data.crew.apprentice),
-        },
-        tender: data.tender,
-        status: 'draft',
-        createdAt: new Date().toISOString(),
-      });
+  useEffect(() => {
+    try {
+      const localSignals = readFieldSignals();
+      const localDrafts = readWorkBriefDrafts();
+      const requestedSignalId = getSignalId(location);
+      const source = localSignals.find(signal => signal.id === requestedSignalId) ?? null;
+      const existing = source
+        ? localDrafts.find(item => item.sourceSignalId === source.id)
+        : localDrafts[0];
+      setSignals(localSignals);
+      setDrafts(localDrafts);
+      setSourceSignal(source);
+      setDraft(existing ?? createWorkBrief(source));
+    } catch (error) {
+      setStorageError(error instanceof Error ? error.message : 'Local work briefs could not be loaded.');
     }
-  };
+  }, []);
 
-  const reset = () => {
-    setStep('issuer');
-    setData(initialData);
-  };
-
-  if (step === 'done') {
-    return (
-      <WorkspaceLayout currentContext="field-desk">
-        <div style={{ maxWidth: '640px', margin: '0 auto', padding: 'var(--space-8) var(--space-4)' }}>
-          <div style={{ textAlign: 'center', marginBottom: 'var(--space-6)' }}>
-            <div style={{ fontSize: '48px', marginBottom: 'var(--space-4)' }}>✓</div>
-            <h2 style={{ font: '400 var(--step-4) var(--serif)', margin: '0 0 var(--space-2)' }}>Tender Authored</h2>
-            <p style={{ color: 'var(--text-muted)', margin: '0 0 var(--space-6)' }}>
-              <strong>{data.tender.asset_name}</strong> by <strong>{getInstitutionName(data.issuer)}</strong>
-            </p>
-          </div>
-
-          <Card>
-            <CardBody style={{ padding: 'var(--space-4)' }}>
-              <div style={{ fontSize: 'var(--step--1)', fontFamily: 'var(--mono)', lineHeight: '2', color: 'var(--text)' }}>
-                <div><strong>slug:</strong> {data.tender.slug}</div>
-                <div><strong>category:</strong> {data.tender.category}</div>
-                <div><strong>location:</strong> {data.tender.location || '—'}</div>
-                <div><strong>local BOM:</strong> {(data.tender.local_bom_minor / 100).toLocaleString()} KES</div>
-                <div><strong>commons ref:</strong> {data.commonsRef ? getCommonsName(data.commonsRef) : 'none'}</div>
-                <div style={{ marginTop: 'var(--space-2)', paddingTop: 'var(--space-2)', borderTop: '1px solid var(--border)' }}>
-                  <div><strong>anchor:</strong> {getPersonName(data.crew.anchor)}</div>
-                  <div><strong>builder:</strong> {getPersonName(data.crew.builder)}</div>
-                  <div><strong>apprentice:</strong> {getPersonName(data.crew.apprentice)}</div>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-
-          <div style={{ display: 'flex', gap: 'var(--space-3)', justifyContent: 'center', marginTop: 'var(--space-6)' }}>
-            <Button variant="ghost" onClick={reset} style={{ minWidth: '140px' }}>New Tender</Button>
-            <Button variant="primary" onClick={() => navigate('/workspace/people')} style={{ minWidth: '140px' }}>View People</Button>
-          </div>
-
-          <p style={{ textAlign: 'center', marginTop: 'var(--space-4)', fontSize: 'var(--step--2)', color: 'var(--text-faint)', fontFamily: 'var(--mono)' }}>
-            Stored locally · Connect Supabase to persist
-          </p>
-        </div>
-      </WorkspaceLayout>
-    );
+  function updateDraft(field: keyof Omit<WorkBriefDraft, 'id' | 'sourceSignalId' | 'updatedAt'>, value: string) {
+    setDraft(current => ({ ...current, [field]: value }));
+    setSaved(false);
   }
 
-  const currentStepIndex = progressSteps.findIndex(s => s.id === step);
+  function saveDraft() {
+    if (!draft.title.trim()) {
+      setStorageError('Add a work brief title before saving.');
+      return;
+    }
+    const updated = { ...draft, updatedAt: new Date().toISOString() };
+    const nextDrafts = [updated, ...drafts.filter(item => item.id !== updated.id)];
+    try {
+      writeWorkBriefDrafts(nextDrafts);
+      setDraft(updated);
+      setDrafts(nextDrafts);
+      setSaved(true);
+      setStorageError('');
+    } catch (error) {
+      setSaved(false);
+      setStorageError(error instanceof Error ? error.message : 'The local work brief could not be saved.');
+    }
+  }
+
+  function startNewDraft() {
+    setSourceSignal(null);
+    setDraft(createWorkBrief(null));
+    setActiveFile('brief');
+    setSaved(false);
+    setStorageError('');
+    navigate('/workspace/workbench');
+  }
+
+  function selectDraft(item: WorkBriefDraft) {
+    setDraft(item);
+    setSourceSignal(signals.find(signal => signal.id === item.sourceSignalId) ?? null);
+    setActiveFile('brief');
+    setSaved(true);
+    setStorageError('');
+  }
 
   return (
-    <WorkspaceLayout currentContext="field-desk">
-      <div style={{ maxWidth: '640px', margin: '0 auto', padding: '0 var(--space-4)' }}>
-        <header style={{ marginBottom: 'var(--space-6)', textAlign: 'center' }}>
-          <h1 style={{ font: '400 clamp(28px, 3vw, 42px)/1.05 var(--serif)', margin: '0 0 var(--space-2)' }}>
-            Field Desk <span style={{ color: 'var(--terrain)' }}>— Atlas in hand</span>
-          </h1>
-          <p style={{ color: 'var(--text-muted)', margin: 0 }}>Pick issuer → Assemble crew → Author tender → Deploy</p>
+    <WorkspaceLayout currentContext="workbench">
+      <main className="workbench-page">
+        <header className="workbench-page-head">
+          <div>
+            <p className="eyebrow">WORKBENCH / FIELD SYSTEMS</p>
+            <h1>Make the work legible.</h1>
+          </div>
+          <div className="workbench-page-actions">
+            <span className="local-only-stamp">LOCAL DRAFT</span>
+            <button className="workbench-new-button" onClick={startNewDraft} type="button">＋ New brief</button>
+          </div>
         </header>
 
-        {/* Progress */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'var(--space-2)',
-          marginBottom: 'var(--space-6)',
-          fontSize: 'var(--step--2)',
-          fontFamily: 'var(--mono)',
-          color: 'var(--text-muted)',
-        }}>
-          {progressSteps.map((s, i) => (
-            <span
-              key={s.id}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                color: currentStepIndex >= i ? 'var(--terrain)' : 'var(--text-faint)',
-                fontWeight: step === s.id ? 600 : 400,
-              }}
-            >
-              <span style={{
-                width: '20px',
-                height: '20px',
-                borderRadius: '50%',
-                border: '2px solid',
-                borderColor: currentStepIndex >= i ? 'var(--terrain)' : 'var(--border)',
-                background: currentStepIndex > i ? 'var(--terrain)' : 'transparent',
-                display: 'grid',
-                placeItems: 'center',
-                fontSize: '10px',
-                color: currentStepIndex > i ? 'var(--bg)' : 'inherit',
-              }}>
-                {currentStepIndex > i ? '✓' : (i + 1)}
-              </span>
-              {s.label}
-            </span>
-          ))}
-        </div>
+        <section aria-label="Local workbench editor" className="workbench-shell">
+          <aside aria-label="Workbench files" className="workbench-explorer">
+            <div className="workbench-explorer-head"><span>EXPLORER</span><span>⌄</span></div>
+            <div className="workbench-project-name"><span aria-hidden="true">⌄</span> FIELD WORK</div>
+            <button
+              aria-current={activeFile === 'brief' ? 'page' : undefined}
+              className={`workbench-file${activeFile === 'brief' ? ' is-active' : ''}`}
+              onClick={() => setActiveFile('brief')}
+              type="button"
+            ><span className="workbench-file-mark">¶</span>{fileNames.brief}</button>
+            <button
+              aria-current={activeFile === 'materials' ? 'page' : undefined}
+              className={`workbench-file${activeFile === 'materials' ? ' is-active' : ''}`}
+              onClick={() => setActiveFile('materials')}
+              type="button"
+            ><span className="workbench-file-mark">≡</span>{fileNames.materials}</button>
+            <button
+              aria-current={activeFile === 'notes' ? 'page' : undefined}
+              className={`workbench-file${activeFile === 'notes' ? ' is-active' : ''}`}
+              onClick={() => setActiveFile('notes')}
+              type="button"
+            ><span className="workbench-file-mark">∷</span>{fileNames.notes}</button>
+            <div className="workbench-explorer-divider" />
+            <div className="workbench-explorer-head"><span>LOCAL BRIEFS</span><span>{drafts.length.toString().padStart(2, '0')}</span></div>
+            {drafts.map(item => (
+              <button
+                aria-current={draft.id === item.id ? 'true' : undefined}
+                className={`workbench-saved-file${draft.id === item.id ? ' is-active' : ''}`}
+                key={item.id}
+                onClick={() => selectDraft(item)}
+                type="button"
+              >
+                <span aria-hidden="true">◌</span>
+                <span>{item.title || 'Untitled brief'}</span>
+              </button>
+            ))}
+            {drafts.length === 0 && <p className="workbench-no-files">Saved briefs appear here.</p>}
+            <a className="workbench-back-link" href="/workspace/commons">← Signal Desk</a>
+          </aside>
 
-        <Card>
-          <CardBody>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-              {/* Step 1: Issuer + Commons Ref */}
-              {step === 'issuer' && (
-                <>
-                  <div>
-                    <label style={{ display: 'block', fontSize: 'var(--step--2)', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--text-muted)', marginBottom: 'var(--space-2)' }}>Issuing Institution</label>
-                    <select
-                      value={data.issuer}
-                      onChange={(e: Event) => setData({...data, issuer: (e.target as HTMLSelectElement).value})}
-                      style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', border: '1px solid var(--border)', borderRadius: 'var(--radius-3)', background: 'var(--bg-elev)', color: 'var(--text)', fontSize: 'var(--step-0)' }}
-                    >
-                      <option value="">Choose issuer…</option>
-                      {INSTITUTIONS.map(i => <option key={i.id} value={i.id}>{i.name} — {i.kind}</option>)}
-                    </select>
-                  </div>
+          <section aria-label="Work brief editor" className="workbench-editor">
+            <div className="workbench-tabs">
+              {(Object.keys(fileNames) as WorkbenchFile[]).map(file => (
+                <button
+                  aria-pressed={activeFile === file}
+                  className={activeFile === file ? 'is-active' : ''}
+                  key={file}
+                  onClick={() => setActiveFile(file)}
+                  type="button"
+                >
+                  <span className="workbench-file-mark">{file === 'brief' ? '¶' : file === 'materials' ? '≡' : '∷'}</span>
+                  {fileNames[file]}
+                </button>
+              ))}
+              <span className="workbench-tab-status">{saved ? 'SAVED LOCALLY' : 'UNSAVED'}</span>
+            </div>
+            <div className="workbench-editor-breadcrumb"><span>field-work</span><span>/</span><strong>{fileNames[activeFile]}</strong></div>
 
-                  <div>
-                    <label style={{ display: 'block', fontSize: 'var(--step--2)', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--text-muted)', marginBottom: 'var(--space-2)' }}>Commons Reference (optional)</label>
-                    <select
-                      value={data.commonsRef}
-                      onChange={(e: Event) => setData({...data, commonsRef: (e.target as HTMLSelectElement).value})}
-                      style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', border: '1px solid var(--border)', borderRadius: 'var(--radius-3)', background: 'var(--bg-elev)', color: 'var(--text)', fontSize: 'var(--step-0)' }}
-                    >
-                      <option value="">No reference — start fresh</option>
-                      {COMMONS.map(c => <option key={c.id} value={c.id}>{c.name} ({c.type})</option>)}
-                    </select>
-                  </div>
-                </>
-              )}
-
-              {/* Step 2: Crew */}
-              {step === 'crew' && (
-                <div>
-                  <label style={{ display: 'block', fontSize: 'var(--step--2)', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--text-muted)', marginBottom: 'var(--space-3)' }}>Assemble Crew (from People)</label>
-                  {CREW_ROLES.map(role => (
-                    <div key={role} style={{ marginBottom: 'var(--space-3)' }}>
-                      <label style={{ display: 'block', fontSize: 'var(--step--1)', marginBottom: '4px', textTransform: 'capitalize', fontWeight: 500 }}>{role}</label>
-                      <select
-                        value={data.crew[role]}
-                        onChange={(e: Event) => setData({...data, crew: {...data.crew, [role]: (e.target as HTMLSelectElement).value}})}
-                        style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', border: '1px solid var(--border)', borderRadius: 'var(--radius-3)', background: 'var(--bg-elev)', color: 'var(--text)', fontSize: 'var(--step-0)' }}
-                      >
-                        <option value="">Select {role}…</option>
-                        {availableForRole(data, role).map(p => (
-                          <option key={p.id} value={p.id}>{p.name} — {p.archetype} ({p.institution})</option>
-                        ))}
-                      </select>
-                    </div>
-                  ))}
+            {activeFile === 'brief' && (
+              <div className="workbench-document">
+                <p className="workbench-document-index">WORK BRIEF / LOCAL DRAFT</p>
+                <label className="workbench-title-field">
+                  <span className="visually-hidden">Brief title</span>
+                  <input
+                    aria-label="Brief title"
+                    onInput={event => updateDraft('title', (event.currentTarget as HTMLInputElement).value)}
+                    placeholder="Untitled work brief"
+                    value={draft.title}
+                  />
+                </label>
+                <p className="workbench-document-intro">Define the work in observable terms. Nothing here is an approved tender or a funded call sheet.</p>
+                <div className="workbench-fields">
+                  <label>Institution
+                    <input onInput={event => updateDraft('institutionName', (event.currentTarget as HTMLInputElement).value)} placeholder="Institution or steward" value={draft.institutionName} />
+                  </label>
+                  <label>Asset
+                    <input onInput={event => updateDraft('assetName', (event.currentTarget as HTMLInputElement).value)} placeholder="Equipment, site, or system" value={draft.assetName} />
+                  </label>
+                  <label>Place
+                    <input onInput={event => updateDraft('location', (event.currentTarget as HTMLInputElement).value)} placeholder="Location" value={draft.location} />
+                  </label>
                 </div>
-              )}
+                <label className="workbench-section-field">Scope to investigate
+                  <textarea
+                    onInput={event => updateDraft('scope', (event.currentTarget as HTMLTextAreaElement).value)}
+                    placeholder="What should a qualified person inspect, measure, or repair?"
+                    rows={6}
+                    value={draft.scope}
+                  />
+                </label>
+              </div>
+            )}
 
-              {/* Step 3: Tender */}
-              {step === 'tender' && (
+            {activeFile === 'materials' && (
+              <div className="workbench-document">
+                <p className="workbench-document-index">MATERIALS / NOTES ONLY</p>
+                <h2>List what may be needed.</h2>
+                <p className="workbench-document-intro">A planning aid, not a quote, verified supplier, procurement, or locked budget.</p>
+                <label className="workbench-section-field">Item · quantity · unit · source to confirm
+                  <textarea
+                    onInput={event => updateDraft('materials', (event.currentTarget as HTMLTextAreaElement).value)}
+                    placeholder={'Example format:\nFilter element · 1 · unit · source to confirm'}
+                    rows={12}
+                    value={draft.materials}
+                  />
+                </label>
+              </div>
+            )}
+
+            {activeFile === 'notes' && (
+              <div className="workbench-document">
+                <p className="workbench-document-index">FIELD NOTES / UNVERIFIED</p>
+                <h2>What still needs checking?</h2>
+                <p className="workbench-document-intro">No evidence upload or sensor connection in this demo. Record questions for a future site visit.</p>
+                <label className="workbench-section-field">Questions and observations
+                  <textarea
+                    onInput={event => updateDraft('fieldNotes', (event.currentTarget as HTMLTextAreaElement).value)}
+                    placeholder="What was observed? What remains uncertain? Who needs to review?"
+                    rows={12}
+                    value={draft.fieldNotes}
+                  />
+                </label>
+              </div>
+            )}
+
+            <div className="workbench-statusbar">
+              <span><i /> BROWSER-LOCAL</span>
+              <span>{sourceSignal ? 'SOURCE: COMMONS SIGNAL' : 'NO SOURCE SIGNAL'}</span>
+              <span>NOT VERIFIED</span>
+            </div>
+          </section>
+
+          <aside aria-label="Work brief context" className="workbench-inspector">
+            <div className="workbench-inspector-head"><span>CONTEXT</span><span>⌄</span></div>
+            <section className="workbench-context-block">
+              <p className="eyebrow">SOURCE SIGNAL</p>
+              {sourceSignal ? (
                 <>
-                  <div>
-                    <label style={{ display: 'block', fontSize: 'var(--step--2)', textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--text-muted)', marginBottom: 'var(--space-2)' }}>Tender Details</label>
-                    <Input placeholder="school-console-v1" value={data.tender.slug} onChange={v => setData({...data, tender: {...data.tender, slug: v}})} required />
-                    <Input placeholder="School Console v1" value={data.tender.asset_name} onChange={v => setData({...data, tender: {...data.tender, asset_name: v}})} required />
-                    <Input placeholder="A local-first toolkit for the week teachers actually have." value={data.tender.summary} onChange={v => setData({...data, tender: {...data.tender, summary: v}})} required />
-                    <select
-                      value={data.tender.category}
-                      onChange={(e: Event) => setData({...data, tender: {...data.tender, category: (e.target as HTMLSelectElement).value}})}
-                      style={{ width: '100%', padding: 'var(--space-2) var(--space-3)', border: '1px solid var(--border)', borderRadius: 'var(--radius-3)', background: 'var(--bg-elev)', color: 'var(--text)', fontSize: 'var(--step-0)' }}
-                    >
-                      {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
-                    <Input placeholder="Nairobi, Kenya" value={data.tender.location} onChange={v => setData({...data, tender: {...data.tender, location: v}})} />
-                    <Input
-                      type="text"
-                      placeholder="2400000 (minor units = 24,000 KES)"
-                      value={String(data.tender.local_bom_minor)}
-                      onChange={v => setData({...data, tender: {...data.tender, local_bom_minor: parseInt(v) || 0}})}
-                      required
-                    />
-                  </div>
+                  <strong>{sourceSignal.title}</strong>
+                  <span>{sourceSignal.institutionName}</span>
+                  <span>{sourceSignal.assetName} · {sourceSignal.location}</span>
+                  <span className="workbench-context-state">LOCAL · {sourceSignal.status.toUpperCase()}</span>
                 </>
+              ) : (
+                <p className="workbench-no-source">No signal linked. Start from the Commons Signal Desk to bring an observation into a brief.</p>
               )}
-
-              <Button type="submit" variant="primary" size="lg" style={{ width: '100%', marginTop: 'var(--space-2)' }}>
-                {step === 'issuer' ? 'Next: Assemble Crew' : step === 'crew' ? 'Next: Author Tender' : 'Deploy to Roll'}
-              </Button>
-            </form>
-          </CardBody>
-        </Card>
-      </div>
+              <button className="workbench-context-link" onClick={() => navigate('/workspace/commons')} type="button">Open Signal Desk ↗</button>
+            </section>
+            <section className="workbench-context-block">
+              <p className="eyebrow">BOUNDARY</p>
+              <p>Draft notes only. No assignment, quotation, tender publication, settlement, or proof of work is created here.</p>
+            </section>
+            <div className="workbench-save-area">
+              <button className="workbench-save-button" onClick={saveDraft} type="button">Save local brief</button>
+              {saved && <span role="status">Saved on this device.</span>}
+              {storageError && <p role="alert">{storageError}</p>}
+            </div>
+          </aside>
+        </section>
+        <p className="local-data-note">Workbench is a browser-local prototype. Drafts remain on this device and are not shared with an institution or crew.</p>
+      </main>
     </WorkspaceLayout>
   );
 }
+
+export const FieldDesk = Workbench;
