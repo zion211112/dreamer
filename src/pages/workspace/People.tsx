@@ -156,11 +156,11 @@ export function People() {
               </svg>
               <input
                 type="search"
-                placeholder="Find a person, crew, project, or asset"
+                placeholder="Find a person, crew, or asset"
                 value={query}
                 onInput={(event) => setQuery(event.currentTarget.value)}
                 autoComplete="off"
-                aria-label="Find a person, crew, project, or asset"
+                aria-label="Find a person, crew, or asset"
                 aria-controls="people-search-results"
               />
               {query && (
@@ -199,7 +199,7 @@ export function People() {
           </div>
         </section>
 
-        <section className="people-workbench" aria-label="People, crews, projects, and assets relationship map">
+        <section className="people-workbench" aria-label="People, crews, and assets relationship map">
           <NetworkMap
             rootId={rootId}
             selectedId={selectedEntity?.id ?? ''}

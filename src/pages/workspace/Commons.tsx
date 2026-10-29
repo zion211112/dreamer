@@ -46,6 +46,8 @@ function getCurrentEmail(): string {
 
 export function Commons() {
   const [location, navigate] = useLocation();
+  const [commonsView, setCommonsView] = useState<'signals' | 'decisions'>('signals');
+  const [institutionScope, setInstitutionScope] = useState('');
   const [signals, setSignals] = useState<FieldSignal[]>([]);
   const [selectedId, setSelectedId] = useState('');
   const [filter, setFilter] = useState<(typeof filters)[number]>('all');
@@ -65,8 +67,10 @@ export function Commons() {
     try {
       const savedSignals = readFieldSignals();
       const requestedInstitution = new URLSearchParams(location.split('?')[1] ?? '').get('institution');
+      const initialSignal = savedSignals.find(signal => signal.institutionId === requestedInstitution) ?? savedSignals[0];
       setSignals(savedSignals);
-      setSelectedId(savedSignals.find(signal => signal.institutionId === requestedInstitution)?.id ?? savedSignals[0]?.id ?? '');
+      setSelectedId(initialSignal?.id ?? '');
+      setInstitutionScope(initialSignal?.institutionId ?? requestedInstitution ?? '');
       if (requestedInstitution) setSearch(requestedInstitution);
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : 'Local field signals could not be loaded.');
@@ -80,11 +84,23 @@ export function Commons() {
   }, []);
 
   const selected = signals.find(signal => signal.id === selectedId) ?? null;
-  const activeInstitutionId = selected?.institutionId ?? '';
-  const activeInstitutionName = selected?.institutionName ?? institutionNames[activeInstitutionId] ?? 'Institution';
-  const activeStewards = governance.stewards.filter(steward => steward.institutionId === activeInstitutionId);
-  const isSteward = hasLocalStewardRole(governance, activeInstitutionId, actorEmail);
-  const institutionProposals = governance.proposals.filter(proposal => proposal.institutionId === activeInstitutionId);
+  const activeInstitutionId = institutionScope || selected?.institutionId || '';
+  const activeInstitutionName = activeInstitutionId ? institutionNames[activeInstitutionId]
+    ?? selected?.institutionName
+    ?? signals.find(signal => signal.institutionId === activeInstitutionId)?.institutionName
+    ?? selected?.institutionName
+    ?? 'Institution' : 'All institutions';
+  const authorityInstitutionId = selected?.institutionId ?? activeInstitutionId;
+  const activeStewards = governance.stewards.filter(steward => steward.institutionId === authorityInstitutionId);
+  const isSteward = hasLocalStewardRole(governance, authorityInstitutionId, actorEmail);
+  const institutionProposals = governance.proposals.filter(proposal => !activeInstitutionId || proposal.institutionId === activeInstitutionId);
+  const approvedProposal = selected
+    ? governance.proposals.find(proposal => proposal.sourceSignalId === selected.id && proposal.status === 'approved') ?? null
+    : null;
+  const institutionOptions = [...new Map([
+    ...signals.map(signal => [signal.institutionId, signal.institutionName] as const),
+    ...governance.proposals.map(proposal => [proposal.institutionId, proposal.institutionName] as const),
+  ]).entries()];
   const visibleSignals = useMemo(() => signals
     .filter(signal => filter === 'all' || signal.status === filter)
     .filter(signal => {
@@ -203,6 +219,7 @@ export function Commons() {
     const next = [signal, ...signals];
     if (!persist(next)) return;
     setSelectedId(signal.id);
+    setInstitutionScope(signal.institutionId);
     setShowReportForm(false);
     form.reset();
   }
@@ -246,29 +263,61 @@ export function Commons() {
       <main className="signal-desk">
         <header className="signal-desk-head">
           <div>
-            <p className="eyebrow">COMMONS / SIGNAL DESK</p>
-            <h1>Notice the change.<br /><em>Move the work.</em></h1>
-            <p>Human-reported field signals, privately kept on this device until reviewed.</p>
+            <p className="eyebrow">COMMONS / WORK SIGNALS</p>
+            <h1>Commons</h1>
+            <p>Observation → steward decision → work.</p>
           </div>
           <div className="signal-head-actions">
             <span className="local-only-stamp">LOCAL · NOT SHARED</span>
             <button className="signal-primary-action" onClick={() => setShowReportForm(value => !value)} type="button">
-              {showReportForm ? 'Close report' : '＋ Report a problem'}
+              {showReportForm ? 'Close form' : '＋ Report an issue'}
             </button>
           </div>
         </header>
 
-        <div className="signal-boundary" role="note">
-          Demo workspace. Reports are browser-local, unverified, and visible only in this browser. No sensors, alerts, or institution accounts are connected.
-        </div>
+        <p className="commons-note">Observations are reports. Only steward decisions authorize work.</p>
+
+        <nav className="commons-modebar" aria-label="Commons views" role="tablist">
+          <button
+            aria-pressed={commonsView === 'signals'}
+            className={commonsView === 'signals' ? 'is-active' : ''}
+            onClick={() => setCommonsView('signals')}
+            type="button"
+          >
+            Observations <span>{signals.length.toString().padStart(2, '0')}</span>
+          </button>
+          <button
+            aria-pressed={commonsView === 'decisions'}
+            className={commonsView === 'decisions' ? 'is-active' : ''}
+            onClick={() => setCommonsView('decisions')}
+            type="button"
+          >
+            Decisions <span>{governance.proposals.length.toString().padStart(2, '0')}</span>
+          </button>
+          <label className="commons-scope-select">
+            <span className="visually-hidden">Institution scope</span>
+            <select
+              onChange={event => {
+                const nextInstitutionId = (event.currentTarget as HTMLSelectElement).value;
+                setInstitutionScope(nextInstitutionId);
+                setSelectedId(signals.find(signal => signal.institutionId === nextInstitutionId)?.id ?? '');
+              }}
+              value={institutionScope}
+            >
+              <option value="">All institutions</option>
+              {institutionOptions.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
+            </select>
+          </label>
+          <span className="commons-mode-hint">{activeInstitutionName}</span>
+        </nav>
 
         {error && <p className="local-data-warning" role="alert">{error}</p>}
 
         {showReportForm && (
           <form className="signal-report-form" onSubmit={submitReport}>
             <div className="signal-form-heading">
-              <div><p className="eyebrow">NEW / FIELD REPORT</p><h2>What changed?</h2></div>
-              <span>Private draft · this browser only</span>
+              <div><p className="eyebrow">NEW OBSERVATION</p><h2>What changed?</h2></div>
+              <span>Saved locally</span>
             </div>
             <div className="signal-form-grid">
               <label>Institution
@@ -308,7 +357,7 @@ export function Commons() {
           </form>
         )}
 
-        <section className="commons-governance" aria-labelledby="commons-governance-title">
+        <section className="commons-governance" aria-labelledby="commons-governance-title" hidden={commonsView !== 'decisions'}>
           <div className="commons-governance-head">
             <div>
               <p className="eyebrow">GOVERNANCE / {activeInstitutionName.toUpperCase()}</p>
@@ -388,6 +437,7 @@ export function Commons() {
                   <time dateTime={proposal.createdAt}>{formatSignalDate(proposal.createdAt)}</time>
                 </div>
                 <h3>{proposal.title}</h3>
+                <div className="commons-proposal-context">{proposal.institutionName}</div>
                 <p>{proposal.rationale}</p>
                 <div className="commons-proposal-rule"><span>Rule</span><strong>{proposal.rule}</strong></div>
                 <ol className="commons-decision-history">
@@ -399,7 +449,7 @@ export function Commons() {
                     </li>
                   ))}
                 </ol>
-                {proposal.status === 'proposed' && isSteward && (
+                {proposal.status === 'proposed' && hasLocalStewardRole(governance, proposal.institutionId, actorEmail) && (
                   <div className="commons-decision-controls">
                     <label className="visually-hidden" htmlFor={`decision-note-${proposal.id}`}>Decision reason</label>
                     <input
@@ -431,7 +481,7 @@ export function Commons() {
           </div>
         </section>
 
-        <section aria-label="Field signal queue" className="signal-workspace">
+        <section aria-label="Field signal queue" className="signal-workspace" hidden={commonsView !== 'signals'}>
           <aside className="signal-queue">
             <div className="signal-queue-heading">
               <div><p className="eyebrow">QUEUE / {signals.length.toString().padStart(2, '0')}</p><h2>Field signals</h2></div>
@@ -460,7 +510,10 @@ export function Commons() {
                   aria-current={selected?.id === signal.id ? 'true' : undefined}
                   className={`signal-list-item${selected?.id === signal.id ? ' is-selected' : ''}`}
                   key={signal.id}
-                  onClick={() => setSelectedId(signal.id)}
+                  onClick={() => {
+                    setSelectedId(signal.id);
+                    setInstitutionScope(signal.institutionId);
+                  }}
                   type="button"
                 >
                   <span className={`signal-status-mark signal-status-${signal.status}`} />
@@ -501,25 +554,27 @@ export function Commons() {
                     <p className="eyebrow">NEXT ACTION</p>
                     <strong>
                       {selected.status === 'new' ? 'Review the observation' :
-                        selected.status === 'triaged' ? 'Prepare a work brief if needed' :
-                          selected.status === 'brief' ? 'Continue shaping the work brief' : 'Signal marked resolved'}
+                        selected.status === 'triaged' ? 'Steward review before work' :
+                          selected.status === 'brief' ? 'Approved work brief' : 'Observation closed'}
                     </strong>
-                    <span>Status changes here are private demo actions, not institutional decisions.</span>
+                    <span>{selected.status === 'brief' && !approvedProposal
+                      ? 'No approved proposal is linked. This observation cannot authorize a work brief.'
+                      : 'An observation describes a condition; a steward decision authorizes the next action.'}</span>
                   </div>
                   {selected.status === 'new' && <button className="signal-secondary-action" onClick={() => changeStatus('triaged')} type="button">Move to triage</button>}
-                  {selected.status === 'triaged' && <button className="signal-primary-action" onClick={() => { changeStatus('brief'); navigate(`/workspace/workbench?signal=${encodeURIComponent(selected.id)}`); }} type="button">Prepare work brief</button>}
-                  {selected.status === 'brief' && <button className="signal-primary-action" onClick={() => navigate(`/workspace/workbench?signal=${encodeURIComponent(selected.id)}`)} type="button">Open in Workbench</button>}
+                  {selected.status === 'triaged' && <button className="signal-primary-action" onClick={() => setCommonsView('decisions')} type="button">Open decision register</button>}
+                  {selected.status === 'brief' && approvedProposal && <button className="signal-primary-action" onClick={() => navigate(`/workspace/workbench?proposal=${encodeURIComponent(approvedProposal.id)}`)} type="button">Open approved work brief</button>}
                   {selected.status !== 'resolved' && isSteward && <button className="signal-quiet-action" onClick={() => changeStatus('resolved')} type="button">Close observation</button>}
                   {selected.status === 'resolved' && <button className="signal-secondary-action" onClick={() => changeStatus('new')} type="button">Reopen</button>}
                 </section>
-                <section className="signal-history">
-                  <div className="signal-history-heading"><p className="eyebrow">LOCAL HISTORY</p><span>{selected.updates.length.toString().padStart(2, '0')} entries</span></div>
+                <details className="signal-history">
+                  <summary className="signal-history-heading"><span>Activity &amp; notes</span><span>{selected.updates.length.toString().padStart(2, '0')}</span></summary>
                   <form className="signal-note-form" onSubmit={addNote}>
                     <input
-                      aria-label="Add a private note"
+                      aria-label="Record a work note"
                       maxLength={280}
                       onInput={event => setNote((event.currentTarget as HTMLInputElement).value)}
-                      placeholder="Add a private note or next step…"
+                      placeholder="Evidence, next step, or open question"
                       value={note}
                     />
                     <button className="signal-secondary-action" disabled={!note.trim()} type="submit">Add note</button>
@@ -532,7 +587,7 @@ export function Commons() {
                       </li>
                     ))}
                   </ol>
-                </section>
+                </details>
               </>
             ) : (
               <div className="signal-detail-empty">

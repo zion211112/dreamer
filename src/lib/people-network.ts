@@ -1,5 +1,5 @@
 export type EntityType = 'person' | 'crew' | 'project' | 'asset' | 'work' | 'institution' | 'evidence';
-export type PrimaryEntityType = 'person' | 'crew' | 'project' | 'asset';
+export type PrimaryEntityType = 'person' | 'crew' | 'asset';
 
 export type RelationshipKind =
   | 'membership'
@@ -44,7 +44,6 @@ interface PortablePeopleRecord extends PeopleNetworkRecord {
 export const ENTITY_TYPES: Array<{ id: EntityType; label: string; plural: string }> = [
   { id: 'person', label: 'Person', plural: 'People' },
   { id: 'crew', label: 'Crew', plural: 'Crews' },
-  { id: 'project', label: 'Project', plural: 'Projects' },
   { id: 'asset', label: 'Asset', plural: 'Assets' },
   { id: 'work', label: 'Work', plural: 'Work' },
   { id: 'institution', label: 'Institution', plural: 'Institutions' },
@@ -54,23 +53,21 @@ export const ENTITY_TYPES: Array<{ id: EntityType; label: string; plural: string
 export const PEOPLE_ROOT_LENSES: Array<{ id: PrimaryEntityType; label: string }> = [
   { id: 'person', label: 'People' },
   { id: 'crew', label: 'Crews' },
-  { id: 'project', label: 'Projects' },
   { id: 'asset', label: 'Assets' },
 ];
 
-export const PRIMARY_ENTITY_TYPES: PrimaryEntityType[] = ['person', 'crew', 'project', 'asset'];
+export const PRIMARY_ENTITY_TYPES: PrimaryEntityType[] = ['person', 'crew', 'asset'];
 
 export function isPrimaryEntity(
   entity: NetworkEntity,
 ): entity is NetworkEntity & { type: PrimaryEntityType } {
-  return entity.type === 'person' || entity.type === 'crew' || entity.type === 'project' || entity.type === 'asset';
+  return entity.type === 'person' || entity.type === 'crew' || entity.type === 'asset';
 }
 
 export const ROOT_ENTITY_BY_TYPE: Record<PrimaryEntityType, string> = {
   person: 'person-kemoly-murage',
   crew: 'crew-crew0',
-  project: 'project-kemetos1',
-  asset: 'asset-aptlabs-rails',
+  asset: 'asset-kemetos1',
 };
 
 const peopleRecordStorageKey = 'aptlabs:people-network:v1';
@@ -150,14 +147,14 @@ export const PEOPLE_NETWORK: NetworkEntity[] = [
     capabilities: ['Crew administration'],
   },
   {
-    id: 'project-kemetos1',
-    type: 'project',
+    id: 'asset-kemetos1',
+    type: 'asset',
     name: 'Kemetos1',
-    role: 'AGI systems project',
-    summary: 'Shared project anchor for Crew0 work, research, and project-issued evidence.',
+    role: 'AGI systems asset',
+    summary: 'A reusable AGI systems asset that anchors Crew0 research, infrastructure, and operational work.',
     location: 'Distributed',
-    capabilities: ['AGI systems', 'Research', 'Project coordination'],
-    context: 'Project record; no institution or external affiliation inferred.',
+    capabilities: ['AGI systems', 'Inference', 'Agent infrastructure'],
+    context: 'Asset record; no institution or external affiliation inferred.',
   },
   {
     id: 'crew-field-systems',
@@ -351,14 +348,14 @@ export const PEOPLE_RELATIONSHIPS: NetworkRelationship[] = [
   { id: 'kemoly-crew0', sourceId: 'person-kemoly-murage', targetId: 'crew-crew0', kind: 'membership', verb: 'architects' },
   { id: 'horus-crew0', sourceId: 'person-horus-young', targetId: 'crew-crew0', kind: 'membership', verb: 'contributes to' },
   { id: 'tehuti-crew0', sourceId: 'person-tehuti', targetId: 'crew-crew0', kind: 'membership', verb: 'administers' },
-  { id: 'kemoly-kemetos1', sourceId: 'person-kemoly-murage', targetId: 'project-kemetos1', kind: 'work', verb: 'architects' },
-  { id: 'horus-kemetos1', sourceId: 'person-horus-young', targetId: 'project-kemetos1', kind: 'work', verb: 'builds' },
-  { id: 'tehuti-kemetos1', sourceId: 'person-tehuti', targetId: 'project-kemetos1', kind: 'work', verb: 'coordinates' },
-  { id: 'crew0-kemetos1', sourceId: 'crew-crew0', targetId: 'project-kemetos1', kind: 'work', verb: 'delivers' },
+  { id: 'kemoly-kemetos1', sourceId: 'person-kemoly-murage', targetId: 'asset-kemetos1', kind: 'work', verb: 'architects' },
+  { id: 'horus-kemetos1', sourceId: 'person-horus-young', targetId: 'asset-kemetos1', kind: 'work', verb: 'builds' },
+  { id: 'tehuti-kemetos1', sourceId: 'person-tehuti', targetId: 'asset-kemetos1', kind: 'work', verb: 'coordinates' },
+  { id: 'crew0-kemetos1', sourceId: 'crew-crew0', targetId: 'asset-kemetos1', kind: 'work', verb: 'maintains' },
   { id: 'kemoly-sbts', sourceId: 'person-kemoly-murage', targetId: 'evidence-kemoly-sbts', kind: 'evidence', verb: 'holds' },
   { id: 'kemoly-papers', sourceId: 'person-kemoly-murage', targetId: 'evidence-kemoly-papers', kind: 'evidence', verb: 'authored' },
-  { id: 'sbt-kemetos1', sourceId: 'evidence-kemoly-sbts', targetId: 'project-kemetos1', kind: 'evidence', verb: 'records design work for' },
-  { id: 'papers-kemetos1', sourceId: 'evidence-kemoly-papers', targetId: 'project-kemetos1', kind: 'evidence', verb: 'verified by project' },
+  { id: 'sbt-kemetos1', sourceId: 'evidence-kemoly-sbts', targetId: 'asset-kemetos1', kind: 'evidence', verb: 'records design work for' },
+  { id: 'papers-kemetos1', sourceId: 'evidence-kemoly-papers', targetId: 'asset-kemetos1', kind: 'evidence', verb: 'verified by project' },
   { id: 'nia-work', sourceId: 'person-nia', targetId: 'work-microgrid', kind: 'work', verb: 'designs' },
   { id: 'jabari-work', sourceId: 'person-jabari', targetId: 'work-microgrid', kind: 'work', verb: 'commissions' },
   { id: 'kwame-work', sourceId: 'person-kwame', targetId: 'work-water-audit', kind: 'work', verb: 'researches' },
@@ -390,7 +387,7 @@ function isNetworkEntity(value: unknown): value is NetworkEntity {
   const entity = value as Record<string, unknown>;
   return typeof entity.id === 'string'
     && typeof entity.type === 'string'
-    && ENTITY_TYPES.some((type) => type.id === entity.type)
+    && (ENTITY_TYPES.some((type) => type.id === entity.type) || entity.type === 'project')
     && typeof entity.name === 'string'
     && typeof entity.role === 'string'
     && typeof entity.summary === 'string'
@@ -437,7 +434,20 @@ export function readPeopleNetworkRecord(): PeopleNetworkRecord {
   if (!isPortablePeopleRecord(parsed)) {
     throw new Error('The saved coordination record is not a supported APT-LABS record. Export it before replacing it.');
   }
-  return { entities: parsed.entities, relationships: parsed.relationships };
+  const legacyKemetos = parsed.entities.find(entity => entity.type === 'project'
+    && (entity.id === 'project-kemetos1' || entity.name.toLocaleLowerCase() === 'kemetos1'));
+  if (!legacyKemetos) return { entities: parsed.entities, relationships: parsed.relationships };
+
+  return {
+    entities: parsed.entities.map(entity => entity.id === legacyKemetos.id
+      ? { ...entity, id: 'asset-kemetos1', type: 'asset', role: 'AGI systems asset' }
+      : entity),
+    relationships: parsed.relationships.map(relationship => ({
+      ...relationship,
+      sourceId: relationship.sourceId === legacyKemetos.id ? 'asset-kemetos1' : relationship.sourceId,
+      targetId: relationship.targetId === legacyKemetos.id ? 'asset-kemetos1' : relationship.targetId,
+    })),
+  };
 }
 
 export function createPortablePeopleRecord(): string {

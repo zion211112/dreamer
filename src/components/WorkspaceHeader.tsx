@@ -35,11 +35,12 @@ export function WorkspaceHeader() {
   const routePath = location.split('?')[0];
   const currentContext = CONTEXTS.find((context) => routePath === `/workspace/${context.id}`)?.id
     ?? getContext();
+  const currentWorkspace = CONTEXTS.find((context) => context.id === currentContext)?.label ?? 'Workspace';
   const user = getUser();
   const userName = user?.name || user?.fullName || user?.email?.split('@')[0] || 'Contributor';
   const initials = (userName || '??').split(/\s+/).slice(0, 2).map((part: string) => part[0]).join('').slice(0, 2).toUpperCase() || '??';
-  const role = user?.role || 'Personal account';
-  const activeWork = user?.context || 'No assigned work';
+  const userEmail = typeof user?.email === 'string' ? user.email : 'No email on file';
+  const role = typeof user?.role === 'string' ? user.role : 'Role not assigned';
 
   const exportRecord = () => {
     try {
@@ -96,7 +97,7 @@ export function WorkspaceHeader() {
           <span className="ws-user-avatar">{initials}</span>
           <span className="ws-user-text">
             <span className="ws-user-name">{userName}</span>
-            <span className="ws-user-caption">Access</span>
+            <span className="ws-user-caption">{currentWorkspace}</span>
           </span>
           <svg className="ws-user-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
             <path d="m3 4.5 3 3 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
@@ -117,20 +118,26 @@ export function WorkspaceHeader() {
                   <span className="ws-user-avatar ws-user-avatar--large">{initials}</span>
                   <div>
                     <div className="ws-user-email">{userName}</div>
-                    <div className="ws-user-context">{role}</div>
+                    <div className="ws-user-context">{userEmail}</div>
                   </div>
                 </div>
               </div>
 
               <div className="ws-user-meta">
                 <div>
-                  <span>Active work</span>
-                  <strong>{activeWork}</strong>
+                  <span>Workspace</span>
+                  <strong>{currentWorkspace}</strong>
                 </div>
                 <div>
-                  <span>Record state</span>
-                  <strong>Browser-local</strong>
+                  <span>Role</span>
+                  <strong>{role}</strong>
                 </div>
+              </div>
+
+              <div className="ws-user-value">
+                <span>Contribution &amp; value</span>
+                <strong>No verified value linked</strong>
+                <small>Accepted work and settlements appear here when recorded.</small>
               </div>
 
               <div className="ws-user-actions">
@@ -142,7 +149,7 @@ export function WorkspaceHeader() {
                   }}
                   type="button"
                 >
-                  Open profile
+                  People network
                 </button>
                 <button className="ws-user-action" onClick={exportRecord} type="button">
                   Export record

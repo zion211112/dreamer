@@ -5,43 +5,10 @@ import { readFieldSignals } from '../../lib/local-workflows';
 
 const institutions = [
   {
-    id: 'kenya',
-    name: 'Kenya',
-    kind: 'Sovereign',
-    recordType: 'Jurisdiction context',
-    location: 'East Africa',
-    summary: 'A sovereign jurisdiction that anchors public mandates, institutions, infrastructure, and cross-border work.',
-    value: 'Jurisdiction + public mandate context',
-    role: 'Sovereign context',
-    tags: ['Public service', 'Procurement', 'Institutional capacity'],
-  },
-  {
-    id: 'uganda',
-    name: 'Uganda',
-    kind: 'Sovereign',
-    recordType: 'Jurisdiction context',
-    location: 'East Africa',
-    summary: 'A sovereign jurisdiction for locating institutions, infrastructure, and work relationships across the region.',
-    value: 'Jurisdiction + regional operating context',
-    role: 'Sovereign context',
-    tags: ['Utilities', 'Enterprise demand', 'Local operations'],
-  },
-  {
-    id: 'tanzania',
-    name: 'Tanzania',
-    kind: 'Sovereign',
-    recordType: 'Jurisdiction context',
-    location: 'East Africa',
-    summary: 'A sovereign jurisdiction that can contextualize future institutional onboarding and accountable regional work.',
-    value: 'Jurisdiction + future coordination context',
-    role: 'Sovereign context',
-    tags: ['Growth market', 'Asset operations', 'Work orchestration'],
-  },
-  {
     id: 'mwea-school',
     name: 'Mwea Community School',
     kind: 'School',
-    recordType: 'Operating institution',
+    recordType: 'Institution',
     location: 'Mwea, Kenya',
     summary: 'A school coordinates service needs and the assets under its care, creating recurring, locally accountable work.',
     value: 'Service demand + asset stewardship',
@@ -52,7 +19,7 @@ const institutions = [
     id: 'mwea-water',
     name: 'Mwea Water Cooperative',
     kind: 'Cooperative',
-    recordType: 'Operating institution',
+    recordType: 'Institution',
     location: 'Mwea, Kenya',
     summary: 'A cooperative stewards public utility assets and turns local service issues into accountable work packages.',
     value: 'Shared asset control + community coordination',
@@ -63,16 +30,49 @@ const institutions = [
     id: 'lake-basin-cold-store',
     name: 'Lake Basin Cold Store',
     kind: 'Enterprise',
-    recordType: 'Operating institution',
+    recordType: 'Institution',
     location: 'Kisumu, Kenya',
     summary: 'An enterprise with operational continuity needs, maintenance, and auditable work proof.',
     value: 'Asset uptime + operations + compliance',
     role: 'Execution engine',
     tags: ['Cold chain', 'Operations', 'Proof of work'],
   },
+  {
+    id: 'asset-kemetos1',
+    name: 'Kemetos1',
+    kind: 'Asset',
+    recordType: 'Asset',
+    location: 'Distributed',
+    summary: 'An AGI systems asset with reusable inference, research, and agent infrastructure.',
+    value: 'Reusable systems capability + technical work',
+    role: 'Systems asset',
+    tags: ['AGI systems', 'Inference', 'Agent infrastructure'],
+  },
+  {
+    id: 'asset-school-management-console',
+    name: 'School Management Console',
+    kind: 'Asset',
+    recordType: 'Asset',
+    location: 'Mwea, Kenya',
+    summary: 'A digital operations asset for school records, service coordination, and accountable work.',
+    value: 'School operations + service coordination',
+    role: 'Digital asset',
+    tags: ['Education', 'Operations', 'Work coordination'],
+  },
+  {
+    id: 'asset-thiba-hydro-project',
+    name: 'Thiba Hydro Project',
+    kind: 'Asset',
+    recordType: 'Asset',
+    location: 'Location to confirm',
+    summary: 'An infrastructure project asset for coordinating stewardship, work packages, and evidence.',
+    value: 'Infrastructure scope + accountable execution',
+    role: 'Infrastructure asset',
+    tags: ['Hydropower', 'Infrastructure', 'Project stewardship'],
+  },
 ] as const;
 
-const filters = ['All', 'Sovereign', 'School', 'Cooperative', 'Enterprise'] as const;
+const filters = ['All', 'Institution', 'Asset'] as const;
 
 export function Institutions() {
   const [, navigate] = useLocation();
@@ -95,7 +95,7 @@ export function Institutions() {
   }, []);
 
   const results = useMemo(() => institutions.filter(institution =>
-    (filter === 'All' || institution.kind === filter)
+    (filter === 'All' || institution.recordType === filter)
     && `${institution.name} ${institution.kind} ${institution.location} ${institution.summary} ${institution.value}`
       .toLocaleLowerCase()
       .includes(query.trim().toLocaleLowerCase())
@@ -107,8 +107,8 @@ export function Institutions() {
         <header className="institution-page-head">
           <div>
             <p className="eyebrow">INSTITUTIONS / OPERATING LAYER</p>
-            <h1>Institutions coordinate work.</h1>
-            <p>Operators and stewards organize mandates, assets, and recurring needs. Jurisdictions anchor where they act; they are not assets.</p>
+            <h1>Institutions &amp; assets</h1>
+            <p>Stewards connect capability to real needs. Each record anchors work, evidence, and responsibility.</p>
           </div>
           <span className="demo-stamp">LOCAL-FIRST MODE</span>
         </header>
@@ -116,7 +116,7 @@ export function Institutions() {
         <section className="institution-banner">
           <div className="institution-banner-copy">
             <p className="eyebrow">OPERATING MODEL</p>
-            <h2>Institutions create and govern work. Assets are what they steward. Countries define the jurisdiction around both.</h2>
+            <h2>Institution sets the mandate. Asset holds the capability. Work makes both matter.</h2>
           </div>
           <div className="institution-banner-meta">
             <span>Institution</span>
@@ -172,7 +172,7 @@ export function Institutions() {
                 <span>{institution.recordType}</span>
                 <span>{institution.kind}</span>
                 <span>{institution.location}</span>
-                <span>{signalCounts[institution.id] ?? 0} local signals</span>
+                {institution.recordType === 'Institution' && <span>{signalCounts[institution.id] ?? 0} local signals</span>}
               </div>
 
               <div className="institution-card-value">
@@ -188,10 +188,12 @@ export function Institutions() {
 
               <button
                 className="institution-open"
-                onClick={() => navigate(`/workspace/commons?institution=${encodeURIComponent(institution.id)}`)}
+                onClick={() => navigate(institution.recordType === 'Asset'
+                  ? `/workspace/workbench?asset=${encodeURIComponent(institution.name)}`
+                  : `/workspace/commons?institution=${encodeURIComponent(institution.id)}`)}
                 type="button"
               >
-                Open signals <span aria-hidden="true">↗</span>
+                {institution.recordType === 'Asset' ? 'Plan work' : 'Open signals'} <span aria-hidden="true">↗</span>
               </button>
             </article>
           ))}

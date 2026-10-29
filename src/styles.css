@@ -700,6 +700,31 @@ a:focus-visible {
   font: 500 11px var(--sans);
 }
 
+.ws-user-value {
+  display: grid;
+  gap: 5px;
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.ws-user-value > span {
+  color: var(--text-faint);
+  font: 8px var(--mono);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.ws-user-value > strong {
+  color: var(--text);
+  font: 500 12px var(--sans);
+}
+
+.ws-user-value > small {
+  color: var(--text-muted);
+  font-size: 9px;
+  line-height: 1.45;
+}
+
 .ws-user-orgs {
   display: flex;
   flex-wrap: wrap;
@@ -1014,13 +1039,6 @@ a:focus-visible {
   transform: rotate(45deg) scale(.8);
 }
 
-.people-type-mark--project {
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--people-asset) 24%, var(--bg-elev));
-  color: var(--people-asset);
-  transform: rotate(0deg);
-}
-
 .people-type-mark--asset {
   background: var(--people-asset);
   color: var(--people-asset);
@@ -1323,11 +1341,6 @@ a:focus-visible {
 .people-node--crew .people-node-shape {
   fill: color-mix(in srgb, var(--people-crew) 21%, #19231c);
   stroke: var(--people-crew);
-}
-
-.people-node--project .people-node-shape {
-  fill: color-mix(in srgb, var(--people-asset) 18%, #19231c);
-  stroke: var(--people-asset);
 }
 
 .people-node--asset .people-node-shape {
@@ -2299,6 +2312,64 @@ a:focus-visible {
   line-height: 1.6;
 }
 
+.commons-note {
+  margin: -13px 0 12px;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.commons-modebar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 44px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.commons-modebar > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 39px;
+  padding: 0 12px;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.commons-modebar > button.is-active {
+  border-bottom-color: var(--terrain);
+  color: var(--text);
+}
+
+.commons-modebar > button span {
+  color: var(--text-faint);
+  font: 8px var(--mono);
+}
+
+.commons-scope-select { margin-left: auto; }
+
+.commons-scope-select select {
+  min-height: 32px;
+  max-width: 220px;
+  padding: 0 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  background: var(--bg-elev);
+  color: var(--text-muted);
+  font-size: 9px;
+}
+
+.commons-mode-hint {
+  color: var(--text-faint);
+  font: 8px var(--mono);
+  text-transform: uppercase;
+}
+
+.commons-governance[hidden],
+.signal-workspace[hidden] { display: none; }
+
 .commons-governance {
   margin: 22px 0;
   padding: 18px 0;
@@ -2450,6 +2521,12 @@ a:focus-visible {
   margin: 8px 0 4px;
   color: var(--text);
   font: 500 14px/1.35 var(--sans);
+}
+
+.commons-proposal-context {
+  margin-bottom: 6px;
+  color: var(--text-faint);
+  font: 8px var(--mono);
 }
 
 .commons-proposal > p {
@@ -2822,6 +2899,21 @@ a:focus-visible {
 }
 
 .signal-history { padding-top: 17px; }
+
+.signal-history > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.signal-history > summary::-webkit-details-marker { display: none; }
+
+.signal-history > summary::after {
+  content: '+';
+  margin-left: 9px;
+  color: var(--text-faint);
+}
+
+.signal-history[open] > summary::after { content: '−'; }
 
 .signal-history-heading {
   display: flex;
@@ -3218,6 +3310,10 @@ a:focus-visible {
   .institution-open { grid-column: 3; grid-row: 1 / span 2; }
   .institution-name-line h2 { font-size: 18px; }
   .signal-head-actions { justify-content: flex-start; }
+  .commons-modebar { flex-wrap: wrap; padding-bottom: 7px; }
+  .commons-mode-hint { display: none; }
+  .commons-scope-select { margin-left: auto; }
+  .commons-scope-select select { max-width: 100%; }
   .commons-governance-head,
   .commons-authority,
   .commons-proposal-footer { align-items: flex-start; flex-direction: column; }
@@ -3266,6 +3362,10 @@ a:focus-visible {
   .commons-decision-controls .signal-quiet-action { padding: 0 5px; }
   .signal-detail-head { flex-direction: column; gap: 8px; }
   .signal-updated { padding: 0; }
+  .commons-modebar { gap: 0; }
+  .commons-modebar > button { padding: 0 8px; }
+  .commons-scope-select { width: 100%; margin: 0; }
+  .commons-scope-select select { width: 100%; max-width: none; }
   .signal-next-step > div { flex-basis: 100%; }
   .signal-note-form { align-items: stretch; }
   .workbench-inspector { grid-template-columns: minmax(0, 1fr); }

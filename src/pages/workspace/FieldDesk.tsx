@@ -20,9 +20,9 @@ const fileNames: Record<WorkbenchFile, string> = {
   notes: 'field-notes.md',
 };
 
-function getWorkbenchQuery(location: string): { signalId: string | null; proposalId: string | null } {
+function getWorkbenchQuery(location: string): { signalId: string | null; proposalId: string | null; assetName: string | null } {
   const params = new URLSearchParams(location.split('?')[1] ?? '');
-  return { signalId: params.get('signal'), proposalId: params.get('proposal') };
+  return { signalId: params.get('signal'), proposalId: params.get('proposal'), assetName: params.get('asset') };
 }
 
 export function Workbench() {
@@ -40,16 +40,18 @@ export function Workbench() {
     try {
       const localSignals = readFieldSignals();
       const localDrafts = readWorkBriefDrafts();
-      const { signalId, proposalId } = getWorkbenchQuery(location);
+      const { signalId, proposalId, assetName } = getWorkbenchQuery(location);
       const localProposals = readCommonsGovernance().proposals;
       const requestedProposal = localProposals.find(item => item.id === proposalId) ?? null;
       const proposal = requestedProposal?.status === 'approved' ? requestedProposal : null;
       const source = localSignals.find(signal => signal.id === (signalId ?? proposal?.sourceSignalId)) ?? null;
       const existing = proposal
         ? localDrafts.find(item => item.sourceProposalId === proposal.id)
-        : source
+        : signalId && source
         ? localDrafts.find(item => item.sourceSignalId === source.id)
-        : localDrafts[0];
+          : assetName
+            ? localDrafts.find(item => item.assetName === assetName)
+            : localDrafts[0];
       const proposalDraft = proposal ? {
         ...createWorkBrief(source),
         sourceProposalId: proposal.id,
@@ -58,11 +60,16 @@ export function Workbench() {
         scope: `${proposal.rationale}\n\nRule: ${proposal.rule}`,
         acceptanceCriteria: '',
       } : null;
+      const assetDraft = !proposal && assetName ? {
+        ...createWorkBrief(null),
+        title: `Work brief: ${assetName}`,
+        assetName,
+      } : null;
       setSignals(localSignals);
       setDrafts(localDrafts);
       setSourceSignal(source);
       setApprovedProposal(proposal);
-      setDraft(existing ?? proposalDraft ?? createWorkBrief(source));
+      setDraft(existing ?? proposalDraft ?? assetDraft ?? createWorkBrief(source));
       if (proposalId && !proposal) {
         setStorageError(requestedProposal
           ? 'This proposal has no steward approval. It cannot seed a linked work brief.'
