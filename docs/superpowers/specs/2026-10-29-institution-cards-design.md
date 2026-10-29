@@ -1,7 +1,9 @@
 # Public Institution Cards
 
-**Status:** Draft for review  
-**Date:** 2026-10-29  
+**Status:** Draft for review
+
+**Date:** 2026-10-29
+
 **Scope:** First release of the institution portfolio
 
 ## Product intent
