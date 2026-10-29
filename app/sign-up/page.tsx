@@ -14,7 +14,7 @@ export default async function SignUpPage({ searchParams }: { searchParams: Promi
   const localMode = isLocalAuthEnabled();
 
   return (
-    <main className="site-shell">
+    <main className="site-shell auth-shell">
       <SiteHeader />
       <AuthEntry localMode={localMode} mode="sign-up" next={next} />
       <footer className="page-footer"><span>APT-LABS / ACCOUNT ACCESS</span><span>Public Market and Roll remain available without an account.</span></footer>
