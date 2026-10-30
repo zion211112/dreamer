@@ -45,7 +45,7 @@ function getCurrentEmail(): string {
 }
 
 export function Commons() {
-  const [location, navigate] = useLocation();
+  const [, navigate] = useLocation();
   const [commonsView, setCommonsView] = useState<'signals' | 'decisions'>('signals');
   const [institutionScope, setInstitutionScope] = useState('');
   const [signals, setSignals] = useState<FieldSignal[]>([]);
@@ -66,7 +66,7 @@ export function Commons() {
     setActorEmail(getCurrentEmail());
     try {
       const savedSignals = readFieldSignals();
-      const requestedInstitution = new URLSearchParams(location.split('?')[1] ?? '').get('institution');
+      const requestedInstitution = new URLSearchParams(window.location.search).get('institution');
       const initialSignal = savedSignals.find(signal => signal.institutionId === requestedInstitution) ?? savedSignals[0];
       setSignals(savedSignals);
       setSelectedId(initialSignal?.id ?? '');
@@ -549,6 +549,15 @@ export function Commons() {
                   <p>{selected.details}</p>
                   {selected.scenario && <small>This is sample content for the local prototype, not an operational report.</small>}
                 </section>
+                {selected.id === 'scenario-pump-pressure' && (
+                  <section aria-label="Illustrative Fikra machine scan" className="signal-machine-scan">
+                    <div className="signal-machine-scan-head">
+                      <p className="eyebrow">FIKRA API / MACHINE DISCOVERY</p>
+                      <span>MOCK SCAN // BROWSER-LOCAL DEMO MODE</span>
+                    </div>
+                    <p>Suggested checks: compare inlet pressure at rest and under load; record pump cycling. No live telemetry or cause assessment is available in this example.</p>
+                  </section>
+                )}
                 <section className="signal-next-step">
                   <div>
                     <p className="eyebrow">NEXT ACTION</p>

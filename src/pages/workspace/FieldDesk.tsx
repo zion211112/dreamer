@@ -12,46 +12,58 @@ import {
   type WorkBriefDraft,
 } from '../../lib/local-workflows';
 
-type WorkbenchFile = 'brief' | 'materials' | 'notes';
-
-const fileNames: Record<WorkbenchFile, string> = {
-  brief: 'brief.md',
-  materials: 'materials.csv',
-  notes: 'field-notes.md',
-};
-
-function getWorkbenchQuery(location: string): { signalId: string | null; proposalId: string | null; assetName: string | null } {
-  const params = new URLSearchParams(location.split('?')[1] ?? '');
+function getWorkbenchQuery(): { signalId: string | null; proposalId: string | null; assetName: string | null } {
+  const params = new URLSearchParams(window.location.search);
   return { signalId: params.get('signal'), proposalId: params.get('proposal'), assetName: params.get('asset') };
 }
 
+function getApprovedProposalForDraft(draft: WorkBriefDraft, proposals: CommonsProposal[]): CommonsProposal | null {
+  return proposals.find(proposal => proposal.status === 'approved'
+    && (proposal.id === draft.sourceProposalId
+      ? !draft.sourceSignalId || proposal.sourceSignalId === draft.sourceSignalId
+      : !draft.sourceProposalId && Boolean(draft.sourceSignalId) && proposal.sourceSignalId === draft.sourceSignalId)) ?? null;
+}
+
 export function Workbench() {
-  const [location, navigate] = useLocation();
+  const [, navigate] = useLocation();
   const [draft, setDraft] = useState<WorkBriefDraft>(() => createWorkBrief(null));
   const [drafts, setDrafts] = useState<WorkBriefDraft[]>([]);
   const [signals, setSignals] = useState<FieldSignal[]>([]);
   const [sourceSignal, setSourceSignal] = useState<FieldSignal | null>(null);
   const [approvedProposal, setApprovedProposal] = useState<CommonsProposal | null>(null);
-  const [activeFile, setActiveFile] = useState<WorkbenchFile>('brief');
   const [storageError, setStorageError] = useState('');
   const [saved, setSaved] = useState(false);
+  const [accessBlocked, setAccessBlocked] = useState(false);
 
   useEffect(() => {
     try {
       const localSignals = readFieldSignals();
       const localDrafts = readWorkBriefDrafts();
-      const { signalId, proposalId, assetName } = getWorkbenchQuery(location);
+      const { signalId, proposalId, assetName } = getWorkbenchQuery();
       const localProposals = readCommonsGovernance().proposals;
       const requestedProposal = localProposals.find(item => item.id === proposalId) ?? null;
-      const proposal = requestedProposal?.status === 'approved' ? requestedProposal : null;
-      const source = localSignals.find(signal => signal.id === (signalId ?? proposal?.sourceSignalId)) ?? null;
+      const requestedApproval = proposalId
+        ? requestedProposal?.status === 'approved' ? requestedProposal : null
+        : signalId
+          ? localProposals.find(item => item.sourceSignalId === signalId && item.status === 'approved') ?? null
+          : null;
+      const blockedLink = Boolean((proposalId || signalId)
+        && (!requestedApproval || Boolean(signalId && requestedApproval.sourceSignalId !== signalId)));
+      const proposal = blockedLink ? null : requestedApproval;
+      const source = proposal
+        ? localSignals.find(signal => signal.id === proposal.sourceSignalId) ?? null
+        : null;
+      const latestEligibleDraft = localDrafts.find(item => (
+        !item.sourceSignalId && !item.sourceProposalId
+      ) || Boolean(getApprovedProposalForDraft(item, localProposals))) ?? null;
       const existing = proposal
-        ? localDrafts.find(item => item.sourceProposalId === proposal.id)
-        : signalId && source
-        ? localDrafts.find(item => item.sourceSignalId === source.id)
+        ? localDrafts.find(item => item.sourceProposalId === proposal.id
+          || Boolean(source && item.sourceSignalId === source.id))
+        : blockedLink
+          ? null
           : assetName
-            ? localDrafts.find(item => item.assetName === assetName)
-            : localDrafts[0];
+            ? localDrafts.find(item => item.assetName === assetName && !item.sourceSignalId && !item.sourceProposalId)
+            : latestEligibleDraft;
       const proposalDraft = proposal ? {
         ...createWorkBrief(source),
         sourceProposalId: proposal.id,
@@ -69,23 +81,33 @@ export function Workbench() {
       setDrafts(localDrafts);
       setSourceSignal(source);
       setApprovedProposal(proposal);
-      setDraft(existing ?? proposalDraft ?? assetDraft ?? createWorkBrief(source));
-      if (proposalId && !proposal) {
-        setStorageError(requestedProposal
-          ? 'This proposal has no steward approval. It cannot seed a linked work brief.'
-          : 'This proposal is not available in the local governance record.');
-      }
+      setDraft(blockedLink ? createWorkBrief(null) : existing ?? proposalDraft ?? assetDraft ?? createWorkBrief(null));
+      setAccessBlocked(blockedLink);
+      setSaved(Boolean(existing));
+      setStorageError(blockedLink
+        ? proposalId
+          ? requestedProposal
+            ? 'This proposal has no steward approval. It cannot seed a linked work brief.'
+            : 'This proposal is not available in the local governance record.'
+          : 'An approved steward decision is required before a signal can seed a work brief.'
+        : '');
     } catch (error) {
       setStorageError(error instanceof Error ? error.message : 'Local work briefs could not be loaded.');
     }
   }, []);
 
   function updateDraft(field: keyof Omit<WorkBriefDraft, 'id' | 'sourceSignalId' | 'sourceProposalId' | 'updatedAt'>, value: string) {
+    if (accessBlocked) return;
     setDraft(current => ({ ...current, [field]: value }));
     setSaved(false);
   }
 
   function saveDraft() {
+    if (accessBlocked) return;
+    if ((draft.sourceSignalId || draft.sourceProposalId) && !approvedProposal) {
+      setStorageError('An approved steward decision is required before saving a linked work brief.');
+      return;
+    }
     if (!draft.title.trim()) {
       setStorageError('Add a work brief title before saving.');
       return;
@@ -108,21 +130,30 @@ export function Workbench() {
     setSourceSignal(null);
     setApprovedProposal(null);
     setDraft(createWorkBrief(null));
-    setActiveFile('brief');
     setSaved(false);
+    setAccessBlocked(false);
     setStorageError('');
     navigate('/workspace/workbench');
   }
 
   function selectDraft(item: WorkBriefDraft) {
-    setDraft(item);
-    setSourceSignal(signals.find(signal => signal.id === item.sourceSignalId) ?? null);
-    const proposals = readCommonsGovernance().proposals;
-    const proposal = proposals.find(candidate => candidate.id === item.sourceProposalId && candidate.status === 'approved') ?? null;
-    setApprovedProposal(proposal);
-    setActiveFile('brief');
-    setSaved(true);
-    setStorageError('');
+    try {
+      const proposal = getApprovedProposalForDraft(item, readCommonsGovernance().proposals);
+      if ((item.sourceSignalId || item.sourceProposalId) && !proposal) {
+        setAccessBlocked(true);
+        setStorageError('This saved linked draft has no approved steward decision. It remains stored but cannot be opened as work.');
+        return;
+      }
+      setAccessBlocked(false);
+      setDraft(item);
+      setSourceSignal(signals.find(signal => signal.id === (item.sourceSignalId ?? proposal?.sourceSignalId)) ?? null);
+      setApprovedProposal(proposal);
+      setSaved(true);
+      setStorageError('');
+    } catch (error) {
+      setAccessBlocked(false);
+      setStorageError(error instanceof Error ? error.message : 'The saved brief could not be opened.');
+    }
   }
 
   return (
@@ -130,199 +161,163 @@ export function Workbench() {
       <main className="workbench-page">
         <header className="workbench-page-head">
           <div>
-            <p className="eyebrow">WORKBENCH / FIELD SYSTEMS</p>
-            <h1>Make the work legible.</h1>
+            <p className="eyebrow">WORKBENCH / FIELD BRIEF</p>
+            <h1>Work brief</h1>
+            <p>Scope the response. Leave authorization to the institution.</p>
           </div>
           <div className="workbench-page-actions">
-            <span className="local-only-stamp">{approvedProposal ? 'STEWARD-APPROVED DRAFT' : 'LOCAL DRAFT'}</span>
+            <details className="workbench-draft-picker">
+              <summary>Saved drafts <span>{drafts.length.toString().padStart(2, '0')}</span></summary>
+              <div className="workbench-draft-list">
+                {drafts.length ? drafts.map(item => (
+                  <button
+                    aria-current={draft.id === item.id ? 'true' : undefined}
+                    key={item.id}
+                    onClick={() => selectDraft(item)}
+                    type="button"
+                  >
+                    <span>{item.title || 'Untitled brief'}</span>
+                    <small>{item.sourceSignalId || item.sourceProposalId ? 'LINKED' : 'LOCAL'}</small>
+                  </button>
+                )) : <p>No saved briefs yet.</p>}
+              </div>
+            </details>
+            <span className="local-only-stamp">{approvedProposal ? 'APPROVED SOURCE · DRAFT' : 'DRAFT · LOCAL'}</span>
+            <button className="workbench-save-button" disabled={accessBlocked} onClick={saveDraft} type="button">Save draft</button>
             <button className="workbench-new-button" onClick={startNewDraft} type="button">＋ New brief</button>
           </div>
         </header>
 
-        <section aria-label="Local workbench editor" className="workbench-shell">
-          <aside aria-label="Workbench files" className="workbench-explorer">
-            <div className="workbench-explorer-head"><span>EXPLORER</span><span>⌄</span></div>
-            <div className="workbench-project-name"><span aria-hidden="true">⌄</span> FIELD WORK</div>
-            <button
-              aria-current={activeFile === 'brief' ? 'page' : undefined}
-              className={`workbench-file${activeFile === 'brief' ? ' is-active' : ''}`}
-              onClick={() => setActiveFile('brief')}
-              type="button"
-            ><span className="workbench-file-mark">¶</span>{fileNames.brief}</button>
-            <button
-              aria-current={activeFile === 'materials' ? 'page' : undefined}
-              className={`workbench-file${activeFile === 'materials' ? ' is-active' : ''}`}
-              onClick={() => setActiveFile('materials')}
-              type="button"
-            ><span className="workbench-file-mark">≡</span>{fileNames.materials}</button>
-            <button
-              aria-current={activeFile === 'notes' ? 'page' : undefined}
-              className={`workbench-file${activeFile === 'notes' ? ' is-active' : ''}`}
-              onClick={() => setActiveFile('notes')}
-              type="button"
-            ><span className="workbench-file-mark">∷</span>{fileNames.notes}</button>
-            <div className="workbench-explorer-divider" />
-            <div className="workbench-explorer-head"><span>LOCAL BRIEFS</span><span>{drafts.length.toString().padStart(2, '0')}</span></div>
-            {drafts.map(item => (
-              <button
-                aria-current={draft.id === item.id ? 'true' : undefined}
-                className={`workbench-saved-file${draft.id === item.id ? ' is-active' : ''}`}
-                key={item.id}
-                onClick={() => selectDraft(item)}
-                type="button"
-              >
-                <span aria-hidden="true">◌</span>
-                <span>{item.title || 'Untitled brief'}</span>
-              </button>
-            ))}
-            {drafts.length === 0 && <p className="workbench-no-files">Saved briefs appear here.</p>}
-            <a className="workbench-back-link" href="/workspace/commons">← Signal Desk</a>
-          </aside>
+        {storageError && !accessBlocked && <p className="local-data-warning" role="alert">{storageError}</p>}
 
-          <section aria-label="Work brief editor" className="workbench-editor">
-            <div className="workbench-tabs">
-              {(Object.keys(fileNames) as WorkbenchFile[]).map(file => (
-                <button
-                  aria-pressed={activeFile === file}
-                  className={activeFile === file ? 'is-active' : ''}
-                  key={file}
-                  onClick={() => setActiveFile(file)}
-                  type="button"
-                >
-                  <span className="workbench-file-mark">{file === 'brief' ? '¶' : file === 'materials' ? '≡' : '∷'}</span>
-                  {fileNames[file]}
-                </button>
-              ))}
-              <span className="workbench-tab-status">{saved ? 'SAVED LOCALLY' : 'UNSAVED'}</span>
-            </div>
-            <div className="workbench-editor-breadcrumb"><span>field-work</span><span>/</span><strong>{fileNames[activeFile]}</strong></div>
-
-            {activeFile === 'brief' && (
-              <div className="workbench-document">
-                <p className="workbench-document-index">WORK BRIEF / LOCAL DRAFT</p>
-                <label className="workbench-title-field">
-                  <span className="visually-hidden">Brief title</span>
-                  <input
-                    aria-label="Brief title"
-                    onInput={event => updateDraft('title', (event.currentTarget as HTMLInputElement).value)}
-                    placeholder="Untitled work brief"
-                    value={draft.title}
-                  />
-                </label>
-                <p className="workbench-document-intro">
-                  {approvedProposal
-                    ? `Linked to an approved local decision: ${approvedProposal.title}. This remains a draft until the institution authorizes execution.`
-                    : 'Define the work in observable terms. A draft is not an assignment, tender, or funded call sheet.'}
-                </p>
-                <div className="workbench-fields">
-                  <label>Institution
-                    <input onInput={event => updateDraft('institutionName', (event.currentTarget as HTMLInputElement).value)} placeholder="Institution or steward" value={draft.institutionName} />
-                  </label>
-                  <label>Asset
-                    <input onInput={event => updateDraft('assetName', (event.currentTarget as HTMLInputElement).value)} placeholder="Equipment, site, or system" value={draft.assetName} />
-                  </label>
-                  <label>Place
-                    <input onInput={event => updateDraft('location', (event.currentTarget as HTMLInputElement).value)} placeholder="Location" value={draft.location} />
-                  </label>
-                </div>
-                <label className="workbench-section-field">Scope to investigate
-                  <textarea
-                    onInput={event => updateDraft('scope', (event.currentTarget as HTMLTextAreaElement).value)}
-                    placeholder="What should a qualified person inspect, measure, or repair?"
-                    rows={6}
-                    value={draft.scope}
-                  />
-                </label>
-                  <label className="workbench-section-field workbench-acceptance">Acceptance criteria
-                    <textarea
-                      onInput={event => updateDraft('acceptanceCriteria', (event.currentTarget as HTMLTextAreaElement).value)}
-                      placeholder="What observable evidence would show this work is complete?"
-                      rows={3}
-                      value={draft.acceptanceCriteria ?? ''}
-                    />
-                  </label>
-              </div>
-            )}
-
-            {activeFile === 'materials' && (
-              <div className="workbench-document">
-                <p className="workbench-document-index">MATERIALS / NOTES ONLY</p>
-                <h2>List what may be needed.</h2>
-                <p className="workbench-document-intro">A planning aid, not a quote, verified supplier, procurement, or locked budget.</p>
-                <label className="workbench-section-field">Item · quantity · unit · source to confirm
-                  <textarea
-                    onInput={event => updateDraft('materials', (event.currentTarget as HTMLTextAreaElement).value)}
-                    placeholder={'Example format:\nFilter element · 1 · unit · source to confirm'}
-                    rows={12}
-                    value={draft.materials}
-                  />
-                </label>
-              </div>
-            )}
-
-            {activeFile === 'notes' && (
-              <div className="workbench-document">
-                <p className="workbench-document-index">FIELD NOTES / UNVERIFIED</p>
-                <h2>What still needs checking?</h2>
-                <p className="workbench-document-intro">No evidence upload or sensor connection in this demo. Record questions for a future site visit.</p>
-                <label className="workbench-section-field">Questions and observations
-                  <textarea
-                    onInput={event => updateDraft('fieldNotes', (event.currentTarget as HTMLTextAreaElement).value)}
-                    placeholder="What was observed? What remains uncertain? Who needs to review?"
-                    rows={12}
-                    value={draft.fieldNotes}
-                  />
-                </label>
-              </div>
-            )}
-
-            <div className="workbench-statusbar">
-              <span><i /> BROWSER-LOCAL</span>
-              <span>{sourceSignal ? 'SOURCE: COMMONS SIGNAL' : 'NO SOURCE SIGNAL'}</span>
-              <span>NOT VERIFIED</span>
-            </div>
+        {accessBlocked ? (
+          <section className="workbench-blocked" role="status">
+            <p className="eyebrow">STEWARDSHIP REQUIRED</p>
+            <h2>This signal is not approved for a work brief.</h2>
+            <p>{storageError}</p>
+            <button className="signal-secondary-action" onClick={() => navigate('/workspace/commons')} type="button">Return to Commons</button>
           </section>
+        ) : (
+          <section aria-label="Work brief editor" className="workbench-layout">
+            <article className="workbench-document">
+              <div className="workbench-document-topline">
+                <p className="eyebrow">WORK BRIEF / LOCAL DRAFT</p>
+                <span>DRAFT</span>
+              </div>
+              <label className="workbench-title-field">
+                <span className="visually-hidden">Brief title</span>
+                <input
+                  aria-label="Brief title"
+                  onInput={event => updateDraft('title', (event.currentTarget as HTMLInputElement).value)}
+                  placeholder="Untitled work brief"
+                  value={draft.title}
+                />
+              </label>
+              <p className="workbench-document-intro">
+                {approvedProposal
+                  ? `Seeded by an approved steward decision: ${approvedProposal.title}. This remains a draft for institutional review.`
+                  : 'Define the proposed response. This draft does not assign work or commit funds.'}
+              </p>
 
-          <aside aria-label="Work brief context" className="workbench-inspector">
-            <div className="workbench-inspector-head"><span>CONTEXT</span><span>⌄</span></div>
-            <section className="workbench-context-block">
-              <p className="eyebrow">SOURCE SIGNAL</p>
-              {sourceSignal ? (
-                <>
-                  <strong>{sourceSignal.title}</strong>
-                  <span>{sourceSignal.institutionName}</span>
-                  <span>{sourceSignal.assetName} · {sourceSignal.location}</span>
-                  <span className="workbench-context-state">LOCAL · {sourceSignal.status.toUpperCase()}</span>
-                </>
-              ) : (
-                <p className="workbench-no-source">No signal linked. Start from the Commons Signal Desk to bring an observation into a brief.</p>
-              )}
-              <button className="workbench-context-link" onClick={() => navigate('/workspace/commons')} type="button">Open Signal Desk ↗</button>
-            </section>
-            <section className="workbench-context-block">
-              <p className="eyebrow">GOVERNANCE DECISION</p>
-              {approvedProposal ? (
-                <>
-                  <strong>{approvedProposal.title}</strong>
-                  <span>{approvedProposal.rule}</span>
-                  <span>Recorded by {approvedProposal.events.at(-1)?.actor ?? 'institution steward'}</span>
-                  <span className="workbench-context-state">APPROVED · LOCAL RECORD</span>
-                </>
-              ) : (
-                <p className="workbench-no-source">No approved proposal linked. This stays an independent local draft.</p>
-              )}
-            </section>
-            <section className="workbench-context-block">
-              <p className="eyebrow">BOUNDARY</p>
-              <p>Draft notes only. No assignment, quotation, tender publication, settlement, or proof of work is created here.</p>
-            </section>
-            <div className="workbench-save-area">
-              <button className="workbench-save-button" onClick={saveDraft} type="button">Save local brief</button>
-              {saved && <span role="status">Saved on this device.</span>}
-              {storageError && <p role="alert">{storageError}</p>}
-            </div>
-          </aside>
-        </section>
+              <div className="workbench-fields">
+                <label>Institution
+                  <input onInput={event => updateDraft('institutionName', (event.currentTarget as HTMLInputElement).value)} placeholder="Institution" value={draft.institutionName} />
+                </label>
+                <label>Asset
+                  <input onInput={event => updateDraft('assetName', (event.currentTarget as HTMLInputElement).value)} placeholder="Equipment, site, or system" value={draft.assetName} />
+                </label>
+                <label>Place
+                  <input onInput={event => updateDraft('location', (event.currentTarget as HTMLInputElement).value)} placeholder="Location" value={draft.location} />
+                </label>
+              </div>
+
+              <label className="workbench-section-field">Problem and scope
+                <textarea
+                  onInput={event => updateDraft('scope', (event.currentTarget as HTMLTextAreaElement).value)}
+                  placeholder="What should a qualified person inspect, measure, or repair?"
+                  rows={5}
+                  value={draft.scope}
+                />
+              </label>
+              <label className="workbench-section-field">Materials and BOM candidates
+                <textarea
+                  onInput={event => updateDraft('materials', (event.currentTarget as HTMLTextAreaElement).value)}
+                  placeholder="Item · quantity · unit · source to confirm"
+                  rows={3}
+                  value={draft.materials}
+                />
+                <small>Planning candidates only. Not a quote or procurement.</small>
+              </label>
+              <label className="workbench-section-field">Unknowns and risks
+                <textarea
+                  onInput={event => updateDraft('fieldNotes', (event.currentTarget as HTMLTextAreaElement).value)}
+                  placeholder="Site facts, diagnostics, safety questions, and assumptions still to check."
+                  rows={4}
+                  value={draft.fieldNotes}
+                />
+              </label>
+              <label className="workbench-section-field workbench-acceptance">Acceptance criteria
+                <textarea
+                  onInput={event => updateDraft('acceptanceCriteria', (event.currentTarget as HTMLTextAreaElement).value)}
+                  placeholder="What observable evidence would demonstrate completion?"
+                  rows={3}
+                  value={draft.acceptanceCriteria ?? ''}
+                />
+                <small>Criteria describe evidence to review; they are not proof of completed work.</small>
+              </label>
+              <div className="workbench-document-footer">
+                <span>{saved ? 'SAVED ON THIS DEVICE' : 'UNSAVED CHANGES'}</span>
+                <span>NO WORK ORDER CREATED</span>
+              </div>
+            </article>
+
+            <aside aria-label="Brief context" className="workbench-context-rail">
+              <section className="workbench-context-block">
+                <p className="eyebrow">COMMONS SIGNAL</p>
+                {sourceSignal ? (
+                  <>
+                    <strong>{sourceSignal.title}</strong>
+                    <span>{sourceSignal.institutionName}</span>
+                    <span>{sourceSignal.assetName} · {sourceSignal.location}</span>
+                    <span className="workbench-context-state">SOURCE · {sourceSignal.status.toUpperCase()}</span>
+                    <button className="workbench-context-link" onClick={() => navigate(`/workspace/commons?signal=${encodeURIComponent(sourceSignal.id)}`)} type="button">Open signal ↗</button>
+                  </>
+                ) : (
+                  <p>No Commons signal linked. This is an independent planning draft.</p>
+                )}
+              </section>
+              <section className="workbench-context-block">
+                <p className="eyebrow">STEWARD DECISION</p>
+                {approvedProposal ? (
+                  <>
+                    <strong>{approvedProposal.title}</strong>
+                    <span>{approvedProposal.rule}</span>
+                    <span>Recorded by {approvedProposal.events.at(-1)?.actor ?? 'institution steward'}</span>
+                    <span className="workbench-context-state">APPROVED · LOCAL RECORD</span>
+                  </>
+                ) : <p>No approved decision linked.</p>}
+              </section>
+              <section className="workbench-context-block">
+                <p className="eyebrow">INSTITUTION / ASSET</p>
+                <strong>{draft.assetName || 'No asset selected'}</strong>
+                <span>{draft.institutionName || 'No institution selected'}</span>
+                {(draft.assetName || draft.institutionName) && (
+                  <button
+                    className="workbench-context-link"
+                    onClick={() => navigate(`/workspace/institutions?q=${encodeURIComponent(draft.assetName || draft.institutionName)}`)}
+                    type="button"
+                  >
+                    Open record ↗
+                  </button>
+                )}
+              </section>
+              <section className="workbench-context-boundary">
+                <p className="eyebrow">DRAFT BOUNDARY</p>
+                <p>Saving keeps this brief local. It does not publish a call sheet, recruit a crew, or lock capital.</p>
+              </section>
+            </aside>
+          </section>
+        )}
         <p className="local-data-note">Workbench is a browser-local prototype. Drafts remain on this device and are not shared with an institution or crew.</p>
       </main>
     </WorkspaceLayout>

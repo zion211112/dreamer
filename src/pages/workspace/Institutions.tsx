@@ -3,7 +3,21 @@ import { Link } from 'wouter';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import { readFieldSignals } from '../../lib/local-workflows';
 
-const institutions = [
+interface InstitutionRecord {
+  id: string;
+  name: string;
+  kind: string;
+  recordType: 'Institution' | 'Asset';
+  location: string;
+  summary: string;
+  value: string;
+  role: string;
+  tags: string[];
+  owner?: string;
+  action?: false;
+}
+
+const institutions: InstitutionRecord[] = [
   {
     id: 'mwea-school',
     name: 'Mwea Community School',
@@ -70,7 +84,32 @@ const institutions = [
     role: 'Infrastructure asset',
     tags: ['Hydropower', 'Infrastructure', 'Project stewardship'],
   },
-] as const;
+  {
+    id: 'lacesse-co',
+    name: 'Lacesse Co',
+    kind: 'Infrastructure partner',
+    recordType: 'Institution',
+    location: 'Kenya',
+    summary: 'The company behind Fikra API, an independent inference service partner for APT-LABS.',
+    value: 'Inference infrastructure + engineering partnership',
+    role: 'APT-LABS partner',
+    tags: ['Inference', 'AI infrastructure', 'Engineering'],
+    action: false,
+  },
+  {
+    id: 'asset-fikra-api',
+    name: 'Fikra API',
+    kind: 'Inference service',
+    recordType: 'Asset',
+    location: 'Service infrastructure',
+    summary: 'An inference API operated by Lacesse Co that can support backend capabilities such as Commons discovery and school-console automarking.',
+    value: 'Model access + application infrastructure',
+    role: 'Inference service asset',
+    tags: ['Inference', 'Commons discovery', 'School operations'],
+    owner: 'Lacesse Co',
+    action: false,
+  },
+];
 
 const filters = ['All', 'Institution', 'Asset'] as const;
 
@@ -81,6 +120,8 @@ export function Institutions() {
   const [storageError, setStorageError] = useState('');
 
   useEffect(() => {
+    const requestedQuery = new URLSearchParams(window.location.search).get('q');
+    if (requestedQuery) setQuery(requestedQuery);
     try {
       const signals = readFieldSignals();
       const counts: Record<string, number> = {};
@@ -95,7 +136,7 @@ export function Institutions() {
 
   const results = useMemo(() => institutions.filter(institution =>
     (filter === 'All' || institution.recordType === filter)
-    && `${institution.name} ${institution.kind} ${institution.location} ${institution.summary} ${institution.value}`
+    && `${institution.name} ${institution.kind} ${institution.location} ${institution.summary} ${institution.value} ${institution.owner ?? ''} ${institution.tags.join(' ')}`
       .toLocaleLowerCase()
       .includes(query.trim().toLocaleLowerCase())
   ), [filter, query]);
@@ -151,6 +192,7 @@ export function Institutions() {
                   <span>{institution.recordType}</span>
                   <span>{institution.kind}</span>
                   <span>{institution.location}</span>
+                  {institution.owner && <span>Operated by {institution.owner}</span>}
                 </div>
                 <h2>{institution.name}</h2>
                 <p>{institution.summary}</p>
@@ -164,16 +206,20 @@ export function Institutions() {
                 )}
               </div>
 
-              <Link
-                aria-label={`${institution.recordType === 'Asset' ? 'Plan work for' : 'Open signals for'} ${institution.name}`}
-                className="institution-open"
-                href={institution.recordType === 'Asset'
-                  ? `/workspace/workbench?asset=${encodeURIComponent(institution.name)}`
-                  : `/workspace/commons?institution=${encodeURIComponent(institution.id)}`}
-              >
-                {institution.recordType === 'Asset' ? 'Plan work' : 'Open signals'}
-                <span aria-hidden="true">↗</span>
-              </Link>
+              {institution.action === false ? (
+                <span className="institution-static-note">PROFILE ONLY</span>
+              ) : (
+                <Link
+                  aria-label={`${institution.recordType === 'Asset' ? 'Plan work for' : 'Open signals for'} ${institution.name}`}
+                  className="institution-open"
+                  href={institution.recordType === 'Asset'
+                    ? `/workspace/workbench?asset=${encodeURIComponent(institution.name)}`
+                    : `/workspace/commons?institution=${encodeURIComponent(institution.id)}`}
+                >
+                  {institution.recordType === 'Asset' ? 'Plan work' : 'Open signals'}
+                  <span aria-hidden="true">↗</span>
+                </Link>
+              )}
             </article>
           ))}
           {results.length === 0 && (
