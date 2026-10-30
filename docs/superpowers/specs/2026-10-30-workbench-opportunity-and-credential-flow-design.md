@@ -2,7 +2,9 @@
 
 ## Status
 
-Design approved on 2026-10-30. This specification is awaiting user review before implementation planning.
+Design and specification approved on 2026-10-30.
+
+The current implementation scope is a browser-local workflow. Supabase Auth/Postgres and Issuer2 remain the target architecture, not connected services in this build. Applications, reviewer decisions, work authorization, evidence, and acceptance remain local to the browser; payment and credential issuance are disabled.
 
 ## Purpose
 
