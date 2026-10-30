@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
-import { useLocation } from 'wouter';
+import { Link } from 'wouter';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import { readFieldSignals } from '../../lib/local-workflows';
 
@@ -75,7 +75,6 @@ const institutions = [
 const filters = ['All', 'Institution', 'Asset'] as const;
 
 export function Institutions() {
-  const [, navigate] = useLocation();
   const [filter, setFilter] = useState<(typeof filters)[number]>('All');
   const [query, setQuery] = useState('');
   const [signalCounts, setSignalCounts] = useState<Record<string, number>>({});
@@ -106,28 +105,14 @@ export function Institutions() {
       <main className="institution-page">
         <header className="institution-page-head">
           <div>
-            <p className="eyebrow">INSTITUTIONS / OPERATING LAYER</p>
-            <h1>Institutions &amp; assets</h1>
-            <p>Stewards connect capability to real needs. Each record anchors work, evidence, and responsibility.</p>
+            <p className="eyebrow">APT-LABS / FIELD REGISTER</p>
+            <h1>Institutions <span aria-hidden="true">/</span> Assets</h1>
           </div>
-          <span className="demo-stamp">LOCAL-FIRST MODE</span>
+          <span className="institution-page-index">{String(results.length).padStart(2, '0')} RECORDS</span>
         </header>
 
-        <section className="institution-banner">
-          <div className="institution-banner-copy">
-            <p className="eyebrow">OPERATING MODEL</p>
-            <h2>Institution sets the mandate. Asset holds the capability. Work makes both matter.</h2>
-          </div>
-          <div className="institution-banner-meta">
-            <span>Institution</span>
-            <strong>Mandate + governance</strong>
-            <span>Asset / work</span>
-            <strong>Stewardship + accountable execution</strong>
-          </div>
-        </section>
-
         <div className="institution-toolbar">
-          <div aria-label="Filter institutions by type" className="institution-filters" role="group">
+          <div aria-label="Filter records" className="institution-filters" role="group">
             {filters.map(item => (
               <button
                 aria-pressed={filter === item}
@@ -143,58 +128,52 @@ export function Institutions() {
           <label className="institution-search">
             <span aria-hidden="true">⌕</span>
             <input
-              aria-label="Search institutions"
+                aria-label="Search institutions and assets"
               onInput={event => setQuery((event.currentTarget as HTMLInputElement).value)}
-              placeholder="Name, type, or place"
+                placeholder="Name, type, or place…"
               value={query}
             />
           </label>
         </div>
 
         <p aria-live="polite" className="institution-result-count">
-          {results.length.toString().padStart(2, '0')} operating profiles
+          {String(results.length).padStart(2, '0')} matching records
         </p>
 
-        <section aria-label="Institution profiles" className="institution-grid">
+        <section aria-label="Institutions and assets" className="institution-records">
           {results.map((institution, index) => (
-            <article className="institution-card" key={institution.id}>
-              <div className="institution-card-top">
-                <span className="institution-card-index">{String(index + 1).padStart(2, '0')}</span>
-                <span className="institution-card-role">{institution.role}</span>
-              </div>
+            <article className={`institution-record institution-record--${institution.recordType.toLowerCase()}`} key={institution.id}>
+              <span className="institution-record-mark" aria-hidden="true" />
+              <span className="institution-record-index">{String(index + 1).padStart(2, '0')}</span>
 
-              <div className="institution-card-body">
+              <div className="institution-record-main">
+                <div className="institution-record-meta">
+                  <span>{institution.recordType}</span>
+                  <span>{institution.kind}</span>
+                  <span>{institution.location}</span>
+                </div>
                 <h2>{institution.name}</h2>
                 <p>{institution.summary}</p>
               </div>
 
-              <div className="institution-card-meta">
-                <span>{institution.recordType}</span>
-                <span>{institution.kind}</span>
-                <span>{institution.location}</span>
-                {institution.recordType === 'Institution' && <span>{signalCounts[institution.id] ?? 0} local signals</span>}
+              <div className="institution-record-function">
+                <span>NETWORK ROLE</span>
+                <strong>{institution.role}</strong>
+                {institution.recordType === 'Institution' && (
+                  <small>{signalCounts[institution.id] ?? 0} local signals</small>
+                )}
               </div>
 
-              <div className="institution-card-value">
-                <span>Value shape</span>
-                <strong>{institution.value}</strong>
-              </div>
-
-              <div className="institution-chips">
-                {institution.tags.map(tag => (
-                  <span key={tag}>{tag}</span>
-                ))}
-              </div>
-
-              <button
+              <Link
+                aria-label={`${institution.recordType === 'Asset' ? 'Plan work for' : 'Open signals for'} ${institution.name}`}
                 className="institution-open"
-                onClick={() => navigate(institution.recordType === 'Asset'
+                href={institution.recordType === 'Asset'
                   ? `/workspace/workbench?asset=${encodeURIComponent(institution.name)}`
-                  : `/workspace/commons?institution=${encodeURIComponent(institution.id)}`)}
-                type="button"
+                  : `/workspace/commons?institution=${encodeURIComponent(institution.id)}`}
               >
-                {institution.recordType === 'Asset' ? 'Plan work' : 'Open signals'} <span aria-hidden="true">↗</span>
-              </button>
+                {institution.recordType === 'Asset' ? 'Plan work' : 'Open signals'}
+                <span aria-hidden="true">↗</span>
+              </Link>
             </article>
           ))}
           {results.length === 0 && (
