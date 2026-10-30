@@ -13,7 +13,6 @@ interface InstitutionRecord {
   value: string;
   role: string;
   tags: string[];
-  owner?: string;
   action?: false;
 }
 
@@ -85,28 +84,15 @@ const institutions: InstitutionRecord[] = [
     tags: ['Hydropower', 'Infrastructure', 'Project stewardship'],
   },
   {
-    id: 'lacesse-co',
-    name: 'Lacesse Co',
-    kind: 'Infrastructure partner',
-    recordType: 'Institution',
-    location: 'Kenya',
-    summary: 'The company behind Fikra API, an independent inference service partner for APT-LABS.',
-    value: 'Inference infrastructure + engineering partnership',
-    role: 'APT-LABS partner',
-    tags: ['Inference', 'AI infrastructure', 'Engineering'],
-    action: false,
-  },
-  {
     id: 'asset-fikra-api',
     name: 'Fikra API',
     kind: 'Inference service',
     recordType: 'Asset',
     location: 'Service infrastructure',
-    summary: 'An inference API operated by Lacesse Co that can support backend capabilities such as Commons discovery and school-console automarking.',
+    summary: 'An inference API asset for backend capabilities such as Commons discovery and school-console automarking.',
     value: 'Model access + application infrastructure',
     role: 'Inference service asset',
     tags: ['Inference', 'Commons discovery', 'School operations'],
-    owner: 'Lacesse Co',
     action: false,
   },
 ];
@@ -136,7 +122,7 @@ export function Institutions() {
 
   const results = useMemo(() => institutions.filter(institution =>
     (filter === 'All' || institution.recordType === filter)
-    && `${institution.name} ${institution.kind} ${institution.location} ${institution.summary} ${institution.value} ${institution.owner ?? ''} ${institution.tags.join(' ')}`
+    && `${institution.name} ${institution.kind} ${institution.location} ${institution.summary} ${institution.value} ${institution.tags.join(' ')}`
       .toLocaleLowerCase()
       .includes(query.trim().toLocaleLowerCase())
   ), [filter, query]);
@@ -192,7 +178,6 @@ export function Institutions() {
                   <span>{institution.recordType}</span>
                   <span>{institution.kind}</span>
                   <span>{institution.location}</span>
-                  {institution.owner && <span>Operated by {institution.owner}</span>}
                 </div>
                 <h2>{institution.name}</h2>
                 <p>{institution.summary}</p>

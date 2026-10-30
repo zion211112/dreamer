@@ -34,6 +34,12 @@ export interface WorkBriefDraft {
   materials: string;
   fieldNotes: string;
   acceptanceCriteria?: string;
+  compensationType?: '' | 'paid' | 'unpaid';
+  compensationAmount?: string;
+  compensationCurrency?: string;
+  paymentTrigger?: string;
+  expenseTerms?: string;
+  rightsTerms?: string;
   updatedAt: string;
 }
 
@@ -164,6 +170,12 @@ function isWorkBriefDraft(value: unknown): value is WorkBriefDraft {
     && typeof value.materials === 'string'
     && typeof value.fieldNotes === 'string'
     && (value.acceptanceCriteria === undefined || typeof value.acceptanceCriteria === 'string')
+    && (value.compensationType === undefined || value.compensationType === '' || value.compensationType === 'paid' || value.compensationType === 'unpaid')
+    && (value.compensationAmount === undefined || typeof value.compensationAmount === 'string')
+    && (value.compensationCurrency === undefined || typeof value.compensationCurrency === 'string')
+    && (value.paymentTrigger === undefined || typeof value.paymentTrigger === 'string')
+    && (value.expenseTerms === undefined || typeof value.expenseTerms === 'string')
+    && (value.rightsTerms === undefined || typeof value.rightsTerms === 'string')
     && typeof value.updatedAt === 'string';
 }
 
@@ -401,6 +413,12 @@ export function createWorkBrief(signal: FieldSignal | null): WorkBriefDraft {
     scope: signal?.details ?? '',
     materials: '',
     fieldNotes: '',
+    compensationType: '',
+    compensationAmount: '',
+    compensationCurrency: '',
+    paymentTrigger: '',
+    expenseTerms: '',
+    rightsTerms: '',
     updatedAt: new Date().toISOString(),
   };
 }

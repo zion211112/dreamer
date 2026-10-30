@@ -11,6 +11,9 @@ import {
   type FieldSignal,
   type WorkBriefDraft,
 } from '../../lib/local-workflows';
+import { WorkbenchOpportunityFlow } from './WorkbenchOpportunityFlow';
+
+type WorkbenchView = 'opportunities' | 'my-work' | 'prepare';
 
 function getWorkbenchQuery(): { signalId: string | null; proposalId: string | null; assetName: string | null } {
   const params = new URLSearchParams(window.location.search);
@@ -26,6 +29,10 @@ function getApprovedProposalForDraft(draft: WorkBriefDraft, proposals: CommonsPr
 
 export function Workbench() {
   const [, navigate] = useLocation();
+  const [activeView, setActiveView] = useState<WorkbenchView>(() => {
+    const { signalId, proposalId, assetName } = getWorkbenchQuery();
+    return signalId || proposalId || assetName ? 'prepare' : 'opportunities';
+  });
   const [draft, setDraft] = useState<WorkBriefDraft>(() => createWorkBrief(null));
   const [drafts, setDrafts] = useState<WorkBriefDraft[]>([]);
   const [signals, setSignals] = useState<FieldSignal[]>([]);
@@ -96,11 +103,27 @@ export function Workbench() {
     }
   }, []);
 
-  function updateDraft(field: keyof Omit<WorkBriefDraft, 'id' | 'sourceSignalId' | 'sourceProposalId' | 'updatedAt'>, value: string) {
+  function updateDraft<Field extends keyof Omit<WorkBriefDraft, 'id' | 'sourceSignalId' | 'sourceProposalId' | 'updatedAt'>>(
+    field: Field,
+    value: WorkBriefDraft[Field],
+  ) {
     if (accessBlocked) return;
     setDraft(current => ({ ...current, [field]: value }));
     setSaved(false);
   }
+
+  const termsReady = draft.compensationType === 'unpaid'
+    ? Boolean(draft.expenseTerms?.trim() && draft.rightsTerms?.trim())
+    : draft.compensationType === 'paid'
+      ? Boolean(
+        Number.isFinite(Number(draft.compensationAmount))
+        && Number(draft.compensationAmount) > 0
+        && /^[A-Z]{3}$/.test(draft.compensationCurrency?.trim().toUpperCase() ?? '')
+        && draft.paymentTrigger?.trim()
+        && draft.expenseTerms?.trim()
+        && draft.rightsTerms?.trim(),
+      )
+      : false;
 
   function saveDraft() {
     if (accessBlocked) return;
@@ -161,11 +184,11 @@ export function Workbench() {
       <main className="workbench-page">
         <header className="workbench-page-head">
           <div>
-            <p className="eyebrow">WORKBENCH / FIELD BRIEF</p>
-            <h1>Work brief</h1>
-            <p>Scope the response. Leave authorization to the institution.</p>
+            <p className="eyebrow">WORKBENCH / PEOPLE TO PROOF</p>
+            <h1>Workbench</h1>
+            <p>Find scoped work, make a contribution, and leave evidence the institution can review.</p>
           </div>
-          <div className="workbench-page-actions">
+          {activeView === 'prepare' && <div className="workbench-page-actions">
             <details className="workbench-draft-picker">
               <summary>Saved drafts <span>{drafts.length.toString().padStart(2, '0')}</span></summary>
               <div className="workbench-draft-list">
@@ -185,9 +208,25 @@ export function Workbench() {
             <span className="local-only-stamp">{approvedProposal ? 'APPROVED SOURCE · DRAFT' : 'DRAFT · LOCAL'}</span>
             <button className="workbench-save-button" disabled={accessBlocked} onClick={saveDraft} type="button">Save draft</button>
             <button className="workbench-new-button" onClick={startNewDraft} type="button">＋ New brief</button>
-          </div>
+          </div>}
         </header>
 
+        <nav className="wb-view-tabs" aria-label="Workbench views">
+          <button aria-pressed={activeView === 'opportunities'} onClick={() => setActiveView('opportunities')} type="button">Find work</button>
+          <button aria-pressed={activeView === 'my-work'} onClick={() => setActiveView('my-work')} type="button">My work</button>
+          <button aria-pressed={activeView === 'prepare'} onClick={() => setActiveView('prepare')} type="button">Prepare a brief</button>
+        </nav>
+
+        <div className="wb-local-notice" role="note">
+          <strong>LOCAL WORKFLOW</strong>
+          <span>Applications and decisions stay in this browser. Nothing is sent to an institution, no payment is processed, and no credential is issued.</span>
+        </div>
+
+        {activeView !== 'prepare' && (
+          <WorkbenchOpportunityFlow view={activeView} />
+        )}
+
+        {activeView === 'prepare' && <>
         {storageError && !accessBlocked && <p className="local-data-warning" role="alert">{storageError}</p>}
 
         {accessBlocked ? (
@@ -256,6 +295,76 @@ export function Workbench() {
                   value={draft.fieldNotes}
                 />
               </label>
+              <section className="workbench-terms-section" aria-labelledby="workbench-terms-heading">
+                <div>
+                  <p className="eyebrow" id="workbench-terms-heading">ENGAGEMENT TERMS</p>
+                  <p>State compensation and rights before a brief is published or applications open.</p>
+                </div>
+                <label>Compensation
+                  <select
+                    onChange={event => {
+                      const value = event.currentTarget.value;
+                      if (value === '' || value === 'paid' || value === 'unpaid') {
+                        updateDraft('compensationType', value);
+                      }
+                    }}
+                    value={draft.compensationType ?? ''}
+                  >
+                    <option value="">Select paid or unpaid</option>
+                    <option value="paid">Paid</option>
+                    <option value="unpaid">Unpaid</option>
+                  </select>
+                </label>
+                {draft.compensationType === 'paid' && (
+                  <div className="workbench-terms-grid">
+                    <label>Amount
+                      <input
+                        min="0"
+                        inputMode="decimal"
+                        onInput={event => updateDraft('compensationAmount', event.currentTarget.value)}
+                        placeholder="Amount"
+                        step="0.01"
+                        type="number"
+                        value={draft.compensationAmount ?? ''}
+                      />
+                    </label>
+                    <label>Currency
+                      <input
+                        onInput={event => updateDraft('compensationCurrency', event.currentTarget.value)}
+                        placeholder="e.g. KES"
+                        value={draft.compensationCurrency ?? ''}
+                      />
+                    </label>
+                    <label className="workbench-terms-wide">Payment trigger or milestones
+                      <input
+                        onInput={event => updateDraft('paymentTrigger', event.currentTarget.value)}
+                        placeholder="When and how payment is due"
+                        value={draft.paymentTrigger ?? ''}
+                      />
+                    </label>
+                  </div>
+                )}
+                <label>Expenses
+                  <input
+                    onInput={event => updateDraft('expenseTerms', event.currentTarget.value)}
+                    placeholder="Reimbursed, included, or none"
+                    value={draft.expenseTerms ?? ''}
+                  />
+                </label>
+                <label>Rights and attribution
+                  <textarea
+                    onInput={event => updateDraft('rightsTerms', event.currentTarget.value)}
+                    placeholder="Ownership, license, credit, and reuse terms"
+                    rows={2}
+                    value={draft.rightsTerms ?? ''}
+                  />
+                </label>
+                <p className={`workbench-terms-status${termsReady ? ' is-ready' : ''}`}>
+                  {termsReady
+                    ? 'Terms are complete for institutional review. This draft is not published.'
+                    : 'Complete all applicable terms before institutional review. This draft is not published.'}
+                </p>
+              </section>
               <label className="workbench-section-field workbench-acceptance">Acceptance criteria
                 <textarea
                   onInput={event => updateDraft('acceptanceCriteria', (event.currentTarget as HTMLTextAreaElement).value)}
@@ -318,7 +427,8 @@ export function Workbench() {
             </aside>
           </section>
         )}
-        <p className="local-data-note">Workbench is a browser-local prototype. Drafts remain on this device and are not shared with an institution or crew.</p>
+        <p className="local-data-note">Drafts stay in this browser; this brief is not shared with an institution or crew.</p>
+        </>}
       </main>
     </WorkspaceLayout>
   );
