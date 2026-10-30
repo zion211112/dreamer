@@ -64,13 +64,13 @@ const institutions: InstitutionRecord[] = [
   {
     id: 'asset-school-management-console',
     name: 'School Management Console',
-    kind: 'Asset',
+    kind: 'Operations platform',
     recordType: 'Asset',
     location: 'Mwea, Kenya',
-    summary: 'A digital operations asset for school records, service coordination, and accountable work.',
-    value: 'School operations + service coordination',
-    role: 'Digital asset',
-    tags: ['Education', 'Operations', 'Work coordination'],
+    summary: 'A local-first teaching and school operations prototype for daily planning, practice marking, and private need drafts. Records stay in this browser and are not shared with the APT-LABS network.',
+    value: 'Teaching tools + private school-need drafts',
+    role: 'Local operations prototype',
+    tags: ['Education', 'Teaching', 'Local records', 'Need drafts'],
   },
   {
     id: 'asset-thiba-hydro-project',
@@ -195,13 +195,21 @@ export function Institutions() {
                 <span className="institution-static-note">PROFILE ONLY</span>
               ) : (
                 <Link
-                  aria-label={`${institution.recordType === 'Asset' ? 'Plan work for' : 'Open signals for'} ${institution.name}`}
+                  aria-label={institution.recordType === 'Asset'
+                    ? institution.name === 'School Management Console' ? 'Open School Console' : `Open asset work for ${institution.name}`
+                    : `Open signals for ${institution.name}`}
                   className="institution-open"
                   href={institution.recordType === 'Asset'
-                    ? `/workspace/workbench?asset=${encodeURIComponent(institution.name)}`
+                    ? institution.name === 'School Management Console'
+                      ? '/workspace/institutions/school-console'
+                      : `/workspace/workbench?asset=${encodeURIComponent(institution.name)}`
                     : `/workspace/commons?institution=${encodeURIComponent(institution.id)}`}
                 >
-                  {institution.recordType === 'Asset' ? 'Plan work' : 'Open signals'}
+                  {institution.recordType === 'Asset'
+                    ? institution.name === 'School Management Console'
+                      ? 'Open console'
+                      : 'Plan work'
+                    : 'Open signals'}
                   <span aria-hidden="true">↗</span>
                 </Link>
               )}

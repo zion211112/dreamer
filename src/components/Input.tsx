@@ -1,5 +1,5 @@
 interface InputProps {
-  type?: 'text' | 'email' | 'password';
+  type?: 'text' | 'email' | 'password' | 'number';
   placeholder?: string;
   value?: string;
   onChange?: (value: string) => void;
@@ -9,6 +9,8 @@ interface InputProps {
   id?: string;
   name?: string;
   autoComplete?: string;
+  min?: number;
+  step?: number;
   className?: string;
   style?: Record<string, string>;
   'aria-invalid'?: boolean;
@@ -26,6 +28,8 @@ export function Input({
   id,
   name,
   autoComplete,
+  min,
+  step,
   className = '',
   style = {},
   'aria-invalid': ariaInvalid,
@@ -54,6 +58,8 @@ export function Input({
       id={id}
       name={name}
       autoComplete={autoComplete}
+      min={min}
+      step={step}
       className={`input ${className}`}
       style={inputStyle}
       aria-invalid={ariaInvalid}
