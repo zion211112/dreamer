@@ -1,8 +1,13 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { useLocation } from 'wouter';
 import { WorkspaceLayout } from './WorkspaceLayout';
+import { EXAMPLE_DECISIONS, EXAMPLE_FIELD_SIGNALS } from '../../lib/ecosystem-examples';
+import { PEOPLE_NETWORK } from '../../lib/people-network';
+import { loadConsoleSnapshot } from '../../lib/school-console-storage';
 import {
   createLocalId,
+  hasRegisteredInstitution,
+  parseConsoleDraftId,
   assignLocalSteward,
   createCommonsProposal,
   decideCommonsProposal,
@@ -24,11 +29,10 @@ const statusLabels: Record<SignalStatus, string> = {
 };
 
 const filters: Array<'all' | SignalStatus> = ['all', 'new', 'triaged', 'brief', 'resolved'];
-const institutionNames: Record<string, string> = {
-  'mwea-school': 'Mwea Community School',
-  'mwea-water': 'Mwea Water Cooperative',
-  'lake-basin-cold-store': 'Lake Basin Cold Store',
-};
+const institutionNames = Object.fromEntries(PEOPLE_NETWORK
+  .filter(entity => entity.type === 'institution')
+  .map(entity => [entity.id, entity.name]));
+const exampleSignalById = new Map(EXAMPLE_FIELD_SIGNALS.map(signal => [signal.id, signal]));
 
 function formatSignalDate(value: string): string {
   return new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(value));
@@ -53,6 +57,9 @@ export function Commons() {
   const [filter, setFilter] = useState<(typeof filters)[number]>('all');
   const [search, setSearch] = useState('');
   const [showReportForm, setShowReportForm] = useState(false);
+  const [sourceConsoleDraftId, setSourceConsoleDraftId] = useState<string | null>(null);
+  const [reportTitle, setReportTitle] = useState('');
+  const [reportDetails, setReportDetails] = useState('');
   const [note, setNote] = useState('');
   const [error, setError] = useState('');
   const [loaded, setLoaded] = useState(false);
@@ -63,15 +70,21 @@ export function Commons() {
   const [decisionNotes, setDecisionNotes] = useState<Record<string, string>>({});
 
   useEffect(() => {
+    let active = true;
     setActorEmail(getCurrentEmail());
     try {
       const savedSignals = readFieldSignals();
-      const requestedInstitution = new URLSearchParams(window.location.search).get('institution');
-      const initialSignal = savedSignals.find(signal => signal.institutionId === requestedInstitution) ?? savedSignals[0];
+      const searchParams = new URLSearchParams(window.location.search);
+      const requestedInstitution = searchParams.get('institution');
+      const requestedSignal = searchParams.get('signal');
+      const initialSignal = requestedSignal
+        ? savedSignals.find(signal => signal.id === requestedSignal)
+        : savedSignals.find(signal => signal.institutionId === requestedInstitution) ?? savedSignals[0];
       setSignals(savedSignals);
       setSelectedId(initialSignal?.id ?? '');
-      setInstitutionScope(initialSignal?.institutionId ?? requestedInstitution ?? '');
-      if (requestedInstitution) setSearch(requestedInstitution);
+      const initialInstitution = requestedInstitution ?? initialSignal?.institutionId ?? '';
+      setInstitutionScope(initialInstitution);
+      if (initialInstitution) setSearch(initialInstitution);
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : 'Local field signals could not be loaded.');
     }
@@ -81,10 +94,32 @@ export function Commons() {
       setError(loadError instanceof Error ? loadError.message : 'Local governance records could not be loaded.');
     }
     setLoaded(true);
+    const requestedDraftId = parseConsoleDraftId(window.location.search);
+    if (requestedDraftId) {
+      void loadConsoleSnapshot().then(snapshot => {
+        const draft = snapshot.tenderDrafts.find(item => item.id === requestedDraftId);
+        if (!draft) throw new Error('The selected School Console draft is no longer available.');
+        const title = draft.assetName.trim();
+        const details = draft.need.trim();
+        if (title.length < 5 || details.length < 12) {
+          throw new Error('The selected Console draft needs a clear title and at least 12 characters of need detail before it can be reviewed here.');
+        }
+        if (!active) return;
+        setSourceConsoleDraftId(draft.id);
+        setReportTitle(title);
+        setReportDetails(details);
+        setShowReportForm(true);
+      }).catch(loadError => {
+        if (active) setError(loadError instanceof Error
+          ? loadError.message
+          : 'The selected School Console draft could not be loaded.');
+      });
+    }
+    return () => { active = false; };
   }, []);
 
   const selected = signals.find(signal => signal.id === selectedId) ?? null;
-  const activeInstitutionId = institutionScope || selected?.institutionId || '';
+  const activeInstitutionId = institutionScope || (selected?.scenario ? '' : selected?.institutionId) || '';
   const activeInstitutionName = activeInstitutionId ? institutionNames[activeInstitutionId]
     ?? selected?.institutionName
     ?? signals.find(signal => signal.institutionId === activeInstitutionId)?.institutionName
@@ -94,6 +129,7 @@ export function Commons() {
   const activeStewards = governance.stewards.filter(steward => steward.institutionId === authorityInstitutionId);
   const isSteward = hasLocalStewardRole(governance, authorityInstitutionId, actorEmail);
   const institutionProposals = governance.proposals.filter(proposal => !activeInstitutionId || proposal.institutionId === activeInstitutionId);
+  const exampleDecisions = EXAMPLE_DECISIONS.filter(decision => !activeInstitutionId || decision.institutionId === activeInstitutionId);
   const approvedProposal = selected
     ? governance.proposals.find(proposal => proposal.sourceSignalId === selected.id && proposal.status === 'approved') ?? null
     : null;
@@ -106,7 +142,7 @@ export function Commons() {
     .filter(signal => {
       const query = search.trim().toLocaleLowerCase();
       if (!query) return true;
-      return `${signal.title} ${signal.institutionName} ${signal.institutionId} ${signal.assetName} ${signal.location}`
+      return `${signal.title} ${signal.institutionName} ${signal.institutionId} ${signal.assetId ?? ''} ${signal.assetName ?? ''} ${signal.location}`
         .toLocaleLowerCase()
         .includes(query);
     }), [signals, filter, search]);
@@ -145,7 +181,7 @@ export function Commons() {
 
   function submitProposal(event: Event) {
     event.preventDefault();
-    if (!selected) return;
+    if (!selected || selected.scenario) return;
     const form = event.currentTarget as HTMLFormElement;
     const values = new FormData(form);
     try {
@@ -187,14 +223,13 @@ export function Commons() {
     const values = new FormData(form);
     const title = String(values.get('title') ?? '').trim();
     const institutionId = String(values.get('institution') ?? '');
-    const institutionName = String(values.get('institution-name') ?? '').trim()
-      || institutionNames[institutionId]
-      || '';
+    const institutionName = institutionNames[institutionId] ?? '';
     const assetName = String(values.get('asset') ?? '').trim();
     const locationName = String(values.get('location') ?? '').trim();
     const details = String(values.get('details') ?? '').trim();
-    if (title.length < 5 || details.length < 12 || !institutionName || !assetName) {
-      setError('Add an institution, asset, short issue title, and enough detail to triage.');
+    if (title.length < 5 || details.length < 12
+      || !hasRegisteredInstitution(institutionId, Object.keys(institutionNames))) {
+      setError('Select a registered institution, add a short issue title, and provide enough detail to review.');
       return;
     }
 
@@ -203,7 +238,8 @@ export function Commons() {
       id: createLocalId('signal'),
       institutionId,
       institutionName,
-      assetName,
+      ...(assetName ? { assetName } : {}),
+      ...(sourceConsoleDraftId ? { sourceConsoleDraftId } : {}),
       location: locationName,
       title,
       details,
@@ -221,11 +257,23 @@ export function Commons() {
     setSelectedId(signal.id);
     setInstitutionScope(signal.institutionId);
     setShowReportForm(false);
+    setSourceConsoleDraftId(null);
+    setReportTitle('');
+    setReportDetails('');
+    navigate('/workspace/commons');
     form.reset();
   }
 
+  function closeReportForm() {
+    setShowReportForm(false);
+    setSourceConsoleDraftId(null);
+    setReportTitle('');
+    setReportDetails('');
+    if (parseConsoleDraftId(window.location.search)) navigate('/workspace/commons');
+  }
+
   function changeStatus(status: SignalStatus) {
-    if (!selected) return;
+    if (!selected || selected.scenario) return;
     if (status === 'resolved' && !isSteward) {
       setError('Only a designated steward can close this observation.');
       return;
@@ -249,7 +297,7 @@ export function Commons() {
 
   function addNote(event: Event) {
     event.preventDefault();
-    if (!selected || !note.trim()) return;
+    if (!selected || selected.scenario || !note.trim()) return;
     const now = new Date().toISOString();
     const update = { id: createLocalId('update'), text: note.trim(), createdAt: now };
     const saved = persist(signals.map(signal => signal.id === selected.id
@@ -268,14 +316,16 @@ export function Commons() {
             <p>Observation → steward decision → work.</p>
           </div>
           <div className="signal-head-actions">
-            <span className="local-only-stamp">LOCAL · NOT SHARED</span>
-            <button className="signal-primary-action" onClick={() => setShowReportForm(value => !value)} type="button">
+            <button className="signal-primary-action" onClick={() => {
+              if (showReportForm) closeReportForm();
+              else setShowReportForm(true);
+            }} type="button">
               {showReportForm ? 'Close form' : '＋ Report an issue'}
             </button>
           </div>
         </header>
 
-        <p className="commons-note">Observations are reports. Only steward decisions authorize work.</p>
+        <p className="commons-note">Review the record, document the condition, and route the decision through the steward authority.</p>
 
         <nav className="commons-modebar" aria-label="Commons views" role="tablist">
           <button
@@ -317,30 +367,26 @@ export function Commons() {
           <form className="signal-report-form" onSubmit={submitReport}>
             <div className="signal-form-heading">
               <div><p className="eyebrow">NEW OBSERVATION</p><h2>What changed?</h2></div>
-              <span>Saved locally</span>
+              <span>Record update</span>
             </div>
             <div className="signal-form-grid">
               <label>Institution
                 <select name="institution" required>
-                  <option value="mwea-school">Mwea Community School</option>
-                  <option value="mwea-water">Mwea Water Cooperative</option>
-                  <option value="lake-basin-cold-store">Lake Basin Cold Store</option>
+                  <option value="">Select a registered institution</option>
+                  {Object.entries(institutionNames).map(([id, name]) => <option key={id} value={id}>{name}</option>)}
                 </select>
               </label>
-              <label>Institution name (if different)
-                <input name="institution-name" placeholder="Use the selected example or enter another" />
-              </label>
               <label>Asset or place
-                <input name="asset" placeholder="Pump 02, cold room, classroom…" required />
+                <input name="asset" placeholder="Optional · select or describe if known" />
               </label>
               <label>Location
                 <input name="location" placeholder="Town, site, or building" />
               </label>
               <label className="signal-form-wide">Short issue
-                <input maxLength={120} name="title" placeholder="What changed?" required />
+                <input maxLength={120} name="title" onInput={event => setReportTitle((event.currentTarget as HTMLInputElement).value)} placeholder="What changed?" required value={reportTitle} />
               </label>
               <label className="signal-form-wide">What did you observe?
-                <textarea maxLength={1200} minLength={12} name="details" placeholder="Describe what was noticed. Separate observation from suspected cause." required rows={3} />
+                <textarea maxLength={1200} minLength={12} name="details" onInput={event => setReportDetails((event.currentTarget as HTMLTextAreaElement).value)} placeholder="Describe what was noticed. Separate observation from suspected cause." required rows={3} value={reportDetails} />
               </label>
               <label>Attention
                 <select name="urgency">
@@ -351,8 +397,11 @@ export function Commons() {
               </label>
             </div>
             <div className="signal-form-footer">
-              <span>Urgency is a reporter’s note, not an automated priority.</span>
-              <button className="signal-primary-action" type="submit">Save local signal</button>
+              <span>{sourceConsoleDraftId ? 'Review and edit this observation before saving; the Console draft remains unchanged.' : 'Urgency is a reporter’s note, not an automated priority.'}</span>
+              <div>
+                <button className="signal-quiet-action" onClick={closeReportForm} type="button">Cancel</button>
+                <button className="signal-primary-action" type="submit">Save signal</button>
+              </div>
             </div>
           </form>
         )}
@@ -363,7 +412,7 @@ export function Commons() {
               <p className="eyebrow">GOVERNANCE / {activeInstitutionName.toUpperCase()}</p>
               <h2 id="commons-governance-title">Decision register</h2>
             </div>
-            {isSteward && selected && (
+            {isSteward && selected && !selected.scenario && (
               <button
                 className="signal-secondary-action"
                 onClick={() => setShowProposalForm(value => !value)}
@@ -383,7 +432,7 @@ export function Commons() {
                   {activeStewards.map(steward => <li key={steward.email}>{steward.email}</li>)}
                 </ul>
               )}
-              <small>Role records are stored in this browser; identity and authority are not independently authenticated.</small>
+              <small>Authority is local to the working record and should be confirmed by the responsible institution.</small>
             </div>
             {!activeStewards.length && actorEmail && activeInstitutionId && (
               <button className="signal-secondary-action" onClick={registerInitialSteward} type="button">
@@ -392,6 +441,36 @@ export function Commons() {
             )}
             {!actorEmail && <span className="commons-authority-prompt">Sign in to record a steward role.</span>}
           </div>
+
+          <section aria-labelledby="commons-example-decisions-title" className="commons-example-decisions">
+            <header>
+              <div>
+                <p className="eyebrow">CASE REFERENCES</p>
+                <h3 id="commons-example-decisions-title">Decision examples</h3>
+              </div>
+              <span>Reference view</span>
+            </header>
+            {exampleDecisions.length ? (
+              <div className="commons-example-decision-list">
+                {exampleDecisions.map(decision => {
+                  const example = exampleSignalById.get(decision.caseId);
+                  return (
+                    <article className={`commons-example-decision commons-example-decision--${decision.outcome}`} key={decision.id}>
+                      <div className="commons-example-decision-meta">
+                        <span>{decision.outcome}</span>
+                        <small>{institutionNames[decision.institutionId] ?? 'Institution scenario'}</small>
+                      </div>
+                      <h4>{example?.title ?? 'Example observation'}</h4>
+                      <p>{decision.scope}</p>
+                      <small>{decision.reason}</small>
+                    </article>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="commons-no-proposals">No decision references are associated with this institution.</p>
+            )}
+          </section>
 
           {isSteward && (
             <form className="commons-steward-form" onSubmit={addSteward}>
@@ -484,7 +563,10 @@ export function Commons() {
         <section aria-label="Field signal queue" className="signal-workspace" hidden={commonsView !== 'signals'}>
           <aside className="signal-queue">
             <div className="signal-queue-heading">
-              <div><p className="eyebrow">QUEUE / {signals.length.toString().padStart(2, '0')}</p><h2>Field signals</h2></div>
+              <div>
+                <p className="eyebrow">{signals.length > 0 && signals.every(signal => signal.scenario) ? 'EXAMPLE CASES' : 'QUEUE'} / {signals.length.toString().padStart(2, '0')}</p>
+                <h2>Field signals</h2>
+              </div>
               <span className="signal-queue-count">{visibleSignals.length}</span>
             </div>
             <label className="signal-search">
@@ -519,9 +601,9 @@ export function Commons() {
                   <span className={`signal-status-mark signal-status-${signal.status}`} />
                   <span className="signal-list-copy">
                     <strong>{signal.title}</strong>
-                    <small>{signal.institutionName} · {signal.assetName}</small>
+                    <small>{signal.institutionName} · {signal.assetName ?? 'Asset not identified'}</small>
                   </span>
-                  <span className="signal-list-date">{formatSignalDate(signal.updatedAt)}</span>
+                  <span className="signal-list-date">{signal.scenario ? 'EXAMPLE' : formatSignalDate(signal.updatedAt)}</span>
                 </button>
               ))}
               {loaded && visibleSignals.length === 0 && (
@@ -537,57 +619,83 @@ export function Commons() {
                   <div>
                     <div className="signal-detail-kickers">
                       <span className={`signal-status-label signal-status-${selected.status}`}>{statusLabels[selected.status]}</span>
-                      {selected.scenario && <span className="signal-scenario-label">DEMO SCENARIO</span>}
+                      {selected.scenario && <span className="signal-scenario-label">CASE REFERENCE</span>}
                     </div>
                     <h2>{selected.title}</h2>
-                    <p>{selected.institutionName} <span>·</span> {selected.assetName} <span>·</span> {selected.location}</p>
+                    <p>{selected.institutionName} <span>·</span> {selected.assetName ?? 'Asset not identified'} <span>·</span> {selected.location}</p>
+                    {selected.sourceConsoleDraftId && (
+                      <button
+                        className="signal-source-console-link"
+                        onClick={() => navigate(`/workspace/institutions/school-console?draft=${encodeURIComponent(selected.sourceConsoleDraftId!)}#school-draft-${encodeURIComponent(selected.sourceConsoleDraftId!)}`)}
+                        type="button"
+                      >
+                        Open source Console draft
+                      </button>
+                    )}
                   </div>
-                  <span className="signal-updated">UPDATED {formatSignalDate(selected.updatedAt).toUpperCase()}</span>
+                  <span className="signal-updated">{selected.scenario ? 'EXAMPLE SCENARIO' : `UPDATED ${formatSignalDate(selected.updatedAt).toUpperCase()}`}</span>
                 </header>
                 <section className="signal-observation">
-                  <p className="eyebrow">OBSERVATION / {selected.urgency.toUpperCase()}</p>
+                  <p className="eyebrow">{selected.scenario ? `REPORTED ATTENTION / ${selected.urgency.toUpperCase()}` : `OBSERVATION / ${selected.urgency.toUpperCase()}`}</p>
                   <p>{selected.details}</p>
-                  {selected.scenario && <small>This is sample content for the local prototype, not an operational report.</small>}
+                  {selected.scenario && <small>Reference case only; this record is not an active operational report.</small>}
                 </section>
+                {selected.scenario && (
+                  <section aria-label="Example evidence and review boundary" className="signal-scenario-evidence">
+                    <dl>
+                      <div><dt>Suspected cause</dt><dd>{selected.suspectedCause ?? 'Unknown; not assessed.'}</dd></div>
+                      <div><dt>Verified priority</dt><dd>{selected.verifiedPriority === 'not-assessed' ? 'Not assessed' : 'Unknown'}</dd></div>
+                      <div><dt>Evidence on hand</dt><dd>{selected.evidenceOnHand?.join(' ') ?? 'No evidence attached.'}</dd></div>
+                      <div><dt>Missing checks</dt><dd>{selected.missingChecks?.join(' · ') ?? 'No checks documented.'}</dd></div>
+                    </dl>
+                  </section>
+                )}
                 {selected.id === 'scenario-pump-pressure' && (
                   <section aria-label="Illustrative Fikra machine scan" className="signal-machine-scan">
                     <div className="signal-machine-scan-head">
-                      <p className="eyebrow">FIKRA API / MACHINE DISCOVERY</p>
-                      <span>MOCK SCAN // BROWSER-LOCAL DEMO MODE</span>
+                      <p className="eyebrow">CASE REVIEW</p>
+                      <span>REFERENCE CHECKLIST</span>
                     </div>
-                    <p>Suggested checks: compare inlet pressure at rest and under load; record pump cycling. No live telemetry or cause assessment is available in this example.</p>
+                    <p>Any site check would require a qualified person and a recorded method. This record is a reference scenario, not an active assessment.</p>
                   </section>
                 )}
                 <section className="signal-next-step">
                   <div>
-                    <p className="eyebrow">NEXT ACTION</p>
+                    <p className="eyebrow">{selected.scenario ? 'SUGGESTED NEXT STEP · NOT AUTHORIZED' : 'NEXT ACTION'}</p>
                     <strong>
-                      {selected.status === 'new' ? 'Review the observation' :
+                      {selected.scenario ? selected.suggestedNextStep ?? 'Review evidence with an authorized person.' :
+                        selected.status === 'new' ? 'Review the observation' :
                         selected.status === 'triaged' ? 'Steward review before work' :
                           selected.status === 'brief' ? 'Approved work brief' : 'Observation closed'}
                     </strong>
-                    <span>{selected.status === 'brief' && !approvedProposal
+                    <span>{selected.scenario
+                      ? 'This reference case does not authorize action or create a work brief.'
+                      : selected.status === 'brief' && !approvedProposal
                       ? 'No approved proposal is linked. This observation cannot authorize a work brief.'
                       : 'An observation describes a condition; a steward decision authorizes the next action.'}</span>
                   </div>
-                  {selected.status === 'new' && <button className="signal-secondary-action" onClick={() => changeStatus('triaged')} type="button">Move to triage</button>}
-                  {selected.status === 'triaged' && <button className="signal-primary-action" onClick={() => setCommonsView('decisions')} type="button">Open decision register</button>}
-                  {selected.status === 'brief' && approvedProposal && <button className="signal-primary-action" onClick={() => navigate(`/workspace/workbench?proposal=${encodeURIComponent(approvedProposal.id)}`)} type="button">Open approved work brief</button>}
-                  {selected.status !== 'resolved' && isSteward && <button className="signal-quiet-action" onClick={() => changeStatus('resolved')} type="button">Close observation</button>}
-                  {selected.status === 'resolved' && <button className="signal-secondary-action" onClick={() => changeStatus('new')} type="button">Reopen</button>}
+                  {!selected.scenario && selected.status === 'new' && <button className="signal-secondary-action" onClick={() => changeStatus('triaged')} type="button">Move to triage</button>}
+                  {!selected.scenario && selected.status === 'triaged' && <button className="signal-primary-action" onClick={() => setCommonsView('decisions')} type="button">Open decision register</button>}
+                  {!selected.scenario && selected.status === 'brief' && approvedProposal && <button className="signal-primary-action" onClick={() => navigate(`/workspace/workbench?proposal=${encodeURIComponent(approvedProposal.id)}`)} type="button">Open approved work brief</button>}
+                  {!selected.scenario && selected.status !== 'resolved' && isSteward && <button className="signal-quiet-action" onClick={() => changeStatus('resolved')} type="button">Close observation</button>}
+                  {!selected.scenario && selected.status === 'resolved' && <button className="signal-secondary-action" onClick={() => changeStatus('new')} type="button">Reopen</button>}
                 </section>
                 <details className="signal-history">
                   <summary className="signal-history-heading"><span>Activity &amp; notes</span><span>{selected.updates.length.toString().padStart(2, '0')}</span></summary>
-                  <form className="signal-note-form" onSubmit={addNote}>
-                    <input
-                      aria-label="Record a work note"
-                      maxLength={280}
-                      onInput={event => setNote((event.currentTarget as HTMLInputElement).value)}
-                      placeholder="Evidence, next step, or open question"
-                      value={note}
-                    />
-                    <button className="signal-secondary-action" disabled={!note.trim()} type="submit">Add note</button>
-                  </form>
+                  {selected.scenario
+                    ? <p className="signal-scenario-readonly">Example history is not editable.</p>
+                    : (
+                      <form className="signal-note-form" onSubmit={addNote}>
+                        <input
+                          aria-label="Record a work note"
+                          maxLength={280}
+                          onInput={event => setNote((event.currentTarget as HTMLInputElement).value)}
+                          placeholder="Evidence, next step, or open question"
+                          value={note}
+                        />
+                        <button className="signal-secondary-action" disabled={!note.trim()} type="submit">Add note</button>
+                      </form>
+                    )}
                   <ol className="signal-update-list">
                     {selected.updates.map(update => (
                       <li key={update.id}>
@@ -601,8 +709,8 @@ export function Commons() {
             ) : (
               <div className="signal-detail-empty">
                 <p className="eyebrow">NO SIGNAL SELECTED</p>
-                <h2>{loaded ? 'The queue is clear.' : 'Opening local signals…'}</h2>
-                <p>{loaded ? 'Choose a signal or report a new observation to begin.' : 'Reading this browser’s demo records.'}</p>
+                <h2>{loaded ? 'The queue is clear.' : 'Opening signal queue…'}</h2>
+                <p>{loaded ? 'Choose a signal or report a new observation to begin.' : 'Reviewing current records.'}</p>
               </div>
             )}
           </article>

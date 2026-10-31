@@ -43,10 +43,10 @@ function statusLabel(application: LocalWorkApplication): string {
   if (application.workStatus === 'submitted') return 'Delivery submitted';
   if (application.workStatus === 'changes_requested') return 'Changes requested';
   if (application.workStatus === 'accepted') return 'Accepted · credential eligible';
-  if (application.status === 'submitted') return 'Application saved locally';
-  if (application.status === 'under_review') return 'Review in progress · local';
-  if (application.status === 'selected') return 'Selected locally';
-  return 'Declined locally';
+  if (application.status === 'submitted') return 'Application saved';
+  if (application.status === 'under_review') return 'Review in progress';
+  if (application.status === 'selected') return 'Selected';
+  return 'Declined';
 }
 
 function persist(
@@ -213,9 +213,9 @@ export function WorkbenchOpportunityFlow({ view }: { view: View }) {
 
               {existingApplication ? (
                 <div className="wb-existing-application">
-                  <span className="wb-eyebrow">LOCAL WORKFLOW</span>
+                  <span className="wb-eyebrow">WORKFLOW</span>
                   <strong>{statusLabel(existingApplication)}</strong>
-                  <p>This browser has a local application for this work context. It has not been sent to an institution.</p>
+                  <p>This work context already has an application in progress for your current record.</p>
                 </div>
               ) : (
                 <form className="wb-application-form" onSubmit={saveApplication}>
@@ -237,7 +237,7 @@ export function WorkbenchOpportunityFlow({ view }: { view: View }) {
                   </label>
                   <div className="wb-form-footer">
                     <span>Terms must be published before a real application can be submitted.</span>
-                    <button className="wb-primary-button" disabled={!ready || !note.trim()} type="submit">Save application locally</button>
+                    <button className="wb-primary-button" disabled={!ready || !note.trim()} type="submit">Save application</button>
                   </div>
                 </form>
               )}
@@ -249,10 +249,10 @@ export function WorkbenchOpportunityFlow({ view }: { view: View }) {
               <span className="wb-eyebrow">CONTRIBUTOR PROFILE</span>
               <div className="wb-profile">
                 <span className="wb-avatar" aria-hidden="true">KM</span>
-                <span><strong>{applicant}</strong><small>Local profile</small></span>
+                <span><strong>{applicant}</strong><small>Profile</small></span>
               </div>
               <p className="wb-profile-capabilities">Animation · AGI systems · systems design</p>
-              <span className="wb-credential-note">No verified credential is connected to this local profile.</span>
+              <span className="wb-credential-note">No verified credential is connected to this profile.</span>
             </section>
             <section className="wb-rail-section">
               <span className="wb-eyebrow">FROM APPLICATION TO PROOF</span>
@@ -278,7 +278,7 @@ export function WorkbenchOpportunityFlow({ view }: { view: View }) {
               <span className="wb-eyebrow">YOUR WORKFLOW</span>
               <h2>Applications and work</h2>
             </div>
-            <span>{applications.length.toString().padStart(2, '0')} local records</span>
+            <span>{applications.length.toString().padStart(2, '0')} records</span>
           </header>
           {applications.length === 0 ? (
             <div className="wb-empty-state">
@@ -294,7 +294,7 @@ export function WorkbenchOpportunityFlow({ view }: { view: View }) {
                   <article className="wb-application-card" key={application.id}>
                     <header className="wb-application-card-head">
                       <div>
-                        <span className="wb-eyebrow">{opportunity.discipline} · LOCAL RECORD</span>
+                        <span className="wb-eyebrow">{opportunity.discipline} · RECORD</span>
                         <h3>{opportunity.title}</h3>
                       </div>
                       <span className="wb-status-pill">{statusLabel(application)}</span>
@@ -306,26 +306,26 @@ export function WorkbenchOpportunityFlow({ view }: { view: View }) {
 
                     {application.status === 'submitted' && (
                       <div className="wb-review-action">
-                        <p>Institution review is represented locally. No institution has received this application.</p>
+                        <p>Institution review is tracked within this record. No external submission has been made.</p>
                         <button
                           className="wb-secondary-button"
                           disabled={!ready}
                           onClick={() => runAction(
                             () => beginLocalReview(record, application.id),
-                            'Local review started. No institution was notified.',
+                            'Review started. No institution was notified.',
                           )}
                           type="button"
-                        >Begin local review</button>
+                        >Begin review</button>
                       </div>
                     )}
 
                     {application.status === 'under_review' && (
                       <div className="wb-review-action">
                         <label className="wb-inline-field">
-                          Local decision note
+                          Decision note
                           <textarea
                             onInput={event => setApplicationNotes(current => ({ ...current, [application.id]: event.currentTarget.value }))}
-                            placeholder="Record the reason for the local decision."
+                            placeholder="Record the reason for the decision."
                             rows={2}
                             value={applicationNotes[application.id] ?? ''}
                           />
@@ -336,16 +336,16 @@ export function WorkbenchOpportunityFlow({ view }: { view: View }) {
                             disabled={!ready || !(applicationNotes[application.id] ?? '').trim()}
                             onClick={() => runAction(
                               () => decideLocalApplication(record, application.id, 'declined', applicationNotes[application.id] ?? ''),
-                              'Decision saved locally.',
+                              'Decision saved.',
                             )}
                             type="button"
-                          >Decline locally</button>
+                          >Decline</button>
                           <button
                             className="wb-primary-button"
                             disabled={!ready || !(applicationNotes[application.id] ?? '').trim()}
                             onClick={() => runAction(
                               () => decideLocalApplication(record, application.id, 'selected', applicationNotes[application.id] ?? ''),
-                              'Selection saved locally; work is still unauthorized.',
+                              'Selection saved; work remains unauthorized.',
                             )}
                             type="button"
                           >Select for work</button>
@@ -355,7 +355,7 @@ export function WorkbenchOpportunityFlow({ view }: { view: View }) {
 
                     {application.status === 'selected' && application.workStatus === 'authorization_pending' && (
                       <div className="wb-review-action">
-                        <p>Selection is not authorization. Confirm the final scope and terms before recording local authorization.</p>
+                        <p>Selection is not authorization. Confirm the final scope and terms before recording an authorization.</p>
                         <button
                           className="wb-primary-button"
                           disabled={!ready}
@@ -364,19 +364,19 @@ export function WorkbenchOpportunityFlow({ view }: { view: View }) {
                             'Authorization recorded locally. No work order was issued.',
                           )}
                           type="button"
-                        >Authorize work locally</button>
+                        >Authorize work</button>
                       </div>
                     )}
 
                     {application.workStatus === 'authorized' && (
                       <div className="wb-review-action">
-                        <p>The local institution step is complete. The contributor must accept before work begins.</p>
+                        <p>The institution step is complete. The contributor must accept before work begins.</p>
                         <button
                           className="wb-primary-button"
                           disabled={!ready}
                           onClick={() => runAction(
                             () => acceptLocalAuthorization(record, application.id),
-                            'Work marked in progress locally.',
+                            'Work marked in progress.',
                           )}
                           type="button"
                         >Accept authorization &amp; begin</button>
@@ -399,16 +399,16 @@ export function WorkbenchOpportunityFlow({ view }: { view: View }) {
                           disabled={!ready || !(deliveryNotes[application.id] ?? application.deliveryEvidence).trim()}
                           onClick={() => runAction(
                             () => submitLocalDelivery(record, application.id, deliveryNotes[application.id] ?? application.deliveryEvidence),
-                            'Delivery evidence saved locally for institution review.',
+                            'Delivery evidence saved for institution review.',
                           )}
                           type="button"
-                        >Save delivery evidence locally</button>
+                        >Save delivery evidence</button>
                       </div>
                     )}
 
                     {application.workStatus === 'submitted' && (
                       <div className="wb-review-action">
-                        <p><strong>Evidence submitted locally</strong><br />{application.deliveryEvidence}</p>
+                        <p><strong>Evidence submitted</strong><br />{application.deliveryEvidence}</p>
                         <label className="wb-inline-field">
                           Institution review note
                           <textarea
@@ -424,7 +424,7 @@ export function WorkbenchOpportunityFlow({ view }: { view: View }) {
                             disabled={!ready || !(applicationNotes[application.id] ?? '').trim()}
                             onClick={() => runAction(
                               () => reviewLocalDelivery(record, application.id, 'changes_requested', applicationNotes[application.id] ?? ''),
-                              'Changes requested in the local workflow.',
+                              'Changes requested.',
                             )}
                             type="button"
                           >Request changes</button>
@@ -433,10 +433,10 @@ export function WorkbenchOpportunityFlow({ view }: { view: View }) {
                             disabled={!ready || !(applicationNotes[application.id] ?? '').trim()}
                             onClick={() => runAction(
                               () => reviewLocalDelivery(record, application.id, 'accepted', applicationNotes[application.id] ?? ''),
-                              'Acceptance recorded locally; no credential was issued.',
+                              'Acceptance recorded; no credential was issued.',
                             )}
                             type="button"
-                          >Accept delivery locally</button>
+                          >Accept delivery</button>
                         </div>
                       </div>
                     )}
@@ -450,13 +450,13 @@ export function WorkbenchOpportunityFlow({ view }: { view: View }) {
 
                     {application.status === 'declined' && (
                       <div className="wb-credential-eligible">
-                        <strong>Local application declined</strong>
+                        <strong>Application declined</strong>
                         <p>{application.decisionNote}</p>
                       </div>
                     )}
 
                     <details className="wb-history">
-                      <summary>Local activity history <span>{application.events.length.toString().padStart(2, '0')}</span></summary>
+                      <summary>Activity history <span>{application.events.length.toString().padStart(2, '0')}</span></summary>
                       <ol>
                         {application.events.map(item => (
                           <li key={item.id}>

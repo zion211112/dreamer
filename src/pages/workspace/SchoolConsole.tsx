@@ -9,6 +9,7 @@ import {
   type ConsoleSnapshot,
   type SchoolTenderDraft,
 } from '../../lib/school-console-storage';
+import { createConsoleSignalLink } from '../../lib/local-workflows';
 import {
   markPaper,
   parseCsvPapers,
@@ -78,6 +79,10 @@ export function SchoolConsole() {
 
   useEffect(() => {
     let active = true;
+    if (new URLSearchParams(window.location.search).has('draft')) {
+      setRole('principal');
+      setActiveModule('tender-drafts');
+    }
     loadConsoleSnapshot().then(data => {
       if (active) setSnapshot(data);
     }).catch(error => {
@@ -396,14 +401,17 @@ export function SchoolConsole() {
                   {snapshot.tenderDrafts.length === 0
                     ? <p className="sc-empty-state">No local tender drafts. A saved draft remains private and unpublished.</p>
                     : <div className="sc-tender-list">{snapshot.tenderDrafts.map(draft => (
-                      <article className="sc-tender-row" key={draft.id}>
+                      <article className="sc-tender-row" id={`school-draft-${draft.id}`} key={draft.id}>
                         <div className="sc-tender-row-copy">
                           <span className="sc-draft-status">LOCAL DRAFT <i>/</i> UNPUBLISHED</span>
                           <h4>{draft.assetName}</h4>
                           <p>{draft.need}</p>
                           <small>{draft.assetBuildCost ? `Estimated KES ${Number(draft.assetBuildCost).toLocaleString('en-KE')}` : 'Build cost not estimated'} <i>/</i> {new Date(draft.createdAt).toLocaleDateString()}</small>
                         </div>
-                        <Button className="sc-discard-button" disabled={!canWrite} onClick={() => void discardDraft(draft.id)} type="button" variant="ghost">Discard</Button>
+                        <div className="sc-tender-actions">
+                          <Link className="sc-review-commons" href={createConsoleSignalLink(draft.id)}>Review in Commons</Link>
+                          <Button className="sc-discard-button" disabled={!canWrite} onClick={() => void discardDraft(draft.id)} type="button" variant="ghost">Discard</Button>
+                        </div>
                       </article>
                     ))}</div>}
                 </div>

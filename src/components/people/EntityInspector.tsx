@@ -10,11 +10,12 @@ interface EntityInspectorProps {
   mobileOpen: boolean;
   entities: NetworkEntity[];
   relationships: NetworkRelationship[];
+  recordScope: 'sample' | 'imported';
   onSelect: (entity: NetworkEntity) => void;
   onClose: () => void;
 }
 
-export function EntityInspector({ entity, mobileOpen, entities, relationships: allRelationships, onSelect, onClose }: EntityInspectorProps) {
+export function EntityInspector({ entity, mobileOpen, entities, relationships: allRelationships, recordScope, onSelect, onClose }: EntityInspectorProps) {
   if (!entity) {
     return (
       <aside className="people-inspector people-inspector--empty" aria-label="Network details">
@@ -88,7 +89,19 @@ export function EntityInspector({ entity, mobileOpen, entities, relationships: a
           <p>{entity.summary}</p>
           <div className="people-context-tags">
             {entity.location && <span className="people-context-tag">{entity.location}</span>}
-            <span className="people-context-tag people-context-tag--signal">Portable record</span>
+            <span className="people-context-tag people-context-tag--signal">
+              {recordScope === 'sample' ? 'Shared sample registry' : 'Imported portable record'}
+            </span>
+            {entity.assetReference && (
+              <span className="people-context-tag">Sample register · {entity.assetReference}</span>
+            )}
+            {entity.recordBasis && (
+              <span className="people-context-tag">
+                {entity.recordBasis === 'illustrative' ? 'Illustrative example'
+                  : entity.recordBasis === 'local-profile' ? 'Local profile'
+                    : 'Project-reported'}
+              </span>
+            )}
             {entity.commonsContribution && <span className="people-context-tag people-context-tag--commons">Commons contribution</span>}
           </div>
         </section>
@@ -160,7 +173,7 @@ export function EntityInspector({ entity, mobileOpen, entities, relationships: a
 
       <footer className="people-inspector-footer">
         <span className="people-sample-indicator" />
-        Local sample · not a live profile
+        {recordScope === 'sample' ? 'Shared example · not live activity' : 'User-selected portable record'}
       </footer>
     </aside>
   );

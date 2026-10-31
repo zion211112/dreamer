@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'preact/hooks';
 import { Link } from 'wouter';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import { readFieldSignals } from '../../lib/local-workflows';
+import { PEOPLE_NETWORK, PEOPLE_RELATIONSHIPS, type NetworkEntity } from '../../lib/people-network';
 
 interface InstitutionRecord {
   id: string;
@@ -10,108 +11,66 @@ interface InstitutionRecord {
   recordType: 'Institution' | 'Asset';
   location: string;
   summary: string;
-  value: string;
   role: string;
   tags: string[];
+  assetReference?: string;
+  association?: string;
+  recordBasis?: NetworkEntity['recordBasis'];
   action?: false;
 }
 
-const institutions: InstitutionRecord[] = [
-  {
-    id: 'mwea-school',
-    name: 'Mwea Community School',
-    kind: 'School',
-    recordType: 'Institution',
-    location: 'Mwea, Kenya',
-    summary: 'A school coordinates service needs and the assets under its care, creating recurring, locally accountable work.',
-    value: 'Service demand + asset stewardship',
-    role: 'Service operator',
-    tags: ['Education', 'Maintenance', 'Local trust'],
-  },
-  {
-    id: 'mwea-water',
-    name: 'Mwea Water Cooperative',
-    kind: 'Cooperative',
-    recordType: 'Institution',
-    location: 'Mwea, Kenya',
-    summary: 'A cooperative stewards public utility assets and turns local service issues into accountable work packages.',
-    value: 'Shared asset control + community coordination',
-    role: 'Asset steward',
-    tags: ['Water', 'Shared assets', 'Governance'],
-  },
-  {
-    id: 'lake-basin-cold-store',
-    name: 'Lake Basin Cold Store',
-    kind: 'Enterprise',
-    recordType: 'Institution',
-    location: 'Kisumu, Kenya',
-    summary: 'An enterprise with operational continuity needs, maintenance, and auditable work proof.',
-    value: 'Asset uptime + operations + compliance',
-    role: 'Execution engine',
-    tags: ['Cold chain', 'Operations', 'Proof of work'],
-  },
-  {
-    id: 'asset-kemetos1',
-    name: 'Kemetos1',
-    kind: 'Asset',
-    recordType: 'Asset',
-    location: 'Distributed',
-    summary: 'An AGI systems asset with reusable inference, research, and agent infrastructure.',
-    value: 'Reusable systems capability + technical work',
-    role: 'Systems asset',
-    tags: ['AGI systems', 'Inference', 'Agent infrastructure'],
-  },
-  {
-    id: 'asset-school-management-console',
-    name: 'School Management Console',
-    kind: 'Operations platform',
-    recordType: 'Asset',
-    location: 'Mwea, Kenya',
-    summary: 'A local-first teaching and school operations prototype for daily planning, practice marking, and private need drafts. Records stay in this browser and are not shared with the APT-LABS network.',
-    value: 'Teaching tools + private school-need drafts',
-    role: 'Local operations prototype',
-    tags: ['Education', 'Teaching', 'Local records', 'Need drafts'],
-  },
-  {
-    id: 'asset-thiba-hydro-project',
-    name: 'Thiba Hydro Project',
-    kind: 'Asset',
-    recordType: 'Asset',
-    location: 'Location to confirm',
-    summary: 'An infrastructure project asset for coordinating stewardship, work packages, and evidence.',
-    value: 'Infrastructure scope + accountable execution',
-    role: 'Infrastructure asset',
-    tags: ['Hydropower', 'Infrastructure', 'Project stewardship'],
-  },
-  {
-    id: 'asset-fikra-api',
-    name: 'Fikra API',
-    kind: 'Inference service',
-    recordType: 'Asset',
-    location: 'Service infrastructure',
-    summary: 'An inference API asset for backend capabilities such as Commons discovery and school-console automarking.',
-    value: 'Model access + application infrastructure',
-    role: 'Inference service asset',
-    tags: ['Inference', 'Commons discovery', 'School operations'],
-    action: false,
-  },
-];
+const entityById = new Map(PEOPLE_NETWORK.map(entity => [entity.id, entity]));
+const associationsByAsset = new Map<string, string[]>();
+
+for (const relationship of PEOPLE_RELATIONSHIPS) {
+  const source = entityById.get(relationship.sourceId);
+  const target = entityById.get(relationship.targetId);
+  if (source?.type !== 'asset' || target?.type !== 'institution' || relationship.kind !== 'affiliation') continue;
+  const associations = associationsByAsset.get(source.id) ?? [];
+  associations.push(`${relationship.verb}: ${target.name}`);
+  associationsByAsset.set(source.id, associations);
+}
+
+const institutions: InstitutionRecord[] = PEOPLE_NETWORK.flatMap(entity => {
+  if (entity.type !== 'institution' && entity.type !== 'asset') return [];
+  return [{
+    id: entity.id,
+    name: entity.name,
+    kind: entity.role,
+    recordType: entity.type === 'institution' ? 'Institution' : 'Asset',
+    location: entity.location ?? (entity.type === 'asset' ? 'Site not specified' : 'Location not specified'),
+    summary: entity.summary,
+    role: entity.type === 'asset' ? 'Asset profile' : 'Institution profile',
+    tags: [...entity.capabilities, entity.context ?? '', entity.assetReference ?? ''],
+    assetReference: entity.assetReference,
+    association: associationsByAsset.get(entity.id)?.join(' · '),
+    recordBasis: entity.recordBasis,
+    action: entity.id === 'asset-fikra-api' ? false : undefined,
+  }];
+});
 
 const filters = ['All', 'Institution', 'Asset'] as const;
 
 export function Institutions() {
   const [filter, setFilter] = useState<(typeof filters)[number]>('All');
   const [query, setQuery] = useState('');
+  const [selectedRecordId, setSelectedRecordId] = useState('');
   const [signalCounts, setSignalCounts] = useState<Record<string, number>>({});
   const [storageError, setStorageError] = useState('');
 
   useEffect(() => {
+    const requestedRecordId = new URLSearchParams(window.location.search).get('record');
+    if (requestedRecordId) {
+      setSelectedRecordId(requestedRecordId);
+      const requestedRecord = institutions.find(record => record.id === requestedRecordId);
+      if (requestedRecord) setFilter(requestedRecord.recordType);
+    }
     const requestedQuery = new URLSearchParams(window.location.search).get('q');
     if (requestedQuery) setQuery(requestedQuery);
     try {
       const signals = readFieldSignals();
       const counts: Record<string, number> = {};
-      for (const signal of signals) {
+      for (const signal of signals.filter(item => !item.scenario)) {
         counts[signal.institutionId] = (counts[signal.institutionId] ?? 0) + 1;
       }
       setSignalCounts(counts);
@@ -120,12 +79,13 @@ export function Institutions() {
     }
   }, []);
 
-  const results = useMemo(() => institutions.filter(institution =>
-    (filter === 'All' || institution.recordType === filter)
-    && `${institution.name} ${institution.kind} ${institution.location} ${institution.summary} ${institution.value} ${institution.tags.join(' ')}`
-      .toLocaleLowerCase()
-      .includes(query.trim().toLocaleLowerCase())
-  ), [filter, query]);
+  const results = useMemo(() => institutions.filter(institution => selectedRecordId
+    ? institution.id === selectedRecordId
+    : (filter === 'All' || institution.recordType === filter)
+      && `${institution.name} ${institution.kind} ${institution.location} ${institution.summary} ${institution.association ?? ''} ${institution.tags.join(' ')}`
+        .toLocaleLowerCase()
+        .includes(query.trim().toLocaleLowerCase())
+  ), [filter, query, selectedRecordId]);
 
   return (
     <WorkspaceLayout currentContext="institutions">
@@ -145,7 +105,7 @@ export function Institutions() {
                 aria-pressed={filter === item}
                 className={`institution-filter${filter === item ? ' is-active' : ''}`}
                 key={item}
-                onClick={() => setFilter(item)}
+                onClick={() => { setSelectedRecordId(''); setFilter(item); }}
                 type="button"
               >
                 {item}
@@ -156,7 +116,7 @@ export function Institutions() {
             <span aria-hidden="true">⌕</span>
             <input
                 aria-label="Search institutions and assets"
-              onInput={event => setQuery((event.currentTarget as HTMLInputElement).value)}
+              onInput={event => { setSelectedRecordId(''); setQuery((event.currentTarget as HTMLInputElement).value); }}
                 placeholder="Name, type, or place…"
               value={query}
             />
@@ -169,7 +129,7 @@ export function Institutions() {
 
         <section aria-label="Institutions and assets" className="institution-records">
           {results.map((institution, index) => (
-            <article className={`institution-record institution-record--${institution.recordType.toLowerCase()}`} key={institution.id}>
+            <article className={`institution-record institution-record--${institution.recordType.toLowerCase()}`} id={`institution-record-${institution.id}`} key={institution.id}>
               <span className="institution-record-mark" aria-hidden="true" />
               <span className="institution-record-index">{String(index + 1).padStart(2, '0')}</span>
 
@@ -178,9 +138,16 @@ export function Institutions() {
                   <span>{institution.recordType}</span>
                   <span>{institution.kind}</span>
                   <span>{institution.location}</span>
+                  {institution.recordBasis && <span>{institution.recordBasis}</span>}
                 </div>
                 <h2>{institution.name}</h2>
                 <p>{institution.summary}</p>
+                {institution.assetReference && (
+                  <span className="institution-sample-reference">Sample register · {institution.assetReference}</span>
+                )}
+                {institution.association && (
+                  <span className="institution-association">{institution.association}</span>
+                )}
               </div>
 
               <div className="institution-record-function">

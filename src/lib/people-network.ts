@@ -7,7 +7,15 @@ export type RelationshipKind =
   | 'work'
   | 'stewardship'
   | 'contribution'
-  | 'evidence';
+  | 'evidence'
+  | 'owns'
+  | 'operates'
+  | 'stewards'
+  | 'funds'
+  | 'contributes_to'
+  | 'attests'
+  | 'issues';
+export type RecordBasis = 'illustrative' | 'local-profile' | 'project-reported';
 
 export interface NetworkEntity {
   id: string;
@@ -19,6 +27,8 @@ export interface NetworkEntity {
   capabilities: string[];
   context?: string;
   commonsContribution?: boolean;
+  assetReference?: string;
+  recordBasis?: RecordBasis;
 }
 
 export interface NetworkRelationship {
@@ -127,6 +137,7 @@ export const PEOPLE_NETWORK: NetworkEntity[] = [
     location: 'Distributed',
     capabilities: ['Systems architecture', 'Protocol design', 'AGI systems'],
     context: 'Three APT-LABS design SBTs reported; Kemetos1 paper verification stated by project.',
+    recordBasis: 'local-profile',
   },
   {
     id: 'person-horus-young',
@@ -147,6 +158,16 @@ export const PEOPLE_NETWORK: NetworkEntity[] = [
     capabilities: ['Crew administration'],
   },
   {
+    id: 'person-zuri-kamau',
+    type: 'person',
+    name: 'Zuri Kamau',
+    role: 'Illustrative learning animator',
+    summary: 'A fictional sample contributor used to explain the learning-media journey; no real person or availability is represented.',
+    capabilities: ['Storyboarding', 'Learning-focused communication'],
+    context: 'Illustrative only · not an available contributor.',
+    recordBasis: 'illustrative',
+  },
+  {
     id: 'asset-kemetos1',
     type: 'asset',
     name: 'Kemetos1',
@@ -155,6 +176,8 @@ export const PEOPLE_NETWORK: NetworkEntity[] = [
     location: 'Distributed',
     capabilities: ['AGI systems', 'Inference', 'Agent infrastructure'],
     context: 'Asset record; no institution or external affiliation inferred.',
+    assetReference: 'EX-AS-01',
+    recordBasis: 'project-reported',
   },
   {
     id: 'crew-field-systems',
@@ -197,34 +220,91 @@ export const PEOPLE_NETWORK: NetworkEntity[] = [
     context: 'Three members · administration assigned to Tehuti.',
   },
   {
+    id: 'crew-learning-media',
+    type: 'crew',
+    name: 'Learning Media Crew',
+    role: 'Illustrative learning media crew',
+    summary: 'A sample crew concept for the learning-animation journey; no real members or availability are asserted.',
+    capabilities: ['Storyboarding', 'Learning-focused communication'],
+    context: 'Illustrative only · no staffed team is represented.',
+    recordBasis: 'illustrative',
+  },
+  {
     id: 'asset-microgrid',
     type: 'asset',
-    name: 'Community solar microgrid',
+    name: 'Community Solar Microgrid',
     role: 'Energy asset',
-    summary: 'A shared solar and storage installation serving a neighborhood workshop.',
-    location: 'Nairobi',
+    summary: 'Illustrative shared solar and storage asset; site, operator, and operating state are not configured.',
     capabilities: ['Solar generation', 'Battery storage', 'Shared access'],
-    context: 'Held by Solar Commons Cooperative',
+    context: 'Associated institution shown as scenario context; ownership is unknown.',
+    assetReference: 'EX-AS-05',
+    recordBasis: 'illustrative',
   },
   {
     id: 'asset-repair-bench',
     type: 'asset',
-    name: 'Shared repair workshop',
+    name: 'Shared Repair Workshop',
     role: 'Workshop asset',
-    summary: 'A maintained workspace for hands-on repair, training, and prototyping.',
-    location: 'Nairobi',
+    summary: 'Illustrative shared workspace; site, operator, and operating state are not configured.',
     capabilities: ['Repair tools', 'Training space', 'Open hours'],
-    context: 'Held by Kibera Makerspace',
+    context: 'Associated institution shown as scenario context; ownership is unknown.',
+    assetReference: 'EX-AS-06',
+    recordBasis: 'illustrative',
   },
   {
     id: 'asset-tool-library',
     type: 'asset',
-    name: 'Community tool library',
+    name: 'Community Tool Library',
     role: 'Shared equipment',
-    summary: 'A local lending library that keeps useful equipment accessible and accounted for.',
-    location: 'Nairobi',
+    summary: 'Illustrative shared equipment library; location, operator, and condition are not verified.',
     capabilities: ['Tool lending', 'Inventory', 'Maintenance'],
-    context: 'Held by Open Design Library',
+    context: 'Associated institution shown as scenario context; ownership is unknown.',
+    assetReference: 'EX-AS-07',
+    recordBasis: 'illustrative',
+  },
+  {
+    id: 'asset-school-management-console',
+    type: 'asset',
+    name: 'School Management Console',
+    role: 'Local-first software product',
+    summary: 'A browser-local teaching and school operations prototype; it is not the school or its physical infrastructure.',
+    capabilities: ['Teaching tools', 'Practice marking', 'Private need drafts'],
+    context: 'Local-first prototype; no external service integration is implied.',
+    assetReference: 'EX-AS-02',
+    recordBasis: 'illustrative',
+  },
+  {
+    id: 'asset-fikra-api',
+    type: 'asset',
+    name: 'Fikra API',
+    role: 'Inference service',
+    summary: 'A service asset associated with Lacesse Co; no browser-side integration is configured.',
+    capabilities: ['Inference service'],
+    context: 'Service endpoint, availability, and integration are not configured.',
+    assetReference: 'EX-AS-04',
+    recordBasis: 'project-reported',
+  },
+  {
+    id: 'asset-mwea-water-pump-02',
+    type: 'asset',
+    name: 'Mwea Water Cooperative Pump 02',
+    role: 'Water infrastructure asset',
+    summary: 'Illustrative pump asset linked to a sample maintenance observation; site and condition are not verified.',
+    capabilities: ['Water service', 'Maintenance inspection'],
+    context: 'Ownership, operator, and current condition are unknown.',
+    assetReference: 'EX-AS-08',
+    recordBasis: 'illustrative',
+  },
+  {
+    id: 'asset-lake-basin-cold-store-chamber-a',
+    type: 'asset',
+    name: 'Lake Basin Cold Store Chamber A',
+    role: 'Cold-storage asset',
+    summary: 'Illustrative cold-storage chamber linked to a sample inspection observation; readings and condition are not verified.',
+    capabilities: ['Cold storage', 'Inspection'],
+    context: 'Ownership, operator, site details, and operating state are unknown.',
+    assetReference: 'EX-AS-09',
+    recordBasis: 'illustrative',
   },
   {
     id: 'work-microgrid',
@@ -283,6 +363,46 @@ export const PEOPLE_NETWORK: NetworkEntity[] = [
     capabilities: ['Open resources', 'Tool lending', 'Learning'],
   },
   {
+    id: 'mwea-school',
+    type: 'institution',
+    name: 'Mwea Community School',
+    role: 'School',
+    summary: 'Institutional context for the sample school-energy and learning-animation journeys.',
+    capabilities: ['Education'],
+    context: 'Institution identity is illustrative; authority and location are not verified.',
+    recordBasis: 'illustrative',
+  },
+  {
+    id: 'mwea-water',
+    type: 'institution',
+    name: 'Mwea Water Cooperative',
+    role: 'Cooperative',
+    summary: 'Institutional context for the sample pump observation.',
+    capabilities: ['Water service'],
+    context: 'Institution identity and authority are not independently verified.',
+    recordBasis: 'illustrative',
+  },
+  {
+    id: 'lake-basin-cold-store',
+    type: 'institution',
+    name: 'Lake Basin Cold Store',
+    role: 'Enterprise',
+    summary: 'Institutional context for the sample cold-storage observation.',
+    capabilities: ['Cold storage'],
+    context: 'Institution identity and authority are not independently verified.',
+    recordBasis: 'illustrative',
+  },
+  {
+    id: 'institution-lacesse-co',
+    type: 'institution',
+    name: 'Lacesse Co',
+    role: 'Organization',
+    summary: 'Associated institution for the Fikra API service asset.',
+    capabilities: [],
+    context: 'Association is project-reported; legal identity and authority are not verified.',
+    recordBasis: 'project-reported',
+  },
+  {
     id: 'evidence-load-test',
     type: 'evidence',
     name: 'Inverter load-test record',
@@ -316,11 +436,12 @@ export const PEOPLE_NETWORK: NetworkEntity[] = [
     id: 'evidence-kemoly-sbts',
     type: 'evidence',
     name: 'APT-LABS design · 3 SBTs',
-    role: 'Credential record',
-    summary: 'Three Soulbound Tokens are reported for APT-LABS design work. Issuer references are not attached to this portable record.',
+    role: 'Member-reported credential claim',
+    summary: 'Three APT-LABS design SBTs are reported by the local profile; issuer, status, and verification references are unavailable.',
     location: 'APT-LABS',
-    capabilities: ['Design contribution', 'Credential count: 3'],
-    context: 'Member-reported · issuer proof not linked',
+    capabilities: ['Reported design contribution'],
+    context: 'Reported claim only · not a credential or badge; issuer and status unavailable.',
+    recordBasis: 'local-profile',
   },
   {
     id: 'evidence-kemoly-papers',
@@ -368,9 +489,14 @@ export const PEOPLE_RELATIONSHIPS: NetworkRelationship[] = [
   { id: 'jabari-asset', sourceId: 'person-jabari', targetId: 'asset-microgrid', kind: 'stewardship', verb: 'maintains' },
   { id: 'nia-bench', sourceId: 'person-nia', targetId: 'asset-repair-bench', kind: 'stewardship', verb: 'uses' },
   { id: 'yuki-tools', sourceId: 'person-yuki', targetId: 'asset-tool-library', kind: 'stewardship', verb: 'stewards' },
-  { id: 'asset-solar-holder', sourceId: 'asset-microgrid', targetId: 'institution-solar-commons', kind: 'stewardship', verb: 'held by' },
-  { id: 'asset-bench-holder', sourceId: 'asset-repair-bench', targetId: 'institution-kibera-makerspace', kind: 'stewardship', verb: 'held by' },
-  { id: 'asset-tools-holder', sourceId: 'asset-tool-library', targetId: 'institution-open-design', kind: 'stewardship', verb: 'held by' },
+  { id: 'asset-solar-holder', sourceId: 'asset-microgrid', targetId: 'institution-solar-commons', kind: 'affiliation', verb: 'scenario association · role unverified' },
+  { id: 'asset-bench-holder', sourceId: 'asset-repair-bench', targetId: 'institution-kibera-makerspace', kind: 'affiliation', verb: 'scenario association · role unverified' },
+  { id: 'asset-tools-holder', sourceId: 'asset-tool-library', targetId: 'institution-open-design', kind: 'affiliation', verb: 'scenario association · role unverified' },
+  { id: 'asset-fikra-lacesse', sourceId: 'asset-fikra-api', targetId: 'institution-lacesse-co', kind: 'affiliation', verb: 'associated with · project-reported' },
+  { id: 'asset-console-school', sourceId: 'asset-school-management-console', targetId: 'mwea-school', kind: 'affiliation', verb: 'scenario context · not school infrastructure' },
+  { id: 'asset-pump-water-coop', sourceId: 'asset-mwea-water-pump-02', targetId: 'mwea-water', kind: 'affiliation', verb: 'scenario context' },
+  { id: 'asset-cold-store-institution', sourceId: 'asset-lake-basin-cold-store-chamber-a', targetId: 'lake-basin-cold-store', kind: 'affiliation', verb: 'scenario context' },
+  { id: 'zuri-learning-media', sourceId: 'person-zuri-kamau', targetId: 'crew-learning-media', kind: 'membership', verb: 'illustrative association · no availability implied' },
   { id: 'work-uses-grid', sourceId: 'work-microgrid', targetId: 'asset-microgrid', kind: 'work', verb: 'commissions' },
   { id: 'work-uses-bench', sourceId: 'work-repair-guide', targetId: 'asset-repair-bench', kind: 'work', verb: 'uses' },
   { id: 'audit-grid', sourceId: 'work-water-audit', targetId: 'asset-microgrid', kind: 'work', verb: 'assesses' },
@@ -395,7 +521,10 @@ function isNetworkEntity(value: unknown): value is NetworkEntity {
     && entity.capabilities.every((capability) => typeof capability === 'string')
     && (entity.location === undefined || typeof entity.location === 'string')
     && (entity.context === undefined || typeof entity.context === 'string')
-    && (entity.commonsContribution === undefined || typeof entity.commonsContribution === 'boolean');
+    && (entity.commonsContribution === undefined || typeof entity.commonsContribution === 'boolean')
+    && (entity.assetReference === undefined || typeof entity.assetReference === 'string')
+    && (entity.recordBasis === undefined || entity.recordBasis === 'illustrative'
+      || entity.recordBasis === 'local-profile' || entity.recordBasis === 'project-reported');
 }
 
 function isNetworkRelationship(value: unknown): value is NetworkRelationship {
@@ -405,7 +534,8 @@ function isNetworkRelationship(value: unknown): value is NetworkRelationship {
     && typeof relationship.sourceId === 'string'
     && typeof relationship.targetId === 'string'
     && typeof relationship.kind === 'string'
-    && ['membership', 'affiliation', 'work', 'stewardship', 'contribution', 'evidence'].includes(relationship.kind)
+    && ['membership', 'affiliation', 'work', 'stewardship', 'contribution', 'evidence', 'owns', 'operates',
+      'stewards', 'funds', 'contributes_to', 'attests', 'issues'].includes(relationship.kind)
     && typeof relationship.verb === 'string';
 }
 
@@ -450,14 +580,26 @@ export function readPeopleNetworkRecord(): PeopleNetworkRecord {
   };
 }
 
-export function createPortablePeopleRecord(): string {
-  const record = readPeopleNetworkRecord();
+export function readImportedPeopleNetworkRecord(): PeopleNetworkRecord | null {
+  if (typeof window === 'undefined') return null;
+  const saved = window.localStorage.getItem(peopleRecordStorageKey);
+  if (saved === null) return null;
+
+  const parsed: unknown = JSON.parse(saved);
+  if (!isPortablePeopleRecord(parsed)) {
+    throw new Error('The saved coordination record is not a supported APT-LABS record. Export it before replacing it.');
+  }
+  return { entities: parsed.entities, relationships: parsed.relationships };
+}
+
+export function createPortablePeopleRecord(record?: PeopleNetworkRecord): string {
+  const selectedRecord = record ?? readPeopleNetworkRecord();
   const portableRecord: PortablePeopleRecord = {
     format: 'aptlabs.people-network',
     version: 1,
     anchor: 'APT-LABS',
     exportedAt: new Date().toISOString(),
-    ...record,
+    ...selectedRecord,
   };
   return JSON.stringify(portableRecord, null, 2);
 }

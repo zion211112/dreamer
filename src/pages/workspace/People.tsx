@@ -7,7 +7,7 @@ import {
   PEOPLE_NETWORK,
   PEOPLE_RELATIONSHIPS,
   PEOPLE_ROOT_LENSES,
-  readPeopleNetworkRecord,
+  readImportedPeopleNetworkRecord,
   ROOT_ENTITY_BY_TYPE,
   type NetworkEntity,
   type PeopleNetworkRecord,
@@ -16,16 +16,16 @@ import {
 import { WorkspaceLayout } from './WorkspaceLayout';
 
 export function People() {
-  const [networkRecord, setNetworkRecord] = useState<PeopleNetworkRecord>({
-    entities: PEOPLE_NETWORK,
-    relationships: PEOPLE_RELATIONSHIPS,
-  });
+  const sampleRecord: PeopleNetworkRecord = { entities: PEOPLE_NETWORK, relationships: PEOPLE_RELATIONSHIPS };
+  const [importedRecord, setImportedRecord] = useState<PeopleNetworkRecord | null>(null);
+  const [activeDataset, setActiveDataset] = useState<'sample' | 'imported'>('sample');
   const [rootId, setRootId] = useState(ROOT_ENTITY_BY_TYPE.person);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [inspectorDismissed, setInspectorDismissed] = useState(false);
   const [recordStatus, setRecordStatus] = useState('');
   const importInput = useRef<HTMLInputElement>(null);
+  const networkRecord = activeDataset === 'imported' && importedRecord ? importedRecord : sampleRecord;
   const entityById = new Map(networkRecord.entities.map((entity) => [entity.id, entity]));
   const rootEntity = entityById.get(rootId);
   const selectedEntity = selectedId
@@ -43,12 +43,7 @@ export function People() {
 
   useEffect(() => {
     try {
-      const savedRecord = readPeopleNetworkRecord();
-      setNetworkRecord(savedRecord);
-      if (!savedRecord.entities.some((entity) => entity.id === ROOT_ENTITY_BY_TYPE.person)) {
-        const firstPrimary = savedRecord.entities.find(isPrimaryEntity);
-        if (firstPrimary) setRootId(firstPrimary.id);
-      }
+      setImportedRecord(readImportedPeopleNetworkRecord());
     } catch (error) {
       setRecordStatus(error instanceof Error ? error.message : 'Saved People record could not be read.');
     }
@@ -70,9 +65,11 @@ export function People() {
     if (!file) return;
     try {
       importPortablePeopleRecord(await file.text());
-      const importedRecord = readPeopleNetworkRecord();
-      setNetworkRecord(importedRecord);
-      const firstPrimary = importedRecord.entities.find(isPrimaryEntity);
+      const imported = readImportedPeopleNetworkRecord();
+      if (!imported) throw new Error('The imported People record could not be read after import.');
+      setImportedRecord(imported);
+      setActiveDataset('imported');
+      const firstPrimary = imported.entities.find(isPrimaryEntity);
       setRootId(firstPrimary?.id ?? '');
       setSelectedId(firstPrimary?.id ?? null);
       setInspectorDismissed(!firstPrimary);
@@ -101,6 +98,20 @@ export function People() {
     setQuery('');
   };
 
+  const selectDataset = (dataset: 'sample' | 'imported') => {
+    if (dataset === 'imported' && !importedRecord) return;
+    const nextRecord = dataset === 'sample' ? sampleRecord : importedRecord;
+    if (!nextRecord) return;
+    const firstPrimary = dataset === 'sample'
+      ? nextRecord.entities.find((entity) => entity.id === ROOT_ENTITY_BY_TYPE.person)
+      : nextRecord.entities.find(isPrimaryEntity);
+    setActiveDataset(dataset);
+    setRootId(firstPrimary?.id ?? '');
+    setSelectedId(firstPrimary?.id ?? null);
+    setInspectorDismissed(!firstPrimary);
+    setQuery('');
+  };
+
   return (
     <WorkspaceLayout currentContext="people">
       <div className="people-page">
@@ -112,7 +123,26 @@ export function People() {
           </div>
           <div className="people-page-status">
             <span className="people-page-status-dot" />
-            APT-LABS record
+            {activeDataset === 'sample' ? 'Shared sample registry' : 'Imported portable record'}
+            <div aria-label="People dataset" className="people-dataset-switch" role="group">
+              <button
+                aria-pressed={activeDataset === 'sample'}
+                className={activeDataset === 'sample' ? 'is-active' : ''}
+                onClick={() => selectDataset('sample')}
+                type="button"
+              >
+                Shared sample
+              </button>
+              <button
+                aria-pressed={activeDataset === 'imported'}
+                className={activeDataset === 'imported' ? 'is-active' : ''}
+                disabled={!importedRecord}
+                onClick={() => selectDataset('imported')}
+                type="button"
+              >
+                Imported record
+              </button>
+            </div>
             <input
               ref={importInput}
               accept="application/json"
@@ -213,6 +243,7 @@ export function People() {
             mobileOpen={selectedId !== null}
             entities={networkRecord.entities}
             relationships={networkRecord.relationships}
+            recordScope={activeDataset}
             onSelect={chooseEntity}
             onClose={() => {
               setSelectedId(null);

@@ -1,8 +1,7 @@
 # APT-LABS
 
-The active app is a small Vite + Preact project. The current iteration scope is
-the sign-in and sign-up experience; the historical Next.js and Supabase work is
-kept under `bin/` and is not part of the build.
+APT-LABS is an active Vite + Preact application. Its Studio brings together
+People, Institutions, Commons, and Workbench in one workspace.
 
 ## Run locally
 
@@ -11,28 +10,44 @@ npm ci
 npm run dev
 ```
 
-Before shipping a change:
+Create a production build with:
 
 ```sh
 npm run build
 ```
 
-## Fast iteration
+## Routes
 
-Keep each pass to one visible outcome, reuse the existing controls and tokens,
-and verify it with the production build. Avoid unrelated cleanup or new
-dependencies. A small UI iteration should be ready to review in about ten
-minutes; split anything larger into separately reviewable changes.
+- `/` — landing page
+- `/sign-in` and `/sign-up` — browser-local demo authentication
+- `/workspace/people` — People network
+- `/workspace/institutions` — institution and asset register
+- `/workspace/commons` — local observations and steward decisions
+- `/workspace/workbench` — compose a school need into an isolated, manually run Tender → Assembly → Acceptance → Roll-preview simulation; existing local briefs and applications remain read-only
+- `/workspace/field-desk` — Workbench alias
 
-## Sign-in prototype
+Authentication and workspace workflows are browser-local demo functionality,
+not connected services. Passwords are not stored; there is no live
+authentication, external service connection, or live transaction.
 
-Email sign-in creates a demo-only browser-local identity so the existing
-workspace screens can be previewed. It does not create an account, send a
-password, or authenticate against a server. Passwords are not stored. Google
-and GitHub sign-in are intentionally disabled until providers are implemented.
+Workbench reads a selected School Console need draft and can reference an
+existing Commons observation or Institutions asset by ID. Simulation records
+are stored separately in this browser; they do not publish work, assign
+providers, authorize delivery, create registry assets, or create a real Roll.
+Page Agent is unavailable until protected model infrastructure exists.
 
-## Archive
+Run domain and persistence tests with `npm run test:unit -- --run`.
 
-`bin/` contains historical source and design work for reference only. Do not
-import it into the active Vite build. Never archive or commit environment files,
-credentials, access tokens, or generated dependency/build folders.
+## Project layout
+
+- `src/` — active Vite + Preact application
+- `src/pages/workspace/` — Studio workspace routes and shared shell
+- `src/components/` — shared interface components
+- `src/lib/` — browser-local workflow and domain data
+- `src/styles.css` — shared visual tokens and application styles
+- `docs/superpowers/specs/` — current design specifications
+- `bin/` — historical source and design archive; not part of the active build
+
+Local planning/session state, generated tool output, environment files,
+dependencies, and build output are not application source and should not be
+committed.

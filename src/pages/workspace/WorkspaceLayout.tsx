@@ -17,11 +17,7 @@ export function WorkspaceLayout({ children, currentContext }: WorkspaceLayoutPro
         </main>
         <footer className="atlas-footer">
           <span>APT-LABS — {currentContext === 'field-desk' ? 'Workbench' : currentContext}</span>
-          <span>
-            {currentContext === 'workbench' || currentContext === 'field-desk'
-              ? 'LOCAL WORKFLOW · NO EXTERNAL ACTIONS'
-              : 'BROWSER-LOCAL SESSION'}
-          </span>
+          <span>Studio context</span>
         </footer>
       </div>
     </div>

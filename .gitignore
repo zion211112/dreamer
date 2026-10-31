@@ -8,3 +8,12 @@ dist/
 .tmp-*
 .DS_Store
 Thumbs.db
+
+# Local planning and session state
+/.kilo/
+/.superpowers/
+
+# Generated tool output and local CLI metadata
+/scripts/.build/
+/scripts/.verify/
+/supabase/.temp/
