@@ -126,6 +126,9 @@ application, simulation, Console, Commons, People, or Institutions stores.
 ## Interface and accessibility
 
 - Keep the Studio shell and shared navigation.
+- Hide the shared profile/identity entry on Workbench routes so the finder
+  does not present a fallback demo identity as a connected contributor
+  account. Leave identity display on unrelated Studio routes unchanged.
 - Use a concise in-page Workbench navigation for *Find work*, *My interest*,
   and *Create / simulate*.
 - On desktop, keep the list and selected detail visible together.
@@ -172,6 +175,8 @@ application, simulation, Console, Commons, People, or Institutions stores.
 - Save/remove success and error messages accurately describe browser-local
   behavior.
 - Every listing is labeled as a local example, never a live opportunity.
+- Workbench routes do not show the shared fallback profile identity; unrelated
+  Studio routes retain their current identity behavior.
 - `/workspace/workbench/simulate` and `/workspace/field-desk` both retain the
   manual simulation, while existing simulation data remains readable.
 - `npm run build` succeeds; focused unit tests cover interest storage and
