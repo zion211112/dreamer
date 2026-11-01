@@ -105,12 +105,18 @@ export function WorkbenchOpportunityBrowser({
                       onClick={() => onSelectOpportunity(opportunity.id)}
                       type="button"
                     >
-                      <span className="workbench-finder-kicker">LOCAL EXAMPLE · NOT LIVE</span>
+                      <span className="workbench-finder-result-meta">
+                        <span className="workbench-finder-example-label">Example · not live</span>
+                        <span className="workbench-finder-discipline">{opportunity.discipline}</span>
+                      </span>
                       <strong>{opportunity.title}</strong>
-                      <span>{opportunity.context} · {opportunity.discipline}</span>
-                      <small>{interests.some(item => item.opportunityId === opportunity.id)
-                        ? 'Interest saved in this browser'
-                        : 'Terms may be incomplete'}</small>
+                      <span className="workbench-finder-result-context">{opportunity.context}</span>
+                      <span className="workbench-finder-result-summary">{opportunity.summary}</span>
+                      <small className="workbench-finder-result-state">
+                        {interests.some(item => item.opportunityId === opportunity.id)
+                          ? 'Interest saved here'
+                          : 'Terms to confirm'}
+                      </small>
                     </button>
                   </li>
                 ))}
@@ -130,10 +136,18 @@ export function WorkbenchOpportunityBrowser({
                       onClick={() => onSelectOpportunity(interest.opportunityId)}
                       type="button"
                     >
-                      <span className="workbench-finder-kicker">LOCAL INTEREST · NOT SENT</span>
+                      <span className="workbench-finder-result-meta">
+                        <span className="workbench-finder-example-label">Interest · this browser</span>
+                        {opportunity && <span className="workbench-finder-discipline">{opportunity.discipline}</span>}
+                      </span>
                       <strong>{localExampleTitle(opportunity)}</strong>
-                      <span>{opportunity ? `${opportunity.context} · ${opportunity.discipline}` : 'This example is no longer available.'}</span>
-                      <small>Saved {new Date(interest.createdAt).toLocaleDateString()}</small>
+                      <span className="workbench-finder-result-context">
+                        {opportunity ? opportunity.context : 'This example is no longer available.'}
+                      </span>
+                      {opportunity && <span className="workbench-finder-result-summary">{opportunity.summary}</span>}
+                      <small className="workbench-finder-result-state">
+                        Saved {new Date(interest.createdAt).toLocaleDateString()}
+                      </small>
                     </button>
                   </li>
                 );
@@ -154,47 +168,54 @@ export function WorkbenchOpportunityBrowser({
           >← Back to {view === 'find' ? 'examples' : 'interest'}</button>
           {selectedOpportunity ? (
             <>
-              <p className="workbench-finder-kicker">LOCAL EXAMPLE · NOT A LIVE OPPORTUNITY</p>
+              <div className="workbench-finder-detail-meta">
+                <span className="workbench-finder-example-label">Local example · not live</span>
+                <span className="workbench-finder-discipline">{selectedOpportunity.discipline}</span>
+              </div>
               <h2>{selectedOpportunity.title}</h2>
-              <p className="workbench-finder-context">{selectedOpportunity.context} · {selectedOpportunity.discipline}</p>
+              <p className="workbench-finder-context">{selectedOpportunity.context}</p>
               <p className="workbench-finder-summary">{selectedOpportunity.summary}</p>
               <div className="workbench-finder-before-start">
-                <strong>Before work starts</strong>
+                <strong>Before any real work</strong>
                 <p>Final scope and terms must be agreed by both sides, then the institution must explicitly authorize the start.</p>
               </div>
               <details className="workbench-finder-full-details">
-                <summary>View full details and open terms</summary>
+                <summary>Read the full example and terms</summary>
                 <section><h3>Scope</h3><p>{selectedOpportunity.scope}</p></section>
                 <section><h3>Expected deliverables</h3><ul>{selectedOpportunity.deliverables.map(item => <li key={item}>{item}</li>)}</ul></section>
                 <section><h3>Capabilities</h3><ul>{selectedOpportunity.capability.map(item => <li key={item}>{item}</li>)}</ul></section>
                 <section><h3>Terms to confirm</h3><p>{selectedOpportunity.terms}</p><p>{selectedOpportunity.payment}</p><p>{selectedOpportunity.acceptance}</p></section>
               </details>
-              <p className="workbench-finder-local-note">Interest is non-binding. This example and any interest are saved only in this browser; no one is contacted.</p>
-              {selectedInterest ? (
-                <button
-                  className="workbench-finder-secondary"
-                  onClick={() => onRemoveInterest(selectedOpportunity.id)}
-                  type="button"
-                >Remove my local interest</button>
-              ) : (
-                <button
-                  className="workbench-finder-primary"
-                  onClick={() => onExpressInterest(selectedOpportunity.id)}
-                  type="button"
-                >Express interest</button>
-              )}
+              <div className="workbench-finder-action">
+                <div>
+                  <strong>{selectedInterest ? 'Interest saved here' : 'Keep this example in mind'}</strong>
+                  <p>Interest is non-binding and stays in this browser. No one is contacted.</p>
+                </div>
+                {selectedInterest ? (
+                  <button
+                    className="workbench-finder-secondary"
+                    onClick={() => onRemoveInterest(selectedOpportunity.id)}
+                    type="button"
+                  >Remove local interest</button>
+                ) : (
+                  <button
+                    className="workbench-finder-primary"
+                    onClick={() => onExpressInterest(selectedOpportunity.id)}
+                    type="button"
+                  >Express interest</button>
+                )}
+              </div>
             </>
           ) : selectedInterest ? (
             <>
-              <p className="workbench-finder-kicker">UNRESOLVED LOCAL EXAMPLE</p>
+              <p className="workbench-finder-example-label">Unresolved local example</p>
               <h2>Unavailable local example</h2>
               <p>The saved interest refers to an example no longer in this browser’s list. It was not submitted or accepted.</p>
-              <p className="workbench-finder-local-note">This local record has not contacted anyone.</p>
               <button
                 className="workbench-finder-secondary"
                 onClick={() => onRemoveInterest(selectedInterest.opportunityId)}
                 type="button"
-              >Remove my local interest</button>
+              >Remove local interest</button>
             </>
           ) : (
             <div className="workbench-finder-detail-empty">
