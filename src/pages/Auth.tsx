@@ -49,40 +49,54 @@ export function Auth() {
 
   return (
     <main className="auth-layout">
-      <section className="auth-main">
-        <div className="auth-content">
-          <div className="auth-brand">
-            <BrandMark size="sm" />
-            <span>APT<span aria-hidden="true">—</span>LABS</span>
-          </div>
-          <div className="auth-topline">
-            <span className="auth-eyebrow">BROWSER-LOCAL DEMO</span>
-            <div className="auth-mode-switch" aria-label="Account action">
-              <button
-                type="button"
-                aria-pressed={!isSignUp}
-                onClick={() => navigate('/sign-in')}
-              >
-                Sign in
-              </button>
-              <button
-                type="button"
-                aria-pressed={isSignUp}
-                onClick={() => navigate('/sign-up')}
-              >
-                Create account
-              </button>
-            </div>
-          </div>
+      <header className="auth-header">
+        <BrandMark size="sm" />
+        <span className="auth-header-status">
+          <span aria-hidden="true" />
+          Browser-local demo
+        </span>
+      </header>
 
+      <div className="auth-main">
+        <section className="auth-intro" aria-labelledby="auth-intro-title">
+          <p className="auth-intro-label">A practical network for local work</p>
+          <h1 id="auth-intro-title">
+            Make good work<br />
+            <span>find its people.</span>
+          </h1>
+          <p className="auth-intro-copy">
+            A considered place for people, institutions, and ideas to meet around the work their communities need.
+          </p>
+          <p className="auth-intro-coordinate">People <span>/</span> Place <span>/</span> Possibility</p>
+        </section>
+
+        <section className="auth-form-panel" aria-labelledby="auth-title">
           <header className="auth-heading">
-            <h1>{isSignUp ? 'Make a place for the work.' : 'Find your place in the work.'}</h1>
+            <p className="auth-eyebrow">Your studio, on this device</p>
+            <h2 id="auth-title">{isSignUp ? 'Make a place for the work.' : 'Find your place in the work.'}</h2>
             <p>
               {isSignUp
                 ? 'Choose a workspace and continue.'
                 : 'Sign in to continue to your workspace.'}
             </p>
           </header>
+
+          <div className="auth-mode-switch" aria-label="Account action">
+            <button
+              type="button"
+              aria-pressed={!isSignUp}
+              onClick={() => navigate('/sign-in')}
+            >
+              Sign in
+            </button>
+            <button
+              type="button"
+              aria-pressed={isSignUp}
+              onClick={() => navigate('/sign-up')}
+            >
+              Create account
+            </button>
+          </div>
 
           <form onSubmit={handleSubmit} className="auth-form">
             {error && <p className="auth-error" role="alert">{error}</p>}
@@ -114,6 +128,7 @@ export function Auth() {
                 autoComplete="email"
                 required
                 aria-invalid={Boolean(error)}
+                style={{ borderRadius: '3px', padding: '0 13px' }}
               />
             </div>
 
@@ -126,7 +141,7 @@ export function Auth() {
                     className="auth-forgot-button"
                     onClick={() => setError('Password reset is not available in this demo.')}
                   >
-                    Forgot password?
+                    Password reset unavailable in this demo
                   </button>
                 )}
               </div>
@@ -140,6 +155,7 @@ export function Auth() {
                 autoComplete={isSignUp ? 'new-password' : 'current-password'}
                 required
                 aria-invalid={Boolean(error)}
+                style={{ borderRadius: '3px', padding: '0 13px' }}
               />
             </div>
 
@@ -156,20 +172,28 @@ export function Auth() {
                   autoComplete="new-password"
                   required
                   aria-invalid={Boolean(error)}
+                  style={{ borderRadius: '3px', padding: '0 13px' }}
                 />
               </div>
             )}
 
-            <Button type="submit" className="auth-submit" size="lg">
+            <Button type="submit" className="auth-submit" size="lg" style={{ borderRadius: '3px' }}>
               {isSignUp ? 'Create account' : 'Sign in'}
+              <span className="auth-submit-arrow" aria-hidden="true">→</span>
             </Button>
           </form>
 
           <p className="auth-demo-note">
-            Browser-local demo only. No account is created. Passwords are never stored or sent.
+            <span className="auth-demo-mark" aria-hidden="true">i</span>
+            <span>Demo only. No account is created. Passwords are never stored or sent.</span>
           </p>
-        </div>
-      </section>
+        </section>
+      </div>
+
+      <footer className="auth-footer">
+        <span>APT—LABS <i aria-hidden="true">/</i> Studio entrance</span>
+        <span>Local prototype <i aria-hidden="true">·</i> 001</span>
+      </footer>
     </main>
   );
 }
