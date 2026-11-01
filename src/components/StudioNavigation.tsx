@@ -110,8 +110,9 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
   const [identityOpen, setIdentityOpen] = useState(false);
   const [sidebarPreference, setSidebarPreference] = useState(readSidebarPreference);
   const drawerRef = useRef<HTMLDialogElement>(null);
-  const profileName = getLocalProfileName();
   const activeContext = currentContext === 'field-desk' ? 'workbench' : currentContext;
+  const showIdentity = activeContext !== 'workbench';
+  const profileName = showIdentity ? getLocalProfileName() : '';
   const sidebarCollapsed = sidebarPreference.collapsed;
 
   useEffect(() => {
@@ -173,7 +174,7 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
         <StudioLinks currentContext={activeContext} />
 
         <div className="studio-sidebar-bottom">
-          <ProfileEntry name={profileName} onOpen={openIdentity} />
+          {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} />}
           <div className="studio-session-indicator">
             <span>APT-LABS STUDIO</span>
             <span>BROWSER-LOCAL</span>
@@ -196,13 +197,15 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
         </button>
         <BrandMark className="studio-mobile-brand" size="sm" />
         <span className="studio-mobile-current">{CONTEXTS.find(context => context.id === activeContext)?.label}</span>
-        <button
-          aria-haspopup="dialog"
-          aria-label={`Open identity cabinet for ${profileName}`}
-          className="studio-mobile-profile"
-          onClick={() => setIdentityOpen(true)}
-          type="button"
-        >{getInitials(profileName)}</button>
+        {showIdentity && (
+          <button
+            aria-haspopup="dialog"
+            aria-label={`Open identity cabinet for ${profileName}`}
+            className="studio-mobile-profile"
+            onClick={() => setIdentityOpen(true)}
+            type="button"
+          >{getInitials(profileName)}</button>
+        )}
       </header>
 
       <dialog
@@ -239,7 +242,7 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
           <div className="studio-nav-label">Studio</div>
           <StudioLinks currentContext={activeContext} onNavigate={() => setMobileOpen(false)} />
           <div className="studio-sidebar-bottom">
-            <ProfileEntry name={profileName} onOpen={openIdentity} />
+            {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} />}
             <div className="studio-session-indicator">
               <span>APT-LABS STUDIO</span>
               <span>BROWSER-LOCAL</span>
@@ -248,11 +251,13 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
         </div>
       </dialog>
 
-      <IdentityCabinet
-        currentContext={activeContext}
-        onClose={() => setIdentityOpen(false)}
-        open={identityOpen}
-      />
+      {showIdentity && (
+        <IdentityCabinet
+          currentContext={activeContext}
+          onClose={() => setIdentityOpen(false)}
+          open={identityOpen}
+        />
+      )}
     </>
   );
 }

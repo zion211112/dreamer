@@ -5,6 +5,7 @@ import { People } from './pages/workspace/People';
 import { Institutions } from './pages/workspace/Institutions';
 import { Commons } from './pages/workspace/Commons';
 import { Workbench } from './pages/workspace/FieldDesk';
+import { WorkbenchFinder } from './pages/workspace/WorkbenchFinder';
 import { SchoolConsole } from './pages/workspace/SchoolConsole';
 
 export function App() {
@@ -17,7 +18,8 @@ export function App() {
       <Route path="/workspace/institutions"><Institutions /></Route>
       <Route path="/workspace/institutions/school-console"><SchoolConsole /></Route>
       <Route path="/workspace/commons"><Commons /></Route>
-      <Route path="/workspace/workbench"><Workbench /></Route>
+      <Route path="/workspace/workbench/simulate"><Workbench /></Route>
+      <Route path="/workspace/workbench"><WorkbenchFinder /></Route>
       <Route path="/workspace/field-desk"><Workbench /></Route>
     </Switch>
   );
