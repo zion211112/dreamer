@@ -88,6 +88,8 @@ function exampleSignal(input: {
   id: string;
   institutionId: string;
   assetId?: string;
+  assetName?: string;
+  location?: string;
   title: string;
   observation: string;
   reporterUrgency: FieldSignal['urgency'];
@@ -103,7 +105,8 @@ function exampleSignal(input: {
     institutionId: institution.id,
     institutionName: institution.name,
     ...(asset ? { assetId: asset.id, assetName: asset.name } : {}),
-    location: 'Site not specified',
+    ...(input.assetName ? { assetName: input.assetName } : {}),
+    location: input.location ?? 'Site not specified',
     title: input.title,
     details: input.observation,
     suspectedCause: 'Unknown; no cause has been assessed.',
@@ -129,19 +132,21 @@ function exampleSignal(input: {
 export const EXAMPLE_FIELD_SIGNALS: ExampleFieldSignal[] = [
   exampleSignal({
     id: 'scenario-pump-pressure',
-    institutionId: 'mwea-water',
-    assetId: 'asset-mwea-water-pump-02',
-    title: 'Water pressure is intermittent',
-    observation: 'A sample report describes intermittent water pressure. No measurements, visit log, or service impact evidence is attached.',
-    reporterUrgency: 'soon',
-    suggestedNextStep: 'Ask a qualified local maintainer to document the condition and safe inspection boundary.',
-    missingChecks: ['On-site condition check', 'Pressure observations and measurement method', 'Safe access confirmation'],
+    institutionId: 'mwea-school',
+    assetName: 'School River Crossing',
+    location: 'River crossing',
+    title: 'River crossing becomes difficult after heavy rain',
+    observation: 'After heavy rain, the crossing is reported to be difficult to use. No water-level observations, crossing measurements, or access records are attached.',
+    reporterUrgency: 'routine',
+    suggestedNextStep: 'Document crossing conditions and access with the responsible local people.',
+    missingChecks: ['Time-stamped water-level observations', 'Crossing and access measurements', 'Local access and safety review'],
   }),
   exampleSignal({
     id: 'scenario-school-power',
     institutionId: 'mwea-school',
-    title: 'Classroom power drops during the afternoon',
-    observation: 'A sample report describes a change in classroom power later in the day. No time-series or equipment inspection is attached.',
+    location: 'Classrooms',
+    title: 'Afternoon power interruptions affect lessons',
+    observation: 'Power interruptions are reported during afternoon lessons. No time-stamped readings or equipment inspection are attached.',
     reporterUrgency: 'routine',
     suggestedNextStep: 'Record when the issue is noticed and arrange a safe system inspection with the responsible institution.',
     missingChecks: ['Time-stamped observations', 'System and load inspection', 'Institution authority and access confirmation'],
@@ -150,8 +155,9 @@ export const EXAMPLE_FIELD_SIGNALS: ExampleFieldSignal[] = [
     id: 'scenario-cold-room',
     institutionId: 'lake-basin-cold-store',
     assetId: 'asset-lake-basin-cold-store-chamber-a',
-    title: 'Temperature stability needs inspection',
-    observation: 'A sample report requests an inspection of chamber stability. No readings, calibration record, or product-impact evidence is attached.',
+    location: 'Cold room · Chamber A',
+    title: 'Cold-room temperature readings need verification',
+    observation: 'Cold-room temperature readings need verification. No calibrated readings, sensor record, or operating log is attached.',
     reporterUrgency: 'urgent',
     suggestedNextStep: 'Have an authorized operator document calibrated readings and the relevant handling procedure.',
     missingChecks: ['Calibrated readings and timestamps', 'Sensor and procedure checks', 'Operator-confirmed impact and safe next step'],
@@ -160,11 +166,11 @@ export const EXAMPLE_FIELD_SIGNALS: ExampleFieldSignal[] = [
     id: 'scenario-microgrid-load',
     institutionId: 'institution-solar-commons',
     assetId: 'asset-microgrid',
-    title: 'Microgrid load behavior needs review',
-    observation: 'A sample report describes a change in load behavior. No telemetry values, operating log, or cause assessment is included.',
+    title: 'Daytime solar output may exceed demand',
+    observation: 'An illustrative note raises the possibility of spare daytime generation. No output or demand readings, time range, or operating log is attached.',
     reporterUrgency: 'soon',
-    suggestedNextStep: 'Compare a documented operating period with the agreed observation method before proposing any work.',
-    missingChecks: ['Source and time range for observations', 'Meter and load context', 'Qualified review and safe access'],
+    suggestedNextStep: 'Compare time-stamped generation and demand records with the system operator.',
+    missingChecks: ['Generation and demand readings with timestamps', 'Meter source and time range', 'Operator confirmation'],
   }),
   exampleSignal({
     id: 'scenario-tool-condition',
@@ -182,9 +188,9 @@ export const EXAMPLE_DECISIONS: ExampleDecision[] = [
   {
     id: 'example-decision-pump-check',
     caseId: 'scenario-pump-pressure',
-    institutionId: 'mwea-water',
+    institutionId: 'mwea-school',
     outcome: 'approved',
-    scope: 'Approve only a documented condition check as an illustrative next investigative step; no repair, procurement, or work brief is authorized.',
+    scope: 'Approve only a documented crossing condition check as an illustrative next investigative step; no repair or work brief is authorized.',
     reason: 'A bounded observation could clarify what evidence is missing. This sample outcome grants no real-world authority.',
     recordBasis: 'illustrative',
   },

@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { useLocation } from 'wouter';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import { EXAMPLE_DECISIONS, EXAMPLE_FIELD_SIGNALS } from '../../lib/ecosystem-examples';
+import { WORK_OPPORTUNITIES } from '../../lib/local-workbench';
 import { PEOPLE_NETWORK } from '../../lib/people-network';
 import { loadConsoleSnapshot } from '../../lib/school-console-storage';
 import {
@@ -23,9 +24,9 @@ import {
 
 const statusLabels: Record<SignalStatus, string> = {
   new: 'New',
-  triaged: 'In triage',
-  brief: 'Work brief',
-  resolved: 'Resolved',
+  triaged: 'Being checked',
+  brief: 'Work planning',
+  resolved: 'Closed',
 };
 
 const filters: Array<'all' | SignalStatus> = ['all', 'new', 'triaged', 'brief', 'resolved'];
@@ -33,9 +34,34 @@ const institutionNames = Object.fromEntries(PEOPLE_NETWORK
   .filter(entity => entity.type === 'institution')
   .map(entity => [entity.id, entity.name]));
 const exampleSignalById = new Map(EXAMPLE_FIELD_SIGNALS.map(signal => [signal.id, signal]));
+const featuredPossibility = EXAMPLE_FIELD_SIGNALS.find(signal => signal.id === 'scenario-microgrid-load');
 
 function formatSignalDate(value: string): string {
   return new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(value));
+}
+
+function signalCategory(signal: FieldSignal): string {
+  const title = signal.title.toLocaleLowerCase();
+  if (title.includes('crossing') || title.includes('road') || title.includes('drainage')) return 'Access';
+  if (title.includes('power') || title.includes('solar') || title.includes('microgrid')) return 'Energy';
+  if (title.includes('cold-room') || title.includes('temperature') || title.includes('equipment')) return 'Equipment';
+  return 'Ground';
+}
+
+function signalPlace(signal: FieldSignal): string {
+  const assetName = signal.assetName?.trim();
+  return assetName && !assetName.toLocaleLowerCase().startsWith(signal.institutionName.toLocaleLowerCase())
+    ? assetName
+    : signal.institutionName;
+}
+
+function signalContext(signal: FieldSignal): string {
+  const place = signalPlace(signal);
+  if (place !== signal.institutionName) return `${signal.institutionName} · ${place}`;
+  const location = signal.location.trim();
+  return location && location !== 'Site not specified'
+    ? `${signal.institutionName} · ${location}`
+    : signal.institutionName;
 }
 
 function getCurrentEmail(): string {
@@ -50,13 +76,18 @@ function getCurrentEmail(): string {
 
 export function Commons() {
   const [, navigate] = useLocation();
-  const [commonsView, setCommonsView] = useState<'signals' | 'decisions'>('signals');
+  const contributeButtonRef = useRef<HTMLButtonElement>(null);
+  const reportInstitutionRef = useRef<HTMLSelectElement>(null);
+  const [commonsView, setCommonsView] = useState<'signals' | 'opportunities' | 'decisions'>('signals');
   const [institutionScope, setInstitutionScope] = useState('');
   const [signals, setSignals] = useState<FieldSignal[]>([]);
   const [selectedId, setSelectedId] = useState('');
   const [filter, setFilter] = useState<(typeof filters)[number]>('all');
   const [search, setSearch] = useState('');
+  const [showAllSignals, setShowAllSignals] = useState(false);
   const [showReportForm, setShowReportForm] = useState(false);
+  const [showContributionMenu, setShowContributionMenu] = useState(false);
+  const [selectedOpportunityId, setSelectedOpportunityId] = useState('kemetos-agi1-software');
   const [sourceConsoleDraftId, setSourceConsoleDraftId] = useState<string | null>(null);
   const [reportTitle, setReportTitle] = useState('');
   const [reportDetails, setReportDetails] = useState('');
@@ -68,6 +99,12 @@ export function Commons() {
   const [showProposalForm, setShowProposalForm] = useState(false);
   const [newStewardEmail, setNewStewardEmail] = useState('');
   const [decisionNotes, setDecisionNotes] = useState<Record<string, string>>({});
+  const selectedOpportunity = WORK_OPPORTUNITIES.find(opportunity => opportunity.id === selectedOpportunityId)
+    ?? WORK_OPPORTUNITIES[0];
+
+  useEffect(() => {
+    if (showReportForm) reportInstitutionRef.current?.focus();
+  }, [showReportForm]);
 
   useEffect(() => {
     let active = true;
@@ -79,12 +116,14 @@ export function Commons() {
       const requestedSignal = searchParams.get('signal');
       const initialSignal = requestedSignal
         ? savedSignals.find(signal => signal.id === requestedSignal)
-        : savedSignals.find(signal => signal.institutionId === requestedInstitution) ?? savedSignals[0];
+        : requestedInstitution
+          ? savedSignals.find(signal => signal.institutionId === requestedInstitution) ?? savedSignals[0]
+          : savedSignals[0];
       setSignals(savedSignals);
       setSelectedId(initialSignal?.id ?? '');
-      const initialInstitution = requestedInstitution ?? initialSignal?.institutionId ?? '';
+      const initialInstitution = requestedInstitution ?? (requestedSignal ? initialSignal?.institutionId ?? '' : '');
       setInstitutionScope(initialInstitution);
-      if (initialInstitution) setSearch(initialInstitution);
+      setSearch('');
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : 'Local field signals could not be loaded.');
     }
@@ -138,6 +177,7 @@ export function Commons() {
     ...governance.proposals.map(proposal => [proposal.institutionId, proposal.institutionName] as const),
   ]).entries()];
   const visibleSignals = useMemo(() => signals
+    .filter(signal => !institutionScope || signal.institutionId === institutionScope)
     .filter(signal => filter === 'all' || signal.status === filter)
     .filter(signal => {
       const query = search.trim().toLocaleLowerCase();
@@ -145,7 +185,14 @@ export function Commons() {
       return `${signal.title} ${signal.institutionName} ${signal.institutionId} ${signal.assetId ?? ''} ${signal.assetName ?? ''} ${signal.location}`
         .toLocaleLowerCase()
         .includes(query);
-    }), [signals, filter, search]);
+    }), [signals, institutionScope, filter, search]);
+  const displayedSignals = !showAllSignals
+    && filter === 'all'
+    && !search.trim()
+    && signals.length > 3
+    && signals.every(signal => signal.scenario)
+    ? visibleSignals.slice(0, 3)
+    : visibleSignals;
 
   function persist(nextSignals: FieldSignal[]): boolean {
     try {
@@ -269,6 +316,7 @@ export function Commons() {
     setSourceConsoleDraftId(null);
     setReportTitle('');
     setReportDetails('');
+    contributeButtonRef.current?.focus();
     if (parseConsoleDraftId(window.location.search)) navigate('/workspace/commons');
   }
 
@@ -311,30 +359,65 @@ export function Commons() {
       <main className="signal-desk">
         <header className="signal-desk-head">
           <div>
-            <p className="eyebrow">COMMONS / WORK SIGNALS</p>
-            <h1>Commons</h1>
-            <p>Observation → steward decision → work.</p>
+            <p className="eyebrow">COMMONS / RADAR KWA GROUND</p>
+            <h1>Signals from the ground</h1>
           </div>
           <div className="signal-head-actions">
-            <button className="signal-primary-action" onClick={() => {
-              if (showReportForm) closeReportForm();
-              else setShowReportForm(true);
-            }} type="button">
-              {showReportForm ? 'Close form' : '＋ Report an issue'}
-            </button>
+            <div className="commons-contribute">
+              <button
+                aria-expanded={showContributionMenu}
+                className="signal-primary-action"
+                onClick={() => {
+                  if (showReportForm) closeReportForm();
+                  else setShowContributionMenu(value => !value);
+                }}
+                ref={contributeButtonRef}
+                type="button"
+              >
+                {showReportForm ? 'Close form' : '+ Contribute'}
+              </button>
+              {showContributionMenu && (
+                <div aria-label="Contribution options" className="commons-contribute-menu" role="group">
+                  <button
+                    onClick={() => {
+                      setShowContributionMenu(false);
+                      setShowReportForm(true);
+                    }}
+                    type="button"
+                  >
+                    Add a signal
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowContributionMenu(false);
+                      setCommonsView('opportunities');
+                    }}
+                    type="button"
+                  >
+                    Explore opportunities
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
-        <p className="commons-note">Review the record, document the condition, and route the decision through the steward authority.</p>
-
-        <nav className="commons-modebar" aria-label="Commons views" role="tablist">
+        <nav className="commons-modebar" aria-label="Commons views">
           <button
             aria-pressed={commonsView === 'signals'}
             className={commonsView === 'signals' ? 'is-active' : ''}
             onClick={() => setCommonsView('signals')}
             type="button"
           >
-            Observations <span>{signals.length.toString().padStart(2, '0')}</span>
+            Signals <span>{visibleSignals.length.toString().padStart(2, '0')}</span>
+          </button>
+          <button
+            aria-pressed={commonsView === 'opportunities'}
+            className={commonsView === 'opportunities' ? 'is-active' : ''}
+            onClick={() => setCommonsView('opportunities')}
+            type="button"
+          >
+            Opportunities
           </button>
           <button
             aria-pressed={commonsView === 'decisions'}
@@ -344,13 +427,15 @@ export function Commons() {
           >
             Decisions <span>{governance.proposals.length.toString().padStart(2, '0')}</span>
           </button>
-          <label className="commons-scope-select">
+          <label className="commons-scope-select" hidden={commonsView === 'opportunities'}>
             <span className="visually-hidden">Institution scope</span>
             <select
               onChange={event => {
                 const nextInstitutionId = (event.currentTarget as HTMLSelectElement).value;
                 setInstitutionScope(nextInstitutionId);
-                setSelectedId(signals.find(signal => signal.institutionId === nextInstitutionId)?.id ?? '');
+                setSelectedId(nextInstitutionId
+                  ? signals.find(signal => signal.institutionId === nextInstitutionId)?.id ?? ''
+                  : signals[0]?.id ?? '');
               }}
               value={institutionScope}
             >
@@ -366,12 +451,11 @@ export function Commons() {
         {showReportForm && (
           <form className="signal-report-form" onSubmit={submitReport}>
             <div className="signal-form-heading">
-              <div><p className="eyebrow">NEW OBSERVATION</p><h2>What changed?</h2></div>
-              <span>Record update</span>
+              <div><p className="eyebrow">NEW SIGNAL</p><h2>What did you notice?</h2></div>
             </div>
             <div className="signal-form-grid">
               <label>Institution
-                <select name="institution" required>
+                <select name="institution" ref={reportInstitutionRef} required>
                   <option value="">Select a registered institution</option>
                   {Object.entries(institutionNames).map(([id, name]) => <option key={id} value={id}>{name}</option>)}
                 </select>
@@ -382,11 +466,11 @@ export function Commons() {
               <label>Location
                 <input name="location" placeholder="Town, site, or building" />
               </label>
-              <label className="signal-form-wide">Short issue
-                <input maxLength={120} name="title" onInput={event => setReportTitle((event.currentTarget as HTMLInputElement).value)} placeholder="What changed?" required value={reportTitle} />
+              <label className="signal-form-wide">Signal headline
+                <input maxLength={120} name="title" onInput={event => setReportTitle((event.currentTarget as HTMLInputElement).value)} placeholder="Describe what you noticed" required value={reportTitle} />
               </label>
-              <label className="signal-form-wide">What did you observe?
-                <textarea maxLength={1200} minLength={12} name="details" onInput={event => setReportDetails((event.currentTarget as HTMLTextAreaElement).value)} placeholder="Describe what was noticed. Separate observation from suspected cause." required rows={3} value={reportDetails} />
+              <label className="signal-form-wide">What happened?
+                <textarea maxLength={1200} minLength={12} name="details" onInput={event => setReportDetails((event.currentTarget as HTMLTextAreaElement).value)} placeholder="Share what you saw. Keep observation separate from possible cause." required rows={3} value={reportDetails} />
               </label>
               <label>Attention
                 <select name="urgency">
@@ -560,56 +644,137 @@ export function Commons() {
           </div>
         </section>
 
-        <section aria-label="Field signal queue" className="signal-workspace" hidden={commonsView !== 'signals'}>
-          <aside className="signal-queue">
-            <div className="signal-queue-heading">
-              <div>
-                <p className="eyebrow">{signals.length > 0 && signals.every(signal => signal.scenario) ? 'EXAMPLE CASES' : 'QUEUE'} / {signals.length.toString().padStart(2, '0')}</p>
-                <h2>Field signals</h2>
-              </div>
-              <span className="signal-queue-count">{visibleSignals.length}</span>
+        <section aria-labelledby="commons-opportunities-title" className="commons-opportunities" hidden={commonsView !== 'opportunities'}>
+          <header className="commons-opportunities-head">
+            <div>
+              <p className="eyebrow">COMMONS / OPPORTUNITIES</p>
+              <h2 id="commons-opportunities-title">Example opportunities</h2>
             </div>
-            <label className="signal-search">
-              <span aria-hidden="true">⌕</span>
-              <input aria-label="Search signals" onInput={event => setSearch((event.currentTarget as HTMLInputElement).value)} placeholder="Find an asset or signal" value={search} />
-            </label>
-            <div aria-label="Filter signals by status" className="signal-filters" role="group">
-              {filters.map(item => (
+            <span>Not open for applications</span>
+          </header>
+          <div className="commons-opportunity-workspace">
+            <nav aria-label="Example work contexts" className="commons-opportunity-list">
+              {WORK_OPPORTUNITIES.map(opportunity => (
                 <button
-                  aria-pressed={filter === item}
-                  className={filter === item ? 'is-active' : ''}
-                  key={item}
-                  onClick={() => setFilter(item)}
+                  aria-pressed={selectedOpportunity.id === opportunity.id}
+                  className={selectedOpportunity.id === opportunity.id ? 'is-selected' : ''}
+                  key={opportunity.id}
+                  onClick={() => setSelectedOpportunityId(opportunity.id)}
                   type="button"
                 >
-                  {item === 'all' ? 'All' : statusLabels[item]}
+                  <span>{opportunity.discipline} · Example</span>
+                  <strong>{opportunity.title}</strong>
+                  <small>{opportunity.context}</small>
                 </button>
               ))}
+            </nav>
+            <article className="commons-opportunity-detail">
+              <div className="commons-opportunity-meta">
+                <span>{selectedOpportunity.discipline}</span>
+                <span>Example path</span>
+              </div>
+              <h3>{selectedOpportunity.title}</h3>
+              <p>{selectedOpportunity.summary}</p>
+              <dl>
+                <div>
+                  <dt>Scope</dt>
+                  <dd>{selectedOpportunity.scope}</dd>
+                </div>
+                <div>
+                  <dt>What it could produce</dt>
+                  <dd>{selectedOpportunity.deliverables.join(' · ')}</dd>
+                </div>
+                <div>
+                  <dt>Skills</dt>
+                  <dd>{selectedOpportunity.capability.join(' · ')}</dd>
+                </div>
+              </dl>
+              <p className="commons-opportunity-disclosure">Example only · Terms not published · No application or work is open.</p>
+            </article>
+          </div>
+        </section>
+
+        <section aria-label="Field signal queue" className="signal-workspace" hidden={commonsView !== 'signals'}>
+          <aside className="signal-queue">
+            <div className="commons-signal-tools">
+              <label className="signal-search">
+                <span aria-hidden="true">⌕</span>
+                <input aria-label="Search signals" onInput={event => setSearch((event.currentTarget as HTMLInputElement).value)} placeholder="Find a signal" value={search} />
+              </label>
+              <details className="commons-signal-filter">
+                <summary>{filter === 'all' ? 'Filter' : statusLabels[filter]}</summary>
+                <div aria-label="Filter signals by status" className="signal-filters" role="group">
+                  {filters.map(item => (
+                    <button
+                      aria-pressed={filter === item}
+                      className={filter === item ? 'is-active' : ''}
+                      key={item}
+                      onClick={event => {
+                        setFilter(item);
+                        (event.currentTarget as HTMLButtonElement).closest('details')?.removeAttribute('open');
+                      }}
+                      type="button"
+                    >
+                      {item === 'all' ? 'All' : statusLabels[item]}
+                    </button>
+                  ))}
+                </div>
+              </details>
             </div>
             <div className="signal-list">
-              {visibleSignals.map(signal => (
+              {displayedSignals.map(signal => (
                 <button
                   aria-current={selected?.id === signal.id ? 'true' : undefined}
                   className={`signal-list-item${selected?.id === signal.id ? ' is-selected' : ''}`}
                   key={signal.id}
                   onClick={() => {
                     setSelectedId(signal.id);
-                    setInstitutionScope(signal.institutionId);
                   }}
                   type="button"
                 >
                   <span className={`signal-status-mark signal-status-${signal.status}`} />
                   <span className="signal-list-copy">
+                    <small className="commons-signal-meta">{signalCategory(signal)} · {signal.scenario ? 'Example signal' : formatSignalDate(signal.updatedAt)}</small>
                     <strong>{signal.title}</strong>
-                    <small>{signal.institutionName} · {signal.assetName ?? 'Asset not identified'}</small>
+                    <small>{signalPlace(signal)}</small>
                   </span>
-                  <span className="signal-list-date">{signal.scenario ? 'EXAMPLE' : formatSignalDate(signal.updatedAt)}</span>
+                  <span className="signal-list-date" aria-hidden="true">→</span>
                 </button>
               ))}
-              {loaded && visibleSignals.length === 0 && (
-                <p className="signal-list-empty">No signals match this view. Report a change to start a local record.</p>
+              {loaded && displayedSignals.length === 0 && (
+                <p className="signal-list-empty">
+                  {search.trim() || filter !== 'all' || institutionScope
+                    ? 'No signals match this view.'
+                    : 'No signals here yet.'}
+                </p>
+              )}
+              {displayedSignals.length < visibleSignals.length && (
+                <button className="commons-show-all" onClick={() => setShowAllSignals(true)} type="button">
+                  Show all {visibleSignals.length} signals
+                </button>
               )}
             </div>
+            {featuredPossibility && (
+              <section className="commons-featured-opportunity">
+                <p className="eyebrow">POSSIBILITY / EXAMPLE SIGNAL</p>
+                <h3>{featuredPossibility.title}</h3>
+                <p>{signalPlace(featuredPossibility)}</p>
+                <button
+                  onClick={() => {
+                    setCommonsView('signals');
+                    setSelectedId(featuredPossibility.id);
+                    setInstitutionScope('');
+                    setSearch('');
+                    setFilter('all');
+                    setShowAllSignals(true);
+                  }}
+                  type="button"
+                >
+                  Review signal <span aria-hidden="true">→</span>
+                </button>
+                <small>Illustrative · not verified</small>
+              </section>
+            )}
           </aside>
 
           <article className="signal-detail">
@@ -619,10 +784,10 @@ export function Commons() {
                   <div>
                     <div className="signal-detail-kickers">
                       <span className={`signal-status-label signal-status-${selected.status}`}>{statusLabels[selected.status]}</span>
-                      {selected.scenario && <span className="signal-scenario-label">CASE REFERENCE</span>}
+                      {selected.scenario && <span className="signal-scenario-label">EXAMPLE SIGNAL</span>}
                     </div>
                     <h2>{selected.title}</h2>
-                    <p>{selected.institutionName} <span>·</span> {selected.assetName ?? 'Asset not identified'} <span>·</span> {selected.location}</p>
+                    <p>{signalContext(selected)}</p>
                     {selected.sourceConsoleDraftId && (
                       <button
                         className="signal-source-console-link"
@@ -633,35 +798,27 @@ export function Commons() {
                       </button>
                     )}
                   </div>
-                  <span className="signal-updated">{selected.scenario ? 'EXAMPLE SCENARIO' : `UPDATED ${formatSignalDate(selected.updatedAt).toUpperCase()}`}</span>
+                  <span className="signal-updated">{selected.scenario ? 'ILLUSTRATIVE' : `UPDATED ${formatSignalDate(selected.updatedAt).toUpperCase()}`}</span>
                 </header>
                 <section className="signal-observation">
-                  <p className="eyebrow">{selected.scenario ? `REPORTED ATTENTION / ${selected.urgency.toUpperCase()}` : `OBSERVATION / ${selected.urgency.toUpperCase()}`}</p>
+                  <p className="eyebrow">OBSERVATION</p>
                   <p>{selected.details}</p>
-                  {selected.scenario && <small>Reference case only; this record is not an active operational report.</small>}
+                  {selected.scenario && <small>Illustrative record · not live or verified.</small>}
                 </section>
                 {selected.scenario && (
-                  <section aria-label="Example evidence and review boundary" className="signal-scenario-evidence">
+                  <details aria-label="Example evidence and review boundary" className="signal-scenario-evidence">
+                    <summary>Evidence checks</summary>
                     <dl>
                       <div><dt>Suspected cause</dt><dd>{selected.suspectedCause ?? 'Unknown; not assessed.'}</dd></div>
                       <div><dt>Verified priority</dt><dd>{selected.verifiedPriority === 'not-assessed' ? 'Not assessed' : 'Unknown'}</dd></div>
                       <div><dt>Evidence on hand</dt><dd>{selected.evidenceOnHand?.join(' ') ?? 'No evidence attached.'}</dd></div>
                       <div><dt>Missing checks</dt><dd>{selected.missingChecks?.join(' · ') ?? 'No checks documented.'}</dd></div>
                     </dl>
-                  </section>
-                )}
-                {selected.id === 'scenario-pump-pressure' && (
-                  <section aria-label="Illustrative Fikra machine scan" className="signal-machine-scan">
-                    <div className="signal-machine-scan-head">
-                      <p className="eyebrow">CASE REVIEW</p>
-                      <span>REFERENCE CHECKLIST</span>
-                    </div>
-                    <p>Any site check would require a qualified person and a recorded method. This record is a reference scenario, not an active assessment.</p>
-                  </section>
+                  </details>
                 )}
                 <section className="signal-next-step">
                   <div>
-                    <p className="eyebrow">{selected.scenario ? 'SUGGESTED NEXT STEP · NOT AUTHORIZED' : 'NEXT ACTION'}</p>
+                    <p className="eyebrow">NEXT STEP</p>
                     <strong>
                       {selected.scenario ? selected.suggestedNextStep ?? 'Review evidence with an authorized person.' :
                         selected.status === 'new' ? 'Review the observation' :
@@ -669,10 +826,10 @@ export function Commons() {
                           selected.status === 'brief' ? 'Approved work brief' : 'Observation closed'}
                     </strong>
                     <span>{selected.scenario
-                      ? 'This reference case does not authorize action or create a work brief.'
+                      ? 'Example only · no work authorized.'
                       : selected.status === 'brief' && !approvedProposal
-                      ? 'No approved proposal is linked. This observation cannot authorize a work brief.'
-                      : 'An observation describes a condition; a steward decision authorizes the next action.'}</span>
+                        ? 'No approved work brief is linked.'
+                        : 'Steward decision required before work.'}</span>
                   </div>
                   {!selected.scenario && selected.status === 'new' && <button className="signal-secondary-action" onClick={() => changeStatus('triaged')} type="button">Move to triage</button>}
                   {!selected.scenario && selected.status === 'triaged' && <button className="signal-primary-action" onClick={() => setCommonsView('decisions')} type="button">Open decision register</button>}
@@ -709,8 +866,8 @@ export function Commons() {
             ) : (
               <div className="signal-detail-empty">
                 <p className="eyebrow">NO SIGNAL SELECTED</p>
-                <h2>{loaded ? 'The queue is clear.' : 'Opening signal queue…'}</h2>
-                <p>{loaded ? 'Choose a signal or report a new observation to begin.' : 'Reviewing current records.'}</p>
+                <h2>{loaded ? 'Nothing here yet.' : 'Loading signals…'}</h2>
+                <p>{loaded ? 'Add a signal or explore opportunities.' : 'Please wait.'}</p>
               </div>
             )}
           </article>

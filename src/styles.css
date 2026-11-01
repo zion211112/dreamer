@@ -4321,33 +4321,6 @@ a:focus-visible {
   font-size: 9px;
 }
 
-.signal-machine-scan {
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.signal-machine-scan-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.signal-machine-scan-head > span {
-  padding: 4px 6px;
-  border: 1px solid color-mix(in srgb, var(--water) 45%, var(--border));
-  color: var(--water);
-  font: 8px/1.4 var(--mono);
-}
-
-.signal-machine-scan > p:last-child {
-  margin: 8px 0 0;
-  color: var(--text-muted);
-  font-size: 10px;
-  line-height: 1.65;
-}
-
 .signal-next-step {
   display: flex;
   align-items: center;
@@ -7326,5 +7299,770 @@ a:focus-visible {
     left: 8px;
     max-height: min(82vh, 720px);
     border-radius: var(--radius-4);
+  }
+}
+.signal-desk {
+  width: min(100%, 1360px);
+}
+
+.signal-desk-head {
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.signal-desk-head h1 {
+  margin: 7px 0 0;
+  font-size: clamp(32px, 4vw, 46px);
+}
+
+.signal-desk-head .eyebrow {
+  color: var(--terrain);
+  font-size: 10px;
+}
+
+.commons-contribute {
+  position: relative;
+}
+
+.commons-contribute .signal-primary-action {
+  min-height: 42px;
+  padding: 0 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.commons-contribute-menu {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 7px);
+  right: 0;
+  display: grid;
+  width: 220px;
+  padding: 5px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-elev);
+  box-shadow: var(--shadow-2);
+}
+
+.commons-contribute-menu button {
+  min-height: 40px;
+  padding: 0 11px;
+  border-radius: 5px;
+  color: var(--text);
+  font-size: 13px;
+  text-align: left;
+}
+
+.commons-contribute-menu button:hover {
+  background: var(--bg-subtle);
+}
+
+.commons-modebar {
+  gap: 18px;
+  min-height: 48px;
+  margin-bottom: 20px;
+}
+
+.commons-modebar > button {
+  min-height: 46px;
+  padding: 0 2px;
+  font-size: 13px;
+}
+
+.commons-modebar > button.is-active {
+  border-bottom-width: 3px;
+  color: var(--terrain-ink);
+}
+
+.commons-modebar > button span {
+  font-size: 10px;
+}
+
+.commons-scope-select select {
+  min-height: 36px;
+  font-size: 12px;
+}
+
+.signal-workspace {
+  grid-template-columns: minmax(0, 1.15fr) minmax(360px, .85fr);
+  gap: 18px;
+  min-height: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.signal-queue {
+  gap: 0;
+  border: 0;
+}
+
+.commons-signal-tools {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.signal-search {
+  min-height: 42px;
+  min-width: 0;
+  margin: 0;
+  padding: 0 12px;
+  border-radius: 6px;
+  background: var(--bg-elev);
+}
+
+.signal-search input {
+  font-size: 13px;
+}
+
+.commons-signal-filter {
+  position: relative;
+}
+
+.commons-signal-filter > summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 82px;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-elev);
+  color: var(--text);
+  font-size: 12px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.commons-signal-filter > summary::-webkit-details-marker {
+  display: none;
+}
+
+.commons-signal-filter[open] > .signal-filters {
+  position: absolute;
+  z-index: 15;
+  top: calc(100% + 6px);
+  right: 0;
+  display: grid;
+  min-width: 170px;
+  gap: 2px;
+  padding: 5px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg-elev);
+  box-shadow: var(--shadow-2);
+}
+
+.commons-signal-filter .signal-filters button {
+  justify-content: flex-start;
+  min-height: 36px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  font-size: 12px;
+  text-align: left;
+}
+
+.commons-signal-filter .signal-filters button:hover,
+.commons-signal-filter .signal-filters button.is-active {
+  background: var(--terrain-pale);
+  color: var(--terrain-ink);
+}
+
+.signal-list {
+  display: grid;
+  flex: initial;
+  gap: 8px;
+  overflow: visible;
+}
+
+.signal-list-item {
+  min-height: 92px;
+  gap: 12px;
+  padding: 14px 15px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-elev);
+}
+
+.signal-list-item:hover,
+.signal-list-item.is-selected {
+  border-color: color-mix(in srgb, var(--terrain) 55%, var(--border));
+  background: var(--bg-elev);
+}
+
+.signal-list-item.is-selected {
+  box-shadow: inset 3px 0 var(--terrain);
+}
+
+.signal-status-mark {
+  width: 8px;
+  height: 8px;
+  flex-basis: 8px;
+}
+
+.signal-list-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.signal-list-copy strong {
+  white-space: normal;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.signal-list-copy small {
+  white-space: normal;
+  font-size: 11px;
+}
+
+.signal-list-copy .commons-signal-meta {
+  color: var(--terrain);
+  font: 10px/1.3 var(--mono);
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.signal-list-date {
+  align-self: center;
+  padding: 0;
+  font-size: 15px;
+}
+
+.signal-list-empty {
+  padding: 20px 14px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.commons-show-all {
+  min-height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg-elev);
+  color: var(--terrain-ink);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.commons-show-all:hover {
+  border-color: var(--terrain);
+}
+
+.commons-featured-opportunity {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 17px;
+  border: 1px solid color-mix(in srgb, var(--terrain) 28%, var(--border));
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--terrain-pale) 65%, var(--bg-elev));
+}
+
+.commons-featured-opportunity .eyebrow {
+  color: var(--terrain-ink);
+}
+
+.commons-featured-opportunity h3 {
+  margin: 0;
+  font: 500 20px/1.25 var(--serif);
+}
+
+.commons-featured-opportunity > p:not(.eyebrow) {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.commons-featured-opportunity button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 38px;
+  margin-top: 3px;
+  padding: 0 11px;
+  border-radius: 6px;
+  background: var(--terrain);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.commons-featured-opportunity button:hover {
+  background: var(--terrain-ink);
+}
+
+.commons-featured-opportunity > small {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.signal-detail {
+  min-height: 100%;
+  padding: clamp(20px, 3vw, 30px);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--bg-elev);
+  box-shadow: var(--shadow-1);
+}
+
+.signal-detail-head {
+  padding-bottom: 17px;
+}
+
+.signal-detail-head h2 {
+  margin: 10px 0 7px;
+  font-size: clamp(22px, 2.4vw, 30px);
+}
+
+.signal-detail-head > div > p {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.signal-status-label,
+.signal-scenario-label {
+  min-height: 25px;
+  padding: 0 9px;
+  font-size: 10px;
+}
+
+.signal-updated {
+  font-size: 9px;
+}
+
+.signal-observation {
+  padding: 18px 0;
+}
+
+.signal-observation > p:first-child {
+  font-size: 10px;
+}
+
+.signal-observation > p:nth-child(2) {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.signal-observation small {
+  font-size: 11px;
+}
+
+.signal-scenario-evidence {
+  padding: 15px 0;
+}
+
+.signal-scenario-evidence > summary {
+  color: var(--terrain-ink);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.signal-scenario-evidence[open] > summary {
+  margin-bottom: 13px;
+}
+
+.signal-scenario-evidence dt {
+  font-size: 9px;
+}
+
+.signal-scenario-evidence dd {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.signal-next-step {
+  align-items: flex-start;
+  padding: 16px 0;
+}
+
+.signal-next-step > div {
+  gap: 7px;
+}
+
+.signal-next-step > div strong {
+  font-size: 14px;
+}
+
+.signal-next-step > div > span {
+  font-size: 11px;
+}
+
+.signal-history {
+  padding-top: 15px;
+}
+
+.signal-history-heading > span {
+  font-size: 10px;
+}
+
+.signal-note-form input {
+  min-height: 40px;
+  font-size: 12px;
+}
+
+.signal-update-list li {
+  grid-template-columns: 72px minmax(0, 1fr);
+  font-size: 12px;
+}
+
+.signal-update-list time {
+  font-size: 9px;
+}
+
+.signal-detail-empty {
+  min-height: 320px;
+}
+
+.commons-opportunities[hidden],
+.commons-governance[hidden],
+.signal-workspace[hidden] {
+  display: none;
+}
+
+.commons-opportunities {
+  padding: 4px 0 20px;
+}
+
+.commons-opportunities-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 15px;
+}
+
+.commons-opportunities-head h2 {
+  margin: 5px 0 0;
+  font: 400 clamp(24px, 3vw, 32px)/1.15 var(--serif);
+}
+
+.commons-opportunities-head > span {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.commons-opportunity-workspace {
+  display: grid;
+  grid-template-columns: minmax(220px, .72fr) minmax(0, 1.28fr);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--bg-elev);
+  box-shadow: var(--shadow-1);
+}
+
+.commons-opportunity-list {
+  display: grid;
+  align-content: start;
+  border-right: 1px solid var(--border);
+}
+
+.commons-opportunity-list button {
+  display: grid;
+  gap: 6px;
+  min-height: 88px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--hairline);
+  text-align: left;
+}
+
+.commons-opportunity-list button:last-child {
+  border-bottom: 0;
+}
+
+.commons-opportunity-list button:hover,
+.commons-opportunity-list button.is-selected {
+  background: var(--bg-subtle);
+}
+
+.commons-opportunity-list button.is-selected {
+  box-shadow: inset 3px 0 var(--terrain);
+}
+
+.commons-opportunity-list button > span {
+  color: var(--terrain);
+  font: 10px var(--mono);
+  text-transform: uppercase;
+}
+
+.commons-opportunity-list button strong {
+  font-size: 14px;
+}
+
+.commons-opportunity-list button small {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.commons-opportunity-detail {
+  padding: clamp(20px, 4vw, 34px);
+}
+
+.commons-opportunity-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.commons-opportunity-meta span {
+  padding: 5px 8px;
+  border-radius: 20px;
+  background: var(--terrain-pale);
+  color: var(--terrain-ink);
+  font: 10px var(--mono);
+}
+
+.commons-opportunity-detail h3 {
+  margin: 15px 0 8px;
+  font: 400 clamp(23px, 3vw, 32px)/1.15 var(--serif);
+}
+
+.commons-opportunity-detail > p:not(.commons-opportunity-disclosure) {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.commons-opportunity-detail dl {
+  display: grid;
+  gap: 15px;
+  margin: 23px 0;
+}
+
+.commons-opportunity-detail dl > div {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr);
+  gap: 12px;
+}
+
+.commons-opportunity-detail dt {
+  color: var(--text-faint);
+  font: 10px var(--mono);
+  text-transform: uppercase;
+}
+
+.commons-opportunity-detail dd {
+  margin: 0;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.commons-opportunity-detail .commons-opportunity-disclosure {
+  margin: 0;
+  padding: 11px 12px;
+  border-left: 2px solid var(--brass);
+  background: var(--brass-pale);
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.commons-governance {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.commons-governance-head h2 {
+  font-size: 26px;
+}
+
+.commons-authority strong,
+.commons-authority-prompt {
+  font-size: 13px;
+}
+
+.commons-authority small {
+  font: 11px/1.5 var(--sans);
+}
+
+.commons-steward-list li,
+.commons-example-decision-meta,
+.commons-example-decisions > header > span,
+.commons-proposal-topline,
+.commons-proposal-context {
+  font-size: 10px;
+}
+
+.commons-example-decision h4,
+.commons-proposal h3 {
+  font-size: 15px;
+}
+
+.commons-example-decision p,
+.commons-example-decision > small,
+.commons-proposal > p {
+  font-size: 12px;
+}
+
+.signal-report-form {
+  padding: clamp(18px, 3vw, 28px);
+}
+
+.signal-form-heading h2 {
+  font-size: 25px;
+}
+
+.signal-form-grid label,
+.commons-steward-form label,
+.commons-proposal-form label {
+  font-size: 12px;
+}
+
+.signal-form-grid input,
+.signal-form-grid select,
+.signal-form-grid textarea,
+.commons-steward-form input,
+.commons-proposal-form input,
+.commons-proposal-form textarea {
+  min-height: 42px;
+  font-size: 13px;
+}
+
+.signal-form-grid textarea,
+.commons-proposal-form textarea {
+  min-height: 100px;
+}
+
+.signal-form-footer > span,
+.commons-proposal-footer > span {
+  font-size: 11px;
+}
+
+.signal-primary-action,
+.signal-secondary-action {
+  min-height: 40px;
+  font-size: 12px;
+}
+
+.signal-quiet-action {
+  min-height: 36px;
+  font-size: 11px;
+}
+
+@media (max-width: 900px) {
+  .signal-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .signal-queue {
+    max-height: none;
+  }
+
+  .signal-list {
+    max-height: none;
+  }
+
+  .commons-opportunity-workspace {
+    grid-template-columns: minmax(210px, .8fr) minmax(0, 1.2fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .signal-desk-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .commons-modebar {
+    gap: 14px;
+    overflow-x: auto;
+  }
+
+  .commons-modebar > button {
+    flex: 0 0 auto;
+  }
+
+  .signal-detail {
+    min-height: 0;
+  }
+
+  .commons-opportunity-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .commons-opportunity-list {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .commons-opportunities-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .signal-desk-head {
+    align-items: flex-start;
+  }
+
+  .signal-desk-head h1 {
+    font-size: 31px;
+  }
+
+  .commons-contribute .signal-primary-action {
+    min-height: 38px;
+    padding: 0 11px;
+    font-size: 12px;
+  }
+
+  .commons-modebar {
+    gap: 11px;
+  }
+
+  .commons-modebar > button {
+    font-size: 12px;
+  }
+
+  .signal-list-item {
+    min-height: 86px;
+    padding: 12px 10px;
+  }
+
+  .commons-signal-filter > summary {
+    min-width: 75px;
+    padding: 0 9px;
+  }
+
+  .signal-list-copy strong {
+    font-size: 14px;
+  }
+
+  .signal-detail {
+    padding: 18px 14px;
+  }
+
+  .signal-scenario-evidence dl {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .commons-opportunity-detail dl > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 5px;
+  }
+
+  .commons-scope-select {
+    width: auto;
+    margin-left: auto;
+  }
+
+  .commons-scope-select select {
+    width: auto;
+    max-width: 145px;
   }
 }
