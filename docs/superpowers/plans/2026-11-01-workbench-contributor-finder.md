@@ -80,6 +80,7 @@
   - `opportunities: readonly WorkOpportunity[]`
   - `interests: readonly LocalWorkInterest[]`
   - `selectedOpportunityId: string | null`
+  - `mobileDetailOpen: boolean`
   - `query: string`
   - `error: string`
   - `notice: string`
