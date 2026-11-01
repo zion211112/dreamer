@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { useLocation } from 'wouter';
 import { WorkspaceLayout } from './WorkspaceLayout';
-import { EXAMPLE_DECISIONS, EXAMPLE_FIELD_SIGNALS } from '../../lib/ecosystem-examples';
+import { EXAMPLE_FIELD_SIGNALS } from '../../lib/ecosystem-examples';
 import { WORK_OPPORTUNITIES } from '../../lib/local-workbench';
 import { PEOPLE_NETWORK } from '../../lib/people-network';
 import { loadConsoleSnapshot } from '../../lib/school-console-storage';
@@ -33,8 +33,7 @@ const filters: Array<'all' | SignalStatus> = ['all', 'new', 'triaged', 'brief', 
 const institutionNames = Object.fromEntries(PEOPLE_NETWORK
   .filter(entity => entity.type === 'institution')
   .map(entity => [entity.id, entity.name]));
-const exampleSignalById = new Map(EXAMPLE_FIELD_SIGNALS.map(signal => [signal.id, signal]));
-const featuredPossibility = EXAMPLE_FIELD_SIGNALS.find(signal => signal.id === 'scenario-microgrid-load');
+const featuredPossibility = EXAMPLE_FIELD_SIGNALS.find(signal => signal.id === 'scenario-kibera-making-space');
 
 function formatSignalDate(value: string): string {
   return new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(value));
@@ -168,14 +167,12 @@ export function Commons() {
   const activeStewards = governance.stewards.filter(steward => steward.institutionId === authorityInstitutionId);
   const isSteward = hasLocalStewardRole(governance, authorityInstitutionId, actorEmail);
   const institutionProposals = governance.proposals.filter(proposal => !activeInstitutionId || proposal.institutionId === activeInstitutionId);
-  const exampleDecisions = EXAMPLE_DECISIONS.filter(decision => !activeInstitutionId || decision.institutionId === activeInstitutionId);
   const approvedProposal = selected
     ? governance.proposals.find(proposal => proposal.sourceSignalId === selected.id && proposal.status === 'approved') ?? null
     : null;
-  const institutionOptions = [...new Map([
-    ...signals.map(signal => [signal.institutionId, signal.institutionName] as const),
-    ...governance.proposals.map(proposal => [proposal.institutionId, proposal.institutionName] as const),
-  ]).entries()];
+  const institutionOptions = PEOPLE_NETWORK
+    .filter(entity => entity.type === 'institution')
+    .map(entity => [entity.id, entity.name] as const);
   const visibleSignals = useMemo(() => signals
     .filter(signal => !institutionScope || signal.institutionId === institutionScope)
     .filter(signal => filter === 'all' || signal.status === filter)
@@ -525,36 +522,6 @@ export function Commons() {
             )}
             {!actorEmail && <span className="commons-authority-prompt">Sign in to record a steward role.</span>}
           </div>
-
-          <section aria-labelledby="commons-example-decisions-title" className="commons-example-decisions">
-            <header>
-              <div>
-                <p className="eyebrow">CASE REFERENCES</p>
-                <h3 id="commons-example-decisions-title">Decision examples</h3>
-              </div>
-              <span>Reference view</span>
-            </header>
-            {exampleDecisions.length ? (
-              <div className="commons-example-decision-list">
-                {exampleDecisions.map(decision => {
-                  const example = exampleSignalById.get(decision.caseId);
-                  return (
-                    <article className={`commons-example-decision commons-example-decision--${decision.outcome}`} key={decision.id}>
-                      <div className="commons-example-decision-meta">
-                        <span>{decision.outcome}</span>
-                        <small>{institutionNames[decision.institutionId] ?? 'Institution scenario'}</small>
-                      </div>
-                      <h4>{example?.title ?? 'Example observation'}</h4>
-                      <p>{decision.scope}</p>
-                      <small>{decision.reason}</small>
-                    </article>
-                  );
-                })}
-              </div>
-            ) : (
-              <p className="commons-no-proposals">No decision references are associated with this institution.</p>
-            )}
-          </section>
 
           {isSteward && (
             <form className="commons-steward-form" onSubmit={addSteward}>

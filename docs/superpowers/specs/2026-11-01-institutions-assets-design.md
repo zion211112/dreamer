@@ -1,15 +1,17 @@
 # APT-LABS Institutions & Assets Register
 
-**Status:** Design approved in conversation; awaiting spec review
+**Status:** Design approved; implementation delivered and automated validation passed
 
 **Date:** 2026-11-01
 
 ## Purpose
 
-Redesign the existing Institutions / Assets register as a concise map of
-institutional and productive capacity, rather than a mixed catalogue. The
-register should distinguish organised actors from resources, keep provenance
-and unknowns visible, and connect only to flows that exist today.
+Redesign the existing Institutions / Assets register as a concise, trustworthy
+index of selected institutions and resources in the bundled starter network.
+Make documented identity, source basis, supported relationships, and unknowns
+legible, with contextual entry points only to flows that exist today. This
+iteration does not establish operational capacity, availability, authority, or
+financial position.
 
 ## Distilled product model
 
@@ -35,8 +37,8 @@ transaction or operating result.
 
 ## Confirmed scope
 
-The bundled starter network and its default Institutions / Assets register will
-retain exactly these five Institution / Asset records:
+The bundled starter network and its default Institutions / Assets register
+retain exactly these five approved starter-seed records:
 
 | Type | Existing ID | Name |
 |---|---|---|
@@ -48,10 +50,38 @@ retain exactly these five Institution / Asset records:
 
 Preserve these IDs. Remove other Institution and Asset entities from the
 checked-in starter seed, but leave people, crews, work, and evidence entities
-unchanged unless a tightly coupled fixture or relationship must be retired for
-integrity. Imported portable People-network data in browser storage is
-user-owned and must not be rewritten or deleted. Do not add a Capital tab,
-capital-record model, financial amounts, or new financial claims.
+unchanged unless a tightly coupled relationship must be retired for integrity.
+Imported portable People-network data in browser storage is user-owned and
+must not be rewritten or deleted. Do not add a Capital tab, capital-record
+model, financial amounts, or new financial claims.
+
+### Starter-seed retirement manifest
+
+Remove these entities from the bundled starter seed:
+
+- Institutions: `institution-solar-commons`, `institution-open-design`,
+  `mwea-school`, `lake-basin-cold-store`, `institution-lacesse-co`.
+- Assets: `asset-microgrid`, `asset-repair-bench`, `asset-fikra-api`,
+  `asset-mwea-water-pump-02`, `asset-lake-basin-cold-store-chamber-a`.
+
+Remove relationships that reference those entities:
+`nia-institution`, `jabari-institution`, `yuki-institution`, `jabari-asset`,
+`nia-bench`, `asset-solar-holder`, `asset-bench-holder`, `asset-tools-holder`,
+`asset-fikra-lacesse`, `asset-console-school`, `asset-pump-water-coop`,
+`asset-cold-store-institution`, `work-uses-grid`, `work-uses-bench`, and
+`audit-grid`. Preserve all other relationships whose endpoints remain.
+
+Retire the dependent illustrative Commons signals
+`scenario-pump-pressure`, `scenario-school-power`, `scenario-cold-room`,
+`scenario-microgrid-load`, and `scenario-tool-condition`; decisions
+`example-decision-pump-check`, `example-decision-school-returned`, and
+`example-decision-cold-declined`; applications
+`example-application-kemetos` and `example-application-animation`; work
+records `example-work-microgrid` and `example-work-kemetos`; brief
+`example-brief-kemoly-local`; and asset journeys `journey-microgrid`,
+`journey-school-animation`, and `journey-kemetos`. Their replacement Commons
+prompts are `scenario-kibera-making-space` and `scenario-mwea-water-context`;
+each is illustrative, institution-only, and not a live report.
 
 ## Current cross-module flow and boundaries
 
@@ -147,7 +177,8 @@ screens.
 
 - Exactly the five confirmed Institution / Asset entities remain in the
   bundled starter network with their current IDs.
-- Every remaining network relationship resolves to an existing entity.
+- Every relationship in the cleaned bundled starter network resolves to an
+  existing entity. Historical browser-local references may remain unresolved.
 - Bundled examples and their dependent fixtures do not point to removed
   entities; the two replacement examples are illustrative and institution-only.
 - Existing browser-local signals, governance, Console/Workbench data, and
