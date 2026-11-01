@@ -1,6 +1,6 @@
 # Workbench Contributor Finder Design
 
-**Status:** Approved in design discussion; awaiting written-spec review
+**Status:** Approved
 **Date:** 2026-11-01
 
 ## Goal
