@@ -23,18 +23,24 @@ npm run build
 - `/workspace/people` — People network
 - `/workspace/institutions` — institution and asset register
 - `/workspace/commons` — local observations and steward decisions
-- `/workspace/workbench` — compose a school need into an isolated, manually run Tender → Assembly → Acceptance → Roll-preview simulation; existing local briefs and applications remain read-only
-- `/workspace/field-desk` — Workbench alias
+- `/workspace/workbench` — browse local work examples and save or remove non-binding interest in this browser
+- `/workspace/workbench/simulate` — compose a school need into an isolated, manually run Tender → Assembly → Acceptance → Roll-preview simulation
+- `/workspace/field-desk` — compatibility alias for the Workbench simulation
 
 Authentication and workspace workflows are browser-local demo functionality,
 not connected services. Passwords are not stored; there is no live
 authentication, external service connection, or live transaction.
 
-Workbench reads a selected School Console need draft and can reference an
-existing Commons observation or Institutions asset by ID. Simulation records
-are stored separately in this browser; they do not publish work, assign
-providers, authorize delivery, create registry assets, or create a real Roll.
-Page Agent is unavailable until protected model infrastructure exists.
+Workbench examples are static and not live opportunities. Interest is saved
+only in this browser; it is non-binding and does not contact an institution.
+The finder does not negotiate terms or start work.
+
+The separate simulation reads a selected School Console need draft and can
+reference an existing Commons observation or Institutions asset by ID.
+Simulation records are stored separately in this browser; they do not publish
+work, assign providers, authorize delivery, create registry assets, or create
+a real Roll. Page Agent is unavailable until protected model infrastructure
+exists.
 
 Run domain and persistence tests with `npm run test:unit -- --run`.
 
