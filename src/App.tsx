@@ -18,7 +18,6 @@ export function App() {
       <Route path="/workspace/institutions"><Institutions /></Route>
       <Route path="/workspace/institutions/school-console"><SchoolConsole /></Route>
       <Route path="/workspace/commons"><Commons /></Route>
-      <Route path="/workspace/workbench/simulate"><Workbench /></Route>
       <Route path="/workspace/workbench"><WorkbenchFinder /></Route>
       <Route path="/workspace/field-desk"><Workbench /></Route>
     </Switch>

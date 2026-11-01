@@ -88,8 +88,8 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
     }
   }, [open]);
 
-  const profileName = session?.displayName?.trim() || 'Kemoly Murage';
-  const profile = network?.entities.find(entity => entity.type === 'person' && entity.name === profileName) ?? null;
+  const profileName = session?.displayName?.trim() || '';
+  const profile = profileName ? network?.entities.find(entity => entity.type === 'person' && entity.name === profileName) ?? null : null;
   const currentPath = location.split('?')[0];
   const normalizedContext = currentPath === '/workspace/field-desk' ? 'workbench' : currentContext;
   const contextLabel = normalizedContext.replace('-', ' ');
@@ -173,16 +173,15 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
           <div className="identity-cabinet-body">
             <section className="identity-profile-card">
               <div className="identity-profile-summary">
-                <span aria-hidden="true" className="identity-avatar">{getInitials(profile?.name ?? profileName)}</span>
+                <span aria-hidden="true" className="identity-avatar">{getInitials((profile?.name ?? profileName) || '?')}</span>
                 <div>
-                  <h3>{profile?.name ?? profileName}</h3>
-                  <span className="identity-source-label">LOCAL PROFILE · NOT AN AUTHENTICATED IDENTITY</span>
+                  <h3>{(profile?.name ?? profileName) || 'Unnamed profile'}</h3>
                 </div>
               </div>
               <div className="identity-session-grid">
                 <div>
                   <span>Session</span>
-                  <strong>{session?.email ? 'Browser-local sign-in' : 'No local sign-in'}</strong>
+                  <strong>{session?.email ? 'Signed in' : 'Not signed in'}</strong>
                 </div>
                 <div>
                   <span>Studio context</span>
@@ -190,7 +189,7 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
                 </div>
                 {session?.email && (
                   <div className="identity-session-email">
-                    <span>Local email</span>
+                    <span>Email</span>
                     <strong>{session.email}</strong>
                   </div>
                 )}
@@ -205,11 +204,11 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
                     {profile.capabilities.map(capability => <span key={capability}>{capability}</span>)}
                   </div>
                 ) : <p className="identity-muted">No capability record is connected to this local profile.</p>}
-                {profile?.role && <p className="identity-provenance">Profile role: {profile.role}. This is not a permission or verified skill claim.</p>}
+                {profile?.role && <p className="identity-provenance">Profile role: {profile.role}</p>}
               </section>
 
               <section className="identity-section">
-                <SectionHeading detail={localEvidence.length ? `${localEvidence.length.toString().padStart(2, '0')} PROFILE RECORDS` : 'NO ISSUER CONNECTION'}>
+                <SectionHeading detail={localEvidence.length ? `${localEvidence.length.toString().padStart(2, '0')} PROFILE RECORDS` : ''}>
                   Credentials &amp; claims
                 </SectionHeading>
                 {localEvidence.length ? (
@@ -220,20 +219,19 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
                         <div className="identity-evidence-copy">
                           <strong>{evidence.name}</strong>
                           <p>{evidence.summary}</p>
-                          <span>{evidence.context ?? 'Profile record · issuer/status not linked'}</span>
+                          <span>{evidence.context ?? 'Profile record'}</span>
                         </div>
                         <span className="identity-reported-tag">REPORTED</span>
                       </article>
                     ))}
-                    <p className="identity-provenance">Reported records are not cryptographically verified. No credential wallet or issuer/status connection is configured.</p>
                   </div>
                 ) : (
-                  <p className="identity-muted">No issuer-verified credentials are connected. Profile notes, if present, remain unverified.</p>
+                  <p className="identity-muted">No issuer-verified credentials are connected.</p>
                 )}
               </section>
 
               <section className="identity-section">
-                <SectionHeading detail="LOCAL NETWORK RECORD">Memberships &amp; authority</SectionHeading>
+                <SectionHeading detail="''">Memberships &amp; authority</SectionHeading>
                 {networkLinks.length ? (
                   <ul className="identity-network-links">
                     {networkLinks.map(({ relationship, entity }) => (
@@ -244,16 +242,8 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
                     ))}
                   </ul>
                 ) : <p className="identity-muted">No membership or affiliation is recorded in this local profile.</p>}
-                <div className="identity-authority-state">
-                  <span>Verified institution membership</span><strong>Not connected</strong>
-                  <span>Reviewer / issuer authority</span><strong>Not assigned</strong>
-                </div>
               </section>
 
-              <section className="identity-section">
-                <SectionHeading detail="INSTITUTION-RECORDED">Work &amp; value</SectionHeading>
-                <p className="identity-muted">No accepted contribution or settlement is connected. Work acceptance and payment settlement remain separate records.</p>
-              </section>
 
               <section className="identity-section identity-portability">
                 <SectionHeading>Portability &amp; session</SectionHeading>
@@ -263,7 +253,6 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
                 </div>
                 {actionStatus && <p className="identity-action-status" role="status">{actionStatus}</p>}
                 <button className="identity-sign-out" onClick={signOut} type="button">End local session</button>
-                <p className="identity-provenance">Authentication is browser-local. Passwords are not stored or sent.</p>
               </section>
             </div>
           </div>

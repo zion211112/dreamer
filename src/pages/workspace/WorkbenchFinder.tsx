@@ -79,7 +79,7 @@ export function WorkbenchFinder() {
     try {
       const saved = expressLocalWorkInterest(opportunityId);
       setInterests(saved);
-      setNotice('Interest saved in this browser — no one was contacted.');
+      setNotice('Interest saved.');
     } catch (saveError) {
       setError(saveError instanceof Error
         ? saveError.message
@@ -97,7 +97,7 @@ export function WorkbenchFinder() {
         setSelectedOpportunityId(remaining[0]?.opportunityId ?? null);
         setMobileDetailOpen(false);
       }
-      setNotice('Local interest was removed from this browser. Nothing was sent or withdrawn elsewhere.');
+      setNotice('Interest removed.');
     } catch (removeError) {
       setError(removeError instanceof Error
         ? removeError.message

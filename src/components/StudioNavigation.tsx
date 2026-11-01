@@ -17,15 +17,15 @@ interface StudioNavigationProps {
 function getLocalProfileName(): string {
   try {
     const raw = localStorage.getItem('authUser');
-    if (!raw) return 'Kemoly Murage';
+    if (!raw) return '';
     const parsed: unknown = JSON.parse(raw);
-    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return 'Kemoly Murage';
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return '';
     const user = parsed as { [key: string]: unknown };
     const displayName = typeof user.name === 'string' ? user.name.trim()
       : typeof user.fullName === 'string' ? user.fullName.trim() : '';
-    return displayName || 'Kemoly Murage';
+    return displayName || '';
   } catch {
-    return 'Kemoly Murage';
+    return '';
   }
 }
 
@@ -84,18 +84,20 @@ function StudioLinks({
 }
 
 function ProfileEntry({ name, onOpen }: { name: string; onOpen: () => void }) {
+  const displayName = name || 'Unnamed profile';
+  const initials = name ? getInitials(name) : '?';
   return (
     <button
-      aria-label={`Open identity cabinet for ${name}`}
+      aria-label={`Open identity cabinet for ${displayName}`}
       aria-haspopup="dialog"
       className="studio-profile-entry"
       onClick={onOpen}
       type="button"
-      title={`Open identity cabinet for ${name}`}
+      title={`Open identity cabinet for ${displayName}`}
     >
-      <span aria-hidden="true" className="studio-profile-avatar">{getInitials(name)}</span>
+      <span aria-hidden="true" className="studio-profile-avatar">{initials}</span>
       <span className="studio-profile-copy">
-        <strong>{name}</strong>
+        <strong>{displayName}</strong>
         <small>Local profile · open identity</small>
       </span>
       <svg aria-hidden="true" className="studio-profile-arrow" viewBox="0 0 16 16">

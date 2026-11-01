@@ -20,7 +20,6 @@ export function Landing() {
           linear-gradient(90deg, var(--hairline) 1px, transparent 1px)
         `,
         backgroundSize: '34px 34px',
-        content: '""',
         maskImage: 'linear-gradient(to bottom, #000 0%, transparent 72%)',
         pointerEvents: 'none',
       }} />
@@ -169,7 +168,6 @@ export function Landing() {
             textTransform: 'uppercase',
           }}>
             <span>BUILT FOR REAL-WORLD EXECUTION</span>
-            <span>PROTOTYPE · 001</span>
           </div>
         </div>
 
@@ -189,7 +187,6 @@ export function Landing() {
             border: '1px solid var(--border)',
             borderRadius: '50%',
             background: 'radial-gradient(circle, var(--bg-elev) 0 31%, color-mix(in srgb, var(--terrain-pale) 45%, transparent) 32% 60%, transparent 61%)',
-            content: '""',
           }} />
           
           <div className="frontdoor-orbit-coordinate" style={{

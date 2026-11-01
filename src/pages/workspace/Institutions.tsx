@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import { readFieldSignals } from '../../lib/local-workflows';
 import { PEOPLE_NETWORK, PEOPLE_RELATIONSHIPS, type NetworkEntity } from '../../lib/people-network';
@@ -69,6 +69,7 @@ function recordMatches(record: InstitutionRecord, query: string): boolean {
 }
 
 export function Institutions() {
+  const [, navigate] = useLocation();
   const [filter, setFilter] = useState<RecordFilter>('All');
   const [query, setQuery] = useState('');
   const [requestedRecordId, setRequestedRecordId] = useState('');
@@ -112,6 +113,7 @@ export function Institutions() {
     setRequestedRecordId('');
     setFilter(nextFilter);
     setSelectedRecordId('');
+    navigate('/workspace/institutions');
   }
 
   return (
@@ -164,6 +166,7 @@ export function Institutions() {
                 setRequestedRecordId('');
                 setSelectedRecordId('');
                 setQuery((event.currentTarget as HTMLInputElement).value);
+                navigate('/workspace/institutions');
               }}
               placeholder="Search name, place, function…"
               type="search"
@@ -199,7 +202,10 @@ export function Institutions() {
                         aria-current={active ? 'true' : undefined}
                         aria-label={`Inspect ${entity.name}, ${record.recordType}`}
                         className={`institution-record-select institution-record--${record.recordType.toLowerCase()}`}
-                        onClick={() => setSelectedRecordId(entity.id)}
+                        onClick={() => {
+                          setSelectedRecordId(entity.id);
+                          navigate(`/workspace/institutions?record=${encodeURIComponent(entity.id)}`);
+                        }}
                         type="button"
                       >
                         <span className="institution-record-index">{String(index + 1).padStart(2, '0')}</span>

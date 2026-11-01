@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>People Workspace · Design Comparison</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f5f3ee;
+      --paper-deep: #ebe7df;
+      --surface: #fbfaf7;
+      --ink: #1a1d18;
+      --muted: #6b7066;
+      --faint: #92978d;
+      --line: rgba(26, 29, 24, .13);
+      --line-strong: rgba(26, 29, 24, .24);
+      --green: #587457;
+      --green-pale: #e4ebe3;
+      --brass: #a9864d;
+      --serif: Georgia, "Times New Roman", serif;
+      --sans: Inter, "Segoe UI", sans-serif;
+      --mono: "JetBrains Mono", Consolas, monospace;
+      font-family: var(--sans);
+      color: var(--ink);
+      background: var(--paper);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: var(--paper); }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; }
+    button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+    .shell { min-height: 100vh; display: grid; grid-template-columns: 220px minmax(0, 1fr); }
+    .rail { display: flex; flex-direction: column; min-height: 100vh; padding: 22px 14px 16px; border-right: 1px solid var(--line); background: #f0eee8; }
+    .brand { display: flex; align-items: center; gap: 9px; padding: 0 8px; font: 600 11px var(--mono); letter-spacing: .04em; }
+    .brand-mark { display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid var(--line-strong); border-radius: 7px 7px 7px 2px; color: var(--green); font: 15px var(--serif); }
+    .rail-label { margin: 40px 10px 11px; color: var(--faint); font: 9px var(--mono); letter-spacing: .13em; text-transform: uppercase; }
+    .nav { display: grid; gap: 3px; }
+    .nav a { display: flex; align-items: center; gap: 11px; min-height: 38px; padding: 0 10px; color: #555a51; text-decoration: none; font-size: 12px; }
+    .nav a span { width: 20px; color: #989c91; font: 9px var(--mono); }
+    .nav a.active { color: var(--ink); background: #e5e8df; }
+    .rail-bottom { margin-top: auto; padding: 12px 9px 0; border-top: 1px solid var(--line); color: var(--muted); font: 9px/1.6 var(--mono); }
+    main { min-width: 0; padding: 31px clamp(22px, 4vw, 64px) 60px; }
+    .topline { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding-bottom: 20px; border-bottom: 1px solid var(--line-strong); }
+    .crumb { color: var(--muted); font-size: 11px; }
+    .crumb b { color: var(--ink); font-weight: 500; }
+    .sample-tag { color: #6c704f; font: 9px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+    .page-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; padding: 28px 0 22px; }
+    h1 { margin: 0; font: 400 39px/1.08 var(--serif); }
+    .lede { max-width: 540px; margin: 8px 0 0; color: var(--muted); font-size: 13px; }
+    .view-tabs { display: flex; gap: 20px; border-bottom: 1px solid var(--line-strong); }
+    .view-tabs button { position: relative; min-height: 43px; padding: 0 1px; border: 0; background: transparent; color: var(--muted); font-size: 12px; cursor: pointer; }
+    .view-tabs button[aria-pressed="true"] { color: var(--ink); }
+    .view-tabs button[aria-pressed="true"]::after { position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; background: var(--green); content: ""; }
+    .option-tabs { display: flex; align-items: center; gap: 6px; margin: 22px 0; padding: 4px; width: fit-content; border: 1px solid var(--line); background: #efede7; }
+    .option-tabs button { min-height: 30px; padding: 0 11px; border: 0; background: transparent; color: var(--muted); font-size: 10px; cursor: pointer; }
+    .option-tabs button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.07); }
+    .toolbar { display: flex; align-items: center; gap: 9px; margin: 21px 0 16px; }
+    .search { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 170px; min-height: 40px; padding: 0 12px; border: 1px solid var(--line-strong); background: var(--surface); }
+    .search span { color: var(--faint); font-size: 17px; }
+    .search input { width: 100%; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 12px; }
+    .search input::placeholder { color: #92978d; }
+    .filter { min-height: 38px; padding: 0 12px; border: 1px solid var(--line); background: transparent; color: #52574e; font-size: 10px; cursor: pointer; }
+    .count { margin: 0; color: var(--faint); font: 9px var(--mono); }
+    .directory-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 320px); align-items: start; gap: 30px; }
+    .result-head { display: grid; grid-template-columns: minmax(170px, 1.15fr) minmax(180px, 1fr) minmax(95px, .55fr) 118px; gap: 15px; padding: 9px 10px; border-bottom: 1px solid var(--line); color: var(--faint); font: 8px var(--mono); letter-spacing: .07em; text-transform: uppercase; }
+    .person-row { display: grid; grid-template-columns: minmax(170px, 1.15fr) minmax(180px, 1fr) minmax(95px, .55fr) 118px; gap: 15px; align-items: center; width: 100%; min-height: 79px; padding: 13px 10px; border: 0; border-bottom: 1px solid var(--line); background: transparent; text-align: left; cursor: pointer; }
+    .person-row:hover, .person-row.selected { background: rgba(255,255,255,.55); }
+    .person-row.selected { box-shadow: inset 2px 0 var(--green); }
+    .person-name { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .initials { display: grid; flex: none; place-items: center; width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 50%; background: var(--green-pale); color: #3d523b; font: 10px var(--mono); }
+    .name-copy { display: grid; gap: 4px; min-width: 0; }
+    .name-copy strong { overflow: hidden; font: 400 16px/1.15 var(--serif); text-overflow: ellipsis; white-space: nowrap; }
+    .name-copy small { color: var(--muted); font-size: 10px; }
+    .skills { display: flex; flex-wrap: wrap; gap: 5px 12px; color: #42483f; font-size: 10px; }
+    .place, .availability { color: #51564d; font-size: 10px; }
+    .availability::before { display: inline-block; width: 6px; height: 6px; margin: 0 7px 1px 0; border: 1px solid #989b8f; border-radius: 50%; content: ""; }
+    .inspector { position: sticky; top: 22px; border-top: 2px solid var(--green); background: var(--surface); }
+    .inspector-head { padding: 17px 18px 14px; border-bottom: 1px solid var(--line); }
+    .eyebrow { margin: 0 0 8px; color: var(--faint); font: 8px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+    .inspector h2 { margin: 0; font: 400 26px/1.15 var(--serif); }
+    .inspector-role { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+    .section { padding: 14px 18px; border-bottom: 1px solid var(--line); }
+    .section h3 { margin: 0 0 9px; color: #777c71; font: 8px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+    .section p { margin: 0; color: #3f443d; font-size: 11px; line-height: 1.6; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag { padding: 4px 0; border-bottom: 1px solid #c7d0c3; color: #3e523c; font-size: 10px; }
+    .evidence { display: flex; justify-content: space-between; gap: 12px; color: #3f443d; font-size: 10px; }
+    .evidence small { color: var(--faint); font: 8px var(--mono); }
+    .contact-note { color: var(--faint) !important; font-size: 10px !important; }
+    .ledger-feature { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, .65fr); gap: 24px; padding: 22px 0; border-bottom: 1px solid var(--line-strong); }
+    .feature-title { margin: 0 0 8px; font: 400 30px/1.1 var(--serif); }
+    .feature-copy { max-width: 530px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+    .feature-side { padding: 4px 0 4px 18px; border-left: 1px solid var(--line); }
+    .feature-side .section { padding: 9px 0; border: 0; }
+    .ledger-list { margin-top: 22px; }
+    .ledger-row { display: grid; grid-template-columns: 1fr 1.3fr .7fr; gap: 15px; align-items: center; min-height: 64px; padding: 10px; border-bottom: 1px solid var(--line); cursor: pointer; }
+    .ledger-row:hover { background: rgba(255,255,255,.5); }
+    .ledger-row strong { font: 400 16px var(--serif); }
+    .ledger-row span { color: var(--muted); font-size: 10px; }
+    .index-layout { display: grid; grid-template-columns: 180px minmax(0,1fr); gap: 26px; }
+    .facet { border-right: 1px solid var(--line); padding-right: 18px; }
+    .facet h3 { margin: 0 0 11px; font: 9px var(--mono); color: var(--faint); letter-spacing: .1em; text-transform: uppercase; }
+    .facet button { display: block; width: 100%; padding: 8px 2px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--muted); text-align: left; font-size: 11px; cursor: pointer; }
+    .facet button.active { color: var(--ink); }
+    .facet button span { float: right; color: var(--faint); font: 9px var(--mono); }
+    .index-table { width: 100%; border-collapse: collapse; }
+    .index-table th { padding: 9px 10px; border-bottom: 1px solid var(--line-strong); color: var(--faint); text-align: left; font: 8px var(--mono); letter-spacing: .07em; text-transform: uppercase; }
+    .index-table td { padding: 12px 10px; border-bottom: 1px solid var(--line); color: #474c44; font-size: 10px; vertical-align: middle; }
+    .index-table tr { cursor: pointer; }
+    .index-table tbody tr:hover, .index-table tbody tr.selected { background: rgba(255,255,255,.55); }
+    .index-table td:first-child { color: var(--ink); font: 400 15px var(--serif); }
+    .index-table .sub { display: block; margin-top: 4px; color: var(--muted); font: 10px var(--sans); }
+    .empty { padding: 36px 10px; color: var(--muted); font: 11px var(--mono); }
+    [hidden] { display: none !important; }
+    @media (max-width: 1050px) {
+      .shell { grid-template-columns: 64px minmax(0,1fr); }
+      .rail { align-items: center; padding-inline: 8px; }
+      .brand { padding: 0; }
+      .brand-word, .rail-label, .nav a:not(.active) .nav-word, .nav .nav-word, .rail-bottom { display: none; }
+      .nav { margin-top: 38px; }
+      .nav a { justify-content: center; width: 42px; padding: 0; font-size: 0; }
+      .nav a span { width: auto; font-size: 10px; }
+    }
+    @media (max-width: 820px) {
+      main { padding: 22px 20px 40px; }
+      .directory-layout { grid-template-columns: minmax(0,1fr); }
+      .inspector { position: static; }
+      .result-head { grid-template-columns: minmax(150px,1fr) minmax(140px,1fr) 90px; }
+      .result-head span:last-child { display: none; }
+      .person-row { grid-template-columns: minmax(150px,1fr) minmax(140px,1fr) 90px; }
+      .person-row .availability { display: none; }
+      .index-layout { grid-template-columns: 1fr; }
+      .facet { display: flex; gap: 12px; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 0 0 8px; }
+      .facet h3 { display: none; }
+      .facet button { flex: 0 0 auto; width: auto; border: 0; }
+    }
+    @media (max-width: 580px) {
+      .shell { display: block; }
+      .rail { display: none; }
+      main { padding: 17px 16px 36px; }
+      .topline { align-items: flex-start; }
+      .page-head { align-items: flex-start; padding-top: 22px; }
+      h1 { font-size: 33px; }
+      .lede { font-size: 12px; }
+      .sample-tag { max-width: 128px; text-align: right; line-height: 1.4; }
+      .option-tabs { max-width: 100%; overflow-x: auto; }
+      .option-tabs button { white-space: nowrap; }
+      .toolbar { flex-wrap: wrap; }
+      .search { flex-basis: 100%; }
+      .filter { flex: 1; }
+      .result-head { display: none; }
+      .person-row { grid-template-columns: minmax(0,1fr) auto; gap: 7px 10px; min-height: auto; padding: 13px 6px; }
+      .person-name { grid-column: 1 / -1; }
+      .skills { padding-left: 44px; }
+      .place { text-align: right; }
+      .ledger-feature { grid-template-columns: 1fr; gap: 14px; }
+      .feature-side { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px 0 0; border-top: 1px solid var(--line); border-left: 0; }
+      .ledger-row { grid-template-columns: 1fr auto; }
+      .ledger-row span:nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
+      .index-table th:nth-child(3), .index-table td:nth-child(3) { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="rail" aria-label="Studio navigation">
+      <div class="brand"><span class="brand-mark">A</span><span class="brand-word">APT—LABS</span></div>
+      <p class="rail-label">Studio</p>
+      <nav class="nav">
+        <a class="active" href="#people"><span>01</span><span class="nav-word">People</span></a>
+        <a href="#institutions"><span>02</span><span class="nav-word">Institutions</span></a>
+        <a href="#commons"><span>03</span><span class="nav-word">Commons</span></a>
+        <a href="#workbench"><span>04</span><span class="nav-word">Workbench</span></a>
+      </nav>
+      <div class="rail-bottom">APT-LABS STUDIO<br>ILLUSTRATIVE RECORDS</div>
+    </aside>
+    <main id="people">
+      <div class="topline"><div class="crumb">Studio <span aria-hidden="true">/</span> <b>People</b></div><span class="sample-tag">Illustrative studio records</span></div>
+      <header class="page-head">
+        <div><h1>People</h1><p class="lede">Capability, services, and the work behind them.</p></div>
+      </header>
+      <div class="view-tabs" role="tablist" aria-label="People views">
+        <button type="button" role="tab" aria-selected="true">People</button>
+        <button type="button" role="tab" aria-selected="false">Crews</button>
+        <button type="button" role="tab" aria-selected="false">Network</button>
+      </div>
+      <nav class="option-tabs" aria-label="Design alternatives">
+        <button type="button" data-option="field" aria-pressed="true">1 · Field directory</button>
+        <button type="button" data-option="index" aria-pressed="false">2 · Capability index</button>
+        <button type="button" data-option="ledger" aria-pressed="false">3 · Practice ledger</button>
+      </nav>
+
+      <section id="field-view" aria-label="Field directory">
+        <div class="toolbar">
+          <label class="search"><span aria-hidden="true">⌕</span><input id="search-field" type="search" placeholder="Find a person, crew, capability, or service…" aria-label="Search people and capabilities"></label>
+          <button class="filter" type="button">Capability⌄</button>
+          <button class="filter" type="button">Area⌄</button>
+          <button class="filter" type="button">Availability⌄</button>
+        </div>
+        <div class="directory-layout">
+          <div>
+            <p class="count">09 PEOPLE · 05 CREWS</p>
+            <div class="result-head"><span>Practitioner</span><span>Capabilities</span><span>Area</span><span>Availability</span></div>
+            <button class="person-row selected" data-person="nia" type="button">
+              <span class="person-name"><span class="initials">NW</span><span class="name-copy"><strong>Nia Wanjiru</strong><small>Field systems designer</small></span></span>
+              <span class="skills"><span>Systems design</span><span>Community research</span></span><span class="place">Nairobi</span><span class="availability">Not stated</span>
+            </button>
+            <button class="person-row" data-person="jabari" type="button">
+              <span class="person-name"><span class="initials">JO</span><span class="name-copy"><strong>Jabari Otieno</strong><small>Solar technician</small></span></span>
+              <span class="skills"><span>Electrical systems</span><span>Solar maintenance</span></span><span class="place">Nairobi</span><span class="availability">Not stated</span>
+            </button>
+            <button class="person-row" data-person="yuki" type="button">
+              <span class="person-name"><span class="initials">YT</span><span class="name-copy"><strong>Yuki Tanaka</strong><small>Knowledge steward</small></span></span>
+              <span class="skills"><span>Documentation</span><span>Open learning</span></span><span class="place">Nairobi</span><span class="availability">Not stated</span>
+            </button>
+            <button class="person-row" data-person="kemoly" type="button">
+              <span class="person-name"><span class="initials">KM</span><span class="name-copy"><strong>Kemoly Murage</strong><small>Systems architect</small></span></span>
+              <span class="skills"><span>Systems architecture</span><span>Protocol design</span></span><span class="place">Distributed</span><span class="availability">Not stated</span>
+            </button>
+          </div>
+          <aside class="inspector" aria-label="Selected person details">
+            <header class="inspector-head"><p class="eyebrow">Person · illustrative record</p><h2 id="detail-name">Nia Wanjiru</h2><p class="inspector-role" id="detail-role">Field systems designer · Nairobi</p></header>
+            <section class="section"><h3>Practice</h3><p id="detail-summary">Turns local infrastructure needs into maintainable, community-run systems.</p></section>
+            <section class="section"><h3>Capabilities</h3><div class="tags" id="detail-skills"><span class="tag">Systems design</span><span class="tag">Community research</span><span class="tag">Solar planning</span></div></section>
+            <section class="section"><h3>Collaborations</h3><p id="detail-links">Field Systems Crew · member<br>Solar Commons Cooperative · works with</p></section>
+            <section class="section"><h3>Evidence</h3><p class="evidence"><span id="detail-work">Microgrid commissioning</span><small>WORK RECORD</small></p></section>
+            <section class="section"><h3>Contact</h3><p class="contact-note">No contact route disclosed.</p></section>
+          </aside>
+        </div>
+      </section>
+
+      <section id="index-view" class="index-layout" aria-label="Capability index" hidden>
+        <aside class="facet"><h3>Capabilities</h3><button class="active">All capabilities<span>12</span></button><button>Energy systems<span>4</span></button><button>Research<span>3</span></button><button>Documentation<span>2</span></button><button>Software<span>3</span></button></aside>
+        <div>
+          <div class="toolbar"><label class="search"><span aria-hidden="true">⌕</span><input type="search" placeholder="Search capability or practitioner…" aria-label="Search capabilities"></label><button class="filter" type="button">Area⌄</button></div>
+          <table class="index-table"><thead><tr><th>Capability / practitioner</th><th>Related work</th><th>Area</th><th>Availability</th></tr></thead><tbody>
+            <tr class="selected"><td>Systems design<span class="sub">Nia Wanjiru · Field Systems Crew</span></td><td>Microgrid commissioning</td><td>Nairobi</td><td>Not stated</td></tr>
+            <tr><td>Electrical systems<span class="sub">Jabari Otieno · Field Systems Crew</span></td><td>Solar maintenance</td><td>Nairobi</td><td>Not stated</td></tr>
+            <tr><td>Water systems<span class="sub">Kwame Mensah · Field Systems Crew</span></td><td>Water resilience audit</td><td>Accra</td><td>Not stated</td></tr>
+            <tr><td>Documentation<span class="sub">Yuki Tanaka · Open Knowledge Stewards</span></td><td>Repair guide & workshop</td><td>Nairobi</td><td>Not stated</td></tr>
+            <tr><td>Systems architecture<span class="sub">Kemoly Murage · Crew0</span></td><td>Kemetos1 research</td><td>Distributed</td><td>Not stated</td></tr>
+          </tbody></table>
+          <p class="count" style="margin-top:12px">Capabilities as recorded · availability not supplied</p>
+        </div>
+      </section>
+
+      <section id="ledger-view" aria-label="Practice ledger" hidden>
+        <div class="toolbar"><label class="search"><span aria-hidden="true">⌕</span><input type="search" placeholder="Find a practitioner or body of work…" aria-label="Search practice records"></label><button class="filter" type="button">People⌄</button><button class="filter" type="button">Crews⌄</button></div>
+        <article class="ledger-feature">
+          <div><p class="eyebrow">PRACTICE · PERSON</p><h2 class="feature-title">Nia Wanjiru</h2><p class="inspector-role">Field systems designer · Nairobi</p><p class="feature-copy" style="margin-top:13px">Turns local infrastructure needs into maintainable, community-run systems. Her recorded practice links systems design and community research to work with the Field Systems Crew.</p></div>
+          <div class="feature-side"><section class="section"><h3>Capabilities</h3><div class="tags"><span class="tag">Systems design</span><span class="tag">Community research</span><span class="tag">Solar planning</span></div></section><section class="section"><h3>Contact preference</h3><p class="contact-note">No contact route disclosed.</p></section></div>
+        </article>
+        <div class="ledger-list">
+          <p class="eyebrow">SELECTED WORK & RELATIONSHIPS</p>
+          <div class="ledger-row"><strong>Microgrid commissioning</strong><span>Designs · work relationship</span><span>Nairobi</span></div>
+          <div class="ledger-row"><strong>Field Systems Crew</strong><span>Member · explicit relationship</span><span>Crew</span></div>
+          <div class="ledger-row"><strong>Solar Commons Cooperative</strong><span>Works with · affiliation</span><span>Institution</span></div>
+        </div>
+        <div class="ledger-list"><p class="eyebrow">MORE PRACTITIONERS</p><div class="ledger-row"><strong>Jabari Otieno</strong><span>Solar technician · Electrical systems</span><span>Nairobi</span></div><div class="ledger-row"><strong>Yuki Tanaka</strong><span>Knowledge steward · Documentation</span><span>Nairobi</span></div></div>
+      </section>
+    </main>
+  </div>
+  <script>
+    const optionButtons = [...document.querySelectorAll('[data-option]')];
+    const optionSections = { field: document.querySelector('#field-view'), index: document.querySelector('#index-view'), ledger: document.querySelector('#ledger-view') };
+    optionButtons.forEach(button => button.addEventListener('click', () => {
+      optionButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+      Object.entries(optionSections).forEach(([key, section]) => { section.hidden = key !== button.dataset.option; });
+    }));
+    const people = {
+      nia: { name: 'Nia Wanjiru', role: 'Field systems designer · Nairobi', summary: 'Turns local infrastructure needs into maintainable, community-run systems.', skills: ['Systems design', 'Community research', 'Solar planning'], links: 'Field Systems Crew · member<br>Solar Commons Cooperative · works with', work: 'Microgrid commissioning' },
+      jabari: { name: 'Jabari Otieno', role: 'Solar technician · Nairobi', summary: 'Installs and maintains small-scale energy systems with local crews.', skills: ['Electrical systems', 'Solar maintenance', 'Safety'], links: 'Field Systems Crew · member<br>Solar Commons Cooperative · works with', work: 'Microgrid commissioning' },
+      yuki: { name: 'Yuki Tanaka', role: 'Knowledge steward · Nairobi', summary: 'Makes practical learning reusable through open guides and shared records.', skills: ['Documentation', 'Open learning', 'Workshop design'], links: 'Open Knowledge Stewards · member<br>Open Design Library · works with', work: 'Repair guide & workshop' },
+      kemoly: { name: 'Kemoly Murage', role: 'Systems architect · Distributed', summary: 'Designs systems across APT-LABS and Kemetos1; contribution records are linked below.', skills: ['Systems architecture', 'Protocol design', 'AGI systems'], links: 'Crew0 · architects<br>Kemetos1 · architects', work: 'Kemetos1 research papers' },
+    };
+    document.querySelectorAll('[data-person]').forEach(button => button.addEventListener('click', () => {
+      document.querySelectorAll('[data-person]').forEach(item => item.classList.toggle('selected', item === button));
+      const person = people[button.dataset.person];
+      document.querySelector('#detail-name').textContent = person.name;
+      document.querySelector('#detail-role').textContent = person.role;
+      document.querySelector('#detail-summary').textContent = person.summary;
+      document.querySelector('#detail-links').innerHTML = person.links;
+      document.querySelector('#detail-work').textContent = person.work;
+      const tags = document.querySelector('#detail-skills');
+      tags.replaceChildren(...person.skills.map(skill => { const tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = skill; return tag; }));
+    }));
+    document.querySelector('#search-field').addEventListener('input', event => {
+      const query = event.target.value.trim().toLocaleLowerCase();
+      document.querySelectorAll('#field-view [data-person]').forEach(row => row.hidden = !row.textContent.toLocaleLowerCase().includes(query));
+    });
+  </script>
+</body>
+</html>

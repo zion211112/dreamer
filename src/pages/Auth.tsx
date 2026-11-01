@@ -18,15 +18,40 @@ export function Auth() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [context, setContext] = useState('people');
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string; confirmPassword?: string }>({});
+
+  const validateEmail = (value: string) => {
+    if (!value) return 'Email is required.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Enter a valid email address.';
+    return '';
+  };
+
+  const validatePassword = (value: string, isSignUp: boolean) => {
+    if (!value) return 'Password is required.';
+    if (isSignUp && value.length < 8) return 'Password must be at least 8 characters.';
+    return '';
+  };
+
+  const validateConfirmPassword = (value: string, password: string) => {
+    if (!value) return 'Confirm your password.';
+    if (value !== password) return 'Passwords do not match.';
+    return '';
+  };
 
   const handleSubmit = (event: Event) => {
     event.preventDefault();
     setError('');
 
-    if (isSignUp && password !== confirmPassword) {
-      setError('Passwords do not match.');
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password, isSignUp);
+    const confirmError = isSignUp ? validateConfirmPassword(confirmPassword, password) : '';
+
+    if (emailError || passwordError || confirmError) {
+      setFieldErrors({ email: emailError, password: passwordError, confirmPassword: confirmError });
       return;
     }
+
+    setFieldErrors({});
 
     const requestedNext = new URLSearchParams(window.location.search).get('next');
     const next = requestedNext
@@ -51,10 +76,6 @@ export function Auth() {
     <main className="auth-layout">
       <header className="auth-header">
         <BrandMark size="sm" />
-        <span className="auth-header-status">
-          <span aria-hidden="true" />
-          Browser-local demo
-        </span>
       </header>
 
       <div className="auth-main">
@@ -72,7 +93,6 @@ export function Auth() {
 
         <section className="auth-form-panel" aria-labelledby="auth-title">
           <header className="auth-heading">
-            <p className="auth-eyebrow">Your studio, on this device</p>
             <h2 id="auth-title">{isSignUp ? 'Make a place for the work.' : 'Find your place in the work.'}</h2>
             <p>
               {isSignUp
@@ -81,17 +101,19 @@ export function Auth() {
             </p>
           </header>
 
-          <div className="auth-mode-switch" aria-label="Account action">
+          <div className="auth-mode-switch" role="tablist" aria-label="Account action">
             <button
               type="button"
-              aria-pressed={!isSignUp}
+              role="tab"
+              aria-selected={!isSignUp}
               onClick={() => navigate('/sign-in')}
             >
               Sign in
             </button>
             <button
               type="button"
-              aria-pressed={isSignUp}
+              role="tab"
+              aria-selected={isSignUp}
               onClick={() => navigate('/sign-up')}
             >
               Create account
@@ -124,39 +146,32 @@ export function Auth() {
                 type="email"
                 placeholder="you@domain.org"
                 value={email}
-                onChange={setEmail}
+                onChange={(value: string) => { setEmail(value); setFieldErrors(prev => ({ ...prev, email: validateEmail(value) })); }}
+                onBlur={() => setFieldErrors(prev => ({ ...prev, email: validateEmail(email) }))}
                 autoComplete="email"
                 required
-                aria-invalid={Boolean(error)}
-                style={{ borderRadius: '3px', padding: '0 13px' }}
+                aria-invalid={Boolean(fieldErrors.email)}
+                aria-describedby={fieldErrors.email ? 'auth-email-error' : undefined}
               />
+              {fieldErrors.email && <p id="auth-email-error" className="auth-field-error" role="alert">{fieldErrors.email}</p>}
             </div>
 
             <div className="auth-field">
-              <div className="auth-label-row">
-                <label htmlFor="auth-password">Password</label>
-                {!isSignUp && (
-                  <button
-                    type="button"
-                    className="auth-forgot-button"
-                    onClick={() => setError('Password reset is not available in this demo.')}
-                  >
-                    Password reset unavailable in this demo
-                  </button>
-                )}
-              </div>
+              <label htmlFor="auth-password">Password</label>
               <Input
                 id="auth-password"
                 name="password"
                 type="password"
                 placeholder="Enter your password"
                 value={password}
-                onChange={setPassword}
+                onChange={(value: string) => { setPassword(value); setFieldErrors(prev => ({ ...prev, password: validatePassword(value, isSignUp) })); }}
+                onBlur={() => setFieldErrors(prev => ({ ...prev, password: validatePassword(password, isSignUp) }))}
                 autoComplete={isSignUp ? 'new-password' : 'current-password'}
                 required
-                aria-invalid={Boolean(error)}
-                style={{ borderRadius: '3px', padding: '0 13px' }}
+                aria-invalid={Boolean(fieldErrors.password)}
+                aria-describedby={fieldErrors.password ? 'auth-password-error' : undefined}
               />
+              {fieldErrors.password && <p id="auth-password-error" className="auth-field-error" role="alert">{fieldErrors.password}</p>}
             </div>
 
             {isSignUp && (
@@ -168,31 +183,27 @@ export function Auth() {
                   type="password"
                   placeholder="Re-enter your password"
                   value={confirmPassword}
-                  onChange={setConfirmPassword}
+                  onChange={(value: string) => { setConfirmPassword(value); setFieldErrors(prev => ({ ...prev, confirmPassword: validateConfirmPassword(value, password) })); }}
+                  onBlur={() => setFieldErrors(prev => ({ ...prev, confirmPassword: validateConfirmPassword(confirmPassword, password) }))}
                   autoComplete="new-password"
                   required
-                  aria-invalid={Boolean(error)}
-                  style={{ borderRadius: '3px', padding: '0 13px' }}
+                  aria-invalid={Boolean(fieldErrors.confirmPassword)}
+                  aria-describedby={fieldErrors.confirmPassword ? 'auth-confirm-error' : undefined}
                 />
+                {fieldErrors.confirmPassword && <p id="auth-confirm-error" className="auth-field-error" role="alert">{fieldErrors.confirmPassword}</p>}
               </div>
             )}
 
-            <Button type="submit" className="auth-submit" size="lg" style={{ borderRadius: '3px' }}>
+            <Button type="submit" className="auth-submit" size="lg">
               {isSignUp ? 'Create account' : 'Sign in'}
               <span className="auth-submit-arrow" aria-hidden="true">→</span>
             </Button>
           </form>
-
-          <p className="auth-demo-note">
-            <span className="auth-demo-mark" aria-hidden="true">i</span>
-            <span>Demo only. No account is created. Passwords are never stored or sent.</span>
-          </p>
         </section>
       </div>
 
       <footer className="auth-footer">
         <span>APT—LABS <i aria-hidden="true">/</i> Studio entrance</span>
-        <span>Local prototype <i aria-hidden="true">·</i> 001</span>
       </footer>
     </main>
   );

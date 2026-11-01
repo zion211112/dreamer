@@ -24,15 +24,15 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function getDefaultApplicant(): string {
   try {
     const raw = localStorage.getItem('authUser');
-    if (!raw) return 'Kemoly Murage';
+    if (!raw) return '';
     const parsed: unknown = JSON.parse(raw);
-    if (!isRecord(parsed)) return 'Kemoly Murage';
+    if (!isRecord(parsed)) return '';
     const user = parsed;
     const name = typeof user.name === 'string' ? user.name.trim()
       : typeof user.fullName === 'string' ? user.fullName.trim() : '';
-    return name || 'Kemoly Murage';
+    return name || '';
   } catch {
-    return 'Kemoly Murage';
+    return '';
   }
 }
 
