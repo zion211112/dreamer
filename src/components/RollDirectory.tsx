@@ -17,6 +17,7 @@ export function RollDirectory({ initialEntries = [], onEntryAction }: RollDirect
   const [entries, setEntries] = useState<RollEntry[]>(initialEntries);
   const [filteredEntries, setFilteredEntries] = useState<RollEntry[]>(initialEntries);
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     if (typeof window !== 'undefined') {
       return (localStorage.getItem('rollViewMode') as ViewMode) || 'card';
@@ -31,7 +32,7 @@ export function RollDirectory({ initialEntries = [], onEntryAction }: RollDirect
   }, []);
 
   useEffect(() => {
-    if (entries.length === 0) {
+    if (entries.length === 0 && !loadError) {
       loadData();
     }
   }, []);
@@ -42,6 +43,7 @@ export function RollDirectory({ initialEntries = [], onEntryAction }: RollDirect
 
   const loadData = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const dbFilters: RollQueryFilters = {};
       if (filters.undertakingType?.length) {
@@ -59,7 +61,9 @@ export function RollDirectory({ initialEntries = [], onEntryAction }: RollDirect
       const data = await queryRollEntries(dbFilters);
       setEntries(data);
     } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to load Roll entries';
       console.error('Failed to load roll entries:', error);
+      setLoadError(message);
     } finally {
       setLoading(false);
     }
@@ -87,7 +91,6 @@ export function RollDirectory({ initialEntries = [], onEntryAction }: RollDirect
     }
 
     if (filters.status?.length) {
-      // Status is derived from acceptance - for now filter by acceptance existence
       result = result.filter(e => {
         if (filters.status!.includes('sealed')) return !!e.acceptance.accepted_by;
         if (filters.status!.includes('draft')) return !e.acceptance.accepted_by;
@@ -118,6 +121,10 @@ export function RollDirectory({ initialEntries = [], onEntryAction }: RollDirect
     onEntryAction?.(entry, action);
   }, [onEntryAction]);
 
+  const handleRetry = () => {
+    loadData();
+  };
+
   const columns: Array<'type' | 'status' | 'evidence' | 'participants' | 'hash' | 'date' | 'actions'> = ['type', 'status', 'evidence', 'participants', 'hash', 'date', 'actions'];
 
   if (loading && entries.length === 0) {
@@ -126,6 +133,23 @@ export function RollDirectory({ initialEntries = [], onEntryAction }: RollDirect
         <div className="roll-skeleton-card" />
         <div className="roll-skeleton-card" />
         <div className="roll-skeleton-card" />
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="roll-error-state">
+        <svg className="roll-error-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        <h3 className="roll-error-title">Could not load Roll entries</h3>
+        <p className="roll-error-message">{loadError}</p>
+        <button className="roll-retry-button" onClick={handleRetry} type="button">
+          Try again
+        </button>
       </div>
     );
   }
