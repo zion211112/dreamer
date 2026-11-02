@@ -1,5 +1,6 @@
 import { useState } from 'preact/hooks';
 import { useLocation } from 'wouter';
+import { useAuth } from '../lib/auth/hooks';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { BrandMark } from '../components/BrandMark';
@@ -12,13 +13,17 @@ const contexts = [
 
 export function Auth() {
   const [location, navigate] = useLocation();
+  const { signUp, signIn, loading, error: authError } = useAuth();
   const isSignUp = location === '/sign-up';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [displayName, setDisplayName] = useState('');
+  const [role, setRole] = useState<'founder' | 'institution' | 'coordinator'>('founder');
+  const [organizationName, setOrganizationName] = useState('');
   const [context, setContext] = useState('people');
   const [error, setError] = useState('');
-  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string; confirmPassword?: string }>({});
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string; confirmPassword?: string; displayName?: string }>({});
 
   const validateEmail = (value: string) => {
     if (!value) return 'Email is required.';
@@ -38,20 +43,25 @@ export function Auth() {
     return '';
   };
 
-  const handleSubmit = (event: Event) => {
+  const validateDisplayName = (value: string) => {
+    if (!value.trim()) return 'Display name is required.';
+    return '';
+  };
+
+  const handleSubmit = async (event: Event) => {
     event.preventDefault();
     setError('');
+    setFieldErrors({});
 
     const emailError = validateEmail(email);
     const passwordError = validatePassword(password, isSignUp);
     const confirmError = isSignUp ? validateConfirmPassword(confirmPassword, password) : '';
+    const displayNameError = isSignUp ? validateDisplayName(displayName) : '';
 
-    if (emailError || passwordError || confirmError) {
-      setFieldErrors({ email: emailError, password: passwordError, confirmPassword: confirmError });
+    if (emailError || passwordError || confirmError || displayNameError) {
+      setFieldErrors({ email: emailError, password: passwordError, confirmPassword: confirmError, displayName: displayNameError });
       return;
     }
-
-    setFieldErrors({});
 
     const requestedNext = new URLSearchParams(window.location.search).get('next');
     const next = requestedNext
@@ -62,14 +72,22 @@ export function Auth() {
       : `/workspace/${context}`;
 
     try {
-      localStorage.setItem('workspaceContext', context);
-      localStorage.setItem('authUser', JSON.stringify({ email, context }));
-    } catch {
-      setError('This browser could not save the demo session. Check your storage settings and try again.');
-      return;
-    }
+      let result;
+      if (isSignUp) {
+        result = await signUp({ email, password, displayName, role, organizationName });
+      } else {
+        result = await signIn({ email, password });
+      }
 
-    navigate(next);
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+
+      navigate(next);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Authentication failed. Please try again.');
+    }
   };
 
   return (
@@ -96,7 +114,7 @@ export function Auth() {
             <h2 id="auth-title">{isSignUp ? 'Make a place for the work.' : 'Find your place in the work.'}</h2>
             <p>
               {isSignUp
-                ? 'Choose a workspace and continue.'
+                ? 'Choose a role and continue.'
                 : 'Sign in to continue to your workspace.'}
             </p>
           </header>
@@ -121,22 +139,59 @@ export function Auth() {
           </div>
 
           <form onSubmit={handleSubmit} className="auth-form">
-            {error && <p className="auth-error" role="alert">{error}</p>}
+            {(error || authError) && <p className="auth-error" role="alert">{error || authError}</p>}
 
-            <div className="auth-field">
-              <label htmlFor="auth-workspace">Workspace</label>
-              <select
-                id="auth-workspace"
-                name="workspace"
-                value={context}
-                onChange={(event: Event) => setContext((event.target as HTMLSelectElement).value)}
-                required
-              >
-                {contexts.map((item) => (
-                  <option key={item.id} value={item.id}>{item.label}</option>
-                ))}
-              </select>
-            </div>
+            {isSignUp && (
+              <div className="auth-field">
+                <label htmlFor="auth-display-name">Display name</label>
+                <Input
+                  id="auth-display-name"
+                  name="displayName"
+                  type="text"
+                  placeholder="Your name or venture name"
+                  value={displayName}
+                  onChange={(value: string) => { setDisplayName(value); setFieldErrors(prev => ({ ...prev, displayName: validateDisplayName(value) })); }}
+                  onBlur={() => setFieldErrors(prev => ({ ...prev, displayName: validateDisplayName(displayName) }))}
+                  autoComplete="name"
+                  required
+                  aria-invalid={Boolean(fieldErrors.displayName)}
+                  aria-describedby={fieldErrors.displayName ? 'auth-display-name-error' : undefined}
+                />
+                {fieldErrors.displayName && <p id="auth-display-name-error" className="auth-field-error" role="alert">{fieldErrors.displayName}</p>}
+              </div>
+            )}
+
+            {isSignUp && (
+              <div className="auth-field">
+                <label htmlFor="auth-role">Role</label>
+                <select
+                  id="auth-role"
+                  name="role"
+                  value={role}
+                  onChange={(event: Event) => setRole((event.target as HTMLSelectElement).value as 'founder' | 'institution' | 'coordinator')}
+                  required
+                >
+                  <option value="founder">Founder / Business / Crew</option>
+                  <option value="institution">Institution / Customer</option>
+                  <option value="coordinator">Coordinator</option>
+                </select>
+              </div>
+            )}
+
+            {isSignUp && role === 'institution' && (
+              <div className="auth-field">
+                <label htmlFor="auth-org-name">Organization name</label>
+                <Input
+                  id="auth-org-name"
+                  name="organizationName"
+                  type="text"
+                  placeholder="School, cooperative, company name"
+                  value={organizationName}
+                  onChange={(value: string) => setOrganizationName(value)}
+                  autoComplete="organization"
+                />
+              </div>
+            )}
 
             <div className="auth-field">
               <label htmlFor="auth-email">Email</label>
@@ -194,9 +249,23 @@ export function Auth() {
               </div>
             )}
 
-            <Button type="submit" className="auth-submit" size="lg">
-              {isSignUp ? 'Create account' : 'Sign in'}
-              <span className="auth-submit-arrow" aria-hidden="true">→</span>
+            <div className="auth-field">
+              <label htmlFor="auth-workspace">Workspace</label>
+              <select
+                id="auth-workspace"
+                name="workspace"
+                value={context}
+                onChange={(event: Event) => setContext((event.target as HTMLSelectElement).value)}
+                required
+              >
+                {contexts.map((item) => (
+                  <option key={item.id} value={item.id}>{item.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <Button type="submit" className="auth-submit" size="lg" disabled={loading}>
+              {loading ? 'Please wait...' : (isSignUp ? 'Create account' : 'Sign in')}
             </Button>
           </form>
         </section>

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { useLocation } from 'wouter';
+import { useAuth } from '../lib/auth/hooks';
 import {
   createPortablePeopleRecord,
   readPeopleNetworkRecord,
@@ -11,36 +12,6 @@ interface IdentityCabinetProps {
   open: boolean;
   onClose: () => void;
   currentContext: string;
-}
-
-interface LocalSession {
-  email: string | null;
-  displayName: string | null;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-function readLocalSession(): LocalSession {
-  const raw = localStorage.getItem('authUser');
-  if (!raw) return { email: null, displayName: null };
-
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(raw);
-  } catch {
-    throw new Error('The local session record is damaged. Sign out and sign in again to reset it.');
-  }
-  if (!isRecord(parsed)) {
-    throw new Error('The local session record has an unsupported format. Sign out and sign in again to reset it.');
-  }
-
-  return {
-    email: typeof parsed.email === 'string' ? parsed.email : null,
-    displayName: typeof parsed.name === 'string' ? parsed.name
-      : typeof parsed.fullName === 'string' ? parsed.fullName : null,
-  };
 }
 
 function getInitials(name: string): string {
@@ -57,10 +28,10 @@ function SectionHeading({ children, detail }: { children: string; detail?: strin
 }
 
 export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabinetProps) {
+  const { profile, signOut: supabaseSignOut } = useAuth();
+  const [, navigate] = useLocation();
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [location, navigate] = useLocation();
   const [network, setNetwork] = useState<PeopleNetworkRecord | null>(null);
-  const [session, setSession] = useState<LocalSession | null>(null);
   const [loadError, setLoadError] = useState('');
   const [actionStatus, setActionStatus] = useState('');
 
@@ -72,14 +43,11 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
       try {
         setLoadError('');
         setActionStatus('');
-        const nextSession = readLocalSession();
         const nextNetwork = readPeopleNetworkRecord();
-        setSession(nextSession);
         setNetwork(nextNetwork);
         dialog.showModal();
       } catch (error) {
         setLoadError(error instanceof Error ? error.message : 'Local identity records could not be read.');
-        setSession(null);
         setNetwork(null);
         dialog.showModal();
       }
@@ -88,20 +56,20 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
     }
   }, [open]);
 
-  const profileName = session?.displayName?.trim() || '';
-  const profile = profileName ? network?.entities.find(entity => entity.type === 'person' && entity.name === profileName) ?? null : null;
-  const currentPath = location.split('?')[0];
+  const profileName = profile?.display_name?.trim() || '';
+  const networkProfile = profileName ? network?.entities.find(entity => entity.type === 'person' && entity.name === profileName) ?? null : null;
+  const currentPath = useLocation()[0].split('?')[0];
   const normalizedContext = currentPath === '/workspace/field-desk' ? 'workbench' : currentContext;
   const contextLabel = normalizedContext.replace('-', ' ');
-  const localEvidence = profile && network
+  const localEvidence = networkProfile && network
     ? network.relationships
-      .filter(relationship => relationship.sourceId === profile.id && relationship.kind === 'evidence')
+      .filter(relationship => relationship.sourceId === networkProfile.id && relationship.kind === 'evidence')
       .map(relationship => network.entities.find(entity => entity.id === relationship.targetId))
       .filter((entity): entity is NetworkEntity => Boolean(entity))
     : [];
-  const networkLinks = profile && network
+  const networkLinks = networkProfile && network
     ? network.relationships
-      .filter(relationship => relationship.sourceId === profile.id && ['membership', 'affiliation'].includes(relationship.kind))
+      .filter(relationship => relationship.sourceId === networkProfile.id && ['membership', 'affiliation'].includes(relationship.kind))
       .map(relationship => ({
         relationship,
         entity: network.entities.find(entity => entity.id === relationship.targetId),
@@ -124,10 +92,11 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
     }
   }
 
-  function signOut() {
+  async function signOut() {
     try {
       localStorage.removeItem('authUser');
       localStorage.removeItem('workspaceContext');
+      await supabaseSignOut();
     } catch {
       setActionStatus('This browser could not end the local session. Check storage settings and try again.');
       return;
@@ -173,24 +142,24 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
           <div className="identity-cabinet-body">
             <section className="identity-profile-card">
               <div className="identity-profile-summary">
-                <span aria-hidden="true" className="identity-avatar">{getInitials((profile?.name ?? profileName) || '?')}</span>
+                <span aria-hidden="true" className="identity-avatar">{getInitials(profileName || '?')}</span>
                 <div>
-                  <h3>{(profile?.name ?? profileName) || 'Unnamed profile'}</h3>
+                  <h3>{profileName || 'Unnamed profile'}</h3>
                 </div>
               </div>
               <div className="identity-session-grid">
                 <div>
                   <span>Session</span>
-                  <strong>{session?.email ? 'Signed in' : 'Not signed in'}</strong>
+                  <strong>{profile ? 'Signed in' : 'Not signed in'}</strong>
                 </div>
                 <div>
                   <span>Studio context</span>
                   <strong>{contextLabel}</strong>
                 </div>
-                {session?.email && (
+                {profile && (
                   <div className="identity-session-email">
                     <span>Email</span>
-                    <strong>{session.email}</strong>
+                    <strong>{profile.display_name}</strong>
                   </div>
                 )}
               </div>
@@ -199,17 +168,17 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
             <div className="identity-cabinet-content">
               <section className="identity-section">
                 <SectionHeading detail="SELF-DESCRIBED">Capabilities</SectionHeading>
-                {profile?.capabilities.length ? (
+                {networkProfile?.capabilities.length ? (
                   <div className="identity-capability-list">
-                    {profile.capabilities.map(capability => <span key={capability}>{capability}</span>)}
+                    {networkProfile.capabilities.map(capability => <span key={capability}>{capability}</span>)}
                   </div>
                 ) : <p className="identity-muted">No capability record is connected to this local profile.</p>}
-                {profile?.role && <p className="identity-provenance">Profile role: {profile.role}</p>}
+                {networkProfile?.role && <p className="identity-provenance">Profile role: {networkProfile.role}</p>}
               </section>
 
               <section className="identity-section">
                 <SectionHeading detail={localEvidence.length ? `${localEvidence.length.toString().padStart(2, '0')} PROFILE RECORDS` : ''}>
-                  Credentials &amp; claims
+                  Credentials & claims
                 </SectionHeading>
                 {localEvidence.length ? (
                   <div className="identity-evidence-list">
@@ -231,7 +200,7 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
               </section>
 
               <section className="identity-section">
-                <SectionHeading detail="''">Memberships &amp; authority</SectionHeading>
+                <SectionHeading detail="''">Memberships & authority</SectionHeading>
                 {networkLinks.length ? (
                   <ul className="identity-network-links">
                     {networkLinks.map(({ relationship, entity }) => (
@@ -244,15 +213,14 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
                 ) : <p className="identity-muted">No membership or affiliation is recorded in this local profile.</p>}
               </section>
 
-
               <section className="identity-section identity-portability">
-                <SectionHeading>Portability &amp; session</SectionHeading>
+                <SectionHeading>Portability & session</SectionHeading>
                 <div className="identity-action-grid">
                   <button onClick={() => { onClose(); navigate('/workspace/people'); }} type="button">View People profile</button>
                   <button onClick={exportRecord} type="button">Export People record</button>
                 </div>
                 {actionStatus && <p className="identity-action-status" role="status">{actionStatus}</p>}
-                <button className="identity-sign-out" onClick={signOut} type="button">End local session</button>
+                <button className="identity-sign-out" onClick={signOut} type="button">End session</button>
               </section>
             </div>
           </div>

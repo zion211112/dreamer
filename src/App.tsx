@@ -3,10 +3,12 @@ import { Landing } from './pages/Landing';
 import { Auth } from './pages/Auth';
 import { People } from './pages/workspace/People';
 import { Institutions } from './pages/workspace/Institutions';
+import { Network } from './pages/workspace/Network';
 import { Commons } from './pages/workspace/Commons';
 import { Workbench } from './pages/workspace/FieldDesk';
 import { WorkbenchFinder } from './pages/workspace/WorkbenchFinder';
 import { SchoolConsole } from './pages/workspace/SchoolConsole';
+import { Roll } from './pages/workspace/Roll';
 
 export function App() {
   return (
@@ -16,10 +18,12 @@ export function App() {
       <Route path="/sign-up"><Auth /></Route>
       <Route path="/workspace/people"><People /></Route>
       <Route path="/workspace/institutions"><Institutions /></Route>
+      <Route path="/workspace/institutions/network"><Network /></Route>
       <Route path="/workspace/institutions/school-console"><SchoolConsole /></Route>
       <Route path="/workspace/commons"><Commons /></Route>
       <Route path="/workspace/workbench"><WorkbenchFinder /></Route>
       <Route path="/workspace/field-desk"><Workbench /></Route>
+      <Route path="/workspace/roll"><Roll /></Route>
     </Switch>
   );
 }

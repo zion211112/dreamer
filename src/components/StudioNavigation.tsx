@@ -1,45 +1,19 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Link } from 'wouter';
+import { useAuth } from '../lib/auth/hooks';
 import { BrandMark } from './BrandMark';
 import { IdentityCabinet } from './IdentityCabinet';
 
 const CONTEXTS = [
-  { id: 'people', label: 'People', number: '01' },
-  { id: 'institutions', label: 'Institutions', number: '02' },
-  { id: 'commons', label: 'Commons', number: '03' },
-  { id: 'workbench', label: 'Workbench', number: '04' },
+  { id: 'people', label: 'People' },
+  { id: 'institutions', label: 'Institutions' },
+  { id: 'commons', label: 'Commons' },
+  { id: 'workbench', label: 'Workbench' },
+  { id: 'roll', label: 'Roll' },
 ] as const;
 
 interface StudioNavigationProps {
-  currentContext: 'people' | 'institutions' | 'commons' | 'field-desk' | 'workbench';
-}
-
-function getLocalProfileName(): string {
-  try {
-    const raw = localStorage.getItem('authUser');
-    if (!raw) return '';
-    const parsed: unknown = JSON.parse(raw);
-    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return '';
-    const user = parsed as { [key: string]: unknown };
-    const displayName = typeof user.name === 'string' ? user.name.trim()
-      : typeof user.fullName === 'string' ? user.fullName.trim() : '';
-    return displayName || '';
-  } catch {
-    return '';
-  }
-}
-
-function getInitials(name: string): string {
-  return name.trim().split(/\s+/).slice(0, 2).map(part => part[0] ?? '').join('').toUpperCase() || '??';
-}
-
-function readSidebarPreference(): { collapsed: boolean; notice: string } {
-  try {
-    return { collapsed: localStorage.getItem('studioSidebarCollapsed') === 'true', notice: '' };
-  } catch (error) {
-    console.error('Could not read the Studio sidebar preference.', error);
-    return { collapsed: false, notice: 'Sidebar preference could not be read; showing expanded.' };
-  }
+  currentContext: 'people' | 'institutions' | 'commons' | 'workbench' | 'roll' | 'field-desk';
 }
 
 function ContextIcon({ id }: { id: string }) {
@@ -51,6 +25,9 @@ function ContextIcon({ id }: { id: string }) {
   }
   if (id === 'commons') {
     return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="10" cy="4.5" r="2" /><circle cx="4.5" cy="14.5" r="2" /><circle cx="15.5" cy="14.5" r="2" /><path d="m9 6.3-3.5 6.4m6-6.4 3.5 6.4m-8.5 1.8h7" /></svg>;
+  }
+  if (id === 'roll') {
+    return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 16.5V3.5a1.5 1.5 0 0 1 1.5-1.5h11a1.5 1.5 0 0 1 1.5 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-11a1.5 1.5 0 0 1-1.5-1.5z" /><path d="M5.5 9h9M5.5 13h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>;
   }
   return <svg aria-hidden="true" viewBox="0 0 20 20"><rect x="2.5" y="6.5" width="15" height="10" rx="1" /><path d="M7 6.5V4h6v2.5M2.5 10h15m-9 0v2h3v-2" /></svg>;
 }
@@ -66,7 +43,7 @@ function StudioLinks({
     <nav aria-label="Studio destinations" className="studio-destinations">
       {CONTEXTS.map(context => (
         <Link
-          aria-label={`${context.label} · ${context.number}`}
+          aria-label={context.label}
           aria-current={currentContext === context.id ? 'page' : undefined}
           className={`studio-destination${currentContext === context.id ? ' is-active' : ''}`}
           href={`/workspace/${context.id}`}
@@ -74,7 +51,6 @@ function StudioLinks({
           onClick={onNavigate}
           title={context.label}
         >
-          <span aria-hidden="true" className="studio-destination-number">{context.number}</span>
           <span aria-hidden="true" className="studio-destination-icon"><ContextIcon id={context.id} /></span>
           <span className="studio-destination-label">{context.label}</span>
         </Link>
@@ -85,7 +61,7 @@ function StudioLinks({
 
 function ProfileEntry({ name, onOpen }: { name: string; onOpen: () => void }) {
   const displayName = name || 'Unnamed profile';
-  const initials = name ? getInitials(name) : '?';
+  const initials = name ? name.trim().split(/\s+/).slice(0, 2).map(part => part[0] ?? '').join('').toUpperCase() : '?';
   return (
     <button
       aria-label={`Open identity cabinet for ${displayName}`}
@@ -98,7 +74,7 @@ function ProfileEntry({ name, onOpen }: { name: string; onOpen: () => void }) {
       <span aria-hidden="true" className="studio-profile-avatar">{initials}</span>
       <span className="studio-profile-copy">
         <strong>{displayName}</strong>
-        <small>Local profile · open identity</small>
+        <small>Profile · open identity</small>
       </span>
       <svg aria-hidden="true" className="studio-profile-arrow" viewBox="0 0 16 16">
         <path d="M4.5 11.5 11 5m0 0H5.5M11 5v5.5" />
@@ -107,14 +83,24 @@ function ProfileEntry({ name, onOpen }: { name: string; onOpen: () => void }) {
   );
 }
 
+function readSidebarPreference(): { collapsed: boolean; notice: string } {
+  try {
+    return { collapsed: localStorage.getItem('studioSidebarCollapsed') === 'true', notice: '' };
+  } catch (error) {
+    console.error('Could not read the Studio sidebar preference.', error);
+    return { collapsed: false, notice: 'Sidebar preference could not be read; showing expanded.' };
+  }
+}
+
 export function StudioNavigation({ currentContext }: StudioNavigationProps) {
+  const { profile, loading: authLoading } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [identityOpen, setIdentityOpen] = useState(false);
   const [sidebarPreference, setSidebarPreference] = useState(readSidebarPreference);
   const drawerRef = useRef<HTMLDialogElement>(null);
-  const activeContext = currentContext === 'field-desk' ? 'workbench' : currentContext;
-  const showIdentity = activeContext !== 'workbench';
-  const profileName = showIdentity ? getLocalProfileName() : '';
+  const activeContext = currentContext === 'field-desk' ? 'workbench' : currentContext === 'roll' ? 'roll' : currentContext;
+  const showIdentity = activeContext !== 'workbench' && !!profile;
+  const profileName = showIdentity ? profile?.display_name || '' : '';
   const sidebarCollapsed = sidebarPreference.collapsed;
 
   useEffect(() => {
@@ -143,6 +129,18 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
       notice = 'Could not save this sidebar choice. It may reset on reload.';
     }
     setSidebarPreference({ collapsed, notice });
+  }
+
+  if (authLoading) {
+    return (
+      <aside aria-label="Studio sidebar" className={`studio-sidebar${sidebarCollapsed ? ' is-collapsed' : ''}`}>
+        <div className="studio-sidebar-brand">
+          <BrandMark className="studio-brand-mark" size="sm" />
+          <span className="studio-brand-divider" aria-hidden="true" />
+          <span className="studio-brand-label">STUDIO</span>
+        </div>
+      </aside>
+    );
   }
 
   return (
@@ -179,7 +177,6 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
           {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} />}
           <div className="studio-session-indicator">
             <span>APT-LABS STUDIO</span>
-            <span>BROWSER-LOCAL</span>
           </div>
         </div>
       </aside>
@@ -206,7 +203,7 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
             className="studio-mobile-profile"
             onClick={() => setIdentityOpen(true)}
             type="button"
-          >{getInitials(profileName)}</button>
+          >{profileName.trim().split(/\s+/).slice(0, 2).map(part => part[0] ?? '').join('').toUpperCase() || '?'}</button>
         )}
       </header>
 
@@ -247,7 +244,6 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
             {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} />}
             <div className="studio-session-indicator">
               <span>APT-LABS STUDIO</span>
-              <span>BROWSER-LOCAL</span>
             </div>
           </div>
         </div>

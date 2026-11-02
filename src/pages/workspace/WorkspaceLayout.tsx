@@ -2,7 +2,7 @@ import { StudioNavigation } from '../../components/StudioNavigation';
 
 interface WorkspaceLayoutProps {
   children: any;
-  currentContext: 'people' | 'institutions' | 'commons' | 'field-desk' | 'workbench';
+  currentContext: 'people' | 'institutions' | 'commons' | 'field-desk' | 'workbench' | 'roll';
 }
 
 export function WorkspaceLayout({ children, currentContext }: WorkspaceLayoutProps) {

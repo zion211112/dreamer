@@ -313,6 +313,10 @@ export function Institutions() {
         <footer className="institution-page-footer">
           <span>APT-LABS <i aria-hidden="true">/</i> RECORDS, NOT ASSUMPTIONS</span>
           <span>This register reads the bundled starter set; it does not alter imported People records.</span>
+          <a className="institution-network-link" href="/workspace/institutions/network">
+            <span>Open Capability Directory</span>
+            <span aria-hidden="true">→</span>
+          </a>
         </footer>
       </main>
     </WorkspaceLayout>
