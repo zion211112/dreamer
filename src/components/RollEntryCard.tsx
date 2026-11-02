@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'preact/hooks';
 import type { RollEntry } from '../lib/db/roll';
+import { isDemoMode } from '../lib/supabase/client';
 
 interface RollEntryCardProps {
   entry: RollEntry;
-  onSelect?: () => void;
-  onAction?: (action: 'view' | 'verify' | 'export' | 'blueprint') => void;
+  onAction?: (action: 'view' | 'verify') => void;
   compact?: boolean;
   className?: string;
 }
@@ -38,12 +38,12 @@ function formatHash(hash: string): string {
 }
 
 function getStatusLabel(hasAcceptance: boolean): string {
-  return hasAcceptance ? 'Sealed' : 'Draft';
+  if (!hasAcceptance) return 'Draft';
+  return isDemoMode ? 'Sample acceptance' : 'Sealed';
 }
 
 export function RollEntryCard({
   entry,
-  onSelect,
   onAction,
   compact = false,
   className = '',
@@ -71,14 +71,13 @@ export function RollEntryCard({
   const handleClick = (event: MouseEvent) => {
     if ((event.target as HTMLElement).closest('button')) return;
     setExpanded(!expanded);
-    onSelect?.();
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.target !== event.currentTarget) return;
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       setExpanded(!expanded);
-      onSelect?.();
     }
   };
 
@@ -153,12 +152,7 @@ export function RollEntryCard({
           <div className="roll-hash-anchor">
             <span className="roll-hash-label">Hash Anchor</span>
             <code className="roll-hash-value" title={entry.hash_anchor}>{formatHash(entry.hash_anchor)}</code>
-            <span
-              className="roll-hash-verified"
-              style={{ color: 'var(--roll-sealed)' }}
-            >
-              ✓ Verified
-            </span>
+            <span className="roll-hash-unchecked">Stored · not checked</span>
           </div>
         )}
       </div>
@@ -232,13 +226,13 @@ export function RollEntryCard({
           {entry.hash_anchor && (
             <div className="roll-hash-detail">
               <span style={{ color: 'var(--net-ink-faint)', font: '600 var(--roll-text-xs) var(--roll-font-mono)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Immutable Hash Anchor
+                Stored Hash Anchor
               </span>
               <div style={{ marginTop: 'var(--roll-space-2)', padding: 'var(--roll-space-3)', background: 'var(--roll-hash-bg)', color: 'var(--roll-hash-text)', borderRadius: 'var(--roll-radius-tight)', fontFamily: 'var(--roll-font-mono)', fontSize: 'var(--roll-text-xs)', wordBreak: 'break-all', border: '1px solid var(--roll-hash-border)' }}>
                 {entry.hash_anchor}
               </div>
               <div style={{ marginTop: 'var(--roll-space-2)', fontSize: 'var(--roll-text-xs)', color: 'var(--net-ink-faint)' }}>
-                SHA-256 of canonical Roll JSON. Verifiable via <code>verifyHashAnchor(canonicalJson, hash)</code>.
+                SHA-256 of canonical Roll fields. Use Inspect &amp; verify to compare the current digest.
               </div>
             </div>
           )}
@@ -267,28 +261,7 @@ export function RollEntryCard({
           onClick={(e) => { e.stopPropagation(); onAction?.('view'); }}
           type="button"
         >
-          View Details
-        </button>
-        <button
-          className="secondary"
-          onClick={(e) => { e.stopPropagation(); onAction?.('verify'); }}
-          type="button"
-        >
-          Verify Hash
-        </button>
-        <button
-          className="secondary"
-          onClick={(e) => { e.stopPropagation(); onAction?.('export'); }}
-          type="button"
-        >
-          Export
-        </button>
-        <button
-          className="primary"
-          onClick={(e) => { e.stopPropagation(); onAction?.('blueprint'); }}
-          type="button"
-        >
-          Generate Blueprint
+          Inspect &amp; verify
         </button>
       </footer>
     </article>

@@ -79,6 +79,98 @@ export interface RollQueryFilters {
   offset?: number;
 }
 
+const DEMO_ROLL_STORAGE_KEY = 'demo_roll_entries';
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every(item => typeof item === 'string');
+}
+
+function isRollParticipant(value: unknown): value is RollEntry['participants'][number] {
+  return isRecord(value)
+    && ['anchor', 'builder', 'apprentice', 'coordinator'].includes(String(value.role_type))
+    && typeof value.person_id === 'string'
+    && (typeof value.profile_id === 'string' || value.profile_id === null)
+    && typeof value.name === 'string'
+    && isStringArray(value.capability_claims)
+    && isStringArray(value.evidence_ids);
+}
+
+function isRollEvidence(value: unknown): value is RollEntry['evidence'][number] {
+  return isRecord(value)
+    && typeof value.id === 'string'
+    && ['public', 'participant', 'restricted'].includes(String(value.layer))
+    && typeof value.title === 'string'
+    && (typeof value.file_url === 'string' || value.file_url === null)
+    && (typeof value.description === 'string' || value.description === null);
+}
+
+function isRollEntry(value: unknown): value is RollEntry {
+  if (!isRecord(value)) return false;
+  const commissionedBy = value.commissioned_by;
+  const acceptance = value.acceptance;
+  const costDisclosed = isRecord(acceptance) ? acceptance.cost_disclosed : undefined;
+  return typeof value.id === 'string'
+    && typeof value.undertaking_id === 'string'
+    && ['physical', 'digital', 'creative', 'hybrid'].includes(String(value.undertaking_type))
+    && typeof value.title === 'string'
+    && typeof value.scope === 'string'
+    && isStringArray(value.deliverables)
+    && (value.reusable_designs === null || isRecord(value.reusable_designs))
+    && isRecord(commissionedBy)
+    && typeof commissionedBy.institution_id === 'string'
+    && typeof commissionedBy.name === 'string'
+    && typeof commissionedBy.coordinator_id === 'string'
+    && Array.isArray(value.participants)
+    && value.participants.every(isRollParticipant)
+    && Array.isArray(value.evidence)
+    && value.evidence.every(isRollEvidence)
+    && isRecord(acceptance)
+    && typeof acceptance.accepted_by === 'string'
+    && typeof acceptance.accepted_at === 'string'
+    && (typeof acceptance.inspection_report_id === 'string' || acceptance.inspection_report_id === null)
+    && (costDisclosed === null || (isRecord(costDisclosed)
+      && typeof costDisclosed.amount === 'number'
+      && typeof costDisclosed.currency === 'string'))
+    && (value.maintenance_obligations === null || isRecord(value.maintenance_obligations))
+    && typeof value.recorded_at === 'string'
+    && typeof value.recorded_by === 'string'
+    && typeof value.hash_anchor === 'string'
+    && typeof value.version === 'number';
+}
+
+function readDemoRollEntries(): RollEntry[] {
+  let serialized: string | null;
+  try {
+    serialized = localStorage.getItem(DEMO_ROLL_STORAGE_KEY);
+  } catch (error) {
+    throw new Error('Demo Roll entries are unreadable from this browser.', { cause: error });
+  }
+  if (serialized === null) return [];
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(serialized);
+  } catch (error) {
+    throw new Error('Demo Roll entries are unreadable: stored data is not valid JSON.', { cause: error });
+  }
+  if (!Array.isArray(parsed) || !parsed.every(isRollEntry)) {
+    throw new Error('Demo Roll entries are unreadable: stored data does not match the Roll entry format.');
+  }
+  return parsed;
+}
+
+function writeDemoRollEntries(entries: RollEntry[]): void {
+  try {
+    localStorage.setItem(DEMO_ROLL_STORAGE_KEY, JSON.stringify(entries));
+  } catch (error) {
+    throw new Error('Demo Roll entries could not be saved in this browser.', { cause: error });
+  }
+}
+
 // Create Roll Entry (the primary write operation)
 export async function createRollEntry(
   data: Omit<RollEntry, 'id' | 'recorded_at' | 'hash_anchor' | 'version'>,
@@ -101,9 +193,7 @@ export async function createRollEntry(
   const hash_anchor = await computeHashAnchor(canonical);
 
   if (isDemoMode) {
-    // Demo mode: write to localStorage
-    const demoKey = 'demo_roll_entries';
-    const existing = JSON.parse(localStorage.getItem(demoKey) || '[]');
+    const existing = readDemoRollEntries();
     const newEntry: RollEntry = {
       ...data,
       id: crypto.randomUUID(),
@@ -113,7 +203,7 @@ export async function createRollEntry(
       version: 1,
     };
     existing.unshift(newEntry);
-    localStorage.setItem(demoKey, JSON.stringify(existing));
+    writeDemoRollEntries(existing);
     return newEntry;
   }
 
@@ -158,53 +248,51 @@ const DEMO_ROLL_ENTRIES: RollEntry[] = [
     id: 'demo-1',
     undertaking_id: 'undertaking-physical-001',
     undertaking_type: 'physical',
-    title: 'Community Workshop Build-out',
-    scope: 'Retrofit 2000sqft warehouse into multi-use fabrication space with CNC, woodworking, and assembly zones',
-    deliverables: ['Floor plan & load calcs', 'Electrical & dust collection install', 'Tooling layout & safety signage', 'First cohort onboarding'],
-    reusable_designs: { layout_template: 'warehouse-fab-v1', safety_protocol: 'fab-shop-standard' },
-    commissioned_by: { institution_id: 'inst-001', name: 'Meridian Makerspace', coordinator_id: 'coord-001' },
+    title: 'DEMO · Community Workshop Build-out',
+    scope: 'Example scope for converting a shared room into a flexible workshop.',
+    deliverables: ['Example layout', 'Sample equipment plan', 'Demo orientation checklist'],
+    reusable_designs: { layout_template: 'example-workshop-layout' },
+    commissioned_by: { institution_id: 'demo-inst-001', name: 'Example Makerspace · Demo', coordinator_id: 'demo-coord-001' },
     participants: [
-      { role_type: 'coordinator', person_id: 'coord-001', profile_id: null, name: 'Alex Chen', capability_claims: ['project-coordination', 'shop-safety'], evidence_ids: ['evd-001'] },
-      { role_type: 'anchor', person_id: 'person-002', profile_id: null, name: 'Maria Santos', capability_claims: ['cnc-programming', 'fusion-360'], evidence_ids: ['evd-002', 'evd-003'] },
-      { role_type: 'builder', person_id: 'person-003', profile_id: null, name: 'James Okonkwo', capability_claims: ['electrical-install', 'dust-collection-design'], evidence_ids: ['evd-004'] },
-      { role_type: 'apprentice', person_id: 'person-004', profile_id: null, name: 'Priya Patel', capability_claims: ['shop-assembly', 'material-handling'], evidence_ids: [] },
+      { role_type: 'coordinator', person_id: 'demo-coord-001', profile_id: null, name: 'Demo Coordinator 1', capability_claims: ['example-coordination'], evidence_ids: ['demo-evd-001'] },
+      { role_type: 'anchor', person_id: 'demo-person-002', profile_id: null, name: 'Demo Participant 2', capability_claims: ['example-workshop-planning'], evidence_ids: ['demo-evd-002'] },
+      { role_type: 'builder', person_id: 'demo-person-003', profile_id: null, name: 'Demo Participant 3', capability_claims: ['example-assembly'], evidence_ids: ['demo-evd-003'] },
     ],
     evidence: [
-      { id: 'evd-001', layer: 'public', title: 'Final walkthrough photos', file_url: null, description: '360° documentation of completed zones' },
-      { id: 'evd-002', layer: 'public', title: 'CNC cut files & toolpaths', file_url: null, description: 'Reusable Fusion 360 setups for workbench series' },
-      { id: 'evd-003', layer: 'participant', title: 'Maria Santos — CNC certification', file_url: null, description: 'Third-party verified CNC programming credential' },
-      { id: 'evd-004', layer: 'restricted', title: 'Electrical permit & inspection report', file_url: null, description: 'City permit #EL-2024-0847, passed rough-in & final' },
+      { id: 'demo-evd-001', layer: 'public', title: 'Example handover checklist', file_url: null, description: 'Synthetic example of a public-layer record.' },
+      { id: 'demo-evd-002', layer: 'participant', title: 'Example participant notes', file_url: null, description: 'Synthetic example of participant-layer material.' },
+      { id: 'demo-evd-003', layer: 'restricted', title: 'Example internal checklist', file_url: null, description: 'Synthetic example of restricted-layer material.' },
     ],
-    acceptance: { accepted_by: 'coord-001', accepted_at: '2024-11-15T14:30:00Z', inspection_report_id: 'rpt-001', cost_disclosed: { amount: 47500, currency: 'USD' } },
-    maintenance_obligations: { dust_collection: 'quarterly filter replacement', cnc: 'annual calibration' },
-    recorded_at: '2024-11-15T14:35:00Z',
-    recorded_by: 'coord-001',
-    hash_anchor: '', // Will be computed on load
+    acceptance: { accepted_by: 'demo-coord-001', accepted_at: '2026-10-15T14:30:00Z', inspection_report_id: null, cost_disclosed: null },
+    maintenance_obligations: null,
+    recorded_at: '2026-10-15T14:35:00Z',
+    recorded_by: 'demo-coord-001',
+    hash_anchor: '',
     version: 1,
   },
   {
     id: 'demo-2',
     undertaking_id: 'undertaking-digital-001',
     undertaking_type: 'digital',
-    title: 'Open-Source Grant Management Platform',
-    scope: 'Build v1 of grant lifecycle manager: applications, review workflows, compliance tracking, and public dashboard',
-    deliverables: ['API spec & data model', 'React admin + public frontend', 'Automated compliance checks', 'Documentation & deployment'],
-    reusable_designs: { api_pattern: 'grant-lifecycle-rest', compliance_engine: 'rule-dsl-v1' },
-    commissioned_by: { institution_id: 'inst-002', name: 'Civic Tech Collective', coordinator_id: 'coord-002' },
+    title: 'DEMO · Community Resource Directory',
+    scope: 'Example scope for a searchable directory of fictional community resources.',
+    deliverables: ['Example data model', 'Sample directory screen', 'Demo usage notes'],
+    reusable_designs: { api_pattern: 'example-directory-pattern' },
+    commissioned_by: { institution_id: 'demo-inst-002', name: 'Example Civic Lab · Demo', coordinator_id: 'demo-coord-002' },
     participants: [
-      { role_type: 'coordinator', person_id: 'coord-002', profile_id: null, name: 'Samira Al-Rashid', capability_claims: ['product-management', 'open-source-governance'], evidence_ids: ['evd-011'] },
-      { role_type: 'anchor', person_id: 'person-005', profile_id: null, name: 'Diego Morales', capability_claims: ['typescript', 'postgres', 'api-design'], evidence_ids: ['evd-012'] },
-      { role_type: 'builder', person_id: 'person-006', profile_id: null, name: 'Aisha Kim', capability_claims: ['react', 'accessibility', 'testing'], evidence_ids: ['evd-013'] },
+      { role_type: 'coordinator', person_id: 'demo-coord-002', profile_id: null, name: 'Demo Coordinator 2', capability_claims: ['example-planning'], evidence_ids: ['demo-evd-011'] },
+      { role_type: 'anchor', person_id: 'demo-person-005', profile_id: null, name: 'Demo Participant 5', capability_claims: ['example-data-design'], evidence_ids: ['demo-evd-012'] },
+      { role_type: 'builder', person_id: 'demo-person-006', profile_id: null, name: 'Demo Participant 6', capability_claims: ['example-interface-design'], evidence_ids: ['demo-evd-013'] },
     ],
     evidence: [
-      { id: 'evd-011', layer: 'public', title: 'Public repo & release notes', file_url: 'https://github.com/civic-tech/grant-platform', description: 'MIT licensed, v1.0.0 tagged' },
-      { id: 'evd-012', layer: 'participant', title: 'Architecture decision records', file_url: null, description: 'ADRs for auth, multi-tenancy, audit logging' },
-      { id: 'evd-012', layer: 'restricted', title: 'Security audit report', file_url: null, description: 'Third-party pen test, 0 critical findings' },
+      { id: 'demo-evd-011', layer: 'public', title: 'Example directory preview', file_url: null, description: 'Synthetic example of a public-layer record.' },
+      { id: 'demo-evd-012', layer: 'participant', title: 'Example design notes', file_url: null, description: 'Synthetic example of participant-layer material.' },
+      { id: 'demo-evd-013', layer: 'restricted', title: 'Example internal notes', file_url: null, description: 'Synthetic example of restricted-layer material.' },
     ],
-    acceptance: { accepted_by: 'coord-002', accepted_at: '2024-10-28T10:00:00Z', inspection_report_id: 'rpt-002', cost_disclosed: { amount: 120000, currency: 'USD' } },
-    maintenance_obligations: { security: 'quarterly dependency audit', compliance: 'annual rule review' },
-    recorded_at: '2024-10-28T10:05:00Z',
-    recorded_by: 'coord-002',
+    acceptance: { accepted_by: 'demo-coord-002', accepted_at: '2026-10-07T10:00:00Z', inspection_report_id: null, cost_disclosed: null },
+    maintenance_obligations: null,
+    recorded_at: '2026-10-07T10:05:00Z',
+    recorded_by: 'demo-coord-002',
     hash_anchor: '',
     version: 1,
   },
@@ -212,50 +300,63 @@ const DEMO_ROLL_ENTRIES: RollEntry[] = [
     id: 'demo-3',
     undertaking_id: 'undertaking-creative-001',
     undertaking_type: 'creative',
-    title: 'Neighborhood Oral History Archive',
-    scope: 'Record, transcribe, and publish 50 interviews with longtime residents; produce traveling exhibit and digital collection',
-    deliverables: ['Interview guide & consent forms', '50 recorded + transcribed interviews', 'Traveling exhibit design', 'Digital archive with search'],
-    reusable_designs: { interview_protocol: 'oral-history-standard', exhibit_system: 'modular-panel-v2' },
-    commissioned_by: { institution_id: 'inst-003', name: 'Heritage District Council', coordinator_id: 'coord-003' },
+    title: 'DEMO · Neighborhood Story Collection',
+    scope: 'Example scope for collecting fictional stories and arranging them in a small exhibit.',
+    deliverables: ['Example prompt sheet', 'Sample exhibit outline', 'Demo collection index'],
+    reusable_designs: { exhibit_system: 'example-modular-panels' },
+    commissioned_by: { institution_id: 'demo-inst-003', name: 'Example Heritage Group · Demo', coordinator_id: 'demo-coord-003' },
     participants: [
-      { role_type: 'coordinator', person_id: 'coord-003', profile_id: null, name: 'Elena Volkov', capability_claims: ['community-engagement', 'archival-practice'], evidence_ids: ['evd-021'] },
-      { role_type: 'anchor', person_id: 'person-007', profile_id: null, name: 'Kwame Asante', capability_claims: ['audio-production', 'interview-technique'], evidence_ids: ['evd-022'] },
-      { role_type: 'builder', person_id: 'person-008', profile_id: null, name: 'Sofia Andersson', capability_claims: ['transcription', 'metadata-schema'], evidence_ids: ['evd-023'] },
-      { role_type: 'apprentice', person_id: 'person-009', profile_id: null, name: 'Liam O\'Connor', capability_claims: ['exhibit-fabrication', 'installation'], evidence_ids: [] },
+      { role_type: 'coordinator', person_id: 'demo-coord-003', profile_id: null, name: 'Demo Coordinator 3', capability_claims: ['example-collection-planning'], evidence_ids: ['demo-evd-021'] },
+      { role_type: 'anchor', person_id: 'demo-person-007', profile_id: null, name: 'Demo Participant 7', capability_claims: ['example-story-editing'], evidence_ids: ['demo-evd-022'] },
+      { role_type: 'builder', person_id: 'demo-person-008', profile_id: null, name: 'Demo Participant 8', capability_claims: ['example-exhibit-layout'], evidence_ids: ['demo-evd-023'] },
     ],
     evidence: [
-      { id: 'evd-021', layer: 'public', title: 'Published digital collection', file_url: 'https://archive.heritagedistrict.org', description: 'Searchable, CC-BY licensed' },
-      { id: 'evd-022', layer: 'participant', title: 'Interview consent forms (redacted)', file_url: null, description: 'IRB-approved protocol, all signatures collected' },
-      { id: 'evd-023', layer: 'restricted', title: 'Raw audio files (participants only)', file_url: null, description: 'Unedited recordings, access restricted per consent' },
+      { id: 'demo-evd-021', layer: 'public', title: 'Example exhibit outline', file_url: null, description: 'Synthetic example of a public-layer record.' },
+      { id: 'demo-evd-022', layer: 'participant', title: 'Example editing notes', file_url: null, description: 'Synthetic example of participant-layer material.' },
+      { id: 'demo-evd-023', layer: 'restricted', title: 'Example working notes', file_url: null, description: 'Synthetic example of restricted-layer material.' },
     ],
-    acceptance: { accepted_by: 'coord-003', accepted_at: '2024-09-20T16:00:00Z', inspection_report_id: 'rpt-003', cost_disclosed: { amount: 35000, currency: 'USD' } },
-    maintenance_obligations: { archive: 'annual backup verification', exhibit: 'per-venue condition report' },
-    recorded_at: '2024-09-20T16:10:00Z',
-    recorded_by: 'coord-003',
+    acceptance: { accepted_by: 'demo-coord-003', accepted_at: '2026-09-29T16:00:00Z', inspection_report_id: null, cost_disclosed: null },
+    maintenance_obligations: null,
+    recorded_at: '2026-09-29T16:10:00Z',
+    recorded_by: 'demo-coord-003',
     hash_anchor: '',
     version: 1,
   },
 ];
 
+function cloneRollEntry(entry: RollEntry): RollEntry {
+  return {
+    ...entry,
+    deliverables: [...entry.deliverables],
+    reusable_designs: entry.reusable_designs ? structuredClone(entry.reusable_designs) : null,
+    commissioned_by: { ...entry.commissioned_by },
+    participants: entry.participants.map(participant => ({
+      ...participant,
+      capability_claims: [...participant.capability_claims],
+      evidence_ids: [...participant.evidence_ids],
+    })),
+    evidence: entry.evidence.map(evidence => ({ ...evidence })),
+    acceptance: {
+      ...entry.acceptance,
+      cost_disclosed: entry.acceptance.cost_disclosed ? { ...entry.acceptance.cost_disclosed } : null,
+    },
+    maintenance_obligations: entry.maintenance_obligations
+      ? structuredClone(entry.maintenance_obligations)
+      : null,
+  };
+}
+
 export async function queryRollEntries(
   filters: RollQueryFilters = {}
 ): Promise<RollEntry[]> {
   if (isDemoMode) {
-    // Load demo entries and compute hashes if needed
-    const entries = [...DEMO_ROLL_ENTRIES];
+    const entries = [
+      ...DEMO_ROLL_ENTRIES.map(cloneRollEntry),
+      ...readDemoRollEntries().map(cloneRollEntry),
+    ];
     for (const entry of entries) {
       if (!entry.hash_anchor) {
-        const canonical = createCanonicalRollJson({
-          undertaking_id: entry.undertaking_id,
-          undertaking_type: entry.undertaking_type,
-          title: entry.title,
-          scope: entry.scope,
-          deliverables: entry.deliverables,
-          commissioned_by: entry.commissioned_by,
-          participants: entry.participants,
-          acceptance: entry.acceptance,
-        });
-        entry.hash_anchor = await computeHashAnchor(canonical);
+        entry.hash_anchor = await computeHashAnchor(createCanonicalRollJson(entry));
       }
     }
 

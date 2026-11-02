@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { RollDirectory } from '../../components/RollDirectory';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import type { RollEntry } from '../../lib/db/roll';
 import { verifyRollEntry } from '../../lib/db/roll';
+import { isDemoMode } from '../../lib/supabase/client';
 
-function VerifyModal({
+function VerificationDialog({
   entry,
   onClose,
 }: { entry: RollEntry; onClose: () => void }) {
@@ -14,95 +15,154 @@ function VerifyModal({
     computedHash: string;
     storedHash: string;
   } | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [verifying, setVerifying] = useState(true);
+  const [attempt, setAttempt] = useState(0);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    closeButtonRef.current?.focus();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+
+      const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+        'button:not(:disabled), [href], summary, [tabindex]:not([tabindex="-1"])'
+      );
+      if (!focusable?.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      previousFocus?.focus();
+    };
+  }, [onClose]);
 
   useEffect(() => {
     let cancelled = false;
+    setResult(null);
+    setError(null);
     setVerifying(true);
     verifyRollEntry(entry)
       .then(verification => {
-        if (!cancelled) {
-          setResult(verification);
-          setVerifying(false);
-        }
+        if (!cancelled) setResult(verification);
       })
-      .catch(error => {
-        if (!cancelled) {
-          console.error('Verification failed:', error);
-          setVerifying(false);
-        }
+      .catch(verificationError => {
+        if (cancelled) return;
+        const message = verificationError instanceof Error
+          ? verificationError.message
+          : 'The hash could not be recomputed in this browser.';
+        console.error('Roll hash verification failed:', verificationError);
+        setError(message);
+      })
+      .finally(() => {
+        if (!cancelled) setVerifying(false);
       });
     return () => { cancelled = true; };
-  }, [entry]);
-
-  if (verifying && !result) {
-    return (
-      <div className="roll-modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="verify-modal-title">
-        <div className="roll-modal" onClick={(e) => e.stopPropagation()}>
-          <header className="roll-modal-header">
-            <h2 id="verify-modal-title">Verifying Hash Anchor</h2>
-            <button className="roll-modal-close" onClick={onClose} type="button" aria-label="Close">×</button>
-          </header>
-          <div className="roll-modal-body">
-            <div className="roll-verifying">
-              <svg className="roll-spinner" viewBox="0 0 24 24" width="32" height="32" aria-hidden="true">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" fill="none" strokeDasharray="31.4 31.4" strokeLinecap="round" />
-              </svg>
-              <p>Recomputing hash from canonical JSON…</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!result) return null;
+  }, [entry, attempt]);
 
   return (
-    <div className="roll-modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="verify-modal-title">
-      <div className="roll-modal roll-modal-wide" onClick={(e) => e.stopPropagation()}>
+    <div className="roll-modal-overlay" onClick={onClose}>
+      <div
+        ref={dialogRef}
+        className="roll-modal roll-modal-wide"
+        onClick={(event) => event.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="roll-verify-title"
+        tabIndex={-1}
+      >
         <header className="roll-modal-header">
-          <h2 id="verify-modal-title">Hash Verification: {entry.title}</h2>
-          <button className="roll-modal-close" onClick={onClose} type="button" aria-label="Close">×</button>
+          <div>
+            <p className="roll-modal-eyebrow">ROLL / INTEGRITY CHECK</p>
+            <h2 id="roll-verify-title">{entry.title}</h2>
+          </div>
+          <button
+            ref={closeButtonRef}
+            className="roll-modal-close"
+            onClick={onClose}
+            type="button"
+            aria-label="Close verification details"
+          >
+            ×
+          </button>
         </header>
         <div className="roll-modal-body">
-          <div className="roll-verification-result" style={{ borderLeftColor: result.valid ? 'var(--roll-sealed)' : 'var(--roll-draft)' }}>
-            <div className="roll-verification-status" style={{ color: result.valid ? 'var(--roll-sealed)' : 'var(--roll-draft)' }}>
-              {result.valid ? '✓ Hash Matches — Entry is Valid' : '✗ Hash Mismatch — Entry Has Been Altered'}
+          {verifying && (
+            <div className="roll-verifying" role="status" aria-live="polite">
+              <svg className="roll-spinner" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" fill="none" strokeDasharray="31.4 31.4" strokeLinecap="round" />
+              </svg>
+              <p>Recomputing SHA-256 from the canonical fields…</p>
             </div>
-            <p className="roll-verification-explanation" style={{ color: 'var(--net-ink-faint)', fontSize: 'var(--roll-text-sm)', marginTop: 'var(--roll-space-2)' }}>
-              {result.valid
-                ? 'The stored hash anchor matches the recomputed SHA-256 of the canonical Roll JSON. This entry has not been tampered with since recording.'
-                : 'The stored hash anchor does NOT match the recomputed hash. This indicates the entry data has been modified after recording — the Roll integrity is compromised.'}
-            </p>
-          </div>
+          )}
 
-          <div className="roll-verification-comparison">
-            <div className="roll-verification-field">
-              <label>Stored Hash Anchor</label>
-              <code className="roll-hash-display">{result.storedHash}</code>
+          {error && (
+            <div className="roll-verification-error" role="alert">
+              <strong>Could not verify this record</strong>
+              <p>{error}</p>
+              <button className="roll-retry-button" onClick={() => setAttempt(value => value + 1)} type="button">
+                Try again
+              </button>
             </div>
-            <div className="roll-verification-field">
-              <label>Computed Hash</label>
-              <code className="roll-hash-display">{result.computedHash}</code>
-            </div>
-          </div>
+          )}
 
-          <details className="roll-canonical-json">
-            <summary>Show Canonical JSON (used for hashing)</summary>
-            <pre className="roll-json-display"><code>{result.canonicalJson}</code></pre>
-          </details>
+          {result && (
+            <>
+              <div
+                className={`roll-verification-result ${result.valid ? 'matches' : 'mismatch'}`}
+                role="status"
+                aria-live="polite"
+              >
+                <strong className="roll-verification-status">
+                  {result.valid
+                    ? 'Canonical fields match the stored SHA-256'
+                    : 'Canonical fields do not match the stored SHA-256'}
+                </strong>
+                <p className="roll-verification-explanation">
+                  {result.valid
+                    ? 'The current canonical fields produce the stored digest. This confirms only a digest match for these fields; it does not verify the claims, identity, acceptance, or evidence.'
+                    : 'The current canonical fields produce a different digest. Review the fields and stored anchor; this result does not establish when or why they diverged.'}
+                </p>
+              </div>
 
-          <div className="roll-verification-note" style={{ fontSize: 'var(--roll-text-xs)', color: 'var(--net-ink-faint)', marginTop: 'var(--roll-space-3)' }}>
-            <strong>Verification Method:</strong> SHA-256 of canonical Roll JSON via Web Crypto API.
-            The canonical JSON includes: undertaking_id, undertaking_type, title, scope, deliverables,
-            commissioned_by, participants, and acceptance — excluding recorded_at, recorded_by, hash_anchor, and version.
-            This ensures only the immutable undertaking data is anchored.
-          </div>
+              <div className="roll-verification-comparison">
+                <div className="roll-verification-field">
+                  <span className="roll-verification-label">Stored hash anchor</span>
+                  <code className="roll-hash-display">{result.storedHash || 'No stored hash'}</code>
+                </div>
+                <div className="roll-verification-field">
+                  <span className="roll-verification-label">Computed SHA-256</span>
+                  <code className="roll-hash-display">{result.computedHash}</code>
+                </div>
+              </div>
 
-          <footer className="roll-modal-footer">
-            <button className="secondary" onClick={onClose} type="button">Close</button>
-          </footer>
+              <details className="roll-canonical-json">
+                <summary>Inspect canonical JSON used for this comparison</summary>
+                <pre className="roll-json-display"><code>{result.canonicalJson}</code></pre>
+              </details>
+
+              <p className="roll-verification-note">
+                <strong>Committed fields:</strong> undertaking ID and type, title, scope, deliverables,
+                commissioner, participants, and acceptance. <strong>Not committed:</strong> evidence
+                objects/files, reusable designs, maintenance obligations, recording metadata, or version.
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -115,31 +175,36 @@ export function Roll() {
   return (
     <WorkspaceLayout currentContext="roll">
       <main className="roll-page" role="main">
+        {isDemoMode && (
+          <aside className="roll-demo-notice" aria-label="Demo data notice">
+            <span className="roll-demo-label">BROWSER-LOCAL DEMO</span>
+            <p>
+              The included examples are synthetic; records created in demo mode stay in this browser.
+              Example acceptance is not real acceptance. These records are not authoritative. Visibility
+              labels are examples only: this demo does not enforce access control or independently verify evidence.
+            </p>
+          </aside>
+        )}
         <header className="roll-page-header">
           <div className="roll-page-heading">
             <p className="roll-page-eyebrow">APT—LABS <span aria-hidden="true">/</span> ROLL</p>
-            <h1>Immutable Evidence Ledger</h1>
+            <h1>Evidence ledger</h1>
             <p className="roll-page-intro">
-              Every completed undertaking generates a verified Roll entry — hash-anchored,
-              evidence-layered, and blueprint-ready. This is the trusted substrate that
-              compounds into capability upgrades, capital legibility, and repeatable delivery.
+              Inspect the fields committed to each record’s SHA-256 anchor. A matching digest means only
+              that those canonical fields currently produce the stored hash.
             </p>
           </div>
         </header>
         <RollDirectory
           onEntryAction={(entry, action) => {
-            console.log(`Roll entry action: ${action}`, entry);
-            if (action === 'verify') {
-              setVerifyEntry(entry);
-            } else if (action === 'export') {
-              alert(`Exporting Roll entry: ${entry.title}\n\nThis would generate a PDF/JSON export with all evidence layers.`);
-            } else if (action === 'blueprint') {
-              alert(`Generating blueprint from: ${entry.title}\n\nThis would create a reusable capability blueprint from the completed undertaking.`);
-            }
+            if (action === 'verify' || action === 'view') setVerifyEntry(entry);
           }}
         />
         {verifyEntry && (
-          <VerifyModal entry={verifyEntry} onClose={() => setVerifyEntry(null)} />
+          <VerificationDialog
+            entry={verifyEntry}
+            onClose={() => setVerifyEntry(null)}
+          />
         )}
       </main>
     </WorkspaceLayout>

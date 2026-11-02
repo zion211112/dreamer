@@ -129,7 +129,7 @@ export function RollDirectory({ initialEntries = [], onEntryAction }: RollDirect
 
   if (loading && entries.length === 0) {
     return (
-      <div className="roll-directory-loading">
+      <div className="roll-directory-loading" aria-busy="true" aria-label="Loading Roll entries">
         <div className="roll-skeleton-card" />
         <div className="roll-skeleton-card" />
         <div className="roll-skeleton-card" />
@@ -139,7 +139,7 @@ export function RollDirectory({ initialEntries = [], onEntryAction }: RollDirect
 
   if (loadError) {
     return (
-      <div className="roll-error-state">
+      <div className="roll-error-state" role="alert">
         <svg className="roll-error-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" aria-hidden="true">
           <circle cx="12" cy="12" r="10" />
           <line x1="12" y1="8" x2="12" y2="12" />
@@ -156,7 +156,7 @@ export function RollDirectory({ initialEntries = [], onEntryAction }: RollDirect
 
   if (filteredEntries.length === 0 && !loading) {
     return (
-      <div className="roll-empty-state">
+      <div className="roll-empty-state" role="status">
         <svg className="roll-empty-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" aria-hidden="true">
           <path d="M4 16.5V3.5a1.5 1.5 0 0 1 1.5-1.5h11a1.5 1.5 0 0 1 1.5 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-11a1.5 1.5 0 0 1-1.5-1.5z" />
           <path d="M5.5 9h9M5.5 13h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -164,7 +164,7 @@ export function RollDirectory({ initialEntries = [], onEntryAction }: RollDirect
         <h3 className="roll-empty-title">No Roll entries found</h3>
         <p className="roll-empty-message">
           {entries.length === 0
-            ? 'No undertakings have been closed yet. Complete work in the Workbench to generate Roll entries.'
+            ? 'No Roll entries have been recorded in this ledger yet.'
             : 'Try adjusting your filters or search terms.'}
         </p>
       </div>
@@ -205,7 +205,6 @@ export function RollDirectory({ initialEntries = [], onEntryAction }: RollDirect
             <RollEntryCard
               key={entry.id}
               entry={entry}
-              onSelect={() => handleEntryAction(entry, 'view')}
               onAction={(action) => handleEntryAction(entry, action)}
             />
           ))}

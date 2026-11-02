@@ -1,9 +1,10 @@
 import type { RollEntry } from '../lib/db/roll';
+import { isDemoMode } from '../lib/supabase/client';
 
 interface RollEntryRowProps {
   entry: RollEntry;
   onSelect?: () => void;
-  onAction?: (action: 'view' | 'verify' | 'export' | 'blueprint') => void;
+  onAction?: (action: 'view' | 'verify') => void;
   expanded?: boolean;
   onExpand?: () => void;
   columns?: ('type' | 'status' | 'evidence' | 'participants' | 'hash' | 'date' | 'actions')[];
@@ -38,7 +39,8 @@ function formatHash(hash: string): string {
 }
 
 function getStatusLabel(hasAcceptance: boolean): string {
-  return hasAcceptance ? 'Sealed' : 'Draft';
+  if (!hasAcceptance) return 'Draft';
+  return isDemoMode ? 'Sample acceptance' : 'Sealed';
 }
 
 function countEvidenceByLayer(evidence: RollEntry['evidence']): Record<RollEntry['evidence'][0]['layer'], number> {
@@ -192,7 +194,7 @@ export function RollEntryRow({
             {entry.hash_anchor ? (
               <div className="roll-table-hash">
                 <code className="roll-hash-value" title={entry.hash_anchor}>{formatHash(entry.hash_anchor)}</code>
-                <span className="roll-hash-verified" style={{ color: 'var(--roll-sealed)' }}>✓</span>
+                <span className="roll-hash-unchecked">Stored</span>
               </div>
             ) : (
               <span className="roll-no-hash" style={{ color: 'var(--net-ink-faint)' }}>—</span>
@@ -209,28 +211,10 @@ export function RollEntryRow({
             <div className="roll-table-actions">
               <button
                 className="primary"
-                onClick={(e) => { e.stopPropagation(); onAction?.('view'); }}
-                type="button"
-              >
-                View
-              </button>
-              <button
                 onClick={(e) => { e.stopPropagation(); onAction?.('verify'); }}
                 type="button"
               >
-                Verify
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); onAction?.('export'); }}
-                type="button"
-              >
-                Export
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); onAction?.('blueprint'); }}
-                type="button"
-              >
-                Blueprint
+                Inspect &amp; verify
               </button>
             </div>
           </td>
@@ -287,13 +271,13 @@ export function RollEntryRow({
               {entry.hash_anchor && (
                 <div className="roll-hash-detail">
                   <span style={{ color: 'var(--net-ink-faint)', font: '600 var(--roll-text-xs) var(--roll-font-mono)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    Immutable Hash Anchor
+                    Stored Hash Anchor
                   </span>
                   <div style={{ marginTop: 'var(--roll-space-2)', padding: 'var(--roll-space-3)', background: 'var(--roll-hash-bg)', color: 'var(--roll-hash-text)', borderRadius: 'var(--roll-radius-tight)', fontFamily: 'var(--roll-font-mono)', fontSize: 'var(--roll-text-xs)', wordBreak: 'break-all', border: '1px solid var(--roll-hash-border)' }}>
                     {entry.hash_anchor}
                   </div>
                   <div style={{ marginTop: 'var(--roll-space-2)', fontSize: 'var(--roll-text-xs)', color: 'var(--net-ink-faint)' }}>
-                    SHA-256 of canonical Roll JSON. Verifiable via <code>verifyHashAnchor(canonicalJson, hash)</code>.
+                    SHA-256 of canonical Roll fields. Use Inspect &amp; verify to compare the current digest.
                   </div>
                 </div>
               )}
