@@ -174,26 +174,19 @@ export function Roll() {
 
   return (
     <WorkspaceLayout currentContext="roll">
-      <main className="roll-page" role="main">
+      <section className="roll-page" aria-labelledby="roll-page-title">
         {isDemoMode && (
           <aside className="roll-demo-notice" aria-label="Demo data notice">
-            <span className="roll-demo-label">BROWSER-LOCAL DEMO</span>
-            <p>
-              The included examples are synthetic; records created in demo mode stay in this browser.
-              Example acceptance is not real acceptance. These records are not authoritative. Visibility
-              labels are examples only: this demo does not enforce access control or independently verify evidence.
-            </p>
+            <span className="roll-demo-label">Local demo</span>
+            <p>Synthetic records stay in this browser; sample acceptance and visibility labels are not authoritative. This demo does not enforce access or verify evidence.</p>
           </aside>
         )}
         <header className="roll-page-header">
-          <div className="roll-page-heading">
-            <p className="roll-page-eyebrow">APT—LABS <span aria-hidden="true">/</span> ROLL</p>
-            <h1>Evidence ledger</h1>
-            <p className="roll-page-intro">
-              Inspect the fields committed to each record’s SHA-256 anchor. A matching digest means only
-              that those canonical fields currently produce the stored hash.
-            </p>
-          </div>
+          <p className="roll-page-eyebrow">APT-LABS <span aria-hidden="true">/</span> ROLL</p>
+          <h1 id="roll-page-title">Evidence ledger</h1>
+          <p className="roll-page-intro">
+            Review records and compare their canonical fields with the stored SHA-256 anchor.
+          </p>
         </header>
         <RollDirectory
           onEntryAction={(entry, action) => {
@@ -206,7 +199,7 @@ export function Roll() {
             onClose={() => setVerifyEntry(null)}
           />
         )}
-      </main>
+      </section>
     </WorkspaceLayout>
   );
 }

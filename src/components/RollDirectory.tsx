@@ -173,21 +173,6 @@ export function RollDirectory({ initialEntries = [], onEntryAction }: RollDirect
 
   return (
     <div className="roll-directory">
-      <header className="roll-directory-header">
-        <div className="roll-directory-title-group">
-          <h1 className="roll-directory-title">Roll</h1>
-          <span className="roll-directory-subtitle">Immutable evidence ledger</span>
-        </div>
-        <div className="roll-directory-controls">
-          <RollViewToggle
-            mode={viewMode}
-            onChange={setViewMode}
-            cardCount={filteredEntries.length}
-            tableCount={filteredEntries.length}
-          />
-        </div>
-      </header>
-
       <RollFilterBar
         filters={filters}
         onChange={handleFilterChange}
@@ -195,12 +180,20 @@ export function RollDirectory({ initialEntries = [], onEntryAction }: RollDirect
         availableInstitutions={Array.from(new Set(entries.map(e => e.commissioned_by.name)))}
       />
 
-      <div className="roll-results-count">
-        <strong>{filteredEntries.length}</strong> of <strong>{entries.length}</strong> entries
+      <div className="roll-directory-toolbar">
+        <p className="roll-results-count">
+          <strong>{filteredEntries.length}</strong> of {entries.length} records
+        </p>
+        <RollViewToggle
+          mode={viewMode}
+          onChange={setViewMode}
+          cardCount={filteredEntries.length}
+          tableCount={filteredEntries.length}
+        />
       </div>
 
       {viewMode === 'card' ? (
-        <div className="roll-card-grid" role="list" aria-label="Roll entries">
+        <section className="roll-card-grid" aria-label="Roll entries">
           {filteredEntries.map(entry => (
             <RollEntryCard
               key={entry.id}
@@ -208,7 +201,7 @@ export function RollDirectory({ initialEntries = [], onEntryAction }: RollDirect
               onAction={(action) => handleEntryAction(entry, action)}
             />
           ))}
-        </div>
+        </section>
       ) : (
         <div className="roll-table-container" role="region" aria-label="Roll entries table" tabIndex={0}>
           <table className="roll-table">

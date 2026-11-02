@@ -10,18 +10,6 @@ interface RollEntryRowProps {
   columns?: ('type' | 'status' | 'evidence' | 'participants' | 'hash' | 'date' | 'actions')[];
 }
 
-function getInitials(name: string): string {
-  return name.trim().split(/\s+/).slice(0, 2).map(p => p[0] ?? '').join('').toUpperCase() || '?';
-}
-
-function getTypeColor(type: RollEntry['undertaking_type']): string {
-  return `var(--roll-${type})`;
-}
-
-function getStatusColor(hasAcceptance: boolean): string {
-  return hasAcceptance ? 'var(--roll-sealed)' : 'var(--roll-draft)';
-}
-
 function getLayerColor(layer: RollEntry['evidence'][0]['layer']): string {
   switch (layer) {
     case 'public': return 'var(--roll-layer-public)';
@@ -59,7 +47,6 @@ export function RollEntryRow({
 }: RollEntryRowProps) {
   const hasAcceptance = !!entry.acceptance.accepted_by;
   const evidenceCounts = countEvidenceByLayer(entry.evidence);
-  const totalEvidence = entry.evidence.length;
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -84,32 +71,10 @@ export function RollEntryRow({
       >
         <td>
           <div className="roll-table-name">
-            <div
-              className="roll-table-avatar"
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                background: getTypeColor(entry.undertaking_type),
-                display: 'grid',
-                placeItems: 'center',
-                color: 'var(--net-paper)',
-                font: '600 11px var(--roll-font-mono)',
-              }}
-              aria-hidden="true"
-            >
-              {getInitials(entry.commissioned_by.name)}
-            </div>
             <div className="roll-table-name-text">
               <span className="roll-table-title">{entry.title}</span>
               <span className="roll-table-meta">
                 <span className="roll-table-institution">{entry.commissioned_by.name}</span>
-                <span
-                  className="roll-table-type"
-                  style={{ background: getTypeColor(entry.undertaking_type) }}
-                >
-                  {entry.undertaking_type}
-                </span>
               </span>
             </div>
           </div>
@@ -118,7 +83,7 @@ export function RollEntryRow({
           <td>
             <span
               className="roll-table-type-badge"
-              style={{ background: getTypeColor(entry.undertaking_type) }}
+              data-type={entry.undertaking_type}
             >
               {entry.undertaking_type}
             </span>
@@ -128,7 +93,7 @@ export function RollEntryRow({
           <td>
             <span
               className="roll-table-status-badge"
-              style={{ background: getStatusColor(hasAcceptance) }}
+              data-status={hasAcceptance ? 'sealed' : 'draft'}
             >
               {getStatusLabel(hasAcceptance)}
             </span>
@@ -161,31 +126,13 @@ export function RollEntryRow({
                 <span className="roll-evidence-dot" style={{ background: getLayerColor('restricted') }} />
                 {evidenceCounts.restricted}
               </span>
-              {totalEvidence > 0 && (
-                <span className="roll-total-evidence" style={{ color: 'var(--net-ink-faint)', font: 'var(--roll-text-xs) var(--roll-font-mono)', marginLeft: 'var(--roll-space-1)' }}>
-                  {totalEvidence} total
-                </span>
-              )}
             </div>
           </td>
         )}
         {columns.includes('participants') && (
           <td>
             <div className="roll-table-participants">
-              {entry.participants.slice(0, 3).map(p => (
-                <span
-                  key={p.person_id}
-                  className="roll-participant-chip"
-                  title={`${p.name} (${p.role_type})`}
-                >
-                  {getInitials(p.name)}
-                </span>
-              ))}
-              {entry.participants.length > 3 && (
-                <span className="roll-participant-chip overflow">
-                  +{entry.participants.length - 3}
-                </span>
-              )}
+              {entry.participants.length} {entry.participants.length === 1 ? 'person' : 'people'}
             </div>
           </td>
         )}
@@ -194,7 +141,7 @@ export function RollEntryRow({
             {entry.hash_anchor ? (
               <div className="roll-table-hash">
                 <code className="roll-hash-value" title={entry.hash_anchor}>{formatHash(entry.hash_anchor)}</code>
-                <span className="roll-hash-unchecked">Stored</span>
+                <span className="roll-hash-unchecked">Stored · not verified</span>
               </div>
             ) : (
               <span className="roll-no-hash" style={{ color: 'var(--net-ink-faint)' }}>—</span>

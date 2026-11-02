@@ -9,18 +9,6 @@ interface RollEntryCardProps {
   className?: string;
 }
 
-function getInitials(name: string): string {
-  return name.trim().split(/\s+/).slice(0, 2).map(p => p[0] ?? '').join('').toUpperCase() || '?';
-}
-
-function getTypeColor(type: RollEntry['undertaking_type']): string {
-  return `var(--roll-${type})`;
-}
-
-function getStatusColor(hasAcceptance: boolean): string {
-  return hasAcceptance ? 'var(--roll-sealed)' : 'var(--roll-draft)';
-}
-
 function getLayerColor(layer: RollEntry['evidence'][0]['layer']): string {
   switch (layer) {
     case 'public': return 'var(--roll-layer-public)';
@@ -92,93 +80,69 @@ export function RollEntryCard({
       aria-expanded={expanded}
     >
       <header className="roll-entry-header">
-        <div
-          className="roll-entry-avatar"
-          aria-hidden="true"
-          style={{ background: getTypeColor(entry.undertaking_type) }}
-        >
-          {getInitials(entry.commissioned_by.name)}
-        </div>
         <div className="roll-entry-identity">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--roll-space-2)', flexWrap: 'wrap' }}>
+          <div className="roll-entry-title-line">
             <h3 className="roll-entry-name">{entry.title}</h3>
-            <span
-              className="roll-entry-type"
-              style={{ background: getTypeColor(entry.undertaking_type) }}
-            >
+            <span className="roll-entry-type" data-type={entry.undertaking_type}>
               {entry.undertaking_type}
             </span>
-            <span
-              className="roll-entry-status"
-              style={{ background: getStatusColor(hasAcceptance) }}
-            >
+            <span className="roll-entry-status" data-status={hasAcceptance ? 'sealed' : 'draft'}>
               {getStatusLabel(hasAcceptance)}
             </span>
           </div>
-          <span className="roll-entry-institution">{entry.commissioned_by.name}</span>
-          <span className="roll-entry-date">Recorded {formatDate(entry.recorded_at)}</span>
+          <div className="roll-entry-meta">
+            <span className="roll-entry-institution">{entry.commissioned_by.name}</span>
+            <span aria-hidden="true">·</span>
+            <span className="roll-entry-date">{formatDate(entry.recorded_at)}</span>
+          </div>
         </div>
       </header>
 
       <div className="roll-evidence-layers">
         <div className="roll-layer-summary">
           <span className="roll-layer-label">Evidence</span>
-          <div className="roll-layer-chips">
+          <div className="roll-layer-chips" aria-label="Evidence by visibility">
             <span
               className="roll-layer-chip"
               style={{ borderColor: getLayerColor('public') }}
             >
               <span className="roll-layer-dot" style={{ background: getLayerColor('public') }} />
-              Public: {publicEvidence.length}
+              P {publicEvidence.length}
             </span>
             <span
               className="roll-layer-chip"
               style={{ borderColor: getLayerColor('participant') }}
             >
               <span className="roll-layer-dot" style={{ background: getLayerColor('participant') }} />
-              Participant: {participantEvidence.length}
+              Part. {participantEvidence.length}
             </span>
             <span
               className="roll-layer-chip"
               style={{ borderColor: getLayerColor('restricted') }}
             >
               <span className="roll-layer-dot" style={{ background: getLayerColor('restricted') }} />
-              Restricted: {restrictedEvidence.length}
+              Rest. {restrictedEvidence.length}
             </span>
           </div>
         </div>
 
         {entry.hash_anchor && (
           <div className="roll-hash-anchor">
-            <span className="roll-hash-label">Hash Anchor</span>
+            <span className="roll-hash-label">SHA-256</span>
             <code className="roll-hash-value" title={entry.hash_anchor}>{formatHash(entry.hash_anchor)}</code>
-            <span className="roll-hash-unchecked">Stored · not checked</span>
+            <span className="roll-hash-unchecked">Stored · not verified</span>
           </div>
         )}
       </div>
 
       <div className="roll-entry-participants">
-        <span className="roll-participants-label">Participants</span>
-        <div className="roll-participants-list">
-          {entry.participants.slice(0, 4).map(p => (
-            <span
-              key={p.person_id}
-              className="roll-participant-chip"
-              title={`${p.name} (${p.role_type})`}
-            >
-              {getInitials(p.name)}
-            </span>
-          ))}
-          {entry.participants.length > 4 && (
-            <span className="roll-participant-chip overflow">
-              +{entry.participants.length - 4}
-            </span>
-          )}
-        </div>
+        <span className="roll-participants-label">
+          {entry.participants.length} {entry.participants.length === 1 ? 'participant' : 'participants'}
+        </span>
       </div>
 
       {expanded && !compact && (
-        <div className="roll-entry-expanded" style={{ animation: 'roll-expand 200ms ease-out' }}>
+        <div className="roll-entry-expanded">
           <div style={{ marginBottom: 'var(--roll-space-3)' }}>
             <span style={{ color: 'var(--net-ink-faint)', font: '600 var(--roll-text-xs) var(--roll-font-mono)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Evidence Details

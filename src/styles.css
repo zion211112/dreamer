@@ -9614,3 +9614,719 @@ a:focus-visible {
     padding: var(--roll-space-2);
   }
 }
+
+/* --- Roll ledger --- */
+.roll-page {
+  width: min(100%, 1240px);
+  margin: 0 auto;
+  color: var(--text);
+}
+
+.roll-page-header {
+  margin: 0 0 var(--space-4);
+}
+
+.roll-page-eyebrow {
+  margin: 0 0 var(--space-1);
+  color: var(--text-muted);
+  font: 600 10px/1.4 var(--mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.roll-page-header h1 {
+  margin: 0;
+  color: var(--text);
+  font: 500 clamp(28px, 3vw, 38px)/1.12 var(--serif);
+  letter-spacing: -.025em;
+}
+
+.roll-page-intro {
+  max-width: 620px;
+  margin: var(--space-2) 0 0;
+  color: var(--text-muted);
+  font: var(--step-0)/1.55 var(--sans);
+}
+
+.roll-demo-notice {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--brass) 38%, var(--border));
+  border-radius: var(--radius-2);
+  background: color-mix(in srgb, var(--brass-pale) 65%, var(--bg-elev));
+}
+
+.roll-demo-label {
+  flex: 0 0 auto;
+  color: var(--text);
+  font: 600 10px/1.4 var(--mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.roll-demo-notice p {
+  margin: 0;
+  color: var(--text-muted);
+  font: var(--step--1)/1.5 var(--sans);
+}
+
+.roll-directory {
+  min-width: 0;
+}
+
+.roll-directory-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: var(--space-3) 0 var(--space-2);
+}
+
+.roll-results-count {
+  margin: 0;
+  color: var(--text-muted);
+  font: var(--step--1)/1.4 var(--sans);
+}
+
+.roll-results-count strong {
+  color: var(--text);
+  font: 600 var(--step--1) var(--mono);
+}
+
+.roll-view-toggle {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  background: var(--bg-elev);
+}
+
+.roll-view-toggle button {
+  display: grid;
+  width: 34px;
+  height: 30px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 3px;
+  color: var(--text-muted);
+  background: transparent;
+  cursor: pointer;
+}
+
+.roll-view-toggle button:hover,
+.roll-view-toggle button[aria-pressed="true"] {
+  color: var(--text);
+  background: var(--bg-subtle);
+}
+
+.roll-view-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+
+.roll-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  background: var(--bg-elev);
+}
+
+.roll-filter-group {
+  position: relative;
+  display: flex;
+  min-width: 130px;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.roll-filter-group.flex-1 {
+  min-width: 210px;
+  flex: 1 1 240px;
+}
+
+.roll-filter-label {
+  color: var(--text-muted);
+  font: 600 10px/1.3 var(--mono);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.roll-filter-input,
+.roll-filter-select {
+  width: 100%;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-1);
+  color: var(--text);
+  background: var(--bg);
+  font: var(--step--1) var(--sans);
+}
+
+.roll-filter-input::placeholder {
+  color: var(--text-faint);
+}
+
+.roll-filter-input:focus-visible,
+.roll-filter-select:focus-visible,
+.roll-type-chips:focus-visible,
+.roll-filter-toggle:focus-visible,
+.roll-filter-clear:focus-visible,
+.roll-filter-drawer-close:focus-visible,
+.roll-view-toggle button:focus-visible,
+.roll-entry-card:focus-visible,
+.roll-table tbody tr:focus-visible {
+  outline: 2px solid var(--terrain);
+  outline-offset: 2px;
+}
+
+.roll-filter-select {
+  appearance: none;
+  padding-right: 30px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='m3 4.5 3 3 3-3' fill='none' stroke='%236b7066' stroke-width='1.2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 9px center;
+}
+
+.roll-filter-group > .roll-filter-input:has(input) {
+  display: flex;
+  align-items: center;
+  cursor: text;
+}
+
+.roll-type-chips {
+  position: absolute;
+  z-index: var(--net-z-dropdown);
+  top: calc(100% + 4px);
+  left: 0;
+  width: max(100%, 190px);
+  max-height: 200px;
+  overflow: auto;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  background: var(--bg-elev);
+  box-shadow: var(--shadow-2);
+}
+
+.roll-type-chips label {
+  color: var(--text);
+  font: var(--step--1) var(--sans);
+}
+
+.roll-status-chips {
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 6px;
+}
+
+.roll-status-chip {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-1);
+  color: var(--text-muted);
+  background: var(--bg);
+  font: var(--step--1) var(--sans);
+  cursor: pointer;
+}
+
+.roll-status-chip[aria-pressed="true"] {
+  border-color: var(--border-strong);
+  color: var(--text);
+  background: var(--bg-subtle);
+}
+
+.roll-status-chip .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+
+.roll-status-chip[data-status="sealed"] .status-dot { background: var(--terrain); }
+.roll-status-chip[data-status="draft"] .status-dot { background: var(--brass); }
+
+.roll-filter-checkbox {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-muted);
+  font: var(--step--1) var(--sans);
+}
+
+.roll-filter-checkbox input {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: var(--terrain);
+}
+
+.roll-filter-clear,
+.roll-filter-toggle {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-1);
+  color: var(--text-muted);
+  background: var(--bg);
+  font: 500 var(--step--1) var(--sans);
+  cursor: pointer;
+}
+
+.roll-filter-clear:hover,
+.roll-filter-toggle:hover {
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.roll-filter-toggle {
+  display: none;
+}
+
+.roll-filter-drawer {
+  display: none;
+}
+
+.roll-filter-drawer.open {
+  position: fixed;
+  z-index: var(--z-modal);
+  inset: 0;
+  display: block;
+  overflow: auto;
+  padding: var(--space-4);
+  background: var(--bg-elev);
+}
+
+.roll-filter-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.roll-filter-drawer-title {
+  margin: 0;
+  font: 600 var(--step-1) var(--sans);
+}
+
+.roll-filter-drawer-close {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-1);
+  color: var(--text-muted);
+  background: var(--bg);
+  font: 20px/1 var(--sans);
+  cursor: pointer;
+}
+
+.roll-filter-drawer .roll-filter-bar {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.roll-entry-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  background: var(--bg-elev);
+  cursor: pointer;
+}
+
+.roll-entry-card:hover,
+.roll-entry-card.expanded {
+  border-color: var(--border-strong);
+}
+
+.roll-entry-title-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 8px;
+}
+
+.roll-entry-name {
+  flex: 1 1 100%;
+  min-width: 0;
+  margin: 0;
+  color: var(--text);
+  font: 600 var(--step-1) / 1.3 var(--sans);
+}
+
+.roll-entry-type,
+.roll-table-type-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-muted);
+  background: var(--bg-subtle);
+  font: 500 10px/1.4 var(--mono);
+  text-transform: capitalize;
+}
+
+.roll-entry-status,
+.roll-table-status-badge {
+  color: var(--text-muted);
+  font: 500 10px/1.4 var(--mono);
+}
+
+.roll-entry-status[data-status="sealed"],
+.roll-table-status-badge[data-status="sealed"] {
+  color: var(--terrain);
+}
+
+.roll-entry-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  color: var(--text-muted);
+  font: var(--step--1) / 1.4 var(--sans);
+}
+
+.roll-evidence-layers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.roll-layer-summary,
+.roll-layer-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.roll-layer-label,
+.roll-hash-label,
+.roll-participants-label {
+  color: var(--text-muted);
+  font: 500 var(--step--1) / 1.4 var(--sans);
+}
+
+.roll-layer-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 5px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-muted);
+  font: 10px/1.4 var(--mono);
+}
+
+.roll-layer-dot,
+.roll-evidence-dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.roll-hash-anchor {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px 8px;
+}
+
+.roll-hash-value {
+  min-width: 0;
+  color: var(--text);
+  font: 10px/1.4 var(--mono);
+  overflow-wrap: anywhere;
+}
+
+.roll-hash-unchecked {
+  color: var(--text-faint);
+  font: 10px/1.4 var(--mono);
+}
+
+.roll-entry-participants {
+  color: var(--text-muted);
+  font: var(--step--1) / 1.4 var(--sans);
+}
+
+.roll-entry-expanded {
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border);
+  font: var(--step--1) / 1.5 var(--sans);
+  cursor: auto;
+}
+
+.roll-entry-expanded > div {
+  margin-bottom: 0 !important;
+}
+
+.roll-entry-actions {
+  display: flex;
+  margin-top: auto;
+  padding-top: var(--space-1);
+}
+
+.roll-entry-actions button,
+.roll-table-actions button {
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-1);
+  color: var(--text);
+  background: var(--bg);
+  font: 500 var(--step--1) var(--sans);
+  cursor: pointer;
+}
+
+.roll-entry-actions button:hover,
+.roll-table-actions button:hover {
+  border-color: var(--terrain);
+  background: var(--terrain-pale);
+}
+
+.roll-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.roll-table-container {
+  max-width: 100%;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  background: var(--bg-elev);
+}
+
+.roll-table {
+  width: 100%;
+  border-collapse: collapse;
+  font: var(--step--1) / 1.45 var(--sans);
+}
+
+.roll-table thead {
+  background: var(--bg-subtle);
+}
+
+.roll-table th {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  font: 600 10px/1.4 var(--mono);
+  letter-spacing: .04em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.roll-table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: middle;
+}
+
+.roll-table tbody tr:hover,
+.roll-table tbody tr.expanded {
+  background: color-mix(in srgb, var(--terrain-pale) 45%, transparent);
+}
+
+.roll-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.roll-table-name {
+  min-width: 190px;
+}
+
+.roll-table-name-text,
+.roll-table-meta,
+.roll-table-hash {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.roll-table-title {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.roll-table-meta,
+.roll-table-date {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.roll-table-evidence {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.roll-evidence-layer-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 5px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-muted);
+  font: 10px var(--mono);
+}
+
+.roll-table-participants {
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.roll-table-detail-row > td {
+  padding: var(--space-3);
+  background: var(--bg-subtle);
+}
+
+.roll-table-detail {
+  display: grid;
+  gap: var(--space-2);
+  max-width: 900px;
+}
+
+.roll-table-detail > div {
+  margin-bottom: 0 !important;
+}
+
+.roll-table-detail-item {
+  font: var(--step--1)/1.5 var(--sans);
+}
+
+.roll-table-actions {
+  white-space: nowrap;
+}
+
+.roll-error-state,
+.roll-empty-state {
+  min-height: 180px;
+  padding: var(--space-5);
+}
+
+.roll-error-icon,
+.roll-empty-icon {
+  width: 36px;
+  height: 36px;
+}
+
+.roll-error-title,
+.roll-empty-title {
+  font: 600 var(--step-1) var(--sans);
+}
+
+.roll-error-message,
+.roll-empty-message {
+  font: var(--step--1)/1.5 var(--sans);
+}
+
+.roll-directory-loading {
+  gap: var(--space-2);
+}
+
+.roll-skeleton-card {
+  height: 150px;
+  border-radius: var(--radius-2);
+  animation: none;
+  background: var(--bg-subtle);
+}
+
+@media (min-width: 1500px) {
+  .roll-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 960px) {
+  .roll-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .roll-filter-bar {
+    gap: var(--space-2);
+  }
+}
+
+@media (max-width: 767px) {
+  .roll-demo-notice {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .roll-filter-toggle {
+    display: inline-flex;
+  }
+
+  .roll-filter-bar {
+    display: none;
+  }
+
+  .roll-filter-drawer .roll-filter-bar {
+    display: grid;
+  }
+
+  .roll-directory-toolbar {
+    margin-top: var(--space-2);
+  }
+
+  .roll-table {
+    min-width: 760px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roll-spinner,
+  .roll-entry-expanded,
+  .roll-modal-overlay,
+  .roll-modal {
+    animation: none;
+  }
+}

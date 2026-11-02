@@ -35,8 +35,7 @@ export function RollViewToggle({ mode, onChange, cardCount, tableCount }: RollVi
   return (
     <div className="roll-view-toggle" role="group" aria-label="View mode">
       <button
-        role="switch"
-        aria-checked={mode === 'card'}
+        aria-pressed={mode === 'card'}
         aria-label={`Card view${cardCount !== undefined ? ` (${cardCount})` : ''}`}
         title="Card view"
         className={mode === 'card' ? 'active' : ''}
@@ -51,8 +50,7 @@ export function RollViewToggle({ mode, onChange, cardCount, tableCount }: RollVi
         </svg>
       </button>
       <button
-        role="switch"
-        aria-checked={mode === 'table'}
+        aria-pressed={mode === 'table'}
         aria-label={`Table view${tableCount !== undefined ? ` (${tableCount})` : ''}`}
         title="Table view"
         className={mode === 'table' ? 'active' : ''}
