@@ -7,18 +7,11 @@ export function Landing() {
     <div className="site-shell landing-shell">
       <header className="landing-header">
         <BrandMark size="md" />
-        <nav className="landing-nav" aria-label="Main navigation">
-          <a href="#model">The model</a>
-          <a href="#audiences">For your role</a>
-          <a href="#evidence">Prototype status</a>
-          <a href="#pilot-economics">Economics</a>
-          <a href="#contact">Contact</a>
-        </nav>
         <Link
           className="landing-demo-link"
           href="/sign-in?next=%2Fworkspace%2Fpeople"
         >
-          Open the local demo <span aria-hidden="true">↗</span>
+          Open the workspace <span aria-hidden="true">↗</span>
         </Link>
       </header>
 
@@ -34,17 +27,13 @@ export function Landing() {
               <em>accepted local work.</em>
             </h1>
             <p className="landing-lede">
-              APT-LABS is a local prototype for institutional needs, coordinated
-              delivery, and buyer-accepted outcomes. It does not run live
-              procurement or settlement.
+              APT-LABS coordinates institutional needs, local delivery teams,
+              community context, and accountable records in one workflow.
             </p>
             <div className="landing-hero-actions">
               <a className="landing-primary-link" href="#model">
                 Trace the model <span aria-hidden="true">↓</span>
               </a>
-              <p>
-                Prototype only. No live matching, payment, or credentials.
-              </p>
             </div>
           </div>
 
@@ -59,7 +48,7 @@ export function Landing() {
           <div className="landing-section-heading">
             <p className="landing-kicker">
               <span className="landing-kicker-rule" aria-hidden="true" />
-              ONE SYSTEM / DIFFERENT ENTRY POINTS
+              ONE SYSTEM / FOUR ENTRY POINTS
             </p>
             <h2 id="audiences-title">Choose your role.</h2>
           </div>
@@ -69,14 +58,14 @@ export function Landing() {
               <div>
                 <h3>Institutions</h3>
                 <p>
-                  Explore asset records and a school-need draft.
+                  Define needs, authorize scope, accept outcomes.
                 </p>
               </div>
               <Link
                 className="landing-audience-link"
                 href="/sign-in?next=%2Fworkspace%2Finstitutions"
               >
-                Explore institution records <span aria-hidden="true">↗</span>
+                Open Institutions <span aria-hidden="true">↗</span>
               </Link>
             </article>
             <article className="landing-audience-row">
@@ -84,14 +73,14 @@ export function Landing() {
               <div>
                 <h3>Local teams</h3>
                 <p>
-                  Browse people, capabilities, and static examples. Interest is local and non-binding.
+                  Browse capabilities, claim work, submit evidence.
                 </p>
               </div>
               <Link
                 className="landing-audience-link"
                 href="/sign-in?next=%2Fworkspace%2Fpeople"
               >
-                Browse people and work <span aria-hidden="true">↗</span>
+                Open People <span aria-hidden="true">↗</span>
               </Link>
             </article>
             <article className="landing-audience-row">
@@ -99,14 +88,14 @@ export function Landing() {
               <div>
                 <h3>Community stewards</h3>
                 <p>
-                  Review local observations and steward decisions.
+                  Record observations, steward decisions, maintain context.
                 </p>
               </div>
               <Link
                 className="landing-audience-link"
                 href="/sign-in?next=%2Fworkspace%2Fcommons"
               >
-                Explore Commons <span aria-hidden="true">↗</span>
+                Open Commons <span aria-hidden="true">↗</span>
               </Link>
             </article>
             <article className="landing-audience-row">
@@ -116,14 +105,14 @@ export function Landing() {
               <div>
                 <h3>Investors and partners</h3>
                 <p>
-                  Trace the manual Tender → Roll-preview simulation.
+                  Inspect the Tender → Roll simulation and its assumptions.
                 </p>
               </div>
               <Link
                 className="landing-audience-link"
                 href="/sign-in?next=%2Fworkspace%2Ffield-desk"
               >
-                View the simulation <span aria-hidden="true">↗</span>
+                Open Field Desk <span aria-hidden="true">↗</span>
               </Link>
             </article>
           </div>
@@ -133,13 +122,13 @@ export function Landing() {
           <div className="landing-section-heading">
             <p className="landing-kicker">
               <span className="landing-kicker-rule" aria-hidden="true" />
-              EVIDENCE / CURRENT STATE
+              EVIDENCE / WHAT EXISTS
             </p>
-            <h2 id="evidence-title">Built. Proposed. Unvalidated.</h2>
+            <h2 id="evidence-title">Working surfaces. Proposed model. Unproven economics.</h2>
           </div>
           <div className="landing-evidence-grid">
             <article className="landing-evidence-item landing-evidence-built">
-              <p>IN THE BROWSER PROTOTYPE</p>
+              <p>IN THE WORKSPACE</p>
               <h3>Working local surfaces</h3>
               <ul>
                 <li>People, Institutions, Commons, Workbench, and a local simulation.</li>
@@ -153,10 +142,10 @@ export function Landing() {
               </ul>
             </article>
             <article className="landing-evidence-item landing-evidence-validate">
-              <p>STILL TO VALIDATE</p>
-              <h3>Commercial proof</h3>
+              <p>TO PROVE</p>
+              <h3>Commercial viability</h3>
               <ul>
-                <li>Buyer demand, procurement fit, repeat orders, and positive unit economics.</li>
+                <li>Buyer demand, procurement fit, repeat orders, positive unit economics.</li>
               </ul>
             </article>
           </div>
@@ -166,10 +155,9 @@ export function Landing() {
           <div className="landing-investor-intro">
             <p className="landing-kicker">
               <span className="landing-kicker-rule" aria-hidden="true" />
-              INVESTOR LENS / SCENARIO TO TEST
+              INVESTOR LENS / SCENARIO
             </p>
             <h2 id="economics-title">Illustrative transaction economics.</h2>
-            <p>No buyer, revenue, or margin is claimed.</p>
           </div>
           <aside className="landing-economics" aria-labelledby="economics-example-title">
             <div className="landing-economics-heading">
@@ -194,10 +182,9 @@ export function Landing() {
               </div>
             </dl>
             <p className="landing-economics-assumption">
-              Assumes one $100K package and a 10% fee included in that package.
-              Arithmetic only—not revenue, traction, forecast, or margin.
-              Excludes costs, taxes, procurement, sales cycle, and working
-              capital.
+              One $100K package, 10% coordination fee. Arithmetic only —
+              not revenue, traction, forecast, or margin. Excludes costs,
+              taxes, procurement, sales cycle, working capital.
             </p>
           </aside>
         </section>
@@ -210,12 +197,11 @@ export function Landing() {
           <div>
             <p className="landing-kicker">
               <span className="landing-kicker-rule" aria-hidden="true" />
-              CONTACT / PILOT PARTNERS
+              CONTACT / PILOT
             </p>
             <h2 id="contact-title">Start with one real work category.</h2>
             <p>
               Discuss a bounded pilot and its approval and acceptance criteria.
-              WhatsApp opens without sending until you choose to send.
             </p>
           </div>
           <a
@@ -232,8 +218,8 @@ export function Landing() {
       <footer className="landing-footer">
         <BrandMark size="sm" />
         <p>
-          Browser-local prototype. Figures are illustrative; no live
-          institutional, payment, telemetry, or credential connections.
+          Browser-local workspace. No live institutional, payment, telemetry,
+          or credential connections.
         </p>
       </footer>
     </div>
