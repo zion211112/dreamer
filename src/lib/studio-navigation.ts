@@ -14,6 +14,7 @@ export interface StudioNavigationModule {
   id: StudioModuleId;
   label: string;
   href: string;
+  defaultContext: StudioContext;
   contexts: readonly StudioContext[];
 }
 
@@ -29,24 +30,28 @@ export const STUDIO_MODULES: readonly StudioNavigationModule[] = [
     id: 'radar',
     label: 'Radar',
     href: '/workspace/commons',
+    defaultContext: 'commons',
     contexts: ['commons'],
   },
   {
     id: 'network',
     label: 'Network',
     href: '/workspace/people',
+    defaultContext: 'people',
     contexts: ['people', 'institutions', 'network'],
   },
   {
     id: 'undertakings',
     label: 'Undertakings',
     href: '/workspace/workbench',
+    defaultContext: 'workbench',
     contexts: ['workbench', 'field-desk'],
   },
   {
     id: 'roll',
     label: 'Roll',
     href: '/workspace/roll',
+    defaultContext: 'roll',
     contexts: ['roll'],
   },
 ];

@@ -10,16 +10,17 @@ import {
 
 describe('Studio navigation model', () => {
   it('defines the four operational modules and their existing routes in order', () => {
-    expect(STUDIO_MODULES.map(({ id, label, href, contexts }) => ({
+    expect(STUDIO_MODULES.map(({ id, label, href, defaultContext, contexts }) => ({
       id,
       label,
       href,
+      defaultContext,
       contexts,
     }))).toEqual([
-      { id: 'radar', label: 'Radar', href: '/workspace/commons', contexts: ['commons'] },
-      { id: 'network', label: 'Network', href: '/workspace/people', contexts: ['people', 'institutions', 'network'] },
-      { id: 'undertakings', label: 'Undertakings', href: '/workspace/workbench', contexts: ['workbench', 'field-desk'] },
-      { id: 'roll', label: 'Roll', href: '/workspace/roll', contexts: ['roll'] },
+      { id: 'radar', label: 'Radar', href: '/workspace/commons', defaultContext: 'commons', contexts: ['commons'] },
+      { id: 'network', label: 'Network', href: '/workspace/people', defaultContext: 'people', contexts: ['people', 'institutions', 'network'] },
+      { id: 'undertakings', label: 'Undertakings', href: '/workspace/workbench', defaultContext: 'workbench', contexts: ['workbench', 'field-desk'] },
+      { id: 'roll', label: 'Roll', href: '/workspace/roll', defaultContext: 'roll', contexts: ['roll'] },
     ]);
   });
 

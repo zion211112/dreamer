@@ -1,8 +1,9 @@
 import { StudioNavigation } from '../../components/StudioNavigation';
+import { getStudioModuleLabel, type StudioContext } from '../../lib/studio-navigation';
 
 interface WorkspaceLayoutProps {
   children: any;
-  currentContext: 'people' | 'institutions' | 'commons' | 'field-desk' | 'workbench' | 'roll';
+  currentContext: StudioContext;
 }
 
 export function WorkspaceLayout({ children, currentContext }: WorkspaceLayoutProps) {
@@ -16,7 +17,7 @@ export function WorkspaceLayout({ children, currentContext }: WorkspaceLayoutPro
           </div>
         </main>
         <footer className="atlas-footer">
-          <span>APT-LABS — {currentContext === 'field-desk' ? 'Workbench' : currentContext}</span>
+          <span>APT-LABS — {getStudioModuleLabel(currentContext)}</span>
           <span>Studio context</span>
         </footer>
       </div>

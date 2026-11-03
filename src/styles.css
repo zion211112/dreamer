@@ -1089,6 +1089,19 @@ a:focus-visible {
   gap: 5px;
 }
 
+.studio-destination-group {
+  display: grid;
+  gap: 2px;
+}
+
+.studio-network-views {
+  display: grid;
+  gap: 2px;
+  margin: 0 0 4px 14px;
+  padding-left: 8px;
+  border-left: 1px solid var(--studio-rail-line);
+}
+
 .studio-destination {
   position: relative;
   display: flex;
@@ -1107,6 +1120,24 @@ a:focus-visible {
 .studio-destination:hover {
   color: #f0eee3;
   background: rgb(255 255 255 / 5%);
+}
+
+.studio-destination:focus-visible {
+  outline: 2px solid #d6cba8;
+  outline-offset: 2px;
+}
+
+.studio-destination-secondary {
+  min-height: 36px;
+  gap: 9px;
+  padding: 0 9px;
+  font-size: 11px;
+}
+
+.studio-destination-secondary .studio-destination-icon {
+  display: grid;
+  width: 17px;
+  height: 17px;
 }
 
 .studio-destination.is-active {
@@ -1282,10 +1313,21 @@ a:focus-visible {
   margin-top: 52px;
 }
 
+.studio-sidebar.is-collapsed .studio-network-views {
+  gap: 3px;
+  margin: 3px 0 0;
+  padding: 0;
+  border-left: 0;
+}
+
 .studio-sidebar.is-collapsed .studio-destination {
   justify-content: center;
   gap: 0;
   padding: 0;
+}
+
+.studio-sidebar.is-collapsed .studio-destination-secondary {
+  min-height: 40px;
 }
 
 .studio-sidebar.is-collapsed .studio-destination-number,

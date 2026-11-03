@@ -312,7 +312,7 @@ export function Workbench() {
   const status = simulation?.status ?? null;
 
   return (
-    <WorkspaceLayout currentContext="workbench">
+    <WorkspaceLayout currentContext="field-desk">
       <main className="workbench-sim-page">
         <header className="workbench-sim-head">
           <div>

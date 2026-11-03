@@ -1,19 +1,19 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Link } from 'wouter';
 import { useAuth } from '../lib/auth/hooks';
+import {
+  getStudioModuleForContext,
+  getStudioModuleLabel,
+  getStudioNetworkView,
+  STUDIO_MODULES,
+  STUDIO_NETWORK_VIEWS,
+  type StudioContext,
+} from '../lib/studio-navigation';
 import { BrandMark } from './BrandMark';
 import { IdentityCabinet } from './IdentityCabinet';
 
-const CONTEXTS = [
-  { id: 'people', label: 'People' },
-  { id: 'institutions', label: 'Institutions' },
-  { id: 'commons', label: 'Commons' },
-  { id: 'workbench', label: 'Workbench' },
-  { id: 'roll', label: 'Roll' },
-] as const;
-
 interface StudioNavigationProps {
-  currentContext: 'people' | 'institutions' | 'commons' | 'workbench' | 'roll' | 'field-desk';
+  currentContext: StudioContext;
 }
 
 function ContextIcon({ id }: { id: string }) {
@@ -23,8 +23,14 @@ function ContextIcon({ id }: { id: string }) {
   if (id === 'institutions') {
     return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M2.5 7 10 3l7.5 4M4 8v7m4-7v7m4-7v7m4-7v7M2.5 17h15M2.5 7h15" /></svg>;
   }
-  if (id === 'commons') {
+  if (id === 'network') {
     return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="10" cy="4.5" r="2" /><circle cx="4.5" cy="14.5" r="2" /><circle cx="15.5" cy="14.5" r="2" /><path d="m9 6.3-3.5 6.4m6-6.4 3.5 6.4m-8.5 1.8h7" /></svg>;
+  }
+  if (id === 'radar') {
+    return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" /><circle cx="10" cy="10" r="3" /><path d="m10 10 5-5M10 2v2m8 6h-2" /></svg>;
+  }
+  if (id === 'capabilities') {
+    return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m10 2.5 2.3 4.7 5.2.8-3.8 3.7.9 5.3-4.6-2.5-4.6 2.5.9-5.3-3.8-3.7 5.2-.8z" /></svg>;
   }
   if (id === 'roll') {
     return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 16.5V3.5a1.5 1.5 0 0 1 1.5-1.5h11a1.5 1.5 0 0 1 1.5 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-11a1.5 1.5 0 0 1-1.5-1.5z" /><path d="M5.5 9h9M5.5 13h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>;
@@ -36,25 +42,52 @@ function StudioLinks({
   currentContext,
   onNavigate,
 }: {
-  currentContext: string;
+  currentContext: StudioContext;
   onNavigate?: () => void;
 }) {
+  const activeModule = getStudioModuleForContext(currentContext);
+  const activeNetworkView = getStudioNetworkView(currentContext);
+
   return (
     <nav aria-label="Studio destinations" className="studio-destinations">
-      {CONTEXTS.map(context => (
-        <Link
-          aria-label={context.label}
-          aria-current={currentContext === context.id ? 'page' : undefined}
-          className={`studio-destination${currentContext === context.id ? ' is-active' : ''}`}
-          href={`/workspace/${context.id}`}
-          key={context.id}
-          onClick={onNavigate}
-          title={context.label}
-        >
-          <span aria-hidden="true" className="studio-destination-icon"><ContextIcon id={context.id} /></span>
-          <span className="studio-destination-label">{context.label}</span>
-        </Link>
-      ))}
+      {STUDIO_MODULES.map(module => {
+        const isActive = activeModule === module.id;
+        const isDefaultDestination = currentContext === module.defaultContext;
+
+        return (
+          <div className={`studio-destination-group${isActive ? ' is-active' : ''}`} key={module.id}>
+            <Link
+              aria-label={module.label}
+              aria-current={isDefaultDestination ? 'page' : undefined}
+              className={`studio-destination${isActive ? ' is-active' : ''}`}
+              href={module.href}
+              onClick={onNavigate}
+              title={module.label}
+            >
+              <span aria-hidden="true" className="studio-destination-icon"><ContextIcon id={module.id} /></span>
+              <span className="studio-destination-label">{module.label}</span>
+            </Link>
+            {module.id === 'network' && isActive && (
+              <div aria-label="Network views" className="studio-network-views" role="group">
+                {STUDIO_NETWORK_VIEWS.map(view => (
+                  <Link
+                    aria-label={view.label}
+                    aria-current={activeNetworkView === view.id ? 'page' : undefined}
+                    className={`studio-destination studio-destination-secondary${activeNetworkView === view.id ? ' is-active' : ''}`}
+                    href={view.href}
+                    key={view.id}
+                    onClick={onNavigate}
+                    title={view.label}
+                  >
+                    <span aria-hidden="true" className="studio-destination-icon"><ContextIcon id={view.id} /></span>
+                    <span className="studio-destination-label">{view.label}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </nav>
   );
 }
@@ -171,7 +204,7 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
         )}
 
         <div className="studio-nav-label">Studio</div>
-        <StudioLinks currentContext={activeContext} />
+        <StudioLinks currentContext={currentContext} />
 
         <div className="studio-sidebar-bottom">
           {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} />}
@@ -195,7 +228,7 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
           </svg>
         </button>
         <BrandMark className="studio-mobile-brand" size="sm" />
-        <span className="studio-mobile-current">{CONTEXTS.find(context => context.id === activeContext)?.label}</span>
+        <span className="studio-mobile-current">{getStudioModuleLabel(activeContext)}</span>
         {showIdentity && (
           <button
             aria-haspopup="dialog"
@@ -239,7 +272,7 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
             >×</button>
           </header>
           <div className="studio-nav-label">Studio</div>
-          <StudioLinks currentContext={activeContext} onNavigate={() => setMobileOpen(false)} />
+          <StudioLinks currentContext={currentContext} onNavigate={() => setMobileOpen(false)} />
           <div className="studio-sidebar-bottom">
             {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} />}
             <div className="studio-session-indicator">

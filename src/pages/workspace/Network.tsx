@@ -3,7 +3,7 @@ import { CapabilityDirectory } from '../../components/CapabilityDirectory';
 
 export function Network() {
   return (
-    <WorkspaceLayout currentContext="institutions">
+    <WorkspaceLayout currentContext="network">
       <main className="net-page">
         <header className="net-page-header">
           <div className="net-page-heading">
