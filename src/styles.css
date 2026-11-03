@@ -10593,6 +10593,171 @@ a:focus-visible {
   line-height: 1.65;
 }
 
+/* Investor Lens — economic logic section */
+.landing-investor-band {
+  width: min(1232px, calc(100% - clamp(40px, 10vw, 152px)));
+  margin: 0 auto;
+  padding: 72px 0;
+  border-top: 1px solid var(--border-strong);
+}
+
+.landing-investor-intro {
+  max-width: 760px;
+  margin: 0 auto 48px;
+  text-align: center;
+}
+
+.landing-investor-thesis {
+  max-width: 680px;
+  margin: 16px auto 0;
+  color: var(--text-muted);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.landing-investor-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.landing-investor-card {
+  padding: clamp(24px, 3vw, 36px);
+  border: 1px solid var(--border-strong);
+  background: var(--bg);
+  border-radius: 4px;
+}
+
+.landing-investor-card header {
+  margin-bottom: 24px;
+}
+
+.landing-investor-card h3 {
+  margin: 8px 0 0;
+  font: 400 22px/1.1 var(--landing-serif);
+  letter-spacing: 0;
+}
+
+.landing-investor-unit .landing-economics-ledger {
+  background: var(--bg-term);
+  color: #f5f3ee;
+  margin: -24px;
+  padding: 24px;
+  border-radius: 0 0 4px 4px;
+}
+
+.landing-investor-unit .landing-ledger-row {
+  border-color: rgba(245, 243, 238, .14);
+}
+
+.landing-investor-unit .landing-ledger-row dt {
+  color: #c4c9c0;
+  font-size: 13px;
+}
+
+.landing-investor-unit .landing-ledger-row dt span {
+  color: #8d9d89;
+}
+
+.landing-investor-unit .landing-ledger-row dd {
+  color: #f5f3ee;
+}
+
+.landing-investor-unit .landing-ledger-subtotal dd {
+  color: #c4c9c0;
+  font-size: 20px;
+}
+
+.landing-investor-unit .landing-ledger-total dd {
+  color: var(--phosphor);
+}
+
+.landing-investor-unit .landing-economics-assumption {
+  color: #c4c9c0;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.landing-scale-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 16px;
+}
+
+.landing-scale-list li {
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.landing-scale-list strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.landing-risk-list {
+  margin: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.landing-risk-row {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.landing-risk-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.landing-risk-row dt {
+  color: var(--text-muted);
+  font: 600 10px/1.4 var(--landing-mono);
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.landing-risk-row dd {
+  margin: 0;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+@media (max-width: 900px) {
+  .landing-investor-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .landing-investor-unit .landing-economics-ledger {
+    margin: -24px -24px 24px;
+    border-radius: 0 0 4px 4px;
+  }
+}
+
+@media (max-width: 600px) {
+  .landing-investor-card {
+    padding: 20px 16px;
+  }
+
+  .landing-investor-unit .landing-economics-ledger {
+    margin: -20px -16px 20px;
+    padding: 20px 16px;
+  }
+
+  .landing-risk-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+}
+
 .landing-footer {
   width: min(1232px, calc(100% - clamp(40px, 10vw, 152px)));
   margin: 0 auto;
