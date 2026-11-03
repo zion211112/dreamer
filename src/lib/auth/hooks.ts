@@ -35,19 +35,23 @@ export function useAuth() {
     error: null,
   });
 
-  const refreshProfile = useCallback(async (userId: string) => {
+  const refreshProfile = useCallback(async (userId: string): Promise<Profile | null> => {
     if (isDemoMode) {
       const demo = getDemoAuth();
-      setState(s => ({ ...s, profile: demo?.profile || null, loading: false }));
-      return;
+      const profile = demo?.profile || null;
+      setState(s => ({ ...s, profile, loading: false }));
+      return profile;
     }
 
     try {
       const { data, error } = await supabase!.from('profiles').select('*').eq('id', userId).single();
       if (error) throw error;
-      setState(s => ({ ...s, profile: data as Profile, loading: false }));
+      const profile = data as Profile;
+      setState(s => ({ ...s, profile, loading: false }));
+      return profile;
     } catch {
       setState(s => ({ ...s, profile: null, loading: false, error: 'Failed to load profile' }));
+      return null;
     }
   }, []);
 
@@ -150,20 +154,23 @@ export function useAuth() {
     setState(s => ({ ...s, loading: true, error: null }));
 
     if (isDemoMode) {
-      const profile: Profile = {
-        id: 'demo-user',
-        role: 'founder',
-        display_name: data.email.split('@')[0],
-        avatar_url: null,
-        organization_name: null,
-        location: null,
-        service_area: [],
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        version: 1,
-        created_by: 'demo-user',
-        updated_by: 'demo-user',
-      };
+      const existing = getDemoAuth();
+      const profile: Profile = existing?.user?.email === data.email && existing.profile
+        ? existing.profile
+        : {
+          id: 'demo-user',
+          role: 'founder',
+          display_name: data.email.split('@')[0],
+          avatar_url: null,
+          organization_name: null,
+          location: null,
+          service_area: [],
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          version: 1,
+          created_by: 'demo-user',
+          updated_by: 'demo-user',
+        };
       const user = { id: 'demo-user', email: data.email, role: 'authenticated' } as AuthState['user'];
       setDemoAuth(user, profile);
       setState({ user, profile, loading: false, error: null });
@@ -181,8 +188,9 @@ export function useAuth() {
     }
 
     if (authData.user) {
-      await refreshProfile(authData.user.id);
-      return { user: authData.user, profile: state.profile, error: null };
+      const profile = await refreshProfile(authData.user.id);
+      if (!profile) return { user: authData.user, profile: null, error: 'Failed to load profile' };
+      return { user: authData.user, profile, error: null };
     }
 
     setState(s => ({ ...s, loading: false, error: 'Sign in failed' }));

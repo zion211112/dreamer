@@ -1,29 +1,93 @@
-import { useState } from 'preact/hooks';
-import { useLocation } from 'wouter';
+import { useEffect, useState } from 'preact/hooks';
+import { Link, useLocation } from 'wouter';
 import { useAuth } from '../lib/auth/hooks';
+import type { UserRole } from '../lib/auth/types';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { BrandMark } from '../components/BrandMark';
 
-const contexts = [
-  { id: 'people', label: 'People' },
-  { id: 'institutions', label: 'Institutions' },
-  { id: 'commons', label: 'Commons' },
+const workspacePaths = {
+  people: '/workspace/people',
+  school: '/workspace/institutions/school-console',
+  commons: '/workspace/commons',
+  workbench: '/workspace/workbench',
+  roll: '/workspace/roll',
+} as const;
+
+const workspaces = [
+  { id: 'people', label: 'Parent / caregiver' },
+  { id: 'school', label: 'School team' },
+  { id: 'commons', label: 'Community member' },
+  { id: 'workbench', label: 'Local provider / crew' },
+  { id: 'roll', label: 'Coordinator / steward' },
 ];
+
+type WorkspaceId = keyof typeof workspacePaths;
+type SignUpRole = Extract<UserRole, 'founder' | 'institution' | 'coordinator'>;
+type AuthMethod = 'Google' | 'GitHub' | 'phone';
+
+function isWorkspaceId(value: string): value is WorkspaceId {
+  return workspaces.some((workspace) => workspace.id === value);
+}
+
+function defaultWorkspaceForRole(role: UserRole): WorkspaceId {
+  if (role === 'institution') return 'school';
+  if (role === 'coordinator') return 'roll';
+  return 'people';
+}
+
+function getWorkspacePath(workspaceId: WorkspaceId): string {
+  return workspacePaths[workspaceId];
+}
+
+function AuthMethodIcon({ method }: { method: AuthMethod }) {
+  if (method === 'Google') {
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M21.6 12.23c0-.7-.06-1.37-.18-2.02H12v3.82h5.38a4.6 4.6 0 0 1-2 3.02v2.48h3.24c1.9-1.75 2.98-4.33 2.98-7.3Z" />
+        <path fill="#34A853" d="M12 22c2.7 0 4.96-.9 6.62-2.45l-3.24-2.48c-.9.6-2.06.96-3.38.96-2.6 0-4.8-1.75-5.58-4.1H3.08v2.56A10 10 0 0 0 12 22Z" />
+        <path fill="#FBBC05" d="M6.42 13.93a6 6 0 0 1 0-3.86V7.5H3.08a10 10 0 0 0 0 9Z" />
+        <path fill="#EA4335" d="M12 5.97c1.47 0 2.79.5 3.82 1.5l2.86-2.86A9.56 9.56 0 0 0 12 1.99a10 10 0 0 0-8.92 5.5l3.34 2.58c.78-2.35 2.98-4.1 5.58-4.1Z" />
+      </svg>
+    );
+  }
+
+  if (method === 'GitHub') {
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.56.1.76-.24.76-.54v-2.1c-3.1.68-3.76-1.32-3.76-1.32-.5-1.3-1.24-1.65-1.24-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.73 1.16 1.73 1.16 1 .1.75 2.3 3.87 1.64.1-.73.4-1.23.7-1.51-2.48-.28-5.08-1.24-5.08-5.52 0-1.22.44-2.22 1.16-3-.12-.29-.5-1.43.11-2.98 0 0 .95-.3 3.06 1.15a10.6 10.6 0 0 1 5.57 0c2.1-1.45 3.05-1.15 3.05-1.15.61 1.55.23 2.69.12 2.98.72.78 1.15 1.78 1.15 3 0 4.29-2.6 5.23-5.09 5.5.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+      <path d="M7.1 3.5h2.5l1.2 4.2-1.8 1.8a15 15 0 0 0 5.5 5.5l1.8-1.8 4.2 1.2v2.5a2 2 0 0 1-2.2 2A16.3 16.3 0 0 1 5.1 5.7a2 2 0 0 1 2-2.2Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 export function Auth() {
   const [location, navigate] = useLocation();
-  const { signUp, signIn, loading, error: authError } = useAuth();
+  const { signUp, signIn, loading, error: authError, profile } = useAuth();
   const isSignUp = location === '/sign-up';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
-  const [role, setRole] = useState<'founder' | 'institution' | 'coordinator'>('founder');
+  const [role, setRole] = useState<SignUpRole>('founder');
   const [organizationName, setOrganizationName] = useState('');
-  const [context, setContext] = useState('people');
+  const [workspace, setWorkspace] = useState<WorkspaceId>('people');
+  const [workspaceCustomized, setWorkspaceCustomized] = useState(false);
   const [error, setError] = useState('');
+  const [methodNotice, setMethodNotice] = useState('');
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string; confirmPassword?: string; displayName?: string }>({});
+
+  useEffect(() => {
+    if (profile && !workspaceCustomized) {
+      setWorkspace(defaultWorkspaceForRole(profile.role));
+    }
+  }, [profile, workspaceCustomized]);
 
   const validateEmail = (value: string) => {
     if (!value) return 'Email is required.';
@@ -64,12 +128,12 @@ export function Auth() {
     }
 
     const requestedNext = new URLSearchParams(window.location.search).get('next');
-    const next = requestedNext
+    const validNext = requestedNext
       && requestedNext.startsWith('/')
       && !requestedNext.startsWith('//')
       && !requestedNext.includes('\\')
       ? requestedNext
-      : `/workspace/${context}`;
+      : null;
 
     try {
       let result;
@@ -84,7 +148,9 @@ export function Auth() {
         return;
       }
 
-      navigate(next);
+      const defaultWorkspace = defaultWorkspaceForRole(result.profile?.role ?? role);
+      const destination = workspaceCustomized ? workspace : defaultWorkspace;
+      navigate(validNext ?? getWorkspacePath(destination));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Authentication failed. Please try again.');
     }
@@ -94,49 +160,25 @@ export function Auth() {
     <main className="auth-layout">
       <header className="auth-header">
         <BrandMark size="sm" />
+        <span className="auth-demo-status"><span aria-hidden="true" />Browser-local demo</span>
       </header>
 
       <div className="auth-main">
-        <section className="auth-intro" aria-labelledby="auth-intro-title">
-          <p className="auth-intro-label">A practical network for local work</p>
-          <h1 id="auth-intro-title">
-            Make good work<br />
-            <span>find its people.</span>
-          </h1>
-          <p className="auth-intro-copy">
-            A considered place for people, institutions, and ideas to meet around the work their communities need.
-          </p>
-          <p className="auth-intro-coordinate">People <span>/</span> Place <span>/</span> Possibility</p>
-        </section>
-
         <section className="auth-form-panel" aria-labelledby="auth-title">
           <header className="auth-heading">
-            <h2 id="auth-title">{isSignUp ? 'Make a place for the work.' : 'Find your place in the work.'}</h2>
-            <p>
-              {isSignUp
-                ? 'Choose a role and continue.'
-                : 'Sign in to continue to your workspace.'}
-            </p>
+            <p className="auth-eyebrow">APT-LABS / STUDIO</p>
+            <h1 id="auth-title">{isSignUp ? 'Create your account' : 'Tuko rada.'}</h1>
+            {isSignUp && <p>Set up your profile to enter the workspace.</p>}
           </header>
 
-          <div className="auth-mode-switch" role="tablist" aria-label="Account action">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={!isSignUp}
-              onClick={() => navigate('/sign-in')}
-            >
+          <nav className="auth-mode-switch" aria-label="Account">
+            <Link href="/sign-in" aria-current={!isSignUp ? 'page' : undefined} onClick={() => setMethodNotice('')}>
               Sign in
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={isSignUp}
-              onClick={() => navigate('/sign-up')}
-            >
+            </Link>
+            <Link href="/sign-up" aria-current={isSignUp ? 'page' : undefined} onClick={() => setMethodNotice('')}>
               Create account
-            </button>
-          </div>
+            </Link>
+          </nav>
 
           <form onSubmit={handleSubmit} className="auth-form">
             {(error || authError) && <p className="auth-error" role="alert">{error || authError}</p>}
@@ -158,23 +200,6 @@ export function Auth() {
                   aria-describedby={fieldErrors.displayName ? 'auth-display-name-error' : undefined}
                 />
                 {fieldErrors.displayName && <p id="auth-display-name-error" className="auth-field-error" role="alert">{fieldErrors.displayName}</p>}
-              </div>
-            )}
-
-            {isSignUp && (
-              <div className="auth-field">
-                <label htmlFor="auth-role">Role</label>
-                <select
-                  id="auth-role"
-                  name="role"
-                  value={role}
-                  onChange={(event: Event) => setRole((event.target as HTMLSelectElement).value as 'founder' | 'institution' | 'coordinator')}
-                  required
-                >
-                  <option value="founder">Founder / Business / Crew</option>
-                  <option value="institution">Institution / Customer</option>
-                  <option value="coordinator">Coordinator</option>
-                </select>
               </div>
             )}
 
@@ -249,30 +274,78 @@ export function Auth() {
               </div>
             )}
 
-            <div className="auth-field">
-              <label htmlFor="auth-workspace">Workspace</label>
-              <select
-                id="auth-workspace"
-                name="workspace"
-                value={context}
-                onChange={(event: Event) => setContext((event.target as HTMLSelectElement).value)}
-                required
-              >
-                {contexts.map((item) => (
-                  <option key={item.id} value={item.id}>{item.label}</option>
-                ))}
-              </select>
+            <div className={`auth-onboarding-bar${isSignUp ? '' : ' auth-onboarding-bar-single'}`}>
+              {isSignUp && (
+                <div className="auth-field">
+                  <label htmlFor="auth-role">Role</label>
+                  <select
+                    id="auth-role"
+                    name="role"
+                    value={role}
+                    onChange={(event: Event) => {
+                      const selectedRole = (event.target as HTMLSelectElement).value;
+                      if (selectedRole === 'founder' || selectedRole === 'institution' || selectedRole === 'coordinator') {
+                        setRole(selectedRole);
+                        if (!workspaceCustomized) setWorkspace(defaultWorkspaceForRole(selectedRole));
+                      }
+                    }}
+                    required
+                  >
+                    <option value="founder">Founder / business / crew</option>
+                    <option value="institution">School / institution</option>
+                    <option value="coordinator">Coordinator</option>
+                  </select>
+                </div>
+              )}
+              <div className="auth-field">
+                <label htmlFor="auth-workspace">Start in</label>
+                <select
+                  id="auth-workspace"
+                  name="workspace"
+                  value={workspace}
+                  onChange={(event: Event) => {
+                    const selectedWorkspace = (event.target as HTMLSelectElement).value;
+                    if (isWorkspaceId(selectedWorkspace)) {
+                      setWorkspace(selectedWorkspace);
+                      setWorkspaceCustomized(true);
+                    }
+                  }}
+                  required
+                >
+                  {workspaces.map((item) => (
+                    <option key={item.id} value={item.id}>{item.label}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <Button type="submit" className="auth-submit" size="lg" disabled={loading}>
               {loading ? 'Please wait...' : (isSignUp ? 'Create account' : 'Sign in')}
             </Button>
           </form>
+
+          <div className="auth-divider"><span>or continue with</span></div>
+          <div className="auth-provider-options" role="group" aria-label="Other sign-in methods">
+            {(['Google', 'GitHub', 'phone'] as const).map((method) => (
+              <button
+                key={method}
+                type="button"
+                className="auth-provider-button"
+                aria-label={`Continue with ${method}`}
+                title={`Continue with ${method}`}
+                onClick={() => setMethodNotice(`${method} sign-in is not connected in this browser-local demo.`)}
+              >
+                <AuthMethodIcon method={method} />
+              </button>
+            ))}
+          </div>
+          <p className="auth-provider-note">Google, GitHub, and phone sign-in are not connected.</p>
+          {methodNotice && <p className="auth-method-notice" role="status">{methodNotice}</p>}
         </section>
       </div>
 
       <footer className="auth-footer">
-        <span>APT—LABS <i aria-hidden="true">/</i> Studio entrance</span>
+        <span>Browser-local demo. Passwords are not stored.</span>
       </footer>
     </main>
   );
