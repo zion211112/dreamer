@@ -1,13 +1,6 @@
 import { Link } from 'wouter';
 import { BrandMark } from '../components/BrandMark';
-
-const deliveryStages = [
-  { number: '01', title: 'Need recorded' },
-  { number: '02', title: 'Scope approved' },
-  { number: '03', title: 'Team assembled' },
-  { number: '04', title: 'Work accepted' },
-  { number: '05', title: 'Outcome recorded' },
-];
+import { OperatingMap } from '../components/landing/OperatingMap';
 
 export function Landing() {
   return (
@@ -55,23 +48,7 @@ export function Landing() {
             </div>
           </div>
 
-          <figure className="landing-atlas" id="model" aria-labelledby="atlas-title">
-            <figcaption className="landing-atlas-heading">
-              <span id="atlas-title">Proposed operating sequence</span>
-              <span>Human authorization retained</span>
-            </figcaption>
-            <ol className="landing-atlas-flow">
-              {deliveryStages.map((stage) => (
-                <li className="landing-atlas-step" key={stage.number}>
-                  <span className="landing-atlas-number">{stage.number}</span>
-                  <span className="landing-atlas-title">{stage.title}</span>
-                </li>
-              ))}
-            </ol>
-            <p className="landing-atlas-note">
-              Manual simulation only. No real-world transactions.
-            </p>
-          </figure>
+          <OperatingMap />
         </section>
 
         <section

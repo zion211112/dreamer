@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#eef0ec" />
+    <title>APT-LABS | Audience-led landing directions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: "DM Sans", sans-serif;
+        color: #17201c;
+        background: #e8ebe6;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-width: 320px; }
+      a { color: inherit; }
+      .board-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        max-width: 1720px;
+        margin: 0 auto;
+        padding: 27px 32px 21px;
+      }
+      .board-head p { margin: 0; }
+      .board-kicker, .concept-index, .eyebrow, .mono, .status {
+        font: 500 9px/1.5 "IBM Plex Mono", monospace;
+        letter-spacing: .045em;
+        text-transform: uppercase;
+      }
+      .board-kicker { color: #53625a; }
+      .board-head h1 { margin: 7px 0 0; font-size: 23px; font-weight: 600; line-height: 1.15; }
+      .board-note { max-width: 430px; color: #59645d; font-size: 11px; line-height: 1.55; text-align: right; }
+      .comparison {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        max-width: 1720px;
+        margin: 0 auto;
+        padding: 0 14px 28px;
+      }
+      .concept { min-width: 0; overflow: hidden; border: 1px solid #c8cec8; background: #fff; }
+      .concept-head {
+        display: flex;
+        min-height: 40px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 13px;
+        border-bottom: 1px solid #d5dad4;
+        color: #56625b;
+      }
+      .concept-head p { margin: 0; }
+      .concept-name { color: #17201c; font-size: 11px; font-weight: 600; }
+      .concept-site { min-height: 980px; }
+      .nav {
+        display: flex;
+        min-height: 52px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 0 21px;
+      }
+      .brand { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+      .brand-mark { width: 13px; height: 13px; flex: none; border: 2px solid currentColor; border-radius: 2px 2px 2px 0; }
+      .nav-links { display: flex; align-items: center; gap: 12px; font: 500 8px/1.4 "IBM Plex Mono", monospace; text-transform: uppercase; }
+      .nav-links a { text-decoration: none; }
+      .nav-link { display: inline-flex; min-height: 30px; align-items: center; padding: 0 9px; border: 1px solid currentColor; font: 600 8px/1.4 "IBM Plex Mono", monospace; text-decoration: none; text-transform: uppercase; white-space: nowrap; }
+      .concept-site a:focus-visible { outline: 2px solid #cb503b; outline-offset: 3px; }
+      .status { display: inline-flex; align-items: center; gap: 6px; }
+      .status::before { width: 6px; height: 6px; border-radius: 50%; background: currentColor; content: ""; }
+
+      /* Direction 01: a spatial operating atlas */
+      .atlas {
+        --paper: #f5f3ed;
+        --ink: #202720;
+        --muted: #59645b;
+        --rule: #d3d4c9;
+        --moss: #4e6b50;
+        --brick: #b14c37;
+        --river: #3e6e82;
+        color: var(--ink);
+        background: var(--paper);
+      }
+      .atlas .nav { border-bottom: 1px solid var(--rule); }
+      .atlas .brand { font-family: "Newsreader", Georgia, serif; font-size: 15px; }
+      .atlas .brand-mark { color: var(--moss); }
+      .atlas .nav-links { color: var(--muted); }
+      .atlas .nav-link { color: var(--moss); }
+      .atlas-hero {
+        display: grid;
+        grid-template-columns: minmax(0, .86fr) minmax(0, 1.14fr);
+        align-items: center;
+        gap: 16px;
+        padding: 27px 21px 18px;
+      }
+      .atlas-copy { min-width: 0; }
+      .atlas-copy .eyebrow { color: var(--moss); }
+      .atlas-copy h2 {
+        margin: 13px 0 10px;
+        font: 400 39px/.98 "Newsreader", Georgia, serif;
+        letter-spacing: -.02em;
+      }
+      .atlas-copy h2 em { color: var(--moss); font-weight: 400; }
+      .atlas-copy > p:not(.eyebrow) { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
+      .atlas-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 15px; }
+      .atlas-primary {
+        display: inline-flex;
+        min-height: 34px;
+        align-items: center;
+        padding: 0 11px;
+        background: var(--moss);
+        color: #fff;
+        font: 600 8px/1.4 "IBM Plex Mono", monospace;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+      .atlas-secondary { color: var(--ink); font: 500 8px/1.4 "IBM Plex Mono", monospace; text-underline-offset: 3px; text-transform: uppercase; }
+      .atlas-map {
+        min-width: 0;
+        padding: 13px;
+        border: 1px solid var(--rule);
+        background:
+          linear-gradient(rgba(67, 94, 72, .07) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(67, 94, 72, .07) 1px, transparent 1px),
+          #eeeee5;
+        background-size: 22px 22px;
+      }
+      .map-heading { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+      .map-heading strong { font-size: 9px; font-weight: 600; }
+      .map-heading span { color: var(--muted); font: 400 7px/1.4 "IBM Plex Mono", monospace; text-transform: uppercase; }
+      .map-route { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: start; }
+      .map-stop { position: relative; min-width: 0; padding: 0 5px; }
+      .map-stop:not(:last-child)::after {
+        position: absolute;
+        top: 8px;
+        right: -3px;
+        left: calc(50% + 10px);
+        height: 1px;
+        background: #aab9a8;
+        content: "";
+      }
+      .map-stop i { position: relative; z-index: 1; display: block; width: 16px; height: 16px; margin: 0 auto 7px; border: 1px solid var(--moss); border-radius: 50%; background: var(--paper); }
+      .map-stop:nth-child(2) i, .map-stop:nth-child(4) i { border-radius: 1px; border-color: var(--brick); }
+      .map-stop b { display: block; color: var(--moss); font: 500 6px/1.35 "IBM Plex Mono", monospace; text-align: center; }
+      .map-stop span { display: block; margin-top: 3px; color: var(--ink); font-size: 7px; line-height: 1.3; text-align: center; }
+      .map-legend { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--rule); color: var(--muted); font: 400 6px/1.35 "IBM Plex Mono", monospace; text-transform: uppercase; }
+      .map-legend span { display: inline-flex; align-items: center; gap: 4px; }
+      .key-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--river); }
+      .key-dot.proposed { background: var(--brick); }
+      .prototype-band { padding: 8px 21px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); color: var(--muted); font: 500 7px/1.4 "IBM Plex Mono", monospace; text-transform: uppercase; }
+      .audiences { padding: 18px 21px 15px; }
+      .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 9px; }
+      .section-head h3 { margin: 0; font: 400 21px/1.05 "Newsreader", Georgia, serif; }
+      .section-head span { color: var(--muted); font: 400 7px/1.4 "IBM Plex Mono", monospace; text-transform: uppercase; }
+      .audience-row {
+        display: grid;
+        grid-template-columns: minmax(90px, .75fr) minmax(0, 1fr) minmax(78px, .8fr);
+        gap: 10px;
+        padding: 9px 0;
+        border-top: 1px solid var(--rule);
+      }
+      .audience-row strong { font-size: 9px; font-weight: 600; }
+      .audience-row p { margin: 0; color: var(--muted); font-size: 8px; line-height: 1.45; }
+      .audience-row .mono { align-self: start; color: var(--moss); font-size: 6px; line-height: 1.5; }
+      .truth-panel {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        margin: 0 21px;
+        border-top: 1px solid var(--rule);
+        border-bottom: 1px solid var(--rule);
+      }
+      .truth-col { min-width: 0; padding: 11px 10px 12px 0; }
+      .truth-col + .truth-col { padding-right: 0; padding-left: 12px; border-left: 1px solid var(--rule); }
+      .truth-col h4 { display: flex; align-items: center; gap: 6px; margin: 0 0 7px; font: 500 7px/1.4 "IBM Plex Mono", monospace; text-transform: uppercase; }
+      .truth-col p { margin: 0; color: var(--muted); font-size: 8px; line-height: 1.5; }
+      .truth-col.built h4 { color: var(--river); }
+      .truth-col.proposed h4 { color: var(--brick); }
+      .atlas-economics { display: grid; grid-template-columns: 1fr repeat(3, auto); align-items: center; gap: 9px; padding: 13px 21px 17px; }
+      .atlas-economics > p { margin: 0; color: var(--muted); font-size: 8px; line-height: 1.4; }
+      .atlas-economics strong { display: block; font: 400 17px/1 "Newsreader", Georgia, serif; font-variant-numeric: tabular-nums; }
+      .atlas-economics span { display: block; margin-top: 4px; color: var(--muted); font: 400 6px/1.35 "IBM Plex Mono", monospace; text-transform: uppercase; }
+      .atlas-foot { margin: 0; padding: 0 21px 15px; color: var(--muted); font-size: 7px; line-height: 1.5; }
+
+      /* Direction 02: a factual product and evidence brief */
+      .brief {
+        --paper: #fbfcfa;
+        --ink: #192321;
+        --muted: #52615d;
+        --rule: #cbd4d0;
+        --orange: #c94f35;
+        --teal: #08786d;
+        color: var(--ink);
+        background: var(--paper);
+      }
+      .brief .nav { border-bottom: 2px solid var(--ink); }
+      .brief .brand { letter-spacing: .035em; }
+      .brief .brand-mark { border-radius: 50%; color: var(--orange); }
+      .brief .nav-links { color: var(--muted); }
+      .brief .nav-link { border-color: var(--orange); background: var(--orange); color: #fff; }
+      .brief-topline { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 21px; border-bottom: 1px solid var(--rule); }
+      .brief-topline .status { color: var(--orange); font-size: 7px; }
+      .brief-topline > span:last-child { color: var(--muted); font: 400 7px/1.4 "IBM Plex Mono", monospace; text-transform: uppercase; }
+      .brief-hero { padding: 26px 21px 20px; }
+      .brief-hero-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 17px; align-items: end; }
+      .brief-copy { min-width: 0; }
+      .brief-copy .eyebrow { color: var(--orange); }
+      .brief-copy h2 { margin: 12px 0 10px; font-size: 36px; font-weight: 700; line-height: .98; letter-spacing: -.045em; }
+      .brief-copy > p:not(.eyebrow) { margin: 0; color: var(--muted); font-size: 9px; line-height: 1.55; }
+      .brief-claim { align-self: stretch; display: flex; flex-direction: column; justify-content: space-between; padding: 12px; border-left: 3px solid var(--teal); background: #edf3f0; }
+      .brief-claim p { margin: 0; font-size: 11px; font-weight: 500; line-height: 1.45; }
+      .brief-claim span { display: block; margin-top: 14px; color: var(--teal); font: 500 7px/1.4 "IBM Plex Mono", monospace; text-transform: uppercase; }
+      .brief-cta-row { display: flex; gap: 8px; margin-top: 14px; }
+      .brief-cta { display: inline-flex; min-height: 32px; align-items: center; padding: 0 10px; background: var(--orange); color: #fff; font: 600 7px/1.4 "IBM Plex Mono", monospace; text-decoration: none; text-transform: uppercase; }
+      .brief-cta.secondary { border: 1px solid var(--rule); background: transparent; color: var(--ink); }
+      .brief-model { padding: 12px 21px 14px; background: var(--ink); color: #f5f7f4; }
+      .brief-model-head { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+      .brief-model-head strong { font-size: 9px; font-weight: 600; }
+      .brief-model-head span { color: #b6c4bd; font: 400 7px/1.4 "IBM Plex Mono", monospace; text-transform: uppercase; }
+      .model-steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid #61706a; }
+      .model-step { min-width: 0; padding: 8px 6px 0 0; }
+      .model-step + .model-step { padding-left: 8px; border-left: 1px solid #46554f; }
+      .model-step b { display: block; color: #ed977e; font: 500 7px/1.4 "IBM Plex Mono", monospace; }
+      .model-step span { display: block; margin-top: 4px; font-size: 8px; font-weight: 600; line-height: 1.35; }
+      .model-step small { display: block; margin-top: 3px; color: #bdc9c3; font-size: 6px; line-height: 1.35; }
+      .brief-roles { padding: 15px 21px 11px; }
+      .brief-roles h3 { margin: 0 0 8px; font-size: 14px; font-weight: 600; letter-spacing: -.02em; }
+      .role-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+      .role-table th { padding: 5px 6px; border-bottom: 1px solid var(--ink); color: var(--muted); font: 500 6px/1.4 "IBM Plex Mono", monospace; text-align: left; text-transform: uppercase; }
+      .role-table td { padding: 7px 6px; border-bottom: 1px solid var(--rule); font-size: 7px; line-height: 1.4; vertical-align: top; }
+      .role-table td:first-child { width: 25%; font-weight: 600; }
+      .role-table td:last-child { color: var(--teal); font: 500 6px/1.45 "IBM Plex Mono", monospace; text-transform: uppercase; }
+      .brief-evidence { display: grid; grid-template-columns: .9fr 1.1fr; gap: 14px; padding: 12px 21px 13px; border-top: 1px solid var(--rule); }
+      .evidence-state { min-width: 0; }
+      .evidence-state h4 { margin: 0 0 6px; font: 500 7px/1.4 "IBM Plex Mono", monospace; text-transform: uppercase; }
+      .evidence-state ul { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+      .evidence-state li { display: flex; gap: 6px; align-items: baseline; color: var(--muted); font-size: 7px; line-height: 1.35; }
+      .evidence-state li::before { width: 5px; height: 5px; flex: none; border-radius: 50%; background: var(--teal); content: ""; }
+      .evidence-state.proposed li::before { background: var(--orange); }
+      .brief-math { padding: 11px 21px 14px; border-top: 2px solid var(--ink); background: #f0f3f1; }
+      .brief-math-head { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 7px; }
+      .brief-math-head strong { font-size: 8px; font-weight: 600; }
+      .brief-math-head span { color: var(--orange); font: 500 6px/1.4 "IBM Plex Mono", monospace; text-transform: uppercase; }
+      .math-row { display: grid; grid-template-columns: 1fr repeat(3, auto); gap: 12px; align-items: baseline; }
+      .math-row p { margin: 0; color: var(--muted); font-size: 7px; line-height: 1.4; }
+      .math-item strong { display: block; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+      .math-item span { display: block; margin-top: 3px; color: var(--muted); font: 400 6px/1.35 "IBM Plex Mono", monospace; text-transform: uppercase; }
+      .brief-foot { margin: 7px 0 0; color: var(--muted); font-size: 6px; line-height: 1.45; }
+
+      @media (max-width: 1120px) {
+        .comparison { grid-template-columns: minmax(0, 1fr); max-width: 900px; }
+        .concept-site { min-height: 0; }
+        .atlas-copy h2 { max-width: 520px; font-size: 52px; }
+        .brief-copy h2 { max-width: 520px; font-size: 48px; }
+      }
+      @media (max-width: 620px) {
+        .board-head { align-items: flex-start; flex-direction: column; padding: 21px 17px 15px; }
+        .board-note { text-align: left; }
+        .comparison { gap: 11px; padding: 0 9px 22px; }
+        .concept-head { min-height: 36px; padding: 0 10px; }
+        .nav { padding: 0 13px; }
+        .nav-links { gap: 7px; font-size: 6px; }
+        .nav-link { min-height: 28px; padding: 0 6px; font-size: 6px; }
+        .atlas-hero, .brief-hero-grid { grid-template-columns: minmax(0, 1fr); gap: 13px; }
+        .atlas-hero { padding: 23px 15px 14px; }
+        .atlas-copy h2 { font-size: 47px; }
+        .atlas-map { padding: 11px; }
+        .prototype-band, .audiences, .brief-roles { padding-right: 15px; padding-left: 15px; }
+        .audience-row { grid-template-columns: minmax(80px, .72fr) minmax(0, 1fr); gap: 7px; }
+        .audience-row .mono { grid-column: 2; }
+        .truth-panel { margin-right: 15px; margin-left: 15px; }
+        .atlas-economics { grid-template-columns: 1fr repeat(3, auto); gap: 7px; padding-right: 15px; padding-left: 15px; }
+        .atlas-economics strong { font-size: 14px; }
+        .atlas-foot { padding-right: 15px; padding-left: 15px; }
+        .brief-topline, .brief-hero, .brief-model, .brief-evidence, .brief-math { padding-right: 15px; padding-left: 15px; }
+        .brief-copy h2 { font-size: 44px; }
+        .brief-claim { min-height: 88px; }
+        .model-steps { grid-template-columns: minmax(0, 1fr); border-top: 0; }
+        .model-step, .model-step + .model-step { display: grid; grid-template-columns: 30px 1fr; gap: 5px; padding: 7px 0; border-top: 1px solid #46554f; border-left: 0; }
+        .model-step b { grid-row: span 2; }
+        .model-step span, .model-step small { margin: 0; }
+        .brief-evidence { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+        .role-table th, .role-table td { padding-right: 3px; padding-left: 3px; }
+        .role-table td:first-child { width: 26%; }
+        .math-row { grid-template-columns: repeat(3, 1fr); gap: 7px; }
+        .math-row > p { grid-column: 1 / -1; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="board-head">
+      <div>
+        <p class="board-kicker">APT-LABS / WHOLE-APP LANDING / DESIGN STUDY 02</p>
+        <h1>One product story. Four stakeholder paths.</h1>
+      </div>
+      <p class="board-note">Both concepts use the same product facts and proof labels. Compare the visual language, not competing claims. No stock photography or implied live deployments.</p>
+    </header>
+
+    <main class="comparison" aria-label="Audience-led landing page design directions">
+      <article class="concept" aria-labelledby="atlas-title">
+        <header class="concept-head">
+          <p class="concept-name" id="atlas-title">01 / Operating Atlas</p>
+          <p class="concept-index">Spatial / Editorial</p>
+        </header>
+        <div class="concept-site atlas">
+          <nav class="nav" aria-label="Operating Atlas concept navigation">
+            <a class="brand" href="#atlas-roles" aria-label="APT-LABS Operating Atlas"><span class="brand-mark" aria-hidden="true"></span>APT-LABS</a>
+            <div class="nav-links"><a href="#atlas-system">System</a><a href="#atlas-roles">By role</a><a href="#atlas-proof">Proof</a></div>
+            <a class="nav-link" href="#atlas-roles">Explore</a>
+          </nav>
+          <section class="atlas-hero" aria-labelledby="atlas-headline">
+            <div class="atlas-copy">
+              <p class="eyebrow">A local delivery coordination prototype</p>
+              <h2 id="atlas-headline">A need becomes work. <em>Work becomes proof.</em></h2>
+              <p>APT-LABS explores how institutional needs, local delivery teams, community context, and accountable records could connect in one workflow.</p>
+              <div class="atlas-actions"><a class="atlas-primary" href="#atlas-system">Trace the model <span aria-hidden="true">&darr;</span></a><a class="atlas-secondary" href="#atlas-roles">Choose your path</a></div>
+            </div>
+            <figure class="atlas-map" id="atlas-system" aria-labelledby="atlas-map-title">
+              <figcaption class="map-heading"><strong id="atlas-map-title">Proposed operating sequence</strong><span>Human-controlled gates</span></figcaption>
+              <div class="map-route" role="list" aria-label="Five proposed work stages">
+                <div class="map-stop" role="listitem"><i aria-hidden="true"></i><b>01 / INPUT</b><span>Need recorded</span></div>
+                <div class="map-stop" role="listitem"><i aria-hidden="true"></i><b>02 / SCOPE</b><span>Buyer authorizes</span></div>
+                <div class="map-stop" role="listitem"><i aria-hidden="true"></i><b>03 / TEAM</b><span>Provider assembled</span></div>
+                <div class="map-stop" role="listitem"><i aria-hidden="true"></i><b>04 / ACCEPT</b><span>Buyer verifies</span></div>
+                <div class="map-stop" role="listitem"><i aria-hidden="true"></i><b>05 / RECORD</b><span>Outcome retained</span></div>
+              </div>
+              <div class="map-legend"><span><i class="key-dot" aria-hidden="true"></i>Prototype surfaces</span><span><i class="key-dot proposed" aria-hidden="true"></i>Proposed live model</span></div>
+            </figure>
+          </section>
+          <p class="prototype-band"><span class="status">Browser-local prototype</span> &nbsp; No live procurement, provider assignment, payment, telemetry, or credential connection</p>
+          <section class="audiences" id="atlas-roles" aria-labelledby="atlas-roles-title">
+            <div class="section-head"><h3 id="atlas-roles-title">Find your place in the system.</h3><span>Four stakeholder paths</span></div>
+            <div class="audience-row"><strong>Institutions</strong><p>Explore local asset and need records, including a school-need draft.</p><span class="mono">Institutions / School Console<br />Browser-local prototype</span></div>
+            <div class="audience-row"><strong>Local teams</strong><p>Review people, capabilities, and static work examples; interest stays non-binding.</p><span class="mono">People / Workbench<br />No live matching</span></div>
+            <div class="audience-row"><strong>Community stewards</strong><p>Record local observations and steward decisions inside the prototype.</p><span class="mono">Commons<br />Local records only</span></div>
+            <div class="audience-row"><strong>Investors &amp; partners</strong><p>Inspect a manually run Tender to Roll-preview simulation and the assumptions it is meant to test.</p><span class="mono">Workbench simulation<br />Not a real transaction</span></div>
+          </section>
+          <section class="truth-panel" id="atlas-proof" aria-label="Prototype and proposed model status">
+            <div class="truth-col built"><h4><i class="key-dot" aria-hidden="true"></i>In the prototype</h4><p>Browser-local directory, asset and observation records, work examples, and an isolated manual simulation.</p></div>
+            <div class="truth-col proposed"><h4><i class="key-dot proposed" aria-hidden="true"></i>Still to prove</h4><p>Buyer demand, repeat work, procurement fit, provider delivery, accepted outcomes, and positive economics after costs.</p></div>
+          </section>
+          <div class="atlas-economics" aria-label="Illustrative economics only">
+            <p>One hypothetical<br />$100K package</p>
+            <div><strong>$100K</strong><span>Routed</span></div>
+            <div><strong>$90K</strong><span>Delivery</span></div>
+            <div><strong>$10K</strong><span>Example fee</span></div>
+          </div>
+          <p class="atlas-foot">Illustrative arithmetic only. A 10% fee is an assumption, not revenue, traction, a forecast, or a margin claim; operating costs, taxes, and procurement constraints are excluded.</p>
+        </div>
+      </article>
+
+      <article class="concept" aria-labelledby="brief-title">
+        <header class="concept-head">
+          <p class="concept-name" id="brief-title">02 / Evidence-Led Product Brief</p>
+          <p class="concept-index">Evidence-First / Stage-Explicit</p>
+        </header>
+        <div class="concept-site brief">
+          <nav class="nav" aria-label="Evidence Brief concept navigation">
+            <a class="brand" href="#brief-roles" aria-label="APT-LABS Evidence Brief"><span class="brand-mark" aria-hidden="true"></span>APT-LABS <span class="mono">/ 01</span></a>
+            <div class="nav-links"><a href="#brief-model">Model</a><a href="#brief-roles">People</a><a href="#brief-evidence">Evidence</a></div>
+            <a class="nav-link" href="#brief-roles">Open prototype</a>
+          </nav>
+          <div class="brief-topline"><span class="status">Prototype / local-only</span><span>Public-work coordination thesis</span></div>
+          <section class="brief-hero" aria-labelledby="brief-headline">
+            <div class="brief-hero-grid">
+              <div class="brief-copy">
+                <p class="eyebrow">One shared workflow / four ways to take part</p>
+                <h2 id="brief-headline">Connect institutional need to accountable local work.</h2>
+                <p>A product concept for scoping, coordinating, and recording work. The current app demonstrates local workflows; it does not run procurement or settlement.</p>
+                <div class="brief-cta-row"><a class="brief-cta" href="#brief-roles">Explore by role</a><a class="brief-cta secondary" href="#brief-evidence">See current status</a></div>
+              </div>
+              <aside class="brief-claim" aria-label="Core product thesis">
+                <p>Buyers define and authorize the scope. Local teams could deliver it. The buyer accepts the evidence before settlement.</p>
+                <span>Proposed operating model / not yet a live service</span>
+              </aside>
+            </div>
+          </section>
+          <section class="brief-model" id="brief-model" aria-labelledby="brief-model-title">
+            <div class="brief-model-head"><strong id="brief-model-title">The work package, end to end</strong><span>Proposed sequence / human authorization retained</span></div>
+            <div class="model-steps">
+              <div class="model-step"><b>01</b><span>Need recorded</span><small>Asset, inspection, or draft</small></div>
+              <div class="model-step"><b>02</b><span>Scope approved</span><small>Buyer sets budget and criteria</small></div>
+              <div class="model-step"><b>03</b><span>Team assembled</span><small>Qualified local delivery</small></div>
+              <div class="model-step"><b>04</b><span>Work accepted</span><small>Buyer reviews evidence</small></div>
+              <div class="model-step"><b>05</b><span>Outcome recorded</span><small>Consent and issuer required</small></div>
+            </div>
+          </section>
+          <section class="brief-roles" id="brief-roles" aria-labelledby="brief-roles-title">
+            <h3 id="brief-roles-title">One product, useful entry points for different people.</h3>
+            <table class="role-table">
+              <thead><tr><th>For</th><th>Current prototype surface</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>Institutions</td><td>Asset register and school-need draft</td><td>Local records</td></tr>
+                <tr><td>Local teams</td><td>People profiles and static work examples</td><td>No live matching</td></tr>
+                <tr><td>Community stewards</td><td>Commons observations and decisions</td><td>Local records</td></tr>
+                <tr><td>Investors / partners</td><td>Manual Tender to Roll-preview simulation</td><td>No real transaction</td></tr>
+              </tbody>
+            </table>
+          </section>
+          <section class="brief-evidence" id="brief-evidence" aria-label="Current proof status">
+            <div class="evidence-state"><h4 style="color: var(--teal)">Built in the browser prototype</h4><ul><li>People, Institutions, Commons, and Workbench surfaces</li><li>Isolated simulation using local records</li><li>Explicit buyer review and acceptance stages</li></ul></div>
+            <div class="evidence-state proposed"><h4 style="color: var(--orange)">Validation still required</h4><ul><li>Defined buyer and repeatable first work category</li><li>Procurement approval and real provider delivery</li><li>Repeat orders and economics after operating costs</li></ul></div>
+          </section>
+          <section class="brief-math" aria-label="Illustrative economics only">
+            <div class="brief-math-head"><strong>Scenario to test / one hypothetical $100K package</strong><span>Not company performance</span></div>
+            <div class="math-row"><p>10% fee is an assumption. No revenue, traction, forecast, or margin is claimed.</p><div class="math-item"><strong>$100K</strong><span>Work package</span></div><div class="math-item"><strong>$90K</strong><span>Delivery share</span></div><div class="math-item"><strong>$10K</strong><span>Example fee</span></div></div>
+            <p class="brief-foot">A diligence view would add verified buyer evidence, delivery costs, acquisition cost, sales cycle, payment timing, working capital, and sensitivity cases when those facts are available.</p>
+          </section>
+        </div>
+      </article>
+    </main>
+  </body>
+</html>

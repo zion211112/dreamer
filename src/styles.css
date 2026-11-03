@@ -10943,6 +10943,195 @@ a:focus-visible {
   line-height: 1.55;
 }
 
+/* Operating Map — visual route diagram */
+.landing-atlas-map {
+  min-width: 0;
+  margin: 0;
+  padding: clamp(20px, 3vw, 34px);
+  border: 1px solid var(--border-strong);
+  background:
+    linear-gradient(var(--hairline) 1px, transparent 1px),
+    linear-gradient(90deg, var(--hairline) 1px, transparent 1px),
+    var(--bg);
+  background-size: 34px 34px;
+}
+
+.landing-atlas-map-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-strong);
+  margin-bottom: 20px;
+}
+
+.landing-atlas-map-heading strong {
+  font: 400 22px/1.05 var(--landing-serif);
+  letter-spacing: 0;
+}
+
+.landing-atlas-map-heading span {
+  color: var(--text-muted);
+  font: 400 9px/1.4 var(--landing-mono);
+  text-transform: uppercase;
+  text-align: right;
+  flex: none;
+}
+
+.landing-atlas-route {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.landing-atlas-stop {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.landing-atlas-connector {
+  position: relative;
+  width: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.landing-atlas-line {
+  width: 1px;
+  height: 100%;
+  min-height: 48px;
+  background: var(--border);
+  flex: 1;
+}
+
+.landing-atlas-marker {
+  position: relative;
+  z-index: 1;
+  width: 20px;
+  height: 20px;
+  border: 2px solid;
+  border-radius: 50%;
+  background: var(--bg);
+  flex: none;
+}
+
+.landing-atlas-marker.built {
+  border-color: var(--terrain);
+}
+
+.landing-atlas-marker.built::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--terrain);
+}
+
+.landing-atlas-marker.proposed {
+  border-color: var(--brass);
+  background: var(--bg);
+}
+
+.landing-atlas-marker.proposed::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--brass);
+}
+
+.landing-atlas-content {
+  min-width: 0;
+  padding-top: 2px;
+}
+
+.landing-atlas-step-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.landing-atlas-step-number {
+  color: var(--text-muted);
+  font: 600 9px/1 var(--landing-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.landing-atlas-step-title {
+  margin: 0;
+  font: 400 17px/1.2 var(--landing-serif);
+  letter-spacing: 0;
+}
+
+.landing-atlas-state-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font: 500 8px/1.3 var(--landing-mono);
+  text-transform: uppercase;
+  border-radius: 999px;
+}
+
+.landing-atlas-state-badge.built {
+  background: var(--terrain-pale);
+  color: var(--terrain-ink);
+}
+
+.landing-atlas-state-badge.proposed {
+  background: var(--brass-pale);
+  color: #6b5420;
+}
+
+.landing-atlas-step-detail {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.landing-atlas-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.landing-atlas-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font: 400 10px/1.4 var(--landing-mono);
+  text-transform: uppercase;
+}
+
+.landing-atlas-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.landing-atlas-legend-dot.built {
+  background: var(--terrain);
+}
+
+.landing-atlas-legend-dot.proposed {
+  border: 2px solid var(--brass);
+  background: var(--bg);
+}
+
 .landing-audiences,
 .landing-evidence {
   width: min(1232px, calc(100% - clamp(40px, 10vw, 152px)));
