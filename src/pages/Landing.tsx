@@ -2,36 +2,11 @@ import { Link } from 'wouter';
 import { BrandMark } from '../components/BrandMark';
 
 const deliveryStages = [
-  {
-    number: '01',
-    title: 'Find a real need',
-    detail:
-      'Start with an asset record, a field inspection, or a sensor signal where it is useful. Telemetry flags work for review; it never commissions work on its own.',
-  },
-  {
-    number: '02',
-    title: 'Authorize a defined scope',
-    detail:
-      'The institution sets the budget, safety requirements, and acceptance criteria before any provider is matched.',
-  },
-  {
-    number: '03',
-    title: 'Match the right labor',
-    detail:
-      'A pilot could offer supervised, paid, low-risk tasks as an entry path for unemployed youth. Licensed and experienced contractors retain specialist, regulated, and safety-critical scopes; the roles complement, not replace, each other.',
-  },
-  {
-    number: '04',
-    title: 'Verify the work',
-    detail:
-      'A dated evidence trail and buyer acceptance connect the original need to completed work. Access to sensitive site data should be limited to delivery needs and governed by retention rules.',
-  },
-  {
-    number: '05',
-    title: 'Settle, then record',
-    detail:
-      'The buyer authorizes payment after acceptance. A credential could record demonstrated work only with worker consent and a trusted issuer; portable W3C Verifiable Credentials are a design direction, not a live service. SBTs are not the default.',
-  },
+  { number: '01', title: 'Need recorded' },
+  { number: '02', title: 'Scope approved' },
+  { number: '03', title: 'Team assembled' },
+  { number: '04', title: 'Work accepted' },
+  { number: '05', title: 'Outcome recorded' },
 ];
 
 export function Landing() {
@@ -40,8 +15,10 @@ export function Landing() {
       <header className="landing-header">
         <BrandMark size="md" />
         <nav className="landing-nav" aria-label="Main navigation">
-          <a href="#about">About</a>
-          <a href="#pilot-economics">Pilot model</a>
+          <a href="#model">The model</a>
+          <a href="#audiences">For your role</a>
+          <a href="#evidence">Prototype status</a>
+          <a href="#pilot-economics">Economics</a>
           <a href="#contact">Contact</a>
         </nav>
         <Link
@@ -57,153 +34,195 @@ export function Landing() {
           <div className="landing-hero-copy">
             <p className="landing-kicker">
               <span className="landing-kicker-rule" aria-hidden="true" />
-              FIELD SYSTEM / OPERATING THESIS
+              LOCAL WORK / HUMAN-AUTHORIZED MODEL
             </p>
             <h1 id="landing-title">
-              Move overlooked institutional work into{' '}
-              <em>verified local delivery.</em>
+              From institutional need to{' '}
+              <em>accepted local work.</em>
             </h1>
             <p className="landing-lede">
-              The proposed model connects approved institutional needs with
-              local teams and ties payment to accepted work. It would earn a
-              coordination fee on delivery—not a seat license or a new
-              debt-financed build.
+              APT-LABS is a local prototype for institutional needs, coordinated
+              delivery, and buyer-accepted outcomes. It does not run live
+              procurement or settlement.
             </p>
             <div className="landing-hero-actions">
-              <a className="landing-primary-link" href="#pilot-economics">
-                See the pilot model <span aria-hidden="true">↓</span>
+              <a className="landing-primary-link" href="#model">
+                Trace the model <span aria-hidden="true">↓</span>
               </a>
               <p>
-                Prototype only. No live institutional, telemetry, payment, or
-                credential connections.
+                Prototype only. No live matching, payment, or credentials.
               </p>
             </div>
           </div>
 
-          <aside
-            className="landing-economics"
-            id="pilot-economics"
-            aria-labelledby="economics-title"
-          >
+          <figure className="landing-atlas" id="model" aria-labelledby="atlas-title">
+            <figcaption className="landing-atlas-heading">
+              <span id="atlas-title">Proposed operating sequence</span>
+              <span>Human authorization retained</span>
+            </figcaption>
+            <ol className="landing-atlas-flow">
+              {deliveryStages.map((stage) => (
+                <li className="landing-atlas-step" key={stage.number}>
+                  <span className="landing-atlas-number">{stage.number}</span>
+                  <span className="landing-atlas-title">{stage.title}</span>
+                </li>
+              ))}
+            </ol>
+            <p className="landing-atlas-note">
+              Manual simulation only. No real-world transactions.
+            </p>
+          </figure>
+        </section>
+
+        <section
+          className="landing-audiences"
+          id="audiences"
+          aria-labelledby="audiences-title"
+        >
+          <div className="landing-section-heading">
+            <p className="landing-kicker">
+              <span className="landing-kicker-rule" aria-hidden="true" />
+              ONE SYSTEM / DIFFERENT ENTRY POINTS
+            </p>
+            <h2 id="audiences-title">Choose your role.</h2>
+          </div>
+          <div className="landing-audience-list">
+            <article className="landing-audience-row">
+              <span className="landing-audience-index">01 / BUYERS</span>
+              <div>
+                <h3>Institutions</h3>
+                <p>
+                  Explore asset records and a school-need draft.
+                </p>
+              </div>
+              <Link
+                className="landing-audience-link"
+                href="/sign-in?next=%2Fworkspace%2Finstitutions"
+              >
+                Explore institution records <span aria-hidden="true">↗</span>
+              </Link>
+            </article>
+            <article className="landing-audience-row">
+              <span className="landing-audience-index">02 / DELIVERY</span>
+              <div>
+                <h3>Local teams</h3>
+                <p>
+                  Browse people, capabilities, and static examples. Interest is local and non-binding.
+                </p>
+              </div>
+              <Link
+                className="landing-audience-link"
+                href="/sign-in?next=%2Fworkspace%2Fpeople"
+              >
+                Browse people and work <span aria-hidden="true">↗</span>
+              </Link>
+            </article>
+            <article className="landing-audience-row">
+              <span className="landing-audience-index">03 / STEWARDSHIP</span>
+              <div>
+                <h3>Community stewards</h3>
+                <p>
+                  Review local observations and steward decisions.
+                </p>
+              </div>
+              <Link
+                className="landing-audience-link"
+                href="/sign-in?next=%2Fworkspace%2Fcommons"
+              >
+                Explore Commons <span aria-hidden="true">↗</span>
+              </Link>
+            </article>
+            <article className="landing-audience-row">
+              <span className="landing-audience-index">
+                04 / CAPITAL &amp; DELIVERY PARTNERS
+              </span>
+              <div>
+                <h3>Investors and partners</h3>
+                <p>
+                  Trace the manual Tender → Roll-preview simulation.
+                </p>
+              </div>
+              <Link
+                className="landing-audience-link"
+                href="/sign-in?next=%2Fworkspace%2Ffield-desk"
+              >
+                View the simulation <span aria-hidden="true">↗</span>
+              </Link>
+            </article>
+          </div>
+        </section>
+
+        <section className="landing-evidence" id="evidence" aria-labelledby="evidence-title">
+          <div className="landing-section-heading">
+            <p className="landing-kicker">
+              <span className="landing-kicker-rule" aria-hidden="true" />
+              EVIDENCE / CURRENT STATE
+            </p>
+            <h2 id="evidence-title">Built. Proposed. Unvalidated.</h2>
+          </div>
+          <div className="landing-evidence-grid">
+            <article className="landing-evidence-item landing-evidence-built">
+              <p>IN THE BROWSER PROTOTYPE</p>
+              <h3>Working local surfaces</h3>
+              <ul>
+                <li>People, Institutions, Commons, Workbench, and a local simulation.</li>
+              </ul>
+            </article>
+            <article className="landing-evidence-item landing-evidence-proposed">
+              <p>PROPOSED OPERATING MODEL</p>
+              <h3>Human-reviewed work</h3>
+              <ul>
+                <li>Buyer-scoped work, qualified providers, acceptance before payment.</li>
+              </ul>
+            </article>
+            <article className="landing-evidence-item landing-evidence-validate">
+              <p>STILL TO VALIDATE</p>
+              <h3>Commercial proof</h3>
+              <ul>
+                <li>Buyer demand, procurement fit, repeat orders, and positive unit economics.</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section className="landing-investor-band" id="pilot-economics" aria-labelledby="economics-title">
+          <div className="landing-investor-intro">
+            <p className="landing-kicker">
+              <span className="landing-kicker-rule" aria-hidden="true" />
+              INVESTOR LENS / SCENARIO TO TEST
+            </p>
+            <h2 id="economics-title">Illustrative transaction economics.</h2>
+            <p>No buyer, revenue, or margin is claimed.</p>
+          </div>
+          <aside className="landing-economics" aria-labelledby="economics-example-title">
             <div className="landing-economics-heading">
               <p className="landing-micro-label">
-                <span>WORKED EXAMPLE</span>
-                <span>ASSUMPTIONS / 01</span>
+                <span>HYPOTHETICAL PACKAGE</span>
+                <span>ASSUMPTION / 01</span>
               </p>
-              <h2 id="economics-title">Illustrative pilot economics</h2>
+              <h3 id="economics-example-title">Illustrative transaction economics</h3>
             </div>
             <dl className="landing-economics-ledger">
               <div className="landing-ledger-row">
-                <dt>
-                  <span>01</span> Institutional work routed
-                </dt>
+                <dt><span>01</span> Work package</dt>
                 <dd>$100,000</dd>
               </div>
               <div className="landing-ledger-row">
-                <dt>
-                  <span>02</span> Paid to delivery teams
-                </dt>
+                <dt><span>02</span> Delivery share</dt>
                 <dd>$90,000</dd>
               </div>
               <div className="landing-ledger-row landing-ledger-total">
-                <dt>
-                  <span>03</span> APT coordination fee
-                </dt>
+                <dt><span>03</span> Example coordination fee</dt>
                 <dd>$10,000</dd>
               </div>
             </dl>
             <p className="landing-economics-assumption">
-              Assumes one $100K work package and a 10% fee included in that
-              package; the remaining 90% goes to delivery. This is illustrative
-              arithmetic—not APT-LABS revenue, traction, a forecast, or a
-              margin claim. It excludes operating costs, taxes, and procurement
-              constraints.
+              Assumes one $100K package and a 10% fee included in that package.
+              Arithmetic only—not revenue, traction, forecast, or margin.
+              Excludes costs, taxes, procurement, sales cycle, and working
+              capital.
             </p>
           </aside>
-        </section>
-
-        <section className="landing-flow-section" aria-labelledby="flow-title">
-          <div className="landing-section-heading">
-            <p className="landing-kicker">
-              <span className="landing-kicker-rule" aria-hidden="true" />
-              THE DELIVERY LOOP
-            </p>
-            <h2 id="flow-title">From physical signal to accountable work.</h2>
-            <p>
-              A human-authorized chain—not an automated jump from sensor
-              reading to labor assignment.
-            </p>
-          </div>
-
-          <ol className="landing-flow">
-            {deliveryStages.map((stage) => (
-              <li className="landing-flow-step" key={stage.number}>
-                <span className="landing-flow-number">{stage.number}</span>
-                <div>
-                  <h3>{stage.title}</h3>
-                  <p>{stage.detail}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        <section
-          className="landing-thesis"
-          id="about"
-          aria-labelledby="thesis-title"
-        >
-          <div className="landing-thesis-intro">
-            <p className="landing-kicker">
-              <span className="landing-kicker-rule" aria-hidden="true" />
-              THE 2030 BET / TO BE PROVEN
-            </p>
-            <h2 id="thesis-title">
-              The arbitrage is coordination—not cheaper labor.
-            </h2>
-            <p>
-              Working thesis: institutional leakage is the gap between
-              budgeted need and locally delivered, accepted work. APT-LABS
-              proposes to close that gap by reducing discovery, verification,
-              and coordination friction—not by replacing procurement, SaaS, or
-              public finance. The size of that gap is unmeasured.
-            </p>
-          </div>
-          <div className="landing-thesis-points">
-            <article>
-              <span>01 / REVENUE</span>
-              <h3>Fee on accepted work</h3>
-              <p>
-                In the proposed model, revenue would follow buyer-accepted
-                delivery. A 10% fee is an example to test with buyers, not an
-                established rate.
-              </p>
-            </article>
-            <article>
-              <span>02 / DISTRIBUTION</span>
-              <h3>Start with repeatable needs</h3>
-              <p>
-                The wedge is a defined buyer and recurring work category. Local
-                providers and repeat orders could compound supply and evidence;
-                no partnerships or network effects are claimed today.
-              </p>
-            </article>
-            <article>
-              <span>03 / DEFENSIBILITY</span>
-              <h3>Proof, not a token</h3>
-              <p>
-                The potential advantage is accepted work history and lower
-                coordination friction—not an unproven credential or blockchain
-                label.
-              </p>
-            </article>
-          </div>
-          <p className="landing-proof-gate">
-            <strong>What a pilot must prove:</strong> buyer-approved scopes,
-            compliant provider selection, on-time accepted work, local payment,
-            repeat orders, and positive unit economics after delivery and
-            operating costs.
-          </p>
         </section>
 
         <section
@@ -218,9 +237,8 @@ export function Landing() {
             </p>
             <h2 id="contact-title">Start with one real work category.</h2>
             <p>
-              Discuss a bounded pilot, its buyer approvals, delivery partners,
-              and acceptance criteria. The link opens WhatsApp; nothing is sent
-              until you choose to send the message.
+              Discuss a bounded pilot and its approval and acceptance criteria.
+              WhatsApp opens without sending until you choose to send.
             </p>
           </div>
           <a
@@ -237,9 +255,8 @@ export function Landing() {
       <footer className="landing-footer">
         <BrandMark size="sm" />
         <p>
-          APT-LABS is a browser-local prototype. Figures above are illustrative
-          assumptions; workflows are not connected to live institutions,
-          payments, telemetry, or credential issuers.
+          Browser-local prototype. Figures are illustrative; no live
+          institutional, payment, telemetry, or credential connections.
         </p>
       </footer>
     </div>
