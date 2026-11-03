@@ -105,14 +105,14 @@ export function Landing() {
               <div>
                 <h3>Investors and partners</h3>
                 <p>
-                  Inspect the Tender → Roll simulation and its assumptions.
+                  Read the investment memorandum and inspect the simulation.
                 </p>
               </div>
               <Link
                 className="landing-audience-link"
-                href="/sign-in?next=%2Fworkspace%2Ffield-desk"
+                href="/investor-memo"
               >
-                Open Field Desk <span aria-hidden="true">↗</span>
+                Read the memo <span aria-hidden="true">↗</span>
               </Link>
             </article>
           </div>
@@ -147,122 +147,6 @@ export function Landing() {
               <ul>
                 <li>Buyer demand, procurement fit, repeat orders, positive unit economics.</li>
               </ul>
-            </article>
-          </div>
-        </section>
-
-        <section className="landing-investor-band" id="pilot-economics" aria-labelledby="economics-title">
-          <div className="landing-investor-intro">
-            <p className="landing-kicker">
-              <span className="landing-kicker-rule" aria-hidden="true" />
-              INVESTOR LENS / ECONOMIC LOGIC
-            </p>
-            <h2 id="economics-title">How the coordination fee compounds.</h2>
-            <p className="landing-investor-thesis">
-              The fee is not the business. The business is the data asset that
-              makes the fee defensible: buyer-accepted outcomes, provider
-              performance history, and community context — all recorded at the
-              point of work.
-            </p>
-          </div>
-
-          <div className="landing-investor-grid">
-            <article className="landing-investor-card landing-investor-unit">
-              <header>
-                <p className="landing-micro-label">
-                  <span>UNIT ECONOMICS</span>
-                  <span>PER WORK PACKAGE</span>
-                </p>
-                <h3>Single-package arithmetic</h3>
-              </header>
-              <dl className="landing-economics-ledger">
-                <div className="landing-ledger-row">
-                  <dt><span>01</span> Work package value</dt>
-                  <dd>$100,000</dd>
-                </div>
-                <div className="landing-ledger-row">
-                  <dt><span>02</span> Delivery share (90%)</dt>
-                  <dd>$90,000</dd>
-                </div>
-                <div className="landing-ledger-row">
-                  <dt><span>03</span> Coordination fee (10%)</dt>
-                  <dd>$10,000</dd>
-                </div>
-                <div className="landing-ledger-row landing-ledger-subtotal">
-                  <dt><span>—</span> Gross margin on fee</dt>
-                  <dd>~$7,000</dd>
-                </div>
-                <div className="landing-ledger-row landing-ledger-subtotal">
-                  <dt><span>—</span> Estimated CAC (pilot)</dt>
-                  <dd>~$3,000</dd>
-                </div>
-                <div className="landing-ledger-row landing-ledger-total">
-                  <dt><span>04</span> Net contribution / package</dt>
-                  <dd>$4,000</dd>
-                </div>
-              </dl>
-              <p className="landing-economics-assumption">
-                Assumes 30% operating cost on fee (infra, ops, compliance).
-                CAC estimated for first 5 buyers via direct sales.
-                No sales leverage, no renewal revenue, no expansion.
-              </p>
-            </article>
-
-            <article className="landing-investor-card landing-investor-scale">
-              <header>
-                <p className="landing-micro-label">
-                  <span>SCALE LOGIC</span>
-                  <span>WHY THIS COMPOUNDS</span>
-                </p>
-                <h3>Network effects in coordination</h3>
-              </header>
-              <ul className="landing-scale-list">
-                <li>
-                  <strong>Buyer retention:</strong> Accepted outcomes create
-                  switching cost — re-procurement requires re-verification.
-                </li>
-                <li>
-                  <strong>Provider liquidity:</strong> Performance history
-                  reduces search cost for next buyer; fee stays defensible.
-                </li>
-                <li>
-                  <strong>Data moat:</strong> Community context + outcome
-                  records = proprietary underwriting dataset for insurers
-                  and financiers.
-                </li>
-                <li>
-                  <strong>Fee expansion:</strong> 10% coordination → 15% with
-                  insurance wrap → 20% with financing facilitation.
-                </li>
-              </ul>
-            </article>
-
-            <article className="landing-investor-card landing-investor-risks">
-              <header>
-                <p className="landing-micro-label">
-                  <span>KEY RISKS</span>
-                  <span>WHAT MUST BE PROVEN</span>
-                </p>
-                <h3>Gates to the next round</h3>
-              </header>
-              <dl className="landing-risk-list">
-                <div className="landing-risk-row">
-                  <dt>Procurement fit</dt>
-                  <dd>Can buyers authorize via existing frameworks?</dd>
-                </div>
-                <div className="landing-risk-row">
-                  <dt>Delivery density</dt>
-                  <dd>Can local teams deliver repeatedly at quality?</dd>
-                </div>
-                <div className="landing-risk-row">
-                  <dt>Payment timing</dt>
-                  <dd>Net-30? Net-60? Working capital requirement?</dd>
-                </div>
-                <div className="landing-risk-row">
-                  <dt>Regulatory</dt>
-                  <dd>Public funds rules, labor classification, data sovereignty.</dd>
-                </div>
-              </dl>
             </article>
           </div>
         </section>
