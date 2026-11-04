@@ -166,9 +166,7 @@ export function Auth() {
       <div className="auth-main">
         <section className="auth-form-panel" aria-labelledby="auth-title">
           <header className="auth-heading">
-            <p className="auth-eyebrow">APT-LABS / STUDIO</p>
-            <h1 id="auth-title">{isSignUp ? 'Create your account' : 'Tuko rada.'}</h1>
-            {isSignUp && <p>Set up your profile to enter the workspace.</p>}
+            <h1 id="auth-title">{isSignUp ? 'Create your account' : 'Sign in'}</h1>
           </header>
 
           <nav className="auth-mode-switch" aria-label="Account">
