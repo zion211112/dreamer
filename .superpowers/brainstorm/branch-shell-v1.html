@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0d120f" />
+<title>APT-LABS — Branch Design Study</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --paper: #0b110f;
+    --paper-alt: #101910;
+    --panel: rgba(17, 25, 20, 0.9);
+    --panel-elevated: rgba(23, 31, 26, 0.96);
+    --panel-strong: rgba(30, 40, 33, 0.98);
+    --line: rgba(200, 213, 197, 0.11);
+    --line-strong: rgba(200, 213, 197, 0.18);
+    --ink: #edf4ec;
+    --muted: #aab8a7;
+    --dim: #758175;
+    --lime: #c8f292;
+    --lime-strong: #dff7b2;
+    --lime-wash: rgba(200, 242, 146, 0.11);
+    --coral: #ea9d7b;
+    --coral-wash: rgba(234, 157, 123, 0.1);
+    --teal: #87c8c0;
+    --teal-wash: rgba(135, 200, 192, 0.1);
+    --amber: #d0b87d;
+    --mono: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+    --sans: "Segoe UI Variable", "Segoe UI", sans-serif;
+    --header: 54px;
+    --rail: 54px;
+    --tree: 238px;
+    --inspector: 298px;
+    --dock-height: 148px;
+    --status: 24px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: radial-gradient(circle at top, rgba(114, 160, 110, 0.18), transparent 38%),
+      linear-gradient(180deg, #0c120d, #0a0e0b 48%, #090d0b);
+    color: var(--ink);
+    font: 12px/1.5 var(--sans);
+    overflow: hidden;
+  }
+
+  button, input, select { font: inherit; }
+  button { color: inherit; }
+
+  .frame {
+    height: 100dvh;
+    display: grid;
+    grid-template-rows: var(--header) minmax(0, 1fr) var(--status);
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 0 15px;
+    border-bottom: 1px solid var(--line);
+    background: rgba(17, 25, 20, 0.82);
+    backdrop-filter: blur(14px) saturate(1.2);
+    min-width: 0;
+  }
+
+  .brand { display: flex; align-items: center; gap: 9px; white-space: nowrap; }
+  .brand-mark {
+    width: 25px; height: 25px;
+    display: grid; place-items: center;
+    border: 1px solid rgba(200, 242, 146, 0.8);
+    border-radius: 2px 2px 2px 0;
+    background: linear-gradient(145deg, rgba(20, 28, 22, 0.9), rgba(29, 40, 31, 0.8));
+    color: var(--lime);
+    font: 700 13px Georgia, serif;
+    transform: rotate(-3deg);
+  }
+  .brand-name { font-size: 11px; font-weight: 750; letter-spacing: .11em; }
+  .top-divider { width: 1px; height: 22px; background: var(--line); }
+  .workspace-name { color: var(--muted); white-space: nowrap; }
+  .workspace-name strong { color: var(--ink); font-weight: 650; }
+  .environment {
+    display: flex; align-items: center; gap: 3px;
+    padding: 3px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: rgba(18, 24, 19, 0.72);
+  }
+  .environment span {
+    min-height: 27px; display: flex; align-items: center;
+    padding: 0 10px; border-radius: 4px;
+    color: var(--dim);
+  }
+  .environment .current {
+    background: var(--lime);
+    color: #161f17;
+    font-weight: 700; box-shadow: inset 0 1px rgba(255,255,255,0.2);
+  }
+
+  .top-spacer { flex: 1; }
+
+  .search {
+    height: 32px; width: min(280px, 24vw); display: flex; align-items: center; gap: 8px;
+    padding: 0 9px; border: 1px solid var(--line); border-radius: 5px;
+    background: rgba(17, 24, 19, 0.7); color: var(--dim);
+  }
+  .search svg { width: 14px; height: 14px; flex: none; stroke: currentColor; stroke-width: 1.7; fill: none; }
+  .search kbd { margin-left: auto; font: 9px var(--mono); color: var(--muted); }
+
+  .top-action {
+    height: 32px; display: flex; align-items: center; gap: 7px;
+    padding: 0 10px; border: 1px solid rgba(200, 242, 146, 0.32);
+    border-radius: 5px; background: rgba(200, 242, 146, 0.08); color: var(--lime);
+    white-space: nowrap;
+  }
+  .top-action .counter {
+    width: 16px; height: 16px; display: grid; place-items: center;
+    border-radius: 50%; background: var(--lime); color: #161f17;
+    font: 700 9px var(--mono);
+  }
+
+  .avatar {
+    width: 28px; height: 28px; display: grid; place-items: center;
+    border: 1px solid var(--line-strong); border-radius: 50%;
+    color: var(--ink); font: 10px var(--mono);
+  }
+
+  .workspace {
+    min-height: 0; display: grid;
+    grid-template-columns: var(--rail) var(--tree) minmax(0, 1fr) var(--inspector);
+    grid-template-rows: minmax(0, 1fr) var(--dock-height);
+    background: linear-gradient(180deg, rgba(17, 25, 20, 0.4), rgba(11, 17, 15, 0.78));
+  }
+
+  .rail {
+    grid-row: 1 / 3; display: flex; flex-direction: column; align-items: center;
+    gap: 6px; padding: 10px 0; border-right: 1px solid var(--line);
+    background: rgba(14, 19, 16, 0.96);
+  }
+  .rail-item {
+    position: relative; width: 36px; height: 36px; display: grid; place-items: center;
+    border: 0; border-radius: 5px; background: transparent; color: var(--dim);
+  }
+  .rail-item svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; }
+  .rail-item.selected {
+    background: var(--lime-wash); color: var(--lime);
+  }
+  .rail-item.selected::before {
+    content: ""; position: absolute; left: -8px; top: 8px; width: 2px; height: 20px; background: var(--lime);
+  }
+  .rail-rule { width: 22px; height: 1px; margin: 4px 0; background: var(--line); }
+  .rail-spacer { flex: 1; }
+
+  .tree {
+    min-width: 0; display: flex; flex-direction: column; border-right: 1px solid var(--line);
+    background: rgba(20, 27, 22, 0.92);
+  }
+  .tree-header {
+    height: 47px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 13px; border-bottom: 1px solid var(--line);
+  }
+  .tree-header span { color: var(--muted); font: 9px var(--mono); letter-spacing: .1em; }
+  .tree-add {
+    width: 25px; height: 25px; display: grid; place-items: center;
+    border: 1px solid var(--line-strong); border-radius: 4px; color: var(--lime);
+    font-weight: 600;
+  }
+  .tree-scroll { padding: 12px 9px 14px; overflow: auto; }
+  .group-label {
+    display: flex; align-items: center; gap: 7px; margin: 2px 6px 9px; color: var(--dim);
+    font: 9px var(--mono); letter-spacing: .1em;
+  }
+  .group-label .count { margin-left: auto; color: var(--dim); }
+  .branch-row {
+    min-height: 50px; display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; align-items: center; gap: 7px;
+    padding: 5px 8px; margin: 3px 0; border: 1px solid transparent; border-radius: 5px; color: var(--muted);
+  }
+  .branch-row.active {
+    border-color: rgba(200, 242, 146, 0.22);
+    background: rgba(200, 242, 146, 0.07);
+    color: var(--ink);
+  }
+  .branch-glyph {
+    width: 10px; height: 20px; border-left: 1px solid var(--dim); border-bottom: 1px solid var(--dim);
+    border-radius: 0 0 0 4px; transform: translateY(-4px);
+  }
+  .branch-row.active .branch-glyph { border-color: var(--lime); }
+  .branch-copy { min-width: 0; }
+  .branch-copy strong {
+    display: block; overflow: hidden; font-size: 11px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .branch-copy small {
+    display: block; overflow: hidden; margin-top: 3px; color: var(--dim);
+    font: 8px var(--mono); text-overflow: ellipsis; white-space: nowrap;
+  }
+  .branch-state { align-self: start; margin-top: 8px; color: var(--coral); font: 8px var(--mono); text-transform: uppercase; }
+  .tree-origin {
+    margin: 14px 6px 0; padding: 11px 9px; border-top: 1px solid var(--line);
+    color: var(--muted);
+  }
+  .tree-origin-label { color: var(--dim); font: 8px var(--mono); letter-spacing: .08em; }
+  .tree-origin strong { display: block; margin-top: 7px; color: var(--ink); font-size: 10px; font-weight: 600; }
+  .tree-origin small { display: block; margin-top: 4px; color: var(--dim); font: 9px var(--mono); }
+  .origin-dot { display: inline-block; width: 6px; height: 6px; margin-right: 5px; border-radius: 50%; background: var(--teal); }
+
+  .main {
+    grid-column: 3; grid-row: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; background: rgba(11, 17, 15, 0.8); overflow: hidden;
+  }
+  .breadcrumbs {
+    height: 41px; display: flex; align-items: center; gap: 7px; padding: 0 17px; border-bottom: 1px solid var(--line);
+    color: var(--dim); font-size: 9px;
+  }
+  .breadcrumbs strong { color: var(--muted); font-weight: 600; }
+  .breadcrumbs .slash { color: #536053; }
+  .breadcrumbs .local { margin-left: auto; color: var(--dim); font: 8px var(--mono); }
+
+  .page-head { padding: 18px 22px 14px; border-bottom: 1px solid var(--line); }
+  .eyebrow {
+    color: var(--dim); font: 9px var(--mono); letter-spacing: .14em;
+  }
+  h1 { margin: 7px 0 4px; color: var(--ink); font: 500 25px/1.15 Georgia, "Times New Roman", serif; }
+  .subtitle { margin: 0; color: var(--muted); font-size: 10px; }
+  .head-tools { display: flex; align-items: center; gap: 7px; margin-top: 12px; }
+  .quiet-action, .primary-action {
+    min-height: 30px; padding: 0 9px; border: 1px solid var(--line-strong); border-radius: 4px; background: transparent; color: var(--muted); font-size: 10px;
+  }
+  .primary-action {
+    border-color: rgba(200, 242, 146, 0.38); background: rgba(200, 242, 146, 0.08); color: var(--lime-strong); font-weight: 700;
+  }
+
+  .overview {
+    flex: 1; min-height: 0; display: flex; flex-direction: column; margin: 16px 20px 15px; border: 1px solid var(--line); background: rgba(17, 24, 20, 0.92); overflow: hidden;
+  }
+  .overview-header {
+    min-height: 42px; display: flex; align-items: center; gap: 12px; padding: 0 12px; border-bottom: 1px solid var(--line);
+  }
+  .overview-header .title { color: var(--ink); font-size: 10px; font-weight: 650; }
+  .overview-header .spacer { flex: 1; }
+  .origin-pill {
+    display: flex; align-items: center; gap: 7px; padding: 4px 7px; border: 1px solid var(--line);
+    border-radius: 4px; color: var(--muted); font: 9px var(--mono); white-space: nowrap;
+  }
+  .origin-pill b { color: var(--teal); font-weight: 600; }
+  .legend { display: flex; gap: 10px; color: var(--dim); font-size: 8px; }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .legend i { width: 6px; height: 6px; border-radius: 50%; display: inline-block; background: currentColor; }
+  .legend .main-legend { color: var(--teal); }
+  .legend .proposal { color: var(--lime); }
+  .legend .risk { color: var(--coral); }
+
+  .timeline {
+    position: relative; flex: 1; min-height: 260px; padding: 18px 15px 15px; overflow: auto;
+    background-image: linear-gradient(rgba(224, 240, 219, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(224, 240, 219, 0.03) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .time-axis { display: flex; justify-content: space-between; margin: 0 4px 16px 116px; color: #5e6c5f; font: 8px var(--mono); }
+  .track {
+    position: relative; min-width: 650px; display: grid; grid-template-columns: 105px repeat(4, minmax(110px, 1fr));
+    align-items: center; min-height: 64px;
+  }
+  .track + .track { margin-top: 8px; }
+  .track::before {
+    content: ""; position: absolute; left: 105px; right: 5px; top: 50%; height: 1px;
+    background: rgba(135, 200, 192, 0.38);
+  }
+  .track.proposed::before { background: linear-gradient(90deg, rgba(135, 200, 192, 0.36) 0 18%, rgba(200, 242, 146, 0.9) 18% 100%); }
+  .track.secondary::before { background: linear-gradient(90deg, rgba(135, 200, 192, 0.36) 0 18%, rgba(234, 157, 123, 0.7) 18% 100%); }
+
+  .track-label { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 4px; padding-right: 10px; }
+  .track-label strong { color: var(--ink); font-size: 9px; font-weight: 700; }
+  .track-label small { color: var(--dim); font: 8px var(--mono); }
+  .track.main-track .track-label strong { color: var(--teal); }
+
+  .event {
+    position: relative; z-index: 1; justify-self: center; width: min(112px, 100%); min-height: 42px;
+    display: flex; flex-direction: column; justify-content: center; gap: 3px; padding: 6px 7px;
+    border: 1px solid rgba(135, 200, 192, 0.22); background: rgba(17, 31, 29, 0.92);
+  }
+  .event::before {
+    content: ""; position: absolute; left: 9px; top: -5px; width: 7px; height: 7px; border: 1px solid var(--teal); border-radius: 50%; background: rgba(14, 20, 18, 0.9);
+  }
+  .event strong { color: #dfece0; font-size: 8px; font-weight: 600; line-height: 1.3; }
+  .event small { color: #728074; font: 7px var(--mono); }
+  .event.proposal {
+    border-color: rgba(200, 242, 146, 0.28); background: rgba(24, 33, 26, 0.98);
+  }
+  .event.proposal::before { border-color: var(--lime); background: var(--lime); }
+  .event.proposal strong { color: var(--lime-strong); }
+  .event.risk {
+    border-color: rgba(234, 157, 123, 0.34); background: rgba(39, 26, 22, 0.96);
+  }
+  .event.risk::before { border-color: var(--coral); background: rgba(39, 26, 22, 0.96); }
+
+  .fork-stem {
+    position: absolute; left: calc(105px + 26%); top: 124px; width: 1px; height: 42px;
+    background: linear-gradient(180deg, var(--teal), var(--lime));
+  }
+  .fork-caption {
+    position: absolute; top: 143px; left: calc(105px + 26% + 8px); color: var(--lime);
+    font: 7px var(--mono); text-transform: uppercase;
+  }
+
+  .canvas-note {
+    display: flex; align-items: center; gap: 7px; min-height: 32px; padding: 0 12px; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 8px;
+  }
+  .canvas-note b { color: var(--coral); font: 8px var(--mono); }
+
+  .inspector {
+    grid-column: 4; grid-row: 1; min-width: 0; display: flex; flex-direction: column; overflow: auto;
+    border-left: 1px solid var(--line); background: rgba(17, 24, 20, 0.94);
+  }
+  .inspector-header {
+    min-height: 42px; display: flex; align-items: center; justify-content: space-between; padding: 0 13px;
+    border-bottom: 1px solid var(--line); color: var(--muted); font: 8px var(--mono); letter-spacing: .1em;
+  }
+  .inspector-body { padding: 14px 13px; }
+  .inspector-kicker { color: var(--dim); font: 8px var(--mono); letter-spacing: .12em; }
+  .inspector-name { margin: 5px 0 6px; color: var(--ink); font: 500 18px/1.2 Georgia, "Times New Roman", serif; }
+  .inspector-copy { margin: 0; color: var(--muted); font-size: 9px; line-height: 1.6; }
+  .state-line {
+    display: flex; align-items: center; gap: 7px; margin: 12px 0; padding: 7px 8px;
+    border: 1px solid rgba(234, 157, 123, 0.3); background: rgba(234, 157, 123, 0.1); color: #f0ba9d; font: 8px var(--mono);
+  }
+  .state-line i { width: 6px; height: 6px; border-radius: 50%; background: var(--coral); }
+
+  .inspect-section { padding: 12px 0; border-top: 1px solid var(--line); }
+  .inspect-label { margin-bottom: 9px; color: var(--dim); font: 8px var(--mono); letter-spacing: .12em; }
+  .origin-row { display: flex; align-items: flex-start; gap: 8px; }
+  .origin-mark {
+    width: 18px; height: 18px; display: grid; place-items: center;
+    border: 1px solid rgba(135, 200, 192, 0.35); color: var(--teal); font: 8px var(--mono);
+  }
+  .origin-row strong { display: block; color: var(--ink); font-size: 9px; font-weight: 600; }
+  .origin-row small { display: block; margin-top: 3px; color: var(--dim); font: 8px var(--mono); }
+  .property {
+    display: flex; justify-content: space-between; gap: 10px; margin: 8px 0; color: var(--muted); font-size: 9px;
+  }
+  .property b { color: var(--ink); font: 9px var(--mono); text-align: right; }
+  .review-status {
+    display: flex; align-items: center; gap: 7px; margin-top: 6px; color: var(--muted); font-size: 9px;
+  }
+  .review-status i { width: 7px; height: 7px; border: 1px solid var(--coral); border-radius: 50%; }
+  .inspector-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 14px; }
+  .inspector-actions button {
+    min-height: 28px; border: 1px solid var(--line-strong); border-radius: 4px; background: transparent;
+    color: var(--muted); font-size: 9px;
+  }
+  .inspector-actions .merge-action { grid-column: 1 / 3; border-color: rgba(234, 157, 123, 0.35); color: #efb49a; }
+
+  .dock {
+    grid-column: 3 / 5; grid-row: 2; min-width: 0; display: flex; flex-direction: column;
+    border-top: 1px solid var(--line-strong); background: rgba(19, 25, 21, 0.96);
+  }
+  .dock-header {
+    height: 34px; display: flex; align-items: center; gap: 16px; padding: 0 14px; border-bottom: 1px solid var(--line);
+  }
+  .dock-tab { position: relative; display: flex; align-items: center; color: var(--dim); font: 9px var(--mono); letter-spacing: .08em; }
+  .dock-tab.current { color: var(--ink); }
+  .dock-tab.current::after {
+    content: ""; position: absolute; right: 0; bottom: -10px; left: 0; height: 2px; background: var(--lime);
+  }
+  .dock-tab em { margin-left: 5px; color: var(--coral); font-style: normal; }
+  .dock-spacer { flex: 1; }
+  .dock-boundary { color: var(--dim); font-size: 8px; }
+  .change-table {
+    display: grid; grid-template-columns: 76px minmax(150px, 1fr) minmax(130px, .75fr) 100px;
+    align-items: center; min-height: 35px; padding: 0 14px; color: var(--muted); font-size: 9px;
+  }
+  .change-table.header { min-height: 26px; color: var(--dim); font: 8px var(--mono); letter-spacing: .08em; }
+  .change-table + .change-table { border-top: 1px solid rgba(224, 235, 218, .06); }
+  .change-id { color: var(--lime); font: 8px var(--mono); }
+  .change-kind { color: var(--coral); font: 8px var(--mono); }
+
+  .statusbar {
+    display: flex; align-items: center; gap: 14px; padding: 0 10px; border-top: 1px solid var(--line);
+    background: rgba(17, 25, 20, 0.96); color: #9aa79e; font: 8px var(--mono);
+  }
+  .statusbar .status-right { display: flex; gap: 12px; margin-left: auto; }
+  .statusbar .branch-status { color: var(--lime); }
+
+  .mobile-nav { display: none; }
+
+  @media (max-width: 1180px) {
+    :root { --tree: 210px; --inspector: 260px; }
+    .search { width: 220px; }
+    .legend { gap: 7px; }
+  }
+
+  @media (max-width: 900px) {
+    :root { --tree: 190px; --inspector: 0px; --dock-height: 132px; }
+    .workspace { grid-template-columns: var(--rail) var(--tree) minmax(0, 1fr); }
+    .inspector { display: none; }
+    .dock { grid-column: 3; }
+    .legend { display: none; }
+    .workspace-name { display: none; }
+    .topbar { gap: 9px; padding: 0 9px; }
+    .mobile-nav { display: flex; gap: 4px; padding: 0 7px; border-bottom: 1px solid var(--line); background: rgba(17, 25, 20, 0.9); overflow-x: auto; }
+    .mobile-nav .mobile-module { display: flex; align-items: center; padding: 0 10px; border-bottom: 2px solid transparent; color: var(--dim); white-space: nowrap; font-size: 9px; }
+    .mobile-nav .mobile-module.is-active { border-color: var(--lime); color: var(--lime); }
+  }
+
+  @media (max-width: 640px) {
+    body { overflow: auto; }
+    .frame { display: flex; flex-direction: column; min-height: 100vh; height: auto; }
+    .topbar { position: sticky; top: 0; z-index: 2; }
+    .brand-name, .top-divider, .search, .avatar { display: none; }
+    .environment { margin-left: auto; }
+    .top-action { padding: 0 7px; font-size: 9px; }
+    .mobile-nav { display: flex; flex: none; height: 36px; }
+    .workspace { min-height: calc(100vh - 110px); display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(440px, 1fr) 130px; }
+    .rail { display: none; }
+    .tree { grid-column: 1; grid-row: 1; border-right: 0; border-bottom: 1px solid var(--line); }
+    .tree-header { height: 36px; }
+    .tree-scroll { display: flex; gap: 6px; padding: 6px 8px; overflow-x: auto; }
+    .group-label, .tree-origin { display: none; }
+    .branch-row { flex: 0 0 180px; min-height: 42px; margin: 0; }
+    .main { grid-column: 1; grid-row: 2; }
+    .breadcrumbs { padding: 0 12px; }
+    .page-head { padding: 14px 12px 10px; }
+    h1 { font-size: 21px; }
+    .overview { margin: 0 10px 12px; }
+    .overview-header { padding: 0 10px; }
+    .overview-header .spacer { display: none; }
+    .origin-pill { max-width: calc(100% - 12px); overflow: hidden; text-overflow: ellipsis; }
+    .timeline { padding: 14px 10px; }
+    .dock { grid-column: 1; grid-row: 3; }
+    .dock-boundary, .status-right { display: none !important; }
+    .change-table { grid-template-columns: 52px minmax(0, 1fr) 80px; padding: 0 9px; }
+    .change-table > :nth-child(3) { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark">A</div><span class="brand-name">APT-LABS</span></div>
+    <span class="top-divider" aria-hidden="true"></span>
+    <div class="workspace-name"><strong>Field operations</strong> / Agricultural venture</div>
+    <div class="environment" aria-label="Working environment"><span>Main</span><span class="current">Branch</span></div>
+    <div class="top-spacer"></div>
+    <div class="search" aria-label="Search branch data"><svg viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="5.2"/><path d="m12.5 12.5 4 4"/></svg><span>Find a branch or commit</span><kbd>Ctrl K</kbd></div>
+    <button class="top-action" type="button"><span class="counter">2</span> Review queue</button>
+    <div class="avatar" aria-label="Active user">ZM</div>
+  </header>
+
+  <nav class="mobile-nav" aria-label="Branch workspace modules">
+    <span class="mobile-module is-active">Branches</span>
+    <span class="mobile-module">Annals</span>
+    <span class="mobile-module">The Roll</span>
+    <span class="mobile-module">Workbench</span>
+  </nav>
+
+  <div class="workspace">
+    <nav class="rail" aria-label="Workspace modules">
+      <div class="rail-item selected" aria-label="Branches" title="Branches"><svg viewBox="0 0 20 20"><circle cx="5" cy="4" r="1.8"/><circle cx="5" cy="16" r="1.8"/><circle cx="15" cy="10" r="1.8"/><path d="M5 5.7v8.7M6.8 5.2c5.7 0 1.4 4.7 6.5 4.7"/></svg></div>
+      <div class="rail-item" aria-label="Annals" title="Annals"><svg viewBox="0 0 20 20"><path d="M4 4h12M4 9h8M4 14h6"/><circle cx="15" cy="9" r="1"/><circle cx="12" cy="14" r="1"/></svg></div>
+      <div class="rail-item" aria-label="The Roll" title="The Roll"><svg viewBox="0 0 20 20"><path d="M5 2.5h8l3 3v12H5zM13 2.5v3h3M7.5 10h6M7.5 13h6"/></svg></div>
+      <div class="rail-item" aria-label="Workbench" title="Workbench"><svg viewBox="0 0 20 20"><path d="M2.5 6h15v11h-15zM7 6V3.5h6V6M2.5 10h15m-9 0v2.5h3V10"/></svg></div>
+      <div class="rail-spacer"></div>
+      <div class="rail-rule"></div>
+      <div class="rail-item" aria-label="Settings" title="Settings"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="2.5"/><path d="m16.5 11.5 1 .8-1.6 2.7-1.2-.5a6.8 6.8 0 0 1-1.4.8l-.2 1.3h-3l-.2-1.3a6.8 6.8 0 0 1-1.4-.8l-1.2.5-1.6-2.7 1-.8a6.7 6.7 0 0 1 0-1.6l-1-.8 1.6-2.7 1.2.5a6.8 6.8 0 0 1 1.4-.8l.2-1.3h3l.2 1.3a6.8 6.8 0 0 1 1.4.8l1.2-.5 1.6 2.7-1 .8a6.7 6.7 0 0 1 0 1.6Z"/></svg></div>
+    </nav>
+
+    <aside class="tree" aria-label="Branch explorer">
+      <div class="tree-header"><span>BRANCH EXPLORER</span><div class="tree-add" aria-label="Create branch">+</div></div>
+      <div class="tree-scroll">
+        <div class="group-label">AGRICULTURAL VENTURE <span class="count">02</span></div>
+
+        <div class="branch-row active">
+          <span class="branch-glyph" aria-hidden="true"></span>
+          <span class="branch-copy"><strong>Lease additional land</strong><small>FORK · MAIN M-042 · 3 COMMITS</small></span>
+          <span class="branch-state">DRAFT</span>
+        </div>
+
+        <div class="branch-row">
+          <span class="branch-glyph" aria-hidden="true"></span>
+          <span class="branch-copy"><strong>Purchase equipment</strong><small>FORK · MAIN M-042 · 2 COMMITS</small></span>
+          <span class="branch-state">REVIEW</span>
+        </div>
+
+        <div class="tree-origin">
+          <div class="tree-origin-label">CANONICAL ORIGIN</div>
+          <strong><i class="origin-dot"></i>Main snapshot M-042</strong>
+          <small>04 NOV 2026 · 16:42 UTC</small>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="breadcrumbs"><strong>Branches</strong><span class="slash">/</span><span>Agricultural venture</span><span class="slash">/</span><span>Lease additional land</span><span class="local">DESIGN STUDY · ILLUSTRATIVE DATA</span></div>
+
+      <div class="page-head">
+        <div class="eyebrow">ALTERNATIVE TIMELINE / BRANCH 01</div>
+        <h1>Agricultural venture</h1>
+        <p class="subtitle">Explore a possible future from a fixed point in the canonical Main record.</p>
+        <div class="head-tools">
+          <button class="quiet-action" type="button">Compare branches</button>
+          <button class="primary-action" type="button">＋ New branch</button>
+        </div>
+      </div>
+
+      <section class="overview" aria-label="Timeline comparison">
+        <div class="overview-header">
+          <span class="title">Timeline relationship</span>
+          <span class="origin-pill"><b>ORIGIN</b> Main · M-042 · canonical snapshot</span>
+          <span class="spacer"></span>
+          <div class="legend" aria-label="Timeline legend">
+            <span class="main-legend"><i></i>Main event</span>
+            <span class="proposal"><i></i>Branch proposal</span>
+            <span class="risk"><i></i>Unresolved</span>
+          </div>
+        </div>
+
+        <div class="timeline">
+          <div class="time-axis"><span>04 NOV · ORIGIN</span><span>10 NOV</span><span>17 NOV</span><span>24 NOV</span></div>
+
+          <div class="track main-track">
+            <div class="track-label"><strong>MAIN</strong><small>CANONICAL · READ ONLY</small></div>
+            <div class="event"><strong>Membership confirmed</strong><small>ACCEPTED EVENT</small></div>
+            <div class="event"><strong>Land inventory</strong><small>ACCEPTED EVENT</small></div>
+            <div class="event"><strong>Reserve approved</strong><small>MAIN M-042</small></div>
+            <div></div>
+          </div>
+
+          <div class="fork-stem" aria-hidden="true"></div>
+          <span class="fork-caption">Fork point · M-042</span>
+
+          <div class="track proposed">
+            <div class="track-label"><strong>LEASE LAND</strong><small>SCENARIO · 3 COMMITS</small></div>
+            <div></div>
+            <div class="event proposal"><strong>Draft lease terms</strong><small>PROPOSED</small></div>
+            <div class="event proposal"><strong>Allocate 12 ha</strong><small>PROJECTED</small></div>
+            <div class="event risk"><strong>Yield estimate</strong><small>EVIDENCE NEEDED</small></div>
+          </div>
+
+          <div class="track secondary">
+            <div class="track-label"><strong>EQUIPMENT</strong><small>SCENARIO · 2 COMMITS</small></div>
+            <div></div>
+            <div></div>
+            <div class="event risk"><strong>Equipment purchase</strong><small>PROPOSED · REVIEW</small></div>
+            <div class="event"><strong>Capacity estimate</strong><small>PROJECTION</small></div>
+          </div>
+        </div>
+
+        <div class="canvas-note"><b>SIMULATION ≠ EVENT</b><span>Branch work represents possible changes and does not modify canonical history or assert a live occurrence.</span></div>
+      </section>
+    </main>
+
+    <aside class="inspector" aria-label="Selected branch details">
+      <div class="inspector-header"><span>BRANCH INSPECTOR</span><span>•••</span></div>
+      <div class="inspector-body">
+        <div class="inspector-kicker">SELECTED TIMELINE</div>
+        <h2 class="inspector-name">Lease additional land</h2>
+        <p class="inspector-copy">Test the effect of a 12-hectare lease on the cooperative's growing capacity without altering the accepted record.</p>
+
+        <div class="state-line"><i></i>SCENARIO · NOT MERGED INTO MAIN</div>
+
+        <section class="inspect-section">
+          <div class="inspect-label">LINEAGE</div>
+          <div class="origin-row">
+            <span class="origin-mark">M</span>
+            <div><strong>Main · M-042</strong><small>Forked 04 Nov 2026 · 16:42 UTC</small></div>
+          </div>
+        </section>
+
+        <section class="inspect-section">
+          <div class="inspect-label">CHANGE SET</div>
+          <div class="property"><span>Proposed commits</span><b>03</b></div>
+          <div class="property"><span>Changed records</span><b>05</b></div>
+          <div class="property"><span>Evidence attached</span><b>01 / 03</b></div>
+        </section>
+
+        <section class="inspect-section">
+          <div class="inspect-label">RECONCILIATION</div>
+          <div class="review-status"><i></i>Authorization not requested</div>
+          <div class="property"><span>Main conflicts</span><b>Not checked</b></div>
+          <div class="inspector-actions">
+            <button type="button">Open Annals</button>
+            <button type="button">View The Roll</button>
+            <button class="merge-action" type="button">Review before merge</button>
+          </div>
+        </section>
+      </div>
+    </aside>
+
+    <section class="dock" aria-label="Branch commit list">
+      <div class="dock-header">
+        <span class="dock-tab current">COMMITS <em>03</em></span>
+        <span class="dock-tab">CONFLICTS <em>1</em></span>
+        <span class="dock-tab">EVIDENCE</span>
+        <span class="dock-spacer"></span>
+        <span class="dock-boundary">PROPOSED RECORDS · NOT CANONICAL</span>
+      </div>
+
+      <div class="change-table header"><span>COMMIT</span><span>PROPOSED CHANGE</span><span>SUPPORT</span><span>STATE</span></div>
+      <div class="change-table"><span class="change-id">B-001</span><span>Draft land lease terms</span><span>Agreement · draft</span><span class="change-kind">PROPOSED</span></div>
+      <div class="change-table"><span class="change-id">B-002</span><span>Allocate 12 hectares to the venture</span><span>Needs authorization</span><span class="change-kind">PROPOSED</span></div>
+      <div class="change-table"><span class="change-id">B-003</span><span>Risk review on yield estimate</span><span>Evidence pending</span><span class="change-kind">PENDING</span></div>
+    </section>
+  </div>
+
+  <footer class="statusbar"><span>APT-LABS</span><span>/</span><span>BRANCH WORKSPACE</span><span class="branch-status">● SCENARIO</span><div class="status-right"><span>ORIGIN M-042</span><span>LOCAL DESIGN STUDY</span><span>NO LIVE COMMITMENTS</span></div></footer>
+</div>
+</body>
+</html>
