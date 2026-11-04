@@ -12161,3 +12161,456 @@ a:focus-visible {
     animation-duration: .01ms !important;
   }
 }
+
+/* Radar spatial stage */
+.radar-spatial-panel {
+  margin: 0 0 16px;
+  padding: clamp(14px, 2vw, 22px);
+  border: 1px solid var(--border);
+  background: var(--bg-elev);
+}
+
+.radar-spatial-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.radar-spatial-head > div:first-child {
+  min-width: 0;
+}
+
+.radar-spatial-head h2 {
+  margin: 5px 0 4px;
+  color: var(--text);
+  font: 400 25px/1.12 var(--serif);
+}
+
+.radar-spatial-head > div:first-child > p:last-child {
+  max-width: 650px;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.radar-map-status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 0 0 auto;
+  min-width: 142px;
+  padding: 9px 11px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.radar-map-status > span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--brass);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brass-pale) 75%, transparent);
+}
+
+.radar-map-status > div {
+  display: grid;
+  gap: 3px;
+}
+
+.radar-map-status small,
+.radar-map-status strong {
+  font: 9px/1.3 var(--mono);
+}
+
+.radar-map-status small {
+  color: var(--text-muted);
+  letter-spacing: .07em;
+}
+
+.radar-map-status strong {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.radar-spatial-stage {
+  position: relative;
+  display: grid;
+  min-height: 220px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--terrain) 22%, var(--border));
+  background:
+    radial-gradient(ellipse at 50% 45%, color-mix(in srgb, var(--terrain-pale) 70%, transparent), transparent 58%),
+    var(--bg-subtle);
+}
+
+.radar-spatial-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--terrain) 10%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--terrain) 10%, transparent) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(ellipse at center, #000 12%, transparent 82%);
+}
+
+.radar-spatial-code,
+.radar-spatial-edge-note {
+  position: absolute;
+  z-index: 1;
+  color: var(--text-faint);
+  font: 9px/1.4 var(--mono);
+  letter-spacing: .08em;
+}
+
+.radar-spatial-code {
+  top: 12px;
+  left: 14px;
+}
+
+.radar-spatial-edge-note {
+  right: 14px;
+  bottom: 12px;
+}
+
+.radar-spatial-empty {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  max-width: 460px;
+  padding: 25px 20px;
+  text-align: center;
+}
+
+.radar-spatial-glyph {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 10px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--terrain) 30%, var(--border));
+  background: color-mix(in srgb, var(--bg-elev) 82%, transparent);
+  color: var(--terrain);
+}
+
+.radar-spatial-glyph svg {
+  width: 23px;
+  height: 23px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.2;
+}
+
+.radar-spatial-empty .eyebrow {
+  margin: 0 0 5px;
+  color: var(--terrain);
+  font-size: 9px;
+}
+
+.radar-spatial-empty h3 {
+  margin: 0;
+  color: var(--text);
+  font: 400 21px/1.2 var(--serif);
+}
+
+.radar-spatial-empty > p:last-child {
+  max-width: 390px;
+  margin: 7px 0 0;
+  color: var(--text-muted);
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.radar-spatial-data {
+  display: flex;
+  align-items: stretch;
+  gap: 18px;
+  padding: 13px 0 9px;
+  border-bottom: 1px solid var(--border);
+}
+
+.radar-spatial-total {
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  min-width: 116px;
+  padding-right: 17px;
+  border-right: 1px solid var(--border);
+}
+
+.radar-spatial-total .eyebrow {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 9px;
+  letter-spacing: .08em;
+}
+
+.radar-spatial-total strong {
+  color: var(--text);
+  font: 400 25px/1 var(--serif);
+  font-variant-numeric: tabular-nums;
+}
+
+.radar-spatial-total small {
+  color: var(--text-muted);
+  font-size: 9px;
+}
+
+.radar-spatial-stages {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.radar-spatial-stages > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  padding: 0 10px;
+  border-left: 1px solid var(--border);
+}
+
+.radar-spatial-stages dt {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.radar-spatial-stages dd {
+  margin: 0;
+  color: var(--text);
+  font: 10px var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.radar-spatial-disclaimer {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+  .radar-spatial-panel {
+    padding: 12px;
+  }
+
+  .radar-spatial-head {
+    flex-direction: column;
+    gap: 11px;
+  }
+
+  .radar-spatial-head h2 {
+    font-size: 22px;
+  }
+
+  .radar-map-status {
+    min-width: 0;
+    padding: 7px 9px;
+  }
+
+  .radar-spatial-stage {
+    min-height: 178px;
+  }
+
+  .radar-spatial-empty {
+    padding: 22px 14px;
+  }
+
+  .radar-spatial-empty h3 {
+    font-size: 19px;
+  }
+
+  .radar-spatial-edge-note {
+    display: none;
+  }
+
+  .radar-spatial-data {
+    gap: 10px;
+  }
+
+  .radar-spatial-total {
+    min-width: 88px;
+    padding-right: 10px;
+  }
+
+  .radar-spatial-stages {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px 0;
+  }
+
+  .radar-spatial-stages > div {
+    padding: 3px 7px;
+  }
+}
+
+@media (max-width: 390px) {
+  .radar-spatial-data {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .radar-spatial-total {
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    column-gap: 8px;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .radar-spatial-total .eyebrow {
+    grid-column: 1 / -1;
+  }
+
+  .radar-spatial-total small {
+    justify-self: start;
+  }
+
+  .radar-spatial-stages {
+    width: 100%;
+  }
+}
+
+.signal-workspace {
+  grid-template-areas:
+    "radar-spatial radar-spatial"
+    "queue detail";
+  grid-template-columns: minmax(0, .86fr) minmax(0, 1.14fr);
+  align-items: start;
+  gap: 16px;
+  min-height: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.signal-workspace > .radar-spatial-panel {
+  grid-area: radar-spatial;
+}
+
+.signal-queue {
+  grid-area: queue;
+  min-width: 0;
+  max-height: none;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+.signal-queue .signal-list {
+  max-height: 460px;
+  overflow: auto;
+}
+
+.signal-workspace > .signal-detail {
+  grid-area: detail;
+  min-height: 0;
+}
+
+.radar-pagination {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.radar-pagination > span {
+  color: var(--text-muted);
+  font: 9px/1.45 var(--mono);
+}
+
+.radar-pagination > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.radar-pagination button {
+  min-height: 32px;
+  padding: 0 9px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--bg-elev);
+  color: var(--text);
+  font-size: 10px;
+}
+
+.radar-pagination button:hover:not(:disabled) {
+  border-color: var(--terrain);
+  color: var(--terrain-ink);
+}
+
+.radar-pagination button:disabled {
+  color: var(--text-faint);
+  cursor: not-allowed;
+  opacity: .58;
+}
+
+.radar-pagination > div > span {
+  color: var(--text-muted);
+  font: 9px var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 900px) {
+  .signal-workspace {
+    grid-template-areas:
+      "radar-spatial"
+      "queue"
+      "detail";
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .signal-queue {
+    max-height: none;
+  }
+
+  .signal-queue .signal-list {
+    max-height: 360px;
+  }
+}
+
+@media (max-width: 700px) {
+  .signal-workspace {
+    grid-template-areas:
+      "queue"
+      "radar-spatial"
+      "detail";
+    gap: 12px;
+  }
+
+  .signal-queue .signal-list {
+    max-height: 320px;
+  }
+}
+
+@media (max-width: 390px) {
+  .signal-queue {
+    padding: 9px;
+  }
+
+  .radar-pagination > div {
+    gap: 4px;
+  }
+
+  .radar-pagination button {
+    padding: 0 7px;
+  }
+}

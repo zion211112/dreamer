@@ -4,7 +4,9 @@ import { WorkspaceLayout } from './WorkspaceLayout';
 import { EXAMPLE_FIELD_SIGNALS } from '../../lib/ecosystem-examples';
 import { WORK_OPPORTUNITIES } from '../../lib/local-workbench';
 import { PEOPLE_NETWORK } from '../../lib/people-network';
+import { filterRadarSignals, getSelectedRadarSignal, paginateRadarSignals } from '../../lib/radar-view';
 import { loadConsoleSnapshot } from '../../lib/school-console-storage';
+import { RadarSpatialPanel } from '../../components/RadarSpatialPanel';
 import {
   createLocalId,
   hasRegisteredInstitution,
@@ -30,6 +32,7 @@ const statusLabels: Record<SignalStatus, string> = {
 };
 
 const filters: Array<'all' | SignalStatus> = ['all', 'new', 'triaged', 'brief', 'resolved'];
+const RADAR_PAGE_SIZE = 12;
 const institutionNames = Object.fromEntries(PEOPLE_NETWORK
   .filter(entity => entity.type === 'institution')
   .map(entity => [entity.id, entity.name]));
@@ -83,7 +86,7 @@ export function Commons() {
   const [selectedId, setSelectedId] = useState('');
   const [filter, setFilter] = useState<(typeof filters)[number]>('all');
   const [search, setSearch] = useState('');
-  const [showAllSignals, setShowAllSignals] = useState(false);
+  const [signalPage, setSignalPage] = useState(0);
   const [showReportForm, setShowReportForm] = useState(false);
   const [showContributionMenu, setShowContributionMenu] = useState(false);
   const [selectedOpportunityId, setSelectedOpportunityId] = useState('kemetos-agi1-software');
@@ -114,13 +117,13 @@ export function Commons() {
       const requestedInstitution = searchParams.get('institution');
       const requestedSignal = searchParams.get('signal');
       const initialSignal = requestedSignal
-        ? savedSignals.find(signal => signal.id === requestedSignal)
+        ? savedSignals.find(signal => signal.id === requestedSignal) ?? savedSignals[0]
         : requestedInstitution
           ? savedSignals.find(signal => signal.institutionId === requestedInstitution) ?? savedSignals[0]
           : savedSignals[0];
       setSignals(savedSignals);
       setSelectedId(initialSignal?.id ?? '');
-      const initialInstitution = requestedInstitution ?? (requestedSignal ? initialSignal?.institutionId ?? '' : '');
+      const initialInstitution = requestedInstitution ?? initialSignal?.institutionId ?? '';
       setInstitutionScope(initialInstitution);
       setSearch('');
     } catch (loadError) {
@@ -156,12 +159,33 @@ export function Commons() {
     return () => { active = false; };
   }, []);
 
-  const selected = signals.find(signal => signal.id === selectedId) ?? null;
+  const institutionOptions = PEOPLE_NETWORK
+    .filter(entity => entity.type === 'institution')
+    .map(entity => [entity.id, entity.name] as const);
+  const visibleSignals = useMemo(() => filterRadarSignals(signals, {
+    institutionId: institutionScope,
+    status: filter,
+    query: search,
+  }), [signals, institutionScope, filter, search]);
+  const paginatedSignals = paginateRadarSignals(visibleSignals, signalPage, RADAR_PAGE_SIZE);
+  const selected = getSelectedRadarSignal(visibleSignals, selectedId);
+
+  useEffect(() => {
+    if (selected?.id !== selectedId) setSelectedId(selected?.id ?? '');
+  }, [selected?.id, selectedId]);
+
+  useEffect(() => {
+    if (paginatedSignals.page !== signalPage) setSignalPage(paginatedSignals.page);
+  }, [paginatedSignals.page, signalPage]);
+
   const activeInstitutionId = institutionScope || (selected?.scenario ? '' : selected?.institutionId) || '';
   const activeInstitutionName = activeInstitutionId ? institutionNames[activeInstitutionId]
     ?? selected?.institutionName
     ?? signals.find(signal => signal.institutionId === activeInstitutionId)?.institutionName
     ?? selected?.institutionName
+    ?? 'Institution' : 'All institutions';
+  const scopeInstitutionName = institutionScope ? institutionNames[institutionScope]
+    ?? signals.find(signal => signal.institutionId === institutionScope)?.institutionName
     ?? 'Institution' : 'All institutions';
   const authorityInstitutionId = selected?.institutionId ?? activeInstitutionId;
   const activeStewards = governance.stewards.filter(steward => steward.institutionId === authorityInstitutionId);
@@ -170,27 +194,6 @@ export function Commons() {
   const approvedProposal = selected
     ? governance.proposals.find(proposal => proposal.sourceSignalId === selected.id && proposal.status === 'approved') ?? null
     : null;
-  const institutionOptions = PEOPLE_NETWORK
-    .filter(entity => entity.type === 'institution')
-    .map(entity => [entity.id, entity.name] as const);
-  const visibleSignals = useMemo(() => signals
-    .filter(signal => !institutionScope || signal.institutionId === institutionScope)
-    .filter(signal => filter === 'all' || signal.status === filter)
-    .filter(signal => {
-      const query = search.trim().toLocaleLowerCase();
-      if (!query) return true;
-      return `${signal.title} ${signal.institutionName} ${signal.institutionId} ${signal.assetId ?? ''} ${signal.assetName ?? ''} ${signal.location}`
-        .toLocaleLowerCase()
-        .includes(query);
-    }), [signals, institutionScope, filter, search]);
-  const displayedSignals = !showAllSignals
-    && filter === 'all'
-    && !search.trim()
-    && signals.length > 3
-    && signals.every(signal => signal.scenario)
-    ? visibleSignals.slice(0, 3)
-    : visibleSignals;
-
   function persist(nextSignals: FieldSignal[]): boolean {
     try {
       writeFieldSignals(nextSignals);
@@ -300,6 +303,7 @@ export function Commons() {
     if (!persist(next)) return;
     setSelectedId(signal.id);
     setInstitutionScope(signal.institutionId);
+    setSignalPage(0);
     setShowReportForm(false);
     setSourceConsoleDraftId(null);
     setReportTitle('');
@@ -430,9 +434,7 @@ export function Commons() {
               onChange={event => {
                 const nextInstitutionId = (event.currentTarget as HTMLSelectElement).value;
                 setInstitutionScope(nextInstitutionId);
-                setSelectedId(nextInstitutionId
-                  ? signals.find(signal => signal.institutionId === nextInstitutionId)?.id ?? ''
-                  : signals[0]?.id ?? '');
+                setSignalPage(0);
               }}
               value={institutionScope}
             >
@@ -440,7 +442,7 @@ export function Commons() {
               {institutionOptions.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
             </select>
           </label>
-          <span className="commons-mode-hint">{activeInstitutionName}</span>
+          <span className="commons-mode-hint">{scopeInstitutionName}</span>
         </nav>
 
         {error && <p className="local-data-warning" role="alert">{error}</p>}
@@ -661,12 +663,15 @@ export function Commons() {
           </div>
         </section>
 
-        <section aria-label="Field signal queue" className="signal-workspace" hidden={commonsView !== 'signals'}>
+        <section aria-label="Field signal workspace" className="signal-workspace" hidden={commonsView !== 'signals'}>
           <aside className="signal-queue">
             <div className="commons-signal-tools">
               <label className="signal-search">
                 <span aria-hidden="true">⌕</span>
-                <input aria-label="Search signals" onInput={event => setSearch((event.currentTarget as HTMLInputElement).value)} placeholder="Find a signal" value={search} />
+                <input aria-label="Search signals" onInput={event => {
+                  setSearch((event.currentTarget as HTMLInputElement).value);
+                  setSignalPage(0);
+                }} placeholder="Find a signal" value={search} />
               </label>
               <details className="commons-signal-filter">
                 <summary>{filter === 'all' ? 'Filter' : statusLabels[filter]}</summary>
@@ -678,6 +683,7 @@ export function Commons() {
                       key={item}
                       onClick={event => {
                         setFilter(item);
+                        setSignalPage(0);
                         (event.currentTarget as HTMLButtonElement).closest('details')?.removeAttribute('open');
                       }}
                       type="button"
@@ -689,7 +695,7 @@ export function Commons() {
               </details>
             </div>
             <div className="signal-list">
-              {displayedSignals.map(signal => (
+              {paginatedSignals.items.map(signal => (
                 <button
                   aria-current={selected?.id === signal.id ? 'true' : undefined}
                   className={`signal-list-item${selected?.id === signal.id ? ' is-selected' : ''}`}
@@ -708,19 +714,40 @@ export function Commons() {
                   <span className="signal-list-date" aria-hidden="true">→</span>
                 </button>
               ))}
-              {loaded && displayedSignals.length === 0 && (
+              {loaded && paginatedSignals.items.length === 0 && (
                 <p className="signal-list-empty">
                   {search.trim() || filter !== 'all' || institutionScope
                     ? 'No signals match this view.'
                     : 'No signals here yet.'}
                 </p>
               )}
-              {displayedSignals.length < visibleSignals.length && (
-                <button className="commons-show-all" onClick={() => setShowAllSignals(true)} type="button">
-                  Show all {visibleSignals.length} signals
-                </button>
-              )}
             </div>
+            {paginatedSignals.pageCount > 0 && (
+              <nav className="radar-pagination" aria-label="Signal pages">
+                <span aria-live="polite">
+                  Showing {paginatedSignals.page * RADAR_PAGE_SIZE + 1}–{paginatedSignals.page * RADAR_PAGE_SIZE + paginatedSignals.items.length} of {paginatedSignals.total} local matches
+                </span>
+                <div>
+                  <button
+                    aria-label="Previous signal page"
+                    disabled={paginatedSignals.page === 0}
+                    onClick={() => setSignalPage(page => Math.max(0, page - 1))}
+                    type="button"
+                  >
+                    Previous
+                  </button>
+                  <span>Page {paginatedSignals.page + 1} of {paginatedSignals.pageCount}</span>
+                  <button
+                    aria-label="Next signal page"
+                    disabled={paginatedSignals.page >= paginatedSignals.pageCount - 1}
+                    onClick={() => setSignalPage(page => Math.min(paginatedSignals.pageCount - 1, page + 1))}
+                    type="button"
+                  >
+                    Next
+                  </button>
+                </div>
+              </nav>
+            )}
             {featuredPossibility && (
               <section className="commons-featured-opportunity">
                 <p className="eyebrow">POSSIBILITY / EXAMPLE SIGNAL</p>
@@ -733,7 +760,7 @@ export function Commons() {
                     setInstitutionScope('');
                     setSearch('');
                     setFilter('all');
-                    setShowAllSignals(true);
+                    setSignalPage(0);
                   }}
                   type="button"
                 >
@@ -743,6 +770,8 @@ export function Commons() {
               </section>
             )}
           </aside>
+
+          <RadarSpatialPanel signals={visibleSignals} />
 
           <article className="signal-detail">
             {selected ? (
