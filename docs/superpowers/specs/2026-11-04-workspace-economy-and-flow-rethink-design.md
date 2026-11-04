@@ -60,30 +60,59 @@ them into one reputation score or imply that recording a claim makes it true.
 - Choosing a blockchain, token economics, production backend vendor, or
   regulatory classification in this design.
 
-## Workspace modules
+## Workspace environments and modules
 
-Keep the current shell geometry and visual identity. Use six flat destinations:
+The workspace has two mutually exclusive environments in one persistent shell.
+After sign-in, the default is **Branch / Annals**. The small bottom environment
+switch replaces the current environment's navigation and takes the user to
+that environment's home; it is not a Git-branch switch. Workspace routes belong
+to exactly one environment. Public landing, sign-in, and sign-up remain entry
+routes outside the workspace.
 
-1. **Radar** — the current Commons surface. Capture observations, proposals,
-   steward decisions, and the status of a concern. “Being checked” and
-   “work planning” are not verification or authorization.
-2. **People** — participant-controlled profiles, consent, availability, and
-   scoped capability claims. The Capability Directory is a People view.
-3. **Institutions** — organizations, assets, record basis, and delegated
-   authority. A title or relationship alone does not authorize work.
-4. **Undertakings** — the current Workbench surface. Discover, compose, agree
-   terms for, authorize, deliver, review, and if needed dispute work.
-5. **Roll** — durable records of outcomes, evidence, acceptance, cost
-   disclosure, attribution, and visible revisions. It is an accountable memory,
-   not an infallible ledger.
-6. **APT Coin Lab** — a research-only area for comparing hypothetical
-   accounting, incentive, and governance models. No coin role is selected.
+### Main / Canon
 
-People and Institutions are independent peers, not nested views. Existing
-routes remain compatible while navigation is evolved. The School Console is
-one source of needs and work, not the canonical entry point for every
-undertaking. APT Coin Lab is visible as a module but remains outside operational
-workflows: no balances, transfers, rewards, access, votes, or authority.
+Main presents the current, qualified view of enduring records:
+
+- **People & Crews** — participant-controlled profiles, consent, availability,
+  scoped capability claims, and explicit relationships. The Capability
+  Directory is a nested People view.
+- **Institutions & Assets** — organizations, resources, record basis, and
+  delegated authority. A title or relationship alone does not authorize work.
+
+People and Institutions remain independent record families and peer
+destinations. Main is a current projection over sourced records, not an
+immutable or universal trust graph.
+
+### Branch / Annals
+
+Branch is the default working environment. Annals frames the chronological
+history and lineage of work; a proposed fork does not silently change Main.
+Existing action modules stay within Branch:
+
+- **Radar** — the current Commons surface. Capture observations, proposals,
+  steward decisions, and the status of a concern. “Being checked” and
+  “work planning” are not verification or authorization.
+- **Undertakings** — the current Workbench surface. Discover, compose, agree
+  terms for, authorize, deliver, review, and if needed dispute work.
+- **Roll** — durable records of outcomes, evidence, acceptance, cost
+  disclosure, attribution, and visible revisions. It is an accountable memory,
+  not an infallible ledger.
+- **APT Coin Lab** — a research-only area for comparing hypothetical
+  accounting, incentive, and governance models. No coin role is selected.
+
+The Annals interface is a structural prototype, not a claim that current local
+Commons, Workbench, and Roll records already form a unified shared event
+stream. Event sourcing, authority, provenance, time validity, and correction
+rules require separate implementation and review.
+
+The School Console remains a private, browser-local education tool and source
+of need drafts, not a Canon record or a persistent workspace destination. Open
+it contextually from relevant institution, Commons, or education-work flows.
+Only explicitly selected, appropriately scoped references may leave the
+Console; learner and student records do not flow into Canon or Annals by
+default. Existing route paths remain compatible and must map to Main or Branch.
+APT Coin Lab remains outside operational workflows: no balances, transfers,
+rewards, access, votes, or authority.
 
 Use the mockup only as a limited interaction reference: make source, state,
 uncertainty, authorization, and a useful next action easy to scan. Do not copy

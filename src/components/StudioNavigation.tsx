@@ -2,10 +2,15 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { Link } from 'wouter';
 import { useAuth } from '../lib/auth/hooks';
 import {
+  BRANCH_MODULES,
+  getStudioEnvironmentForContext,
+  getStudioEnvironmentHome,
   getStudioModuleForContext,
   getStudioModuleLabel,
-  STUDIO_MODULES,
+  MAIN_MODULES,
   type StudioContext,
+  type StudioEnvironment,
+  type StudioModuleId,
 } from '../lib/studio-navigation';
 import { BrandMark } from './BrandMark';
 import { IdentityCabinet } from './IdentityCabinet';
@@ -14,7 +19,10 @@ interface StudioNavigationProps {
   currentContext: StudioContext;
 }
 
-function ContextIcon({ id }: { id: string }) {
+function ContextIcon({ id }: { id: StudioModuleId }) {
+  if (id === 'annals') {
+    return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 4h12M4 10h8M4 16h5" /><circle cx="15" cy="10" r="1.5" /><circle cx="12" cy="16" r="1.5" /></svg>;
+  }
   if (id === 'people') {
     return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="7" cy="6.5" r="2.5" /><path d="M2.5 16v-1.2a4.5 4.5 0 0 1 9 0V16zM13 4.5a2.3 2.3 0 0 1 0 4.5m1.5 2a3.8 3.8 0 0 1 3 3.7V16h-3" /></svg>;
   }
@@ -35,35 +43,92 @@ function ContextIcon({ id }: { id: string }) {
 
 function StudioLinks({
   currentContext,
+  environment,
   onNavigate,
 }: {
   currentContext: StudioContext;
+  environment: StudioEnvironment;
   onNavigate?: () => void;
 }) {
   const activeModule = getStudioModuleForContext(currentContext);
+  const modules = environment === 'branch' ? BRANCH_MODULES : MAIN_MODULES;
 
   return (
-    <nav aria-label="Studio destinations" className="studio-destinations">
-      {STUDIO_MODULES.map(module => {
+    <nav
+      aria-label={`${environment === 'branch' ? 'Branch' : 'Main'} navigation`}
+      className="studio-destinations"
+    >
+      {modules.map(module => {
         const isActive = activeModule === module.id;
-        const isDefaultDestination = currentContext === module.defaultContext;
+        const isCurrent = currentContext === module.contexts[0];
 
         return (
-          <Link
-            aria-label={module.label}
-            aria-current={isDefaultDestination ? 'page' : isActive ? 'location' : undefined}
-            className={`studio-destination${isActive ? ' is-active' : ''}`}
-            href={module.href}
-            key={module.id}
-            onClick={onNavigate}
-            title={module.label}
-          >
-            <span aria-hidden="true" className="studio-destination-icon"><ContextIcon id={module.id} /></span>
-            <span className="studio-destination-label">{module.label}</span>
-          </Link>
+          <div className="studio-destination-group" key={module.id}>
+            <Link
+              aria-label={module.label}
+              aria-current={isCurrent ? 'page' : isActive ? 'location' : undefined}
+              className={`studio-destination${isActive ? ' is-active' : ''}`}
+              href={module.href}
+              onClick={onNavigate}
+              title={module.label}
+            >
+              <span aria-hidden="true" className="studio-destination-icon"><ContextIcon id={module.id} /></span>
+              <span className="studio-destination-label">{module.label}</span>
+            </Link>
+            {module.id === 'people' && (
+              <div className="studio-subdestinations">
+                <Link
+                  aria-current={currentContext === 'capabilities' ? 'page' : undefined}
+                  className={`studio-subdestination${currentContext === 'capabilities' ? ' is-active' : ''}`}
+                  href="/workspace/institutions/network"
+                  onClick={onNavigate}
+                  title="Capabilities & relations"
+                >
+                  Capabilities & relations
+                </Link>
+              </div>
+            )}
+          </div>
         );
       })}
     </nav>
+  );
+}
+
+function EnvironmentSwitcher({
+  currentEnvironment,
+  onNavigate,
+}: {
+  currentEnvironment: StudioEnvironment;
+  onNavigate?: () => void;
+}) {
+  return (
+    <div aria-label="Working environment" className="studio-environment-switcher">
+      <span className="studio-environment-label">ENVIRONMENT</span>
+      <div className="studio-environment-options">
+        {(['branch', 'main'] as const).map(environment => {
+          const label = environment === 'branch' ? 'Branch' : 'Main';
+          const selected = currentEnvironment === environment;
+          return (
+            <Link
+              aria-current={selected ? 'page' : undefined}
+              aria-label={`${label} environment${selected ? ', current' : ''}`}
+              className={`studio-environment-option${selected ? ' is-active' : ''}`}
+              href={getStudioEnvironmentHome(environment)}
+              key={environment}
+              onClick={onNavigate}
+              title={`Switch to ${label}`}
+            >
+              <span className="studio-environment-full">{label}</span>
+              <span aria-hidden="true" className="studio-environment-short">{environment === 'branch' ? 'BR' : 'MA'}</span>
+            </Link>
+          );
+        })}
+      </div>
+      <span className="studio-environment-caption">
+        {currentEnvironment === 'branch' ? 'Annals · work in motion' : 'Canon · current records'}
+      </span>
+    </div>
   );
 }
 
@@ -108,8 +173,9 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
   const [identityOpen, setIdentityOpen] = useState(false);
   const [sidebarPreference, setSidebarPreference] = useState(readSidebarPreference);
   const drawerRef = useRef<HTMLDialogElement>(null);
-  const activeContext = currentContext === 'field-desk' ? 'workbench' : currentContext === 'roll' ? 'roll' : currentContext;
-  const showIdentity = activeContext !== 'workbench' && !!profile;
+  const activeContext = currentContext === 'field-desk' ? 'workbench' : currentContext;
+  const currentEnvironment = getStudioEnvironmentForContext(currentContext);
+  const showIdentity = activeContext !== 'workbench' && activeContext !== 'school-console' && !!profile;
   const profileName = showIdentity ? profile?.display_name || '' : '';
   const sidebarCollapsed = sidebarPreference.collapsed;
 
@@ -147,7 +213,7 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
         <div className="studio-sidebar-brand">
           <BrandMark className="studio-brand-mark" size="sm" />
           <span className="studio-brand-divider" aria-hidden="true" />
-          <span className="studio-brand-label">STUDIO</span>
+          <span className="studio-brand-label">WORKSPACE</span>
         </div>
       </aside>
     );
@@ -162,7 +228,7 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
         <div className="studio-sidebar-brand">
           <BrandMark className="studio-brand-mark" size="sm" />
           <span className="studio-brand-divider" aria-hidden="true" />
-          <span className="studio-brand-label">STUDIO</span>
+          <span className="studio-brand-label">WORKSPACE</span>
         </div>
         <button
           aria-label={sidebarCollapsed ? 'Expand Studio sidebar' : 'Collapse Studio sidebar'}
@@ -180,13 +246,14 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
           <p className="studio-sidebar-notice" role="status">{sidebarPreference.notice}</p>
         )}
 
-        <div className="studio-nav-label">Studio</div>
-        <StudioLinks currentContext={currentContext} />
+        <div className="studio-nav-label">{currentEnvironment === 'branch' ? 'Branch / Annals' : 'Main / Canon'}</div>
+        <StudioLinks currentContext={currentContext} environment={currentEnvironment} />
 
         <div className="studio-sidebar-bottom">
           {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} open={identityOpen} />}
+          <EnvironmentSwitcher currentEnvironment={currentEnvironment} />
           <div className="studio-session-indicator">
-            <span>APT-LABS STUDIO</span>
+            <span>BROWSER-LOCAL DEMO</span>
           </div>
         </div>
       </aside>
@@ -205,7 +272,9 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
           </svg>
         </button>
         <BrandMark className="studio-mobile-brand" size="sm" />
-        <span className="studio-mobile-current">{getStudioModuleLabel(activeContext)}</span>
+        <span className="studio-mobile-current">
+          {currentEnvironment === 'branch' ? 'BRANCH' : 'MAIN'} / {getStudioModuleLabel(activeContext)}
+        </span>
         {showIdentity && (
           <button
             aria-controls="identity-cabinet"
@@ -250,12 +319,17 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
               type="button"
             >×</button>
           </header>
-          <div className="studio-nav-label">Studio</div>
-          <StudioLinks currentContext={currentContext} onNavigate={() => setMobileOpen(false)} />
+          <div className="studio-nav-label">{currentEnvironment === 'branch' ? 'Branch / Annals' : 'Main / Canon'}</div>
+          <StudioLinks
+            currentContext={currentContext}
+            environment={currentEnvironment}
+            onNavigate={() => setMobileOpen(false)}
+          />
           <div className="studio-sidebar-bottom">
             {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} open={identityOpen} />}
+            <EnvironmentSwitcher currentEnvironment={currentEnvironment} onNavigate={() => setMobileOpen(false)} />
             <div className="studio-session-indicator">
-              <span>APT-LABS STUDIO</span>
+              <span>BROWSER-LOCAL DEMO</span>
             </div>
           </div>
         </div>

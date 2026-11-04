@@ -11,6 +11,7 @@ import { WorkbenchFinder } from './pages/workspace/WorkbenchFinder';
 import { SchoolConsole } from './pages/workspace/SchoolConsole';
 import { Roll } from './pages/workspace/Roll';
 import { AptCoinLab } from './pages/workspace/AptCoinLab';
+import { Annals } from './pages/workspace/Annals';
 
 export function App() {
   return (
@@ -20,6 +21,7 @@ export function App() {
       <Route path="/sign-in"><Auth /></Route>
       <Route path="/sign-up"><Auth /></Route>
       <Route path="/workspace/people"><People /></Route>
+      <Route path="/workspace/annals"><Annals /></Route>
       <Route path="/workspace/institutions"><Institutions /></Route>
       <Route path="/workspace/institutions/network"><Network /></Route>
       <Route path="/workspace/institutions/school-console"><SchoolConsole /></Route>

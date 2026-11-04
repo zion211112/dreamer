@@ -7,6 +7,7 @@ import { Input } from '../components/Input';
 import { BrandMark } from '../components/BrandMark';
 
 const workspacePaths = {
+  annals: '/workspace/annals',
   people: '/workspace/people',
   school: '/workspace/institutions/school-console',
   commons: '/workspace/commons',
@@ -15,6 +16,7 @@ const workspacePaths = {
 } as const;
 
 const workspaces = [
+  { id: 'annals', label: 'Branch / Annals' },
   { id: 'people', label: 'Parent / caregiver' },
   { id: 'school', label: 'School team' },
   { id: 'commons', label: 'Community member' },
@@ -30,10 +32,8 @@ function isWorkspaceId(value: string): value is WorkspaceId {
   return workspaces.some((workspace) => workspace.id === value);
 }
 
-function defaultWorkspaceForRole(role: UserRole): WorkspaceId {
-  if (role === 'institution') return 'school';
-  if (role === 'coordinator') return 'roll';
-  return 'people';
+function defaultWorkspaceForRole(_role: UserRole): WorkspaceId {
+  return 'annals';
 }
 
 function getWorkspacePath(workspaceId: WorkspaceId): string {
@@ -77,7 +77,7 @@ export function Auth() {
   const [displayName, setDisplayName] = useState('');
   const [role, setRole] = useState<SignUpRole>('founder');
   const [organizationName, setOrganizationName] = useState('');
-  const [workspace, setWorkspace] = useState<WorkspaceId>('people');
+  const [workspace, setWorkspace] = useState<WorkspaceId>('annals');
   const [workspaceCustomized, setWorkspaceCustomized] = useState(false);
   const [error, setError] = useState('');
   const [methodNotice, setMethodNotice] = useState('');

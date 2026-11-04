@@ -1,5 +1,9 @@
 import { StudioNavigation } from '../../components/StudioNavigation';
-import { getStudioModuleLabel, type StudioContext } from '../../lib/studio-navigation';
+import {
+  getStudioEnvironmentForContext,
+  getStudioModuleLabel,
+  type StudioContext,
+} from '../../lib/studio-navigation';
 
 interface WorkspaceLayoutProps {
   children: any;
@@ -7,6 +11,7 @@ interface WorkspaceLayoutProps {
 }
 
 export function WorkspaceLayout({ children, currentContext }: WorkspaceLayoutProps) {
+  const environment = getStudioEnvironmentForContext(currentContext);
   return (
     <div className="studio-shell">
       <StudioNavigation currentContext={currentContext} />
@@ -18,7 +23,7 @@ export function WorkspaceLayout({ children, currentContext }: WorkspaceLayoutPro
         </main>
         <footer className="atlas-footer">
           <span>APT-LABS — {getStudioModuleLabel(currentContext)}</span>
-          <span>Studio context</span>
+          <span>{environment === 'branch' ? 'BRANCH · BROWSER-LOCAL PROTOTYPE' : 'MAIN · CANON VIEW'}</span>
         </footer>
       </div>
     </div>
