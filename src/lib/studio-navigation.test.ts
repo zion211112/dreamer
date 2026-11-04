@@ -2,14 +2,12 @@ import { describe, expect, it } from 'vitest';
 import {
   getStudioModuleForContext,
   getStudioModuleLabel,
-  getStudioNetworkView,
   STUDIO_MODULES,
-  STUDIO_NETWORK_VIEWS,
   type StudioContext,
 } from './studio-navigation';
 
 describe('Studio navigation model', () => {
-  it('defines the four operational modules and their existing routes in order', () => {
+  it('defines six flat workspace modules and their routes in order', () => {
     expect(STUDIO_MODULES.map(({ id, label, href, defaultContext, contexts }) => ({
       id,
       label,
@@ -18,75 +16,59 @@ describe('Studio navigation model', () => {
       contexts,
     }))).toEqual([
       { id: 'radar', label: 'Radar', href: '/workspace/commons', defaultContext: 'commons', contexts: ['commons'] },
-      { id: 'network', label: 'Network', href: '/workspace/people', defaultContext: 'people', contexts: ['people', 'institutions', 'network'] },
+      { id: 'people', label: 'People', href: '/workspace/people', defaultContext: 'people', contexts: ['people', 'capabilities'] },
+      { id: 'institutions', label: 'Institutions', href: '/workspace/institutions', defaultContext: 'institutions', contexts: ['institutions'] },
       { id: 'undertakings', label: 'Undertakings', href: '/workspace/workbench', defaultContext: 'workbench', contexts: ['workbench', 'field-desk'] },
       { id: 'roll', label: 'Roll', href: '/workspace/roll', defaultContext: 'roll', contexts: ['roll'] },
-    ]);
-  });
-
-  it('defines Network secondary destinations without replacing existing routes', () => {
-    expect(STUDIO_NETWORK_VIEWS.map(({ id, label, href, context }) => ({
-      id,
-      label,
-      href,
-      context,
-    }))).toEqual([
-      { id: 'institutions', label: 'Institutions', href: '/workspace/institutions', context: 'institutions' },
-      { id: 'capabilities', label: 'Capability Directory', href: '/workspace/institutions/network', context: 'network' },
+      { id: 'apt-coin-lab', label: 'APT Coin Lab', href: '/workspace/apt-coin-lab', defaultContext: 'apt-coin-lab', contexts: ['apt-coin-lab'] },
     ]);
   });
 
   it('maps every existing workspace context to its operational module', () => {
     const contexts: StudioContext[] = [
       'people',
+      'capabilities',
       'institutions',
-      'network',
       'commons',
       'workbench',
       'field-desk',
       'roll',
+      'apt-coin-lab',
     ];
 
     expect(contexts.map(context => [context, getStudioModuleForContext(context)])).toEqual([
-      ['people', 'network'],
-      ['institutions', 'network'],
-      ['network', 'network'],
+      ['people', 'people'],
+      ['capabilities', 'people'],
+      ['institutions', 'institutions'],
       ['commons', 'radar'],
       ['workbench', 'undertakings'],
       ['field-desk', 'undertakings'],
       ['roll', 'roll'],
+      ['apt-coin-lab', 'apt-coin-lab'],
     ]);
   });
 
   it('returns the parent module label for each context', () => {
     const contexts: StudioContext[] = [
       'people',
+      'capabilities',
       'institutions',
-      'network',
       'commons',
       'workbench',
       'field-desk',
       'roll',
+      'apt-coin-lab',
     ];
 
     expect(contexts.map(context => getStudioModuleLabel(context))).toEqual([
-      'Network',
-      'Network',
-      'Network',
+      'People',
+      'People',
+      'Institutions',
       'Radar',
       'Undertakings',
       'Undertakings',
       'Roll',
+      'APT Coin Lab',
     ]);
-  });
-
-  it('selects the exact Network view and returns null outside Network', () => {
-    expect(getStudioNetworkView('people')).toBe('people');
-    expect(getStudioNetworkView('institutions')).toBe('institutions');
-    expect(getStudioNetworkView('network')).toBe('capabilities');
-    expect(getStudioNetworkView('commons')).toBeNull();
-    expect(getStudioNetworkView('workbench')).toBeNull();
-    expect(getStudioNetworkView('field-desk')).toBeNull();
-    expect(getStudioNetworkView('roll')).toBeNull();
   });
 });

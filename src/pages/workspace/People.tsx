@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { Link } from 'wouter';
 import { EntityInspector } from '../../components/people/EntityInspector';
 import { NetworkMap } from '../../components/people/NetworkMap';
 import { PeopleDirectory } from '../../components/people/PeopleDirectory';
@@ -194,6 +195,10 @@ export function People() {
             </button>
           </div>
         </header>
+        <p className="people-capability-shortcut">
+          <span>Looking for a capability directory?</span>
+          <Link href="/workspace/institutions/network">Browse capabilities <span aria-hidden="true">→</span></Link>
+        </p>
 
         <nav className="people-view-tabs" aria-label="People views" role="tablist">
           {([

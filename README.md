@@ -22,10 +22,13 @@ npm run build
 - `/sign-in` and `/sign-up` — browser-local demo authentication
 - `/workspace/people` — People network
 - `/workspace/institutions` — institution and asset register
+- `/workspace/institutions/network` — People capability directory
+- `/workspace/institutions/school-console` — browser-local School Console prototype
 - `/workspace/commons` — local observations and steward decisions
 - `/workspace/workbench` — browse local work examples and save or remove non-binding interest in this browser
 - `/workspace/workbench/simulate` — compose a school need into an isolated, manually run Tender → Assembly → Acceptance → Roll-preview simulation
 - `/workspace/field-desk` — compatibility alias for the Workbench simulation
+- `/workspace/apt-coin-lab` — research-only area; no coin balances, transfers, rewards, access, voting, or authority
 
 Authentication and workspace workflows are browser-local demo functionality,
 not connected services. Passwords are not stored; there is no live

@@ -28,7 +28,7 @@ function SectionHeading({ children, detail }: { children: string; detail?: strin
 }
 
 export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabinetProps) {
-  const { profile, signOut: supabaseSignOut } = useAuth();
+  const { profile, user, signOut: supabaseSignOut } = useAuth();
   const [, navigate] = useLocation();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [network, setNetwork] = useState<PeopleNetworkRecord | null>(null);
@@ -109,6 +109,7 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
     <dialog
       aria-labelledby="identity-cabinet-title"
       className="identity-cabinet"
+      id="identity-cabinet"
       onKeyDown={event => {
         if (event.key === 'Escape') {
           event.preventDefault();
@@ -129,7 +130,8 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
         <header className="identity-cabinet-header">
           <div>
             <span className="identity-eyebrow">PERSON · PROOF · AUTHORITY</span>
-            <h2 id="identity-cabinet-title">Identity cabinet</h2>
+            <h2 id="identity-cabinet-title">Identity</h2>
+            <p className="identity-cabinet-description">A local browser profile and its records.</p>
           </div>
           <button aria-label="Close identity cabinet" className="identity-close-button" onClick={onClose} type="button">×</button>
         </header>
@@ -145,6 +147,7 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
                 <span aria-hidden="true" className="identity-avatar">{getInitials(profileName || '?')}</span>
                 <div>
                   <h3>{profileName || 'Unnamed profile'}</h3>
+                  <span className="identity-source-label">LOCAL BROWSER PROFILE</span>
                 </div>
               </div>
               <div className="identity-session-grid">
@@ -156,10 +159,10 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
                   <span>Studio context</span>
                   <strong>{contextLabel}</strong>
                 </div>
-                {profile && (
+                {user?.email && (
                   <div className="identity-session-email">
                     <span>Email</span>
-                    <strong>{profile.display_name}</strong>
+                    <strong>{user.email}</strong>
                   </div>
                 )}
               </div>
@@ -172,7 +175,7 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
                   <div className="identity-capability-list">
                     {networkProfile.capabilities.map(capability => <span key={capability}>{capability}</span>)}
                   </div>
-                ) : <p className="identity-muted">No capability record is connected to this local profile.</p>}
+                ) : <p className="identity-muted">No capabilities are recorded for this local profile.</p>}
                 {networkProfile?.role && <p className="identity-provenance">Profile role: {networkProfile.role}</p>}
               </section>
 
@@ -195,12 +198,12 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
                     ))}
                   </div>
                 ) : (
-                  <p className="identity-muted">No issuer-verified credentials are connected.</p>
+                  <p className="identity-muted">No issuer-verified credentials are recorded in this browser.</p>
                 )}
               </section>
 
               <section className="identity-section">
-                <SectionHeading detail="''">Memberships & authority</SectionHeading>
+                <SectionHeading>Memberships & authority</SectionHeading>
                 {networkLinks.length ? (
                   <ul className="identity-network-links">
                     {networkLinks.map(({ relationship, entity }) => (

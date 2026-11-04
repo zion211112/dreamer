@@ -3,8 +3,8 @@
 ## Status
 
 This design was developed with the user and is approved for specification.
-The user must review this document before implementation planning begins. No
-application source, routes, or data flows have been changed.
+The user later selected a six-destination, flat workspace navigation; the
+APT Coin Lab is a research-only destination with no operational coin behavior.
 
 ## Goal
 
@@ -41,7 +41,7 @@ them into one reputation score or imply that recording a claim makes it true.
   boundaries between those flows.
 - Define an optional, selectively disclosed contribution SBT-like attestation
   for accepted work.
-- Include APT Coin as a separate, non-operational research model.
+- Include APT Coin Lab as a separate, non-operational research destination.
 - Preserve the current Vite + Preact application and visual language while
   clarifying its navigation and information hierarchy.
 - Design for a desktop-first coordination experience with responsive,
@@ -62,29 +62,28 @@ them into one reputation score or imply that recording a claim makes it true.
 
 ## Workspace modules
 
-Keep the current shell geometry and visual identity. Use four operational
-destinations with clearer names:
+Keep the current shell geometry and visual identity. Use six flat destinations:
 
 1. **Radar** — the current Commons surface. Capture observations, proposals,
    steward decisions, and the status of a concern. “Being checked” and
    “work planning” are not verification or authorization.
-2. **Network** — bring People and Institutions together as distinct views.
-   Preserve their separate records while making relationships, capabilities,
-   assets, provenance, availability, and authority easier to navigate.
-3. **Undertakings** — the current Workbench surface. Discover, compose, agree
+2. **People** — participant-controlled profiles, consent, availability, and
+   scoped capability claims. The Capability Directory is a People view.
+3. **Institutions** — organizations, assets, record basis, and delegated
+   authority. A title or relationship alone does not authorize work.
+4. **Undertakings** — the current Workbench surface. Discover, compose, agree
    terms for, authorize, deliver, review, and if needed dispute work.
-4. **Roll** — durable records of outcomes, evidence, acceptance, cost
+5. **Roll** — durable records of outcomes, evidence, acceptance, cost
    disclosure, attribution, and visible revisions. It is an accountable memory,
    not an infallible ledger.
+6. **APT Coin Lab** — a research-only area for comparing hypothetical
+   accounting, incentive, and governance models. No coin role is selected.
 
-People and Institutions remain intact as Network views; neither capability is
-removed. Existing routes may remain compatible while navigation is evolved.
-The School Console is one source of needs and work, not the canonical entry
-point for every undertaking.
-
-**APT Coin Lab** is a separately labeled research area, not an operational
-destination or a fifth market module. It may compare hypothetical accounting,
-incentive, and governance models. No coin role is selected by this design.
+People and Institutions are independent peers, not nested views. Existing
+routes remain compatible while navigation is evolved. The School Console is
+one source of needs and work, not the canonical entry point for every
+undertaking. APT Coin Lab is visible as a module but remains outside operational
+workflows: no balances, transfers, rewards, access, votes, or authority.
 
 Use the mockup only as a limited interaction reference: make source, state,
 uncertainty, authorization, and a useful next action easy to scan. Do not copy
@@ -273,8 +272,9 @@ design or the current browser-local demo.
   universal score or public identity profile.
 - A participant can opt into a contribution attestation and disclose it
   selectively; the claim can be challenged and corrected or revoked.
-- APT Coin remains demonstrably isolated from balances, payments, access,
-  authorization, and real governance in the operational flow.
+- APT Coin Lab is discoverable as a research destination but isolated from
+  balances, payments, access, authorization, and real governance in the
+  operational flow.
 - All module routes preserve their distinct jobs and connect through explicit,
   understandable references.
 - The current visual language is preserved while hierarchy and naming become

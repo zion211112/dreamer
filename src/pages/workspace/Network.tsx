@@ -3,11 +3,11 @@ import { CapabilityDirectory } from '../../components/CapabilityDirectory';
 
 export function Network() {
   return (
-    <WorkspaceLayout currentContext="network">
-      <main className="net-page">
+    <WorkspaceLayout currentContext="capabilities">
+      <div className="net-page">
         <header className="net-page-header">
           <div className="net-page-heading">
-            <p className="net-page-eyebrow">APT—LABS <span aria-hidden="true">/</span> NETWORK</p>
+            <p className="net-page-eyebrow">APT—LABS <span aria-hidden="true">/</span> PEOPLE</p>
             <h1>Capability Directory</h1>
             <p className="net-page-intro">
               Find people by what they can prove they do. Every capability is tied to evidence —
@@ -18,7 +18,7 @@ export function Network() {
         </header>
 
         <CapabilityDirectory />
-      </main>
+      </div>
     </WorkspaceLayout>
   );
 }

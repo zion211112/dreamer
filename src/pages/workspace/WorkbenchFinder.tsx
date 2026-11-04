@@ -107,7 +107,7 @@ export function WorkbenchFinder() {
 
   return (
     <WorkspaceLayout currentContext="workbench">
-      <main className="workbench-finder-page">
+      <div className="workbench-finder-page">
         <header className="workbench-finder-head">
           <div>
             <p className="eyebrow">WORKBENCH / BROWSER-LOCAL EXAMPLES</p>
@@ -134,7 +134,7 @@ export function WorkbenchFinder() {
             view={view}
           />
         )}
-      </main>
+      </div>
     </WorkspaceLayout>
   );
 }

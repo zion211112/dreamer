@@ -1,14 +1,14 @@
 export type StudioContext =
   | 'people'
+  | 'capabilities'
   | 'institutions'
-  | 'network'
   | 'commons'
   | 'workbench'
   | 'field-desk'
-  | 'roll';
+  | 'roll'
+  | 'apt-coin-lab';
 
-export type StudioModuleId = 'radar' | 'network' | 'undertakings' | 'roll';
-export type StudioNetworkViewId = 'people' | 'institutions' | 'capabilities';
+export type StudioModuleId = 'radar' | 'people' | 'institutions' | 'undertakings' | 'roll' | 'apt-coin-lab';
 
 export interface StudioNavigationModule {
   id: StudioModuleId;
@@ -16,13 +16,6 @@ export interface StudioNavigationModule {
   href: string;
   defaultContext: StudioContext;
   contexts: readonly StudioContext[];
-}
-
-export interface StudioNetworkDestination {
-  id: 'institutions' | 'capabilities';
-  label: string;
-  href: string;
-  context: StudioContext;
 }
 
 export const STUDIO_MODULES: readonly StudioNavigationModule[] = [
@@ -34,11 +27,18 @@ export const STUDIO_MODULES: readonly StudioNavigationModule[] = [
     contexts: ['commons'],
   },
   {
-    id: 'network',
-    label: 'Network',
+    id: 'people',
+    label: 'People',
     href: '/workspace/people',
     defaultContext: 'people',
-    contexts: ['people', 'institutions', 'network'],
+    contexts: ['people', 'capabilities'],
+  },
+  {
+    id: 'institutions',
+    label: 'Institutions',
+    href: '/workspace/institutions',
+    defaultContext: 'institutions',
+    contexts: ['institutions'],
   },
   {
     id: 'undertakings',
@@ -54,20 +54,12 @@ export const STUDIO_MODULES: readonly StudioNavigationModule[] = [
     defaultContext: 'roll',
     contexts: ['roll'],
   },
-];
-
-export const STUDIO_NETWORK_VIEWS: readonly StudioNetworkDestination[] = [
   {
-    id: 'institutions',
-    label: 'Institutions',
-    href: '/workspace/institutions',
-    context: 'institutions',
-  },
-  {
-    id: 'capabilities',
-    label: 'Capability Directory',
-    href: '/workspace/institutions/network',
-    context: 'network',
+    id: 'apt-coin-lab',
+    label: 'APT Coin Lab',
+    href: '/workspace/apt-coin-lab',
+    defaultContext: 'apt-coin-lab',
+    contexts: ['apt-coin-lab'],
   },
 ];
 
@@ -76,14 +68,17 @@ export function getStudioModuleForContext(context: StudioContext): StudioModuleI
     case 'commons':
       return 'radar';
     case 'people':
+    case 'capabilities':
+      return 'people';
     case 'institutions':
-    case 'network':
-      return 'network';
+      return 'institutions';
     case 'workbench':
     case 'field-desk':
       return 'undertakings';
     case 'roll':
       return 'roll';
+    case 'apt-coin-lab':
+      return 'apt-coin-lab';
     default: {
       const exhaustiveContext: never = context;
       throw new Error(`Unsupported Studio context: ${exhaustiveContext}`);
@@ -96,24 +91,4 @@ export function getStudioModuleLabel(context: StudioContext): string {
   const module = STUDIO_MODULES.find(destination => destination.id === moduleId);
   if (!module) throw new Error(`Studio navigation is missing module "${moduleId}".`);
   return module.label;
-}
-
-export function getStudioNetworkView(context: StudioContext): StudioNetworkViewId | null {
-  switch (context) {
-    case 'people':
-      return 'people';
-    case 'institutions':
-      return 'institutions';
-    case 'network':
-      return 'capabilities';
-    case 'commons':
-    case 'workbench':
-    case 'field-desk':
-    case 'roll':
-      return null;
-    default: {
-      const exhaustiveContext: never = context;
-      throw new Error(`Unsupported Studio context: ${exhaustiveContext}`);
-    }
-  }
 }

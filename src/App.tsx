@@ -10,6 +10,7 @@ import { Workbench } from './pages/workspace/FieldDesk';
 import { WorkbenchFinder } from './pages/workspace/WorkbenchFinder';
 import { SchoolConsole } from './pages/workspace/SchoolConsole';
 import { Roll } from './pages/workspace/Roll';
+import { AptCoinLab } from './pages/workspace/AptCoinLab';
 
 export function App() {
   return (
@@ -24,8 +25,10 @@ export function App() {
       <Route path="/workspace/institutions/school-console"><SchoolConsole /></Route>
       <Route path="/workspace/commons"><Commons /></Route>
       <Route path="/workspace/workbench"><WorkbenchFinder /></Route>
+      <Route path="/workspace/workbench/simulate"><Workbench /></Route>
       <Route path="/workspace/field-desk"><Workbench /></Route>
       <Route path="/workspace/roll"><Roll /></Route>
+      <Route path="/workspace/apt-coin-lab"><AptCoinLab /></Route>
     </Switch>
   );
 }

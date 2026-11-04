@@ -148,11 +148,15 @@ The production shape required before a 10,000-active-user claim includes:
   testable capacity target.
 
 MapLibre GL with vector rendering is the design assumption for progressive
-zoom and aggregation. No tile or geocoding provider is selected. Provider
-selection requires a separate review of privacy, retention, availability,
-coverage, costs, and low-bandwidth behavior. Until then, the interface must
-work in list mode and any map shown with real service data must not be
-represented as operational.
+zoom and aggregation. No production tile or geocoding provider is selected.
+The browser-local prototype may show a static mock-provider scene made from
+fictional geometry and sample markers, solely to demonstrate visual hierarchy.
+It must be labelled as a simulation, remain independent of signal records, and
+make no requests to tile, geocoding, or location services. Such a scene is not
+a map of Kenya or any other real place. Provider selection requires a separate
+review of privacy, retention, availability, coverage, costs, and low-bandwidth
+behavior. Until then, the interface must work in list mode and any map shown
+with real service data must not be represented as operational.
 
 Map and aggregate failures are surfaced explicitly. A failure must not fall
 back to unscoped data, fabricate counts, or imply success.

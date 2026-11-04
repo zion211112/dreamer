@@ -118,7 +118,7 @@ export function Institutions() {
 
   return (
     <WorkspaceLayout currentContext="institutions">
-      <main className="institution-page">
+      <div className="institution-page">
         <header className="institution-page-head">
           <div className="institution-heading">
             <p className="eyebrow">APT-LABS <span aria-hidden="true">/</span> STARTER NETWORK REGISTER</p>
@@ -318,7 +318,7 @@ export function Institutions() {
             <span aria-hidden="true">→</span>
           </a>
         </footer>
-      </main>
+      </div>
     </WorkspaceLayout>
   );
 }

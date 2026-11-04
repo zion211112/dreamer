@@ -4,9 +4,7 @@ import { useAuth } from '../lib/auth/hooks';
 import {
   getStudioModuleForContext,
   getStudioModuleLabel,
-  getStudioNetworkView,
   STUDIO_MODULES,
-  STUDIO_NETWORK_VIEWS,
   type StudioContext,
 } from '../lib/studio-navigation';
 import { BrandMark } from './BrandMark';
@@ -23,14 +21,11 @@ function ContextIcon({ id }: { id: string }) {
   if (id === 'institutions') {
     return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M2.5 7 10 3l7.5 4M4 8v7m4-7v7m4-7v7m4-7v7M2.5 17h15M2.5 7h15" /></svg>;
   }
-  if (id === 'network') {
-    return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="10" cy="4.5" r="2" /><circle cx="4.5" cy="14.5" r="2" /><circle cx="15.5" cy="14.5" r="2" /><path d="m9 6.3-3.5 6.4m6-6.4 3.5 6.4m-8.5 1.8h7" /></svg>;
-  }
   if (id === 'radar') {
     return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" /><circle cx="10" cy="10" r="3" /><path d="m10 10 5-5M10 2v2m8 6h-2" /></svg>;
   }
-  if (id === 'capabilities') {
-    return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m10 2.5 2.3 4.7 5.2.8-3.8 3.7.9 5.3-4.6-2.5-4.6 2.5.9-5.3-3.8-3.7 5.2-.8z" /></svg>;
+  if (id === 'apt-coin-lab') {
+    return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="5.25" /><path d="m12.5 12.5 4 4M6.5 8.5h4m-2-2v4" /></svg>;
   }
   if (id === 'roll') {
     return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 16.5V3.5a1.5 1.5 0 0 1 1.5-1.5h11a1.5 1.5 0 0 1 1.5 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-11a1.5 1.5 0 0 1-1.5-1.5z" /><path d="M5.5 9h9M5.5 13h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>;
@@ -46,7 +41,6 @@ function StudioLinks({
   onNavigate?: () => void;
 }) {
   const activeModule = getStudioModuleForContext(currentContext);
-  const activeNetworkView = getStudioNetworkView(currentContext);
 
   return (
     <nav aria-label="Studio destinations" className="studio-destinations">
@@ -55,51 +49,34 @@ function StudioLinks({
         const isDefaultDestination = currentContext === module.defaultContext;
 
         return (
-          <div className={`studio-destination-group${isActive ? ' is-active' : ''}`} key={module.id}>
-            <Link
-              aria-label={module.label}
-              aria-current={isDefaultDestination ? 'page' : undefined}
-              className={`studio-destination${isActive ? ' is-active' : ''}`}
-              href={module.href}
-              onClick={onNavigate}
-              title={module.label}
-            >
-              <span aria-hidden="true" className="studio-destination-icon"><ContextIcon id={module.id} /></span>
-              <span className="studio-destination-label">{module.label}</span>
-            </Link>
-            {module.id === 'network' && isActive && (
-              <div aria-label="Network views" className="studio-network-views" role="group">
-                {STUDIO_NETWORK_VIEWS.map(view => (
-                  <Link
-                    aria-label={view.label}
-                    aria-current={activeNetworkView === view.id ? 'page' : undefined}
-                    className={`studio-destination studio-destination-secondary${activeNetworkView === view.id ? ' is-active' : ''}`}
-                    href={view.href}
-                    key={view.id}
-                    onClick={onNavigate}
-                    title={view.label}
-                  >
-                    <span aria-hidden="true" className="studio-destination-icon"><ContextIcon id={view.id} /></span>
-                    <span className="studio-destination-label">{view.label}</span>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
+          <Link
+            aria-label={module.label}
+            aria-current={isDefaultDestination ? 'page' : isActive ? 'location' : undefined}
+            className={`studio-destination${isActive ? ' is-active' : ''}`}
+            href={module.href}
+            key={module.id}
+            onClick={onNavigate}
+            title={module.label}
+          >
+            <span aria-hidden="true" className="studio-destination-icon"><ContextIcon id={module.id} /></span>
+            <span className="studio-destination-label">{module.label}</span>
+          </Link>
         );
       })}
     </nav>
   );
 }
 
-function ProfileEntry({ name, onOpen }: { name: string; onOpen: () => void }) {
+function ProfileEntry({ name, onOpen, open }: { name: string; onOpen: () => void; open: boolean }) {
   const displayName = name || 'Unnamed profile';
   const initials = name ? name.trim().split(/\s+/).slice(0, 2).map(part => part[0] ?? '').join('').toUpperCase() : '?';
   return (
     <button
       aria-label={`Open identity cabinet for ${displayName}`}
+      aria-controls="identity-cabinet"
+      aria-expanded={open}
       aria-haspopup="dialog"
-      className="studio-profile-entry"
+      className={`studio-profile-entry${open ? ' is-open' : ''}`}
       onClick={onOpen}
       type="button"
       title={`Open identity cabinet for ${displayName}`}
@@ -107,10 +84,10 @@ function ProfileEntry({ name, onOpen }: { name: string; onOpen: () => void }) {
       <span aria-hidden="true" className="studio-profile-avatar">{initials}</span>
       <span className="studio-profile-copy">
         <strong>{displayName}</strong>
-        <small>Profile · open identity</small>
+        <small>Local browser profile</small>
       </span>
       <svg aria-hidden="true" className="studio-profile-arrow" viewBox="0 0 16 16">
-        <path d="M4.5 11.5 11 5m0 0H5.5M11 5v5.5" />
+        <path d="m4.5 6.5 3.5 3 3.5-3" />
       </svg>
     </button>
   );
@@ -207,7 +184,7 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
         <StudioLinks currentContext={currentContext} />
 
         <div className="studio-sidebar-bottom">
-          {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} />}
+          {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} open={identityOpen} />}
           <div className="studio-session-indicator">
             <span>APT-LABS STUDIO</span>
           </div>
@@ -231,9 +208,11 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
         <span className="studio-mobile-current">{getStudioModuleLabel(activeContext)}</span>
         {showIdentity && (
           <button
+            aria-controls="identity-cabinet"
+            aria-expanded={identityOpen}
             aria-haspopup="dialog"
             aria-label={`Open identity cabinet for ${profileName}`}
-            className="studio-mobile-profile"
+            className={`studio-mobile-profile${identityOpen ? ' is-open' : ''}`}
             onClick={() => setIdentityOpen(true)}
             type="button"
           >{profileName.trim().split(/\s+/).slice(0, 2).map(part => part[0] ?? '').join('').toUpperCase() || '?'}</button>
@@ -274,7 +253,7 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
           <div className="studio-nav-label">Studio</div>
           <StudioLinks currentContext={currentContext} onNavigate={() => setMobileOpen(false)} />
           <div className="studio-sidebar-bottom">
-            {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} />}
+            {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} open={identityOpen} />}
             <div className="studio-session-indicator">
               <span>APT-LABS STUDIO</span>
             </div>

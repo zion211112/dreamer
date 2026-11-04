@@ -313,7 +313,7 @@ export function Workbench() {
 
   return (
     <WorkspaceLayout currentContext="field-desk">
-      <main className="workbench-sim-page">
+      <div className="workbench-sim-page">
         <header className="workbench-sim-head">
           <div>
             <Link className="workbench-sim-back-link" href="/workspace/workbench">← Find work</Link>
@@ -473,7 +473,7 @@ export function Workbench() {
         {!loading && sourceDrafts.length === 0 && !simulation && (
           <p className="workbench-sim-footnote">The School Console is the source of need drafts; this workspace does not create one on its behalf.</p>
         )}
-      </main>
+      </div>
     </WorkspaceLayout>
   );
 }

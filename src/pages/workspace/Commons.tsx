@@ -357,7 +357,7 @@ export function Commons() {
 
   return (
     <WorkspaceLayout currentContext="commons">
-      <main className="signal-desk">
+      <div className="signal-desk">
         <header className="signal-desk-head">
           <div>
             <p className="eyebrow">COMMONS / RADAR KWA GROUND</p>
@@ -868,7 +868,7 @@ export function Commons() {
             )}
           </article>
         </section>
-      </main>
+      </div>
     </WorkspaceLayout>
   );
 }

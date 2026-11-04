@@ -1,4 +1,5 @@
 import type { FieldSignal } from '../lib/local-workflows';
+import { getMockRadarMapScene } from '../lib/mock-radar-map-provider';
 import { getRadarSignalSummary, getRadarSpatialState } from '../lib/radar-view';
 
 interface RadarSpatialPanelProps {
@@ -16,44 +17,82 @@ export function RadarSpatialPanel({ signals }: RadarSpatialPanelProps) {
   const summary = getRadarSignalSummary(signals);
   const spatialState = getRadarSpatialState(signals);
   const illustrativeCount = signals.filter(signal => signal.scenario || signal.recordBasis === 'illustrative').length;
+  const mockMapScene = getMockRadarMapScene();
 
   return (
     <section className="radar-spatial-panel" aria-labelledby="radar-spatial-title">
       <header className="radar-spatial-head">
         <div>
-          <p className="eyebrow">SPATIAL VIEW / LOCAL DATA</p>
-          <h2 id="radar-spatial-title">Place, without false precision</h2>
-          <p>Location notes stay attached to their records. This view does not turn text into map coordinates.</p>
+          <p className="eyebrow">SPATIAL VIEW / MOCK PROVIDER</p>
+          <h2 id="radar-spatial-title">A map-shaped simulation</h2>
+          <p>This schematic is generated locally. It is not a real place and does not position signal records.</p>
         </div>
-        <div className="radar-map-status" aria-label="Map provider status">
+        <div className="radar-map-status" aria-label="Map provider status: local mock, offline">
           <span aria-hidden="true" />
           <div>
-            <small>MAP LAYER</small>
-            <strong>Not connected</strong>
+            <small>PROVIDER</small>
+            <strong>Mock · offline</strong>
           </div>
         </div>
       </header>
 
       <div className={`radar-spatial-stage radar-spatial-stage--${spatialState}`}>
-        <div className="radar-spatial-grid" aria-hidden="true" />
-        <span className="radar-spatial-code" aria-hidden="true">NO COORDINATES / NO TILES</span>
-        <div className="radar-spatial-empty" role="status" aria-live="polite">
-          <span className="radar-spatial-glyph" aria-hidden="true">
-            <svg viewBox="0 0 32 32" fill="none">
-              <path d="M5 8.5 12 5l8 3.5L27 5v18.5L20 27l-8-3.5L5 27V8.5Z" />
-              <path d="M12 5v18.5M20 8.5V27" />
-              <path d="M16 12.5v7m-3.5-3.5h7" />
-            </svg>
-          </span>
-          <p className="eyebrow">{spatialState === 'empty-scope' ? 'EMPTY SCOPE' : 'LOCATION DATA UNAVAILABLE'}</p>
-          <h3>{spatialState === 'empty-scope' ? 'No signals in this view' : 'No approximate locations recorded'}</h3>
-          <p>
-            {spatialState === 'empty-scope'
-              ? 'Try another institution or remove a filter. This browser has no matching records.'
-              : 'No spatial points are shown. A map provider and privacy-reviewed approximate locations have not been configured.'}
-          </p>
-        </div>
-        <span className="radar-spatial-edge-note" aria-hidden="true">NO LOCATION INFERENCE / CURRENT MODE</span>
+        <svg
+          aria-labelledby="radar-mock-map-title radar-mock-map-description"
+          className="radar-mock-map"
+          role="img"
+          viewBox="0 0 1000 480"
+          preserveAspectRatio="xMidYMid slice"
+        >
+          <title id="radar-mock-map-title">Synthetic map preview</title>
+          <desc id="radar-mock-map-description">
+            A fictional schematic with five sample markers. It is not a real location and none of the markers represent signal records.
+          </desc>
+          <defs>
+            <pattern id="radar-mock-map-grid" width="48" height="48" patternUnits="userSpaceOnUse">
+              <path d="M48 0H0V48" fill="none" className="radar-mock-map-grid-line" />
+            </pattern>
+            <pattern id="radar-mock-map-blocks" width="180" height="134" patternUnits="userSpaceOnUse" patternTransform="rotate(-8)">
+              <rect x="14" y="12" width="56" height="34" rx="3" className="radar-mock-map-block" />
+              <rect x="82" y="12" width="78" height="34" rx="3" className="radar-mock-map-block" />
+              <rect x="14" y="58" width="82" height="60" rx="3" className="radar-mock-map-block" />
+              <rect x="108" y="58" width="52" height="60" rx="3" className="radar-mock-map-block" />
+            </pattern>
+          </defs>
+          <rect width="1000" height="480" className="radar-mock-map-ground" />
+          <rect width="1000" height="480" fill="url(#radar-mock-map-grid)" />
+          <rect x="34" y="28" width="932" height="424" fill="url(#radar-mock-map-blocks)" />
+          <path
+            d="M-20 354C126 296 183 378 318 320S511 213 632 266s205 122 389 35"
+            className="radar-mock-map-route radar-mock-map-route--primary"
+          />
+          <path
+            d="M126-24c22 123 126 116 156 203s-12 145 82 195 179 36 198 126M712-18c-44 98-30 169 39 218s147 56 156 171"
+            className="radar-mock-map-route"
+          />
+          <path d="M67 93H933M67 187H933M67 281H933M67 375H933" className="radar-mock-map-road" />
+          <path d="M198 50V430M397 50V430M596 50V430M795 50V430" className="radar-mock-map-road" />
+          <g aria-hidden="true">
+            {mockMapScene.points.map(point => (
+              <g
+                className="radar-mock-map-point"
+                key={point.id}
+                transform={`translate(${point.x * 10} ${point.y * 4.8})`}
+              >
+                <circle className="radar-mock-map-point-halo" r="20" />
+                <circle className="radar-mock-map-point-core" r="5" />
+              </g>
+            ))}
+          </g>
+        </svg>
+        <span className="radar-spatial-code">FICTIONAL SCHEMATIC / NOT TO SCALE</span>
+        <p className="radar-spatial-disclosure" role="status" aria-live="polite">
+          <strong>SIMULATION ONLY</strong>
+          {spatialState === 'empty-scope'
+            ? ' No records match this view. Sample markers are unrelated to signals.'
+            : ' Sample markers are not real places or signal locations.'}
+        </p>
+        <span className="radar-spatial-edge-note" aria-hidden="true">NO TILES / NO GEOCODING / NO RECORD PINS</span>
       </div>
 
       <div className="radar-spatial-data">
