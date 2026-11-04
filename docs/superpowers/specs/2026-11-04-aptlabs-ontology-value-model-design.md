@@ -1,7 +1,7 @@
 # APT-LABS Ontology & Value Model
 
-**Status:** Design direction approved in conversation; awaiting written-spec review  
-**Date:** 2026-11-04  
+**Status:** Design direction approved in conversation; awaiting written-spec review
+**Date:** 2026-11-04
 **Scope:** Establish a source-grounded ontology for APT-LABS needs, cooperation, delivery, contribution, outcomes, money, and a possible future APT Coin. This is a conceptual model, not an implementation schema or financial instrument design.
 
 ## Purpose
