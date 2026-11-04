@@ -20,6 +20,10 @@
   --terrain: #5d7a5c;
   --terrain-pale: #e4ebe3;
   --terrain-ink: #2e3d2d;
+  --brand-main: #295d70;
+  --brand-main-wash: #e3edf1;
+  --brand-branch: #c6d68e;
+  --brand-branch-wash: rgba(198, 214, 142, 0.12);
   --brass: #b8955a;
   --brass-pale: #f2eadc;
   --water: #3a6b8c;
@@ -27,6 +31,8 @@
   --danger-pale: #f6e5df;
   --phosphor: #8fd98f;
   --bg-term: #0d110e;
+  --glow-soft: rgba(93, 122, 92, 0.1);
+  --shadow-lift: 0 18px 36px rgba(26, 29, 24, 0.07);
 
   /* Button variant tokens (semantic aliases for existing colors) */
   --steel: var(--water);
@@ -1018,8 +1024,10 @@ a:focus-visible {
   transition: grid-template-columns 180ms ease;
   color: var(--text);
   background:
-    radial-gradient(ellipse at 42% 16%, color-mix(in srgb, var(--terrain-pale) 38%, transparent), transparent 44%),
+    radial-gradient(ellipse at 42% 16%, color-mix(in srgb, var(--terrain-pale) 34%, transparent), transparent 42%),
+    linear-gradient(180deg, rgba(255,255,255,0.35), transparent 18%),
     var(--bg);
+  box-shadow: inset 0 1px rgba(255,255,255,0.36);
 }
 
 .studio-sidebar {
@@ -1034,9 +1042,10 @@ a:focus-visible {
   padding: 24px 15px 15px;
   color: var(--studio-rail-ink);
   background:
-    radial-gradient(ellipse at 0 0, rgb(119 145 116 / 12%), transparent 48%),
-    var(--studio-rail);
+    radial-gradient(ellipse at 0 0, rgb(119 145 116 / 14%), transparent 46%),
+    linear-gradient(180deg, rgba(14, 20, 17, 0.98), rgba(18, 29, 24, 0.96));
   border-right: 1px solid rgb(11 22 15 / 20%);
+  box-shadow: inset -1px 0 0 rgba(255,255,255,0.02);
 }
 
 .studio-sidebar-brand {
@@ -1165,8 +1174,9 @@ a:focus-visible {
 
 .studio-destination.is-active {
   color: #f0eee3;
-  background: linear-gradient(100deg, rgb(214 203 168 / 11%), rgb(214 203 168 / 3%));
-  border-color: rgb(214 203 168 / 14%);
+  background: linear-gradient(90deg, rgba(214, 203, 168, 0.12), rgba(214, 203, 168, 0.04));
+  border-color: rgba(214, 203, 168, 0.16);
+  box-shadow: inset 0 1px rgba(255,255,255,0.05);
 }
 
 .studio-destination.is-active::before {
@@ -1545,6 +1555,10 @@ a:focus-visible {
   min-height: 0;
   overflow: auto;
   padding: clamp(22px, 3.2vw, 48px) clamp(16px, 3vw, 32px);
+  background:
+    radial-gradient(circle at top, rgba(93, 122, 92, 0.06), transparent 36%),
+    linear-gradient(180deg, rgba(255,255,255,0.18), transparent 18%),
+    rgba(245, 246, 242, 0.96);
 }
 
 .studio-content {
@@ -2338,15 +2352,17 @@ a:focus-visible {
   min-width: 0;
   background: var(--bg-elev);
   border: 1px solid var(--border);
+  box-shadow: var(--shadow-lift);
 }
 
 .annals-timeline-panel {
   padding: 16px;
   background:
-    radial-gradient(ellipse at 42% 0, rgb(93 122 92 / 11%), transparent 50%),
-    #111712;
+    radial-gradient(ellipse at 42% 0, rgba(93, 122, 92, 0.16), transparent 52%),
+    linear-gradient(180deg, rgba(16, 23, 18, 0.98), rgba(12, 17, 14, 0.98));
   border-color: rgb(109 125 110 / 30%);
   color: #e8ebe5;
+  box-shadow: 0 14px 26px rgba(9, 15, 11, 0.16);
 }
 
 .annals-panel-heading,
@@ -2558,6 +2574,9 @@ a:focus-visible {
   display: flex;
   flex-direction: column;
   padding: 15px;
+  background:
+    linear-gradient(180deg, rgba(247, 248, 245, 0.96), rgba(239, 243, 239, 0.98));
+  border-color: var(--border);
 }
 
 .annals-inspector-top {
@@ -2644,6 +2663,8 @@ a:focus-visible {
 .annals-sources {
   margin-top: 13px;
   padding: 14px 16px 6px;
+  background:
+    linear-gradient(180deg, rgba(250,251,249,0.96), rgba(242,245,242,0.98));
 }
 
 .annals-sources-heading h2 {
