@@ -128,16 +128,21 @@ export function Workbench() {
 
   useEffect(() => {
     let active = true;
+    const searchParams = new URLSearchParams(window.location.search);
+    const requestedDraftId = searchParams.get('sourceConsoleDraftId');
+    const requestedSignalId = searchParams.get('signal');
     async function load() {
+      let availableDrafts: SchoolNeedDraft[] = [];
+      let availableSignals: FieldSignal[] = [];
       try {
         const snapshot = await loadConsoleSnapshot();
-        const projections = snapshot.tenderDrafts.map(draft => ({
+        availableDrafts = snapshot.tenderDrafts.map(draft => ({
           id: draft.id,
           assetName: draft.assetName,
           need: draft.need,
           assetBuildCost: draft.assetBuildCost,
         }));
-        if (active) setSourceDrafts(projections);
+        if (active) setSourceDrafts(availableDrafts);
       } catch (loadError) {
         if (active) setError(loadError instanceof Error
           ? loadError.message
@@ -145,10 +150,31 @@ export function Workbench() {
       }
 
       try {
-        if (active) setSignals(readFieldSignals());
+        availableSignals = readFieldSignals();
+        if (active) setSignals(availableSignals);
       } catch (loadError) {
         if (active) setError(loadError instanceof Error ? loadError.message : 'Commons observations could not be read.');
       }
+
+      if (requestedDraftId && active) {
+        const draft = availableDrafts.find(item => item.id === requestedDraftId);
+        const signal = requestedSignalId
+          ? availableSignals.find(item => item.id === requestedSignalId)
+          : undefined;
+        if (!draft) {
+          setError('The linked School Console draft is not available in this browser. Choose a current draft to continue.');
+        } else if (requestedSignalId && (!signal || signal.sourceConsoleDraftId !== requestedDraftId)) {
+          setError('The linked Commons signal does not match this Console draft. Review the source records before continuing.');
+        } else {
+          const initialContext: SimulationContext = signal ? {
+            commonsSignalId: signal.id,
+            institutionId: signal.institutionId,
+            ...(signal.assetId && assetsById.has(signal.assetId) ? { assetRecordId: signal.assetId } : {}),
+          } : {};
+          chooseDraft(draft, initialContext);
+        }
+      }
+
       try {
         if (active) setBriefs(readWorkBriefDrafts());
       } catch (loadError) {
@@ -163,7 +189,7 @@ export function Workbench() {
         const saved = readWorkbenchSimulations();
         if (active) {
           setSimulations(saved);
-          if (saved[0]) {
+          if (saved[0] && !requestedDraftId) {
             setSimulation(saved[0]);
             setSource(saved[0].source);
             setPlan(saved[0].plan);
@@ -206,14 +232,16 @@ export function Workbench() {
       : undefined,
   };
 
-  function chooseDraft(draft: SchoolNeedDraft) {
+  function chooseDraft(draft: SchoolNeedDraft, initialContext: SimulationContext = {}) {
     try {
-      const emptyContext: SimulationContext = {};
-      const selected = selectSchoolNeedSource({ tenderDrafts: [draft] }, draft.id, emptyContext);
+      const selected = selectSchoolNeedSource({ tenderDrafts: [draft] }, draft.id, initialContext);
       setSelectedDraftId(draft.id);
-      setContext(emptyContext);
+      setContext(initialContext);
       setSource(selected);
-      setPlan(starterPlan(selected, ''));
+      const institutionLabel = initialContext.institutionId
+        ? institutionsById.get(initialContext.institutionId)?.name ?? ''
+        : '';
+      setPlan(starterPlan(selected, institutionLabel));
       setSimulation(null);
       setError('');
     } catch (selectionError) {

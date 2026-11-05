@@ -1,5 +1,3 @@
-export type StudioEnvironment = 'branch' | 'main';
-
 export type StudioContext =
   | 'annals'
   | 'people'
@@ -13,121 +11,93 @@ export type StudioContext =
   | 'apt-coin-lab';
 
 export type StudioModuleId =
-  | 'annals'
   | 'radar'
+  | 'network'
   | 'undertakings'
   | 'roll'
+  | 'annals'
   | 'apt-coin-lab'
-  | 'people'
-  | 'institutions';
+  ;
 
 export interface StudioNavigationModule {
   id: StudioModuleId;
   label: string;
   href: string;
-  environment: StudioEnvironment;
   contexts: readonly StudioContext[];
 }
 
-export const BRANCH_MODULES: readonly StudioNavigationModule[] = [
-  {
-    id: 'annals',
-    label: 'Annals',
-    href: '/workspace/annals',
-    environment: 'branch',
-    contexts: ['annals'],
-  },
+export const STUDIO_FLOW_MODULES: readonly StudioNavigationModule[] = [
   {
     id: 'radar',
     label: 'Radar',
     href: '/workspace/commons',
-    environment: 'branch',
     contexts: ['commons'],
+  },
+  {
+    id: 'network',
+    label: 'Network',
+    href: '/workspace/people',
+    contexts: ['people', 'institutions', 'capabilities'],
   },
   {
     id: 'undertakings',
     label: 'Undertakings',
     href: '/workspace/workbench',
-    environment: 'branch',
     contexts: ['workbench', 'field-desk'],
   },
   {
     id: 'roll',
     label: 'Roll',
     href: '/workspace/roll',
-    environment: 'branch',
     contexts: ['roll'],
+  },
+];
+
+export const STUDIO_SECONDARY_MODULES: readonly StudioNavigationModule[] = [
+  {
+    id: 'annals',
+    label: 'Annals',
+    href: '/workspace/annals',
+    contexts: ['annals'],
   },
   {
     id: 'apt-coin-lab',
     label: 'APT Coin Lab',
     href: '/workspace/apt-coin-lab',
-    environment: 'branch',
     contexts: ['apt-coin-lab'],
   },
 ];
 
-export const MAIN_MODULES: readonly StudioNavigationModule[] = [
+export const STUDIO_NETWORK_VIEWS = [
   {
-    id: 'people',
-    label: 'People & Crews',
-    href: '/workspace/people',
-    environment: 'main',
-    contexts: ['people', 'capabilities'],
-  },
-  {
-    id: 'institutions',
-    label: 'Institutions & Assets',
+    context: 'institutions',
+    label: 'Institutions & assets',
     href: '/workspace/institutions',
-    environment: 'main',
-    contexts: ['institutions'],
   },
-];
-
-export const STUDIO_MODULES: readonly StudioNavigationModule[] = [
-  ...BRANCH_MODULES,
-  ...MAIN_MODULES,
-];
-
-export function getStudioEnvironmentForContext(context: StudioContext): StudioEnvironment {
-  switch (context) {
-    case 'annals':
-    case 'commons':
-    case 'workbench':
-    case 'field-desk':
-    case 'roll':
-    case 'apt-coin-lab':
-    case 'school-console':
-      return 'branch';
-    case 'people':
-    case 'capabilities':
-    case 'institutions':
-      return 'main';
-    default: {
-      const exhaustiveContext: never = context;
-      throw new Error(`Unsupported Studio context: ${exhaustiveContext}`);
-    }
-  }
-}
+  {
+    context: 'capabilities',
+    label: 'Capabilities & relations',
+    href: '/workspace/institutions/network',
+  },
+] as const;
 
 export function getStudioModuleForContext(context: StudioContext): StudioModuleId | null {
   switch (context) {
-    case 'annals':
-      return 'annals';
     case 'commons':
       return 'radar';
+    case 'people':
+    case 'capabilities':
+    case 'institutions':
+      return 'network';
     case 'workbench':
     case 'field-desk':
       return 'undertakings';
     case 'roll':
       return 'roll';
+    case 'annals':
+      return 'annals';
     case 'apt-coin-lab':
       return 'apt-coin-lab';
-    case 'people':
-    case 'capabilities':
-      return 'people';
-    case 'institutions':
-      return 'institutions';
     case 'school-console':
       return null;
     default: {
@@ -140,11 +110,8 @@ export function getStudioModuleForContext(context: StudioContext): StudioModuleI
 export function getStudioModuleLabel(context: StudioContext): string {
   if (context === 'school-console') return 'School Console';
   const moduleId = getStudioModuleForContext(context);
-  const module = STUDIO_MODULES.find(destination => destination.id === moduleId);
+  const module = [...STUDIO_FLOW_MODULES, ...STUDIO_SECONDARY_MODULES]
+    .find(destination => destination.id === moduleId);
   if (!module) throw new Error(`Studio navigation is missing module "${moduleId}".`);
   return module.label;
-}
-
-export function getStudioEnvironmentHome(environment: StudioEnvironment): string {
-  return environment === 'branch' ? '/workspace/annals' : '/workspace/people';
 }

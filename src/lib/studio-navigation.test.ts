@@ -1,59 +1,34 @@
 import { describe, expect, it } from 'vitest';
 import {
-  BRANCH_MODULES,
-  getStudioEnvironmentForContext,
-  getStudioEnvironmentHome,
+  STUDIO_FLOW_MODULES,
+  STUDIO_NETWORK_VIEWS,
+  STUDIO_SECONDARY_MODULES,
   getStudioModuleForContext,
   getStudioModuleLabel,
-  MAIN_MODULES,
   type StudioContext,
 } from './studio-navigation';
 
-describe('Studio environment navigation', () => {
-  it('keeps Branch destinations distinct from Main destinations', () => {
-    expect(BRANCH_MODULES.map(({ id, label, href }) => ({ id, label, href }))).toEqual([
-      { id: 'annals', label: 'Annals', href: '/workspace/annals' },
+describe('Studio workspace navigation', () => {
+  it('keeps the productive path primary and supporting views secondary', () => {
+    expect(STUDIO_FLOW_MODULES.map(({ id, label, href }) => ({ id, label, href }))).toEqual([
       { id: 'radar', label: 'Radar', href: '/workspace/commons' },
+      { id: 'network', label: 'Network', href: '/workspace/people' },
       { id: 'undertakings', label: 'Undertakings', href: '/workspace/workbench' },
       { id: 'roll', label: 'Roll', href: '/workspace/roll' },
+    ]);
+
+    expect(STUDIO_SECONDARY_MODULES.map(({ id, label, href }) => ({ id, label, href }))).toEqual([
+      { id: 'annals', label: 'Annals', href: '/workspace/annals' },
       { id: 'apt-coin-lab', label: 'APT Coin Lab', href: '/workspace/apt-coin-lab' },
     ]);
 
-    expect(MAIN_MODULES.map(({ id, label, href }) => ({ id, label, href }))).toEqual([
-      { id: 'people', label: 'People & Crews', href: '/workspace/people' },
-      { id: 'institutions', label: 'Institutions & Assets', href: '/workspace/institutions' },
+    expect(STUDIO_NETWORK_VIEWS).toEqual([
+      { context: 'institutions', label: 'Institutions & assets', href: '/workspace/institutions' },
+      { context: 'capabilities', label: 'Capabilities & relations', href: '/workspace/institutions/network' },
     ]);
   });
 
-  it('maps every workspace context to the correct environment', () => {
-    const contexts: StudioContext[] = [
-      'annals',
-      'commons',
-      'workbench',
-      'field-desk',
-      'roll',
-      'apt-coin-lab',
-      'people',
-      'capabilities',
-      'institutions',
-      'school-console',
-    ];
-
-    expect(contexts.map(context => [context, getStudioEnvironmentForContext(context)])).toEqual([
-      ['annals', 'branch'],
-      ['commons', 'branch'],
-      ['workbench', 'branch'],
-      ['field-desk', 'branch'],
-      ['roll', 'branch'],
-      ['apt-coin-lab', 'branch'],
-      ['people', 'main'],
-      ['capabilities', 'main'],
-      ['institutions', 'main'],
-      ['school-console', 'branch'],
-    ]);
-  });
-
-  it('maps module contexts and keeps School Console contextual instead of a destination', () => {
+  it('maps every workspace context to the productive module or its supporting view', () => {
     const contexts: StudioContext[] = [
       'annals',
       'commons',
@@ -74,16 +49,13 @@ describe('Studio environment navigation', () => {
       ['field-desk', 'undertakings'],
       ['roll', 'roll'],
       ['apt-coin-lab', 'apt-coin-lab'],
-      ['people', 'people'],
-      ['capabilities', 'people'],
-      ['institutions', 'institutions'],
+      ['people', 'network'],
+      ['capabilities', 'network'],
+      ['institutions', 'network'],
       ['school-console', null],
     ]);
-    expect(getStudioModuleLabel('school-console')).toBe('School Console');
-  });
 
-  it('uses the environment landing views for the persistent switcher', () => {
-    expect(getStudioEnvironmentHome('branch')).toBe('/workspace/annals');
-    expect(getStudioEnvironmentHome('main')).toBe('/workspace/people');
+    expect(getStudioModuleLabel('school-console')).toBe('School Console');
+    expect(getStudioModuleLabel('institutions')).toBe('Network');
   });
 });

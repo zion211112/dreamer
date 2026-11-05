@@ -2,14 +2,12 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { Link } from 'wouter';
 import { useAuth } from '../lib/auth/hooks';
 import {
-  BRANCH_MODULES,
-  getStudioEnvironmentForContext,
-  getStudioEnvironmentHome,
+  STUDIO_FLOW_MODULES,
+  STUDIO_NETWORK_VIEWS,
+  STUDIO_SECONDARY_MODULES,
   getStudioModuleForContext,
   getStudioModuleLabel,
-  MAIN_MODULES,
   type StudioContext,
-  type StudioEnvironment,
   type StudioModuleId,
 } from '../lib/studio-navigation';
 import { BrandMark } from './BrandMark';
@@ -23,11 +21,8 @@ function ContextIcon({ id }: { id: StudioModuleId }) {
   if (id === 'annals') {
     return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 4h12M4 10h8M4 16h5" /><circle cx="15" cy="10" r="1.5" /><circle cx="12" cy="16" r="1.5" /></svg>;
   }
-  if (id === 'people') {
+  if (id === 'network') {
     return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="7" cy="6.5" r="2.5" /><path d="M2.5 16v-1.2a4.5 4.5 0 0 1 9 0V16zM13 4.5a2.3 2.3 0 0 1 0 4.5m1.5 2a3.8 3.8 0 0 1 3 3.7V16h-3" /></svg>;
-  }
-  if (id === 'institutions') {
-    return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M2.5 7 10 3l7.5 4M4 8v7m4-7v7m4-7v7m4-7v7M2.5 17h15M2.5 7h15" /></svg>;
   }
   if (id === 'radar') {
     return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" /><circle cx="10" cy="10" r="3" /><path d="m10 10 5-5M10 2v2m8 6h-2" /></svg>;
@@ -43,92 +38,57 @@ function ContextIcon({ id }: { id: StudioModuleId }) {
 
 function StudioLinks({
   currentContext,
-  environment,
   onNavigate,
 }: {
   currentContext: StudioContext;
-  environment: StudioEnvironment;
   onNavigate?: () => void;
 }) {
   const activeModule = getStudioModuleForContext(currentContext);
-  const modules = environment === 'branch' ? BRANCH_MODULES : MAIN_MODULES;
+  function renderModule(module: (typeof STUDIO_FLOW_MODULES)[number] | (typeof STUDIO_SECONDARY_MODULES)[number]) {
+    const isActive = activeModule === module.id;
+    const isCurrent = currentContext === module.contexts[0];
 
-  return (
-    <nav
-      aria-label={`${environment === 'branch' ? 'Branch' : 'Main'} navigation`}
-      className="studio-destinations"
-    >
-      {modules.map(module => {
-        const isActive = activeModule === module.id;
-        const isCurrent = currentContext === module.contexts[0];
-
-        return (
-          <div className="studio-destination-group" key={module.id}>
-            <Link
-              aria-label={module.label}
-              aria-current={isCurrent ? 'page' : isActive ? 'location' : undefined}
-              className={`studio-destination${isActive ? ' is-active' : ''}`}
-              href={module.href}
-              onClick={onNavigate}
-              title={module.label}
-            >
-              <span aria-hidden="true" className="studio-destination-icon"><ContextIcon id={module.id} /></span>
-              <span className="studio-destination-label">{module.label}</span>
-            </Link>
-            {module.id === 'people' && (
-              <div className="studio-subdestinations">
-                <Link
-                  aria-current={currentContext === 'capabilities' ? 'page' : undefined}
-                  className={`studio-subdestination${currentContext === 'capabilities' ? ' is-active' : ''}`}
-                  href="/workspace/institutions/network"
-                  onClick={onNavigate}
-                  title="Capabilities & relations"
-                >
-                  Capabilities & relations
-                </Link>
-              </div>
-            )}
+    return (
+      <div className="studio-destination-group" key={module.id}>
+        <Link
+          aria-label={module.label}
+          aria-current={isCurrent ? 'page' : isActive ? 'location' : undefined}
+          className={`studio-destination${isActive ? ' is-active' : ''}`}
+          href={module.href}
+          onClick={onNavigate}
+          title={module.label}
+        >
+          <span aria-hidden="true" className="studio-destination-icon"><ContextIcon id={module.id} /></span>
+          <span className="studio-destination-label">{module.label}</span>
+        </Link>
+        {module.id === 'network' && (
+          <div className="studio-subdestinations">
+            {STUDIO_NETWORK_VIEWS.map(view => (
+              <Link
+                aria-current={currentContext === view.context ? 'page' : undefined}
+                className={`studio-subdestination${currentContext === view.context ? ' is-active' : ''}`}
+                href={view.href}
+                key={view.context}
+                onClick={onNavigate}
+                title={view.label}
+              >
+                {view.label}
+              </Link>
+            ))}
           </div>
-        );
-      })}
-    </nav>
-  );
-}
-
-function EnvironmentSwitcher({
-  currentEnvironment,
-  onNavigate,
-}: {
-  currentEnvironment: StudioEnvironment;
-  onNavigate?: () => void;
-}) {
-  return (
-    <div aria-label="Working environment" className="studio-environment-switcher">
-      <span className="studio-environment-label">ENVIRONMENT</span>
-      <div className="studio-environment-options">
-        {(['branch', 'main'] as const).map(environment => {
-          const label = environment === 'branch' ? 'Branch' : 'Main';
-          const selected = currentEnvironment === environment;
-          return (
-            <Link
-              aria-current={selected ? 'page' : undefined}
-              aria-label={`${label} environment${selected ? ', current' : ''}`}
-              className={`studio-environment-option${selected ? ' is-active' : ''}`}
-              href={getStudioEnvironmentHome(environment)}
-              key={environment}
-              onClick={onNavigate}
-              title={`Switch to ${label}`}
-            >
-              <span className="studio-environment-full">{label}</span>
-              <span aria-hidden="true" className="studio-environment-short">{environment === 'branch' ? 'BR' : 'MA'}</span>
-            </Link>
-          );
-        })}
+        )}
       </div>
-      <span className="studio-environment-caption">
-        {currentEnvironment === 'branch' ? 'Annals · work in motion' : 'Canon · current records'}
-      </span>
-    </div>
+    );
+  }
+
+  return (
+    <nav aria-label="Workspace navigation" className="studio-destinations">
+      {STUDIO_FLOW_MODULES.map(renderModule)}
+      <div className="studio-secondary-destinations">
+        <span className="studio-secondary-label">History & research</span>
+        {STUDIO_SECONDARY_MODULES.map(renderModule)}
+      </div>
+    </nav>
   );
 }
 
@@ -174,7 +134,6 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
   const [sidebarPreference, setSidebarPreference] = useState(readSidebarPreference);
   const drawerRef = useRef<HTMLDialogElement>(null);
   const activeContext = currentContext === 'field-desk' ? 'workbench' : currentContext;
-  const currentEnvironment = getStudioEnvironmentForContext(currentContext);
   const showIdentity = activeContext !== 'workbench' && activeContext !== 'school-console' && !!profile;
   const profileName = showIdentity ? profile?.display_name || '' : '';
   const sidebarCollapsed = sidebarPreference.collapsed;
@@ -246,12 +205,11 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
           <p className="studio-sidebar-notice" role="status">{sidebarPreference.notice}</p>
         )}
 
-        <div className="studio-nav-label">{currentEnvironment === 'branch' ? 'Branch / Annals' : 'Main / Canon'}</div>
-        <StudioLinks currentContext={currentContext} environment={currentEnvironment} />
+        <div className="studio-nav-label">The productive path</div>
+        <StudioLinks currentContext={currentContext} />
 
         <div className="studio-sidebar-bottom">
           {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} open={identityOpen} />}
-          <EnvironmentSwitcher currentEnvironment={currentEnvironment} />
           <div className="studio-session-indicator">
             <span>BROWSER-LOCAL DEMO</span>
           </div>
@@ -273,7 +231,7 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
         </button>
         <BrandMark className="studio-mobile-brand" size="sm" />
         <span className="studio-mobile-current">
-          {currentEnvironment === 'branch' ? 'BRANCH' : 'MAIN'} / {getStudioModuleLabel(activeContext)}
+          WORKSPACE / {getStudioModuleLabel(activeContext)}
         </span>
         {showIdentity && (
           <button
@@ -319,15 +277,10 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
               type="button"
             >×</button>
           </header>
-          <div className="studio-nav-label">{currentEnvironment === 'branch' ? 'Branch / Annals' : 'Main / Canon'}</div>
-          <StudioLinks
-            currentContext={currentContext}
-            environment={currentEnvironment}
-            onNavigate={() => setMobileOpen(false)}
-          />
+          <div className="studio-nav-label">The productive path</div>
+          <StudioLinks currentContext={currentContext} onNavigate={() => setMobileOpen(false)} />
           <div className="studio-sidebar-bottom">
             {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} open={identityOpen} />}
-            <EnvironmentSwitcher currentEnvironment={currentEnvironment} onNavigate={() => setMobileOpen(false)} />
             <div className="studio-session-indicator">
               <span>BROWSER-LOCAL DEMO</span>
             </div>
