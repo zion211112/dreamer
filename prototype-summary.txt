@@ -1,9 +1,0 @@
-=== APT-LABS Glassmorphism Auth Prototype ===
-This document provides a complete implementation guide for the Glassmorphism architecture design concept for the APT-LABS sign-up/sign-in pages.
-
-Key Features Demonstrated:
-1. Glassmorphism container design with backdrop blur
-2. Evidence state progression (Declared → Supported → Confirmed → Verified)
-3. Demo user quick-login functionality
-4. Modern form validation and UX
-5. Responsive design for mobile/web presentations
