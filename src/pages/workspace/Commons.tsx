@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { useLocation } from 'wouter';
 import { WorkspaceLayout } from './WorkspaceLayout';
+import { PageHead } from '../../components/PageHead';
 import { EXAMPLE_FIELD_SIGNALS } from '../../lib/ecosystem-examples';
 import { WORK_OPPORTUNITIES } from '../../lib/local-workbench';
 import { PEOPLE_NETWORK } from '../../lib/people-network';
@@ -358,11 +359,11 @@ export function Commons() {
   return (
     <WorkspaceLayout currentContext="commons">
       <div className="signal-desk">
-        <header className="signal-desk-head">
-          <div>
-            <p className="eyebrow">COMMONS / RADAR KWA GROUND</p>
-            <h1>Signals from the ground</h1>
-          </div>
+        <div className="signal-desk-head">
+          <PageHead
+            eyebrow="COMMONS / RADAR KWA GROUND"
+            title="Signals from the ground"
+          />
           <div className="signal-head-actions">
             <div className="commons-contribute">
               <button
@@ -401,7 +402,7 @@ export function Commons() {
               )}
             </div>
           </div>
-        </header>
+        </div>
 
         <nav className="commons-modebar" aria-label="Commons views">
           <button

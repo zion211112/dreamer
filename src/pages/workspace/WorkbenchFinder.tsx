@@ -19,6 +19,7 @@ import {
 } from '../../lib/workbench-interest';
 import { WorkbenchOpportunityBrowser, type WorkbenchFinderView } from '../../components/workbench/WorkbenchOpportunityBrowser';
 import { WorkspaceLayout } from './WorkspaceLayout';
+import { PageHead } from '../../components/PageHead';
 
 interface ProposalWorkBrief {
   proposal: CommonsProposal;
@@ -193,15 +194,13 @@ export function WorkbenchFinder() {
   return (
     <WorkspaceLayout currentContext="workbench">
       <div className="workbench-finder-page">
-        <header className="workbench-finder-head">
-          <div>
-            <p className="eyebrow">WORKBENCH / BROWSER-LOCAL EXAMPLES</p>
-            <h1>{proposalId ? 'Prepare the work' : 'Find work'}</h1>
-            <p>{proposalId
-              ? 'Turn an approved proposal into a scoped local draft.'
-              : 'Explore work contexts and signal interest without committing to work.'}</p>
-          </div>
-        </header>
+        <PageHead
+          eyebrow="WORKBENCH / BROWSER-LOCAL EXAMPLES"
+          title={proposalId ? 'Prepare the work' : 'Find work'}
+          subtitle={proposalId
+            ? 'Turn an approved proposal into a scoped local draft.'
+            : 'Explore work contexts and signal interest without committing to work.'}
+        />
         {loading && <p className="workbench-finder-loading" role="status">Loading local interest…</p>}
         {!loading && (
           proposalId ? (

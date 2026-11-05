@@ -17,7 +17,17 @@
       "Read(//c/Users/zION/Documents/dreamer/src/**)",
       "Bash(grep -r \"data-env\" /c/Users/zION/Documents/dreamer/src)",
       "Bash(ls -la /c/Users/zION/Documents/dreamer/src/test)",
-      "Read(//c/Users/zION/Documents/dreamer/src/test/**)"
+      "Read(//c/Users/zION/Documents/dreamer/src/test/**)",
+      "Read(//c/c/Users/zION/Documents/dreamer/**)"
+    ],
+    "deny": [
+      "Bash(npx *)"
+    ],
+    "ask": [
+      "Bash(npm *)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\zION\\.claude"
     ]
   }
 }

@@ -129,7 +129,7 @@
     {
       "file": "src/styles.css",
       "token": "--l1-font",
-      "currentValue": "Georgia, Times, serif",
+      "currentValue": "Georgia, \"Times New Roman\", serif",
       "usageContext": "Record serif — page and record names (h1 25px/1.1)"
     },
     {
@@ -141,7 +141,7 @@
     {
       "file": "src/styles.css",
       "token": "--l3-font",
-      "currentValue": "Cascadia Code, SF Mono, Consolas, monospace",
+      "currentValue": "\"JetBrains Mono\", \"SFMono-Regular\", Consolas, monospace",
       "usageContext": "Instrument readout — IDs, timestamps, counts, state labels"
     },
     {
@@ -153,43 +153,43 @@
     {
       "file": "src/styles.css",
       "token": "--space-1",
-      "currentValue": "4px",
-      "usageContext": "Base spacing unit (Fibonacci)"
+      "currentValue": "8px",
+      "usageContext": "Base spacing unit"
     },
     {
       "file": "src/styles.css",
       "token": "--space-2",
-      "currentValue": "8px",
+      "currentValue": "16px",
       "usageContext": "2× base"
     },
     {
       "file": "src/styles.css",
       "token": "--space-3",
-      "currentValue": "12px",
+      "currentValue": "24px",
       "usageContext": "3× base"
     },
     {
       "file": "src/styles.css",
       "token": "--space-4",
-      "currentValue": "16px",
+      "currentValue": "32px",
       "usageContext": "4× base"
     },
     {
       "file": "src/styles.css",
       "token": "--space-5",
-      "currentValue": "24px",
+      "currentValue": "40px",
       "usageContext": "5× base"
     },
     {
       "file": "src/styles.css",
       "token": "--space-6",
-      "currentValue": "32px",
+      "currentValue": "48px",
       "usageContext": "6× base"
     },
     {
       "file": "src/styles.css",
       "token": "--space-7",
-      "currentValue": "48px",
+      "currentValue": "56px",
       "usageContext": "7× base"
     },
     {
@@ -201,8 +201,26 @@
     {
       "file": "src/styles.css",
       "token": "--space-9",
-      "currentValue": "96px",
+      "currentValue": "72px",
       "usageContext": "9× base"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--space-10",
+      "currentValue": "80px",
+      "usageContext": "10× base"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--space-11",
+      "currentValue": "88px",
+      "usageContext": "11× base"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--space-12",
+      "currentValue": "96px",
+      "usageContext": "12× base"
     },
     {
       "file": "src/styles.css",
