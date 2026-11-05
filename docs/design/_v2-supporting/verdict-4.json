@@ -1,0 +1,59 @@
+{
+  "refuted": [
+    {
+      "point": "StudioContext type includes 'school-console' as a sixth context value ('commons' | 'network' | 'workbench' | 'records' | 'intelligence' | 'school-console')",
+      "why": "Charter §4 hard navigation constraints: 'No sixth primary module unless a genuinely independent user job cannot fit into the five.' User ruling #2: 'Make the shell genuinely minimal. Five modules, one workspace, one shared graph.' School Console is explicitly an operational boundary under Workbench, not a separate module or context. Adding it to StudioContext makes it a sixth rail item or parallel navigation target, violating the five-module constraint.",
+      "fix": "Remove 'school-console' from StudioContext type. School Console should only appear as a Workbench sidebar destination, not as a StudioContext value. The route /workspace/workbench/school-console handles it without polluting the module context enum."
+    },
+    {
+      "point": "Records module page head has a three-way lens switcher (Canon | Annals | Roll) as primary navigation in the page head",
+      "why": "Charter §5: 'They must remain conceptually distinct while being navigable together.' User ruling #3: 'Do not force every page into an identical four-metric header. Establish one hierarchy and let the information determine how much of it appears. Consistency must not become ceremony.' A prominent lens switcher in the page head risks becoming a 'workspace-within-workspace' (Charter §4: 'No workspace-within-workspace architecture unless an actual permission or operational boundary requires it') and ritualizes the page head across different jobs.",
+      "fix": "Make lens switching contextual and lightweight — e.g., a segmented control or tab bar within the Records module's main surface, not a page-head fixture. Deep links via ?lens=annals|roll are fine. The page head should show Canon/Annals/Roll metrics only when they drive decisions, not as a permanent header element."
+    },
+    {
+      "point": "Page head shows metrics on Records (Canon head, Annals event count, Roll entry count) and Workbench (simulation stage) as a sign-off test",
+      "why": "User ruling #3 explicitly: 'Do not force every page into an identical four-metric header.' Charter §8 anti-slop: 'Decorative metrics with no operational meaning.' Metrics in page heads must be decision-driving, not decorative. Records Canon head count, Annals event count, and Roll entry count are inventory metrics — they don't inherently drive decisions unless the user is actively triaging. Workbench simulation stage is operational but shouldn't be forced into a header ritual.",
+      "fix": "Remove 'page head shows metrics' as a universal requirement. Only show metrics where they directly inform the immediate decision (e.g., Workbench simulation stage during active simulation, Roll evidence gaps when substantiating a claim). Make metric presence conditional on the job, not the module."
+    },
+    {
+      "point": "Sidebar shows 'context destinations within the active module' — e.g., Network shows People/Institutions/Capabilities as separate sidebar items",
+      "why": "Charter §4 hard constraint: 'No duplicate navigation systems inside individual pages.' Current repo-facts show Network module already has contexts: people, institutions, capabilities. Making these sidebar destinations creates a second navigation layer (rail = module, sidebar = sub-module) that duplicates the module-switching job. The charter says rail = module switcher (one job), sidebar = context navigator within module (one job) — but if 'context navigator' means 'switch between People/Institutions/Capabilities', that's effectively module switching by another name.",
+      "fix": "Sidebar should show *contextual* destinations (filters, views, actions relevant to the current entity/work), not *structural* sub-modules. People/Institutions/Capabilities are better handled as inline tabs, filters, or view modes within the Network module's main surface, not as persistent sidebar navigation items that mirror the rail's job."
+    },
+    {
+      "point": "Inspector shows 'selected record/event context' and Dock shows 'change-set/evidence/reconciliation for active context' as separate panes for all modules",
+      "why": "Charter §4: 'Shell chrome must contain no competing navigation systems: topbar, rail, sidebar, inspector, and dock each have exactly one job.' Current repo-facts: 'Current WorkspaceShell.tsx has inspector + dock + sidebar all showing overlapping links. StudioNavigation.tsx rail + sidebar duplicate module switching.' The proposal keeps inspector and dock as permanent shell chrome for all modules, but repo-facts confirm 'NOT present: record-level inspector, change-set/ledger dock'. Only Records and Intelligence genuinely need persistent inspection (Charter §4: 'Records may be a primary destination, but its underlying functions... must also appear contextually throughout the product'). Forcing inspector/dock on Commons, Network, Workbench creates empty chrome.",
+      "fix": "Make inspector and dock *contextual* — they appear only when a record/event/change-set is selected and only for modules that need them (Records, Intelligence, Workbench during simulation). Hide them entirely for Commons and Network. This avoids 'competing navigation systems' and empty chrome."
+    },
+    {
+      "point": "Fork glyph appears in Records lens=Canon when viewing a proposed change-set, Workbench when simulation diverges, and dock/commit list",
+      "why": "User ruling #1: 'The fork glyph may remain as an identity element.' Charter §8: 'The surveyor's grid, evidence markers, branch/fork glyph, and instrument readouts are signature devices. Spend visual emphasis selectively.' The proposal correctly restricts fork glyph to proposed change-sets, not as environment switcher. However, placing it in 'dock/commit list showing proposed commits' risks making it a persistent chrome element rather than a contextual identity marker on the specific divergent record.",
+      "fix": "Restrict fork glyph to the specific proposed change-set record view (in Records Canon lens) and the active Workbench simulation surface when diverged. Remove from generic dock/commit list — that becomes a navigation element, not an identity device."
+    },
+    {
+      "point": "Build order step 7: 'Refactor WorkspaceShell.tsx: single rail (5 modules), sidebar (context destinations), inspector (record/event only), dock (change-set/evidence/reconciliation)'",
+      "why": "This step locks in the problematic inspector/dock as permanent shell chrome for all modules (see point above). The charter says inspector/dock each have 'exactly one job' — but that job is *contextual inspection*, not *permanent pane*. Making them always-present shell chrome violates 'no competing navigation systems' and creates the empty-chrome problem repo-facts already identifies.",
+      "fix": "Refactor WorkspaceShell.tsx to make inspector and dock *conditional* components that mount only when a record/event/change-set is selected in a module that supports it. Default shell = topbar + rail + sidebar + main. Inspector/dock = ephemeral overlays or side-sheets triggered by selection."
+    },
+    {
+      "point": "Sign-off test: 'Charter's twelve never-equate distinctions are visible in changeset state labels (e.g., PROPOSED≠ACCEPTED, IN_REVIEW≠AUTHORIZED)'",
+      "why": "Charter §3 lists 12 never-equate distinctions. The proposal's state machine (DRAFT → PROPOSED → IN_REVIEW → (PENDING_AUTHORIZATION | PENDING_EVIDENCE) → ACCEPTED | REJECTED | AMENDED) only surfaces ~4 of them explicitly. Claiming all 12 are 'visible in changeset state labels' overstates what a state machine can convey — many distinctions (Person≠Asset, Capability≠Credential, Reputation≠Trust, Record≠Truth, Visibility≠Permission, AI suggestion≠institutional decision) are domain modeling concerns, not changeset state labels.",
+      "fix": "Revise sign-off test: changeset state machine must correctly model the work-progression distinctions (Claim≠Evidence, Recommendation≠Approval≠Authorization, Execution≠Acceptance, Acceptance≠Settlement). The other 8 distinctions must be preserved in domain types, permission models, and evidence presentation — not forced into changeset labels."
+    }
+  ],
+  "salvage": [
+    "Five modules: Commons, Network, Workbench, Records, Intelligence — correct per Charter §4",
+    "Module map mappings: Radar→Commons, Network→Network, Undertakings→Workbench, Roll+Annals→Records (three lenses), APT Coin Lab→Intelligence — correct per Charter §4-5",
+    "School Console as Workbench-scoped operational boundary at /workspace/workbench/school-console — correct per Charter §4 (workspace-within-workspace only for actual operational boundary)",
+    "Records model: Canon = entity graph with typed relationships backed by RollEntry.hash_anchor; Annals = WorkEvent chronology from local-workflows + workbench-simulation; Roll = evidence substantiation with hash anchors, evidence layers, acceptance — correct per Charter §5 and repo-facts",
+    "Lens selector as three-way switcher in Records module (Canon|Annals|Roll) with deep-linkable URLs (?lens=) — correct per Charter §5 'navigable together'",
+    "Changeset state machine: DRAFT → PROPOSED → IN_REVIEW → (PENDING_AUTHORIZATION | PENDING_EVIDENCE) → ACCEPTED | REJECTED | AMENDED — correctly maps Workbench simulation stages + WorkEvent states + Roll acceptance",
+    "Fork glyph placement restricted to: (a) Records Canon lens on proposed change-set, (b) Workbench simulation divergence, (c) Dock/commit list for proposed commits — correctly implements User ruling #1 (not an environment switcher)",
+    "Shell chrome job separation: Topbar (brand+search+identity), Rail (5 modules), Sidebar (context destinations), Main (work surface) — correct per Charter §4",
+    "Removal of WorkspaceContextSwitcher.tsx and Main/Branch switcher — correct per User ruling #1",
+    "Redirects for /workspace/annals → /workspace/records?lens=annals and /workspace/apt-coin-lab → /workspace/intelligence — correct route migration",
+    "Build order steps 1-6, 8-11 are sound incremental implementation steps",
+    "Stance 'domain-first' and thesis correctly summarize the consolidation"
+  ],
+  "score": 6
+}

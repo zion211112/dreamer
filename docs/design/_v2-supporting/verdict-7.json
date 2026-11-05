@@ -1,0 +1,63 @@
+{
+  "salvage": [
+    "Five-module structure (Commons, Network, Workbench, Records, Intelligence) aligned with charter §4 — correct module count and jobs",
+    "Collapsing 7 current labels (Radar, Network, Undertakings, Roll, Annals, APT Coin Lab, School Console) into 5 modules — correct consolidation",
+    "Records as single module with three lenses (Canon, Annals, Roll) over shared ledger — directly implements charter §5",
+    "Removing Main/Branch switcher — implements user ruling #1",
+    "Removing duplicate navigation (dock static tabs Source/Related/History + ↗ link tray) — implements user ruling #2",
+    "Contextual record inspector (replaces static module-context text) — correct inspector pattern",
+    "Changeset/evidence dock for active proposal (replaces static tabs) — correct dock pattern",
+    "Real statusbar with head/sync/demo state (replaces static demo text) — correct statusbar pattern",
+    "Dark semantic palette roles (green-black, bone, moss, teal, lime, coral, amber) — implements charter §8",
+    "Type stacks Georgia/Inter/JetBrains Mono — preserves existing verified tokens (repo-facts)",
+    "Fork glyph as visual identity element (not navigation) — implements user ruling #1",
+    "Route migration plan: /workspace/network/{people,institutions,capabilities}, /workspace/records/{canon,annals,roll}, /workspace/intelligence/coin-lab — correct structure",
+    "Roll lens first (hash anchors, evidence layers, acceptance block complete in RollEntry) — verified by repo-facts",
+    "Changeset state machine with authority visibility at each transition — correct direction for charter §3/§7",
+    "School Console as operational boundary (conceptually) — valid per charter §4 exception",
+    "Metrics only where they drive decisions (not forced four-metric header) — implements user ruling #3"
+  ],
+  "score": 6,
+  "refuted": [
+    {
+      "point": "Records module \"lens switcher (Canon/Annals/Roll) in page head\"",
+      "why": "Charter §9: \"Do not force symmetry where the underlying work is asymmetric. Do not confuse visual consistency with identical layouts for different jobs.\" User ruling #3: \"Do not force every page into an identical four-metric header. Establish one hierarchy and let the information determine how much of it appears.\" A fixed lens-switcher in the page head ritualizes the page head across modules with fundamentally different jobs (discovery vs connection vs coordination vs inspection vs analysis).",
+      "fix": "Make the lens switcher a contextual element within Records module content area (e.g., inline segment control near the ledger), not a fixed page-head component. Let each module compose its page head from its actual information hierarchy."
+    },
+    {
+      "point": "Network module sidebar context switcher (people/institutions/capabilities) as persistent sidebar element",
+      "why": "User ruling #2: \"The sidebar, topbar, inspector, and dock must not each become separate navigation systems.\" Charter §4: \"No duplicate navigation systems inside individual pages.\" A persistent sidebar that switches Network sub-contexts becomes a second navigation system alongside the rail.",
+      "fix": "Make Network context switching a transient inline control (dropdown in page head or inline segment control) rather than a persistent sidebar component. Collapse sidebar entirely when no contextual inspector/dock is active."
+    },
+    {
+      "point": "Changeset state machine claims to preserve all 12 charter §3 distinctions but only maps 9",
+      "why": "Charter §3 lists 12 \"never silently equate\" distinctions. Proposal maps 9 (workflow lifecycle: draft≠proposed, proposed≠in_review, in_review≠pending_authorization, pending_authorization≠authorized, authorized≠in_execution, in_execution≠pending_acceptance, pending_acceptance≠accepted, accepted≠amended, accepted≠settled). Missing: Person≠Asset, Capability≠Credential, Claim≠Evidence, Reputation≠Trust, Record≠Truth, Visibility≠Permission, AI suggestion≠institutional decision (7 distinctions).",
+      "fix": "Clarify that the state machine preserves the 5-6 workflow-relevant distinctions (Approval≠Authorization, Authorization≠Execution, Execution≠Acceptance, Acceptance≠Settlement). The other 6-7 distinctions must be preserved in domain modeling, permissions, and UI patterns elsewhere — not in this state machine."
+    },
+    {
+      "point": "School Console route contradiction — not actually nested under Network",
+      "why": "Module Map: \"School Console=nested boundary under Network→Institutions (operational-boundary exception per §4).\" Sign-off test: \"School Console remains at /workspace/institutions/school-console as nested boundary.\" But Network module routes are /workspace/network/{people,institutions,capabilities}. School Console at /workspace/institutions/school-console is a different route tree, not nested under /workspace/network/institutions. Charter §4: \"No workspace-within-workspace architecture unless an actual permission or operational boundary requires it.\"",
+      "fix": "Either move School Console to /workspace/network/institutions/school-console (true nesting under Network) or acknowledge it as a separate operational boundary with its own route tree, not \"under Network→Institutions.\""
+    },
+    {
+      "point": "Page head template \"eyebrow/module → h1/record name → subtitle → metrics only where they drive decisions\" forces symmetry across asymmetric jobs",
+      "why": "Charter §9: \"Do not force symmetry where the underlying work is asymmetric. Do not confuse visual consistency with identical layouts for different jobs.\" User ruling #3: \"Do not force every page into an identical four-metric header.\" Commons (discovery), Network (connection), Workbench (coordination), Records (inspection), Intelligence (analysis) have fundamentally different information hierarchies. A single template creates ceremony.",
+      "fix": "Define page head as a flexible pattern, not a template. Each module declares its own page head composition: Records needs lens context; Network needs no eyebrow; Workbench needs work-status; Commons needs search/filters; Intelligence needs model-selector."
+    },
+    {
+      "point": "Specific hex values for dark palette (--paper #0b110f, --ink #edf4ec, etc.) overfit to visual identity before interaction principles validated",
+      "why": "Charter §8 defines semantic color roles (green-black, bone, moss, teal, lime, coral, amber) not hex values. Charter §9: \"Do not overfit to a reference product. Extract its useful interaction principle, not its visual identity.\" User ruling #4: \"The dark palette is not the product identity by itself. The identity is the combination of economic records, temporal continuity, evidence, relationships, and operational precision.\" Committing to exact hex values in direction memo overconstrains visual identity.",
+      "fix": "Specify semantic color roles, contrast requirements (WCAG AA), and token naming (--paper, --ink, --muted, --dim, --teal, --lime, --coral, --amber). Defer exact hex values to design system implementation with accessibility verification across light/dark."
+    },
+    {
+      "point": "Fork glyph described as \"identity device for proposed change-set\" exceeds user ruling",
+      "why": "User ruling #1: \"A branch is a change-set or proposed state, not a separate workspace. The fork glyph may remain as an identity element.\" Proposal: \"Fork glyph attaches at proposed (identity device for proposed change-set)\" and \"Fork glyph is identity only (per user ruling), not navigation.\" Charter §8: \"surveyor's grid, evidence markers, branch/fork glyph, and instrument readouts are signature devices.\" The fork glyph is a visual signature element (brand mark), not a functional identity device for change-sets.",
+      "fix": "Clarify fork glyph is a visual signature element that appears in proposed-state contexts (like a watermark or corner mark), not a functional identity device. Remove \"identity device for proposed change-set\" language."
+    },
+    {
+      "point": "Intelligence module with only coin-lab context may not justify a primary module",
+      "why": "Charter §4: \"No sixth primary module unless a genuinely independent user job cannot fit into the five.\" Repo-facts: AptCoinLab is a \"static research page.\" Intelligence module has only one context (coin-lab). The charter defines Intelligence as \"use agents, graph analysis, matching, forecasting, and analytics to interpret and improve the system\" — but with one static context, it may not yet be a genuine independent user job.",
+      "fix": "Either demonstrate multiple Intelligence contexts (graph explorer, matching workbench, forecasting desk, analytics dashboard) that justify a primary module, or defer Intelligence module and make coin-lab a contextual view within Workbench or Records until more contexts exist."
+    }
+  ]
+}

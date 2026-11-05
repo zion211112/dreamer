@@ -1,0 +1,120 @@
+{
+  "score": 4,
+  "refuted": [
+    {
+      "point": "data-env tokens assumed in proposal (e.g., '[data-env] tokens')",
+      "why": "grep of src/ finds zero occurrences; repo-facts.md line 56: 'No [data-env] blocks and no dark signature palette exist in src yet (grep-verified)'",
+      "fix": "Remove all references to [data-env]; the token system is class-based (.dark override) today"
+    },
+    {
+      "point": "cross-module event stream assumed as existing or buildable",
+      "why": "repo-facts.md line 83: 'No unified cross-module event stream (Annals page says so in its own context text)'",
+      "fix": "State explicitly: cross-module event stream is a PRECONDITION for Intelligence, not a current capability"
+    },
+    {
+      "point": "Intelligence module exists or can render UI",
+      "why": "repo-facts.md line 82: 'No Intelligence module; AptCoinLab is a static research page.'",
+      "fix": "Keep Intelligence as declared placeholder ONLY; no interactive UI until 5 preconditions met"
+    },
+    {
+      "point": "splitters/resizable panes in WorkspaceShell",
+      "why": "repo-facts.md line 45: 'NOT present: splitters/resizable panes, record-level inspector, change-set/ledger dock, environment switcher, surveyor grid, fork glyph'",
+      "fix": "Remove splitter assumptions; shell uses CSS collapse/expand only"
+    },
+    {
+      "point": "record-level inspector exists",
+      "why": "repo-facts.md line 45: 'NOT present: record-level inspector'; WorkspaceShell.tsx lines 157-166 shows inspector only for roll/apt-coin-lab with static text",
+      "fix": "Inspector must be built from scratch as record-detail pane"
+    },
+    {
+      "point": "change-set/ledger dock exists",
+      "why": "repo-facts.md line 41: 'Dock: three static per-module text tabs — Source / Related modules / History — plus a navigation duplicate of the rail'",
+      "fix": "Dock must be rewritten as cross-module change-set ledger + evidence tray"
+    },
+    {
+      "point": "time scrubber over canonical heads (M-042, M-039) in Network",
+      "why": "NetworkMap.tsx is a column-layout People-only view (person/crew/asset); no time dimension; M-042/M-039 are RollEntry hash anchors, not graph heads; repo-facts.md line 84: 'No general graph explorer (NetworkMap is a People-specific force-directed graph) — actually column layout'",
+      "fix": "Time scrubber requires Annals unified event stream (precondition); NetworkMap must be extended to 6 entity types first"
+    },
+    {
+      "point": "17 relationship-kind filters in NetworkMap",
+      "why": "NetworkMap.tsx has NO filters — renders all relationships; PEOPLE_RELATIONSHIPS has 34 edges with 17 kinds but no UI to filter",
+      "fix": "Relationship-kind filter UI must be built from scratch"
+    },
+    {
+      "point": "entity-type color coding for 6 types (person/crew/asset/work/institution/evidence)",
+      "why": "NetworkMap.tsx lines 35-39, 88-98: only PRIMARY_ENTITY_TYPES (person/crew/asset) rendered; work/institution/evidence excluded from map",
+      "fix": "Extend NetworkMap to render all 6 entity types with distinct color coding"
+    },
+    {
+      "point": "global search (Ctrl+K) in topbar",
+      "why": "No search component exists; StudioNavigation.tsx topbar has only brand, context, demo badge, sidebar toggle, profile",
+      "fix": "Global search must be built from scratch"
+    },
+    {
+      "point": "WorkspaceShell is tracked/wired",
+      "why": "repo-facts.md line 34: 'WorkspaceShell (untracked, ~280 lines — VERIFIED by direct read)'; git status shows WorkspaceShell.tsx as ?? (untracked)",
+      "fix": "Must add WorkspaceShell.tsx to git before any shell rewrite"
+    },
+    {
+      "point": "dark signature palette tokens exist (--env-green-black, --text-bone, --text-moss, --state-teal, --state-lime, --state-coral, --state-amber)",
+      "why": "grep of src/ for these tokens returns zero matches; repo-facts.md line 50-53 shows light-first tokens only",
+      "fix": "S1 must CREATE these tokens from scratch in :root"
+    },
+    {
+      "point": "S3 sign-off: WorkspaceShell renders five panes with collapse persistence at all five routes",
+      "why": "Current shell has no inspector for commons/network/workbench/people/institutions/capabilities (moduleOwnsInspector=true); dock is static tabs; no statusbar module consistency",
+      "fix": "S3 must rewrite inspector to be record-level for ALL modules, dock to change-set ledger, statusbar to consistent format"
+    },
+    {
+      "point": "S4 sign-off: /workspace/commons shows spatial canvas with ≥3 signal types, triage state transitions work, promote button creates Workbench draft",
+      "why": "RadarSpatialPanel.tsx uses mock provider (line 20), only 2 EXAMPLE_FIELD_SIGNALS (both illustrative), NO triage state transitions (signalStages array is display-only), NO promote-to-workbench action",
+      "fix": "Commons hero needs real signal store, triage state machine, promote action wiring"
+    },
+    {
+      "point": "S5 sign-off: /workspace/network renders force-directed graph with 6 entity types color-coded, relationship filter works, time scrubber shows graph at M-042 vs M-039",
+      "why": "NetworkMap is column layout (not force-directed), renders 3/6 entity types, no filters, no time scrubber; M-042/M-039 don't exist as graph heads",
+      "fix": "Network hero needs full rewrite: force-directed layout, 6 entity types, relationship filters, time scrubber (requires Annals event stream)"
+    },
+    {
+      "point": "S6 sign-off: /workspace/workbench shows 6-stage pipeline with gate buttons, version badge, drag blocks, zoom/pan, RollPreview generates hash anchor",
+      "why": "WorkbenchFinder and Workbench (FieldDesk) are separate routes (/workspace/workbench and /workspace/workbench/simulate); no drag-drop canvas, no zoom/pan, no block palette; SimulationRunControls exists but not integrated into unified builder",
+      "fix": "Workbench hero must unify two routes into single block-flow builder with canvas, palette, zoom/pan"
+    },
+    {
+      "point": "S7 sign-off: /workspace/records/canon shows entity registry with hash anchors; /workspace/records/annals shows chronological events with evidence links; cross-lens navigation works",
+      "why": "NO RecordsPage component exists; Annals page is static prototype (repo-facts.md); Roll page shows RollEntry list but no Canon/Annals lenses; cross-navigation absent",
+      "fix": "Records hero must be built from scratch with three lens views and cross-navigation"
+    },
+    {
+      "point": "S8 sign-off: /workspace/intelligence renders placeholder with five preconditions and three conceptual jobs",
+      "why": "NO IntelligencePage component exists; route /workspace/intelligence not in App.tsx",
+      "fix": "Create IntelligencePage as declared placeholder only"
+    },
+    {
+      "point": "S9 sign-off: Ctrl+K opens global search; dock shows cross-module change-sets; statusbar consistent; responsive breakpoints",
+      "why": "No global search, no cross-module dock, statusbar varies by module (moduleLabel), responsive breakpoints untested",
+      "fix": "Each S9 item must be implemented from scratch"
+    },
+    {
+      "point": "GLOBAL end-to-end flow: triage signal → promote to Workbench → run simulation → generate RollPreview → verify in Records → time-scrub in Network → confirm Intelligence preconditions",
+      "why": "None of the connecting wiring exists: no signal→workbench promotion, no roll-preview→roll-entry creation, no network time-scrub, Intelligence has no UI",
+      "fix": "This flow describes the TARGET state after S0-S9 complete; not a current capability"
+    }
+  ],
+  "salvage": [
+    "Module reconciliation to exactly five: Radar→Commons, Network→Network, Undertakings→Workbench, Roll→Records, Annals→sub-view under Records, APT Coin Lab→sub-view under Intelligence, School Console→local-first tool under Workbench",
+    "Canonical routes: /workspace/commons, /workspace/network, /workspace/workbench, /workspace/records, /workspace/intelligence with sub-routes /workspace/records/{canon,annals,roll}, /workspace/intelligence/{matching,forecasting,graph-analysis}",
+    "Design tokens: dark signature palette as :root default with .light variant; three type tiers (--font-record Georgia/serif, --font-system Inter/sans, --font-instrument Cascadia Code/mono); remove light-first field atlas tokens",
+    "Shell chrome: five panes each with one job — topbar (global search + context + user), rail (5 module icons), sidebar (per-module context tree), main (hero surface), inspector (record-level detail), dock (cross-module change-set ledger + evidence tray), statusbar (consistent 'APT-LABS / module · BROWSER-LOCAL WORKSPACE DEMO'); collapse persistence to localStorage",
+    "Page head hierarchy: eyebrow (module/context) → h1 (record serif) → subtitle (moss) → primary action (lime) → quiet action(s); metrics ONLY when they drive current decision",
+    "Commons hero: RadarSpatialPanel promoted to spatial canvas over EXAMPLE_FIELD_SIGNALS + local drafts with SignalTriage states (new→review→propose→authorize), signal-type filters, promote-to-workbench action",
+    "Network hero: NetworkMap extended to typed graph explorer over PEOPLE_NETWORK (31 entities, 34 relationships, 6 entity types, 17 relationship kinds) with entity-type color coding, relationship-kind filters, time scrubber over canonical heads (requires Annals event stream)",
+    "Workbench hero: block-flow simulation builder unifying WorkbenchFinder + FieldDesk, 6-stage pipeline (tender-review → assembly → delivery → acceptance → deployment → roll-preview) with stage gates (blocked/proceed), version badge (sim-ID + hash), drag predefined blocks, zoom/pan canvas, RollPreview generation",
+    "Records hero: three-lens ledger (Canon entity registry with hash anchors, Annals chronological event stream with evidence links, Roll RollEntry list with acceptance blocks); cross-lens navigation (entity → Annals → Roll → entity)",
+    "Intelligence hero: declared placeholder at /workspace/intelligence with exact preconditions (unified event stream, authority model, matching engine, forecasting baseline, graph analysis); three conceptual sub-jobs listed; NO interactive UI until preconditions met",
+    "Branch as record concept: branch = change-set/proposed state (RollRevision + SimulationPackage + unresolvedFacts), never navigation; fork glyph (└─) as identity device in Records revision lineage and Workbench simulation fork; no environment switcher",
+    "Explicit state machines per module: Commons SignalTriage, Network GraphFocus, Workbench SimulationPipeline with gates, Records Lens + EntityState, Intelligence JobQueue (blocked)",
+    "Cuts list: Main/Branch switcher, sixth module, Annals as top-level, APT Coin Lab as top-level, School Console as primary, duplicate dock navigation, static module inspector, four-metric fixed page head, light-first tokens, fake data as real, demo disclaimer theater, Intelligence UI before preconditions, decorative UI kit"
+  ]
+}

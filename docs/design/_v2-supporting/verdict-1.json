@@ -1,0 +1,90 @@
+{
+  "score": 3,
+  "refuted": [
+    {
+      "point": "Token layer: Replace light-first :root tokens with dark-signature primitives on #0A0F0C; add semantic alias table mapping to bone #E9F1E8, moss #8FA08C, dim #5C6B5E, teal #7FC5BC, lime #C9F292, coral #E89670, amber #CBAF6E",
+      "why": "Current styles.css:root uses --paper #f5f3ee, --ink #1a1d18, --terrain #5d7a5c, --brand-main #295d70, --brand-branch #c6d68e, --brass #b8955a, --water #3a6b8c, --danger #a84632, --phosphor #8fd98f. None of the proposed colors (bone, moss, dim, teal, lime, coral, amber) exist in the codebase. The contrast ratios claimed (bone 16.8:1, lime 15.3, etc.) are unverified assertions. The --info-bg defect is real (styles.css:39 references var(--info-bg) which at line 59 references var(--water-pale) — never defined), but the fix proposes a full palette replacement, not a minimal correction.",
+      "fix": "Fix the --info-bg defect by defining --water-pale or removing --steel-pale alias. Keep existing palette; propose semantic aliases as a separate, incremental step after verifying contrast."
+    },
+    {
+      "point": "Pane ownership: Topbar — DELETE environment switcher, workspace-within-workspace, search (moves to module-specific), queue-action (moves to dock)",
+      "why": "WorkspaceShell.tsx and StudioNavigation.tsx show no environment switcher, no workspace-within-workspace, no search, no queue-action in topbar. Current topbar contains: BrandMark, 'Field Studio / {module}', 'Browser-local demo', sidebar toggle, profile avatar. The proposal deletes things that don't exist.",
+      "fix": "Remove the claim of deleting non-existent topbar items. Describe the actual topbar: module label + record name + avatar (record name not currently present; would be an addition)."
+    },
+    {
+      "point": "Pane ownership: Rail — exactly five module icons (Commons, Network, Workbench, Records, Intelligence); DELETE secondary modules",
+      "why": "studio-navigation.ts defines 4 primary modules (radar, network, undertakings, roll) and 2 secondary (annals, apt-coin-lab). 'Intelligence' module does not exist — AptCoinLab is a static research page (repo-facts.md: 'No Intelligence module; AptCoinLab is a static research page'). School Console is not in rail (it's a nested context under institutions).",
+      "fix": "Acknowledge current 4 primary + 2 secondary modules. Any reconciliation to 5 modules requires creating Intelligence module (not just renaming), and moving School Console — both are new work, not deletions."
+    },
+    {
+      "point": "Pane ownership: Inspector — ONE shared record-detail primitive across all modules showing relationships, evidence gaps, context actions, gate status; DELETE per-module static text panels",
+      "why": "WorkspaceShell.tsx:204-218 shows inspector is per-module static text panels (contextDetails object with summary/distinction/source/history/links per context). No shared record-detail primitive exists. No 'evidence gaps', 'context actions', or 'gate status' data structures exist in the codebase.",
+      "fix": "State that inspector primitive must be created from scratch. Define the data contract (what 'relationships', 'evidence gaps', 'gate status' mean per module) before building."
+    },
+    {
+      "point": "Pane ownership: Dock — per-module live change-set/ledger strip (commits, conflicts, evidence, gate status); DELETE static Source/Related/History tabs",
+      "why": "WorkspaceShell.tsx:136-140, 180-192 shows dock has three static tabs (Source/Related modules/History) with static text content. No change-set, ledger, commits, conflicts, or gate status data exists. workbench-simulation.ts has simulation pipeline but no change-set/ledger. roll.ts has RollRevision but no live dock integration.",
+      "fix": "Acknowledge dock primitive must be created from scratch with defined data sources per module. 'Live change-set/ledger' is a new capability, not a replacement."
+    },
+    {
+      "point": "Pane ownership: Statusbar — single boundary line + ledger head state (canonical head / proposed head); DELETE static demo banner",
+      "why": "WorkspaceShell.tsx:274-278 shows static statusbar: 'APT-LABS / {module} · BROWSER-LOCAL WORKSPACE DEMO · No shared workspace service connected'. No ledger head state exists in any data layer. 'Canonical head / proposed head' are undefined concepts.",
+      "fix": "Remove 'ledger head state' claim. Statusbar can show boundary line + demo banner (honest about browser-local). Any ledger integration requires backend/data layer work outside scope."
+    },
+    {
+      "point": "Module reconciliation: Map current 7 labels to 5 modules... APT Coin Lab → Intelligence",
+      "why": "repo-facts.md: 'No Intelligence module; AptCoinLab is a static research page.' The proposal treats 'Intelligence' as an existing module to map to, but it doesn't exist. School Console currently at /workspace/institutions/school-console (App.tsx:27), not under Workbench.",
+      "fix": "Explicitly state: Intelligence module must be created (not reconciled). School Console redirect requires new route under Workbench or separate nested path."
+    },
+    {
+      "point": "Signature devices: Surveyor grid (24px repeating-linear-gradient) as subtle work-surface texture",
+      "why": "styles.css:232-237 defines .grid-bg with 40px grid (--space-5 = 40px), not 24px. 24px = --space-3. The proposal's 24px grid conflicts with the existing 40px utility.",
+      "fix": "Either update .grid-bg to 24px (--space-3) or use 40px consistently. 24px = 3×8px baseline — verify alignment with existing 8px grid."
+    },
+    {
+      "point": "Signature devices: Fork glyph (L-shape) as identity mark for proposed/change-set state only; Ringed evidence markers (6px ring + dot) on events/rows; 24px survey lines (2px left border on L3 metrics, track connectors)",
+      "why": "None of these components exist in the codebase. No fork glyph, no ringed evidence markers, no survey lines. ContextIcon in StudioNavigation.tsx has icons for modules but no fork glyph.",
+      "fix": "Mark as new components to be created, not 'kept' signature devices."
+    },
+    {
+      "point": "Page head: L1/L2/L3 hierarchy with specific typography and metrics per module",
+      "why": "No PageHead component exists (repo-facts.md: 'Current WorkspaceShell.tsx has no page-head component; each page implements its own'). The detailed L1/L2/L3 specs with module-specific examples (e.g., 'Signal S-247', 'PROPOSED · TRIAGE · 02 NOV') assume record types and fields that don't exist in the data layer (radar signals, endorsements, conflicts, evidence gaps).",
+      "fix": "Create PageHead as a shared primitive first with slot architecture. Define data contracts per module before specifying metric content."
+    },
+    {
+      "point": "Type system: Uppercase mono ALLOWED only on informational pane headers... FORBIDDEN on buttons, body text, page headings, metric labels",
+      "why": "styles.css has 50+ text-transform: uppercase usages across buttons, badges, labels, section headers, status pills (e.g., .workbench-sim-status, .commons-decision-history, .wb-issuer-state, user meta badges). .uppercase utility class is used broadly. Restricting to pane headers only would require massive refactor.",
+      "fix": "Audit .uppercase usage incrementally. Add lint rule for new code. Don't claim current state complies."
+    },
+    {
+      "point": "Build order: 10 steps including token layer, PageHead, module reconciliation, shell chrome, inspector primitive, dock primitive, signature devices, type enforcement, light auth verification, build verification",
+      "why": "AGENTS.md: 'Prefer one small, reviewable change at a time. Run npm run build before shipping; do not add tooling or dependencies without a concrete need.' This 10-step plan violates 'small reviewable changes' — step 1 alone replaces the entire token system. Step 3 changes routing. Step 4 refactors shell. The scope far exceeds 'sign-in and sign-up' limit in AGENTS.md.",
+      "fix": "Break into 10+ separate PRs. Step 1: fix --info-bg defect only. Step 2: add [data-theme=light] override for auth pages. Step 3: create PageHead component. etc. Each must pass npm run build."
+    },
+    {
+      "point": "Sign-off test: 'Token layer: :root contains --bg #0A0F0C, --fg #E9F1E8... auth pages render correctly in both themes'",
+      "why": "The test asserts specific hex values that don't exist in the codebase. Auth pages currently use light theme (--paper, --ink) with .dark override; they don't use [data-theme=light]. The test would fail on current code.",
+      "fix": "Write tests against current token names first. Then update tokens incrementally with build verification at each step."
+    },
+    {
+      "point": "Sign-off test: 'Module reconciliation: Routes /workspace/commons, /workspace/people, /workspace/workbench, /workspace/records, /workspace/intelligence exist'",
+      "why": "Current routes (App.tsx): /workspace/commons, /workspace/people, /workspace/institutions, /workspace/institutions/network, /workspace/commons, /workspace/workbench, /workspace/workbench/simulate, /workspace/field-desk, /workspace/roll, /workspace/apt-coin-lab, /workspace/annals. /workspace/records and /workspace/intelligence do not exist. /workspace/people maps to Network module, not a standalone module.",
+      "fix": "Update test to match actual current routes. New routes require implementation, not just testing."
+    },
+    {
+      "point": "Failure states: The proposal does not specify what the surface shows when data is missing, disputed, stale, or unauthorized for new primitives (PageHead, RecordInspector, ChangeSetDock)",
+      "why": "The proposal details happy-path content for PageHead (L1/L2/L3), RecordInspector (relationships, evidence gaps, context actions, gate status), ChangeSetDock (commits, conflicts, evidence, gate status) but is silent on: missing record → no L1 name; disputed evidence → how shown in inspector; stale ledger head → what statusbar shows; unauthorized module access → what rail shows. Repo-facts shows current shell handles missing data with explicit distinctions (e.g., Annals: 'This prototype does not connect a unified cross-module event stream').",
+      "fix": "Add failure-state specs for each new primitive: empty states, error states, unauthorized states, stale data indicators."
+    }
+  ],
+  "salvage": [
+    "The .dark class should be replaced with [data-theme=dark] default + [data-theme=light] variant — current code uses .dark class override (styles.css:106-141), which is an anti-pattern for SSR and theme switching",
+    "[data-env] spec was never implemented and should be abandoned — repo-facts.md confirms: 'No [data-env] blocks and no dark signature palette exist in src yet'",
+    "Three type tiers (serif for record/page names, system sans for interface text, mono for IDs/timestamps/counts/state labels/instrument readouts) — tokens and utilities exist (--serif/--sans/--mono, .text-serif/.text-mono)",
+    "Surveyor grid concept exists as .grid-bg utility (styles.css:232-237) — though at 40px not 24px",
+    "Glassmorphic topbar partially exists: ws-header has backdrop-filter blur(12px) (styles.css:627), studio-topbar does not",
+    "Current shell structure (WorkspaceShell.tsx) has 6 panes: topbar, rail, sidebar, main, inspector, dock, statusbar — matches proposal's 6-pane target (though inspector/dock/content differ)",
+    "Module labels in studio-navigation.ts are explicit and tested (studio-navigation vitest file exists)",
+    "Auth pages are browser-local demo with localStorage authUser — consistent with AGENTS.md 'Be explicit that authentication is a browser-local demo'"
+  ]
+}

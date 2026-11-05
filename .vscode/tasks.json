@@ -1,0 +1,10 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Vite dev server for prototype",
+			"type": "shell",
+			"command": "cd C:/Users/zION/Documents/dreamer && npm run dev"
+		}
+	]
+}

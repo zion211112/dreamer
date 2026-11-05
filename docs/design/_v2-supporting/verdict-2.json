@@ -1,0 +1,46 @@
+{
+  "score": 8,
+  "refuted": [
+    {
+      "point": "Token layer uses both @media (prefers-color-scheme: light) AND [data-theme=light] for auth pages",
+      "why": "Charter establishes dark as signature system with light as explicit variant (“Light is a variant of the same system, not a second product”). Repo-facts confirm no [data-env] blocks exist. Dual mechanism creates conflict: @media responds to OS preference while [data-theme] responds to explicit user/app control. Auth pages (~lines 239–595 in styles.css) would receive contradictory signals.",
+      "fix": "Remove @media override for auth pages. Use only [data-theme=light] on <html> for explicit light variant. Auth pages inherit workspace tokens via the same [data-theme=light] override block."
+    },
+    {
+      "point": "PageHead L2 mono readout specified at 9px JetBrains Mono",
+      "why": "Charter mandates “Monospace for IDs, timestamps, counts, state labels, and instrument readouts” but does not specify size. 9px falls below WCAG AA minimum for body text (12px equivalent) and risks illegibility for timestamps/IDs that users must read. Repo-facts show current type scale uses clamp() step scale with 8px baseline — 9px breaks the scale.",
+      "fix": "Set L2 at clamp(11px, 0.75rem, 13px) / 1.4 with --font-mono. This aligns to 8px baseline (11px ≈ 1.375×8) and meets readability threshold."
+    },
+    {
+      "point": "School Console moved from /workspace/institutions/school-console to /workspace/workbench/school-console without domain justification",
+      "why": "Repo-facts (VERIFIED) show School Console currently at /workspace/institutions/school-console as a nested local-first boundary under Institutions. Charter calls it a “nested local-first boundary” but does not specify parent module. Moving it to Workbench changes the domain relationship (institution-centric → work-centric) without user ruling or charter authority. Hierarchy of authority: repo rules (existing IA) > agent taste.",
+      "fix": "Keep School Console under /workspace/institutions/school-console or /workspace/network/school-console (since Network owns Institutions). Only move if a user ruling or domain model change explicitly reassigns it."
+    },
+    {
+      "point": "Dock “live change-set/ledger strip” risks becoming a competing navigation system",
+      "why": "Charter hard constraint: “No duplicate navigation systems inside individual pages.” User ruling #2: “The sidebar, topbar, inspector, and dock must not each become separate navigation systems.” Current dock already has a ‘↗’ link tray duplicating the rail (repo-facts VERIFIED). A “live change-set/ledger strip” that includes cross-module links, commit navigation, or evidence browsing could replicate rail/sidebar function.",
+      "fix": "Explicitly constrain Dock primitive: show ONLY current module’s change-set (commits, conflicts, evidence, gate status). No cross-module links, no module switcher, no history browser. If history/evidence browsing is needed, it belongs in Records module main pane."
+    },
+    {
+      "point": "Shared RecordInspector primitive could become a ‘repeated rounded-card kit’ (anti-slop ban)",
+      "why": "Charter anti-slop: “Do not introduce: Repeated rounded-card kits.” A single RecordInspector component used across 5 modules with identical layout/sections (relationships, evidence gaps, context actions, gate status) becomes a card kit by definition. Current inspector shows static module-context text only for roll and apt-coin-lab (repo-facts).",
+      "fix": "Define RecordInspector as a composition primitive with module-specific slot overrides (e.g., Intelligence shows model metrics, Workbench shows work stages, Records shows provenance chain). Shared chrome only: panel tokens, 1px border, evidence markers. No fixed section grid."
+    }
+  ],
+  "salvage": [
+    "Five-module workspace (Commons, Network, Workbench, Records, Intelligence) — no sixth module, reconciled from 7 scattered labels",
+    "Dark signature (#0A0F0C) as default; light as [data-theme=light] variant on <html>, not .dark class — retires .dark and [data-env] entirely",
+    "Semantic alias table mapping to approved palette with contrast facts: --fg #E9F1E8 (bone), --fg-muted #8FA08C (moss), --fg-dim #5C6B5E (dim), --state-canon #7FC5BC (teal), --state-proposed #C9F292 (lime), --state-risk #E89670 (coral), --state-caution #CBAF6E (amber)",
+    "Pane ownership: exactly one job per pane — topbar=working-context identity, rail=5 modules only, sidebar=within-module context, main=work surface, inspector=shared record-detail primitive, dock=live change-set/ledger per module, statusbar=boundary line + ledger head",
+    "Environment switcher [Main | Branch] DELETED from topbar (branch is change-set, not workspace) — aligns with user ruling #1",
+    "Cross-module link tray in sidebar DELETED (duplicate of rail) — aligns with charter hard constraint",
+    "Dock static tabs (Source/Related/History) DELETED — replaces rail duplicate with live change-set",
+    "Page head hierarchy: L1 serif always, L2 mono when facts exist, L3 up to 3 decision-driving metrics (first teal 2px left border) — NOT ritualized; School Console shows only L1+L2",
+    "Type system: three tiers enforced — serif (Georgia) for record/page names, sans (Inter) for interface, mono (JetBrains Mono) for IDs/timestamps/counts/state labels; uppercase mono ONLY on informational pane headers at 8px/0.12em tracking",
+    "Signature devices KEPT: surveyor grid (24px = 3×8px baseline), fork glyph (L-shape, proposed/change-set only), ringed evidence markers (6px ring + dot), 2px left border on L3 metrics (survey lines), glassmorphic topbar",
+    "Anti-slop CUTS: gradient washes, all-caps micro-labels (eyebrows/kickers), decorative motion (auto-play/hover ripples), duplicate dock navigation, generic rounded-card kits",
+    "Module redirects: /annals → /records/annals, /apt-coin-lab → /intelligence",
+    "--info-bg defect retired by defining --water-pale or removing --steel-pale alias",
+    "Sign-off tests are objective and verifiable (token layer, pane ownership, module reconciliation, page head, type system, signature devices)"
+  ]
+}

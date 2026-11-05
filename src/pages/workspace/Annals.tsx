@@ -77,7 +77,7 @@ export function Annals() {
   }
 
   return (
-    <WorkspaceLayout currentContext="annals">
+    <WorkspaceLayout currentContext="records:annals">
       <div className="annals-page">
         <header className="annals-header">
           <div className="annals-kicker">APT-LABS <span aria-hidden="true">/</span> ANNALS</div>

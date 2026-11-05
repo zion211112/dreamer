@@ -3,8 +3,6 @@ import { Link } from 'wouter';
 import { useAuth } from '../lib/auth/hooks';
 import {
   STUDIO_FLOW_MODULES,
-  STUDIO_NETWORK_VIEWS,
-  STUDIO_SECONDARY_MODULES,
   getStudioModuleForContext,
   getStudioModuleLabel,
   type StudioContext,
@@ -15,79 +13,137 @@ import { IdentityCabinet } from './IdentityCabinet';
 
 interface StudioNavigationProps {
   currentContext: StudioContext;
+  sidebarCollapsed: boolean;
+  onToggleSidebar: () => void;
 }
 
 function ContextIcon({ id }: { id: StudioModuleId }) {
-  if (id === 'annals') {
-    return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 4h12M4 10h8M4 16h5" /><circle cx="15" cy="10" r="1.5" /><circle cx="12" cy="16" r="1.5" /></svg>;
+  if (id === 'commons') {
+    return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" /><circle cx="10" cy="10" r="3" /><path d="m10 10 5-5M10 2v2m8 6h-2" /></svg>;
   }
   if (id === 'network') {
     return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="7" cy="6.5" r="2.5" /><path d="M2.5 16v-1.2a4.5 4.5 0 0 1 9 0V16zM13 4.5a2.3 2.3 0 0 1 0 4.5m1.5 2a3.8 3.8 0 0 1 3 3.7V16h-3" /></svg>;
   }
-  if (id === 'radar') {
-    return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" /><circle cx="10" cy="10" r="3" /><path d="m10 10 5-5M10 2v2m8 6h-2" /></svg>;
+  if (id === 'workbench') {
+    return <svg aria-hidden="true" viewBox="0 0 20 20"><rect x="3" y="3" width="6" height="6" rx="1" /><rect x="11" y="3" width="6" height="6" rx="1" /><rect x="3" y="11" width="6" height="6" rx="1" /><rect x="11" y="11" width="6" height="6" rx="1" /></svg>;
   }
-  if (id === 'apt-coin-lab') {
-    return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="5.25" /><path d="m12.5 12.5 4 4M6.5 8.5h4m-2-2v4" /></svg>;
+  if (id === 'records') {
+    return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 16.5V3.5a1.5 1.5 0 0 1 1.5-1.5h11a1.5 1.5 0 0 1 1.5 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-11a1.5 1.5 0 0 1-1.5-1.5z" /><path d="M5.5 9h9M5.5 13h6" /></svg>;
   }
-  if (id === 'roll') {
-    return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 16.5V3.5a1.5 1.5 0 0 1 1.5-1.5h11a1.5 1.5 0 0 1 1.5 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-11a1.5 1.5 0 0 1-1.5-1.5z" /><path d="M5.5 9h9M5.5 13h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>;
+  if (id === 'intelligence') {
+    return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0 1.5a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13z"/><path d="M10 6v4l2.5 2.5"/></svg>;
   }
   return <svg aria-hidden="true" viewBox="0 0 20 20"><rect x="2.5" y="6.5" width="15" height="10" rx="1" /><path d="M7 6.5V4h6v2.5M2.5 10h15m-9 0v2h3v-2" /></svg>;
 }
 
-function StudioLinks({
-  currentContext,
-  onNavigate,
-}: {
-  currentContext: StudioContext;
-  onNavigate?: () => void;
-}) {
-  const activeModule = getStudioModuleForContext(currentContext);
-  function renderModule(module: (typeof STUDIO_FLOW_MODULES)[number] | (typeof STUDIO_SECONDARY_MODULES)[number]) {
-    const isActive = activeModule === module.id;
-    const isCurrent = currentContext === module.contexts[0];
+interface ContextDestination {
+  context: StudioContext;
+  href: string;
+  label: string;
+}
 
-    return (
-      <div className="studio-destination-group" key={module.id}>
-        <Link
-          aria-label={module.label}
-          aria-current={isCurrent ? 'page' : isActive ? 'location' : undefined}
-          className={`studio-destination${isActive ? ' is-active' : ''}`}
-          href={module.href}
-          onClick={onNavigate}
-          title={module.label}
-        >
-          <span aria-hidden="true" className="studio-destination-icon"><ContextIcon id={module.id} /></span>
-          <span className="studio-destination-label">{module.label}</span>
-        </Link>
-        {module.id === 'network' && (
-          <div className="studio-subdestinations">
-            {STUDIO_NETWORK_VIEWS.map(view => (
-              <Link
-                aria-current={currentContext === view.context ? 'page' : undefined}
-                className={`studio-subdestination${currentContext === view.context ? ' is-active' : ''}`}
-                href={view.href}
-                key={view.context}
-                onClick={onNavigate}
-                title={view.label}
-              >
-                {view.label}
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  }
+const contextDestinations: Record<StudioContext, { heading: string; links: ContextDestination[] }> = {
+  commons: {
+    heading: 'Commons',
+    links: [],
+  },
+  'network:people': {
+    heading: 'Network',
+    links: [
+      { context: 'network:people', href: '/workspace/network/people', label: 'People & crews' },
+      { context: 'network:institutions', href: '/workspace/network/institutions', label: 'Institutions & assets' },
+      { context: 'network:capabilities', href: '/workspace/network/capabilities', label: 'Capability directory' },
+    ],
+  },
+  'network:institutions': {
+    heading: 'Network',
+    links: [
+      { context: 'network:people', href: '/workspace/network/people', label: 'People & crews' },
+      { context: 'network:institutions', href: '/workspace/network/institutions', label: 'Institutions & assets' },
+      { context: 'network:capabilities', href: '/workspace/network/capabilities', label: 'Capability directory' },
+    ],
+  },
+  'network:capabilities': {
+    heading: 'Network',
+    links: [
+      { context: 'network:people', href: '/workspace/network/people', label: 'People & crews' },
+      { context: 'network:institutions', href: '/workspace/network/institutions', label: 'Institutions & assets' },
+      { context: 'network:capabilities', href: '/workspace/network/capabilities', label: 'Capability directory' },
+    ],
+  },
+  workbench: {
+    heading: 'Workbench',
+    links: [
+      { context: 'workbench:field-desk', href: '/workspace/workbench/field-desk', label: 'Field desk' },
+      { context: 'workbench:school-console', href: '/workspace/workbench/school-console', label: 'School console' },
+    ],
+  },
+  'workbench:field-desk': {
+    heading: 'Workbench',
+    links: [
+      { context: 'workbench:field-desk', href: '/workspace/workbench/field-desk', label: 'Field desk' },
+      { context: 'workbench:school-console', href: '/workspace/workbench/school-console', label: 'School console' },
+    ],
+  },
+  'workbench:school-console': {
+    heading: 'Workbench',
+    links: [
+      { context: 'workbench:field-desk', href: '/workspace/workbench/field-desk', label: 'Field desk' },
+      { context: 'workbench:school-console', href: '/workspace/workbench/school-console', label: 'School console' },
+    ],
+  },
+  'records:canon': {
+    heading: 'Records',
+    links: [
+      { context: 'records:canon', href: '/workspace/records/canon', label: 'Canon' },
+      { context: 'records:annals', href: '/workspace/records/annals', label: 'Annals' },
+      { context: 'records:roll', href: '/workspace/records/roll', label: 'Roll' },
+    ],
+  },
+  'records:annals': {
+    heading: 'Records',
+    links: [
+      { context: 'records:canon', href: '/workspace/records/canon', label: 'Canon' },
+      { context: 'records:annals', href: '/workspace/records/annals', label: 'Annals' },
+      { context: 'records:roll', href: '/workspace/records/roll', label: 'Roll' },
+    ],
+  },
+  'records:roll': {
+    heading: 'Records',
+    links: [
+      { context: 'records:canon', href: '/workspace/records/canon', label: 'Canon' },
+      { context: 'records:annals', href: '/workspace/records/annals', label: 'Annals' },
+      { context: 'records:roll', href: '/workspace/records/roll', label: 'Roll' },
+    ],
+  },
+  intelligence: {
+    heading: 'Intelligence',
+    links: [],
+  },
+  'intelligence:coin-lab': {
+    heading: 'Intelligence',
+    links: [],
+  },
+};
 
+function StudioLinks({ currentContext, onNavigate }: { currentContext: StudioContext; onNavigate?: () => void }) {
+  const { heading, links } = contextDestinations[currentContext];
   return (
-    <nav aria-label="Workspace navigation" className="studio-destinations">
-      {STUDIO_FLOW_MODULES.map(renderModule)}
-      <div className="studio-secondary-destinations">
-        <span className="studio-secondary-label">History & research</span>
-        {STUDIO_SECONDARY_MODULES.map(renderModule)}
-      </div>
+    <nav aria-label={`${heading} destinations`} className="studio-context-destinations">
+      {links.length ? links.map(link => (
+        <Link
+          aria-current={currentContext === link.context ? 'page' : undefined}
+          className={`studio-context-destination${currentContext === link.context ? ' is-active' : ''}`}
+          href={link.href}
+          key={link.context}
+          onClick={onNavigate}
+        >
+          <span aria-hidden="true" className="studio-context-destination-mark" />
+          {link.label}
+        </Link>
+      )) : (
+        <p className="studio-context-empty">No destinations in this context.</p>
+      )}
     </nav>
   );
 }
@@ -107,36 +163,21 @@ function ProfileEntry({ name, onOpen, open }: { name: string; onOpen: () => void
       title={`Open identity cabinet for ${displayName}`}
     >
       <span aria-hidden="true" className="studio-profile-avatar">{initials}</span>
-      <span className="studio-profile-copy">
-        <strong>{displayName}</strong>
-        <small>Local browser profile</small>
-      </span>
-      <svg aria-hidden="true" className="studio-profile-arrow" viewBox="0 0 16 16">
-        <path d="m4.5 6.5 3.5 3 3.5-3" />
-      </svg>
+      <span className="studio-profile-copy"><strong>{displayName}</strong><small>Local browser profile</small></span>
+      <svg aria-hidden="true" className="studio-profile-arrow" viewBox="0 0 16 16"><path d="m4.5 6.5 3.5 3 3.5-3" /></svg>
     </button>
   );
 }
 
-function readSidebarPreference(): { collapsed: boolean; notice: string } {
-  try {
-    return { collapsed: localStorage.getItem('studioSidebarCollapsed') === 'true', notice: '' };
-  } catch (error) {
-    console.error('Could not read the Studio sidebar preference.', error);
-    return { collapsed: false, notice: 'Sidebar preference could not be read; showing expanded.' };
-  }
-}
-
-export function StudioNavigation({ currentContext }: StudioNavigationProps) {
+export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSidebar }: StudioNavigationProps) {
   const { profile, loading: authLoading } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [identityOpen, setIdentityOpen] = useState(false);
-  const [sidebarPreference, setSidebarPreference] = useState(readSidebarPreference);
   const drawerRef = useRef<HTMLDialogElement>(null);
-  const activeContext = currentContext === 'field-desk' ? 'workbench' : currentContext;
-  const showIdentity = activeContext !== 'workbench' && activeContext !== 'school-console' && !!profile;
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const activeModule = getStudioModuleForContext(currentContext) || 'commons';
+  const showIdentity = activeModule !== 'workbench' && !!profile;
   const profileName = showIdentity ? profile?.display_name || '' : '';
-  const sidebarCollapsed = sidebarPreference.collapsed;
 
   useEffect(() => {
     const drawer = drawerRef.current;
@@ -154,147 +195,105 @@ export function StudioNavigation({ currentContext }: StudioNavigationProps) {
     }
   }
 
-  function toggleSidebar() {
-    const collapsed = !sidebarCollapsed;
-    let notice = '';
-    try {
-      localStorage.setItem('studioSidebarCollapsed', String(collapsed));
-    } catch (error) {
-      console.error('Could not save the Studio sidebar preference.', error);
-      notice = 'Could not save this sidebar choice. It may reset on reload.';
-    }
-    setSidebarPreference({ collapsed, notice });
-  }
-
-  if (authLoading) {
+  function renderRailModule(moduleId: StudioModuleId, href: string, label: string, current: boolean) {
     return (
-      <aside aria-label="Studio sidebar" className={`studio-sidebar${sidebarCollapsed ? ' is-collapsed' : ''}`}>
-        <div className="studio-sidebar-brand">
-          <BrandMark className="studio-brand-mark" size="sm" />
-          <span className="studio-brand-divider" aria-hidden="true" />
-          <span className="studio-brand-label">WORKSPACE</span>
-        </div>
-      </aside>
+      <Link
+        aria-current={current ? 'location' : undefined}
+        aria-label={label}
+        className={`studio-rail-link${current ? ' is-active' : ''}`}
+        href={href}
+        key={moduleId}
+        title={label}
+      >
+        <ContextIcon id={moduleId} />
+      </Link>
     );
   }
 
   return (
     <>
-      <aside
-        aria-label="Studio sidebar"
-        className={`studio-sidebar${sidebarCollapsed ? ' is-collapsed' : ''}`}
-      >
-        <div className="studio-sidebar-brand">
-          <BrandMark className="studio-brand-mark" size="sm" />
-          <span className="studio-brand-divider" aria-hidden="true" />
-          <span className="studio-brand-label">WORKSPACE</span>
-        </div>
-        <button
-          aria-label={sidebarCollapsed ? 'Expand Studio sidebar' : 'Collapse Studio sidebar'}
-          aria-pressed={sidebarCollapsed}
-          className="studio-sidebar-toggle"
-          onClick={toggleSidebar}
-          title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          type="button"
-        >
-          <svg aria-hidden="true" viewBox="0 0 18 18">
-            <path d={sidebarCollapsed ? 'm7 4 5 5-5 5' : 'm11 4-5 5 5 5'} />
-          </svg>
-        </button>
-        {sidebarPreference.notice && (
-          <p className="studio-sidebar-notice" role="status">{sidebarPreference.notice}</p>
-        )}
-
-        <div className="studio-nav-label">The productive path</div>
-        <StudioLinks currentContext={currentContext} />
-
-        <div className="studio-sidebar-bottom">
-          {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} open={identityOpen} />}
-          <div className="studio-session-indicator">
-            <span>BROWSER-LOCAL DEMO</span>
-          </div>
-        </div>
-      </aside>
-
-      <header className="studio-mobile-header">
+      <header className="studio-topbar">
         <button
           aria-controls="studio-mobile-drawer"
           aria-expanded={mobileOpen}
-          aria-label="Open Studio navigation"
+          aria-label="Open workspace navigation"
           className="studio-mobile-menu-button"
           onClick={() => setMobileOpen(true)}
+          ref={menuButtonRef}
           type="button"
         >
-          <svg aria-hidden="true" viewBox="0 0 20 20">
-            <path d="M3 5.5h14M3 10h14M3 14.5h14" />
-          </svg>
+          <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M3 5.5h14M3 10h14M3 14.5h14" /></svg>
         </button>
-        <BrandMark className="studio-mobile-brand" size="sm" />
-        <span className="studio-mobile-current">
-          WORKSPACE / {getStudioModuleLabel(activeContext)}
-        </span>
-        {showIdentity && (
-          <button
-            aria-controls="identity-cabinet"
-            aria-expanded={identityOpen}
-            aria-haspopup="dialog"
-            aria-label={`Open identity cabinet for ${profileName}`}
-            className={`studio-mobile-profile${identityOpen ? ' is-open' : ''}`}
-            onClick={() => setIdentityOpen(true)}
-            type="button"
-          >{profileName.trim().split(/\s+/).slice(0, 2).map(part => part[0] ?? '').join('').toUpperCase() || '?'}</button>
-        )}
+        <BrandMark className="studio-topbar-brand" size="sm" />
+        <span className="studio-topbar-divider" aria-hidden="true" />
+        <span className="studio-topbar-context"><strong>Field Studio</strong><span aria-hidden="true">/</span>{getStudioModuleLabel(currentContext)}</span>
+        <span className="studio-topbar-spacer" />
+        <span className="studio-topbar-demo"><i aria-hidden="true" />{authLoading ? 'Loading local profile' : 'Browser-local demo'}</span>
+        <button
+          aria-label={sidebarCollapsed ? 'Show workspace navigation pane' : 'Hide workspace navigation pane'}
+          aria-pressed={sidebarCollapsed}
+          className="studio-context-toggle"
+          onClick={onToggleSidebar}
+          title={sidebarCollapsed ? 'Show navigation pane' : 'Hide navigation pane'}
+          type="button"
+        >
+          <svg aria-hidden="true" viewBox="0 0 20 20"><rect x="2.5" y="3" width="15" height="14"/><path d="M7.5 3v14"/></svg>
+        </button>
+        {showIdentity && <ProfileEntry name={profileName} onOpen={() => setIdentityOpen(true)} open={identityOpen} />}
       </header>
 
+      <nav aria-label="Primary workspace modules" className="studio-module-rail">
+        {STUDIO_FLOW_MODULES.map(module => renderRailModule(
+          module.id,
+          module.href,
+          module.label,
+          getStudioModuleForContext(currentContext) === module.id,
+        ))}
+      </nav>
+
+      <aside aria-label="Workspace context navigation" className={`studio-sidebar${sidebarCollapsed ? ' is-collapsed' : ''}`}>
+        <div className="studio-sidebar-heading">
+          <span>Current workspace</span>
+          <span className="studio-sidebar-context">{getStudioModuleLabel(currentContext)}</span>
+        </div>
+        <div className="studio-nav-label">{contextDestinations[currentContext].heading}</div>
+        <StudioLinks currentContext={currentContext} />
+        <div className="studio-sidebar-bottom">
+          <div className="studio-session-indicator"><span>DATA CONTEXT</span><small>Local, sample, and imported records remain distinct.</small></div>
+        </div>
+      </aside>
+
       <dialog
-        aria-label="Studio navigation"
+        aria-label="Workspace navigation"
         className="studio-mobile-drawer"
         id="studio-mobile-drawer"
-        onKeyDown={event => {
-          if (event.key === 'Escape') {
-            event.preventDefault();
-            setMobileOpen(false);
-          }
-        }}
-        onCancel={event => {
-          event.preventDefault();
-          setMobileOpen(false);
-        }}
+        onCancel={event => { event.preventDefault(); setMobileOpen(false); }}
         onClose={() => setMobileOpen(false)}
-        onClick={event => {
-          if (event.target === event.currentTarget) setMobileOpen(false);
-        }}
+        onClick={event => { if (event.target === event.currentTarget) setMobileOpen(false); }}
+        onKeyDown={event => { if (event.key === 'Escape') { event.preventDefault(); setMobileOpen(false); } }}
         ref={drawerRef}
       >
         <div className="studio-mobile-drawer-panel">
           <header className="studio-mobile-drawer-header">
             <BrandMark className="studio-brand-mark" size="sm" />
-            <button
-              aria-label="Close Studio navigation"
-              autoFocus
-              className="studio-drawer-close"
-              onClick={() => setMobileOpen(false)}
-              type="button"
-            >×</button>
+            <button aria-label="Close workspace navigation" autoFocus className="studio-drawer-close" onClick={() => setMobileOpen(false)} type="button">×</button>
           </header>
-          <div className="studio-nav-label">The productive path</div>
-          <StudioLinks currentContext={currentContext} onNavigate={() => setMobileOpen(false)} />
-          <div className="studio-sidebar-bottom">
-            {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} open={identityOpen} />}
-            <div className="studio-session-indicator">
-              <span>BROWSER-LOCAL DEMO</span>
-            </div>
-          </div>
+          <div className="studio-nav-label">Workspace</div>
+          <StudioLinks
+            currentContext={currentContext}
+            onNavigate={() => {
+              setMobileOpen(false);
+              window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => menuButtonRef.current?.focus());
+              });
+            }}
+          />
+          {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} open={identityOpen} />}
+          <div className="studio-session-indicator"><span>DATA CONTEXT</span><small>Local, sample, and imported records remain distinct.</small></div>
         </div>
       </dialog>
 
-      {showIdentity && (
-        <IdentityCabinet
-          currentContext={activeContext}
-          onClose={() => setIdentityOpen(false)}
-          open={identityOpen}
-        />
-      )}
+      {showIdentity && <IdentityCabinet currentContext={activeModule} onClose={() => setIdentityOpen(false)} open={identityOpen} />}
     </>
   );
 }

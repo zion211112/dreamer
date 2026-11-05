@@ -1,23 +1,23 @@
 export type StudioContext =
-  | 'annals'
-  | 'people'
-  | 'capabilities'
-  | 'institutions'
-  | 'school-console'
   | 'commons'
+  | 'network:people'
+  | 'network:institutions'
+  | 'network:capabilities'
   | 'workbench'
-  | 'field-desk'
-  | 'roll'
-  | 'apt-coin-lab';
+  | 'workbench:field-desk'
+  | 'workbench:school-console'
+  | 'records:canon'
+  | 'records:annals'
+  | 'records:roll'
+  | 'intelligence'
+  | 'intelligence:coin-lab';
 
 export type StudioModuleId =
-  | 'radar'
+  | 'commons'
   | 'network'
-  | 'undertakings'
-  | 'roll'
-  | 'annals'
-  | 'apt-coin-lab'
-  ;
+  | 'workbench'
+  | 'records'
+  | 'intelligence';
 
 export interface StudioNavigationModule {
   id: StudioModuleId;
@@ -28,78 +28,71 @@ export interface StudioNavigationModule {
 
 export const STUDIO_FLOW_MODULES: readonly StudioNavigationModule[] = [
   {
-    id: 'radar',
-    label: 'Radar',
+    id: 'commons',
+    label: 'Commons',
     href: '/workspace/commons',
     contexts: ['commons'],
   },
   {
     id: 'network',
     label: 'Network',
-    href: '/workspace/people',
-    contexts: ['people', 'institutions', 'capabilities'],
+    href: '/workspace/network/people',
+    contexts: ['network:people', 'network:institutions', 'network:capabilities'],
   },
   {
-    id: 'undertakings',
-    label: 'Undertakings',
+    id: 'workbench',
+    label: 'Workbench',
     href: '/workspace/workbench',
-    contexts: ['workbench', 'field-desk'],
+    contexts: ['workbench', 'workbench:field-desk', 'workbench:school-console'],
   },
   {
-    id: 'roll',
-    label: 'Roll',
-    href: '/workspace/roll',
-    contexts: ['roll'],
+    id: 'records',
+    label: 'Records',
+    href: '/workspace/records/roll',
+    contexts: ['records:canon', 'records:annals', 'records:roll'],
+  },
+  {
+    id: 'intelligence',
+    label: 'Intelligence',
+    href: '/workspace/intelligence/coin-lab',
+    contexts: ['intelligence', 'intelligence:coin-lab'],
   },
 ];
 
-export const STUDIO_SECONDARY_MODULES: readonly StudioNavigationModule[] = [
-  {
-    id: 'annals',
-    label: 'Annals',
-    href: '/workspace/annals',
-    contexts: ['annals'],
-  },
-  {
-    id: 'apt-coin-lab',
-    label: 'APT Coin Lab',
-    href: '/workspace/apt-coin-lab',
-    contexts: ['apt-coin-lab'],
-  },
-];
+export const STUDIO_SECONDARY_MODULES: readonly StudioNavigationModule[] = [];
 
 export const STUDIO_NETWORK_VIEWS = [
   {
-    context: 'institutions',
+    context: 'network:institutions',
     label: 'Institutions & assets',
-    href: '/workspace/institutions',
+    href: '/workspace/network/institutions',
   },
   {
-    context: 'capabilities',
+    context: 'network:capabilities',
     label: 'Capabilities & relations',
-    href: '/workspace/institutions/network',
+    href: '/workspace/network/capabilities',
   },
 ] as const;
 
 export function getStudioModuleForContext(context: StudioContext): StudioModuleId | null {
   switch (context) {
     case 'commons':
-      return 'radar';
-    case 'people':
-    case 'capabilities':
-    case 'institutions':
+      return 'commons';
+    case 'network:people':
+    case 'network:institutions':
+    case 'network:capabilities':
       return 'network';
     case 'workbench':
-    case 'field-desk':
-      return 'undertakings';
-    case 'roll':
-      return 'roll';
-    case 'annals':
-      return 'annals';
-    case 'apt-coin-lab':
-      return 'apt-coin-lab';
-    case 'school-console':
-      return null;
+    case 'workbench:field-desk':
+    case 'workbench:school-console':
+      return 'workbench';
+    case 'records:canon':
+    case 'records:annals':
+    case 'records:roll':
+      return 'records';
+    case 'intelligence':
+    case 'intelligence:coin-lab':
+      return 'intelligence';
     default: {
       const exhaustiveContext: never = context;
       throw new Error(`Unsupported Studio context: ${exhaustiveContext}`);
@@ -108,10 +101,9 @@ export function getStudioModuleForContext(context: StudioContext): StudioModuleI
 }
 
 export function getStudioModuleLabel(context: StudioContext): string {
-  if (context === 'school-console') return 'School Console';
   const moduleId = getStudioModuleForContext(context);
-  const module = [...STUDIO_FLOW_MODULES, ...STUDIO_SECONDARY_MODULES]
-    .find(destination => destination.id === moduleId);
+  if (!moduleId) return 'Unknown';
+  const module = STUDIO_FLOW_MODULES.find(destination => destination.id === moduleId);
   if (!module) throw new Error(`Studio navigation is missing module "${moduleId}".`);
   return module.label;
 }

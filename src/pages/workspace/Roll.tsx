@@ -173,7 +173,7 @@ export function Roll() {
   const [verifyEntry, setVerifyEntry] = useState<RollEntry | null>(null);
 
   return (
-    <WorkspaceLayout currentContext="roll">
+    <WorkspaceLayout currentContext="records:roll">
       <section className="roll-page" aria-labelledby="roll-page-title">
         {isDemoMode && (
           <aside className="roll-demo-notice" aria-label="Demo data notice">

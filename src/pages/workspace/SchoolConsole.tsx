@@ -198,7 +198,7 @@ export function SchoolConsole() {
   }
 
   return (
-    <WorkspaceLayout currentContext="school-console">
+    <WorkspaceLayout currentContext="workbench:school-console">
       <section aria-label="School Console" className="sc-console">
         <header className="sc-header">
           <div className="sc-header-main">

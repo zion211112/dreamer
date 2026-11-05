@@ -1,0 +1,285 @@
+{
+  "audit": [
+    {
+      "file": "src/styles.css",
+      "token": "--ink-well",
+      "currentValue": "#0A0F0C",
+      "usageContext": "Page base background — deep green-black, never pure black"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--panel",
+      "currentValue": "#141C17",
+      "usageContext": "Raised surfaces (pane bodies)"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--fg",
+      "currentValue": "#E9F1E8",
+      "usageContext": "Primary text"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--muted",
+      "currentValue": "#8FA08C",
+      "usageContext": "Muted/secondary text"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--dim",
+      "currentValue": "#5C6B5E",
+      "usageContext": "Tertiary/decorative only — never small text (3.42:1 on #0A0F0C)"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--state-canon",
+      "currentValue": "#7FC5BC",
+      "usageContext": "Accepted/canonical/verified/main track — teal"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--state-proposed",
+      "currentValue": "#C9F292",
+      "usageContext": "Proposed/draft/branch accent/primary action — lime"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--state-risk",
+      "currentValue": "#E89670",
+      "usageContext": "Risk/exception/unresolved/amendments — coral"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--state-caution",
+      "currentValue": "#CBAF6E",
+      "usageContext": "Caution/attention/treasury & evidence-gap — amber"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--water-pale",
+      "currentValue": "rgba(74, 158, 187, 0.14)",
+      "usageContext": "Info/water accent background (fixes --info-bg)"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--line",
+      "currentValue": "#2A3A2F",
+      "usageContext": "Borders, dividers, structural lines"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--line-faint",
+      "currentValue": "#1E2D23",
+      "usageContext": "Subtle borders, disabled states"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--shell-topbar",
+      "currentValue": "54px",
+      "usageContext": "Topbar height"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--shell-rail",
+      "currentValue": "54px",
+      "usageContext": "Rail width"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--shell-sidebar-min",
+      "currentValue": "196px",
+      "usageContext": "Sidebar minimum width"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--shell-sidebar-max",
+      "currentValue": "252px",
+      "usageContext": "Sidebar maximum width"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--shell-inspector-min",
+      "currentValue": "286px",
+      "usageContext": "Inspector minimum width"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--shell-inspector-max",
+      "currentValue": "360px",
+      "usageContext": "Inspector maximum width"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--shell-dock-min",
+      "currentValue": "132px",
+      "usageContext": "Dock minimum height"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--shell-dock-max",
+      "currentValue": "174px",
+      "usageContext": "Dock maximum height"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--shell-statusbar",
+      "currentValue": "24px",
+      "usageContext": "Statusbar height"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--l1-font",
+      "currentValue": "Georgia, Times, serif",
+      "usageContext": "Record serif — page and record names (h1 25px/1.1)"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--l2-font",
+      "currentValue": "system-ui, -apple-system, Segoe UI Variable, sans-serif",
+      "usageContext": "UI sans — subtitles, meta, body"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--l3-font",
+      "currentValue": "Cascadia Code, SF Mono, Consolas, monospace",
+      "usageContext": "Instrument readout — IDs, timestamps, counts, state labels"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--eyebrow-font",
+      "currentValue": "var(--l3-font)",
+      "usageContext": "Mono eyebrow (informational only, 8px)"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--space-1",
+      "currentValue": "4px",
+      "usageContext": "Base spacing unit (Fibonacci)"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--space-2",
+      "currentValue": "8px",
+      "usageContext": "2× base"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--space-3",
+      "currentValue": "12px",
+      "usageContext": "3× base"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--space-4",
+      "currentValue": "16px",
+      "usageContext": "4× base"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--space-5",
+      "currentValue": "24px",
+      "usageContext": "5× base"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--space-6",
+      "currentValue": "32px",
+      "usageContext": "6× base"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--space-7",
+      "currentValue": "48px",
+      "usageContext": "7× base"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--space-8",
+      "currentValue": "64px",
+      "usageContext": "8× base"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--space-9",
+      "currentValue": "96px",
+      "usageContext": "9× base"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--radius-sm",
+      "currentValue": "3px",
+      "usageContext": "Small radius (buttons, badges)"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--radius-md",
+      "currentValue": "4px",
+      "usageContext": "Medium radius (cards, panels)"
+    },
+    {
+      "file": "src/styles.css",
+      "token": "--radius-lg",
+      "currentValue": "6px",
+      "usageContext": "Large radius (modals, drawers)"
+    }
+  ],
+  "semanticMap": {
+    "--ink-well": "neutral:base",
+    "--panel": "neutral:surface",
+    "--fg": "neutral:text-primary",
+    "--muted": "neutral:text-secondary",
+    "--dim": "neutral:text-tertiary:decorative-only",
+    "--state-canon": "semantic:canonical:teal",
+    "--state-proposed": "semantic:proposed:lime",
+    "--state-risk": "semantic:risk:coral",
+    "--state-caution": "semantic:caution:amber",
+    "--water-pale": "semantic:info:water",
+    "--line": "neutral:border",
+    "--line-faint": "neutral:border-subtle",
+    "--shell-topbar": "layout:chrome:topbar",
+    "--shell-rail": "layout:chrome:rail",
+    "--shell-sidebar-min": "layout:chrome:sidebar-min",
+    "--shell-sidebar-max": "layout:chrome:sidebar-max",
+    "--shell-inspector-min": "layout:chrome:inspector-min",
+    "--shell-inspector-max": "layout:chrome:inspector-max",
+    "--shell-dock-min": "layout:chrome:dock-min",
+    "--shell-dock-max": "layout:chrome:dock-max",
+    "--shell-statusbar": "layout:chrome:statusbar",
+    "--l1-font": "typography:record-serif",
+    "--l2-font": "typography:ui-sans",
+    "--l3-font": "typography:instrument-mono",
+    "--eyebrow-font": "typography:eyebrow-mono",
+    "--space-1": "spacing:base",
+    "--space-2": "spacing:2x",
+    "--space-3": "spacing:3x",
+    "--space-4": "spacing:4x",
+    "--space-5": "spacing:5x",
+    "--space-6": "spacing:6x",
+    "--space-7": "spacing:7x",
+    "--space-8": "spacing:8x",
+    "--space-9": "spacing:9x",
+    "--radius-sm": "radius:small",
+    "--radius-md": "radius:medium",
+    "--radius-lg": "radius:large"
+  },
+  "skinSpecificInAuth": [
+    "--auth-bg",
+    "--auth-panel",
+    "--auth-border",
+    "--auth-input-bg",
+    "--auth-input-border",
+    "--auth-input-focus",
+    "--auth-button-primary-bg",
+    "--auth-button-primary-hover",
+    "--auth-button-ghost-bg",
+    "--auth-button-ghost-hover",
+    "--auth-link",
+    "--auth-link-hover",
+    "--auth-error-bg",
+    "--auth-error-border",
+    "--auth-error-text",
+    "--auth-success-bg",
+    "--auth-success-border",
+    "--auth-success-text"
+  ]
+}

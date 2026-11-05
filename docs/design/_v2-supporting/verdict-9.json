@@ -1,0 +1,54 @@
+{
+  "score": 9,
+  "refuted": [
+    {
+      "point": "Proposal defines explicit PageHead L3 metrics for 4 of 5 modules (Commons, Network, Workbench, Records) — each with exactly 3 metrics in identical teal/amber/coral structure",
+      "why": "Charter §8 anti-slop: 'Decorative metrics with no operational meaning' prohibited. User ruling #3: 'Do not force every page into an identical four-metric header. Establish one hierarchy and let the information determine how much of it appears. Consistency must not become ceremony.' The proposal forces symmetry — 3 metrics per module, always teal/amber/coral — where Intelligence correctly gets zero L3. This is ritualization, not hierarchy.",
+      "fix": "Remove prescribed L3 metric slots from the direction. Define L1/L2/L3 slots in PageHead component but let each module's actual work surface determine if/which metrics appear. Keep the teal-first left-border convention but make metric count and semantics module-specific and data-driven."
+    },
+    {
+      "point": "Proposal keeps 'Surveyor grid (24px) as subtle background on work surfaces' as a KEEP item in Signature Devices",
+      "why": "Repo-facts §Absences: 'No surveyor grid... in src' (grep-verified). Charter §8 lists it as a signature device but the repo has no implementation. The proposal treats it as already-decided KEEP without verifying it exists or has been approved for v2. This risks agent taste overriding repo reality.",
+      "fix": "Move Surveyor grid from KEEP to PROPOSED in Signature Devices. Require a separate design decision with implementation verification before inclusion."
+    },
+    {
+      "point": "Proposal includes 'Fork glyph (└─) as identity device only (not navigation)' in KEEP",
+      "why": "Repo-facts §Absences: 'No fork glyph... in src' (grep-verified). Same issue — treated as already-decided KEEP without repo verification. User ruling #1: 'The fork glyph may remain as an identity element' — this is a user ruling (authority level 1), so it CAN stay, but the proposal presents it as if it already exists in the codebase.",
+      "fix": "Clarify: fork glyph is APPROVED by user ruling (not repo-verified). Keep in KEEP but annotate as 'user-ruled, not yet implemented'."
+    },
+    {
+      "point": "Proposal cuts 'All-caps micro-labels / eyebrows' but keeps 'Uppercase mono allowed ONLY for informational pane headers (rail tooltips, sidebar section labels, dock tab labels, statusbar)' in TYPE decision",
+      "why": "Charter §8 anti-slop: 'Decorative all-caps eyebrows' prohibited. The TYPE decision creates a loophole — 'informational pane headers' — that could reintroduce the very micro-labels/eyebrows the CUT list removes. Rail tooltips, sidebar labels, dock tabs, statusbar are exactly where 'eyebrows' appeared in v1 studies.",
+      "fix": "Remove the uppercase mono allowance for pane headers. Use mono 8px with letter-spacing for ALL informational text. Reserve uppercase mono for true instrument readouts only (IDs, timestamps, state codes) — never for labels."
+    },
+    {
+      "point": "Proposal defines contrast facts table with 'dim #5C6B5E 3.4:1 (decorative-only, never primary text)'",
+      "why": "WCAG AA requires 4.5:1 for normal text, 3:1 for large text (18pt+). 3.4:1 fails AA for normal text and only passes for large text. Charter §8 provides 'exact palette with contrast requirements' but the proposal's dim token at 3.4:1 is below AA for body text. The 'decorative-only' qualifier is correct but the table presents it as a verified fact without the WCAG nuance.",
+      "fix": "Annotate dim token: '3.4:1 — passes WCAG AA only for large text (≥18pt/14pt bold). Use only for decorative/secondary large text. Never for body copy.'"
+    },
+    {
+      "point": "Proposal build_order step 1: 'Define dark-signature token primitives in styles.css (:root = dark default, [data-skin='light'] = light variant) with semantic alias table (canonical/active/risk/gap replacing ok/warn/info/danger)'",
+      "why": "Repo-facts §Design tokens: 'Current system is light-first \"field atlas\"... a .dark class overrides to terminal look.' The proposal inverts this correctly per charter §8 'Dark is the signature system. Light is a variant.' BUT repo-facts notes 'Auth-page styles (~lines 239–595) sit in styles.css' and AGENTS.md says 'Put shared visual tokens and auth-page styles in src/styles.css; reuse controls from src/components/'. The token flip must not break Auth/Landing. Risk noted but not fully mitigated in build_order.",
+      "fix": "Add explicit build_order step before 1: 'Audit all token usages in src/ (grep for var(--)) to map light-first dependencies. Create semantic alias mapping table. Verify Auth/Landing pages use only semantic tokens (not skin-specific values) before flip.'"
+    }
+  ],
+  "salvage": [
+    "Dark as signature system, light as variant via [data-skin] on html — replaces .dark override and retires [data-env] spec entirely (TOKEN LAYER decision 1)",
+    "Semantic state token rename: ok/warn/info/danger → canonical/active/risk/gap — aligns with domain language (Canon/Annals/Roll) (TOKEN LAYER decision 1)",
+    "Fix --info-bg defect by defining --water-pale in both skins (build_order step 2)",
+    "Five modules exactly: Commons, Network, Workbench, Records, Intelligence. No Annals, no APT Coin Lab, no School Console as rail modules (PANE OWNERSHIP decision 2)",
+    "Annals becomes Records sub-view (Canon/Annals/Roll query concept). APT Coin Lab becomes Intelligence sub-view. School Console becomes Workbench nested boundary (PANE OWNERSHIP decision 2 + cuts)",
+    "Rail = exactly 5 module icons. Sidebar = within-module context only, collapses to 0 on mobile. No duplicate navigation (PANE OWNERSHIP decisions 3, 4)",
+    "Topbar = working-context identity only (workspace name, active module, profile). No environment switcher (PANE OWNERSHIP decision 1 + user ruling #1)",
+    "Inspector = ONE shared record-detail primitive (relationships, evidence gaps, context actions, gate status). Opens on record selection, closes on deselect. Resizable (PANE OWNERSHIP decision 6)",
+    "Dock = per-module live change-set / ledger strip (pending commits, evidence gaps, reconciliation queue). Replaces static Source/Related/History link tray (PANE OWNERSHIP decision 7 + cuts)",
+    "Statusbar = single boundary line + ledger head state (canonical head, pending count, sync status). No module label duplication (PANE OWNERSHIP decision 8)",
+    "Page head hierarchy: L1 serif record/page name always; L2 mono readout line when facts exist; L3 up to 3 decision-driving metrics with 2px left border, first in teal (PAGE HEAD decision 1)",
+    "Intelligence gets ONLY L1+L2 — no forced L3 metrics (PAGE HEAD decision 6) — correctly applies 'let information determine' principle",
+    "Three type tiers: Serif (Georgia) for record/page names; System sans (Inter) for interface text; Monospace (JetBrains Mono) for IDs, timestamps, counts, state labels, instrument readouts (TYPE decision)",
+    "Glassmorphic topbar (backdrop-filter blur) as only glass effect — cuts excessive glass (SIGNATURE DEVICES decision)",
+    "Ringed evidence markers (● with ring) on events/records; 24px survey lines as structural rhythm (SIGNATURE DEVICES decision — verified user-ruled)",
+    "Cuts list correctly removes: Main/Branch switcher, [data-env] spec, .dark class, Annals/APT Coin Lab/School Console as rail modules, static three-tab dock, module-context inspector text panels, forced four-metric header, gradients as primary fills, all-caps micro-labels, decorative metrics, fake functionality, repeated card kits, excessive glass, generic AI dashboard layouts (cuts — comprehensive and correct)",
+    "Sign-off tests are objective, verifiable, and cover both skins, all 5 modules, contrast CI, no .dark/[data-env] remnants, token defects fixed (sign_off_tests — strong)"
+  ]
+}

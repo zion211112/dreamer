@@ -1,0 +1,150 @@
+{
+  "build_order": [
+    "1. Define dark-signature token primitives in styles.css (:root = dark default, [data-skin='light'] = light variant) with semantic alias table (canonical/active/risk/gap replacing ok/warn/info/danger)",
+    "2. Fix --info-bg defect: define --water-pale in both skins",
+    "3. Add contrast facts as CI-checkable constants (optional: token-contrast.test.ts)",
+    "4. Remove .dark class usages; migrate Landing/Auth to semantic tokens so they work in both skins",
+    "5. Build PageHead component (L1/L2/L3 slots, serif/mono typing, 2px left border on L3)",
+    "6. Rebuild WorkspaceShell: rail = 5 modules only; sidebar = within-module; inspector = shared record-detail primitive; dock = live change-set strip; statusbar = boundary + ledger head",
+    "7. Implement skin switcher (dev-only) to verify both skins work",
+    "8. Run npm run build and verify no regressions",
+    "9. Update studio-navigation.ts: STUDIO_FLOW_MODULES = 5 modules; STUDIO_SECONDARY_MODULES removed; contextDestinations mapped to five modules"
+  ],
+  "cuts": [
+    "Main/Branch environment switcher (topbar, rail, anywhere)",
+    "[data-env] attribute spec and all associated CSS",
+    ".dark class override (replaced by [data-skin] on html)",
+    "Annals as primary rail module (becomes Records sub-view)",
+    "APT Coin Lab as primary rail module (becomes Intelligence sub-view)",
+    "School Console as primary rail module (becomes Workbench nested boundary)",
+    "Static three-tab dock (Source/Related/History link tray)",
+    "Module-context inspector text panels (per-module static summaries)",
+    "Four-metric forced page header (replaced by L1/L2/L3 hierarchy)",
+    "Gradients as primary background fills",
+    "All-caps micro-labels / eyebrows",
+    "Decorative metrics with no operational meaning",
+    "Fake functionality or invented data presented as real",
+    "Repeated rounded-card kits",
+    "Excessive glass effects beyond topbar",
+    "Generic AI dashboard layouts"
+  ],
+  "decisions": [
+    {
+      "area": "TOKEN LAYER",
+      "decision": "Adopt dark-signature palette on #0A0F0C as default skin with light 'daylight archive' variant via [data-skin='light'] on html; replace all semantic state tokens (ok/warn/info/danger) with canonical/active/risk/gap aliases; retire .dark class and [data-env] spec entirely; fix --info-bg defect by defining --water-pale in both skins",
+      "rationale": "Charter mandates dark as signature system, light as variant of same system. Current styles.css is light-first 'field atlas' with .dark override — inverted from approved direction. The [data-env] spec from v1 studies never shipped. The --info-bg defect (referenced but undefined) blocks button variant tokens. Skin switching via [data-skin] on html preserves Landing/Auth pages (they use semantic tokens, not skin-specific values).",
+      "risk": "Auth/Landing pages currently depend on light-first tokens; must verify semantic aliases cover all usages before flip."
+    },
+    {
+      "area": "TOKEN LAYER",
+      "decision": "Contrast facts table (WCAG AA on #0A0F0C): bone #E9F1E8 16.8:1 (primary text), teal #7FC5BC 9.8:1 (canonical/verified), lime #C9F292 15.3:1 (active/proposed), amber #CBAF6E 9.1:1 (caution/gap), coral #E89670 8.3:1 (risk/exception), moss #8FA08C 7.0:1 (secondary), dim #5C6B5E 3.4:1 (decorative-only, never primary text)",
+      "rationale": "Charter provides exact palette with contrast requirements. These values must be codified as token primitives and enforced via CI check. The dim token at 3.4:1 is explicitly decorative-only per charter.",
+      "risk": "None — these are verified design decisions."
+    },
+    {
+      "area": "PANE OWNERSHIP",
+      "decision": "Topbar = current working-context identity only (workspace name, active module, profile). No environment switcher. No workspace-within-workspace.",
+      "rationale": "Charter: 'topbar, rail, sidebar, inspector, and dock each have exactly one job.' v1 studies put Main/Branch switcher in topbar — retired by user ruling. Topbar currently duplicates workspace name in breadcrumbs and module label in rail.",
+      "risk": "Must remove environment switcher from any future shell implementation."
+    },
+    {
+      "area": "PANE OWNERSHIP",
+      "decision": "Rail = exactly five module icons (Commons, Network, Workbench, Records, Intelligence). No Annals, no APT Coin Lab, no School Console. These reconcile under the five.",
+      "rationale": "Charter: 'Five modules: Commons, Network, Workbench, Records, Intelligence. No sixth.' Current rail has 4 primary + 2 secondary. Annals is a query concept (Canon/Annals/Roll), not a module. APT Coin Lab is research. School Console is a nested local-first boundary.",
+      "risk": "Routes for annals, apt-coin-lab, school-console must be accessible but not via rail — they become contextual destinations within Records (Annals) or Workbench (School Console) or Intelligence (APT Coin Lab)."
+    },
+    {
+      "area": "PANE OWNERSHIP",
+      "decision": "Sidebar = within-module context only (filtered views, scoped navigation, local filters). Not a second module navigator. Collapses to 0 on mobile.",
+      "rationale": "v1 studies made sidebar a full canon registry navigator (Main) or branch explorer (Branch) — duplicating rail. Current implementation shows contextDestinations per module — correct but must be strictly within-module.",
+      "risk": "Network module currently shows three sub-contexts (people/institutions/capabilities) in sidebar — this is correct within-module navigation."
+    },
+    {
+      "area": "PANE OWNERSHIP",
+      "decision": "Main = work surface only. Page head follows L1/L2/L3 hierarchy. No fixed four-metric header.",
+      "rationale": "Charter: 'Page head is a hierarchy, not a ritual: metrics only where they drive the current decision.' v1 studies forced four metrics on every page. Current implementation has no page-head component.",
+      "risk": "Must build PageHead component with L1/L2/L3 slots."
+    },
+    {
+      "area": "PANE OWNERSHIP",
+      "decision": "Inspector = ONE shared record-detail primitive (relationships, evidence gaps, context actions, gate status). Not per-module text panels. Opens on record selection, closes on deselect. Resizable.",
+      "rationale": "v1 studies: Branch had branch-specific inspector, Main had record inspector. Current WorkspaceShell shows static module-context text for roll/apt-coin-lab only — wrong model. Charter: 'inspector = one shared record-detail primitive.'",
+      "risk": "Requires record-selection state shared across modules."
+    },
+    {
+      "area": "PANE OWNERSHIP",
+      "decision": "Dock = per-module live change-set / ledger strip replacing static Source/Related/History link tray. Shows pending commits, evidence gaps, reconciliation queue. Collapsible.",
+      "rationale": "v1 Branch dock showed commits/conflicts/evidence — correct pattern but branch-specific. v1 Main dock showed reconciliations + integrity — correct but static. Current dock is static three-tab link tray duplicating rail. Dock must be live ledger of the module's working state.",
+      "risk": "Requires module-specific change-set state (drafts, pending reviews, evidence gaps)."
+    },
+    {
+      "area": "PANE OWNERSHIP",
+      "decision": "Statusbar = single boundary line + ledger head state (current canonical head, pending count, sync status). No module label duplication.",
+      "rationale": "v1 studies: statusbar showed module + environment + origin. Current shows 'APT-LABS / {module} · BROWSER-LOCAL WORKSPACE DEMO'. Must reduce to boundary + ledger head.",
+      "risk": "Low."
+    },
+    {
+      "area": "SIGNATURE DEVICES",
+      "decision": "KEEP: Surveyor grid (24px) as subtle background on work surfaces; Fork glyph (└─) as identity device only (not navigation); Ringed evidence markers (● with ring) on events/records; 24px survey lines as structural rhythm; Three type tiers (serif record names, sans UI, mono readouts); Glassmorphic topbar (backdrop-filter blur). CUT: Gradients as primary fills (use only for brand-mark); All-caps micro-labels (use mono 8px with letter-spacing instead); Motion not responding to user action; Generic AI dashboard layouts; Decorative metrics with no operational meaning.",
+      "rationale": "Charter anti-slop rules + user rulings. Surveyor grid, fork glyph, evidence markers, 24px lines, three tiers, glass topbar are explicitly approved. Gradients, all-caps eyebrows, gratuitous motion, fake metrics are explicitly prohibited.",
+      "risk": "Fork glyph must not imply navigation — only identity."
+    },
+    {
+      "area": "PAGE HEAD L1/L2/L3",
+      "decision": "L1 (always): Serif record/page name. L2 (when facts exist): Mono readout line (ID, timestamp, state, head). L3 (max 3, only when driving decision): Metrics with 2px left border, first in teal. Concrete examples per module:",
+      "rationale": "Charter: 'L1 serif record name always; L2 mono readout line when facts exist; L3 up to three decision-driving metrics with 2px left border, first in teal.'",
+      "risk": "Must resist pressure to add more metrics."
+    },
+    {
+      "area": "PAGE HEAD L1/L2/L3",
+      "decision": "Commons (Radar): L1 'Signals & decisions' | L2 '42 signals · 3 under review · HEAD R-017' | L3 (teal) 'Review queue 3', (amber) 'Evidence gaps 7', (coral) 'Unresolved 2'",
+      "rationale": "Metrics drive triage decision: what needs review, what lacks evidence, what is stuck.",
+      "risk": "None."
+    },
+    {
+      "area": "PAGE HEAD L1/L2/L3",
+      "decision": "Network: L1 'People & crews' | L2 '128 entities · 246 relationships · HEAD N-042' | L3 (teal) 'Verified 89', (amber) 'Unverified claims 39', (coral) 'Disputed 4'",
+      "rationale": "Metrics drive trust decision: what is verified, what is claimed, what is contested.",
+      "risk": "None."
+    },
+    {
+      "area": "PAGE HEAD L1/L2/L3",
+      "decision": "Workbench: L1 'Undertakings' | L2 '12 active · 3 simulating · HEAD W-008' | L3 (teal) 'Authorized 5', (amber) 'Awaiting evidence 4', (coral) 'Blocked 3'",
+      "rationale": "Metrics drive coordination decision: what is authorized, what needs evidence, what is blocked.",
+      "risk": "None."
+    },
+    {
+      "area": "PAGE HEAD L1/L2/L3",
+      "decision": "Records: L1 'The Roll' | L2 '42 entries · 36 integrity-checked · HEAD M-042' | L3 (teal) 'Complete 28', (amber) 'Gaps 8', (coral) 'Disputed 6'",
+      "rationale": "Metrics drive verification decision: what is complete, what has gaps, what is disputed.",
+      "risk": "None."
+    },
+    {
+      "area": "PAGE HEAD L1/L2/L3",
+      "decision": "Intelligence: L1 'Intelligence' | L2 'Graph: 128 nodes · 246 edges · Last sync 04 NOV 16:42' | (L3 omitted — no decision-driving metrics)",
+      "rationale": "Charter: 'including a page that gets ONLY L1+L2.' Intelligence is exploratory; metrics would be decorative.",
+      "risk": "None."
+    },
+    {
+      "area": "TYPE",
+      "decision": "Three tiers: Serif (Georgia) for record/page names (L1, inspector titles, entity names); System sans (Inter) for all interface text, body copy, buttons, labels; Monospace (JetBrains Mono) for IDs, timestamps, counts, state labels, instrument readouts, L2 readout line, L3 metric values. Uppercase mono allowed ONLY for informational pane headers (rail tooltips, sidebar section labels, dock tab labels, statusbar) — never for content, never for buttons, never for page head.",
+      "rationale": "Charter: 'the three tiers and the rule for when uppercase mono is allowed (informational pane headers only).' v1 studies used uppercase mono for eyebrow labels (ALTERNATIVE TIMELINE / BRANCH 01) — cut. Current styles.css has .uppercase utility — must restrict.",
+      "risk": "Audit existing uppercase usage in components."
+    }
+  ],
+  "thesis": "The workspace must become a single coherent instrument for productive coordination — five modules sharing one graph, one permission model, one event foundation — with a dark-signature palette on #0A0F0C as the default skin, a light \"daylight archive\" variant, and a shell where every pane has exactly one job. The v1 studies provide valuable visual grammar (surveyor grid, fork glyph, evidence markers, ringed type tiers) but over-engineered the shell into competing navigation systems and forced identical headers. The v2 direction consolidates to: one rail for five modules, sidebar for within-module context only, main for work, inspector as a shared record-detail primitive, dock as a live change-set/ledger strip, statusbar as boundary + ledger head. The token layer replaces the light-first \"field atlas\" with the approved dark palette via semantic aliases (ok/warn/info/danger → canonical/active/risk/gap), retires .dark and [data-env] without breaking Landing/Auth, and fixes the --info-bg defect.",
+  "stance": "system-first",
+  "sign_off_tests": [
+    "npm run build passes with zero TypeScript errors",
+    "All 11 existing vitest test files pass",
+    "Landing page (/), /sign-in, /sign-up render correctly in both [data-skin='dark'] and [data-skin='light']",
+    "Workspace shell loads at /workspace/commons with 5-module rail, no environment switcher",
+    "PageHead component accepts L1/L2/L3 props and renders correct typography",
+    "Inspector opens on record selection (simulated) showing relationships, evidence gaps, context actions, gate status",
+    "Dock shows live change-set data for active module (simulated)",
+    "Contrast ratios for bone/teal/lime/amber/coral/moss/dim on #0A0F0C meet WCAG AA (automated check)",
+    "No .dark class or [data-env] references remain in src/",
+    "--info-bg and --water-pale defined in both skins",
+    "No all-caps micro-labels in workspace shell (pane headers use mono 8px letter-spacing only)"
+  ]
+}

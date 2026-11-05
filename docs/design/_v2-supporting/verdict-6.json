@@ -1,0 +1,67 @@
+{
+  "score": 4,
+  "refuted": [
+    {
+      "point": "Five modules: Commons, Network, Workbench, Records, Intelligence. School Console lives at /workspace/workbench/school-console.",
+      "why": "Intelligence module does not exist in the codebase — AptCoinLab is a static research page (src/pages/workspace/AptCoinLab.tsx:18-56), not an operational module. repo-facts.md §Absences: 'No Intelligence module; AptCoinLab is a static research page.' No routes, components, or data layer for Intelligence exist. School Console currently at /workspace/institutions/school-console (App.tsx:27) — moving it requires route change and rewiring.",
+      "fix": "Remove Intelligence as a fifth module from the decision; keep four charter modules (Commons, Network, Workbench, Records) with AptCoinLab as a research lens under Records or a separate non-module route. If Intelligence is aspirational, mark it explicitly as 'not yet implemented' with no route or rail icon."
+    },
+    {
+      "point": "StudioContext type becomes: 'commons' | 'network' | 'workbench' | 'records' | 'intelligence' | 'school-console'. Rail shows exactly five module icons.",
+      "why": "Current StudioContext has 11 values (studio-navigation.ts:1-11): 'annals', 'people', 'capabilities', 'institutions', 'school-console', 'commons', 'workbench', 'field-desk', 'roll', 'apt-coin-lab'. Reducing to 6 requires removing 'people', 'capabilities', 'institutions', 'annals', 'apt-coin-lab', 'roll', 'field-desk' — but the proposal says 'capabilities/institutions/people become Network destinations' which is a behavioral change, not just a type change. STUDIO_FLOW_MODULES has 4 primary + 2 secondary = 6 modules today (studio-navigation.ts:29-69), not 5.",
+      "fix": "Align StudioContext with actual module structure: keep contexts that map to real routes. If Records absorbs Annals/Roll as lenses, StudioContext needs 'records:canon' | 'records:annals' | 'records:roll' not a flat 'records'. Rail icons must match STUDIO_FLOW_MODULES length (currently 6)."
+    },
+    {
+      "point": "Annals = WorkEvent[] chronology (submitted→under_review→selected/declined from local-workflows.ts + 6-stage simulation pipeline from workbench-simulation.ts). Second lens in Records.",
+      "why": "repo-facts.md §Absences: 'No unified cross-module event stream exists today.' Annals.tsx:98-100 explicitly states: 'Structure preview · no unified event stream. Current Commons, Workbench, and Roll records remain separate local workflows.' WorkEvent exists in local-workbench.ts but is siloed in WorkbenchFinder/FieldDesk. No cross-module event aggregation exists.",
+      "fix": "Mark Annals lens as 'not yet implemented — requires cross-module event stream.' Do not claim it exists or can ship as a lens. The build_order step 10 'Wire Canon/Annals/Roll lenses to existing data' is impossible for Annals without building the event stream first."
+    },
+    {
+      "point": "Lens Selector: Records module has a three-way lens switcher (Canon | Annals | Roll) in its page head. Deep links: /workspace/records?lens=annals, /workspace/records?lens=roll.",
+      "why": "No Records module page exists. No route /workspace/records exists in App.tsx. No lens selector component exists. The proposal assumes a Records page can be created with three lenses, but Annals data doesn't exist (see above) and Roll is currently a separate module at /workspace/roll with its own page (Roll.tsx).",
+      "fix": "Create Records module page first with Canon lens only (backed by people-network.ts). Annals lens blocked on cross-module event stream. Roll lens requires refactoring Roll page into a lens — a separate, reviewable change."
+    },
+    {
+      "point": "Changeset Semantics — State Machine: DRAFT → PROPOSED → IN_REVIEW → (PENDING_AUTHORIZATION | PENDING_EVIDENCE) → ACCEPTED | REJECTED | AMENDED. Fork glyph attaches at PROPOSED.",
+      "why": "No such state machine exists in the codebase. Current states are: SignalStatus (new|triaged|brief|resolved), ProposalStatus (proposed|approved|rejected|returned), SimulationStage (candidate_drafted|tender_review_simulated|assembly_simulated|delivery_simulated|acceptance_simulated|roll_preview), SimulationStatus (active|paused|blocked|completed|cancelled). The proposed 7-state machine doesn't map cleanly to any existing workflow. repo-facts mentions 'Workbench simulation has 6 stages; mapping to 7-state machine requires collapsing/expanding stages explicitly' — this is acknowledged as a risk but not resolved.",
+      "fix": "Define the state machine as a new type in a shared location (e.g., src/lib/changeset.ts) with explicit mapping from each existing workflow's states. Do not claim it 'derives from' existing code — it's a new design that must be implemented."
+    },
+    {
+      "point": "Shell Chrome Jobs: Topbar, Rail, Sidebar, Main, Inspector, Dock, Statusbar each have exactly one job. Refactor WorkspaceShell.tsx to single rail (5 modules), sidebar (context destinations), inspector (record/event only), dock (change-set/evidence/reconciliation).",
+      "why": "WorkspaceShell.tsx is 'untracked and not wired' (repo-facts.md). It has overlapping responsibilities: inspector shows module-context text with navigation links (lines 204-218), dock has 'Related modules' tab duplicating rail navigation (lines 184-189), sidebar shows context destinations. StudioNavigation.tsx rail (lines 230-237) shows 6 modules (4 primary + 2 secondary). The proposal claims a coordinated rewrite but this is a massive multi-file refactor violating AGENTS.md 'one small, reviewable change at a time.'",
+      "fix": "Break shell refactor into atomic steps: (1) Remove inspector navigation links (keep only context text), (2) Remove dock 'Related modules' tab, (3) Reduce rail to 5 icons after module map is finalized, (4) Make inspector record/event-specific (only for Records/Intelligence), (5) Replace dock tabs with change-set/evidence/reconciliation. Each step must pass npm run build."
+    },
+    {
+      "point": "Build order has 11 steps including major refactors (Steps 1, 3, 4, 7, 8, 10) without intermediate build gates.",
+      "why": "AGENTS.md: 'Prefer one small, reviewable change at a time. Run npm run build before shipping; do not add tooling or dependencies without a concrete need.' Step 1 changes StudioContext type (breaking change across StudioNavigation, WorkspaceShell, all workspace pages). Step 3 creates new Records page. Step 4 creates new Intelligence page. Step 7 rewrites WorkspaceShell.tsx. Step 8 rewrites StudioNavigation.tsx. Step 10 'Wire Canon/Annals/Roll lenses to existing data' assumes Annals data exists (it doesn't). No step runs npm run build between changes.",
+      "fix": "Insert 'Run npm run build and verify' after EVERY step. Split Step 1 into: (1a) Add new StudioContext values, (1b) Update STUDIO_FLOW_MODULES to 5, (1c) Remove old contexts from StudioNavigation, (1d) Update all workspace pages' currentContext props. Each sub-step must build."
+    },
+    {
+      "point": "Page head shows metrics only on Records (Canon head, Annals event count, Roll entry count) and Workbench (simulation stage).",
+      "why": "No page head metrics component exists. Current pages (Commons, People, WorkbenchFinder, Roll, Annals, AptCoinLab) have custom headers with no shared metrics pattern. The proposal assumes a metrics display system that doesn't exist.",
+      "fix": "Remove this from the decision or mark as 'future work — requires page head component and metrics data sources.'"
+    },
+    {
+      "point": "Fork glyph appears only on proposed change-sets in Records lens=Canon, Workbench simulation, and dock.",
+      "why": "Fork glyph exists only in Annals.tsx:156 ('↳') and branch-shell-v1.html (external study). No fork glyph component exists in src/components/. WorkspaceContextSwitcher.tsx (src/components/WorkspaceContextSwitcher.tsx) exists but is a context switcher, not a fork glyph. The proposal says 'Existing WorkspaceContextSwitcher.tsx implies workspace modes; must be removed' — but this component is not used in WorkspaceShell or StudioNavigation (verified by grep).",
+      "fix": "Create a ForkGlyph component first. Verify WorkspaceContextSwitcher.tsx is actually used anywhere (grep shows it's not imported in WorkspaceShell or StudioNavigation). Remove dead code separately."
+    },
+    {
+      "point": "School Console accessible only via /workspace/workbench/school-console and Workbench sidebar.",
+      "why": "SchoolConsole currently at /workspace/institutions/school-console (App.tsx:27) and in Institutions module sidebar (StudioNavigation.tsx:45-53 contextDestinations for 'institutions'). Moving it requires: (1) Route change in App.tsx, (2) Remove from Institutions sidebar, (3) Add to Workbench sidebar, (4) Update SchoolConsole page currentContext prop. The proposal bundles this in Step 5 without acknowledging the sidebar/contextDestinations changes.",
+      "fix": "Explicitly list: update App.tsx route, update StudioNavigation contextDestinations for 'institutions' (remove School Console), add to 'workbench' contextDestinations, update SchoolConsole page's currentContext from 'school-console' to workbench scope."
+    }
+  ],
+  "salvage": [
+    "Charter §4 mandates exactly five modules — the principle of consolidating to five charter-aligned modules survives.",
+    "Records module absorbing Annals and Roll as three lenses (Canon | Annals | Roll) survives as the correct architectural pattern per Charter §5.",
+    "Canon backed by RollEntry.hash_anchor and people-network.ts entities is the most complete existing data foundation — this survives.",
+    "RollEntry with participants, evidence layers, acceptance block, hash_anchor is fully implemented in db/roll.ts — survives as Records lens=Roll foundation.",
+    "Lens selector concept (one module, three lenses) survives — avoids workspace-within-workspace per Charter §5.",
+    "Changeset state machine with never-equate distinctions (PROPOSED≠ACCEPTED, IN_REVIEW≠AUTHORIZED, ACCEPTED≠SETTLED) survives as the correct semantic model derived from Charter §3.",
+    "Fork glyph as identity device on per-record change-sets (not workspace mode) survives per user ruling #1.",
+    "Shell chrome job separation (topbar/rail/sidebar/main/inspector/dock/statusbar each one job) survives as Charter §4 mandate.",
+    "Redirects for /workspace/annals → /workspace/records?lens=annals and /workspace/apt-coin-lab → /workspace/intelligence (or Records lens) survive as route stability measures.",
+    "School Console as Workbench-scoped operational boundary survives per Charter §4 exception."
+  ]
+}

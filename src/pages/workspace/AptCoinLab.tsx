@@ -17,7 +17,7 @@ const distinctions = [
 
 export function AptCoinLab() {
   return (
-    <WorkspaceLayout currentContext="apt-coin-lab">
+    <WorkspaceLayout currentContext="intelligence:coin-lab">
       <div className="apt-coin-lab-page">
         <header className="apt-coin-lab-header">
           <p className="apt-coin-lab-eyebrow">APT-LABS <span aria-hidden="true">/</span> RESEARCH</p>

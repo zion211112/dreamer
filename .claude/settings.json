@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:vp0.com)",
+      "Bash(npx -y @figma/mcp-server --help)",
+      "Bash(npx -y @modelcontextprotocol/server-figma --help)",
+      "WebFetch(domain:developers.figma.com)",
+      "Bash(claude mcp *)",
+      "Read(//c/Users/zION/**)",
+      "mcp__plugin_figma_figma__whoami",
+      "mcp__plugin_figma_figma__create_new_file",
+      "mcp__plugin_figma_figma__create_session",
+      "mcp__plugin_figma_figma__use_figma",
+      "Read(//c/Users/zION/.claude/projects/c--Users-zION-Documents-dreamer/memory/**)",
+      "Bash(head -n 200 /c/Users/zION/Documents/dreamer/src/styles.css)",
+      "Read(//c/Users/zION/Documents/dreamer/src/**)",
+      "Bash(grep -r \"data-env\" /c/Users/zION/Documents/dreamer/src)",
+      "Bash(ls -la /c/Users/zION/Documents/dreamer/src/test)",
+      "Read(//c/Users/zION/Documents/dreamer/src/test/**)"
+    ]
+  }
+}

@@ -11,51 +11,55 @@ import {
 describe('Studio workspace navigation', () => {
   it('keeps the productive path primary and supporting views secondary', () => {
     expect(STUDIO_FLOW_MODULES.map(({ id, label, href }) => ({ id, label, href }))).toEqual([
-      { id: 'radar', label: 'Radar', href: '/workspace/commons' },
-      { id: 'network', label: 'Network', href: '/workspace/people' },
-      { id: 'undertakings', label: 'Undertakings', href: '/workspace/workbench' },
-      { id: 'roll', label: 'Roll', href: '/workspace/roll' },
+      { id: 'commons', label: 'Commons', href: '/workspace/commons' },
+      { id: 'network', label: 'Network', href: '/workspace/network/people' },
+      { id: 'workbench', label: 'Workbench', href: '/workspace/workbench' },
+      { id: 'records', label: 'Records', href: '/workspace/records/roll' },
+      { id: 'intelligence', label: 'Intelligence', href: '/workspace/intelligence/coin-lab' },
     ]);
 
-    expect(STUDIO_SECONDARY_MODULES.map(({ id, label, href }) => ({ id, label, href }))).toEqual([
-      { id: 'annals', label: 'Annals', href: '/workspace/annals' },
-      { id: 'apt-coin-lab', label: 'APT Coin Lab', href: '/workspace/apt-coin-lab' },
-    ]);
+    expect(STUDIO_SECONDARY_MODULES.map(({ id, label, href }) => ({ id, label, href }))).toEqual([]);
 
     expect(STUDIO_NETWORK_VIEWS).toEqual([
-      { context: 'institutions', label: 'Institutions & assets', href: '/workspace/institutions' },
-      { context: 'capabilities', label: 'Capabilities & relations', href: '/workspace/institutions/network' },
+      { context: 'network:institutions', label: 'Institutions & assets', href: '/workspace/network/institutions' },
+      { context: 'network:capabilities', label: 'Capabilities & relations', href: '/workspace/network/capabilities' },
     ]);
   });
 
   it('maps every workspace context to the productive module or its supporting view', () => {
     const contexts: StudioContext[] = [
-      'annals',
       'commons',
+      'network:people',
+      'network:institutions',
+      'network:capabilities',
       'workbench',
-      'field-desk',
-      'roll',
-      'apt-coin-lab',
-      'people',
-      'capabilities',
-      'institutions',
-      'school-console',
+      'workbench:field-desk',
+      'workbench:school-console',
+      'records:canon',
+      'records:annals',
+      'records:roll',
+      'intelligence',
+      'intelligence:coin-lab',
     ];
 
     expect(contexts.map(context => [context, getStudioModuleForContext(context)])).toEqual([
-      ['annals', 'annals'],
-      ['commons', 'radar'],
-      ['workbench', 'undertakings'],
-      ['field-desk', 'undertakings'],
-      ['roll', 'roll'],
-      ['apt-coin-lab', 'apt-coin-lab'],
-      ['people', 'network'],
-      ['capabilities', 'network'],
-      ['institutions', 'network'],
-      ['school-console', null],
+      ['commons', 'commons'],
+      ['network:people', 'network'],
+      ['network:institutions', 'network'],
+      ['network:capabilities', 'network'],
+      ['workbench', 'workbench'],
+      ['workbench:field-desk', 'workbench'],
+      ['workbench:school-console', 'workbench'],
+      ['records:canon', 'records'],
+      ['records:annals', 'records'],
+      ['records:roll', 'records'],
+      ['intelligence', 'intelligence'],
+      ['intelligence:coin-lab', 'intelligence'],
     ]);
 
-    expect(getStudioModuleLabel('school-console')).toBe('School Console');
-    expect(getStudioModuleLabel('institutions')).toBe('Network');
+    expect(getStudioModuleLabel('commons')).toBe('Commons');
+    expect(getStudioModuleLabel('network:people')).toBe('Network');
+    expect(getStudioModuleLabel('records:roll')).toBe('Records');
+    expect(getStudioModuleLabel('intelligence:coin-lab')).toBe('Intelligence');
   });
 });

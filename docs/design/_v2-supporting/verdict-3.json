@@ -1,0 +1,73 @@
+{
+  "refuted": [
+    {
+      "point": "School Console as primary module (becomes contextual mode under Records/Workbench)",
+      "why": "Charter §4 lists exactly five modules: Commons, Network, Workbench, Records, Intelligence. Repo-facts confirms SchoolConsole exists at /workspace/institutions/school-console as a nested local-first boundary. The proposal correctly demotes it from a rail label to a contextual mode — this SURVIVES review, not refuted. However, the proposal's wording 'becomes contextual mode under Records/Workbench' is ambiguous — School Console is an institution-specific workspace, not a Records or Workbench lens. It should be an institution-context mode accessible from Network (institutions context), not a Records/Workbench sub-mode.",
+      "fix": "Clarify: School Console is an institution-context mode entered from Network → Institutions, not a Records or Workbench lens. It has its own operational boundary (repo-facts: 'nested local-first boundary')."
+    },
+    {
+      "point": "Radar/Undertakings/Roll/Annals as independent module labels (reconcile to five)",
+      "why": "Repo-facts shows current rail labels: Radar→/workspace/commons, Network→/workspace/people (with contexts), Undertakings→/workspace/workbench, Roll→/workspace/roll, plus Annals and APT Coin Lab as secondary. The proposal correctly identifies these must reconcile to five. However, the proposal's 'cuts' list says 'Radar/Undertakings/Roll/Annals as independent module labels' — this is what EXISTS, not what the proposal decides. The decision is to REPLACE them with the five canonical labels. This is a labeling error in the proposal, not a design flaw.",
+      "fix": "Relabel the cut: 'Current rail labels (Radar, Network contexts, Undertakings, Roll, Annals, APT Coin Lab) must be replaced by the five canonical module labels (Commons, Network, Workbench, Records, Intelligence).'"
+    },
+    {
+      "point": "Separate Annals page (merges into Records as Annals lens)",
+      "why": "Charter §5: 'Canon, Annals, and Roll — They must remain conceptually distinct while being navigable together.' The proposal merges Annals into Records as a 'lens' — this is correct per charter's 'navigable together'. However, the charter says 'conceptually distinct' — a 'lens' could mean a tab or view within Records, which preserves distinctness while enabling navigation. The proposal's S4 says 'three-lens ledger (Canon/Proposed/Roll lanes)' — but charter's three are Canon/Annals/Roll, not Canon/Proposed/Roll. The proposal REPLACES Annals with 'Proposed' lane. This is a significant deviation.",
+      "fix": "Records must have three lenses matching charter: Canon (accepted state), Annals (chronological events), Roll (evidence/provenance). The 'Proposed' lane belongs in Workbench (draft work) or as a change-set in the dock, not as a Records lane."
+    },
+    {
+      "point": "Separate Roll page (merges into Records as Roll lens)",
+      "why": "Charter §5 defines Roll as 'why a claim or outcome can be substantiated — Evidence, provenance, attestations, verification, supporting material.' This is distinct from Annals (what happened). Merging Roll as a lens in Records is correct per 'navigable together'. However, the proposal's S4 describes 'Roll lane — evidence layers (public/participant/restricted) with amber gaps' — this correctly maps to repo-facts RollEntry.evidence_layers. The issue is the three-lane model (Canon/Proposed/Roll) replaces the charter's three (Canon/Annals/Roll).",
+      "fix": "Use Canon/Annals/Roll as the three Records lenses. 'Proposed' is a Workbench concept (draft work definitions), not a Records concept."
+    },
+    {
+      "point": "Identical four-metric page heads on every page",
+      "why": "User ruling #3 explicitly: 'Do not force every page into an identical four-metric header.' Charter §8: 'Do not force symmetry where the underlying work is asymmetric.' The proposal's cuts list includes 'Identical four-metric page heads on every page' as something BEING CUT — this is correct. But the 'Page head hierarchy' decision says 'Metrics only where they drive the current decision (e.g., Records shows head hash + entity count; Workbench shows stage gate status).' This survives. The risk is the proposal's own 'sign-off tests' don't explicitly test that page heads are NOT identical across modules.",
+      "fix": "Add sign-off test: 'Navigate all five modules → page heads follow hierarchy (eyebrow→h1→subtitle→action); metrics appear ONLY where they drive a decision; no module shows four identical metric tiles.'"
+    },
+    {
+      "point": "Demo disclaimer theater (illustrative-note banners, 'LOCAL DESIGN STUDY' statusbar spam)",
+      "why": "Charter §8 anti-slop: 'Repeated disclaimers that make the product look like a demo.' Repo-facts: current statusbar has 'BROWSER-LOCAL WORKSPACE DEMO · No shared workspace service connected'. The proposal cuts this — correct. But S8 Intelligence placeholder says 'No UI until user job exists' — this is correct per charter §7 ('If these questions have no credible answer, do not add the feature yet').",
+      "fix": "Ensure statusbar in S3 shell rewrite removes the demo disclaimer entirely. Auth pages (AGENTS.md: 'Be explicit that authentication is a browser-local demo') may retain a subtle notice, but workspace chrome must not."
+    },
+    {
+      "point": "Fake functionality: simulated merges, fake commits, invented data shown as real",
+      "why": "Charter §8 anti-slop: 'Fake functionality or invented data presented as real.' Repo-facts: ecosystem-examples.ts has 'scenario: true, illustrative', people-network.ts has recordBasis 'illustrative' | 'local-profile' | 'project-reported'. The proposal correctly cuts fake functionality. But S4 Records 'three lanes render with demo data' and S7 Commons 'three panels, triage state chips' risk showing illustrative data as real. The proposal must ensure all demo data carries explicit recordBasis/source labeling.",
+      "fix": "Every demo data point in S4-S7 must display its recordBasis (illustrative/local-profile/project-reported) and never render as verified canon. Records ledger must visually distinguish Canon (verified) from illustrative entries."
+    },
+    {
+      "point": "RadarSpatialPanel promoted to /workspace/commons with signal map, triage queue, governance log",
+      "why": "Charter §4: Commons = 'discover and express needs, offers, resources, opportunities, knowledge, problems.' Repo-facts: ecosystem-examples.ts has EXAMPLE_FIELD_SIGNALS (2 entries, scenario: true). The proposal maps Radar to Commons — this aligns. But 'triage queue with coral/amber/lime state chips' risks becoming a social feed (charter: 'not fundamentally a social network'). Every signal must have explicit source basis and triage state (proposal risk noted).",
+      "fix": "Commons signals must show: source (person/institution/asset), type (need/offer/resource/opportunity/knowledge/problem), triage state with explicit authority (who triaged, what evidence). No anonymous feed."
+    },
+    {
+      "point": "Intelligence placeholder — create /workspace/intelligence with declared user job statement, concept list, 'No UI until user job exists' notice",
+      "why": "Charter §4: Intelligence = 'use agents, graph analysis, matching, forecasting, analytics to interpret and improve the system.' Charter §7: 'Ask of every proposed feature: Who uses this? What decision or action does it improve? What value does it create? Who owns the resulting data? Who has authority? How does APT-LABS sustainably capture value? If these questions have no credible answer, do not add the feature yet.' The proposal correctly implements a declared placeholder with a specific user job: 'An institution needs to allocate a budget across crews with verified capability matches, and wants a ranked shortlist with evidence trails and conflict-of-interest flags.' This is a CREDIBLE user job. The placeholder approach survives.",
+      "fix": "The declared user job is good. Ensure the placeholder page does NOT show mock analytics, fake agents, or decorative 'AI insights' — only the job statement, concept list, and 'No UI until user job exists'."
+    },
+    {
+      "point": "Fork glyph retained as identity device only: appears in Records ledger at canonical→proposed divergence, in Workbench at simulation branch point, in Network at relationship hypothesis",
+      "why": "User ruling #1: 'The fork glyph may survive as an identity device only.' V1 Branch study used it in branch glyph and fork-stem; Main study used it in rail icon. The proposal correctly repurposes it semantically: Records (canonical→proposed divergence), Workbench (simulation branch point), Network (relationship hypothesis). It explicitly says 'Never in shell chrome as environment switcher.' This survives. Risk: 'Proposed' lane in Records doesn't exist per charter (should be Annals). The fork glyph at canonical→proposed divergence should be at canonical→annals (event) or canonical→roll (evidence gap).",
+      "fix": "Map fork glyph to charter's three: Canon→Annals (event fork), Canon→Roll (evidence gap), Workbench (simulation branch). Remove 'Proposed' lane reference."
+    },
+    {
+      "point": "Build order S0–S8 is one small reviewable change per step, each gated by npm run build",
+      "why": "AGENTS.md: 'Prefer one small, reviewable change at a time. Run npm run build before shipping.' This survives. However, S0 says 'mark docs/superpowers/specs/2026-11-05-unified-workspace-shell-design.md as superseded' — but charter §12 says this is the v2 direction pass, and the v1 memo is superseded. The spec doc is a v1 artifact. S0 is correct but the sign-off test 'contains SUPERSEDED — see charter §12 user rulings' should reference the correct section.",
+      "fix": "S0 sign-off: 'docs/superpowers/specs/2026-11-05-unified-workspace-shell-design.md contains SUPERSEDED — see charter §12 (v1 memo superseded by v2 direction pass)'."
+    }
+  ],
+  "salvage": [
+    "Five module routes under /workspace: /commons, /network, /workbench, /records, /intelligence — replaces current Radar/Network/Undertakings/Roll/Annals/APT Coin Lab labels",
+    "Single 5-pane shell: rail (5 module icons), sidebar (contextual tree per module), canvas (hero surface), inspector (record/entity detail), dock (change-set/evidence/history). No environment switcher, no duplicate navigation in dock tabs",
+    "Dark signature palette as default: --bg-term #0d110e, --ink #edf4ec, --moss #aab8a7, --teal #87c8c0 (canonical/verified), --lime #c8f292 (proposed/draft), --coral #ea9d7b (risk/exception), --amber #d0b87d (caution/evidence gap). Three type tiers: Georgia serif (record/page names), Inter sans (interface), JetBrains Mono (IDs/timestamps/state labels)",
+    "Records hero: three-lens ledger over RollEntry + hash_anchor + RollRevision — Canon lane (accepted, teal), Annals lane (chronological events), Roll lane (evidence layers public/participant/restricted, amber gaps). Time-axis scrubs all three lanes together",
+    "Network hero: force-directed graph explorer over PEOPLE_NETWORK 31 entities + 34 typed relationships. Entity-type colors: Person=teal, Crew=lime, Asset=amber, Institution=coral, Work=mono, Evidence=dim. 'Evidence as of' time scrubber filters by recordBasis timestamp. Search + legend pinned",
+    "Workbench hero: block-flow simulation builder extending 6-stage pipeline (tender-review → assembly → delivery → acceptance → deployment → pause/resume/cancel). Canvas: predefined blocks dragged into lanes; stage gates require evidence attachment; version badge shows simulation hash anchor",
+    "Commons hero: RadarSpatialPanel over EXAMPLE_FIELD_SIGNALS. Three panels: (1) Signal map — geospatial field observations, (2) Triage queue — steward decisions with coral/amber/lime state chips, (3) Governance log — accepted proposals linking to Workbench work definitions",
+    "Intelligence hero: declared placeholder — user job 'institution allocates budget across crews with verified capability matches, ranked shortlist with evidence trails and COI flags'. Concepts: matching, forecasting, graph analysis. No UI built",
+    "Page head hierarchy: eyebrow (module/context) → h1 (record/page name, serif) → subtitle (one sentence, operational) → primary action (if any). Metrics only where they drive the current decision",
+    "Fork glyph as identity device only: Records (Canon→Annals divergence), Workbench (simulation branch), Network (relationship hypothesis). Never in shell chrome as environment switcher",
+    "Build order S0–S8: one small reviewable change per step, each gated by npm run build. Sign-off tests are specific and verifiable"
+  ],
+  "score": 6
+}

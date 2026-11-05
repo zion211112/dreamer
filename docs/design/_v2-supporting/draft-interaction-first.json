@@ -1,0 +1,102 @@
+{
+  "cuts": [
+    "Main/Branch environment switcher (retired per user ruling)",
+    "Sixth module (Intelligence UI before user job exists)",
+    "Duplicate navigation in dock tabs (Source/Relations/History → replace with change-set/evidence/history per module)",
+    "Identical four-metric page heads on every page",
+    "Demo disclaimer theater (illustrative-note banners, 'LOCAL DESIGN STUDY' statusbar spam)",
+    "Fake functionality: simulated merges, fake commits, invented data shown as real",
+    "School Console as primary module (becomes contextual mode under Records/Workbench)",
+    "APT Coin Lab as primary module (becomes Intelligence placeholder concept)",
+    "Radar/Undertakings/Roll/Annals as independent module labels (reconcile to five)",
+    "Separate Annals page (merges into Records as Annals lens)",
+    "Separate Roll page (merges into Records as Roll lens)"
+  ],
+  "thesis": "The v2 workspace is a single dark-signature field console where five modules (Commons, Network, Workbench, Records, Intelligence) share one domain graph and shell chrome. The shell contains exactly one navigation rail, one contextual sidebar, one content canvas, one inspector, and one dock — each with a single job. Hero surfaces are grounded in verified data structures: a three-lens ledger over RollEntry+hash anchors, a force-directed graph explorer over PEOPLE_NETWORK+34 typed relationships, a block-flow simulation builder extending the 6-stage pipeline, a spatial radar panel over field signals, and a declared Intelligence placeholder awaiting a user job. Interaction principles extracted from three reference instruments map to concrete APT-LABS interactions: multi-lane timeline with fork glyph becomes the Records ledger's canonical/proposed/evidence lanes; time scrubber over knowledge graph becomes Network's \"evidence as of\" filter; drag-predefined-blocks canvas becomes Workbench's stage-gated pipeline builder. Build order S0–S8 is one small reviewable change per step, each gated by npm run build. No Main/Branch, no sixth module, no Intelligence UI before its job exists, no demo theater.",
+  "build_order": [
+    "S0: Docs reconciliation — mark docs/superpowers/specs/2026-11-05-unified-workspace-shell-design.md as superseded; add charter ruling note. Files: docs/design/charter.md (append), docs/superpowers/specs/2026-11-05-unified-workspace-shell-design.md (mark superseded). Gate: npm run build passes.",
+    "S1: Design tokens — add dark signature palette to src/styles.css as :root defaults; move current light tokens to [data-theme=light]; add three type tier classes (.text-record, .text-ui, .text-instrument). Files: src/styles.css. Gate: npm run build + browser verify sign-in/up pages render correctly in dark.",
+    "S2: Route reconciliation — update src/App.tsx routes to five modules; add redirects from old routes (/workspace/commons→/workspace/commons, /workspace/workbench→/workspace/workbench, /workspace/roll→/workspace/records, /workspace/annals→/workspace/records, /workspace/apt-coin-lab→/workspace/intelligence, /workspace/people→/workspace/network, /workspace/institutions→/workspace/network). Files: src/App.tsx, src/lib/studio-navigation.ts (update labels). Gate: npm run build + browser verify all five routes load.",
+    "S3: Shell rewrite — replace WorkspaceShell.tsx with 5-pane shell (rail, sidebar, canvas, inspector, dock); remove moduleOwnsInspector logic; inspector always present for record/entity selection; dock shows change-set/evidence/history per module. Files: src/components/WorkspaceShell.tsx, src/components/StudioNavigation.tsx (rail only), src/styles.css (shell layout tokens). Gate: npm run build + browser verify collapse/expand persists, no console errors.",
+    "S4: Records module — merge /workspace/roll and /workspace/annals into /workspace/records with three-lens ledger (Canon/Proposed/Roll lanes). Use existing RollEntry, RollRevision, hash_anchor. Files: src/pages/workspace/Records.tsx (new), src/lib/db/roll.ts (reuse), src/styles.css (ledger tokens). Gate: npm run build + browser verify three lanes render with demo data.",
+    "S5: Network module — promote NetworkMap to /workspace/network graph explorer with entity-type colors, 34 relationship types, 'evidence as of' time scrubber, search, legend. Files: src/pages/workspace/Network.tsx (new), src/components/NetworkMap.tsx (extend), src/lib/people-network.ts (reuse). Gate: npm run build + browser verify graph renders, scrubber filters relationships.",
+    "S6: Workbench module — extend /workspace/workbench/simulate to block-flow builder with 6-stage pipeline, predefined blocks, stage gates requiring evidence, version badge from simulation hash. Files: src/pages/workspace/Workbench.tsx (refactor), src/lib/workbench-simulation.ts (extend), src/styles.css (canvas tokens). Gate: npm run build + browser verify drag blocks, stage gate enforcement.",
+    "S7: Commons module — promote RadarSpatialPanel to /workspace/commons with signal map, triage queue, governance log. Files: src/pages/workspace/Commons.tsx (refactor), src/lib/ecosystem-examples.ts (reuse), src/styles.css (radar tokens). Gate: npm run build + browser verify three panels, triage state chips.",
+    "S8: Intelligence placeholder — create /workspace/intelligence with declared user job statement, concept list (matching/forecasting/graph analysis), and 'No UI until user job exists' notice. Files: src/pages/workspace/Intelligence.tsx (new). Gate: npm run build + browser verify page loads with correct messaging."
+  ],
+  "sign_off_tests": [
+    "S0: docs/superpowers/specs/2026-11-05-unified-workspace-shell-design.md contains 'SUPERSEDED — see charter §12 user rulings'",
+    "S1: npm run build exits 0; sign-in page renders dark signature palette (--bg-term background, --ink text, Georgia/Inter/JetBrains Mono fonts)",
+    "S2: All five module routes respond 200; old routes redirect; studio-navigation.ts labels match five modules",
+    "S3: Shell renders 5 panes; rail has 5 icons; sidebar/dock collapse persists in localStorage; no duplicate navigation in dock",
+    "S4: Records page shows three lanes (Canon teal, Proposed lime, Roll amber) with fork glyph at divergence; time-axis scrubs all lanes; hash_anchor visible on RollEntry",
+    "S5: Network page shows force-directed graph with 6 entity colors; 34 relationship types filterable; 'evidence as of' scrubber changes visible edges; search + legend pinned",
+    "S6: Workbench page shows 6-stage pipeline; predefined blocks draggable; stage gate blocks transition without evidence attachment; version badge shows simulation hash",
+    "S7: Commons page shows signal map, triage queue (coral/amber/lime chips), governance log linking to Workbench; no duplicate radar in dock",
+    "S8: Intelligence page shows declared user job, concept list, 'No UI until user job exists' — no mock analytics, no fake agents",
+    "Global: Navigate all five modules in sequence → shell chrome consistent, no competing navigation, page heads follow hierarchy (eyebrow→h1→subtitle→action), dark palette communicates state (teal=canonical, lime=proposed, coral=risk, amber=gap), zero demo disclaimer banners in statusbar"
+  ],
+  "stance": "interaction-first",
+  "decisions": [
+    {
+      "area": "Routes",
+      "decision": "Five module routes under /workspace: /commons, /network, /workbench, /records, /intelligence — replace current Radar/Undertakings/Roll/Annals/APT Coin Lab labels",
+      "rationale": "Charter mandates exactly five modules; current labels (Radar, Undertakings, Roll, Annals, APT Coin Lab, School Console) must reconcile into or under the five. School Console becomes a contextual mode under Records/Workbench, not a primary module.",
+      "risk": "Breaks existing bookmarks; needs redirect layer in App.tsx"
+    },
+    {
+      "area": "Shell chrome",
+      "decision": "Single 5-pane shell: rail (5 module icons), sidebar (contextual tree per module), canvas (hero surface), inspector (record/entity detail), dock (change-set/evidence/history). No environment switcher, no duplicate navigation in dock tabs.",
+      "rationale": "Charter: shell chrome must contain no competing navigation systems. V1 studies had Main/Branch switcher (retired), dock tabs duplicating rail, inspector shown only for some modules. New shell unifies.",
+      "risk": "WorkspaceShell.tsx (~280 lines) and StudioNavigation.tsx need rewrite; must preserve sidebar/dock collapse localStorage"
+    },
+    {
+      "area": "Design tokens",
+      "decision": "Adopt dark signature palette as default: --bg-term #0d110e, --ink #edf4ec, --moss #aab8a7, --teal #87c8c0 (canonical/verified), --lime #c8f292 (proposed/draft), --coral #ea9d7b (risk/exception), --amber #d0b87d (caution/evidence gap). Three type tiers: Georgia serif (record/page names), Inter sans (interface), JetBrains Mono (IDs/timestamps/state labels). Light variant via [data-theme=light] overlay, not separate system.",
+      "rationale": "Charter §8: dark is signature system, light is skin variant. Repo-facts: current styles.css is light-first field atlas with no [data-env] blocks. Must invert without new dependencies.",
+      "risk": "Auth pages in styles.css share tokens; changes must not break sign-in/up"
+    },
+    {
+      "area": "Records hero surface",
+      "decision": "Three-lens ledger view over RollEntry + hash_anchor + RollRevision: (1) Canon lane — accepted events with teal markers, (2) Proposed lane — draft changes with lime markers + fork glyph at divergence, (3) Roll lane — evidence layers (public/participant/restricted) with amber gaps. Time-axis scrubs all three lanes together.",
+      "rationale": "Repo-facts: src/lib/db/roll.ts has RollEntry (participants, capability_claims, evidence_ids, evidence_layers, hash_anchor, acceptance_block) and RollRevision (previous/new hash). Charter §5: Canon/Annals/Roll must be conceptually distinct but navigable together.",
+      "risk": "Current /workspace/roll and /workspace/annals are separate pages; must merge into single Records module with three lenses"
+    },
+    {
+      "area": "Network hero surface",
+      "decision": "Force-directed graph explorer promoted from existing NetworkMap (src/components/NetworkMap.tsx) over PEOPLE_NETWORK 31 entities + 34 typed relationships. Entity-type colors: Person=teal, Crew=lime, Asset=amber, Institution=coral, Work=mono, Evidence=dim. 'Evidence as of' time scrubber filters relationship visibility by recordBasis timestamp. Search + entity legend pinned.",
+      "rationale": "Repo-facts: src/lib/people-network.ts has 34 typed relationships (17 kinds incl evidence links) with recordBasis. NetworkMap exists but is People-specific. Charter §4: Network = understand and connect people, crews, institutions, assets, capabilities, relationships.",
+      "risk": "Current /workspace/institutions/network is CapabilityDirectory; must promote NetworkMap to module-level explorer"
+    },
+    {
+      "area": "Workbench hero surface",
+      "decision": "Block-flow simulation builder extending src/lib/workbench-simulation.ts 6-stage pipeline (tender-review → assembly → delivery → acceptance → deployment → pause/resume/cancel). Canvas: predefined blocks (WorkOpportunity, CapabilityMatch, AuthorizationGate, EvidenceGate, Settlement) dragged into lanes; stage gates require evidence attachment before transition. Version badge shows simulation hash anchor from RollPreview.",
+      "rationale": "Repo-facts: workbench-simulation.ts has 6 stages, RollPreview with hash_anchor, unresolvedFacts[]. Local-workflows.ts has application state machine. Charter: Workbench = scope, assemble, coordinate, manage productive work. Reference instrument: drag-predefined-blocks canvas with zoom + version badge.",
+      "risk": "Current /workspace/workbench/simulate is FieldDesk; must generalize to block-flow builder without inventing fake blocks"
+    },
+    {
+      "area": "Commons hero surface",
+      "decision": "RadarSpatialPanel (existing) over EXAMPLE_FIELD_SIGNALS promoted to module canvas. Three panels: (1) Signal map — geospatial field observations, (2) Triage queue — steward decisions with coral/amber/lime state chips, (3) Governance log — accepted proposals linking to Workbench work definitions. No duplicate radar in dock.",
+      "rationale": "Repo-facts: src/lib/ecosystem-examples.ts has EXAMPLE_FIELD_SIGNALS. Radar exists at /workspace/commons. Charter: Commons = discover and express needs, offers, resources, opportunities, knowledge, problems.",
+      "risk": "Must not become a social feed; every signal must have explicit source basis and triage state"
+    },
+    {
+      "area": "Intelligence hero surface",
+      "decision": "Declared placeholder — no UI built. User job that must exist first: 'An institution needs to allocate a budget across crews with verified capability matches, and wants a ranked shortlist with evidence trails and conflict-of-interest flags.' Conceptually today (no UI): matching (capability → work), forecasting (pipeline → capacity), graph analysis (network → structural gaps).",
+      "rationale": "Charter §4: Intelligence = use agents, graph analysis, matching, forecasting, analytics to interpret and improve the system. Charter §7: every feature must answer 'what decision or action does this improve, and who holds authority?' No credible answer yet → no UI.",
+      "risk": "Stakeholders may pressure for AI dashboard; must hold line per charter"
+    },
+    {
+      "area": "Page head hierarchy",
+      "decision": "Single hierarchy: eyebrow (module/context) → h1 (record/page name, serif) → subtitle (one sentence, operational) → primary action (if any). Metrics only where they drive the current decision (e.g., Records shows head hash + entity count; Workbench shows stage gate status). No four-metric ritual on every page.",
+      "rationale": "User ruling #3: 'Do not force every page into an identical four-metric header.' V1 Main study had 4 metrics on every page; Branch study had none. Hierarchy must serve the decision.",
+      "risk": "Existing pages have varied head patterns; must audit and unify"
+    },
+    {
+      "area": "Fork glyph",
+      "decision": "Retain as identity device only: appears in Records ledger at canonical→proposed divergence, in Workbench at simulation branch point, in Network at relationship hypothesis. Never in shell chrome as environment switcher.",
+      "rationale": "User ruling #1: 'The fork glyph may survive as an identity device only.' V1 Branch study used it in branch glyph and fork-stem; Main study used it in rail icon. Repurpose semantically.",
+      "risk": "Must not resemble git branch UI; fork = proposed state change-set, not version control branch"
+    }
+  ]
+}

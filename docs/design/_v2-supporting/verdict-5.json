@@ -1,0 +1,104 @@
+{
+  "score": 3,
+  "refuted": [
+    {
+      "point": "S1 Design tokens — add dark signature palette as :root defaults; move current light tokens to [data-theme=light]",
+      "why": "repo-facts.md line 56: 'No [data-env] blocks and no dark signature palette exist in src yet (grep-verified)'. Current styles.css uses .dark class override (lines 106-141), not [data-theme=light]. The proposal assumes a [data-theme] mechanism that does not exist; introducing it is a new dependency/pattern, not a small change.",
+      "fix": "Keep .dark class approach; add dark signature palette as new :root defaults and move current light tokens under .light class (or keep as :root with .dark override). Do not invent [data-theme=light]."
+    },
+    {
+      "point": "S2 Route reconciliation — add redirects from old routes (/workspace/commons→/workspace/commons, /workspace/workbench→/workspace/workbench, /workspace/roll→/workspace/records, etc.)",
+      "why": "src/App.tsx uses wouter's Switch/Route (lines 16-34). Wouter has no built-in redirect component. Redirects would require new wrapper component or middleware — a new pattern not in the codebase. AGENTS.md: 'do not add tooling or dependencies without a concrete need.'",
+      "fix": "Handle route mapping in App.tsx by mounting new components at new paths AND keeping old paths as aliases (duplicate Route entries), or add a client-side redirect hook in WorkspaceLayout. No new dependencies."
+    },
+    {
+      "point": "S3 Shell rewrite — replace WorkspaceShell.tsx with 5-pane shell (rail, sidebar, canvas, inspector, dock); remove moduleOwnsInspector logic; inspector always present for record/entity selection",
+      "why": "WorkspaceShell.tsx lines 157-166: moduleOwnsInspector is a Set of 8 contexts where inspector is HIDDEN. The proposal claims 'inspector always present' but current code shows inspector ONLY when moduleOwnsInspector is false (line 204). This is a behavioral inversion, not a refinement. Also: 'dock shows change-set/evidence/history per module' — current dock tabs are static 'Source / Related modules / History' (lines 136-140) with no change-set or evidence UI.",
+      "fix": "Explicitly specify: inspector becomes a record/entity detail pane (shown when entity selected), not a module context pane. Dock tabs become dynamic per-module: Records→change-set/evidence/history, Network→evidence/relations/history, Workbench→stage-gate/evidence/history, Commons→triage/governance/history, Intelligence→concepts/history."
+    },
+    {
+      "point": "S5 Network module — promote NetworkMap to module-level explorer with 'evidence as of' time scrubber filtering relationship visibility by recordBasis timestamp, search, legend",
+      "why": "src/components/people/NetworkMap.tsx: No time scrubber, no recordBasis filtering, no search input, legend is static entity-type only (lines 286-295). repo-facts.md line 84: 'No general graph explorer (NetworkMap is a People-specific force-directed graph).' PEOPLE_RELATIONSHIPS has no timestamp/recordBasis field — only id, sourceId, targetId, kind, verb (line 34-40). Cannot filter by 'evidence as of' without new data model.",
+      "fix": "Either: (a) scope S5 to existing NetworkMap capabilities (entity-type colors, 17 relationship kinds, basic legend, node search via query prop), or (b) add recordBasis/timestamp to NetworkRelationship and build scrubber as a separate follow-up step with its own build gate."
+    },
+    {
+      "point": "S6 Workbench module — extend to block-flow builder with predefined blocks (WorkOpportunity, CapabilityMatch, AuthorizationGate, EvidenceGate, Settlement) dragged into lanes; stage gates require evidence attachment",
+      "why": "src/lib/workbench-simulation.ts has 6 stages (lines 3-9) and SimulationPlan with packages (lines 42-54) but NO predefined block types, NO drag-and-drop canvas, NO stage-gate evidence enforcement beyond delivery stage requiring evidence (lines 398-403). Current /workspace/workbench/simulate is FieldDesk (App.tsx line 30). The proposal invents 5 new block types and a canvas that do not exist.",
+      "fix": "Scope S6 to: generalize FieldDesk into a stage-gated pipeline using existing SimulationStage + SimulationPlan + SimulationAction types. Add evidence attachment requirement at assembly→delivery transition (already partially there). Defer drag-and-drop canvas and predefined block library to post-S8."
+    },
+    {
+      "point": "S7 Commons module — promote RadarSpatialPanel with signal map, triage queue (coral/amber/lime chips), governance log linking to Workbench",
+      "why": "RadarSpatialPanel.tsx lines 20-28: 'This schematic is generated locally. It is not a real place and does not position signal records.' The map is a fictional SVG schematic (lines 40-86), not a geospatial signal map. Triage queue exists in Commons.tsx (status chips: new/triaged/brief/resolved) but coral/amber/lime color mapping is not in styles.css. Governance log links to Workbench via proposal approval button (Commons.tsx line 602) but Workbench does not consume proposal context.",
+      "fix": "Rename 'signal map' to 'spatial schematic (mock)' in S7 scope. Add triage chip colors to styles.css in S1. Make Workbench accept proposalId query param (already in Commons.tsx line 602) and surface it in WorkbenchFinder."
+    },
+    {
+      "point": "S8 Intelligence placeholder — create /workspace/intelligence with declared user job, concept list, 'No UI until user job exists' notice",
+      "why": "This is the ONLY proposal point that correctly acknowledges absence (repo-facts.md line 82: 'No Intelligence module'). However, the 'concept list (matching/forecasting/graph analysis)' assumes these are the only concepts — no source cited. Charter §4 defines Intelligence broadly.",
+      "fix": "Keep S8 but source concept list from Charter §4 verbatim: 'use agents, graph analysis, matching, forecasting, analytics to interpret and improve the system.'"
+    },
+    {
+      "point": "Build order S0–S8 claims 'one small reviewable change per step' but S3 (shell rewrite), S4 (Records merge), S5 (Network promotion), S6 (Workbench builder), S7 (Commons promotion) are each major feature work",
+      "why": "AGENTS.md: 'Prefer one small, reviewable change at a time.' S3 rewrites ~280 lines + StudioNavigation.tsx. S4 merges two pages + creates three-lens ledger. S5 builds time scrubber on missing data model. S6 invents drag canvas + block types. S7 promotes mock schematic to module canvas. Each is a multi-day feature, not a 'small change.'",
+      "fix": "Split each S3–S7 into 2–3 sub-steps each with npm run build gate. Example: S3a: shell layout tokens; S3b: rail component; S3c: sidebar/dock persistence; S3d: inspector/dock integration."
+    },
+    {
+      "point": "Decision 'Routes: Five module routes under /workspace' — breaks existing bookmarks; needs redirect layer in App.tsx",
+      "why": "The proposal acknowledges risk but the fix (redirect layer) assumes wouter supports it natively. It does not. Also: old routes include /workspace/institutions/network (CapabilityDirectory) and /workspace/institutions/school-console — these are not in the five modules but are nested under institutions. The proposal redirects them but doesn't specify where School Console goes (it says 'becomes contextual mode under Records/Workbench').",
+      "fix": "Keep /workspace/institutions and /workspace/institutions/school-console as legacy routes mounting existing components. Add new five module routes. No redirects — let both coexist with deprecation notice in shell."
+    },
+    {
+      "point": "Decision 'Shell chrome: Single 5-pane shell... no duplicate navigation in dock tabs' — but current dock tabs ARE a navigation duplicate (WorkspaceShell.tsx lines 184-189: links to other modules)",
+      "why": "The proposal correctly identifies the duplicate but the fix 'dock shows change-set/evidence/history per module' requires per-module dock content that doesn't exist. Current dock is static text tabs.",
+      "fix": "Make dock tabs dynamic: pass module-specific render functions. Start with static content per module in S3, enrich in S4–S7."
+    },
+    {
+      "point": "Decision 'Design tokens: Adopt dark signature palette as default... Light variant via [data-theme=light] overlay' — current styles.css has NO [data-theme] blocks (repo-facts line 56)",
+      "why": "The proposal invents a new theming mechanism. Current approach: :root = light, .dark = dark override. Adding [data-theme=light] requires either: (a) JS to toggle attribute on html, or (b) CSS :root[data-theme=light] which doesn't match current structure.",
+      "fix": "Use existing pattern: :root = dark signature palette (new defaults), .light = current light tokens. Toggle via class on <html> or <body>. No new CSS mechanism."
+    },
+    {
+      "point": "Decision 'Records hero: Three-lens ledger... fork glyph at divergence' — RollEntry has hash_anchor but no 'fork' or 'divergence' concept",
+      "why": "src/lib/db/roll.ts: RollEntry has hash_anchor, acceptance_block, evidence_layers. RollRevision has previous_hash/new_hash. No 'fork' or 'proposed' lane data. Annals.tsx has fork glyph (line 156) but as static illustration. The three-lens model (Canon/Proposed/Roll) is a NEW design, not existing.",
+      "fix": "Acknowledge three-lens ledger as new design in S4 scope. Use RollRevision.previous_hash/new_hash as divergence anchor. Define 'Proposed' lane data model in S4a before building UI."
+    },
+    {
+      "point": "Decision 'Network hero: 34 relationship types filterable' — PEOPLE_RELATIONSHIPS has 34 entries but only 17 kinds (repo-facts line 63)",
+      "why": "src/lib/people-network.ts lines 4-17: RelationshipKind has 17 kinds. PEOPLE_RELATIONSHIPS array has 34 entries (lines 355-389) but many share kinds. '34 relationship types' conflates entries with kinds. Filtering by 34 types is misleading.",
+      "fix": "Say '17 relationship kinds, 34 relationship instances in demo data'. Build kind filter, not instance filter."
+    },
+    {
+      "point": "Decision 'Workbench hero: predefined blocks (WorkOpportunity, CapabilityMatch, AuthorizationGate, EvidenceGate, Settlement)' — these types do not exist in workbench-simulation.ts",
+      "why": "src/lib/workbench-simulation.ts: SimulationPackage has id, title, deliverables[], roleType, dependsOn[] (lines 34-40). SimulationPlan has packages[], costAssumptions, compensationTerms, rightsTerms, safetyRequirements, acceptanceCriteria[], unresolvedFacts[] (lines 42-54). No block types matching the 5 proposed.",
+      "fix": "Derive block types from existing SimulationPlan structure: PackageBlock (from packages), EvidenceGate (from delivery evidence requirement), AcceptanceGate (from acceptance stage), DeploymentGate (from deployment). Do not invent new types."
+    },
+    {
+      "point": "Decision 'Commons hero: Signal map — geospatial field observations' — RadarSpatialPanel is a fictional SVG schematic, not geospatial",
+      "why": "RadarSpatialPanel.tsx lines 26-28: 'This schematic is generated locally. It is not a real place and does not position signal records.' Lines 40-86: hardcoded SVG paths, 5 fake markers. No geocoding, no tile layer, no record pins.",
+      "fix": "Rename to 'spatial schematic (mock provider)'. In S7 scope, keep mock but add signal list overlay. Real geospatial map is out of scope for v2."
+    },
+    {
+      "point": "Decision 'Page head hierarchy: eyebrow → h1 → subtitle → primary action. Metrics only where they drive the current decision' — current pages have inconsistent heads (Roll.tsx has eyebrow+h1+intro; Annals.tsx has kicker+h1+subtitle+link; Commons.tsx has eyebrow+h1)",
+      "why": "The proposal correctly identifies inconsistency but the fix requires auditing ALL pages. Roll.tsx (lines 184-189): eyebrow + h1 + intro. Annals.tsx (lines 82-92): kicker + h1 + subtitle + link. Commons.tsx (lines 361-365): eyebrow + h1. Network.tsx (lines 9-16): eyebrow + h1 + intro. People.tsx (lines 158-162): h1 + caption. No unified hierarchy exists.",
+      "fix": "Add page head audit as S2a sub-step. Define component <PageHead eyebrow? h1 subtitle? action?> in src/components/ and refactor each page in S4–S7."
+    },
+    {
+      "point": "Decision 'Fork glyph: Retain as identity device only... appears in Records ledger at canonical→proposed divergence, in Workbench at simulation branch point, in Network at relationship hypothesis' — fork glyph currently only in Annals.tsx (static illustration)",
+      "why": "Annals.tsx line 156: static fork glyph in fork-note. No fork glyph in Roll.tsx, Workbench (FieldDesk), NetworkMap, or Radar. The proposal assumes it can be 'repurposed semantically' but no component exists for dynamic fork display.",
+      "fix": "Create ForkGlyph component in S3 or S4. Use only where divergence is real (RollRevision hash change, SimulationPlan branch, Network relationship hypothesis). Not in shell chrome."
+    }
+  ],
+  "salvage": [
+    "Thesis: v2 workspace is a single dark-signature field console where five modules (Commons, Network, Workbench, Records, Intelligence) share one domain graph and shell chrome",
+    "Cuts: Main/Branch environment switcher (retired per user ruling), Sixth module (Intelligence UI before user job exists), Duplicate navigation in dock tabs, Identical four-metric page heads, Demo disclaimer theater, Fake functionality, School Console as primary module, APT Coin Lab as primary module, Radar/Undertakings/Roll/Annals as independent labels, Separate Annals page, Separate Roll page",
+    "Shell chrome decision: Single 5-pane shell (rail, sidebar, canvas, inspector, dock) — no environment switcher, no duplicate navigation in dock tabs",
+    "Design tokens decision: Dark signature palette as default (--bg-term #0d110e, --ink #edf4ec, --moss #aab8a7, --teal #87c8c0 canonical, --lime #c8f292 proposed, --coral #ea9d7b risk, --amber #d0b87d caution). Three type tiers: Georgia serif (record/page names), Inter sans (interface), JetBrains Mono (IDs/timestamps/state labels)",
+    "Records hero decision: Three-lens ledger over RollEntry + hash_anchor + RollRevision: Canon lane (teal), Proposed lane (lime + fork glyph), Roll lane (amber gaps). Time-axis scrubs all three lanes",
+    "Network hero decision: Force-directed graph explorer over PEOPLE_NETWORK 31 entities + 34 typed relationships (17 kinds). Entity-type colors. 'Evidence as of' scrubber (requires data model extension)",
+    "Workbench hero decision: Block-flow builder extending 6-stage pipeline. Predefined blocks from existing SimulationPlan. Stage gates require evidence. Version badge from simulation hash anchor",
+    "Commons hero decision: RadarSpatialPanel promoted with signal map (mock), triage queue (state chips), governance log linking to Workbench",
+    "Intelligence hero decision: Declared placeholder — no UI. User job: 'An institution needs to allocate a budget across crews with verified capability matches, and wants a ranked shortlist with evidence trails and conflict-of-interest flags.'",
+    "Page head hierarchy: eyebrow → h1 (serif) → subtitle → primary action. Metrics only where they drive decisions",
+    "Fork glyph: Identity device only — Records ledger divergence, Workbench branch point, Network hypothesis. Never in shell chrome as environment switcher",
+    "Sign-off tests are specific and verifiable (S0: superseded marker, S1: dark palette renders, S2: 5 routes + redirects, S3: 5 panes + persistence, S4: 3 lanes + fork glyph, S5: graph + scrubber + search, S6: 6-stage + drag + gates, S7: 3 panels + chips, S8: placeholder messaging)"
+  ]
+}

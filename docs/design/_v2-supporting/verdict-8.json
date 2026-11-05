@@ -1,0 +1,98 @@
+{
+  "salvage": [
+    "Five modules map to routes: Commons→/workspace/commons, Network→/workspace/network/{people,institutions,capabilities}, Workbench→/workspace/workbench/{field-desk}, Records→/workspace/records/{canon,annals,roll}, Intelligence→/workspace/intelligence/{coin-lab} — REFRAIN: Intelligence module does not exist; AptCoinLab is static research page",
+    "Records module with three lenses (Canon, Annals, Roll) over shared conceptual ledger — REFRAIN: three separate data stores exist (RollEntry, WorkEvent[], people-network); no unified ledger service",
+    "Changeset state machine with 10 states preserving charter's 12 never-equate distinctions — REFRAIN: four different existing state machines for different domains; 10-state machine is new design",
+    "Shell chrome: rail=module nav (5 items), sidebar=context within module, inspector=selected record, dock=active changeset, statusbar=real state — REFRAIN: rail has 4 primary + 2 secondary modules; inspector/dock/statusbar are static and need full replacement",
+    "Network sub-contexts (people/institutions/capabilities) use sidebar context switcher, not separate rail items — PARTIALLY EXISTS: contextDestinations in StudioNavigation.tsx and view tabs in People.tsx",
+    "School Console remains nested boundary under Network→Institutions at /workspace/institutions/school-console — CONFIRMED: exists in App.tsx line 27 and Institutions.tsx line 299",
+    "Remove Main/Branch environment switcher — CONFIRMED: never existed in codebase",
+    "Remove dock static tabs (Source/Related/History + ↗ link tray) duplicating rail — CONFIRMED: exists in WorkspaceShell.tsx lines 136-140, 184-189",
+    "Remove static inspector module-context text, replace with contextual record inspector — CONFIRMED: exists in WorkspaceShell.tsx lines 204-218",
+    "Replace statusbar static demo text with real head/sync state — CONFIRMED: static text in WorkspaceShell.tsx lines 274-278",
+    "Replace forced four-metric header with hierarchy: metrics only where they drive decisions — CONFIRMED: no forced metric header exists; pages have varying header structures"
+  ],
+  "score": 3,
+  "refuted": [
+    {
+      "point": "Proposal assumes a 'cross-module event stream' exists for Annals lens",
+      "why": "repo-facts.md line 83: 'No unified cross-module event stream (Annals page says so in its own context text)'. Annals.tsx shows static chronology prototype only.",
+      "fix": "Remove 'unified cross-module event stream' from Records model rationale. Annals lens must be built from WorkEvent[] in local-workflows + RollEntry acceptance events, not a phantom stream."
+    },
+    {
+      "point": "Proposal assumes 'Intelligence module' exists with AptCoinLab under it",
+      "why": "repo-facts.md line 82: 'No Intelligence module; AptCoinLab is a static research page'. AptCoinLab.tsx is a static research page with distinctions list, no analysis/forecasting capability.",
+      "fix": "AptCoinLab stays as a secondary research page under existing 'Research' sidebar heading (StudioNavigation.tsx line 123-130). Do not create Intelligence rail item or module."
+    },
+    {
+      "point": "Proposal assumes '[data-env] tokens' and 'dark signature palette' exist in src",
+      "why": "repo-facts.md line 56: 'No [data-env] blocks and no dark signature palette exist in src yet (grep-verified)'. styles.css has light-first tokens with .dark class override only.",
+      "fix": "Step 1 must explicitly create new tokens (--paper #0b110f, --ink #edf4ec, --muted #aab8a7, --dim #758175, --teal #87c8c0, --lime #c8f292, --coral #ea9d7b, --amber #d0b87d) as additive, not replacements. No [data-env] mechanism exists."
+    },
+    {
+      "point": "Proposal assumes 'splitters/resizable panes' exist in WorkspaceShell",
+      "why": "repo-facts.md line 45: 'NOT present: splitters/resizable panes, record-level inspector, change-set/ledger dock, environment switcher, surveyor grid, fork glyph.'",
+      "fix": "Remove splitter references from Shell Chrome decision. Any resize behavior must be newly implemented, not assumed."
+    },
+    {
+      "point": "Proposal claims 'WorkspaceShell is untracked and not wired'",
+      "why": "repo-facts.md line 34: WorkspaceShell.tsx exists and is used by all workspace pages via WorkspaceLayout (e.g., People.tsx line 155, Institutions.tsx line 120, Network.tsx line 6). It is wired.",
+      "fix": "Correct claim: WorkspaceShell exists and is wired but has static inspector/dock/statusbar that need replacement per proposal."
+    },
+    {
+      "point": "Proposal Step 3 migrates routes including '/workspace/intelligence/coin-lab' and '/workspace/records/{canon,annals,roll}'",
+      "why": "App.tsx has no '/workspace/records' or '/workspace/intelligence' routes. 'canon' lens does not exist (repo-facts: Canon is distributed in people-network). Intelligence module does not exist.",
+      "fix": "Route migration must be additive: add /workspace/records/roll and /workspace/records/annals first (pointing to existing Roll/Annals pages), add /workspace/records/canon as new page. Do not add /workspace/intelligence/* — AptCoinLab stays at /workspace/apt-coin-lab or moves to /workspace/research/coin-lab under existing Research sidebar."
+    },
+    {
+      "point": "Proposal Step 5: 'Implement changeset state machine in workbench-simulation.ts with 10 states and fork-glyph identity at proposed'",
+      "why": "workbench-simulation.ts has 6 SimulationStage values (candidate_drafted → tender_review_simulated → assembly_simulated → delivery_simulated → acceptance_simulated → roll_preview) and 5 SimulationStatus values. No 10-state machine exists. Fork glyph does not exist. repo-facts.md line 71: 'persistence throws in demo mode'.",
+      "fix": "State machine must be newly designed, not 'implemented in workbench-simulation.ts'. Demo mode persistence throws must be resolved first (localStorage fallback or error surface). Fork glyph is a new UI element, not in codebase."
+    },
+    {
+      "point": "Proposal Step 6: 'Wire Network module sidebar context switcher (people/institutions/capabilities) using existing people-network data'",
+      "why": "StudioNavigation.tsx lines 47-70 already has contextDestinations for people/capabilities/institutions with three links each. People.tsx lines 203-236 already has view tabs (People/Crews/Network). The sidebar context switcher partially exists but is not a unified Network module sidebar.",
+      "fix": "Clarify: sidebar context switcher for Network module needs consolidation of existing contextDestinations + People view tabs into a single Network module sidebar, not 'wiring' from scratch."
+    },
+    {
+      "point": "Proposal Step 8: 'Run npm run build; verify all five modules accessible, no Main/Branch switcher, no duplicate navigation'",
+      "why": "AGENTS.md: 'Prefer one small, reviewable change at a time. Run npm run build before shipping'. 8 massive steps violate this. No Main/Branch switcher exists (verified by grep), so 'no Main/Branch switcher' is a non-goal.",
+      "fix": "Break into 8+ separate PRs each with npm run build gate. Remove 'no Main/Branch switcher' from verification — it never existed."
+    },
+    {
+      "point": "Proposal Decision 'Records Model': 'Canon, Annals, Roll are three lenses over one ledger backed by RollEntry'",
+      "why": "RollEntry (db/roll.ts) has hash_anchor, evidence layers, acceptance block — Roll data. WorkEvent[] (local-workbench.ts) has history — Annals data. people-network.ts has entities+relationships — Canon data. These are THREE SEPARATE DATA STORES with no unified ledger service.",
+      "fix": "Records module must explicitly acknowledge three separate data sources. 'Single ledger service' is a new build, not existing. Ship Roll lens first (most complete), but do not claim unified ledger exists."
+    },
+    {
+      "point": "Proposal Decision 'Changeset Semantics': 'Derived from workbench-simulation 6 stages + local-workflows + RollEntry acceptance block'",
+      "why": "workbench-simulation.ts stages are simulation-specific (tender-review → assembly → delivery → acceptance → deployment). local-workflows.ts has ProposalStatus (proposed/approved/rejected/returned) and SignalStatus. local-workbench.ts has ApplicationStatus (submitted/under_review/selected/declined) and WorkStatus (authorization_pending/authorized/in_progress/submitted/changes_requested/accepted). RollEntry has acceptance block. These are FOUR different state machines for different domains, not one unified changeset machine.",
+      "fix": "Do not claim derivation from existing code. The 10-state machine is a NEW design that must map across domains. Explicitly state: this is a new cross-domain state machine, not a refactor of existing ones."
+    },
+    {
+      "point": "Proposal Decision 'Shell Chrome': 'Inspector: contextual record inspector (not static module text), shown on selection'",
+      "why": "WorkspaceShell.tsx lines 157-166: inspector shows only when moduleOwnsInspector is FALSE (only for 'roll' and 'apt-coin-lab'). For all other contexts, inspector is NOT shown. Current inspector is static module-context text (lines 204-218).",
+      "fix": "Inspector overhaul must: (1) show for ALL contexts on selection, (2) display selected record data not static text, (3) replace moduleOwnsInspector logic entirely."
+    },
+    {
+      "point": "Proposal Decision 'Shell Chrome': 'Dock: changeset/evidence ledger for active proposal (not static tabs duplicating rail)'",
+      "why": "WorkspaceShell.tsx lines 136-140, 180-192: dock has three static tabs (Source/Related modules/History) with hardcoded content. 'Related modules' tab duplicates rail navigation (lines 184-189). No changeset/evidence ledger exists.",
+      "fix": "Dock replacement must be newly built. 'Not static tabs duplicating rail' is correct but the replacement is entirely new work."
+    },
+    {
+      "point": "Proposal Decision 'Shell Chrome': 'Statusbar: real system state (head, sync, demo mode)'",
+      "why": "WorkspaceShell.tsx lines 274-278: statusbar shows static 'APT-LABS / {module} · BROWSER-LOCAL WORKSPACE DEMO · No shared workspace service connected'. No head, sync, or real demo mode state exists.",
+      "fix": "Statusbar must be newly built to show real state. 'Real system state' does not exist in current codebase."
+    },
+    {
+      "point": "Proposal fails criterion (d): For each proposed feature, cannot answer 'what decision or action does this improve, and who holds authority?' in one line",
+      "why": "The proposal lists features (dark palette, 5 modules, Records lenses, changeset state machine, shell chrome) but does not connect each to a specific decision/action + authority holder. Charter §3 demands preservation of 12 distinctions but proposal doesn't map features to those distinctions with authority.",
+      "fix": "Each decision in proposal must include: 'Improves [specific decision/action] for [role/authority]'. Example: 'Changeset state machine improves authorization decision for institution authorizer by making authorized≠in_execution visible.'"
+    },
+    {
+      "point": "Proposal fails criterion (e): Failure states (missing, disputed, stale, unauthorized data) are ignored",
+      "why": "Proposal does not specify what surfaces show when: RollEntry hash_anchor verification fails, people-network record has 'illustrative' basis, Supabase returns empty in demo mode, localStorage throws, Annals has no events, Canon has no relationships. Current codebase handles these explicitly (e.g., People.tsx line 165 'Shared examples · not live records', Institutions.tsx line 139 'Unknown is a useful answer').",
+      "fix": "Add failure-state specifications to each module decision: what the UI shows when data is missing/disputed/stale/unauthorized, following existing patterns in People.tsx and Institutions.tsx."
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "refuted": [
+    {
+      "point": "Intelligence sub-routes declared in Routes decision: /workspace/intelligence/matching, /workspace/intelligence/forecasting, /workspace/intelligence/graph-analysis",
+      "why": "Charter §4 hard constraint: 'No sixth primary module unless a genuinely independent user job cannot fit into the five.' User ruling #2: 'Five modules, one workspace, one shared graph.' Intelligence decision explicitly states: 'NO UI until preconditions met.' Declaring sub-routes for a module with no UI creates a phantom sixth module in the route map, violating the one-workspace ruling and charter's navigation constraints.",
+      "fix": "Remove Intelligence sub-routes from Routes decision. Only /workspace/intelligence should exist as a route (rendering the placeholder). Sub-routes are added only when preconditions are met and UI is built."
+    }
+  ],
+  "score": 9,
+  "salvage": [
+    "Module reconciliation: collapse 7 current labels (Radar, Network, Undertakings, Roll, Annals, APT Coin Lab, School Console) → 5 canonical modules (Commons, Network, Workbench, Records, Intelligence) with Annals as Records lens, APT Coin Lab as Intelligence sub-view, School Console as Workbench local tool",
+    "Routes: canonical five /workspace/{commons,network,workbench,records,intelligence} + Records sub-lenses /canon,/annals,/roll; remove /workspace/people, /workspace/institutions, /workspace/institutions/network, /workspace/annals, /workspace/apt-coin-lab, /workspace/field-desk, /workspace/workbench/simulate",
+    "Design tokens: signature dark palette as :root default (--env-green-black #0b110f, --text-bone #edf4ec, --text-moss #aab8a7, --state-teal #87c8c0, --state-lime #c8f292, --state-coral #ea9d7b, --state-amber #d0b87d) with .light variant; three type tiers (--font-record Georgia/serif, --font-system Inter/sans, --font-instrument Cascadia Code/mono); invert from current light-first field atlas",
+    "Shell chrome: five panes each with one job — topbar (global search Ctrl+K, context breadcrumb, user avatar), rail (5 module icons only), sidebar (per-module context tree), main (hero surface full bleed), inspector (record/entity detail, contextual), dock (cross-module change-set ledger + evidence tray), statusbar (minimal 'APT-LABS / module · browser-local demo'); collapse persistence in localStorage",
+    "Page head hierarchy: eyebrow → h1 (record serif) → subtitle (moss) → primary action (lime) → quiet actions; metrics ONLY when they drive current decision (Workbench: stage-gate status; Records: head hash + evidence coverage; Commons: signal triage counts); no fixed four-metric header",
+    "Hero Commons: RadarSpatialPanel promoted to /workspace/commons with SignalTriage {new,review,propose,authorize,archived}, signal-type filters (need/offer/resource/opportunity/knowledge/problem), inline evidence attachment, promote-to-workbench action",
+    "Hero Network: NetworkMap promoted to typed graph explorer over PEOPLE_NETWORK (31 entities, 34 typed relationships) with entity-type color coding (person/crew/asset/work/institution/evidence), 17 relationship-kind filters, search+focus+detail inspector, 'knowledge as of' time scrubber over canonical head (M-042)",
+    "Hero Workbench: block-flow simulation builder at /workspace/workbench extending 6-stage pipeline (tender-review→assembly→delivery→acceptance→deployment→roll-preview) with stage gates (blocked/proceed), version badge (sim-ID + hash), drag predefined blocks, zoom/pan, RollPreview generation with hash anchor",
+    "Hero Records: three-lens ledger at /workspace/records/{canon,annals,roll} — Canon (entity registry with hash-anchored state), Annals (chronological event stream with evidence links), Roll (RollEntry list with acceptance blocks, hash anchors, revisions); cross-lens navigation (entity→Annals events→Roll evidence→entity)",
+    "Hero Intelligence: declared placeholder at /workspace/intelligence with five exact preconditions (unified event stream, authority model, matching engine, forecasting baseline, graph analysis) and three conceptual jobs (matching, forecasting, graph analysis) — NO interactive UI until preconditions met",
+    "Branch as record concept: branch = change-set/proposed state (RollRevision + SimulationPackage + unresolvedFacts), never navigation; fork glyph (└─) survives as identity device in Records revision lineage and Workbench simulation fork; no environment switcher, no branch explorer tree in shell",
+    "State machines: Commons SignalTriage, Network GraphFocus, Workbench SimulationPipeline with gates, Records Lens + EntityState, Intelligence JobQueue (blocked until preconditions) — encoded in TypeScript types, not just CSS classes",
+    "Cuts list: Main/Branch switcher, sixth module, Annals as top-level, APT Coin Lab as top-level, School Console as primary, duplicate dock navigation, static inspector, four-metric header, light-first tokens, fake data as real, demo disclaimer theater, Intelligence UI before preconditions, gradient washes/card kits/excessive glass/decorative eyebrows/micro-labels/AI dashboard layouts/unnecessary animation/motion without action"
+  ]
+}

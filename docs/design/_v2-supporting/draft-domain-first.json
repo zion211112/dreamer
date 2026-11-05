@@ -1,0 +1,68 @@
+{
+  "build_order": [
+    "1. Implement dark signature palette tokens in src/styles.css (--paper #0b110f, --ink #edf4ec, --muted #aab8a7, --dim #758175, --teal #87c8c0, --lime #c8f292, --coral #ea9d7b, --amber #d0b87d, type stacks Georgia/Inter/JetBrains Mono)",
+    "2. Refactor WorkspaceShell.tsx: five rail items, sidebar context switcher, contextual inspector, changeset dock, real statusbar",
+    "3. Migrate routes: add /workspace/network/{people,institutions,capabilities}, /workspace/records/{canon,annals,roll}, /workspace/intelligence/coin-lab; remove aliases",
+    "4. Build Records module shell with lens switcher (Canon/Annals/Roll) in page head; implement Roll lens first using existing RollEntry model",
+    "5. Implement changeset state machine in workbench-simulation.ts with 10 states and fork-glyph identity at proposed",
+    "6. Wire Network module sidebar context switcher (people/institutions/capabilities) using existing people-network data",
+    "7. Move AptCoinLab page to /workspace/intelligence/coin-lab; add Intelligence rail item",
+    "8. Run npm run build; verify all five modules accessible, no Main/Branch switcher, no duplicate navigation"
+  ],
+  "decisions": [
+    {
+      "area": "Module Map",
+      "decision": "Five modules map to routes: Commons→/workspace/commons, Network→/workspace/network/{people,institutions,capabilities}, Workbench→/workspace/workbench/{field-desk}, Records→/workspace/records/{canon,annals,roll}, Intelligence→/workspace/intelligence/{coin-lab}. StudioContext keys: commons, network:people|institutions|capabilities, workbench|workbench:field-desk, records:canon|annals|roll, intelligence:coin-lab.",
+      "rationale": "Charter mandates five modules, one workspace. Current seven labels map cleanly: Radar=Commons, Network=Network (with three sub-contexts, not separate routes), Undertakings=Workbench, Roll+Annals=Records lenses, APT Coin Lab→Intelligence (analysis/forecasting job), School Console=nested boundary under Network→Institutions (operational-boundary exception per §4).",
+      "risk": "Network sub-contexts must not become separate rail items; use sidebar context switcher. Records module must not feel like three disconnected pages—lens switcher in page head."
+    },
+    {
+      "area": "Records Model",
+      "decision": "Canon, Annals, Roll are three lenses over one ledger backed by RollEntry (hash_anchor, evidence layers public/participant/restricted, acceptance block, RollRevision), WorkEvent history, 34 typed relationships, and recordBasis values. Ship order: Roll lens first (most complete: hash anchors, evidence layers, acceptance), then Annals (prototype exists), then Canon (distributed in people-network, needs dedicated view). Each lens shows: Canon—entities, identities, typed relationships, accepted state; Annals—chronological WorkEvent stream with actors/decisions/transitions; Roll—evidence, provenance, attestations, verification, hash_anchor chain.",
+      "rationale": "Charter §5 requires conceptual distinction with shared navigation. Repo has RollEntry with hash_anchor+evidence layers+acceptance (Roll), WorkEvent[] with history (Annals), people-network entities+relationships (Canon). Roll ships first because its data model is complete and validates the evidence-first principle.",
+      "risk": "Must not duplicate data fetching across lenses. Single ledger service with lens-specific projections."
+    },
+    {
+      "area": "Changeset Semantics",
+      "decision": "Per-record/proposal state machine: draft → proposed → in_review → pending_authorization → authorized → in_execution → pending_acceptance → accepted → (amended|rejected|cancelled). Fork glyph attaches at proposed (identity device for proposed change-set). Each state preserves charter's never-equate distinctions: draft≠proposed (intent≠submission), proposed≠in_review (submission≠active review), in_review≠pending_authorization (review≠decision), pending_authorization≠authorized (awaiting≠granted), authorized≠in_execution (permission≠action), in_execution≠pending_acceptance (doing≠verifying), pending_acceptance≠accepted (candidate≠confirmed), accepted≠amended (original≠corrected), accepted≠settled (acceptance≠value transfer). Derived from workbench-simulation 6 stages (tender-review→assembly→delivery→acceptance→deployment→pause/resume/cancel) + local-workflows (submitted→under_review→selected/declined) + RollEntry acceptance block.",
+      "rationale": "Charter §3 demands preservation of 12 distinctions. Current simulation stages + workflow states + Roll acceptance map to a single state machine that makes authority visible at each transition. Fork glyph is identity only (per user ruling), not navigation.",
+      "risk": "State machine must be enforced by backend/local persistence, not just UI. Demo mode throws on persistence—needs resolution."
+    },
+    {
+      "area": "Shell Chrome",
+      "decision": "Topbar: brand, workspace name, global search, user avatar (no environment switcher). Rail: exactly five module icons (Commons, Network, Workbench, Records, Intelligence). Sidebar: context switcher for Network (people/institutions/capabilities) and Records lens picker (Canon/Annals/Roll). Main: page head with hierarchy (eyebrow/module → h1/record name → subtitle → metrics only where they drive decisions). Inspector: contextual record inspector (not static module text), shown on selection. Dock: changeset/evidence ledger for active proposal (not static tabs duplicating rail). Statusbar: real system state (head, sync, demo mode).",
+      "rationale": "Charter §4: no competing navigation systems; each chrome surface has exactly one job. Current shell has inspector only for roll/apt-coin-lab, dock duplicating rail links, static module-context text. Must unify to: rail=module nav, sidebar=context within module, inspector=selected record, dock=active changeset.",
+      "risk": "Responsive collapse must preserve access to all five modules on mobile (mobile-nav pattern from v1 studies)."
+    }
+  ],
+  "sign_off_tests": [
+    "All five modules reachable via rail with correct StudioContext keys",
+    "Records module shows three lenses (Canon/Annals/Roll) with shared ledger data, navigable between lenses",
+    "Changeset state machine enforces 10 states with fork glyph at proposed; never-equate distinctions visible in UI (e.g., authorized≠in_execution badge)",
+    "No Main/Branch switcher in topbar; no environment token in URL",
+    "Dock shows active changeset/evidence (not static tabs); inspector shows selected record (not static module text)",
+    "Network module has sidebar context switcher (people/institutions/capabilities) not separate rail items",
+    "APT Coin Lab accessible at /workspace/intelligence/coin-lab under Intelligence rail item",
+    "School Console remains at /workspace/institutions/school-console as nested boundary",
+    "npm run build passes with no TypeScript errors"
+  ],
+  "stance": "domain-first",
+  "thesis": "The v2 workspace must collapse seven current labels (Radar, Network, Undertakings, Roll, Annals, APT Coin Lab, School Console) into five modules (Commons, Network, Workbench, Records, Intelligence) by migrating routes, unifying Records as a single module with three lenses (Canon, Annals, Roll), grounding changeset semantics in the existing 6-stage workbench pipeline plus roll acceptance states, and removing the Main/Branch switcher, duplicate navigation, and static inspector/dock chrome. Apt Coin Lab lands under Intelligence as a contextual view; School Console remains a nested operational boundary under Network → Institutions.",
+  "cuts": [
+    "Radar label → rename to Commons (route unchanged)",
+    "Undertakings label → rename to Workbench (route unchanged)",
+    "Network sub-routes (/workspace/people, /workspace/institutions, /workspace/institutions/network) → collapse to /workspace/network/{people,institutions,capabilities} with sidebar context switcher",
+    "Roll route (/workspace/roll) → move to /workspace/records/roll (Records module, Roll lens)",
+    "Annals route (/workspace/annals) → move to /workspace/records/annals (Records module, Annals lens)",
+    "Add Canon lens route /workspace/records/canon (new, Records module)",
+    "APT Coin Lab route (/workspace/apt-coin-lab) → move to /workspace/intelligence/coin-lab (Intelligence module, not primary)",
+    "School Console route (/workspace/institutions/school-console) → keep as nested boundary under Network→Institutions (operational-boundary exception)",
+    "/workspace/field-desk alias → remove (duplicate of /workspace/workbench/field-desk)",
+    "/workspace/workbench/simulate → rename to /workspace/workbench/field-desk",
+    "Main/Branch environment switcher → REMOVE (user ruling #1)",
+    "Dock static tabs (Source/Related/History + ↗ link tray) → REMOVE (duplicates rail)",
+    "Static inspector module-context text → REMOVE (replace with contextual record inspector)",
+    "Statusbar static demo text → REPLACE with real head/sync state",
+    "Four-metric header forced on every page → REPLACE with hierarchy: metrics only where they drive decisions"
+  ]
+}

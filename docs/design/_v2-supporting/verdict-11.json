@@ -1,0 +1,69 @@
+{
+  "score": 6,
+  "refuted": [
+    {
+      "point": "Intelligence module as a primary rail module (5th module alongside Commons, Network, Workbench, Records)",
+      "why": "repo-facts.md line 82: 'No Intelligence module; AptCoinLab is a static research page.' studio-navigation.ts lines 13-20 defines StudioModuleId without Intelligence. App.tsx lines 13-14 imports AptCoinLab only. The proposal assumes a module that does not exist in routes, types, or components.",
+      "fix": "Remove Intelligence from the 5-module rail. Keep the 4 primary modules (Commons/Radar, Network, Workbench/Undertakings, Roll/Records) and add the 5th as a placeholder or defer until Intelligence has real routes, data, and components. Annals and APT Coin Lab remain secondary/contextual per current studio-navigation.ts."
+    },
+    {
+      "point": "Inspector = ONE shared record-detail primitive that opens on record selection",
+      "why": "WorkspaceShell.tsx lines 157-166: moduleOwnsInspector is true for 8 of 11 contexts (people, capabilities, institutions, commons, workbench, field-desk, annals, school-console) — inspector is ONLY shown for roll and apt-coin-lab. EntityInspector.tsx exists for People module only. No cross-module record-selection state exists. The proposal assumes a shared selection model that does not exist.",
+      "fix": "Acknowledge that inspector is currently per-module static text for most modules, and only roll/apt-coin-lab show it. A shared record-detail primitive requires: (1) a cross-module record selection store, (2) record types with common interface, (3) module opt-in. This is a multi-step effort, not a single shell rebuild."
+    },
+    {
+      "point": "Dock = per-module live change-set / ledger strip showing pending commits, evidence gaps, reconciliation queue",
+      "why": "WorkspaceShell.tsx lines 136-140, 180-192: dock is three static tabs (Source/Relations/History) with hardcoded text and link tray. No change-set state exists in any module. local-workbench.ts has WorkEvent[] history but no pending/draft state exposed. roll.ts has hash anchors but no pending commits queue. The proposal describes a live ledger that does not exist.",
+      "fix": "Rebuild dock as a static context shelf first (matching current behavior but with correct tokens). Live change-set requires per-module draft/pending state — implement per module (e.g., Workbench simulation drafts, Roll pending entries) before a unified dock pattern."
+    },
+    {
+      "point": "Statusbar = boundary + ledger head state (current canonical head, pending count, sync status)",
+      "why": "WorkspaceShell.tsx lines 274-278: statusbar shows static 'APT-LABS / {module} · BROWSER-LOCAL WORKSPACE DEMO · No shared workspace service connected'. No ledger head, no pending count, no sync status exists in any store. repo-facts.md line 75: roll.ts has hash_anchor via computeHashAnchor but no 'head' concept exposed. The proposal assumes ledger infrastructure that does not exist.",
+      "fix": "Statusbar should show: workspace name + module label + 'BROWSER-LOCAL DEMO' (current) until ledger heads are defined per module. Add ledger head only when a module has a canonical head (Roll has hash_anchor; others do not)."
+    },
+    {
+      "point": "Build step 6: 'Rebuild WorkspaceShell: rail = 5 modules only; sidebar = within-module; inspector = shared record-detail primitive; dock = live change-set strip; statusbar = boundary + ledger head'",
+      "why": "This single step bundles 5 major architectural changes, each depending on non-existent infrastructure (Intelligence module, shared record selection, live change-set state, ledger heads). Violates AGENTS.md 'Prefer one small, reviewable change at a time.'",
+      "fix": "Split into: (1) Token layer flip (steps 1-4), (2) PageHead component (step 5), (3) Rail reduction to 4 primary + secondary (update studio-navigation.ts), (4) Sidebar strict within-module (remove cross-module links), (5) Inspector: start with roll/apt-coin-lab pattern, add shared primitive later, (6) Dock: static context shelf first, live ledger per-module later, (7) Statusbar: simplify to boundary + demo label, add ledger head when Roll exposes it, (8) Skin switcher + build verification."
+    },
+    {
+      "point": "Contrast facts table claims specific ratios (bone 16.8:1, teal 9.8:1, lime 15.3:1, amber 9.1:1, coral 8.3:1, moss 7.0:1, dim 3.4:1) on #0A0F0C",
+      "why": "These ratios are not verified in the codebase. styles.css current dark uses --bg-term #0d110e, not #0A0F0C. The proposal's palette (bone #E9F1E8, teal #7FC5BC, lime #C9F292, amber #CBAF6E, coral #E89670, moss #8FA08C, dim #5C6B5E) does not exist in styles.css. No contrast test file exists (repo-facts.md line 89-93 lists 11 vitest files, none for tokens).",
+      "fix": "Either: (a) cite the Charter document that defines these exact values, or (b) mark these as proposed values to be validated, not verified facts. Add token-contrast.test.ts as proposed (optional) but do not claim ratios are verified."
+    },
+    {
+      "point": "L3 metrics for each module (e.g., Commons: 'Review queue 3', 'Evidence gaps 7', 'Unresolved 2')",
+      "why": "No module currently exposes these counts. Commons (Radar) page uses EXAMPLE_FIELD_SIGNALS (2 items, scenario: true). Workbench has 3 WORK_OPPORTUNITIES. Roll has 3 DEMO_ROLL_ENTRIES. Network has 31 entities but no 'verified/unverified/disputed' classification. These specific numbers are invented.",
+      "fix": "Label L3 metrics as 'illustrative examples' not decision-driving metrics. Real metrics require: (1) query APIs per module, (2) state classification (verified/unverified/disputed), (3) live counts. Current demo data cannot support these specific numbers."
+    },
+    {
+      "point": "Sign-off test: 'Inspector opens on record selection (simulated) showing relationships, evidence gaps, context actions, gate status'",
+      "why": "No record selection simulation exists. WorkspaceShell.tsx has no record selection props or state. EntityInspector.tsx (People) shows profile details but not relationships/evidence gaps/gate status. The test assumes infrastructure that does not exist.",
+      "fix": "Change to: 'Inspector displays static module context for roll and apt-coin-lab (current behavior) with semantic tokens working in both skins.' Defer simulated record selection to a follow-up."
+    },
+    {
+      "point": "Sign-off test: 'Dock shows live change-set data for active module (simulated)'",
+      "why": "No change-set data exists in any module. Dock currently shows static text tabs. 'Simulated' here means invented data, which violates 'Fake functionality or invented data presented as real' in cuts.",
+      "fix": "Change to: 'Dock renders static context tabs (Source/Relations/History) with correct semantic tokens in both skins.' Live change-set is a future feature per module."
+    },
+    {
+      "point": "Sign-off test: 'Contrast ratios for bone/teal/lime/amber/coral/moss/dim on #0A0F0C meet WCAG AA (automated check)'",
+      "why": "No automated contrast check exists. The palette colors and #0A0F0C background are not in styles.css. This test cannot pass until tokens are defined and a test is written.",
+      "fix": "Change to: 'Token primitives defined in :root and [data-skin=light] with semantic aliases; contrast validation script added (token-contrast.test.ts) — ratios to be measured and documented.'"
+    }
+  ],
+  "salvage": [
+    "Token layer: Adopt dark-signature palette on #0A0F0C as default skin with light 'daylight archive' variant via [data-skin='light'] on html; replace semantic state tokens (ok/warn/info/danger) with canonical/active/risk/gap aliases; retire .dark class and [data-env] spec entirely; fix --info-bg defect by defining --water-pale in both skins",
+    "Contrast facts: Contrast ratios must be codified as token primitives and enforced via CI check (token-contrast.test.ts optional). The dim token at 3.4:1 is explicitly decorative-only per charter.",
+    "Pane ownership — Topbar: Current working-context identity only (workspace name, active module, profile). No environment switcher. No workspace-within-workspace.",
+    "Pane ownership — Rail: Exactly five module destinations. Annals becomes a contextual destination within Records (Canon/Annals/Roll query concept). APT Coin Lab becomes Intelligence sub-view (research). School Console becomes Workbench nested boundary. Current STUDIO_FLOW_MODULES has 4; need to reconcile to 5 with Intelligence or keep 4 + secondary.",
+    "Pane ownership — Sidebar: Within-module context only (filtered views, scoped navigation, local filters). Not a second module navigator. Collapses to 0 on mobile. Network module's three sub-contexts (people/institutions/capabilities) is correct within-module navigation.",
+    "Pane ownership — Main: Work surface only. Page head follows L1/L2/L3 hierarchy. No fixed four-metric header. Build PageHead component with L1/L2/L3 slots.",
+    "Pane ownership — Inspector: One shared record-detail primitive (relationships, evidence gaps, context actions, gate status). Opens on record selection, closes on deselect. Resizable. Requires record-selection state shared across modules (future work).",
+    "Pane ownership — Dock: Per-module live change-set / ledger strip replacing static Source/Related/History link tray. Shows pending commits, evidence gaps, reconciliation queue. Collapsible. Requires module-specific change-set state (future work).",
+    "Pane ownership — Statusbar: Single boundary line + ledger head state (current canonical head, pending count, sync status). No module label duplication. Reduce from current 'APT-LABS / {module} · BROWSER-LOCAL WORKSPACE DEMO'.",
+    "Signature devices — KEEP: Surveyor grid (24px) as subtle background on work surfaces; Fork glyph (└─) as identity device only (not navigation); Ringed evidence markers (● with ring) on events/records; 24px survey lines as structural rhythm; Three type tiers (serif record names, sans UI, mono readouts); Glassmorphic topbar (backdrop-filter blur). CUT: Gradients as primary fills; All-caps micro-labels; Motion not responding to user action; Generic AI dashboard layouts; Decorative metrics with no operational meaning.",
+    "Page head L1/L2/L3 hierarchy: L1 (always) serif record/page name; L2 (when facts exist) mono readout line (ID, timestamp, state, head); L3 (max 3, only when driving decision) metrics with 2px left border, first in teal. Intelligence page gets only L1+L2 (exploratory, no decision-driving metrics).",
+    "Type system: Three tiers — Serif (Georgia) for record/page names; System sans (Inter) for interface text; Monospace (JetBrains Mono) for IDs, timestamps, counts, state labels, L2/L3 readouts. Uppercase mono ONLY for informational pane headers (rail tooltips, sidebar section labels, dock tab labels, statusbar) — never for content, buttons, or page head. Audit existing .uppercase utility usage."
+  ]
+}

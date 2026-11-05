@@ -152,7 +152,7 @@ export function People() {
   };
 
   return (
-    <WorkspaceLayout currentContext="people">
+    <WorkspaceLayout currentContext="network:people">
       <div className="people-page">
         <header className="people-page-header">
           <div className="people-page-title">

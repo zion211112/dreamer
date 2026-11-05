@@ -117,7 +117,7 @@ export function Institutions() {
   }
 
   return (
-    <WorkspaceLayout currentContext="institutions">
+    <WorkspaceLayout currentContext="network:institutions">
       <div className="institution-page">
         <header className="institution-page-head">
           <div className="institution-heading">
