@@ -170,7 +170,7 @@ function ProfileEntry({ name, onOpen, open }: { name: string; onOpen: () => void
 }
 
 export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSidebar }: StudioNavigationProps) {
-  const { profile, loading: authLoading } = useAuth();
+  const { profile } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [identityOpen, setIdentityOpen] = useState(false);
   const drawerRef = useRef<HTMLDialogElement>(null);
@@ -228,7 +228,6 @@ export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSid
         <span className="studio-topbar-divider" aria-hidden="true" />
         <span className="studio-topbar-context"><strong>Field Studio</strong><span aria-hidden="true">/</span>{getStudioModuleLabel(currentContext)}</span>
         <span className="studio-topbar-spacer" />
-        <span className="studio-topbar-demo"><i aria-hidden="true" />{authLoading ? 'Loading local profile' : 'Browser-local demo'}</span>
         <button
           aria-label={sidebarCollapsed ? 'Show workspace navigation pane' : 'Hide workspace navigation pane'}
           aria-pressed={sidebarCollapsed}

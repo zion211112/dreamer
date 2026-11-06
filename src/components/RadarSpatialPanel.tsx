@@ -16,7 +16,6 @@ const signalStages = [
 export function RadarSpatialPanel({ signals }: RadarSpatialPanelProps) {
   const summary = getRadarSignalSummary(signals);
   const spatialState = getRadarSpatialState(signals);
-  const illustrativeCount = signals.filter(signal => signal.scenario || signal.recordBasis === 'illustrative').length;
   const mockMapScene = getMockRadarMapScene();
 
   return (
@@ -111,10 +110,6 @@ export function RadarSpatialPanel({ signals }: RadarSpatialPanelProps) {
         </dl>
       </div>
 
-      <p className="radar-spatial-disclaimer">
-        Browser-local demo · institution scope is a view, not access control; these are not shared-register counts.
-        {illustrativeCount > 0 && ` Includes ${illustrativeCount} illustrative ${illustrativeCount === 1 ? 'prompt' : 'prompts'}.`}
-      </p>
     </section>
   );
 }

@@ -131,7 +131,6 @@ export function Auth() {
     <main className="auth-layout">
       <header className="auth-header">
         <BrandMark size="sm" />
-        <span className="auth-demo-status"><span aria-hidden="true" />Browser-local demo</span>
       </header>
 
       <div className="auth-main">
@@ -295,9 +294,6 @@ export function Auth() {
         </section>
       </div>
 
-      <footer className="auth-footer">
-        <span>Browser-local demo. Passwords are not stored.</span>
-      </footer>
     </main>
   );
 }

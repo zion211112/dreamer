@@ -139,7 +139,6 @@ export function WorkspaceShell({
         <span className="field-studio-ledger-head">
           {ledgerHeadHash ?? '—'}
         </span>
-        <strong>BROWSER-LOCAL DEMO</strong>
       </footer>
     </div>
   );

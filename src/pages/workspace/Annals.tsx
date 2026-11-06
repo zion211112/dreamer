@@ -99,7 +99,6 @@ export function Annals() {
             Current Commons, Workbench, and Roll records remain separate local workflows. This
             timeline describes the intended relationship; it does not display recorded project events.
           </p>
-          <span className="annals-local-tag">BROWSER-LOCAL DEMO</span>
         </section>
 
         <div className="annals-grid">
