@@ -75,21 +75,21 @@ const contextDestinations: Record<StudioContext, { heading: string; links: Conte
     heading: 'Workbench',
     links: [
       { context: 'workbench:field-desk', href: '/workspace/workbench/field-desk', label: 'Field desk' },
-      { context: 'workbench:school-console', href: '/workspace/workbench/school-console', label: 'School console' },
+      { context: 'workbench:school-console', href: '/workspace/assets/school-console', label: 'School console' },
     ],
   },
   'workbench:field-desk': {
     heading: 'Workbench',
     links: [
       { context: 'workbench:field-desk', href: '/workspace/workbench/field-desk', label: 'Field desk' },
-      { context: 'workbench:school-console', href: '/workspace/workbench/school-console', label: 'School console' },
+      { context: 'workbench:school-console', href: '/workspace/assets/school-console', label: 'School console' },
     ],
   },
   'workbench:school-console': {
     heading: 'Workbench',
     links: [
       { context: 'workbench:field-desk', href: '/workspace/workbench/field-desk', label: 'Field desk' },
-      { context: 'workbench:school-console', href: '/workspace/workbench/school-console', label: 'School console' },
+      { context: 'workbench:school-console', href: '/workspace/assets/school-console', label: 'School console' },
     ],
   },
   'records:canon': {

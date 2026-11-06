@@ -78,7 +78,7 @@ export function InstitutionInspector({
         </Link>
       )}
       {entity.id === 'asset-school-management-console' && (
-        <Link className="institution-context-link" href="/workspace/institutions/school-console">
+        <Link className="institution-context-link" href="/workspace/assets/school-console">
           <span>
             <small>LOCAL-FIRST PROTOTYPE</small>
             <strong>Open School Console</strong>

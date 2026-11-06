@@ -8,7 +8,7 @@ import { Network } from './pages/workspace/Network';
 import { Commons } from './pages/workspace/Commons';
 import { Workbench } from './pages/workspace/FieldDesk';
 import { WorkbenchFinder } from './pages/workspace/WorkbenchFinder';
-import { SchoolConsole } from './pages/workspace/SchoolConsole';
+import { SchoolConsoleModule } from './modules/assets/school-console';
 import { Records } from './pages/workspace/Records';
 import { AptCoinLab } from './pages/workspace/AptCoinLab';
 
@@ -28,7 +28,7 @@ export function App() {
       <Route path="/workspace/network/capabilities"><Network /></Route>
       <Route path="/workspace/workbench"><WorkbenchFinder /></Route>
       <Route path="/workspace/workbench/field-desk"><Workbench /></Route>
-      <Route path="/workspace/workbench/school-console"><SchoolConsole /></Route>
+      <Route path="/workspace/assets/school-console"><SchoolConsoleModule /></Route>
       <Route path="/workspace/records"><Records /></Route>
       <Route path="/workspace/records/canon"><Records /></Route>
       <Route path="/workspace/records/annals"><Records /></Route>
