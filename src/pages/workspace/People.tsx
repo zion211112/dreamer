@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Link } from 'wouter';
 import { EntityInspector } from '../../components/people/EntityInspector';
-import { NetworkMap } from '../../components/people/NetworkMap';
+import { NetworkMap } from '../../components/NetworkMap';
 import { PeopleDirectory } from '../../components/people/PeopleDirectory';
 import {
   importPortablePeopleRecord,
@@ -21,8 +21,9 @@ import {
   type PeopleProfileRecord,
 } from '../../lib/people-profiles';
 import { WorkspaceLayout } from './WorkspaceLayout';
+import { PeopleViewTabs } from './people/PeopleViewTabs';
 
-type PeopleView = 'people' | 'crews' | 'network';
+export type PeopleView = 'people' | 'crews' | 'network';
 
 export function People() {
   const sampleRecord: PeopleNetworkRecord = { entities: PEOPLE_NETWORK, relationships: PEOPLE_RELATIONSHIPS };
@@ -200,40 +201,7 @@ export function People() {
           <Link href="/workspace/institutions/network">Browse capabilities <span aria-hidden="true">→</span></Link>
         </p>
 
-        <nav className="people-view-tabs" aria-label="People views" role="tablist">
-          {([
-            ['people', 'People'],
-            ['crews', 'Crews'],
-            ['network', 'Network'],
-          ] as const).map(([view, label]) => (
-            <button
-              key={view}
-              id={`people-tab-${view}`}
-              type="button"
-              role="tab"
-              aria-selected={activeView === view}
-              aria-controls={`people-panel-${view}`}
-              tabIndex={activeView === view ? 0 : -1}
-              className={activeView === view ? 'is-active' : ''}
-              onClick={() => setActiveView(view)}
-              onKeyDown={event => {
-                const views: PeopleView[] = ['people', 'crews', 'network'];
-                const currentIndex = views.indexOf(view);
-                const nextIndex = event.key === 'ArrowRight' ? (currentIndex + 1) % views.length
-                  : event.key === 'ArrowLeft' ? (currentIndex + views.length - 1) % views.length
-                    : event.key === 'Home' ? 0
-                      : event.key === 'End' ? views.length - 1 : -1;
-                if (nextIndex < 0) return;
-                event.preventDefault();
-                const nextView = views[nextIndex];
-                setActiveView(nextView);
-                document.getElementById(`people-tab-${nextView}`)?.focus();
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </nav>
+        <PeopleViewTabs activeView={activeView} setActiveView={setActiveView} />
 
         <section className="people-workbench" aria-label="People capability directory and network">
           <div

@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
 import { Link } from 'wouter';
-import { Button } from '../../components/Button';
-import { Input } from '../../components/Input';
 import {
   initialConsoleSnapshot,
   loadConsoleSnapshot,
@@ -9,38 +7,12 @@ import {
   type ConsoleSnapshot,
   type SchoolTenderDraft,
 } from '../../lib/school-console-storage';
-import { createConsoleSignalLink } from '../../lib/local-workflows';
-import {
-  markPaper,
-  parseCsvPapers,
-  parseJsonPapers,
-  type SchemeQuestion,
-} from '../../lib/school-marking';
 import { WorkspaceLayout } from './WorkspaceLayout';
-
-type ConsoleRole = 'teacher' | 'principal';
-type ConsoleModule = 'my-day' | 'auto-marking' | 'tender-drafts';
-
-const questions: SchemeQuestion[] = [
-  { id: 'Q1', prompt: 'What is the chemical formula for water?', topic: 'Matter', answer: 'H2O', keywords: ['H₂O'], marks: 1 },
-  { id: 'Q2', prompt: 'Name the process plants use to make food from sunlight.', topic: 'Living things', answer: 'photosynthesis', keywords: ['photosynthesis'], marks: 2 },
-];
-
-const dayTasks = [
-  { id: 'lesson', time: '08:10', title: 'Form 2 Science · Matter' },
-  { id: 'marking', time: '10:20', title: 'Review a practice set' },
-  { id: 'reports', time: '14:00', title: 'Prepare a class note' },
-];
-
-const roleModules: Record<ConsoleRole, { id: ConsoleModule; label: string; index: string }[]> = {
-  teacher: [
-    { id: 'my-day', label: 'My Day', index: '01' },
-    { id: 'auto-marking', label: 'Auto-Marking', index: '02' },
-  ],
-  principal: [
-    { id: 'tender-drafts', label: 'Tender drafts', index: '01' },
-  ],
-};
+import { markPaper, parseCsvPapers, parseJsonPapers } from '../../lib/school-marking';
+import { questions, roleModules, type ConsoleRole, type ConsoleModule } from './school-console/constants';
+import { MyDayView } from './school-console/MyDayView';
+import { AutoMarkingView } from './school-console/AutoMarkingView';
+import { TenderDraftView } from './school-console/TenderDraftView';
 
 function errorText(error: unknown): string {
   return error instanceof Error ? error.message : 'The local School Console action failed.';
@@ -260,162 +232,38 @@ export function SchoolConsole() {
             {feedback && <p className="sc-state-line" role="status">{feedback}</p>}
 
             {activeModule === 'my-day' && role === 'teacher' && (
-              <section className="sc-module" aria-labelledby="sc-my-day-title">
-                <div className="sc-module-head">
-                  <div>
-                    <p className="sc-eyebrow">TEACHER TOOLS <span>/</span> DAILY RHYTHM</p>
-                    <h2 id="sc-my-day-title">My Day</h2>
-                    <p className="sc-module-description">A simple planning checklist. These entries are examples, not a live timetable.</p>
-                  </div>
-                  <span className="sc-example-stamp">EXAMPLE ROUTINE</span>
-                </div>
-                <div className="sc-day-summary">
-                  <span>DAILY PLAN</span>
-                  <strong>{snapshot.completedTasks.filter(id => dayTasks.some(task => task.id === id)).length}<small> / {dayTasks.length} complete</small></strong>
-                </div>
-                <div className="sc-day-list">
-                  {dayTasks.map(task => {
-                    const complete = snapshot.completedTasks.includes(task.id);
-                    return (
-                      <button
-                        aria-pressed={complete}
-                        className={`sc-day-item${complete ? ' is-complete' : ''}`}
-                        disabled={!canWrite}
-                        key={task.id}
-                        onClick={() => void toggleTask(task.id)}
-                        type="button"
-                      >
-                        <time>{task.time}</time>
-                        <span className="sc-task-check" aria-hidden="true">{complete ? '✓' : ''}</span>
-                        <strong>{task.title}</strong>
-                        <span className="sc-task-state">{complete ? 'DONE' : 'OPEN'}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-                <p className="sc-footnote">Checklist changes are stored locally and can be reopened at any time.</p>
-              </section>
+              <MyDayView snapshot={snapshot} toggleTask={toggleTask} canWrite={canWrite} />
             )}
 
             {activeModule === 'auto-marking' && role === 'teacher' && (
-              <section className="sc-module" aria-labelledby="sc-marking-title">
-                <div className="sc-module-head">
-                  <div>
-                    <p className="sc-eyebrow">TEACHER TOOLS <span>/</span> PRACTICE ASSESSMENT</p>
-                    <h2 id="sc-marking-title">Auto-Marking</h2>
-                    <p className="sc-module-description">A visible answer scheme applies the same deterministic rule to each typed response.</p>
-                  </div>
-                  <span className="sc-example-stamp">LOCAL PRACTICE</span>
-                </div>
-
-                <div className="sc-review-warning">
-                  <strong>Teacher review required</strong>
-                  <span>Practice aid only · not an official grade · no AI or scan reading</span>
-                </div>
-
-                <div className="sc-scheme">
-                  <div className="sc-scheme-head"><span>ANSWER SCHEME</span><span>RULE-MARKED</span></div>
-                  {questions.map(question => (
-                    <div className="sc-scheme-row" key={question.id}>
-                      <span className="sc-question-id">{question.id}</span>
-                      <div><strong>{question.prompt}</strong><small>Canonical answer: {question.answer} · accepted keyword: {question.keywords?.join(', ')}</small></div>
-                      <span className="sc-question-marks">{question.marks} {question.marks === 1 ? 'mark' : 'marks'}</span>
-                    </div>
-                  ))}
-                  <p className="sc-scheme-rule">Case-insensitive, accent-sensitive canonical match or accepted keyword found within the response. Review every result before use.</p>
-                </div>
-
-                <form className="sc-mark-form" onSubmit={submitPaper}>
-                  <div className="sc-form-heading"><div><span className="sc-eyebrow">NEW PRACTICE PAPER</span><h3>Enter typed responses</h3></div><span className="sc-data-note">Do not enter real learner records</span></div>
-                  <label className="sc-field sc-field-wide" htmlFor="sc-paper-label">Practice paper label
-                    <Input id="sc-paper-label" onChange={setPaperLabel} value={paperLabel} disabled={!canWrite} />
-                  </label>
-                  {questions.map(question => (
-                    <label className="sc-field" htmlFor={`sc-answer-${question.id}`} key={question.id}>
-                      <span>{question.id} <i>/</i> {question.topic}</span>
-                      <Input id={`sc-answer-${question.id}`} onChange={value => setAnswers(current => ({ ...current, [question.id]: value }))} value={answers[question.id] ?? ''} disabled={!canWrite} />
-                    </label>
-                  ))}
-                  {importError && <p className="sc-inline-error" role="alert">{importError}</p>}
-                  <div className="sc-form-actions">
-                    <Button disabled={!canWrite} type="submit">Mark practice paper <span aria-hidden="true">→</span></Button>
-                    <label className={`sc-import-button${!canWrite ? ' is-disabled' : ''}`}>
-                      Import CSV / JSON
-                      <input accept=".csv,.json,application/json,text/csv" disabled={!canWrite} onChange={event => void importPapers(event)} type="file" />
-                    </label>
-                  </div>
-                  <p className="sc-footnote">CSV headers: student,Q1,Q2 · JSON: [{'{'} &quot;student&quot;, &quot;answers&quot;: {'{'} &quot;Q1&quot;, &quot;Q2&quot; {'}'} {'}'}]. Typed data only; scans and images are not read.</p>
-                </form>
-
-                <div className="sc-results">
-                  <div className="sc-results-head">
-                    <div><span className="sc-eyebrow">LOCAL RESULT SET</span><h3>Practice results</h3></div>
-                    <span><strong>{markedCount}</strong> {markedCount === 1 ? 'paper' : 'papers'} <i>/</i> {averageMark === null ? 'No average' : `${averageMark}% average`}</span>
-                  </div>
-                  {snapshot.markedPapers.length === 0
-                    ? <p className="sc-empty-state">No practice papers yet. Enter typed responses above to begin.</p>
-                    : <div className="sc-result-list">{snapshot.markedPapers.map((paper, index) => (
-                      <div className="sc-result-row" key={`${paper.student}-${index}`}>
-                        <strong>{paper.student}</strong>
-                        <span>{paper.marksByQuestion.map((mark, questionIndex) => `Q${questionIndex + 1}: ${mark}`).join(' · ')}</span>
-                        <b>{paper.score}<i> / {paper.maximum}</i></b>
-                      </div>
-                    ))}</div>}
-                </div>
-              </section>
+              <AutoMarkingView
+                snapshot={snapshot}
+                paperLabel={paperLabel}
+                setPaperLabel={setPaperLabel}
+                answers={answers}
+                setAnswers={setAnswers}
+                importError={importError}
+                submitPaper={submitPaper}
+                importPapers={importPapers}
+                canWrite={canWrite}
+                markedCount={markedCount}
+                averageMark={averageMark}
+              />
             )}
 
             {activeModule === 'tender-drafts' && role === 'principal' && (
-              <section className="sc-module" aria-labelledby="sc-tenders-title">
-                <div className="sc-module-head">
-                  <div>
-                    <p className="sc-eyebrow">SCHOOL OPERATIONS <span>/</span> PRIVATE DRAFTS</p>
-                    <h2 id="sc-tenders-title">Tender drafts</h2>
-                    <p className="sc-module-description">Record a school need for local review. Nothing is published or sent to the APT-LABS Workbench.</p>
-                  </div>
-                  <span className="sc-example-stamp">NOT PUBLISHED</span>
-                </div>
-
-                <form className="sc-tender-form" onSubmit={createDraft}>
-                  <div className="sc-form-heading"><div><span className="sc-eyebrow">NEW LOCAL RECORD</span><h3>Describe the need</h3></div><span className="sc-data-note">No learner details</span></div>
-                  <label className="sc-field sc-field-wide" htmlFor="sc-asset-name">Asset or need title
-                    <Input id="sc-asset-name" onChange={setAssetName} value={assetName} disabled={!canWrite} placeholder="e.g. Classroom desks for repair" />
-                  </label>
-                  <label className="sc-field sc-field-wide" htmlFor="sc-tender-need">Need and operating context
-                    <textarea id="sc-tender-need" disabled={!canWrite} onInput={event => setTenderNeed((event.currentTarget as HTMLTextAreaElement).value)} placeholder="Describe the service gap and the outcome needed. Avoid personal or learner information." value={tenderNeed} />
-                  </label>
-                  <label className="sc-field sc-field-cost" htmlFor="sc-build-cost">Estimated build cost <span>(KES · optional)</span>
-                    <Input id="sc-build-cost" min={0} step={0.01} onChange={setAssetBuildCost} value={assetBuildCost} disabled={!canWrite} placeholder="Leave blank if unknown" type="number" />
-                  </label>
-                  <div className="sc-form-actions">
-                    <Button disabled={!canWrite} type="submit">Save local draft <span aria-hidden="true">→</span></Button>
-                    <span className="sc-form-disclosure">Stored in this browser only</span>
-                  </div>
-                </form>
-
-                <div className="sc-results">
-                  <div className="sc-results-head">
-                    <div><span className="sc-eyebrow">THIS DEVICE</span><h3>Unpublished drafts</h3></div>
-                    <span><strong>{snapshot.tenderDrafts.length}</strong> {snapshot.tenderDrafts.length === 1 ? 'draft' : 'drafts'}</span>
-                  </div>
-                  {snapshot.tenderDrafts.length === 0
-                    ? <p className="sc-empty-state">No local tender drafts. A saved draft remains private and unpublished.</p>
-                    : <div className="sc-tender-list">{snapshot.tenderDrafts.map(draft => (
-                      <article className="sc-tender-row" id={`school-draft-${draft.id}`} key={draft.id}>
-                        <div className="sc-tender-row-copy">
-                          <span className="sc-draft-status">LOCAL DRAFT <i>/</i> UNPUBLISHED</span>
-                          <h4>{draft.assetName}</h4>
-                          <p>{draft.need}</p>
-                          <small>{draft.assetBuildCost ? `Estimated KES ${Number(draft.assetBuildCost).toLocaleString('en-KE')}` : 'Build cost not estimated'} <i>/</i> {new Date(draft.createdAt).toLocaleDateString()}</small>
-                        </div>
-                        <div className="sc-tender-actions">
-                          <Link className="sc-review-commons" href={createConsoleSignalLink(draft.id)}>Review in Commons</Link>
-                          <Button className="sc-discard-button" disabled={!canWrite} onClick={() => void discardDraft(draft.id)} type="button" variant="ghost">Discard</Button>
-                        </div>
-                      </article>
-                    ))}</div>}
-                </div>
-              </section>
+              <TenderDraftView
+                snapshot={snapshot}
+                assetName={assetName}
+                setAssetName={setAssetName}
+                tenderNeed={tenderNeed}
+                setTenderNeed={setTenderNeed}
+                assetBuildCost={assetBuildCost}
+                setAssetBuildCost={setAssetBuildCost}
+                createDraft={createDraft}
+                discardDraft={discardDraft}
+                canWrite={canWrite}
+              />
             )}
           </div>
         </div>

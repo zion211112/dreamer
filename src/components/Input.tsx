@@ -35,17 +35,6 @@ export function Input({
   'aria-invalid': ariaInvalid,
   'aria-describedby': ariaDescribedby,
 }: InputProps) {
-  const inputStyle: Record<string, string> = {
-    width: '100%',
-    border: '1px solid var(--border)',
-    borderRadius: 'var(--radius-3)',
-    padding: 'var(--space-2) var(--space-3)',
-    background: 'var(--bg-elev)',
-    color: 'var(--text)',
-    transition: 'border var(--fast), box-shadow var(--fast), background var(--fast)',
-    ...style,
-  };
-
   return (
     <input
       type={type}
@@ -61,7 +50,7 @@ export function Input({
       min={min}
       step={step}
       className={`input ${className}`}
-      style={inputStyle}
+      style={style}
       aria-invalid={ariaInvalid}
       aria-describedby={ariaDescribedby}
     />

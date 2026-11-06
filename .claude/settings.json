@@ -18,7 +18,10 @@
       "Bash(grep -r \"data-env\" /c/Users/zION/Documents/dreamer/src)",
       "Bash(ls -la /c/Users/zION/Documents/dreamer/src/test)",
       "Read(//c/Users/zION/Documents/dreamer/src/test/**)",
-      "Read(//c/c/Users/zION/Documents/dreamer/**)"
+      "Read(//c/c/Users/zION/Documents/dreamer/**)",
+      "mcp__better-design__get-ui-principle",
+      "mcp__better-design__get-ux-principle",
+      "mcp__better-design__get-review-rules"
     ],
     "deny": [
       "Bash(npx *)"

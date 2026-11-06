@@ -2,6 +2,8 @@
    APT-LABS — Minimal Design Tokens
    Inspired by Field Atlas + Terminal REPL + Workshop fusion
    ============================================================================ */
+@import "./tokens.css";
+@import "./components.css";
 
 :root {
   /* ========================================================================
@@ -36,11 +38,6 @@
   --water-pale: rgba(74, 158, 187, 0.14);
 
   /* Legacy semantic colors (kept for compatibility during migration) */
-  --terrain: var(--state-canon);
-  --terrain-pale: var(--state-canon-wash);
-  --terrain-ink: var(--bg);
-  --brand-main: var(--state-canon);
-  --brand-main-wash: var(--state-canon-wash);
   --brand-branch: var(--state-proposed);
   --brand-branch-wash: var(--state-proposed-wash);
   --brass: var(--state-caution);
@@ -49,12 +46,6 @@
   --danger-pale: var(--state-risk-wash);
   --phosphor: var(--state-proposed);
   --bg-term: var(--bg);
-
-  /* Button variant tokens (semantic aliases) */
-  --steel: var(--water);
-  --steel-pale: var(--water-pale);
-  --oxide: var(--state-risk);
-  --oxide-pale: var(--state-risk-wash);
 
   /* Semantic Roles (mapped to new palette) */
   --bg-elev: var(--bg-elev);
@@ -183,11 +174,6 @@
   --water-pale: rgba(58, 107, 140, 0.12);
 
   /* Legacy mappings for light mode */
-  --terrain: var(--state-canon);
-  --terrain-pale: var(--state-canon-wash);
-  --terrain-ink: var(--fg);
-  --brand-main: var(--state-canon);
-  --brand-main-wash: var(--state-canon-wash);
   --brand-branch: var(--state-proposed);
   --brand-branch-wash: var(--state-proposed-wash);
   --brass: var(--state-caution);
@@ -196,11 +182,6 @@
   --danger-pale: var(--state-risk-wash);
   --phosphor: var(--state-proposed);
   --bg-term: #0D110E;
-
-  --steel: var(--water);
-  --steel-pale: var(--water-pale);
-  --oxide: var(--state-risk);
-  --oxide-pale: var(--state-risk-wash);
 
   --text: var(--fg);
   --text-muted: var(--muted);

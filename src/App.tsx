@@ -11,7 +11,6 @@ import { WorkbenchFinder } from './pages/workspace/WorkbenchFinder';
 import { SchoolConsole } from './pages/workspace/SchoolConsole';
 import { Records } from './pages/workspace/Records';
 import { AptCoinLab } from './pages/workspace/AptCoinLab';
-import { Annals } from './pages/workspace/Annals';
 
 export function App() {
   return (
@@ -37,15 +36,6 @@ export function App() {
       <Route path="/workspace/intelligence"><AptCoinLab /></Route>
       <Route path="/workspace/intelligence/coin-lab"><AptCoinLab /></Route>
 
-      {/* Old routes as aliases (wouter has no redirect) */}
-      <Route path="/workspace/people"><People /></Route>
-      <Route path="/workspace/annals"><Annals /></Route>
-      <Route path="/workspace/institutions"><Institutions /></Route>
-      <Route path="/workspace/institutions/network"><Network /></Route>
-      <Route path="/workspace/institutions/school-console"><SchoolConsole /></Route>
-      <Route path="/workspace/workbench/simulate"><Workbench /></Route>
-      <Route path="/workspace/field-desk"><Workbench /></Route>
-      <Route path="/workspace/apt-coin-lab"><AptCoinLab /></Route>
     </Switch>
   );
 }

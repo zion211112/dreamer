@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
-import { Link, useLocation } from 'wouter';
+import { useLocation } from 'wouter';
 import { WorkspaceLayout } from './WorkspaceLayout';
+import { InstitutionInspector } from './institutions/InstitutionInspector';
 import { readFieldSignals } from '../../lib/local-workflows';
 import { PEOPLE_NETWORK, PEOPLE_RELATIONSHIPS, type NetworkEntity } from '../../lib/people-network';
 
@@ -108,6 +109,7 @@ export function Institutions() {
   const selectedRecord = results.find(record => record.entity.id === selectedRecordId) ?? results[0];
   const institutionCount = records.filter(record => record.recordType === 'Institution').length;
   const assetCount = records.length - institutionCount;
+  const recordIndex = selectedRecord ? records.findIndex(item => item.entity.id === selectedRecord.entity.id) + 1 : 0;
 
   function chooseFilter(nextFilter: RecordFilter) {
     setRequestedRecordId('');
@@ -236,76 +238,12 @@ export function Institutions() {
           </section>
 
           {selectedRecord && (
-            <aside aria-labelledby="institution-inspector-title" className="institution-inspector">
-              <div className="institution-inspector-topline">
-                <span>Record {String(records.findIndex(item => item.entity.id === selectedRecord.entity.id) + 1).padStart(2, '0')}</span>
-                <span>{selectedRecord.recordType}</span>
-              </div>
-              <div className={`institution-inspector-symbol institution-inspector-symbol--${selectedRecord.recordType.toLowerCase()}`} aria-hidden="true">
-                <span />
-              </div>
-              <p className="institution-inspector-role">{selectedRecord.entity.role}</p>
-              <h2 id="institution-inspector-title">{selectedRecord.entity.name}</h2>
-              <p className="institution-inspector-summary">{selectedRecord.entity.summary}</p>
-
-              <dl className="institution-facts">
-                <div>
-                  <dt>Record basis</dt>
-                  <dd>{basisLabel(selectedRecord.entity.recordBasis)}</dd>
-                </div>
-                <div>
-                  <dt>Location</dt>
-                  <dd>{selectedRecord.location}</dd>
-                </div>
-                {selectedRecord.recordType === 'Asset' && (
-                  <>
-                    <div><dt>Condition</dt><dd>Not recorded</dd></div>
-                    <div><dt>Availability</dt><dd>Not established</dd></div>
-                  </>
-                )}
-              </dl>
-
-              {selectedRecord.entity.context && (
-                <p className="institution-record-context">{selectedRecord.entity.context}</p>
-              )}
-
-              <section aria-labelledby="institution-relationships-title" className="institution-relationships">
-                <h3 id="institution-relationships-title">
-                  Recorded links <span>{String(selectedRecord.relationships.length).padStart(2, '0')}</span>
-                </h3>
-                {selectedRecord.relationships.length > 0 ? (
-                  <ul>
-                    {selectedRecord.relationships.map((relationship, index) => (
-                      <li key={`${selectedRecord.entity.id}-${index}`}>{relationship}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No explicit relationships are recorded for this entry.</p>
-                )}
-              </section>
-
-              {selectedRecord.recordType === 'Institution' && (
-                <Link
-                  className="institution-context-link"
-                  href={`/workspace/commons?institution=${encodeURIComponent(selectedRecord.entity.id)}`}
-                >
-                  <span>
-                    <small>COMMONS CONTEXT</small>
-                    <strong>{signalCounts[selectedRecord.entity.id] ?? 0} local signals</strong>
-                  </span>
-                  <span aria-hidden="true">↗</span>
-                </Link>
-              )}
-              {selectedRecord.entity.id === 'asset-school-management-console' && (
-                <Link className="institution-context-link" href="/workspace/institutions/school-console">
-                  <span>
-                    <small>LOCAL-FIRST PROTOTYPE</small>
-                    <strong>Open School Console</strong>
-                  </span>
-                  <span aria-hidden="true">↗</span>
-                </Link>
-              )}
-            </aside>
+            <InstitutionInspector
+              selectedRecord={selectedRecord}
+              recordIndex={recordIndex}
+              signalCounts={signalCounts}
+              basisLabel={basisLabel}
+            />
           )}
         </div>
 

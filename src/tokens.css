@@ -1,0 +1,147 @@
+/* ============================================================================
+   APT-LABS — Design Tokens
+   Extracted from styles.css :root block
+   ============================================================================ */
+
+:root {
+  /* ========================================================================
+     APT-LABS v2 — Dark Signature Palette (default)
+     Green-black base; bone/moss/teal/lime/coral/amber semantic accents
+     ======================================================================== */
+
+  /* Color Primitives (dark signature) */
+  --bg: #0A0F0C;           /* green-black base */
+  --fg: #E9F1E8;           /* bone - primary text */
+  --muted: #8FA08C;        /* moss - secondary information */
+  --dim: #5C6B5E;          /* dim - decorative only (3.4:1, large text only) */
+  --fg-strong: #F0F5EF;
+  --bg-elev: #111713;
+  --bg-subtle: #141A16;
+  --line: rgba(143, 160, 140, 0.18);
+  --line-strong: rgba(143, 160, 140, 0.32);
+  --hairline: rgba(143, 160, 140, 0.10);
+
+  /* State Colors (semantic - meaning-carrying) */
+  --state-canon: #7FC5BC;   /* teal - accepted/canonical/verified */
+  --state-canon-wash: rgba(127, 197, 188, 0.12);
+  --state-proposed: #C9F292; /* lime - proposed/draft/active change */
+  --state-proposed-wash: rgba(201, 242, 146, 0.10);
+  --state-risk: #E89670;    /* coral - risk/exception/unresolved/amendment */
+  --state-risk-wash: rgba(232, 150, 112, 0.12);
+  --state-caution: #CBAF6E; /* amber - caution/attention/evidence gaps */
+  --state-caution-wash: rgba(203, 175, 110, 0.12);
+
+  /* Water (info) - defined to fix --info-bg defect */
+  --water: #4A9EBB;
+  --water-pale: rgba(74, 158, 187, 0.14);
+
+  /* Legacy semantic colors (kept for compatibility during migration) */
+  --brand-branch: var(--state-proposed);
+  --brand-branch-wash: var(--state-proposed-wash);
+  --brass: var(--state-caution);
+  --brass-pale: var(--state-caution-wash);
+  --danger: var(--state-risk);
+  --danger-pale: var(--state-risk-wash);
+  --phosphor: var(--state-proposed);
+  --bg-term: var(--bg);
+
+  /* Semantic Roles (mapped to new palette) */
+  --bg-elev: var(--bg-elev);
+  --bg-subtle: var(--bg-subtle);
+  --text: var(--fg);
+  --text-muted: var(--muted);
+  --text-faint: var(--dim);
+  --border: var(--line);
+  --border-strong: var(--line-strong);
+
+  /* State Color Aliases (replaces ok/warn/info/danger) */
+  --ok: var(--state-canon);
+  --ok-bg: var(--state-canon-wash);
+  --warn: var(--state-caution);
+  --warn-bg: var(--state-caution-wash);
+  --info: var(--water);
+  --info-bg: var(--water-pale);
+
+  /* Typography */
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: system-ui, -apple-system, Segoe UI Variable, sans-serif;
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+
+  /* Modular Scale (1.25) */
+  --step--2: clamp(9px, 0.64rem, 10px);
+  --step--1: clamp(10px, 0.8rem, 11px);
+  --step-0:  clamp(12.5px, 1rem, 13px);
+  --step-1:  clamp(15.6px, 1.25rem, 16px);
+  --step-2:  clamp(19.5px, 1.56rem, 20px);
+  --step-3:  clamp(24.4px, 1.95rem, 25px);
+  --step-4:  clamp(30.5px, 2.44rem, 31px);
+  --step-5:  clamp(38.1px, 3.05rem, 39px);
+
+  /* PageHead L1/L2/L3 Hierarchy Tokens */
+  --l1-font: var(--serif);
+  --l1-size: var(--step-4);
+  --l1-weight: 400;
+  --l1-line: 1.15;
+  --l1-tracking: normal;
+
+  --l2-font: var(--sans);
+  --l2-size: var(--step-0);
+  --l2-weight: 400;
+  --l2-line: 1.5;
+  --l2-tracking: normal;
+  --l2-color: var(--muted);
+
+  --l3-font: var(--mono);
+  --l3-size: var(--step-1);
+  --l3-weight: 500;
+  --l3-line: 1.2;
+  --l3-tracking: 0.12em;
+  --l3-size-label: var(--step--1);
+  --l3-weight-label: 400;
+
+  --eyebrow-font: var(--mono);
+  --eyebrow-size: var(--step--2);
+  --eyebrow-weight: 500;
+  --eyebrow-line: 1;
+  --eyebrow-tracking: 0.12em;
+  --eyebrow-color: var(--text-muted);
+
+  /* Spacing: Baseline Grid (8px) + Fibonacci */
+  --baseline: 8px;
+  --space-1: 8px;   --space-2: 16px;  --space-3: 24px;
+  --space-4: 32px;  --space-5: 40px;  --space-6: 48px;
+  --space-7: 56px;  --space-8: 64px;  --space-9: 72px;
+  --space-10: 80px; --space-11: 88px; --space-12: 96px;
+
+  --fib-1: 8px;  --fib-2: 13px; --fib-3: 21px;
+  --fib-4: 34px; --fib-5: 55px; --fib-6: 89px; --fib-7: 144px;
+
+  /* Border Radius */
+  --radius-1: 3px; --radius-2: 6px; --radius-3: 8px; --radius-4: 12px; --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-1: 0 1px 2px rgba(0,0,0,.35), 0 1px 4px rgba(0,0,0,.25);
+  --shadow-2: 0 4px 8px rgba(0,0,0,.45), 0 2px 4px rgba(0,0,0,.3);
+  --shadow-3: 0 8px 24px rgba(0,0,0,.55), 0 4px 12px rgba(0,0,0,.35);
+
+  /* Transitions */
+  --fast: 120ms ease;
+  --base: 180ms ease;
+  --slow: 280ms ease;
+
+  /* Z-Index */
+  --z-base: 0;
+  --z-modal: 100;
+  --z-tooltip: 300;
+
+  /* Shell Grid Tokens */
+  --shell-topbar: 54px;
+  --shell-rail: 54px;
+  --shell-sidebar-min: 196px;
+  --shell-sidebar-max: 252px;
+  --shell-inspector-min: 286px;
+  --shell-inspector-max: 360px;
+  --shell-dock-min: 132px;
+  --shell-dock-max: 174px;
+  --shell-statusbar: 24px;
+}
