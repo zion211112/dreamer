@@ -192,7 +192,7 @@ export function WorkbenchFinder() {
   }
 
   return (
-    <WorkspaceLayout currentContext="workbench">
+    <WorkspaceLayout currentContext="workbench:examples">
       <div className="workbench-finder-page">
         <PageHead
           eyebrow="WORKBENCH / BROWSER-LOCAL EXAMPLES"
@@ -261,7 +261,7 @@ export function WorkbenchFinder() {
                     {proposalBrief.saved && proposalBrief.signal.sourceConsoleDraftId && (
                       <Link
                         className="workbench-finder-simulation-link"
-                        href={`/workspace/workbench/simulate?sourceConsoleDraftId=${encodeURIComponent(proposalBrief.signal.sourceConsoleDraftId)}&signal=${encodeURIComponent(proposalBrief.signal.id)}`}
+                        href={`/workspace/workbench/field-desk?sourceConsoleDraftId=${encodeURIComponent(proposalBrief.signal.sourceConsoleDraftId)}&signal=${encodeURIComponent(proposalBrief.signal.id)}`}
                       >
                         Continue to school simulation
                       </Link>

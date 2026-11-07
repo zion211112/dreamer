@@ -43,8 +43,10 @@ export interface CapacityFilters {
   query: string;
   hasEvidence: boolean;
   withinKm: number | null;
-  sortBy: 'distance' | 'capacity';
+  sortBy: CapacitySort;
 }
+
+export type CapacitySort = 'distance' | 'capacity';
 
 export interface CapacityScenario {
   id: string;

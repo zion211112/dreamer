@@ -64,11 +64,15 @@ describe('filterCapacityCandidates', () => {
 
   it('returnsSourceOrderForSortTies', () => {
     const tiedCandidates: CapacityCandidate[] = [
-      { ...KIRINYAGA_CAPACITY_SCENARIO.candidates[2], id: 'tie-first', distanceKm: 10 },
-      { ...KIRINYAGA_CAPACITY_SCENARIO.candidates[0], id: 'tie-second', distanceKm: 10 },
+      { ...KIRINYAGA_CAPACITY_SCENARIO.candidates[2], id: 'tie-first', distanceKm: 10, reportedCapacity: 70 },
+      { ...KIRINYAGA_CAPACITY_SCENARIO.candidates[0], id: 'tie-second', distanceKm: 10, reportedCapacity: 70 },
     ];
 
     expect(filterCapacityCandidates(tiedCandidates, noFilters).map(candidate => candidate.id)).toEqual([
+      'tie-first',
+      'tie-second',
+    ]);
+    expect(filterCapacityCandidates(tiedCandidates, { ...noFilters, sortBy: 'capacity' }).map(candidate => candidate.id)).toEqual([
       'tie-first',
       'tie-second',
     ]);
@@ -90,6 +94,7 @@ describe('filterCapacityCandidates', () => {
     expect(KIRINYAGA_CAPACITY_SCENARIO.need.recordBasis).toBe('illustrative');
     expect(candidates.every(candidate => candidate.recordBasis === 'illustrative')).toBe(true);
     expect(candidates.every(candidate => candidate.availability === 'unknown')).toBe(true);
+    expect(candidates.every(candidate => !('verified' in candidate))).toBe(true);
     expect(candidates.flatMap(candidate => candidate.evidence).every(item => item.recordBasis === 'illustrative')).toBe(true);
   });
 });

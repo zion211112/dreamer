@@ -222,7 +222,7 @@ export function Commons() {
             approvedProposal={approvedProposal}
             onChangeStatus={changeStatus}
             onOpenSourceDraft={draftId => navigate(`/workspace/assets/school-console?draft=${encodeURIComponent(draftId)}#school-draft-${encodeURIComponent(draftId)}`)}
-            onOpenWorkBrief={proposalId => navigate(`/workspace/workbench?proposal=${encodeURIComponent(proposalId)}`)}
+            onOpenWorkBrief={proposalId => navigate(`/workspace/workbench/examples?proposal=${encodeURIComponent(proposalId)}`)}
             onSetCommonsView={setCommonsView}
             onAddNote={addNote}
             note={note}

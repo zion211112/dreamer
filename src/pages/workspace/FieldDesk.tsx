@@ -46,7 +46,7 @@ export function Workbench() {
       <div className="workbench-sim-page">
         <header className="workbench-sim-head">
           <div>
-            <Link className="workbench-sim-back-link" href="/workspace/workbench">← Find work</Link>
+            <Link className="workbench-sim-back-link" href="/workspace/workbench">← Find capacity</Link>
             <p className="eyebrow">WORKBENCH / NEED TO PROOF</p>
             <h1>Compose the work</h1>
             <p>Start from a school need. Shape the packages, terms, and evidence before running the scenario.</p>

@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { filterWorkspaceDestinations, type WorkspaceSearchDestination } from './workspace-search';
+import {
+  filterWorkspaceDestinations,
+  WORKSPACE_SEARCH_DESTINATIONS,
+  type WorkspaceSearchDestination,
+} from './workspace-search';
 
 const destinations: WorkspaceSearchDestination[] = [
   { id: 'capacity', label: 'Find capacity', module: 'Workbench', href: '/workspace/workbench' },
@@ -8,6 +12,15 @@ const destinations: WorkspaceSearchDestination[] = [
 ];
 
 describe('filterWorkspaceDestinations', () => {
+  it('exposesOnlyImplementedWorkbenchDestinations', () => {
+    expect(WORKSPACE_SEARCH_DESTINATIONS).toEqual(expect.arrayContaining([
+      { id: 'workbench-plan', label: 'Build a work plan', module: 'Workbench', href: '/workspace/workbench/plan' },
+      { id: 'workbench-examples', label: 'Local examples', module: 'Workbench', href: '/workspace/workbench/examples' },
+      { id: 'workbench-field-desk', label: 'Field desk', module: 'Workbench', href: '/workspace/workbench/field-desk' },
+      { id: 'workbench-school-console', label: 'School Console', module: 'Workbench', href: '/workspace/assets/school-console' },
+    ]));
+  });
+
   it('searchesDestinationLabelsAndModuleNames', () => {
     expect(filterWorkspaceDestinations('  CAPACITY ', destinations)).toEqual([destinations[0]]);
     expect(filterWorkspaceDestinations('workbench', destinations)).toEqual([destinations[0]]);

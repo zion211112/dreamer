@@ -4,6 +4,8 @@ export type StudioContext =
   | 'network:institutions'
   | 'network:capabilities'
   | 'workbench'
+  | 'workbench:plan'
+  | 'workbench:examples'
   | 'workbench:field-desk'
   | 'workbench:school-console'
   | 'records:canon'
@@ -43,7 +45,13 @@ export const STUDIO_FLOW_MODULES: readonly StudioNavigationModule[] = [
     id: 'workbench',
     label: 'Workbench',
     href: '/workspace/workbench',
-    contexts: ['workbench', 'workbench:field-desk', 'workbench:school-console'],
+    contexts: [
+      'workbench',
+      'workbench:plan',
+      'workbench:examples',
+      'workbench:field-desk',
+      'workbench:school-console',
+    ],
   },
   {
     id: 'records',
@@ -83,6 +91,8 @@ export function getStudioModuleForContext(context: StudioContext): StudioModuleI
     case 'network:capabilities':
       return 'network';
     case 'workbench':
+    case 'workbench:plan':
+    case 'workbench:examples':
     case 'workbench:field-desk':
     case 'workbench:school-console':
       return 'workbench';

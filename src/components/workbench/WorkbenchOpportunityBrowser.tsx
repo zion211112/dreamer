@@ -66,8 +66,8 @@ export function WorkbenchOpportunityBrowser({
             type="button"
           >My interest <span>{interests.length}</span></button>
         </div>
-        <Link className="workbench-finder-simulation-link" href="/workspace/workbench/simulate">
-          Create / simulate
+        <Link className="workbench-finder-simulation-link" href="/workspace/workbench/field-desk">
+          Open Field Desk
         </Link>
       </nav>
 

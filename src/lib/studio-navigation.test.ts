@@ -17,6 +17,14 @@ describe('Studio workspace navigation', () => {
       { id: 'records', label: 'Records', href: '/workspace/records/roll' },
       { id: 'intelligence', label: 'Intelligence', href: '/workspace/intelligence/coin-lab' },
     ]);
+    expect(STUDIO_FLOW_MODULES).toHaveLength(5);
+    expect(STUDIO_FLOW_MODULES.find(module => module.id === 'workbench')?.contexts).toEqual([
+      'workbench',
+      'workbench:plan',
+      'workbench:examples',
+      'workbench:field-desk',
+      'workbench:school-console',
+    ]);
 
     expect(STUDIO_SECONDARY_MODULES.map(({ id, label, href }) => ({ id, label, href }))).toEqual([]);
 
@@ -33,6 +41,8 @@ describe('Studio workspace navigation', () => {
       'network:institutions',
       'network:capabilities',
       'workbench',
+      'workbench:plan',
+      'workbench:examples',
       'workbench:field-desk',
       'workbench:school-console',
       'records:canon',
@@ -48,6 +58,8 @@ describe('Studio workspace navigation', () => {
       ['network:institutions', 'network'],
       ['network:capabilities', 'network'],
       ['workbench', 'workbench'],
+      ['workbench:plan', 'workbench'],
+      ['workbench:examples', 'workbench'],
       ['workbench:field-desk', 'workbench'],
       ['workbench:school-console', 'workbench'],
       ['records:canon', 'records'],

@@ -44,6 +44,17 @@ interface ContextDestination {
   label: string;
 }
 
+const workbenchDestinations = {
+  heading: 'Workbench',
+  links: [
+    { context: 'workbench', href: '/workspace/workbench', label: 'Find capacity' },
+    { context: 'workbench:plan', href: '/workspace/workbench/plan', label: 'Build a work plan' },
+    { context: 'workbench:examples', href: '/workspace/workbench/examples', label: 'Local examples' },
+    { context: 'workbench:field-desk', href: '/workspace/workbench/field-desk', label: 'Field desk' },
+    { context: 'workbench:school-console', href: '/workspace/assets/school-console', label: 'School console' },
+  ] satisfies ContextDestination[],
+};
+
 const contextDestinations: Record<StudioContext, { heading: string; links: ContextDestination[] }> = {
   commons: {
     heading: 'Commons',
@@ -73,27 +84,11 @@ const contextDestinations: Record<StudioContext, { heading: string; links: Conte
       { context: 'network:capabilities', href: '/workspace/network/capabilities', label: 'Capability directory' },
     ],
   },
-  workbench: {
-    heading: 'Workbench',
-    links: [
-      { context: 'workbench:field-desk', href: '/workspace/workbench/field-desk', label: 'Field desk' },
-      { context: 'workbench:school-console', href: '/workspace/assets/school-console', label: 'School console' },
-    ],
-  },
-  'workbench:field-desk': {
-    heading: 'Workbench',
-    links: [
-      { context: 'workbench:field-desk', href: '/workspace/workbench/field-desk', label: 'Field desk' },
-      { context: 'workbench:school-console', href: '/workspace/assets/school-console', label: 'School console' },
-    ],
-  },
-  'workbench:school-console': {
-    heading: 'Workbench',
-    links: [
-      { context: 'workbench:field-desk', href: '/workspace/workbench/field-desk', label: 'Field desk' },
-      { context: 'workbench:school-console', href: '/workspace/assets/school-console', label: 'School console' },
-    ],
-  },
+  workbench: workbenchDestinations,
+  'workbench:plan': workbenchDestinations,
+  'workbench:examples': workbenchDestinations,
+  'workbench:field-desk': workbenchDestinations,
+  'workbench:school-console': workbenchDestinations,
   'records:canon': {
     heading: 'Records',
     links: [
