@@ -61,6 +61,7 @@ export function WorkbenchCapacity({
   const [within15Km, setWithin15Km] = useState(false);
   const [sortBy, setSortBy] = useState<CapacitySort>('distance');
   const [selectedId, setSelectedId] = useState<string | null>(scenario.candidates[0]?.id ?? null);
+  const [mobileInspectorOpen, setMobileInspectorOpen] = useState(false);
   const [shortlistedIds, setShortlistedIds] = useState<Set<string>>(
     () => new Set(view === 'matching' ? getPlanCandidates(planCandidateIds).candidates.map(item => item.id) : []),
   );
@@ -90,9 +91,11 @@ export function WorkbenchCapacity({
     const activeElement = document.activeElement;
     returnFocusRef.current = activeElement instanceof HTMLButtonElement ? activeElement : null;
     setSelectedId(id);
+    setMobileInspectorOpen(true);
   }
 
   function closeInspector() {
+    setMobileInspectorOpen(false);
     setSelectedId(null);
     window.requestAnimationFrame(() => returnFocusRef.current?.focus());
   }
@@ -168,8 +171,12 @@ export function WorkbenchCapacity({
                 )}
               </footer>
             </div>
+            {mobileInspectorOpen && (
+              <div aria-hidden="true" className="capacity-inspector-backdrop" onClick={closeInspector} />
+            )}
             <CapacityRecordInspector
               candidate={selectedCandidate}
+              mobileOpen={mobileInspectorOpen}
               onClose={closeInspector}
               onToggleShortlist={() => selectedCandidate && toggleShortlist(selectedCandidate.id)}
               shortlisted={selectedCandidate ? shortlistedIds.has(selectedCandidate.id) : false}

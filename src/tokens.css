@@ -46,8 +46,6 @@
   --bg-term: var(--bg);
 
   /* Semantic Roles (mapped to new palette) */
-  --bg-elev: var(--bg-elev);
-  --bg-subtle: var(--bg-subtle);
   --text: var(--fg);
   --text-muted: var(--muted);
   --text-faint: var(--dim);

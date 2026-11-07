@@ -6,6 +6,7 @@ import {
   getRadarSignalSummary,
   getRadarSpatialState,
   paginateRadarSignals,
+  resolveRadarSignalLink,
 } from './radar-view';
 
 function signal(
@@ -107,6 +108,48 @@ describe('getSelectedRadarSignal', () => {
 
   it('returns no selection when the filtered scope is empty', () => {
     expect(getSelectedRadarSignal([], '1')).toBeNull();
+  });
+});
+
+describe('resolveRadarSignalLink', () => {
+  const signals = [
+    signal('1', 'new'),
+    signal('2', 'triaged', { institutionId: 'institution-2' }),
+  ];
+
+  it('resolves an exact signal and matching institution', () => {
+    expect(resolveRadarSignalLink(signals, '2', 'institution-2')).toEqual({
+      signal: signals[1],
+      error: null,
+    });
+  });
+
+  it('does not replace a stale signal with another record', () => {
+    const result = resolveRadarSignalLink(signals, 'stale-signal', null);
+
+    expect(result.signal).toBeNull();
+    expect(result.error).toMatch(/no longer available/i);
+  });
+
+  it('rejects a signal linked to a different institution', () => {
+    const result = resolveRadarSignalLink(signals, '2', 'institution-1');
+
+    expect(result.signal).toBeNull();
+    expect(result.error).toMatch(/does not match/i);
+  });
+
+  it('rejects an institution link with no saved signals', () => {
+    const result = resolveRadarSignalLink(signals, null, 'institution-missing');
+
+    expect(result.signal).toBeNull();
+    expect(result.error).toMatch(/no saved field signals/i);
+  });
+
+  it('uses the first signal only when there is no cross-flow reference', () => {
+    expect(resolveRadarSignalLink(signals, null, null)).toEqual({
+      signal: signals[0],
+      error: null,
+    });
   });
 });
 

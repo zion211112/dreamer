@@ -53,6 +53,39 @@ export function getSelectedRadarSignal(
   return signals.find(signal => signal.id === selectedId) ?? signals[0] ?? null;
 }
 
+export function resolveRadarSignalLink(
+  signals: readonly FieldSignal[],
+  requestedSignalId: string | null,
+  requestedInstitutionId: string | null,
+): { signal: FieldSignal | null; error: string | null } {
+  if (requestedSignalId !== null) {
+    const signal = signals.find(item => item.id === requestedSignalId);
+    if (!signal) {
+      return {
+        signal: null,
+        error: 'The linked field signal is no longer available. Choose a signal in Commons to continue.',
+      };
+    }
+    if (requestedInstitutionId !== null && signal.institutionId !== requestedInstitutionId) {
+      return {
+        signal: null,
+        error: 'The linked signal does not match the requested institution. Choose a signal in Commons to continue.',
+      };
+    }
+    return { signal, error: null };
+  }
+
+  if (requestedInstitutionId !== null) {
+    const signal = signals.find(item => item.institutionId === requestedInstitutionId);
+    if (!signal) {
+      return { signal: null, error: 'The linked institution has no saved field signals in this browser.' };
+    }
+    return { signal, error: null };
+  }
+
+  return { signal: signals[0] ?? null, error: null };
+}
+
 export interface RadarSignalPage<T> {
   items: T[];
   page: number;

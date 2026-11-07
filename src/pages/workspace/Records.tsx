@@ -3,6 +3,8 @@ import { Link } from 'wouter';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import { PageHead, type PageHeadMetric } from '../../components/PageHead';
 import { queryRollEntries, type RollEntry } from '../../lib/db/roll';
+import { getRollEmptyStateMessage } from '../../lib/records-view';
+import { isDemoMode } from '../../lib/supabase/client';
 
 type Lens = 'canon' | 'annals' | 'roll';
 
@@ -167,7 +169,7 @@ export function Records() {
             </li>
           ))}
           {rollEntries.length === 0 && (
-            <li className="records-empty" role="status">No Roll entries in this browser.</li>
+            <li className="records-empty" role="status">{getRollEmptyStateMessage(isDemoMode)}</li>
           )}
         </ul>
       </section>

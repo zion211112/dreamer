@@ -30,6 +30,7 @@
 
 .sc-workspace {
   display: grid;
+  grid-column: 1 / -1;
   grid-template-columns: 200px 1fr;
   min-height: 0;
 }

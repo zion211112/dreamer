@@ -3,6 +3,7 @@ import { KIRINYAGA_CAPACITY_SCENARIO, type CapacityCandidate } from '../../lib/w
 
 export interface CapacityRecordInspectorProps {
   candidate: CapacityCandidate | null;
+  mobileOpen: boolean;
   shortlisted: boolean;
   onToggleShortlist(): void;
   onClose(): void;
@@ -16,6 +17,7 @@ function availabilityLabel(availability: CapacityCandidate['availability']): str
 
 export function CapacityRecordInspector({
   candidate,
+  mobileOpen,
   shortlisted,
   onToggleShortlist,
   onClose,
@@ -33,8 +35,17 @@ export function CapacityRecordInspector({
   }, []);
 
   useEffect(() => {
-    if (candidate && isNarrow) closeButtonRef.current?.focus();
-  }, [candidate?.id, isNarrow]);
+    if (candidate && isNarrow && mobileOpen) closeButtonRef.current?.focus();
+  }, [candidate?.id, isNarrow, mobileOpen]);
+
+  useEffect(() => {
+    if (!candidate || !isNarrow || !mobileOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [candidate?.id, isNarrow, mobileOpen]);
 
   function handleKeyDown(event: KeyboardEvent) {
     if (!candidate || !isNarrow) return;
@@ -60,10 +71,10 @@ export function CapacityRecordInspector({
   return (
     <aside
       aria-label={candidate ? `${candidate.name} capacity details` : 'Candidate details'}
-      aria-modal={candidate && isNarrow ? 'true' : undefined}
-      className={`capacity-inspector${candidate ? ' is-open' : ''}`}
+      aria-modal={candidate && isNarrow && mobileOpen ? 'true' : undefined}
+      className={`capacity-inspector${candidate && (!isNarrow || mobileOpen) ? ' is-open' : ''}`}
       onKeyDown={handleKeyDown}
-      role={candidate && isNarrow ? 'dialog' : undefined}
+      role={candidate && isNarrow && mobileOpen ? 'dialog' : undefined}
     >
       {candidate ? (
         <>

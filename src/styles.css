@@ -48,8 +48,6 @@
   --bg-term: var(--bg);
 
   /* Semantic Roles (mapped to new palette) */
-  --bg-elev: var(--bg-elev);
-  --bg-subtle: var(--bg-subtle);
   --text: var(--fg);
   --text-muted: var(--muted);
   --text-faint: var(--dim);
@@ -16903,6 +16901,10 @@ a:focus-visible {
   padding: 15px;
 }
 
+.capacity-inspector-backdrop {
+  display: none;
+}
+
 .capacity-inspector-heading,
 .capacity-draft-heading {
   display: flex;
@@ -17332,15 +17334,25 @@ a:focus-visible {
   .capacity-inspector.is-open {
     position: fixed;
     z-index: 80;
-    inset: 0;
+    inset: auto 0 0;
     display: block;
     width: auto;
-    max-height: 100dvh;
+    max-height: min(540px, calc(100dvh - 128px));
     overflow: auto;
     padding: max(18px, env(safe-area-inset-top)) 18px max(18px, env(safe-area-inset-bottom));
     background: var(--bg-elev);
     border: 0;
     border-top: 4px solid var(--terrain);
+    box-shadow: 0 -12px 32px rgb(0 0 0 / 28%);
+    overscroll-behavior: contain;
+  }
+
+  .capacity-inspector-backdrop {
+    position: fixed;
+    z-index: 79;
+    inset: 0;
+    display: block;
+    background: rgb(7 14 9 / 48%);
   }
 
   .capacity-inspector-close {

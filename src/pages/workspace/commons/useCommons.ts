@@ -20,7 +20,12 @@ import {
 import { loadConsoleSnapshot } from '../../../lib/school-console-storage';
 import { EXAMPLE_FIELD_SIGNALS } from '../../../lib/ecosystem-examples';
 import { PEOPLE_NETWORK } from '../../../lib/people-network';
-import { filterRadarSignals, getSelectedRadarSignal, paginateRadarSignals } from '../../../lib/radar-view';
+import {
+  filterRadarSignals,
+  getSelectedRadarSignal,
+  paginateRadarSignals,
+  resolveRadarSignalLink,
+} from '../../../lib/radar-view';
 
 const filters: Array<'all' | SignalStatus> = ['all', 'new', 'triaged', 'brief', 'resolved'];
 const RADAR_PAGE_SIZE = 12;
@@ -133,6 +138,23 @@ export function useCommons(): CommonsHook {
   const [showProposalForm, setShowProposalForm] = useState(false);
   const [newStewardEmail, setNewStewardEmail] = useState('');
   const [decisionNotes, setDecisionNotes] = useState<Record<string, string>>({});
+  const [unresolvedReference, setUnresolvedReference] = useState(false);
+
+  function selectSignal(id: string) {
+    if (unresolvedReference) {
+      setUnresolvedReference(false);
+      setError('');
+    }
+    setSelectedId(id);
+  }
+
+  function changeInstitutionScope(id: string) {
+    if (unresolvedReference) {
+      setUnresolvedReference(false);
+      setError('');
+    }
+    setInstitutionScope(id);
+  }
 
   useEffect(() => {
     if (showReportForm) reportInstitutionRef.current?.focus();
@@ -146,14 +168,12 @@ export function useCommons(): CommonsHook {
       const searchParams = new URLSearchParams(window.location.search);
       const requestedInstitution = searchParams.get('institution');
       const requestedSignal = searchParams.get('signal');
-      const initialSignal = requestedSignal
-        ? savedSignals.find(signal => signal.id === requestedSignal) ?? savedSignals[0]
-        : requestedInstitution
-          ? savedSignals.find(signal => signal.institutionId === requestedInstitution) ?? savedSignals[0]
-          : savedSignals[0];
+      const resolution = resolveRadarSignalLink(savedSignals, requestedSignal, requestedInstitution);
       setSignals(savedSignals);
-      setSelectedId(initialSignal?.id ?? '');
-      const initialInstitution = requestedInstitution ?? initialSignal?.institutionId ?? '';
+      setSelectedId(resolution.signal?.id ?? '');
+      setUnresolvedReference(Boolean(resolution.error));
+      if (resolution.error) setError(resolution.error);
+      const initialInstitution = requestedInstitution ?? resolution.signal?.institutionId ?? '';
       setInstitutionScope(initialInstitution);
       setSearch('');
     } catch (loadError) {
@@ -198,11 +218,12 @@ export function useCommons(): CommonsHook {
     query: search,
   }), [signals, institutionScope, filter, search]);
   const paginatedSignals = paginateRadarSignals(visibleSignals, signalPage, RADAR_PAGE_SIZE);
-  const selected = getSelectedRadarSignal(visibleSignals, selectedId);
+  const selected = unresolvedReference ? null : getSelectedRadarSignal(visibleSignals, selectedId);
 
   useEffect(() => {
+    if (unresolvedReference) return;
     if (selected?.id !== selectedId) setSelectedId(selected?.id ?? '');
-  }, [selected?.id, selectedId]);
+  }, [selected?.id, selectedId, unresolvedReference]);
 
   useEffect(() => {
     if (paginatedSignals.page !== signalPage) setSignalPage(paginatedSignals.page);
@@ -331,8 +352,8 @@ export function useCommons(): CommonsHook {
     };
     const next = [signal, ...signals];
     if (!persist(next)) return;
-    setSelectedId(signal.id);
-    setInstitutionScope(signal.institutionId);
+    selectSignal(signal.id);
+    changeInstitutionScope(signal.institutionId);
     setSignalPage(0);
     setShowReportForm(false);
     setReportTitle('');
@@ -386,9 +407,9 @@ export function useCommons(): CommonsHook {
   return {
     contributeButtonRef, reportInstitutionRef,
     commonsView, setCommonsView,
-    institutionScope, setInstitutionScope,
+    institutionScope, setInstitutionScope: changeInstitutionScope,
     signals, setSignals,
-    selectedId, setSelectedId,
+    selectedId, setSelectedId: selectSignal,
     filter, setFilter,
     search, setSearch,
     signalPage, setSignalPage,
