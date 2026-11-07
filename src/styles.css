@@ -12,30 +12,30 @@
      ======================================================================== */
 
   /* Color Primitives (dark signature) */
-  --bg: #0A0F0C;           /* green-black base */
-  --fg: #E9F1E8;           /* bone - primary text */
-  --muted: #8FA08C;        /* moss - secondary information */
-  --dim: #5C6B5E;          /* dim - decorative only (3.4:1, large text only) */
-  --fg-strong: #F0F5EF;
-  --bg-elev: #111713;
-  --bg-subtle: #141A16;
-  --line: rgba(143, 160, 140, 0.18);
-  --line-strong: rgba(143, 160, 140, 0.32);
-  --hairline: rgba(143, 160, 140, 0.10);
+  --bg: #F7F5F0;           /* warm cream paper */
+  --fg: #1A1D18;           /* deep ink - primary text */
+  --muted: #4A5A52;        /* refined moss - secondary information */
+  --dim: #8FA08C;          /* dim - decorative only (large text only) */
+  --fg-strong: #0F1812;
+  --bg-elev: #FAF9F6;
+  --bg-subtle: #F1EFE8;
+  --line: rgba(26, 29, 24, 0.14);
+  --line-strong: rgba(26, 29, 24, 0.24);
+  --hairline: rgba(26, 29, 24, 0.08);
 
   /* State Colors (semantic - meaning-carrying) */
-  --state-canon: #7FC5BC;   /* teal - accepted/canonical/verified */
-  --state-canon-wash: rgba(127, 197, 188, 0.12);
-  --state-proposed: #C9F292; /* lime - proposed/draft/active change */
-  --state-proposed-wash: rgba(201, 242, 146, 0.10);
-  --state-risk: #E89670;    /* coral - risk/exception/unresolved/amendment */
-  --state-risk-wash: rgba(232, 150, 112, 0.12);
-  --state-caution: #CBAF6E; /* amber - caution/attention/evidence gaps */
-  --state-caution-wash: rgba(203, 175, 110, 0.12);
+  --state-canon: #286375;   /* teal - accepted/canonical/verified */
+  --state-canon-wash: rgba(40, 99, 117, 0.10);
+  --state-proposed: #3D7158; /* green - proposed/draft/active change */
+  --state-proposed-wash: rgba(61, 113, 88, 0.10);
+  --state-risk: #A5533D;    /* coral - risk/exception/unresolved/amendment */
+  --state-risk-wash: rgba(165, 83, 61, 0.10);
+  --state-caution: #B8955A; /* amber - caution/attention/evidence gaps */
+  --state-caution-wash: rgba(184, 149, 90, 0.10);
 
   /* Water (info) - defined to fix --info-bg defect */
-  --water: #4A9EBB;
-  --water-pale: rgba(74, 158, 187, 0.14);
+  --water: #3A6B8C;
+  --water-pale: rgba(58, 107, 140, 0.12);
 
   /* Legacy semantic colors (kept for compatibility during migration) */
   --brand-branch: var(--state-proposed);
@@ -120,9 +120,9 @@
   --radius-1: 3px; --radius-2: 6px; --radius-3: 8px; --radius-4: 12px; --radius-pill: 999px;
 
   /* Shadows */
-  --shadow-1: 0 1px 2px rgba(0,0,0,.35), 0 1px 4px rgba(0,0,0,.25);
-  --shadow-2: 0 4px 8px rgba(0,0,0,.45), 0 2px 4px rgba(0,0,0,.3);
-  --shadow-3: 0 8px 24px rgba(0,0,0,.55), 0 4px 12px rgba(0,0,0,.35);
+  --shadow-1: 0 1px 2px rgba(26,29,24,.06), 0 1px 4px rgba(26,29,24,.04);
+  --shadow-2: 0 4px 8px rgba(26,29,24,.08), 0 2px 4px rgba(26,29,24,.05);
+  --shadow-3: 0 8px 24px rgba(26,29,24,.10), 0 4px 12px rgba(26,29,24,.06);
 
   /* Transitions */
   --fast: 120ms ease;
@@ -146,32 +146,32 @@
   --shell-statusbar: 24px;
 }
 
-/* Light Variant — explicit opt-in via [data-skin="light"] on <html> */
-[data-skin="light"] {
-  --bg: #EEF1ED;           /* paper */
-  --fg: #1D2925;           /* ink */
-  --muted: #5C6B5E;        /* moss */
-  --dim: #8FA08C;          /* dim (decorative only) */
-  --fg-strong: #0F1812;
-  --bg-elev: #FAF9F6;
-  --bg-subtle: #F5F3EE;
-  --line: rgba(29, 41, 37, 0.14);
-  --line-strong: rgba(29, 41, 37, 0.24);
-  --hairline: rgba(29, 41, 37, 0.08);
+/* Dark Variant — explicit opt-in via [data-skin="dark"] on <html> */
+[data-skin="dark"] {
+  --bg: #0A0F0C;           /* green-black base */
+  --fg: #E9F1E8;           /* bone - primary text */
+  --muted: #8FA08C;        /* moss - secondary information */
+  --dim: #5C6B5E;          /* dim - decorative only (3.4:1, large text only) */
+  --fg-strong: #F0F5EF;
+  --bg-elev: #111713;
+  --bg-subtle: #141A16;
+  --line: rgba(143, 160, 140, 0.18);
+  --line-strong: rgba(143, 160, 140, 0.32);
+  --hairline: rgba(143, 160, 140, 0.10);
 
-  --state-canon: #286375;   /* teal */
-  --state-canon-wash: rgba(40, 99, 117, 0.10);
-  --state-proposed: #3D7158; /* lime */
-  --state-proposed-wash: rgba(61, 113, 88, 0.10);
-  --state-risk: #A5533D;    /* coral */
-  --state-risk-wash: rgba(165, 83, 61, 0.10);
-  --state-caution: #B8955A; /* amber */
-  --state-caution-wash: rgba(184, 149, 90, 0.10);
+  --state-canon: #7FC5BC;   /* teal - accepted/canonical/verified */
+  --state-canon-wash: rgba(127, 197, 188, 0.12);
+  --state-proposed: #C9F292; /* lime - proposed/draft/active change */
+  --state-proposed-wash: rgba(201, 242, 146, 0.10);
+  --state-risk: #E89670;    /* coral - risk/exception/unresolved/amendment */
+  --state-risk-wash: rgba(232, 150, 112, 0.12);
+  --state-caution: #CBAF6E; /* amber - caution/attention/evidence gaps */
+  --state-caution-wash: rgba(203, 175, 110, 0.12);
 
-  --water: #3A6B8C;
-  --water-pale: rgba(58, 107, 140, 0.12);
+  --water: #4A9EBB;
+  --water-pale: rgba(74, 158, 187, 0.14);
 
-  /* Legacy mappings for light mode */
+  /* Legacy semantic colors (kept for compatibility during migration) */
   --brand-branch: var(--state-proposed);
   --brand-branch-wash: var(--state-proposed-wash);
   --brass: var(--state-caution);
@@ -179,7 +179,7 @@
   --danger: var(--state-risk);
   --danger-pale: var(--state-risk-wash);
   --phosphor: var(--state-proposed);
-  --bg-term: #0D110E;
+  --bg-term: var(--bg);
 
   --text: var(--fg);
   --text-muted: var(--muted);
@@ -194,12 +194,12 @@
   --info: var(--water);
   --info-bg: var(--water-pale);
 
-  /* Light mode shadows */
-  --shadow-1: 0 1px 2px rgba(26,29,24,.06), 0 1px 4px rgba(26,29,24,.04);
-  --shadow-2: 0 4px 8px rgba(26,29,24,.08), 0 2px 4px rgba(26,29,24,.05);
-  --shadow-3: 0 8px 24px rgba(26,29,24,.1), 0 4px 12px rgba(26,29,24,.06);
+  /* Dark mode shadows */
+  --shadow-1: 0 1px 2px rgba(0,0,0,.35), 0 1px 4px rgba(0,0,0,.25);
+  --shadow-2: 0 4px 8px rgba(0,0,0,.45), 0 2px 4px rgba(0,0,0,.3);
+  --shadow-3: 0 8px 24px rgba(0,0,0,.55), 0 4px 12px rgba(0,0,0,.35);
 
-  /* Light mode selection */
+  /* Dark mode selection */
   ::selection {
     background: var(--state-canon-wash);
     color: var(--state-canon);
