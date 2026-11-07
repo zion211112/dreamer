@@ -6,10 +6,10 @@ import { queryRollEntries, type RollEntry } from '../../lib/db/roll';
 
 type Lens = 'canon' | 'annals' | 'roll';
 
-const LENSES: { id: Lens; label: string; count: number }[] = [
-  { id: 'canon', label: 'Canon', count: 0 },
-  { id: 'annals', label: 'Annals', count: 0 },
-  { id: 'roll', label: 'Roll', count: 0 },
+const LENSES: { id: Lens; label: string }[] = [
+  { id: 'canon', label: 'Canon' },
+  { id: 'annals', label: 'Annals' },
+  { id: 'roll', label: 'Roll' },
 ];
 
 const TIME_AXIS_LABELS = ['2026-09', '2026-10', '2026-11', '2026-12'];
@@ -18,20 +18,30 @@ export function Records() {
   const [lens, setLens] = useState<Lens>('roll');
   const [rollEntries, setRollEntries] = useState<RollEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [timeIndex, setTimeIndex] = useState(TIME_AXIS_LABELS.length - 1);
 
   useEffect(() => {
-    queryRollEntries({ limit: 50 }).then(entries => {
-      setRollEntries(entries);
-      LENSES[2].count = entries.length;
-      setLoading(false);
-    });
+    let active = true;
+    queryRollEntries({ limit: 50 })
+      .then(entries => {
+        if (active) setRollEntries(entries);
+      })
+      .catch(error => {
+        if (active) {
+          setLoadError(error instanceof Error ? error.message : 'Roll entries could not be loaded.');
+        }
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => { active = false; };
   }, []);
 
   const metrics: PageHeadMetric[] = [
-    { label: 'Canon', value: LENSES[0].count, state: 'canon' },
-    { label: 'Annals', value: LENSES[1].count, state: 'proposed' },
-    { label: 'Roll', value: LENSES[2].count, state: 'caution' },
+    { label: 'Canon', value: 'N/A', state: 'canon' },
+    { label: 'Annals', value: 'N/A', state: 'proposed' },
+    { label: 'Roll', value: loading || loadError ? 'N/A' : rollEntries.length, state: 'caution' },
   ];
 
   function renderLensContent() {
@@ -46,7 +56,15 @@ export function Records() {
   }
 
   function renderRollLens() {
-    if (loading) return <p className="records-loading">Loading Roll entries…</p>;
+    if (loading) return <p className="records-loading" role="status">Loading Roll entries…</p>;
+    if (loadError) {
+      return (
+        <div className="records-query-error" role="alert">
+          <strong>Roll entries could not be loaded.</strong>
+          <p>{loadError}</p>
+        </div>
+      );
+    }
 
     return (
       <section className="records-lens" aria-labelledby="roll-lens-title">
@@ -149,7 +167,7 @@ export function Records() {
             </li>
           ))}
           {rollEntries.length === 0 && (
-            <li className="records-empty">No Roll entries in this browser.</li>
+            <li className="records-empty" role="status">No Roll entries in this browser.</li>
           )}
         </ul>
       </section>
@@ -208,6 +226,7 @@ export function Records() {
           {LENSES.map(l => (
             <button
               key={l.id}
+              id={`records-tab-${l.id}`}
               role="tab"
               aria-selected={lens === l.id}
               aria-controls={`records-panel-${l.id}`}
@@ -216,7 +235,9 @@ export function Records() {
               type="button"
             >
               {l.label}
-              <span className="records-lens-count">{l.count}</span>
+              <span className="records-lens-count">
+                {l.id === 'roll' ? (loading || loadError ? 'N/A' : rollEntries.length) : 'N/A'}
+              </span>
             </button>
           ))}
         </nav>

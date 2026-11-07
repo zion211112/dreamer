@@ -10882,6 +10882,39 @@ a:focus-visible {
    Hash-anchored close-out records, evidence layers, blueprint generation
    ============================================================================ */
 
+.records-loading,
+.records-empty {
+  margin: 0;
+  padding: 18px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.records-query-error {
+  display: grid;
+  gap: 7px;
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--danger) 55%, var(--border));
+  background: color-mix(in srgb, var(--danger) 8%, var(--bg-elev));
+  color: var(--text);
+}
+
+.records-query-error strong {
+  color: var(--danger);
+  font: 9px var(--mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.records-query-error p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
 /* --- Roll Tokens (extends Network tokens) --- */
 :root {
   /* Evidence access layers — visible, not hidden */
