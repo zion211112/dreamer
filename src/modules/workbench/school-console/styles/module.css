@@ -545,6 +545,314 @@
   gap: var(--space-1);
 }
 
+/* ── New: Buttons ── */
+.sc-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  color: var(--fg);
+  font-size: var(--step--1);
+  font-family: var(--sans);
+  cursor: pointer;
+}
+
+.sc-button:hover {
+  border-color: var(--state-proposed);
+  background: var(--state-proposed-wash);
+}
+
+.sc-button-primary {
+  border-color: var(--state-canon);
+  background: var(--state-canon);
+  color: var(--bg);
+}
+
+.sc-button-primary:hover {
+  background: var(--state-canon);
+  opacity: 0.9;
+}
+
+.sc-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── New: Result card / summary ── */
+.sc-result-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.sc-result-metric {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+}
+
+.sc-result-label {
+  font-size: var(--step--2);
+  font-family: var(--mono);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── New: Grades ── */
+.sc-grade-distinction { color: var(--state-canon); }
+.sc-grade-credit { color: var(--state-proposed); }
+.sc-grade-pass { color: var(--state-caution); }
+.sc-grade-below-pass { color: var(--state-risk); }
+
+/* ── New: Breakdown ── */
+.sc-breakdown {
+  margin-top: var(--space-3);
+}
+
+.sc-breakdown-title {
+  font-family: var(--serif);
+  font-size: var(--step-1);
+  color: var(--fg-strong);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.sc-breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.sc-breakdown-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--step--1);
+}
+
+.sc-mark-ok { color: var(--state-canon); }
+.sc-mark-miss { color: var(--state-risk); }
+
+/* ── New: Metric grid ── */
+.sc-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-3);
+  margin: var(--space-3) 0;
+}
+
+.sc-metric {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+}
+
+.sc-metric-label {
+  font-size: var(--step--2);
+  font-family: var(--mono);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.sc-metric-value {
+  font-family: var(--serif);
+  font-size: var(--step-2);
+  color: var(--fg-strong);
+}
+
+.sc-metric-sub {
+  font-size: var(--step--2);
+  font-family: var(--mono);
+  color: var(--muted);
+}
+
+/* ── New: Class roster ── */
+.sc-class-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.sc-class-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+}
+
+.sc-class-sub {
+  font-size: var(--step--2);
+  font-family: var(--mono);
+  color: var(--muted);
+  margin: var(--space-1) 0 0 0;
+}
+
+.sc-class-score {
+  font-family: var(--serif);
+  font-size: var(--step-1);
+  color: var(--fg-strong);
+}
+
+/* ── New: Links ── */
+.sc-link-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.sc-link-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+}
+
+.sc-link-row small {
+  display: block;
+  font-size: var(--step--2);
+  font-family: var(--mono);
+  color: var(--muted);
+  margin-top: var(--space-1);
+}
+
+.sc-link-actions {
+  display: flex;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+/* ── New: Meta list ── */
+.sc-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.sc-meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--step--1);
+  font-family: var(--mono);
+}
+
+.sc-meta-key { color: var(--muted); }
+.sc-meta-value { color: var(--fg); }
+
+/* ── New: Fee list ── */
+.sc-fee-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.sc-fee-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--step--1);
+}
+
+/* ── New: Surface padding ── */
+.sc-surface-pad {
+  padding: var(--space-3) var(--space-4);
+}
+
+/* ── New: Answer input ── */
+.sc-answer-input {
+  width: 96px;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: var(--step--1);
+}
+
+.sc-answer-input:disabled {
+  background: var(--bg-subtle);
+  opacity: 0.6;
+}
+
+.sc-answer-input:focus {
+  outline: none;
+  border-color: var(--state-canon);
+}
+
+/* ── New: Kenyan scheme list ── */
+.sc-kenyan-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── New: Kenyan scheme rows ── */
+.sc-kenyan-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: var(--space-2);
+  align-items: center;
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--line);
+  font-size: var(--step--1);
+}
+.sc-kenyan-row:last-child {
+  border-bottom: none;
+}
+.sc-kenyan-row .sc-scheme-q {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+/* ── New: Import button ── */
+.sc-import-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  color: var(--muted);
+  font-size: var(--step--1);
+  font-family: var(--sans);
+  cursor: pointer;
+}
+
+.sc-import-button:hover {
+  border-color: var(--state-proposed);
+  color: var(--fg);
+}
+
+.sc-import-button.is-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .sc-shell {

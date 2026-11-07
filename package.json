@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test:unit": "vitest"
+    "test:unit": "vitest",
+    "deploy": "vite build"
   },
   "dependencies": {
     "@preact/signals": "^1.3.0",

@@ -19,7 +19,11 @@ export function ModuleNav({ role, activeModule, onSelect }: ModuleNavProps) {
   return (
     <>
       <p className="sc-rail-title">
-        {role === 'teacher' ? 'Teacher tools' : 'School operations'}
+        {role === 'teacher'
+          ? 'Teacher tools'
+          : role === 'principal'
+            ? 'School operations'
+            : 'Developer tools'}
       </p>
       <nav className="sc-nav-list" aria-label="Console tools">
         {visibleModules.map((module) => (

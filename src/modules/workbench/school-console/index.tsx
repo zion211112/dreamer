@@ -25,6 +25,10 @@ import { StatusBanner } from './components/StatusBanner';
 import { MyDayView } from './views/MyDayView';
 import { AutoMarkingView } from './views/AutoMarkingView';
 import { TenderDraftView } from './views/TenderDraftView';
+import { KenyanMarkingView } from './views/KenyanMarkingView';
+import { DeveloperView } from './views/DeveloperView';
+import { ClassView } from './views/ClassView';
+import { SchoolOverviewView } from './views/SchoolOverviewView';
 import './styles/token-alias.css';
 import './styles/module.css';
 
@@ -254,6 +258,29 @@ export function SchoolConsoleModule() {
           />
         )}
 
+        {activeModule === 'kenyan-marking' && role === 'teacher' && (
+          <KenyanMarkingView
+            snapshot={snapshot}
+            canWrite={canWrite}
+            persist={persist}
+          />
+        )}
+
+        {activeModule === 'class-view' && role === 'teacher' && (
+          <ClassView
+            snapshot={snapshot}
+            canWrite={canWrite}
+            persist={persist}
+          />
+        )}
+
+        {activeModule === 'school-overview' && role === 'principal' && (
+          <SchoolOverviewView
+            snapshot={snapshot}
+            canWrite={canWrite}
+          />
+        )}
+
         {activeModule === 'tender-drafts' && role === 'principal' && (
           <TenderDraftView
             snapshot={snapshot}
@@ -266,6 +293,22 @@ export function SchoolConsoleModule() {
             createDraft={createDraft}
             discardDraft={discardDraft}
             canWrite={canWrite}
+          />
+        )}
+
+        {activeModule === 'developer-tools' && role === 'developer' && (
+          <DeveloperView
+            snapshot={snapshot}
+            canWrite={canWrite}
+            persist={persist}
+          />
+        )}
+
+        {(activeModule === 'integration-hooks' || activeModule === 'capability-coordination') && role === 'developer' && (
+          <DeveloperView
+            snapshot={snapshot}
+            canWrite={canWrite}
+            persist={persist}
           />
         )}
 
@@ -285,6 +328,13 @@ export function SchoolConsoleModule() {
               type="button"
             >
               Principal
+            </button>
+            <button
+              aria-pressed={role === 'developer'}
+              onClick={() => changeRole('developer')}
+              type="button"
+            >
+              Developer
             </button>
           </div>
           <small>Demo view, not account access</small>
