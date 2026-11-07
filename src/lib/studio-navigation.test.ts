@@ -24,6 +24,9 @@ describe('Studio workspace navigation', () => {
       'workbench:examples',
       'workbench:field-desk',
       'workbench:school-console',
+      'workbench:applications',
+      'workbench:review',
+      'workbench:delivery',
     ]);
 
     expect(STUDIO_SECONDARY_MODULES.map(({ id, label, href }) => ({ id, label, href }))).toEqual([]);
@@ -45,6 +48,9 @@ describe('Studio workspace navigation', () => {
       'workbench:examples',
       'workbench:field-desk',
       'workbench:school-console',
+      'workbench:applications',
+      'workbench:review',
+      'workbench:delivery',
       'records:canon',
       'records:annals',
       'records:roll',
@@ -62,6 +68,9 @@ describe('Studio workspace navigation', () => {
       ['workbench:examples', 'workbench'],
       ['workbench:field-desk', 'workbench'],
       ['workbench:school-console', 'workbench'],
+      ['workbench:applications', 'workbench'],
+      ['workbench:review', 'workbench'],
+      ['workbench:delivery', 'workbench'],
       ['records:canon', 'records'],
       ['records:annals', 'records'],
       ['records:roll', 'records'],

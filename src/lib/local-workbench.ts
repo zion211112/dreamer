@@ -51,6 +51,19 @@ export interface LocalWorkbenchRecord {
   applications: LocalWorkApplication[];
 }
 
+const deliveryWorkStatuses: readonly WorkStatus[] = [
+  'in_progress',
+  'submitted',
+  'changes_requested',
+  'accepted',
+];
+const reviewApplicationStatuses: readonly ApplicationStatus[] = [
+  'submitted',
+  'under_review',
+  'selected',
+  'declined',
+];
+
 export const WORK_OPPORTUNITIES: WorkOpportunity[] = [
   {
     id: 'school-learning-animation',
@@ -146,6 +159,25 @@ function isLocalWorkbenchRecord(value: unknown): value is LocalWorkbenchRecord {
   return isRecord(value)
     && Array.isArray(value.applications)
     && value.applications.every(isLocalWorkApplication);
+}
+
+export function filterLocalWorkbenchApplications(
+  applications: readonly LocalWorkApplication[],
+  applicant: string,
+  phase?: 'review' | 'delivery',
+): LocalWorkApplication[] {
+  const currentApplicant = applicant.trim();
+  return applications.filter(application => {
+    if (application.applicant !== currentApplicant) return false;
+
+    const isDelivery = application.workStatus !== null
+      && deliveryWorkStatuses.includes(application.workStatus);
+    if (phase === 'delivery') return isDelivery;
+    if (phase === 'review') {
+      return !isDelivery && reviewApplicationStatuses.includes(application.status);
+    }
+    return true;
+  });
 }
 
 export function readLocalWorkbench(): LocalWorkbenchRecord {

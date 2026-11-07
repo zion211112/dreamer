@@ -5,6 +5,7 @@ import {
   beginLocalReview,
   createLocalApplication,
   decideLocalApplication,
+  filterLocalWorkbenchApplications,
   readLocalWorkbench,
   reviewLocalDelivery,
   submitLocalDelivery,
@@ -16,6 +17,7 @@ import {
 } from '../../lib/local-workbench';
 
 type View = 'opportunities' | 'my-work';
+type ApplicationPhase = 'review' | 'delivery';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -37,14 +39,14 @@ function getDefaultApplicant(): string {
 }
 
 function statusLabel(application: LocalWorkApplication): string {
-  if (application.workStatus === 'authorization_pending') return 'Awaiting authorization';
-  if (application.workStatus === 'authorized') return 'Authorized · awaiting contributor';
+  if (application.workStatus === 'authorization_pending') return 'Authorization pending';
+  if (application.workStatus === 'authorized') return 'Authorized (local)';
   if (application.workStatus === 'in_progress') return 'In progress';
   if (application.workStatus === 'submitted') return 'Delivery submitted';
   if (application.workStatus === 'changes_requested') return 'Changes requested';
-  if (application.workStatus === 'accepted') return 'Accepted · credential eligible';
-  if (application.status === 'submitted') return 'Application saved';
-  if (application.status === 'under_review') return 'Review in progress';
+  if (application.workStatus === 'accepted') return 'Accepted (local)';
+  if (application.status === 'submitted') return 'Submitted';
+  if (application.status === 'under_review') return 'Under review';
   if (application.status === 'selected') return 'Selected';
   return 'Declined';
 }
@@ -83,7 +85,13 @@ function OpportunityCard({
   );
 }
 
-export function WorkbenchOpportunityFlow({ view }: { view: View }) {
+export function WorkbenchOpportunityFlow({
+  view,
+  phase,
+}: {
+  view: View;
+  phase?: ApplicationPhase;
+}) {
   const [record, setRecord] = useState<LocalWorkbenchRecord>({ applications: [] });
   const [selectedId, setSelectedId] = useState(WORK_OPPORTUNITIES[0].id);
   const [applicant] = useState(getDefaultApplicant);
@@ -112,8 +120,8 @@ export function WorkbenchOpportunityFlow({ view }: { view: View }) {
       && application.status !== 'declined'
   ));
   const applications = useMemo(
-    () => record.applications.filter(application => application.applicant === applicant),
-    [record.applications, applicant],
+    () => filterLocalWorkbenchApplications(record.applications, applicant, phase),
+    [record.applications, applicant, phase],
   );
 
   function runAction(action: () => LocalWorkbenchRecord, success: string) {
@@ -276,7 +284,7 @@ export function WorkbenchOpportunityFlow({ view }: { view: View }) {
           <header className="wb-my-work-heading">
             <div>
               <span className="wb-eyebrow">YOUR WORKFLOW</span>
-              <h2>Applications and work</h2>
+              <h2>{phase === 'review' ? 'Review & authorize' : phase === 'delivery' ? 'Track delivery' : 'Applications and work'}</h2>
             </div>
             <span>{applications.length.toString().padStart(2, '0')} records</span>
           </header>
@@ -303,6 +311,14 @@ export function WorkbenchOpportunityFlow({ view }: { view: View }) {
                     <p className="wb-evidence-choice">
                       Profile evidence: {application.shareEvidence ? 'included by contributor choice' : 'not shared'}
                     </p>
+                    <section aria-label="Opportunity scope and terms" className="wb-work-brief-summary">
+                      <h4>Work brief · {opportunity.context}</h4>
+                      <p><strong>Scope</strong> {opportunity.scope}</p>
+                      <p><strong>Deliverables</strong> {opportunity.deliverables.join(' · ')}</p>
+                      <p><strong>Acceptance</strong> {opportunity.acceptance}</p>
+                      <p><strong>Terms</strong> {opportunity.terms}</p>
+                      <p><strong>Payment</strong> {opportunity.payment}</p>
+                    </section>
 
                     {application.status === 'submitted' && (
                       <div className="wb-review-action">

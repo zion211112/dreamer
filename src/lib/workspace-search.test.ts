@@ -18,6 +18,9 @@ describe('filterWorkspaceDestinations', () => {
       { id: 'workbench-examples', label: 'Local examples', module: 'Workbench', href: '/workspace/workbench/examples' },
       { id: 'workbench-field-desk', label: 'Field desk', module: 'Workbench', href: '/workspace/workbench/field-desk' },
       { id: 'workbench-school-console', label: 'School Console', module: 'Workbench', href: '/workspace/assets/school-console' },
+      { id: 'workbench-applications', label: 'Opportunities', module: 'Workbench', href: '/workspace/workbench/applications' },
+      { id: 'workbench-review', label: 'Review & authorize', module: 'Workbench', href: '/workspace/workbench/review' },
+      { id: 'workbench-delivery', label: 'Track delivery', module: 'Workbench', href: '/workspace/workbench/delivery' },
     ]));
   });
 

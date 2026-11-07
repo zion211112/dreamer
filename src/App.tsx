@@ -9,6 +9,7 @@ import { Commons } from './pages/workspace/Commons';
 import { Workbench } from './pages/workspace/FieldDesk';
 import { WorkbenchFinder } from './pages/workspace/WorkbenchFinder';
 import { WorkbenchCapacityFinder } from './pages/workspace/WorkbenchCapacityFinder';
+import { WorkbenchApplications } from './pages/workspace/WorkbenchApplications';
 import { SchoolConsoleModule } from './modules/assets/school-console';
 import { Records } from './pages/workspace/Records';
 import { AptCoinLab } from './pages/workspace/AptCoinLab';
@@ -29,6 +30,9 @@ export function App() {
       <Route path="/workspace/network/capabilities"><Network /></Route>
       <Route path="/workspace/workbench/plan"><WorkbenchCapacityFinder view="plan" /></Route>
       <Route path="/workspace/workbench/examples"><WorkbenchFinder /></Route>
+      <Route path="/workspace/workbench/applications"><WorkbenchApplications view="opportunities" /></Route>
+      <Route path="/workspace/workbench/review"><WorkbenchApplications view="review" /></Route>
+      <Route path="/workspace/workbench/delivery"><WorkbenchApplications view="delivery" /></Route>
       <Route path="/workspace/workbench/field-desk"><Workbench /></Route>
       <Route path="/workspace/workbench"><WorkbenchCapacityFinder view="matching" /></Route>
       <Route path="/workspace/assets/school-console"><SchoolConsoleModule /></Route>

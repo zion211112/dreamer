@@ -8,6 +8,9 @@ export type StudioContext =
   | 'workbench:examples'
   | 'workbench:field-desk'
   | 'workbench:school-console'
+  | 'workbench:applications'
+  | 'workbench:review'
+  | 'workbench:delivery'
   | 'records:canon'
   | 'records:annals'
   | 'records:roll'
@@ -51,6 +54,9 @@ export const STUDIO_FLOW_MODULES: readonly StudioNavigationModule[] = [
       'workbench:examples',
       'workbench:field-desk',
       'workbench:school-console',
+      'workbench:applications',
+      'workbench:review',
+      'workbench:delivery',
     ],
   },
   {
@@ -95,6 +101,9 @@ export function getStudioModuleForContext(context: StudioContext): StudioModuleI
     case 'workbench:examples':
     case 'workbench:field-desk':
     case 'workbench:school-console':
+    case 'workbench:applications':
+    case 'workbench:review':
+    case 'workbench:delivery':
       return 'workbench';
     case 'records:canon':
     case 'records:annals':

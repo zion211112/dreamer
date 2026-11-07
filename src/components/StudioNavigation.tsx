@@ -52,6 +52,9 @@ const workbenchDestinations = {
     { context: 'workbench:examples', href: '/workspace/workbench/examples', label: 'Local examples' },
     { context: 'workbench:field-desk', href: '/workspace/workbench/field-desk', label: 'Field desk' },
     { context: 'workbench:school-console', href: '/workspace/assets/school-console', label: 'School console' },
+    { context: 'workbench:applications', href: '/workspace/workbench/applications', label: 'Opportunities' },
+    { context: 'workbench:review', href: '/workspace/workbench/review', label: 'Review & authorize' },
+    { context: 'workbench:delivery', href: '/workspace/workbench/delivery', label: 'Track delivery' },
   ] satisfies ContextDestination[],
 };
 
@@ -89,6 +92,9 @@ const contextDestinations: Record<StudioContext, { heading: string; links: Conte
   'workbench:examples': workbenchDestinations,
   'workbench:field-desk': workbenchDestinations,
   'workbench:school-console': workbenchDestinations,
+  'workbench:applications': workbenchDestinations,
+  'workbench:review': workbenchDestinations,
+  'workbench:delivery': workbenchDestinations,
   'records:canon': {
     heading: 'Records',
     links: [
