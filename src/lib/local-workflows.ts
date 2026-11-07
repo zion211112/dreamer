@@ -360,6 +360,16 @@ export function createConsoleSignalLink(draftId: string): string {
   return `/workspace/commons?sourceConsoleDraftId=${encodeURIComponent(normalizedId)}`;
 }
 
+export function createWorkbenchSimulationLink(sourceConsoleDraftId: string, signalId?: string): string {
+  const draftId = sourceConsoleDraftId.trim();
+  if (!draftId) throw new Error('A School Console draft ID is required.');
+
+  const params = [`sourceConsoleDraftId=${encodeURIComponent(draftId)}`];
+  const normalizedSignalId = signalId?.trim();
+  if (normalizedSignalId) params.push(`signal=${encodeURIComponent(normalizedSignalId)}`);
+  return `/workspace/workbench/field-desk?${params.join('&')}`;
+}
+
 export function parseConsoleDraftId(search: string): string | null {
   const draftId = new URLSearchParams(search).get('sourceConsoleDraftId')?.trim() ?? '';
   return draftId || null;

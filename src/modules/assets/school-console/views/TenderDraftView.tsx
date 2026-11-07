@@ -1,10 +1,10 @@
 // src/modules/assets/school-console/views/TenderDraftView.tsx
-// Rebuilt Tender Drafts: local, unpublished drafts. Not sent to Workbench.
+// Rebuilt Tender Drafts: local, unpublished drafts. Simulation handoffs do not modify the source.
 // Principal view only.
 import { Link } from 'wouter';
 import { Button } from '../../../../components/Button';
 import { Input } from '../../../../components/Input';
-import { createConsoleSignalLink } from '../../../../lib/local-workflows';
+import { createConsoleSignalLink, createWorkbenchSimulationLink } from '../../../../lib/local-workflows';
 import type { ConsoleSnapshot, SchoolTenderDraft } from '../../../../lib/school-console-storage';
 
 interface TenderDraftViewProps {
@@ -136,6 +136,9 @@ export function TenderDraftView({
                 <div className="sc-tender-actions">
                   <Link className="sc-review-commons" href={createConsoleSignalLink(draft.id)}>
                     Review in Commons
+                  </Link>
+                  <Link className="sc-review-commons" href={createWorkbenchSimulationLink(draft.id)}>
+                    Open in Workbench simulation
                   </Link>
                   <Button
                     className="sc-discard-button"

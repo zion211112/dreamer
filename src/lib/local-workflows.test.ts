@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   createConsoleSignalLink,
+  createWorkbenchSimulationLink,
   hasRegisteredInstitution,
   parseConsoleDraftId,
   readFieldSignals,
@@ -71,6 +72,20 @@ describe('FieldSignal compatibility', () => {
     expect(link).toBe('/workspace/commons?sourceConsoleDraftId=draft%2Fone');
     expect(parseConsoleDraftId('?sourceConsoleDraftId=draft%2Fone')).toBe('draft/one');
     expect(parseConsoleDraftId('?sourceConsoleDraftId=%20%20')).toBeNull();
+  });
+
+  it('buildsEncodedSimulationLinkWithDraftAndSignal', () => {
+    expect(createWorkbenchSimulationLink('draft/one', 'signal one'))
+      .toBe('/workspace/workbench/field-desk?sourceConsoleDraftId=draft%2Fone&signal=signal%20one');
+  });
+
+  it('omitsMissingSignal', () => {
+    expect(createWorkbenchSimulationLink('draft/one'))
+      .toBe('/workspace/workbench/field-desk?sourceConsoleDraftId=draft%2Fone');
+  });
+
+  it('rejectsBlankDraftId', () => {
+    expect(() => createWorkbenchSimulationLink('  ')).toThrow(/draft ID is required/i);
   });
 
   it('requires an explicitly registered institution ID', () => {

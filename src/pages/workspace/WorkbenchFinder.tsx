@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { WORK_OPPORTUNITIES } from '../../lib/local-workbench';
 import {
   createWorkBrief,
+  createWorkbenchSimulationLink,
   readCommonsGovernance,
   readFieldSignals,
   readWorkBriefDrafts,
@@ -261,7 +262,7 @@ export function WorkbenchFinder() {
                     {proposalBrief.saved && proposalBrief.signal.sourceConsoleDraftId && (
                       <Link
                         className="workbench-finder-simulation-link"
-                        href={`/workspace/workbench/field-desk?sourceConsoleDraftId=${encodeURIComponent(proposalBrief.signal.sourceConsoleDraftId)}&signal=${encodeURIComponent(proposalBrief.signal.id)}`}
+                        href={createWorkbenchSimulationLink(proposalBrief.signal.sourceConsoleDraftId, proposalBrief.signal.id)}
                       >
                         Continue to school simulation
                       </Link>
