@@ -6,6 +6,8 @@ import { StudioNavigation } from './StudioNavigation';
 import { RecordInspector, type RecordSelection, type EvidenceGap, type ContextAction, type GateStatus } from './RecordInspector';
 import { ChangeSetDock, type PendingCommit, type EvidenceGapDock, type ReconciliationItem } from './ChangeSetDock';
 import { queryRollEntries } from '../lib/db/roll';
+import { isDemoMode } from '../lib/supabase/client';
+import { EngineActivityStrip } from './EngineActivityStrip';
 
 interface WorkspaceShellProps {
   children: ComponentChildren;
@@ -54,6 +56,14 @@ export function WorkspaceShell({
   const [ledgerHeadHash, setLedgerHeadHash] = useState<string | null>(null);
   const moduleLabel = getStudioModuleLabel(currentContext);
   const moduleId = getStudioModuleForContext(currentContext);
+  const runtimeLabel = isDemoMode ? 'Local demo' : 'Configured environment';
+  const storageLabel = moduleId === 'records'
+    ? isDemoMode ? 'Demo fixtures + local Roll' : 'Configured Records API'
+    : currentContext === 'workbench:school-console'
+      ? 'School Console · IndexedDB'
+      : moduleId === 'commons' || moduleId === 'workbench'
+        ? `${moduleLabel} · browser-local`
+        : `${moduleLabel} · module-specific data`;
 
   function toggleSidebar() {
     setSidebarCollapsed(current => {
@@ -135,11 +145,13 @@ export function WorkspaceShell({
           onReconcileAction={changeSetData.onReconcileAction}
         />
       )}
-      <footer className="field-studio-statusbar">
-        <span className="field-studio-ledger-head">
-          {ledgerHeadHash ?? '—'}
-        </span>
-      </footer>
+      <EngineActivityStrip
+        agentAvailable={false}
+        ledgerHeadHash={ledgerHeadHash}
+        runs={[]}
+        runtimeLabel={runtimeLabel}
+        storageLabel={storageLabel}
+      />
     </div>
   );
 }

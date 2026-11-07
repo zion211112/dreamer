@@ -10,6 +10,8 @@ import {
 } from '../lib/studio-navigation';
 import { BrandMark } from './BrandMark';
 import { IdentityCabinet } from './IdentityCabinet';
+import { WorkspaceQuickSearch } from './WorkspaceQuickSearch';
+import { WORKSPACE_SEARCH_DESTINATIONS } from '../lib/workspace-search';
 
 interface StudioNavigationProps {
   currentContext: StudioContext;
@@ -25,13 +27,13 @@ function ContextIcon({ id }: { id: StudioModuleId }) {
     return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="7" cy="6.5" r="2.5" /><path d="M2.5 16v-1.2a4.5 4.5 0 0 1 9 0V16zM13 4.5a2.3 2.3 0 0 1 0 4.5m1.5 2a3.8 3.8 0 0 1 3 3.7V16h-3" /></svg>;
   }
   if (id === 'workbench') {
-    return <svg aria-hidden="true" viewBox="0 0 20 20"><rect x="3" y="3" width="6" height="6" rx="1" /><rect x="11" y="3" width="6" height="6" rx="1" /><rect x="3" y="11" width="6" height="6" rx="1" /><rect x="11" y="11" width="6" height="6" rx="1" /></svg>;
+    return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M3 7.5h14v9H3zM7 7.5V5h6v2.5M3 10.5h14m-9 0v2h4v-2" /><path d="m6 4 2-2m6 2-2-2" /></svg>;
   }
   if (id === 'records') {
     return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 16.5V3.5a1.5 1.5 0 0 1 1.5-1.5h11a1.5 1.5 0 0 1 1.5 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-11a1.5 1.5 0 0 1-1.5-1.5z" /><path d="M5.5 9h9M5.5 13h6" /></svg>;
   }
   if (id === 'intelligence') {
-    return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0 1.5a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13z"/><path d="M10 6v4l2.5 2.5"/></svg>;
+    return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="10" cy="10" r="2" /><circle cx="4" cy="5" r="1.5" /><circle cx="16" cy="5" r="1.5" /><circle cx="4" cy="15" r="1.5" /><circle cx="16" cy="15" r="1.5" /><path d="m8.5 8.5-3.4-2.4m6.4 2.4 3.4-2.4m-6.4 3.9-3.4 2.4m6.4-2.4 3.4 2.4" /></svg>;
   }
   return <svg aria-hidden="true" viewBox="0 0 20 20"><rect x="2.5" y="6.5" width="15" height="10" rx="1" /><path d="M7 6.5V4h6v2.5M2.5 10h15m-9 0v2h3v-2" /></svg>;
 }
@@ -176,7 +178,7 @@ export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSid
   const drawerRef = useRef<HTMLDialogElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const activeModule = getStudioModuleForContext(currentContext) || 'commons';
-  const showIdentity = activeModule !== 'workbench' && !!profile;
+  const showIdentity = !!profile;
   const profileName = showIdentity ? profile?.display_name || '' : '';
 
   useEffect(() => {
@@ -228,6 +230,7 @@ export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSid
         <span className="studio-topbar-divider" aria-hidden="true" />
         <span className="studio-topbar-context"><strong>Field Studio</strong><span aria-hidden="true">/</span>{getStudioModuleLabel(currentContext)}</span>
         <span className="studio-topbar-spacer" />
+        <WorkspaceQuickSearch destinations={WORKSPACE_SEARCH_DESTINATIONS} />
         <button
           aria-label={sidebarCollapsed ? 'Show workspace navigation pane' : 'Hide workspace navigation pane'}
           aria-pressed={sidebarCollapsed}
