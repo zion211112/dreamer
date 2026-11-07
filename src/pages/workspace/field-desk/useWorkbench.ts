@@ -222,13 +222,13 @@ export function useWorkbench(): WorkbenchHook {
       : context.commonsSignalId ? `Unresolved reference · ${context.commonsSignalId}` : 'No observation linked',
     assetLabel: contextLabel(context.assetRecordId, assetsById, 'asset'),
     institutionHref: context.institutionId && institutionsById.has(context.institutionId)
-      ? `/workspace/institutions?record=${encodeURIComponent(context.institutionId)}#institution-record-${encodeURIComponent(context.institutionId)}`
+      ? `/workspace/network/institutions?record=${encodeURIComponent(context.institutionId)}#institution-record-${encodeURIComponent(context.institutionId)}`
       : undefined,
     commonsHref: selectedSignal
       ? `/workspace/commons?institution=${encodeURIComponent(selectedSignal.institutionId)}&signal=${encodeURIComponent(selectedSignal.id)}`
       : undefined,
     assetHref: context.assetRecordId && assetsById.has(context.assetRecordId)
-      ? `/workspace/institutions?record=${encodeURIComponent(context.assetRecordId)}#institution-record-${encodeURIComponent(context.assetRecordId)}`
+      ? `/workspace/network/institutions?record=${encodeURIComponent(context.assetRecordId)}#institution-record-${encodeURIComponent(context.assetRecordId)}`
       : undefined,
   };
 

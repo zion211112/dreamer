@@ -1,4 +1,4 @@
-// src/modules/assets/school-console/components/Shell.tsx
+// src/modules/workbench/school-console/components/Shell.tsx
 // Layout shell for the school-console module: sticky rail + top bar + work surface.
 // Not the main app WorkspaceLayout — this module is nested under assets.
 import type { ComponentChildren } from 'preact';

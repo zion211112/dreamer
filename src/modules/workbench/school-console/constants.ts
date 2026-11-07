@@ -1,4 +1,4 @@
-// src/modules/assets/school-console/constants.ts
+// src/modules/workbench/school-console/constants.ts
 // Shared console data: answer scheme, daily tasks, role modules.
 // Kept in the module so it is self-contained under assets.
 export type ConsoleRole = 'teacher' | 'principal';

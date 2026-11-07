@@ -155,7 +155,7 @@ export function Records() {
                   <Link href={`/workspace/records/roll/${entry.id}`} className="records-action-link">
                     Open in Roll
                   </Link>
-                  <Link href={`/workspace/annals?entry=${entry.id}`} className="records-action-link quiet">
+                  <Link href={`/workspace/records/annals?entry=${entry.id}`} className="records-action-link quiet">
                     View Annals
                   </Link>
                   <Link href={`/workspace/network/people?entity=${entry.commissioned_by.coordinator_id}`} className="records-action-link quiet">

@@ -198,7 +198,7 @@ export function People() {
         </header>
         <p className="people-capability-shortcut">
           <span>Looking for a capability directory?</span>
-          <Link href="/workspace/institutions/network">Browse capabilities <span aria-hidden="true">→</span></Link>
+          <Link href="/workspace/network/capabilities">Browse capabilities <span aria-hidden="true">→</span></Link>
         </p>
 
         <PeopleViewTabs activeView={activeView} setActiveView={setActiveView} />

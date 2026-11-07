@@ -206,7 +206,7 @@ export function Institutions() {
                         className={`institution-record-select institution-record--${record.recordType.toLowerCase()}`}
                         onClick={() => {
                           setSelectedRecordId(entity.id);
-                          navigate(`/workspace/institutions?record=${encodeURIComponent(entity.id)}`);
+                          navigate(`/workspace/network/institutions?record=${encodeURIComponent(entity.id)}`);
                         }}
                         type="button"
                       >
@@ -251,7 +251,7 @@ export function Institutions() {
         <footer className="institution-page-footer">
           <span>APT-LABS <i aria-hidden="true">/</i> RECORDS, NOT ASSUMPTIONS</span>
           <span>This register reads the bundled starter set; it does not alter imported People records.</span>
-          <a className="institution-network-link" href="/workspace/institutions/network">
+          <a className="institution-network-link" href="/workspace/network/capabilities">
             <span>Open Capability Directory</span>
             <span aria-hidden="true">→</span>
           </a>

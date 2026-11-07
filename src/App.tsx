@@ -7,7 +7,7 @@ import { Institutions } from './pages/workspace/Institutions';
 import { Network } from './pages/workspace/Network';
 import { Commons } from './pages/workspace/Commons';
 import { Workbench } from './pages/workspace/FieldDesk';
-import { SchoolConsoleModule } from './modules/assets/school-console';
+import { SchoolConsoleModule } from './modules/workbench/school-console';
 import { Records } from './pages/workspace/Records';
 import { AptCoinLab } from './pages/workspace/AptCoinLab';
 

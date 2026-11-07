@@ -20,15 +20,20 @@ npm run build
 
 - `/` — landing page
 - `/sign-in` and `/sign-up` — browser-local demo authentication
-- `/workspace/people` — People network
-- `/workspace/institutions` — institution and asset register
-- `/workspace/institutions/network` — People capability directory
-- `/workspace/institutions/school-console` — browser-local School Console prototype
 - `/workspace/commons` — local observations and steward decisions
-- `/workspace/workbench` — browse local work examples and save or remove non-binding interest in this browser
-- `/workspace/workbench/simulate` — compose a school need into an isolated, manually run Tender → Assembly → Acceptance → Roll-preview simulation
-- `/workspace/field-desk` — compatibility alias for the Workbench simulation
-- `/workspace/apt-coin-lab` — research-only area; no coin balances, transfers, rewards, access, voting, or authority
+- `/workspace/network` — Network module hub
+- `/workspace/network/people` — People network
+- `/workspace/network/institutions` — institution and asset register
+- `/workspace/network/capabilities` — People capability directory
+- `/workspace/workbench` — Workbench hub
+- `/workspace/workbench/field-desk` — Workbench simulation (compose a school need into Tender → Assembly → Acceptance → Roll-preview)
+- `/workspace/workbench/school-console` — browser-local School Console prototype (nested under Workbench as operational boundary)
+- `/workspace/records` — Records hub
+- `/workspace/records/canon` — Canon lens (entity registry)
+- `/workspace/records/annals` — Annals lens (chronological events)
+- `/workspace/records/roll` — Roll lens (evidential ledger)
+- `/workspace/intelligence` — Intelligence hub
+- `/workspace/intelligence/coin-lab` — research-only area; no coin balances, transfers, rewards, access, voting, or authority
 
 Authentication and workspace workflows are browser-local demo functionality,
 not connected services. Passwords are not stored; there is no live

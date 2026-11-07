@@ -1,4 +1,4 @@
-// src/modules/assets/school-console/components/StatusBanner.tsx
+// src/modules/workbench/school-console/components/StatusBanner.tsx
 // Local-data boundary disclosure — keeps the module honest about being
 // browser-local, not a live school system.
 interface StatusBannerProps {

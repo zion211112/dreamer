@@ -59,7 +59,7 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
   const profileName = profile?.display_name?.trim() || '';
   const networkProfile = profileName ? network?.entities.find(entity => entity.type === 'person' && entity.name === profileName) ?? null : null;
   const currentPath = useLocation()[0].split('?')[0];
-  const normalizedContext = currentPath === '/workspace/field-desk' ? 'workbench' : currentContext;
+  const normalizedContext = currentPath === '/workspace/workbench/field-desk' ? 'workbench' : currentContext;
   const contextLabel = normalizedContext.replace('-', ' ');
   const localEvidence = networkProfile && network
     ? network.relationships

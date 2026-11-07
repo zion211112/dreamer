@@ -1,4 +1,4 @@
-// src/modules/assets/school-console/index.tsx
+// src/modules/workbench/school-console/index.tsx
 // School Console module — nested under assets, not a main app page.
 // Entered from the School Management Console asset in Institutions.
 // Browser-local IndexedDB state; deterministic marking; local unpublished tender drafts.

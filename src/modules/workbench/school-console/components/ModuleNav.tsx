@@ -1,4 +1,4 @@
-// src/modules/assets/school-console/components/ModuleNav.tsx
+// src/modules/workbench/school-console/components/ModuleNav.tsx
 // Compact module navigation rail: My Day, Auto-Marking, Tender Drafts.
 // Role-aware: teacher sees My Day + Auto-Marking; principal sees Tender Drafts.
 import {

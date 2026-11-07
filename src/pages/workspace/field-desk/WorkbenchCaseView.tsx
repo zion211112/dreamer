@@ -56,7 +56,7 @@ export function WorkbenchCaseView({
           <div><dt>Institution</dt><dd>
             {contextLabel(simulation.source.institutionId, institutionsById, 'institution')}
             {simulation.source.institutionId && institutionsById.has(simulation.source.institutionId) && (
-              <Link href={`/workspace/institutions?record=${encodeURIComponent(simulation.source.institutionId)}#institution-record-${encodeURIComponent(simulation.source.institutionId)}`}>Open record</Link>
+              <Link href={`/workspace/network/institutions?record=${encodeURIComponent(simulation.source.institutionId)}#institution-record-${encodeURIComponent(simulation.source.institutionId)}`}>Open record</Link>
             )}
           </dd></div>
           <div><dt>Commons</dt><dd>
@@ -68,7 +68,7 @@ export function WorkbenchCaseView({
           <div><dt>Asset</dt><dd>
             {contextLabel(simulation.source.assetRecordId, assetsById, 'asset')}
             {simulation.source.assetRecordId && assetsById.has(simulation.source.assetRecordId) && (
-              <Link href={`/workspace/institutions?record=${encodeURIComponent(simulation.source.assetRecordId)}#institution-record-${encodeURIComponent(simulation.source.assetRecordId)}`}>Open record</Link>
+              <Link href={`/workspace/network/institutions?record=${encodeURIComponent(simulation.source.assetRecordId)}#institution-record-${encodeURIComponent(simulation.source.assetRecordId)}`}>Open record</Link>
             )}
           </dd></div>
           <div><dt>Source estimate</dt><dd>{simulation.source.assetBuildCost === null ? 'Not supplied' : `KES ${simulation.source.assetBuildCost}`}</dd></div>
