@@ -2,6 +2,8 @@ import { useState } from 'preact/hooks';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import { PageHead, type PageHeadMetric } from '../../components/PageHead';
 import { NetworkMap } from '../../components/NetworkMap';
+import { ForkGlyph } from '../../components/ForkGlyph';
+import { RingedEvidenceMarker } from '../../components/RingedEvidenceMarker';
 import { PEOPLE_NETWORK, PEOPLE_RELATIONSHIPS, type NetworkEntity, type RelationshipKind } from '../../lib/people-network';
 
 const ENTITY_TYPES = [
@@ -71,7 +73,7 @@ export function Network() {
     <WorkspaceLayout currentContext="network:capabilities">
       <div className="network-page">
         <PageHead
-          eyebrow="APT-LABS / NETWORK"
+          eyebrow="Network"
           title="People Network"
           subtitle="Force-directed graph of 31 entities, 34 relationships across 17 kinds. Entity-type colors: teal=Person, lime=Crew, amber=Asset, coral=Institution, mono=Work, dim=Evidence."
           metrics={metrics}
@@ -159,6 +161,7 @@ export function Network() {
                         background: `var(--state-${type.id === 'person' ? 'canon' : type.id === 'crew' ? 'proposed' : type.id === 'asset' ? 'caution' : type.id === 'institution' ? 'risk' : type.id === 'work' ? 'muted' : 'dim'})`,
                       }}
                     />
+                    {type.id === 'evidence' && <RingedEvidenceMarker size={10} color="var(--state-dim)" />}
                     <span className="network-entity-label">{type.label}</span>
                     <span className="network-entity-count">{type.count}</span>
                   </li>
@@ -188,19 +191,24 @@ export function Network() {
                     {selectedEntity.name}
                   </div>
                   <div className="network-selected-entity-type">
-                    {selectedEntity.type.toUpperCase()} · {selectedEntity.id}
+                    {selectedEntity.type} / {selectedEntity.id}
+                    {selectedEntity.recordBasis === 'illustrative' && (
+                      <span style={{ marginLeft: '6px', opacity: 0.6 }}>
+                        <ForkGlyph size={10} />
+                      </span>
+                    )}
                   </div>
                   <div className="network-selected-entity-summary">
                     {selectedEntity.summary}
                   </div>
                   {selectedEntity.location && (
                     <div className="network-selected-entity-location">
-                      📍 {selectedEntity.location}
+                      {selectedEntity.location}
                     </div>
                   )}
                   {selectedEntity.capabilities.length > 0 && (
                     <div>
-                      <div className="network-capabilities-title">CAPABILITIES</div>
+                      <div className="network-capabilities-title">Capabilities</div>
                       <div className="network-capabilities-list">
                         {selectedEntity.capabilities.slice(0, 8).map((cap, i) => (
                           <span key={i} className="network-capability-chip">
@@ -249,13 +257,13 @@ export function Network() {
               <strong className="network-section-title">Cross-module paths</strong>
               <ul className="network-cross-module-list">
                 <li className="network-cross-module-item">
-                  Entity → <span className="network-cross-module-path-proposed">Annals events</span> → Roll evidence
+                  Entity then Annals events then Roll evidence
                 </li>
                 <li className="network-cross-module-item">
-                  Roll entry → <span className="network-cross-module-path-caution">Annals timeline</span> → Canon state
+                  Roll entry then Annals timeline then Canon state
                 </li>
                 <li className="network-cross-module-item">
-                  Annals event → <span className="network-cross-module-path-risk">Roll evidence</span> → Entity profile
+                  Annals event then Roll evidence then Entity profile
                 </li>
               </ul>
             </section>
@@ -265,3 +273,4 @@ export function Network() {
     </WorkspaceLayout>
   );
 }
+

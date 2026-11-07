@@ -287,7 +287,7 @@ export function SchoolConsoleModule() {
               Principal
             </button>
           </div>
-          <small>Demo view · not account access</small>
+          <small>Demo view, not account access</small>
         </div>
 
         <div className="sc-boundary-note">

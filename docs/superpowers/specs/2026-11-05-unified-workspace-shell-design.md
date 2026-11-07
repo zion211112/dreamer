@@ -1,5 +1,19 @@
 # Unified Workspace Shell Design
 
+## ⚠️ SUPERSEDED â€” DO NOT IMPLEMENT
+
+This spec (dated 2026-11-05) proposed a dual-environment "Main / Branch" workspace shell with an `[Main | Branch]` environment switcher, six primary modules, and separate per-environment palettes. It was superseded by **Workspace Direction v2** (see `docs/design/workspace-direction-v2.md`) and the four user rulings captured in `docs/design/charter.md` §12.
+
+**Key changes from v1 to v2:**
+1. **Removed** `[Main | Branch]` environment switcher â€” branch is a change-set, not a separate workspace.
+2. **Collapsed** seven labels into five charter modules: Commons, Network, Workbench, Records, Intelligence.
+3. **Dark signature** (`#0A0F0C`) is the default palette; light luxury is a variant via `[data-skin="light"]`.
+4. **Information-driven page head hierarchy** replaces identical four-metric headers.
+5. **Inspector and dock are contextual** â€” mount only on record selection / change-set existence.
+6. **No demo disclaimer theater** â€” honest "Local demo" boundary only.
+
+Do not use this spec for implementation. Refer to `docs/design/workspace-direction-v2.md` for the S0-S15 build order.
+
 **Status:** Approved for implementation  
 **Date:** 2026-11-05  
 **Source:** Distilled from `.superpowers/brainstorm/main-shell-v1.html`, `.superpowers/brainstorm/branch-shell-v1.html`, `bin/design-archive/people-design-comparison.html`, `bin/design-archive/workspace-benchmark-analysis.md`, and semantic architecture (user-provided).

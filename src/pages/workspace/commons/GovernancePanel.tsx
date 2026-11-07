@@ -46,7 +46,7 @@ export function CommonsGovernance({
     <section className="commons-governance" aria-labelledby="commons-governance-title">
       <div className="commons-governance-head">
         <div>
-          <p className="eyebrow">GOVERNANCE / {activeInstitutionName.toUpperCase()}</p>
+          <p className="eyebrow">Governance · {activeInstitutionName}</p>
           <h2 id="commons-governance-title">Decision register</h2>
         </div>
         {isSteward && selected && !selected.scenario && (
@@ -98,7 +98,7 @@ export function CommonsGovernance({
 
       {showProposalForm && isSteward && selected && (
         <form className="commons-proposal-form" onSubmit={submitProposal}>
-          <p className="eyebrow">PROPOSAL / LINKED OBSERVATION</p>
+          <p className="eyebrow">Proposal · linked observation</p>
           <label>Proposed action
             <input defaultValue={`Respond to: ${selected.title}`} maxLength={120} minLength={5} name="proposal-title" required />
           </label>

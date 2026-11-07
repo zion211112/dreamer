@@ -19,9 +19,9 @@ export function ModuleNav({ role, activeModule, onSelect }: ModuleNavProps) {
   return (
     <>
       <p className="sc-rail-title">
-        {role === 'teacher' ? 'TEACHER TOOLS' : 'SCHOOL OPERATIONS'}
+        {role === 'teacher' ? 'Teacher tools' : 'School operations'}
       </p>
-      <nav className="sc-nav-list">
+      <nav className="sc-nav-list" aria-label="Console tools">
         {visibleModules.map((module) => (
           <button
             className={`sc-nav-item${activeModule === module.id ? ' is-active' : ''}`}
@@ -29,13 +29,12 @@ export function ModuleNav({ role, activeModule, onSelect }: ModuleNavProps) {
             onClick={() => onSelect(module.id)}
             type="button"
           >
-            <span className="sc-nav-index">{module.index}</span>
             <span>{module.label}</span>
           </button>
         ))}
       </nav>
       <p className="sc-rail-foot">
-        PRIVATE WORKSPACE<br />
+        Private workspace<br />
         <span style={{ fontSize: '0.625rem', opacity: 0.6 }}>Local to this browser</span>
       </p>
     </>

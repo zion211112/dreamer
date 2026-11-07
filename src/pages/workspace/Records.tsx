@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'preact/hooks';
 import { Link } from 'wouter';
 import { WorkspaceLayout } from './WorkspaceLayout';
-import { PageHead, type PageHeadMetric } from '../../components/PageHead';
+import { PageHead } from '../../components/PageHead';
 import { queryRollEntries, type RollEntry } from '../../lib/db/roll';
 import { getRollEmptyStateMessage } from '../../lib/records-view';
 import { isDemoMode } from '../../lib/supabase/client';
+import { PEOPLE_NETWORK, type NetworkEntity } from '../../lib/people-network';
+import { RingedEvidenceMarker } from '../../components/RingedEvidenceMarker';
+import { ForkGlyph } from '../../components/ForkGlyph';
 
 type Lens = 'canon' | 'annals' | 'roll';
 
@@ -39,12 +42,6 @@ export function Records() {
       });
     return () => { active = false; };
   }, []);
-
-  const metrics: PageHeadMetric[] = [
-    { label: 'Canon', value: 'N/A', state: 'canon' },
-    { label: 'Annals', value: 'N/A', state: 'proposed' },
-    { label: 'Roll', value: loading || loadError ? 'N/A' : rollEntries.length, state: 'caution' },
-  ];
 
   function renderLensContent() {
     switch (lens) {
@@ -106,7 +103,7 @@ export function Records() {
                 </header>
 
                 <div className="records-entry-evidence" role="group" aria-label={`Evidence layers for ${entry.title}`}>
-                  <span className="records-section-label">EVIDENCE LAYERS</span>
+                  <span className="records-section-label">Evidence layers</span>
                   <div className="records-evidence-bands">
                     {(['public', 'participant', 'restricted'] as const).map(layer => {
                       const evidence = entry.evidence.filter(e => e.layer === layer);
@@ -127,7 +124,7 @@ export function Records() {
                 </div>
 
                 <div className="records-entry-acceptance" role="group" aria-label="Acceptance block">
-                  <span className="records-section-label">ACCEPTANCE</span>
+                  <span className="records-section-label">Acceptance</span>
                   <div className="records-acceptance-grid">
                     <div>
                       <span className="records-acceptance-label">Accepted by</span>
@@ -145,7 +142,7 @@ export function Records() {
                 </div>
 
                 <div className="records-entry-revisions" role="group" aria-label="Roll revisions">
-                  <span className="records-section-label">REVISIONS</span>
+                  <span className="records-section-label">Revisions</span>
                   <div className="records-revision-row">
                     <span className="records-revision-prev">Previous: <code>{entry.hash_anchor.slice(0, 12)}</code></span>
                     <span className="records-revision-arrow" aria-hidden="true">↳</span>
@@ -156,13 +153,13 @@ export function Records() {
 
                 <footer className="records-entry-actions">
                   <Link href={`/workspace/records/roll/${entry.id}`} className="records-action-link">
-                    Open in Roll <span aria-hidden="true">→</span>
+                    Open in Roll
                   </Link>
                   <Link href={`/workspace/annals?entry=${entry.id}`} className="records-action-link quiet">
-                    View Annals <span aria-hidden="true">→</span>
+                    View Annals
                   </Link>
                   <Link href={`/workspace/network/people?entity=${entry.commissioned_by.coordinator_id}`} className="records-action-link quiet">
-                    View Entity <span aria-hidden="true">→</span>
+                    View Entity
                   </Link>
                 </footer>
               </article>
@@ -180,12 +177,14 @@ export function Records() {
     return (
       <section className="records-lens" aria-labelledby="annals-lens-title">
         <h2 id="annals-lens-title">Annals timeline</h2>
-        <p className="records-placeholder">Annals event stream not yet connected. Cross-lens navigation: select an entity in Network → view its Annals events → trace to Roll evidence.</p>
+        <p className="records-annals-note">
+          <strong>Prototype — explicit gaps.</strong> Annals requires a unified cross-module event stream (work events: submitted to under review to selected or declined) that does not yet exist. The Roll lens ships first; Annals is a structural placeholder until that stream is built.
+        </p>
         <div className="records-annals-preview">
-          <h3>Prototype structure</h3>
+          <h3>Proposed structure</h3>
           <ul>
-            <li>Recorded sequence (Canon → Annals → Outcome)</li>
-            <li>Proposed changes (Source → Draft → Review → Resolve)</li>
+            <li>Recorded sequence: Canon then Annals then outcome</li>
+            <li>Proposed changes: source then draft then review then resolve</li>
             <li>Fork glyph only in proposed-state contexts</li>
           </ul>
         </div>
@@ -193,19 +192,52 @@ export function Records() {
     );
   }
 
+  function entityStateColor(type: NetworkEntity['type']): string {
+    switch (type) {
+      case 'person': return 'var(--state-canon)';
+      case 'crew': return 'var(--state-proposed)';
+      case 'asset': return 'var(--state-caution)';
+      case 'institution': return 'var(--state-risk)';
+      case 'work': return 'var(--text-muted)';
+      case 'evidence': return 'var(--text-faint)';
+      default: return 'var(--text-faint)';
+    }
+  }
+
   function renderCanonLens() {
     return (
       <section className="records-lens" aria-labelledby="canon-lens-title">
         <h2 id="canon-lens-title">Canon records</h2>
-        <p className="records-placeholder">Canon view shows the current qualified state of each record. Time-axis scrubs all three lenses in sync.</p>
-        <div className="records-canon-preview">
-          <h3>Prototype structure</h3>
-          <ul>
-            <li>Current qualified view per entity</li>
-            <li>Correction history visible, not hidden</li>
-            <li>Cross-lens: Canon → Annals events → Roll evidence</li>
-          </ul>
-        </div>
+        <p className="records-canon-subtitle">Current qualified state of each entity in the APT-LABS network. recordBasis marks whether a record is illustrative, locally profiled, or project-reported.</p>
+        <ul className="records-canon-list" role="list">
+          {PEOPLE_NETWORK.map(entity => {
+            const color = entityStateColor(entity.type);
+            return (
+              <li key={entity.id} className="records-canon-entry">
+                <div className="records-canon-body">
+                  <div className="records-canon-identity">
+                    <RingedEvidenceMarker size={12} color={color} />
+                    <div>
+                      <span className="records-canon-name">{entity.name}</span>
+                      <span className="records-canon-type">{entity.type}</span>
+                    </div>
+                    <p className="records-canon-role">{entity.role}</p>
+                  </div>
+                  <div className="records-canon-meta">
+                    {entity.location && <span className="records-canon-meta-item">{entity.location}</span>}
+                    <span className="records-canon-meta-item">{entity.recordBasis ?? 'qualified'}</span>
+                    {entity.capabilities.length > 0 && <span className="records-canon-meta-item">{entity.capabilities.join(', ')}</span>}
+                  </div>
+                </div>
+                {entity.recordBasis === 'illustrative' && (
+                  <span className="records-canon-proposed">
+                    <ForkGlyph size={10} color="var(--state-caution)" /> illustrative
+                  </span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       </section>
     );
   }
@@ -214,14 +246,9 @@ export function Records() {
     <WorkspaceLayout currentContext={`records:${lens}` as const}>
       <div className="records-page">
         <PageHead
-          eyebrow="APT-LABS / RECORDS"
+          eyebrow="Records"
           title="Records"
           subtitle="Three lenses on the same evidence: Canon (qualified state), Annals (event chronology), Roll (evidence ledger)"
-          metrics={metrics}
-          quietActions={[
-            { label: 'Export snapshot', onClick: () => {} },
-            { label: 'Verify integrity', onClick: () => {} },
-          ]}
         />
 
         <nav className="records-lens-nav" role="tablist" aria-label="Records lenses">
@@ -269,9 +296,9 @@ export function Records() {
         <aside className="records-cross-lens" aria-label="Cross-lens navigation">
           <h3>Cross-lens paths</h3>
           <ul>
-            <li><Link href="/workspace/network/people">Entity in Network</Link> → Annals events → Roll evidence</li>
-            <li><Link href="/workspace/records/roll">Roll entry</Link> → Annals timeline → Canon state</li>
-            <li><Link href="/workspace/annals">Annals event</Link> → Roll evidence → Entity profile</li>
+            <li><Link href="/workspace/network/people">Entity in Network</Link> then Annals events then Roll evidence</li>
+            <li><Link href="/workspace/records/roll">Roll entry</Link> then Annals timeline then Canon state</li>
+            <li><Link href="/workspace/annals">Annals event</Link> then Roll evidence then Entity profile</li>
           </ul>
         </aside>
       </div>

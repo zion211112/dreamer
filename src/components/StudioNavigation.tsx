@@ -51,7 +51,7 @@ const workbenchDestinations = {
     { context: 'workbench:plan', href: '/workspace/workbench/plan', label: 'Build a work plan' },
     { context: 'workbench:examples', href: '/workspace/workbench/examples', label: 'Local examples' },
     { context: 'workbench:field-desk', href: '/workspace/workbench/field-desk', label: 'Field desk' },
-    { context: 'workbench:school-console', href: '/workspace/assets/school-console', label: 'School console' },
+    { context: 'workbench:school-console', href: '/workspace/workbench/school-console', label: 'School console' },
     { context: 'workbench:applications', href: '/workspace/workbench/applications', label: 'Opportunities' },
     { context: 'workbench:review', href: '/workspace/workbench/review', label: 'Review & authorize' },
     { context: 'workbench:delivery', href: '/workspace/workbench/delivery', label: 'Track delivery' },

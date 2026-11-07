@@ -21,14 +21,11 @@
       "Read(//c/c/Users/zION/Documents/dreamer/**)",
       "mcp__better-design__get-ui-principle",
       "mcp__better-design__get-ux-principle",
-      "mcp__better-design__get-review-rules"
-    ],
-    "deny": [
-      "Bash(npx *)"
-    ],
-    "ask": [
+      "mcp__better-design__get-review-rules",
       "Bash(npm *)"
     ],
+    "deny": [],
+    "ask": [],
     "additionalDirectories": [
       "C:\\Users\\zION\\.claude"
     ]

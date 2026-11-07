@@ -1,9 +1,10 @@
-// src/modules/assets/school-console/views/TenderDraftView.tsx
 // Rebuilt Tender Drafts: local, unpublished drafts. Simulation handoffs do not modify the source.
 // Principal view only.
 import { Link } from 'wouter';
 import { Button } from '../../../../components/Button';
 import { Input } from '../../../../components/Input';
+import { ForkGlyph } from '../../../../components/ForkGlyph';
+import { RingedEvidenceMarker } from '../../../../components/RingedEvidenceMarker';
 import { createConsoleSignalLink, createWorkbenchSimulationLink } from '../../../../lib/local-workflows';
 import type { ConsoleSnapshot, SchoolTenderDraft } from '../../../../lib/school-console-storage';
 
@@ -36,19 +37,16 @@ export function TenderDraftView({
     <section className="sc-module" aria-labelledby="sc-tenders-title">
       <div className="sc-module-head">
         <div>
-          <p className="sc-eyebrow">SCHOOL OPERATIONS <span>/</span> PRIVATE DRAFTS</p>
           <h2 className="sc-title" id="sc-tenders-title">Tender drafts</h2>
           <p className="sc-description">
             Record a school need for local review. Nothing is published or shared.
           </p>
         </div>
-        <span className="sc-example-stamp">NOT PUBLISHED</span>
       </div>
 
       <form className="sc-tender-form" onSubmit={createDraft}>
-        <div className="sc-form-heading">
+        <div className="sc-panel-head">
           <div>
-            <span className="sc-eyebrow">NEW LOCAL RECORD</span>
             <h3>Describe the need</h3>
           </div>
           <span className="sc-data-note">No learner details</span>
@@ -95,7 +93,7 @@ export function TenderDraftView({
 
           <div className="sc-actions">
             <Button disabled={!canWrite} type="submit">
-              Save local draft <span aria-hidden="true">→</span>
+              Save local draft
             </Button>
             <span className="sc-form-disclosure">Stored in this browser only</span>
           </div>
@@ -105,7 +103,6 @@ export function TenderDraftView({
       <div className="sc-results">
         <div className="sc-results-head">
           <div>
-            <span className="sc-eyebrow">THIS DEVICE</span>
             <h3>Unpublished drafts</h3>
           </div>
           <span>
@@ -123,14 +120,17 @@ export function TenderDraftView({
             {snapshot.tenderDrafts.map((draft: SchoolTenderDraft) => (
               <article className="sc-tender-row" id={`school-draft-${draft.id}`} key={draft.id}>
                 <div className="sc-tender-row-copy">
-                  <span className="sc-draft-status">LOCAL DRAFT <span>/</span> UNPUBLISHED</span>
+                  <div className="sc-draft-markers">
+                    <ForkGlyph size={10} color="var(--state-proposed)" />
+                    <RingedEvidenceMarker size={10} color="var(--state-proposed)" />
+                  </div>
                   <h4>{draft.assetName}</h4>
                   <p>{draft.need}</p>
                   <small>
                     {draft.assetBuildCost
                       ? `Estimated KES ${Number(draft.assetBuildCost).toLocaleString('en-KE')}`
                       : 'Build cost not estimated'
-                    } <span>/</span> {new Date(draft.createdAt).toLocaleDateString()}
+                    } / {new Date(draft.createdAt).toLocaleDateString()}
                   </small>
                 </div>
                 <div className="sc-tender-actions">

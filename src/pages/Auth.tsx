@@ -9,7 +9,7 @@ import { BrandMark } from '../components/BrandMark';
 const workspacePaths = {
   annals: '/workspace/annals',
   people: '/workspace/people',
-  school: '/workspace/assets/school-console',
+  school: '/workspace/workbench/school-console',
   commons: '/workspace/commons',
   workbench: '/workspace/workbench',
   roll: '/workspace/roll',

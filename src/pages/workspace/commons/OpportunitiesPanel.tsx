@@ -16,7 +16,7 @@ export function CommonsOpportunities({
     <section aria-labelledby="commons-opportunities-title" className="commons-opportunities">
       <header className="commons-opportunities-head">
         <div>
-          <p className="eyebrow">COMMONS / OPPORTUNITIES</p>
+          <p className="eyebrow">Commons · opportunities</p>
           <h2 id="commons-opportunities-title">Example opportunities</h2>
         </div>
         <span>Not open for applications</span>
@@ -51,11 +51,11 @@ export function CommonsOpportunities({
             </div>
             <div>
               <dt>What it could produce</dt>
-              <dd>{selectedOpportunity.deliverables.join(' · ')}</dd>
+              <dd>{selectedOpportunity.deliverables.join(', ')}</dd>
             </div>
             <div>
               <dt>Skills</dt>
-              <dd>{selectedOpportunity.capability.join(' · ')}</dd>
+              <dd>{selectedOpportunity.capability.join(', ')}</dd>
             </div>
           </dl>
           <p className="commons-opportunity-disclosure">Example only · Terms not published · No application or work is open.</p>

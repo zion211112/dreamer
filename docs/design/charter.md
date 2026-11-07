@@ -543,3 +543,15 @@ The v1 "Signature Dark Instrument" direction memo was rated **approve with chang
 4. **The dark palette is not the product identity by itself.** The identity is the combination of
    economic records, temporal continuity, evidence, relationships, and operational precision. The
    palette makes that identity perceptible.
+
+---
+
+### Workspace Direction v2 Ruling (2026-11-05) — appended per user direction
+
+The v1 memo is superseded by Workspace Direction v2 (docs/design/workspace-direction-v2.md). The v2 direction collapses seven current labels into five charter modules, retires the environment switcher, makes every shell pane single-job, replaces the metric ritual with an information-driven hierarchy, and treats the palette as a perceptual instrument for the real identity: economic records, temporal continuity, evidence, relationships, and operational precision.
+
+**Build order (S0-S15):**
+S0 docs reconciliation — S1 token audit — S2 dark signature palette — S3 PageHead — S4 route reconciliation — S5 shell rail — S6 sidebar strict — S7 inspector/dock contextualization — S8 statusbar — S9 Records module — S10 Network module — S11 Workbench block-flow builder — S12 Commons hero — S13 Records Canon + Annals lenses — S14 Intelligence placeholder — S15 Polish.
+
+Do not edit source files based on this direction alone. It is direction memo only; implementation requires separate authorization per charter §11 (working protocol, step F).
+

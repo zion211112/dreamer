@@ -1,4 +1,3 @@
-// src/modules/assets/school-console/views/AutoMarkingView.tsx
 // Rebuilt Auto-Marking: deterministic marking engine, typed practice only,
 // teacher review required. No AI, no scans, no external model.
 import type { ConsoleSnapshot } from '../../../../lib/school-console-storage';
@@ -37,28 +36,22 @@ export function AutoMarkingView({
     <section className="sc-module" aria-labelledby="sc-marking-title">
       <div className="sc-module-head">
         <div>
-          <p className="sc-eyebrow">TEACHER TOOLS <span>/</span> PRACTICE ASSESSMENT</p>
           <h2 className="sc-title" id="sc-marking-title">Auto-Marking</h2>
           <p className="sc-description">
             One rule, applied to every typed response.
           </p>
         </div>
-        <span className="sc-example-stamp">LOCAL PRACTICE</span>
       </div>
 
-      <div className="sc-review-warning">
-        <strong>Teacher review required</strong>
-        <span>Teacher review required · practice aid only</span>
-      </div>
+      <p className="sc-state-line">
+        Teacher review required · practice aid only
+      </p>
 
-      <div className="sc-card">
-        <div className="sc-card-head">
-          <div>
-            <p className="sc-card-label">ANSWER SCHEME</p>
-            <h3 className="sc-card-title">Rule-marked</h3>
-          </div>
+      <div className="sc-panel">
+        <div className="sc-panel-head">
+          <h3 className="sc-panel-title">Answer scheme</h3>
         </div>
-        <div className="sc-card-body">
+        <div className="sc-list">
           {questions.map((question) => (
             <div className="sc-scheme-row" key={question.id}>
               <span className="sc-question-id">{question.id}</span>
@@ -80,10 +73,9 @@ export function AutoMarkingView({
         </div>
       </div>
 
-      <form className="sc-mark-form" onSubmit={submitPaper}>
-        <div className="sc-form-heading">
+      <form className="sc-form" onSubmit={submitPaper}>
+        <div className="sc-panel-head">
           <div>
-            <span className="sc-eyebrow">NEW PRACTICE PAPER</span>
             <h3>Enter typed responses</h3>
           </div>
           <span className="sc-data-note">Do not enter real learner records</span>
@@ -102,7 +94,7 @@ export function AutoMarkingView({
 
           {questions.map((question) => (
             <label className="sc-field" htmlFor={`sc-answer-${question.id}`} key={question.id}>
-              <span>{question.id} <span>/</span> {question.topic}</span>
+              <span>{question.id} / {question.topic}</span>
               <Input
                 id={`sc-answer-${question.id}`}
                 onChange={(value: string) =>
@@ -118,7 +110,7 @@ export function AutoMarkingView({
 
           <div className="sc-actions">
             <Button disabled={!canWrite} type="submit">
-              Mark practice paper <span aria-hidden="true">→</span>
+              Mark practice paper
             </Button>
             <label className={`sc-import-button${!canWrite ? ' is-disabled' : ''}`}>
               Import CSV / JSON
@@ -140,12 +132,11 @@ export function AutoMarkingView({
       <div className="sc-results">
         <div className="sc-results-head">
           <div>
-            <span className="sc-eyebrow">LOCAL RESULT SET</span>
             <h3>Practice results</h3>
           </div>
           <span>
             <strong>{markedCount}</strong>{' '}
-            {markedCount === 1 ? 'paper' : 'papers'} <span>/</span>{' '}
+            {markedCount === 1 ? 'paper' : 'papers'} /{' '}
             {averageMark === null ? 'No average' : `${averageMark}% average`}
           </span>
         </div>
@@ -162,7 +153,7 @@ export function AutoMarkingView({
                 <span>
                   {paper.marksByQuestion.map((mark, questionIndex) =>
                     `Q${questionIndex + 1}: ${mark}`,
-                  ).join(' · ')}
+                  ).join(', ')}
                 </span>
                 <b className="sc-result-score">
                   {paper.score}<i> / {paper.maximum}</i>

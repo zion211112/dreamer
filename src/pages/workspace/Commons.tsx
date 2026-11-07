@@ -72,8 +72,9 @@ export function Commons() {
       <div className="signal-desk">
         <div className="signal-desk-head">
           <PageHead
-            eyebrow="COMMONS / RADAR KWA GROUND"
-            title="Signals from the ground"
+            eyebrow="Commons"
+            title="Signals & decisions"
+            subtitle="Field signals triaged into opportunities and governance decisions for the active institution."
           />
           <div className="signal-head-actions">
             <div className="commons-contribute">
@@ -122,7 +123,7 @@ export function Commons() {
             onClick={() => setCommonsView('signals')}
             type="button"
           >
-            Signals <span>{visibleSignals.length.toString().padStart(2, '0')}</span>
+            Signals <span>{visibleSignals.length}</span>
           </button>
           <button
             aria-pressed={commonsView === 'opportunities'}
@@ -138,7 +139,7 @@ export function Commons() {
             onClick={() => setCommonsView('decisions')}
             type="button"
           >
-            Decisions <span>{governance.proposals.length.toString().padStart(2, '0')}</span>
+            Decisions <span>{governance.proposals.length}</span>
           </button>
           <label className="commons-scope-select" hidden={commonsView === 'opportunities'}>
             <span className="visually-hidden">Institution scope</span>
@@ -221,7 +222,7 @@ export function Commons() {
             isSteward={isSteward}
             approvedProposal={approvedProposal}
             onChangeStatus={changeStatus}
-            onOpenSourceDraft={draftId => navigate(`/workspace/assets/school-console?draft=${encodeURIComponent(draftId)}#school-draft-${encodeURIComponent(draftId)}`)}
+            onOpenSourceDraft={draftId => navigate(`/workspace/workbench/school-console?draft=${encodeURIComponent(draftId)}#school-draft-${encodeURIComponent(draftId)}`)}
             onOpenWorkBrief={proposalId => navigate(`/workspace/workbench/examples?proposal=${encodeURIComponent(proposalId)}`)}
             onSetCommonsView={setCommonsView}
             onAddNote={addNote}
@@ -233,3 +234,4 @@ export function Commons() {
     </WorkspaceLayout>
   );
 }
+

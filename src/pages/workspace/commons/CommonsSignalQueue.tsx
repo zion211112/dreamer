@@ -114,7 +114,7 @@ export function CommonsSignalQueue({
               <strong>{signal.title}</strong>
               <small>{signalPlace(signal)}</small>
             </span>
-            <span className="signal-list-date" aria-hidden="true">→</span>
+            <span className="signal-list-date" aria-hidden="true"></span>
           </button>
         ))}
         {loaded && items.length === 0 && (
@@ -153,7 +153,7 @@ export function CommonsSignalQueue({
       )}
       {featuredPossibility && (
         <section className="commons-featured-opportunity">
-          <p className="eyebrow">POSSIBILITY / EXAMPLE SIGNAL</p>
+          <p className="eyebrow">Possibility · example signal</p>
           <h3>{featuredPossibility.title}</h3>
           <p>{signalPlace(featuredPossibility)}</p>
           <button
@@ -167,7 +167,7 @@ export function CommonsSignalQueue({
             }}
             type="button"
           >
-            Review signal <span aria-hidden="true">→</span>
+            Review signal
           </button>
           <small>Illustrative · not verified</small>
         </section>

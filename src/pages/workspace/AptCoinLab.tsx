@@ -1,56 +1,43 @@
+import { PageHead } from '../../components/PageHead';
 import { WorkspaceLayout } from './WorkspaceLayout';
-
-const distinctions = [
-  {
-    term: 'Productive value',
-    description: 'Comes from useful work, goods, knowledge, and services—not from minting units.',
-  },
-  {
-    term: 'Evidence',
-    description: 'The Roll records contributions and accepted outcomes. A coin cannot prove that work happened.',
-  },
-  {
-    term: 'Rights and capital',
-    description: 'A token can represent a specific, established right; it cannot create that right or the wealth behind it.',
-  },
-];
 
 export function AptCoinLab() {
   return (
     <WorkspaceLayout currentContext="intelligence:coin-lab">
       <div className="apt-coin-lab-page">
-        <header className="apt-coin-lab-header">
-          <p className="apt-coin-lab-eyebrow">APT-LABS <span aria-hidden="true">/</span> RESEARCH</p>
-          <h1>APT Coin Lab</h1>
-          <p className="apt-coin-lab-intro">
-            Explore whether a coin should have any role at all. No purpose has been selected;
-            this is research, not a financial product.
-          </p>
-        </header>
+        <PageHead
+          eyebrow="Intelligence"
+          title="Intelligence"
+          subtitle="Declared placeholder � no interactive UI exists yet."
+        />
 
-        <section aria-labelledby="apt-coin-lab-boundary-title" className="apt-coin-lab-boundary">
-          <div>
-            <p className="apt-coin-lab-status">Research only · no live coin</p>
-            <h2 id="apt-coin-lab-boundary-title">Outside operational work</h2>
-          </div>
+        <section className="intelligence-placeholder">
+          <h2>User job that must exist first</h2>
           <p>
-            No coin balances or transfers; no token rewards or wages; no coin-gated access,
-            voting, or work authorization.
-            Project compensation and costs remain explicit ordinary-money terms
-            (KES for a Kenya pilot).
+            An institution needs to allocate a budget across crews with verified capability matches,
+            and wants a ranked shortlist with evidence trails and conflict-of-interest flags.
           </p>
-        </section>
 
-        <section aria-labelledby="apt-coin-lab-distinctions-title" className="apt-coin-lab-distinctions">
-          <h2 id="apt-coin-lab-distinctions-title">Keep the categories distinct</h2>
-          <dl>
-            {distinctions.map(({ term, description }) => (
-              <div key={term}>
-                <dt>{term}</dt>
-                <dd>{description}</dd>
-              </div>
-            ))}
-          </dl>
+          <h2>Preconditions (all must be met before any UI is built)</h2>
+          <ul className="intelligence-preconditions">
+            <li>Unified cross-module event stream</li>
+            <li>Authority model for matching and forecasting</li>
+            <li>Matching engine with evidence trails</li>
+            <li>Forecasting baseline</li>
+            <li>Graph analysis capability</li>
+          </ul>
+
+          <h2>Conceptual sub-jobs today (no UI)</h2>
+          <ul className="intelligence-subjobs">
+            <li>Matching: capability ? work</li>
+            <li>Forecasting: pipeline ? capacity</li>
+            <li>Graph analysis: network ? structural gaps</li>
+          </ul>
+
+          <p className="intelligence-note">
+            APT Coin Lab remains a static research sub-view at /workspace/intelligence/coin-lab.
+            No coin balances, transfers, token rewards, wages, or coin-gated access exist.
+          </p>
         </section>
       </div>
     </WorkspaceLayout>

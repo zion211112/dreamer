@@ -16,7 +16,7 @@ export function Shell({
   rail,
   children,
   backHref = '/workspace/institutions',
-  localLabel = 'LOCAL · NOT SYNCED',
+  localLabel = 'Local, not synced',
 }: ShellProps) {
   return (
     <div className="sc-shell">

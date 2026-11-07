@@ -1,4 +1,3 @@
-// src/modules/assets/school-console/views/MyDayView.tsx
 // Rebuilt My Day: daily checklist, reversible local completion.
 // Design language: sc-* module styles on APT-LABS tokens (token-alias.css).
 import type { ConsoleSnapshot } from '../../../../lib/school-console-storage';
@@ -11,58 +10,45 @@ interface MyDayViewProps {
 }
 
 export function MyDayView({ snapshot, toggleTask, canWrite }: MyDayViewProps) {
-  const completeCount = snapshot.completedTasks.filter((id: string) =>
-    dayTasks.some((task) => task.id === id),
-  ).length;
-
   return (
     <section className="sc-module" aria-labelledby="sc-my-day-title">
       <div className="sc-module-head">
         <div>
-          <p className="sc-eyebrow">TEACHER TOOLS <span>/</span> DAILY RHYTHM</p>
           <h2 className="sc-title" id="sc-my-day-title">My Day</h2>
           <p className="sc-description">
             A simple planning checklist. These entries are examples, not a live timetable.
           </p>
         </div>
-        <span className="sc-example-stamp">EXAMPLE ROUTINE</span>
       </div>
 
-      <div className="sc-card">
-        <div className="sc-card-head">
-          <div>
-            <p className="sc-card-label">DAILY PLAN</p>
-            <h3 className="sc-card-title">
-              {completeCount} <small style={{ fontSize: '0.75rem', opacity: 0.6 }}>/ {dayTasks.length} complete</small>
-            </h3>
-          </div>
+      <div className="sc-panel">
+        <div className="sc-panel-head">
+          <h3 className="sc-panel-title">Daily plan</h3>
         </div>
-        <div className="sc-card-body">
-          <div className="sc-day-list">
-            {dayTasks.map((task) => {
-              const complete = snapshot.completedTasks.includes(task.id);
-              return (
-                <button
-                  aria-pressed={complete}
-                  className={`sc-day-item${complete ? ' is-complete' : ''}`}
-                  disabled={!canWrite}
-                  key={task.id}
-                  onClick={() => void toggleTask(task.id)}
-                  type="button"
+        <div className="sc-list">
+          {dayTasks.map((task) => {
+            const complete = snapshot.completedTasks.includes(task.id);
+            return (
+              <button
+                aria-pressed={complete}
+                className={`sc-list-item${complete ? ' is-complete' : ''}`}
+                disabled={!canWrite}
+                key={task.id}
+                onClick={() => void toggleTask(task.id)}
+                type="button"
+              >
+                <time>{task.time}</time>
+                <span
+                  className="sc-task-check"
+                  aria-hidden="true"
                 >
-                  <time>{task.time}</time>
-                  <span
-                    className="sc-task-check"
-                    aria-hidden="true"
-                  >
-                    {complete ? '✓' : ''}
-                  </span>
-                  <strong>{task.title}</strong>
-                  <span className="sc-task-state">{complete ? 'DONE' : 'OPEN'}</span>
-                </button>
-              );
-            })}
-          </div>
+                  {complete ? '✓' : ''}
+                </span>
+                <strong>{task.title}</strong>
+                <span className="sc-task-state">{complete ? 'Done' : 'Open'}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
