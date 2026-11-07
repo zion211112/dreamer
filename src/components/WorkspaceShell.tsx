@@ -146,7 +146,7 @@ export function WorkspaceShell({
         />
       )}
       <EngineActivityStrip
-        agentAvailable={false}
+        agentAvailable={true}
         ledgerHeadHash={ledgerHeadHash}
         runs={[]}
         runtimeLabel={runtimeLabel}

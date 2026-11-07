@@ -20,6 +20,7 @@ import {
   type WorkbenchSimulation,
   type WorkbenchViewStage,
 } from '../../../lib/workbench-simulation';
+import { createRollFromSimulation } from '../../../lib/roll-sbt-bridge';
 import {
   deleteWorkbenchSimulation,
   readWorkbenchSimulations,
@@ -288,6 +289,19 @@ export function useWorkbench(): WorkbenchHook {
       const next = advanceWorkbenchSimulation(simulation, action);
       saveWorkbenchSimulation(next);
       refreshSimulations(next);
+
+      // End-to-end: completed simulation with roll preview → Roll entry + SBT attestations
+      if (next.status === 'completed' && next.rollPreview) {
+        void createRollFromSimulation(next).then(result => {
+          setError(prev => prev
+            ? `${prev} · Roll entry created (${result.entry.id}) and ${result.sbtAttestations.length} SBT attestation${result.sbtAttestations.length === 1 ? '' : 's'} minted.`
+            : `Roll entry created (${result.entry.id}) and ${result.sbtAttestations.length} SBT attestation${result.sbtAttestations.length === 1 ? '' : 's'} minted.`);
+        }).catch(bridgeError => {
+          setError(bridgeError instanceof Error
+            ? `Simulation complete, but Roll/SBT bridge failed: ${bridgeError.message}`
+            : 'Simulation complete, but Roll/SBT bridge failed.');
+        });
+      }
     } catch (advanceError) {
       setError(advanceError instanceof Error ? advanceError.message : 'The simulation step could not be recorded.');
     }

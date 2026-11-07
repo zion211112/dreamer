@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" font-family="Georgia, 'Times New Roman', serif">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1A1D18" />
+    </marker>
+    <linearGradient id="layerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#F7F5F0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F1EFE8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="libGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F7F5F0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="560" fill="#F7F5F0" />
+
+  <!-- Title -->
+  <text x="600" y="30" text-anchor="middle" font-family="Georgia" font-size="20" font-weight="bold" fill="#1A1D18">APT-LABS — System Architecture</text>
+  <text x="600" y="50" text-anchor="middle" font-size="12" fill="#4A5A52">Light Luxury default · Preact + Vite + TypeScript · Browser-local demo</text>
+
+  <!-- Layer: UI Components -->
+  <g transform="translate(40, 70)">
+    <rect x="0" y="0" width="1120" height="120" rx="8" fill="url(#layerGrad)" stroke="#1A1D18" stroke-width="2" />
+    <text x="20" y="22" font-family="Georgia" font-size="14" font-weight="bold" fill="#1A1D18">UI Layer — src/components &amp; src/pages/workspace</text>
+    <rect x="20" y="38" width="180" height="70" rx="4" fill="#FFFFFF" stroke="#286375" stroke-width="1" />
+    <text x="110" y="56" text-anchor="middle" font-size="10" fill="#1A1D18" font-weight="bold">WorkspaceShell</text>
+    <text x="110" y="70" text-anchor="middle" font-size="8" fill="#4A5A52">App shell · agentAvailable</text>
+    <rect x="220" y="38" width="180" height="70" rx="4" fill="#FFFFFF" stroke="#286375" stroke-width="1" />
+    <text x="310" y="56" text-anchor="middle" font-size="10" fill="#1A1D18" font-weight="bold">PageAgentPanel</text>
+    <text x="310" y="70" text-anchor="middle" font-size="8" fill="#4A5A52">Agent proposals per stage</text>
+    <rect x="420" y="38" width="180" height="70" rx="4" fill="#FFFFFF" stroke="#286375" stroke-width="1" />
+    <text x="510" y="56" text-anchor="middle" font-size="10" fill="#1A1D18" font-weight="bold">EngineCommandDock</text>
+    <text x="510" y="70" text-anchor="middle" font-size="8" fill="#4A5A52">Scoped request dialog</text>
+    <rect x="620" y="38" width="220" height="70" rx="4" fill="#FFFFFF" stroke="#286375" stroke-width="1" />
+    <text x="730" y="56" text-anchor="middle" font-size="10" fill="#1A1D18" font-weight="bold">useWorkbench hook</text>
+    <text x="730" y="70" text-anchor="middle" font-size="8" fill="#4A5A52">Field Desk · advance → Roll+SBT</text>
+    <rect x="860" y="38" width="240" height="70" rx="4" fill="#FFFFFF" stroke="#286375" stroke-width="1" />
+    <text x="980" y="56" text-anchor="middle" font-size="10" fill="#1A1D18" font-weight="bold">SchoolConsole · Workbench</text>
+    <text x="980" y="70" text-anchor="middle" font-size="8" fill="#4A5A52">Field Desk page routes</text>
+    <text x="560" y="110" text-anchor="middle" font-size="9" fill="#B8955A">Routes: /workspace/workbench/simulate · /workspace/field-desk · /workspace/institutions/school-console</text>
+  </g>
+
+  <!-- Arrow down -->
+  <line x1="600" y1="190" x2="600" y2="220" stroke="#1A1D18" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Layer: Domain Libraries -->
+  <g transform="translate(40, 230)">
+    <rect x="0" y="0" width="1120" height="120" rx="8" fill="url(#libGrad)" stroke="#1A1D18" stroke-width="2" />
+    <text x="20" y="22" font-family="Georgia" font-size="14" font-weight="bold" fill="#1A1D18">Domain Layer — src/lib</text>
+    <rect x="20" y="38" width="160" height="70" rx="4" fill="#FFFFFF" stroke="#3D7158" stroke-width="1" />
+    <text x="100" y="56" text-anchor="middle" font-size="10" fill="#1A1D18" font-weight="bold">workbench-simulation</text>
+    <text x="100" y="70" text-anchor="middle" font-size="8" fill="#4A5A52">6 stages · RollPreview</text>
+    <rect x="200" y="38" width="160" height="70" rx="4" fill="#FFFFFF" stroke="#3D7158" stroke-width="1" />
+    <text x="280" y="56" text-anchor="middle" font-size="10" fill="#1A1D18" font-weight="bold">roll-sbt-bridge</text>
+    <text x="280" y="70" text-anchor="middle" font-size="8" fill="#4A5A52">createRollFromSimulation · mintSBT</text>
+    <rect x="380" y="38" width="160" height="70" rx="4" fill="#FFFFFF" stroke="#3D7158" stroke-width="1" />
+    <text x="460" y="56" text-anchor="middle" font-size="10" fill="#1A1D18" font-weight="bold">sbt-attestations</text>
+    <text x="460" y="70" text-anchor="middle" font-size="8" fill="#4A5A52">mint/list/verify/export SBT</text>
+    <rect x="560" y="38" width="160" height="70" rx="4" fill="#FFFFFF" stroke="#3D7158" stroke-width="1" />
+    <text x="640" y="56" text-anchor="middle" font-size="10" fill="#1A1D18" font-weight="bold">agent-host</text>
+    <text x="640" y="70" text-anchor="middle" font-size="8" fill="#4A5A52">proposes-never-executes</text>
+    <rect x="740" y="38" width="160" height="70" rx="4" fill="#FFFFFF" stroke="#3D7158" stroke-width="1" />
+    <text x="820" y="56" text-anchor="middle" font-size="10" fill="#1A1D18" font-weight="bold">demo-seed</text>
+    <text x="820" y="70" text-anchor="middle" font-size="8" fill="#4A5A52">seedDemoData · 3 scenarios</text>
+    <rect x="920" y="38" width="160" height="70" rx="4" fill="#FFFFFF" stroke="#3D7158" stroke-width="1" />
+    <text x="1000" y="56" text-anchor="middle" font-size="10" fill="#1A1D18" font-weight="bold">local-workbench</text>
+    <text x="1000" y="70" text-anchor="middle" font-size="8" fill="#4A5A52">Applications · workStatus</text>
+  </g>
+
+  <!-- Arrow down -->
+  <line x1="600" y1="350" x2="600" y2="380" stroke="#1A1D18" stroke-width="2" marker-end="url(#arrowhead)" />
+
+  <!-- Layer: Data Persistence -->
+  <g transform="translate(40, 390)">
+    <rect x="0" y="0" width="1120" height="120" rx="8" fill="url(#layerGrad)" stroke="#1A1D18" stroke-width="2" />
+    <text x="20" y="22" font-family="Georgia" font-size="14" font-weight="bold" fill="#1A1D18">Persistence Layer — Browser storage</text>
+    <rect x="20" y="38" width="220" height="70" rx="4" fill="#FFFFFF" stroke="#A5533D" stroke-width="1" />
+    <text x="130" y="56" text-anchor="middle" font-size="10" fill="#1A1D18" font-weight="bold">localStorage</text>
+    <text x="130" y="70" text-anchor="middle" font-size="8" fill="#4A5A52">aptlabs:sbt-attestations:v1</text>
+    <text x="130" y="84" text-anchor="middle" font-size="8" fill="#4A5A52">aptlabs:agent-proposals:v1</text>
+    <text x="130" y="98" text-anchor="middle" font-size="8" fill="#4A5A52">aptlabs:workbench-local-flow:v1</text>
+    <rect x="260" y="38" width="220" height="70" rx="4" fill="#FFFFFF" stroke="#A5533D" stroke-width="1" />
+    <text x="370" y="56" text-anchor="middle" font-size="10" fill="#1A1D18" font-weight="bold">demo_roll_entries</text>
+    <text x="370" y="70" text-anchor="middle" font-size="8" fill="#4A5A52">Roll entries + hash_anchor</text>
+    <rect x="500" y="38" width="220" height="70" rx="4" fill="#FFFFFF" stroke="#A5533D" stroke-width="1" />
+    <text x="610" y="56" text-anchor="middle" font-size="10" fill="#1A1D18" font-weight="bold">IndexedDB</text>
+    <text x="610" y="70" text-anchor="middle" font-size="8" fill="#4A5A52">school-console-storage</text>
+    <text x="610" y="84" text-anchor="middle" font-size="8" fill="#4A5A52">Tender drafts · snapshots</text>
+    <rect x="740" y="38" width="220" height="70" rx="4" fill="#FFFFFF" stroke="#A5533D" stroke-width="1" />
+    <text x="850" y="56" text-anchor="middle" font-size="10" fill="#1A1D18" font-weight="bold">people-network</text>
+    <text x="850" y="70" text-anchor="middle" font-size="8" fill="#4A5A52">31 entities · 34 relationships</text>
+    <rect x="980" y="38" width="120" height="70" rx="4" fill="#FFFFFF" stroke="#A5533D" stroke-width="1" />
+    <text x="1040" y="56" text-anchor="middle" font-size="10" fill="#1A1D18" font-weight="bold">Supabase</text>
+    <text x="1040" y="70" text-anchor="middle" font-size="8" fill="#4A5A52">demo mode fallback</text>
+  </g>
+
+  <!-- Legend -->
+  <g transform="translate(40, 530)">
+    <rect x="0" y="0" width="1120" height="24" rx="4" fill="#FFFFFF" stroke="#4A5A52" stroke-width="1" />
+    <text x="12" y="16" font-size="10" fill="#4A5A52">UI → Domain → Persistence · All browser-local · Mock SBT signatures (SHA-256 digest) · No on-chain claims</text>
+  </g>
+</svg>
