@@ -6,7 +6,7 @@ import { People } from './pages/workspace/People';
 import { Institutions } from './pages/workspace/Institutions';
 import { Network } from './pages/workspace/Network';
 import { Commons } from './pages/workspace/Commons';
-import { Workbench } from './pages/workspace/FieldDesk';
+import { FieldDesk as Workbench } from './pages/workspace/FieldDesk';
 import { WorkbenchFinder } from './pages/workspace/WorkbenchFinder';
 import { SchoolConsole } from './pages/workspace/SchoolConsole';
 import { Records } from './pages/workspace/Records';

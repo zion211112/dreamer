@@ -2,7 +2,7 @@ import { WorkspaceHeader } from '../../components/WorkspaceHeader';
 
 interface WorkspaceLayoutProps {
   children: any;
-  currentContext: 'people' | 'institutions' | 'commons' | 'field-desk';
+  currentContext: string;
 }
 
 export function WorkspaceLayout({ children }: WorkspaceLayoutProps) {

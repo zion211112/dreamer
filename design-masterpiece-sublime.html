@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APT-LABS — Field Desk (Sublime)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+/* ============================================================================
+   SUBLIME — The One Workspace
+   Anti-slop · User-first · All users · Sublime
+   Surveyor's precision + Workshop tactility = Field Desk
+   ============================================================================ */
+
+:root {
+  /* APT-LABS Signature — Dark Default */
+  --bg: #0A0F0C; --fg: #E9F1E8; --muted: #8FA08C; --dim: #5C6B5E;
+  --fg-strong: #F0F5EF; --bg-elev: #111713; --bg-subtle: #141A16;
+  --line: rgba(143,160,140,.18); --line-strong: rgba(143,160,140,.32);
+  --hairline: rgba(143,160,140,.10);
+
+  --state-canon: #7FC5BC; --state-canon-wash: rgba(127,197,188,.12);
+  --state-proposed: #C9F292; --state-proposed-wash: rgba(201,242,146,.10);
+  --state-risk: #E89670; --state-risk-wash: rgba(232,150,112,.12);
+  --state-caution: #CBAF6E; --state-caution-wash: rgba(203,175,110,.12);
+  --water: #4A9EBB; --water-pale: rgba(74,158,187,.14);
+
+  --serif: "DM Serif Display", Georgia, serif;
+  --sans: "Space Grotesk", Inter, system-ui, sans-serif;
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+
+  --step--2: clamp(9px,.64rem,10px); --step--1: clamp(10px,.8rem,11px);
+  --step-0: clamp(12.5px,1rem,13px); --step-1: clamp(15.6px,1.25rem,16px);
+  --step-2: clamp(19.5px,1.56rem,20px); --step-3: clamp(24.4px,1.95rem,25px);
+  --step-4: clamp(30.5px,2.44rem,31px); --step-5: clamp(38.1px,3.05rem,39px);
+
+  --space-1: 8px; --space-2: 16px; --space-3: 24px; --space-4: 32px;
+  --space-5: 40px; --space-6: 48px;
+
+  --radius-1: 3px; --radius-2: 6px; --radius-3: 8px; --radius-4: 12px; --radius-pill: 999px;
+
+  --shadow-1: 0 1px 2px #0005, 0 1px 4px #0004;
+  --shadow-2: 0 4px 8px #0007, 0 2px 4px #0005;
+  --shadow-3: 0 8px 24px #0009, 0 4px 12px #0006;
+  --shadow-inner: inset 0 1px 0 #fff1, inset 0 -1px 0 #0005;
+
+  --fast: 120ms ease; --base: 180ms ease; --slow: 280ms ease;
+
+  /* Shell */
+  --bar-h: 52px; --rail-w: 56px; --tote-w: 300px; --vise-w: 360px; --status-h: 28px;
+  --grid: 40px;
+
+  /* Material */
+  --steel: #1e262a; --steel-bright: #2a363c; --brass: #c8a868; --brass-dim: #8a7548;
+  --copper: #b87333; --paper: #f5f0e8; --ink: #1a1612;
+}
+
+/* Light — Daylight Workshop */
+[data-skin="light"] {
+  --bg: #f5f0e8; --fg: #1a1612; --muted: #6a6055; --dim: #9a8f82;
+  --fg-strong: #0d0a08; --bg-elev: #fffaf5; --bg-subtle: #efe8de;
+  --line: rgba(26,22,18,.12); --line-strong: rgba(26,22,18,.22); --hairline: rgba(26,22,18,.06);
+  --state-canon: #286375; --state-canon-wash: rgba(40,99,117,.10);
+  --state-proposed: #3d7158; --state-proposed-wash: rgba(61,113,88,.10);
+  --state-risk: #a5533d; --state-risk-wash: rgba(165,83,61,.10);
+  --state-caution: #b8955a; --state-caution-wash: rgba(184,149,90,.10);
+  --water: #3a6b8c; --water-pale: rgba(58,107,140,.12);
+  --shadow-1: 0 1px 2px #1a161210, 0 1px 4px #1a16120a;
+  --shadow-2: 0 4px 12px #1a161214, 0 2px 6px #1a16120d;
+  --shadow-3: 0 12px 32px #1a16121e, 0 6px 16px #1a161212;
+  --shadow-inner: inset 0 1px 0 #fffc, inset 0 -1px 0 #1a16120d;
+  --steel: #e8edf0; --steel-bright: #f0f4f8; --paper: #fdfbf7; --ink: #1a1612;
+}
+
+@media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; } }
+*,*::before,*::after { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { margin:0; min-height:100vh; color:var(--fg); background:var(--bg); font:var(--step-0)/1.55 var(--sans); -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+
+/* ===== SHELL GRID ===== */
+.sublime {
+  min-height:100vh;
+  display:grid;
+  grid-template-rows: var(--bar-h) 1fr var(--status-h);
+  grid-template-columns: var(--rail-w) var(--tote-w) 1fr var(--vise-w);
+  background:
+    radial-gradient(ellipse at 20% 30%, #0002 0, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, #0001 0, transparent 50%),
+    linear-gradient(180deg, #0d120e, #0a0f0c);
+  position:relative; isolation:isolate;
+}
+.sublime::before {
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:-1; opacity:.08;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.sublime::after {
+  content:""; position:fixed; left:calc(var(--rail-w)+var(--tote-w)); right:var(--vise-w); top:var(--bar-h); bottom:var(--status-h);
+  pointer-events:none; z-index:0; opacity:.15;
+  background-image:
+    linear-gradient(var(--hairline) 1px, transparent 1px),
+    linear-gradient(90deg, var(--hairline) 1px, transparent 1px);
+  background-size:var(--grid) var(--grid);
+}
+
+/* Responsive — mobile-first collapse */
+@media (max-width:1360px) { .sublime { --vise-w:320px; --tote-w:280px; } }
+@media (max-width:1140px) { .sublime { grid-template-columns:var(--rail-w) 1fr var(--vise-w); --tote-w:0; } .tote {display:none;} }
+@media (max-width:900px) {
+  .sublime { grid-template-columns:var(--rail-w) 1fr; grid-template-rows:var(--bar-h) 1fr auto var(--status-h); --vise-w:0; }
+  .vise { grid-column:2; grid-row:3; border-top:1px solid var(--line-strong); display:block; }
+  .rail { grid-row:1/5; }
+}
+@media (max-width:680px) {
+  .sublime { grid-template-columns:1fr; grid-template-rows:var(--bar-h) auto 1fr var(--status-h); --rail-w:0; }
+  .rail { display:none; } .bar { grid-column:1; } .bench { grid-row:3; } .vise { grid-row:4; }
+}
+
+/* ===== BAR — Precision Header ===== */
+.bar {
+  grid-column:1/-1; display:grid; grid-template-columns:auto 1fr auto auto; align-items:center; gap:var(--space-3);
+  padding:0 var(--space-4); border-bottom:1px solid var(--line-strong);
+  background:linear-gradient(180deg,rgba(10,15,12,.95),rgba(10,15,12,.8)); backdrop-filter:blur(20px); z-index:20;
+}
+.brand { display:flex; align-items:center; gap:var(--space-2); text-decoration:none; color:var(--fg); }
+.brand-mark { width:36px; height:36px; display:grid; place-items:center; background:var(--steel); border:1px solid var(--brass); border-radius:var(--radius-2) var(--radius-2) var(--radius-2) 2px; box-shadow:var(--shadow-inner); position:relative; }
+.brand-mark::before { content:""; position:absolute; inset:-1px; border-radius:inherit; background:linear-gradient(135deg,var(--brass),var(--copper),var(--brass)); z-index:-1; opacity:.2; filter:blur(4px); }
+.brand-mark svg { width:22px; height:22px; stroke:var(--brass); }
+.brand-text { font-family:var(--serif); font-size:var(--step-2); font-weight:400; letter-spacing:-.01em; }
+.brand-text mark { background:linear-gradient(90deg,var(--brass),var(--copper)); color:var(--ink); font-style:normal; font-weight:600; padding:0 6px; border-radius:var(--radius-1); font-family:var(--sans); font-size:var(--step-0); }
+
+.context { display:flex; align-items:center; gap:var(--space-2); padding:var(--space-1) var(--space-3); background:var(--steel); border:1px solid var(--line); border-radius:var(--radius-pill); font-size:var(--step--1); box-shadow:var(--shadow-inner); }
+.context-label { color:var(--dim); text-transform:uppercase; letter-spacing:.1em; font:500 var(--step--2) var(--mono); }
+.context-value { color:var(--fg); font-weight:600; }
+
+.coords { display:flex; align-items:center; gap:var(--space-2); padding:var(--space-1) var(--space-3); background:var(--steel); border:1px solid var(--line); border-radius:var(--radius-pill); font-family:var(--mono); font-size:var(--step--1); color:var(--muted); box-shadow:var(--shadow-inner); }
+.coords .sep { color:var(--dim); }
+
+.bar-actions { display:flex; align-items:center; gap:var(--space-1); }
+.tool-btn { width:36px; height:36px; display:grid; place-items:center; background:var(--steel); border:1px solid var(--line); border-radius:var(--radius-2); color:var(--muted); cursor:pointer; transition:all var(--fast); box-shadow:var(--shadow-inner); }
+.tool-btn:hover { border-color:var(--brass); color:var(--brass); background:var(--steel-bright); transform:translateY(-1px); }
+.tool-btn:active { transform:translateY(0); }
+.tool-btn svg { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; }
+.tool-btn[aria-pressed="true"] { border-color:var(--brass); color:var(--brass); background:rgba(200,168,104,.15); }
+
+.profile { display:flex; align-items:center; gap:var(--space-2); padding:var(--space-1) var(--space-2); background:var(--steel); border:1px solid var(--line); border-radius:var(--radius-pill); cursor:pointer; transition:all var(--fast); box-shadow:var(--shadow-inner); }
+.profile:hover { border-color:var(--brass); background:var(--steel-bright); }
+.avatar { width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,var(--brass),var(--copper)); display:grid; place-items:center; font:600 var(--step--1) var(--mono); color:var(--ink); box-shadow:inset 0 1px 0 #fff2, inset 0 -1px 0 #0003; }
+.name { font-size:var(--step-0); font-weight:500; max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* ===== RAIL — Vernier Module Switcher ===== */
+.rail { display:flex; flex-direction:column; align-items:center; padding:var(--space-3) var(--space-1); border-right:1px solid var(--line); background:linear-gradient(180deg,var(--bg-elev),var(--bg-subtle)); position:relative; z-index:10; }
+.rail::before { content:""; position:absolute; left:50%; top:var(--bar-h); bottom:var(--status-h); width:1px; background:repeating-linear-gradient(180deg,var(--line-strong),var(--line-strong) 2px,transparent 2px,transparent 40px); transform:translateX(-50%); opacity:.4; }
+.rail-btn { position:relative; width:40px; height:40px; display:grid; place-items:center; border:1px solid var(--line); border-radius:var(--radius-2); background:var(--bg); color:var(--muted); cursor:pointer; transition:all var(--fast); margin-bottom:var(--space-2); }
+.rail-btn:hover { border-color:var(--state-canon); color:var(--state-canon); background:var(--state-canon-wash); transform:scale(1.05); }
+.rail-btn.active { border-color:var(--state-canon); background:var(--state-canon-wash); color:var(--state-canon); box-shadow:0 0 0 2px var(--state-canon-wash), 0 0 16px rgba(127,197,188,.15); }
+.rail-btn.active::after { content:""; position:absolute; right:-6px; width:3px; height:36px; background:var(--state-canon); border-radius:0 var(--radius-1) var(--radius-1) 0; }
+.rail-btn svg { width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:1.5; }
+.rail-divider { width:24px; height:1px; background:var(--line); margin:var(--space-2) 0; }
+.rail-vernier { margin-top:auto; padding-top:var(--space-3); border-top:1px solid var(--line); display:flex; flex-direction:column; align-items:center; gap:var(--space-1); }
+.v-tick { width:24px; height:2px; background:var(--line); border-radius:1px; }
+.v-tick:nth-child(5n) { background:var(--line-strong); width:32px; }
+.v-tick.on { background:var(--state-proposed); box-shadow:0 0 8px var(--state-proposed); }
+
+/* ===== TOTE — Material Bin ===== */
+.tote { grid-row:2; position:relative; min-height:0; overflow:auto; padding:var(--space-4); background:var(--bg); border-right:1px solid var(--line); }
+.tote-bg { position:absolute; inset:0; background-image:linear-gradient(var(--hairline) 1px,transparent 1px),linear-gradient(90deg,var(--hairline) 1px,transparent 1px); background-size:40px 40px; opacity:.1; pointer-events:none; }
+.tote-sec { margin-bottom:var(--space-5); }
+.tote-h { display:flex; align-items:center; justify-content:space-between; margin-bottom:var(--space-3); padding-bottom:var(--space-2); border-bottom:1px solid var(--line); }
+.tote-h-text { font:500 var(--step--1) var(--mono); text-transform:uppercase; letter-spacing:.15em; color:var(--dim); }
+.tote-count { font:500 var(--step-0) var(--mono); color:var(--muted); }
+
+/* Cards — Published */
+.mat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:var(--space-2); }
+.mat-card { position:relative; padding:var(--space-3); background:var(--bg-elev); border:1px solid var(--line); border-radius:var(--radius-2); cursor:pointer; transition:all var(--fast); }
+.mat-card::before { content:""; position:absolute; top:0; left:0; right:0; height:3px; background:var(--line); }
+.mat-card:hover { border-color:var(--line-strong); transform:translateY(-2px); box-shadow:var(--shadow-2); }
+.mat-card.sel { border-color:var(--state-canon); box-shadow:0 0 0 2px var(--state-canon-wash), var(--shadow-2); }
+.mat-card.sel::before { background:var(--state-canon); }
+.mat-type { font:500 var(--step--2) var(--mono); text-transform:uppercase; letter-spacing:.05em; color:var(--dim); margin-bottom:var(--space-1); }
+.mat-name { font-family:var(--serif); font-size:var(--step-1); font-weight:400; color:var(--fg); margin-bottom:var(--space-1); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.mat-meta { display:flex; align-items:center; justify-content:space-between; font-size:var(--step--1); }
+.mat-status { color:var(--muted); }
+.mat-status.canon { color:var(--state-canon); }
+.mat-status.proposed { color:var(--state-proposed); }
+.mat-status.caution { color:var(--state-caution); }
+.mat-status.risk { color:var(--state-risk); }
+.mat-cost { font-family:var(--mono); font-variant-numeric:tabular-nums; color:var(--fg); }
+
+/* Stacks — Illustrative / Friction */
+.mat-stack { display:flex; flex-direction:column; gap:var(--space-2); }
+.stack { display:flex; align-items:center; gap:var(--space-3); padding:var(--space-2) var(--space-3); background:var(--bg-elev); border:1px solid var(--line); border-radius:var(--radius-2); cursor:pointer; transition:all var(--fast); }
+.stack:hover { border-color:var(--line-strong); background:var(--bg-subtle); }
+.stack.sel { border-color:var(--state-canon); background:var(--state-canon-wash); }
+.stack-sw { width:36px; height:36px; border-radius:var(--radius-1); border:1px solid var(--line-strong); flex-shrink:0; }
+.stack-sw.pub { background:linear-gradient(145deg,var(--state-canon-wash),var(--state-canon)); border-color:var(--state-canon); }
+.stack-sw.ill { background:repeating-linear-gradient(45deg,transparent,transparent 6px,var(--state-caution) 6px,var(--state-caution) 12px); border-color:var(--state-caution); }
+.stack-sw.fric { background:linear-gradient(145deg,var(--water-pale),var(--water)); border-color:var(--water); }
+.stack-sw.prop { background:linear-gradient(145deg,var(--state-proposed-wash),var(--state-proposed)); border-color:var(--state-proposed); }
+.stack-info { flex:1; min-width:0; }
+.stack-name { font-weight:500; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.stack-detail { font:var(--step--1) var(--mono); color:var(--dim); }
+.stack-acts { display:flex; gap:var(--space-1); opacity:0; transition:opacity var(--fast); }
+.stack:hover .stack-acts { opacity:1; }
+.s-btn { width:28px; height:28px; display:grid; place-items:center; background:var(--bg); border:1px solid var(--line); border-radius:var(--radius-1); color:var(--muted); cursor:pointer; transition:all var(--fast); }
+.s-btn:hover { border-color:var(--state-canon); color:var(--state-canon); background:var(--state-canon-wash); }
+.s-btn svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:1.8; }
+
+/* ===== BENCH — Blueprint Surface ===== */
+.bench { grid-row:2; grid-column:3; position:relative; min-height:0; overflow:hidden; background:var(--bg); }
+.bench-surface { position:absolute; inset:0; background-image:linear-gradient(var(--hairline) 1px,transparent 1px),linear-gradient(90deg,var(--hairline) 1px,transparent 1px); background-size:40px 40px; }
+.blueprint { position:absolute; inset:var(--space-4); background:var(--paper); border:1px solid var(--line-strong); border-radius:var(--radius-3); box-shadow:0 4px 24px #0005, inset 0 1px 0 #fff8, inset 0 -1px 0 #0001; overflow:hidden; }
+.blueprint::before { content:""; position:absolute; inset:0; background-image:linear-gradient(#1a161205 1px,transparent 1px),linear-gradient(90deg,#1a161205 1px,transparent 1px); background-size:40px 40px; pointer-events:none; }
+
+.bp-head { position:absolute; top:0; left:0; right:0; height:60px; background:linear-gradient(180deg,#1a161210,transparent); border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; padding:0 var(--space-4); z-index:5; }
+.bp-title-block { display:flex; flex-direction:column; gap:2px; }
+.bp-dwg { font:500 var(--step--1) var(--mono); color:var(--dim); text-transform:uppercase; letter-spacing:.1em; }
+.bp-title { font-family:var(--serif); font-size:var(--step-2); color:var(--ink); }
+.bp-rev { display:flex; align-items:center; gap:var(--space-3); font:var(--step--1) var(--mono); color:var(--muted); }
+.bp-rev span:first-child { text-transform:uppercase; letter-spacing:.1em; }
+.bp-rev strong { color:var(--ink); font-weight:600; font-family:var(--mono); }
+
+/* Nodes on Blueprint */
+.bp-node { position:absolute; pointer-events:auto; cursor:pointer; transition:all var(--fast); z-index:10; }
+.bp-node:hover { transform:scale(1.05); z-index:20; }
+.bp-node.sel .bp-marker { border-color:var(--brass); box-shadow:0 0 0 3px rgba(200,168,104,.3); }
+.bp-marker { width:44px; height:44px; border-radius:50%; border:2px solid var(--line-strong); background:var(--paper); display:grid; place-items:center; box-shadow:0 2px 8px #0002, inset 0 1px 0 #fff8; font-size:20px; transition:all var(--fast); }
+.bp-node.pub .bp-marker { border-color:var(--state-canon); background:var(--state-canon-wash); }
+.bp-node.ill .bp-marker { border-style:dashed; border-color:var(--state-caution); background:var(--state-caution-wash); }
+.bp-node.fric .bp-marker { background:var(--water-pale); border-color:var(--water); }
+.bp-node.prop .bp-marker { border-color:var(--state-proposed); background:var(--state-proposed-wash); }
+.bp-label { position:absolute; bottom:100%; left:50%; transform:translateX(-50%); margin-bottom:6px; padding:4px 10px; background:var(--ink); color:var(--paper); font:500 var(--step--1) var(--mono); border-radius:var(--radius-1); white-space:nowrap; opacity:0; pointer-events:none; transition:opacity var(--fast),transform var(--fast); transform:translateX(-50%) translateY(4px); box-shadow:var(--shadow-2); }
+.bp-node:hover .bp-label { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* Connections */
+.bp-conn { position:absolute; height:1px; transform-origin:0 0; z-index:1; opacity:.4; }
+.bp-conn.active { background:var(--brass); opacity:.8; }
+.bp-conn { background:var(--hairline); }
+
+/* Tools & Legend */
+.bp-tools { position:absolute; bottom:var(--space-4); right:var(--space-4); z-index:5; display:flex; flex-direction:column; gap:var(--space-2); }
+.bp-tool { width:40px; height:40px; display:grid; place-items:center; background:var(--steel); border:1px solid var(--line-strong); border-radius:var(--radius-2); color:var(--muted); cursor:pointer; transition:all var(--fast); box-shadow:var(--shadow-1); }
+.bp-tool:hover { border-color:var(--brass); color:var(--brass); background:var(--steel-bright); }
+.bp-tool svg { width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:1.8; }
+.bp-legend { position:absolute; bottom:var(--space-4); left:var(--space-4); z-index:5; background:var(--steel); border:1px solid var(--line-strong); border-radius:var(--radius-2); padding:var(--space-2) var(--space-3); font-size:var(--step--1); box-shadow:var(--shadow-1); }
+
+/* ===== VISE — Inspection Clamp ===== */
+.vise { grid-row:2; grid-column:4; position:relative; min-height:0; overflow:auto; padding:var(--space-4); border-left:2px solid var(--line-strong); background:linear-gradient(180deg,#0d120e,#0a0f0c); background-image:radial-gradient(circle at 18px 18px,transparent 8px,var(--hairline) 8px,transparent 9px); background-size:36px 36px; }
+.vise::before { content:""; position:absolute; top:0; bottom:0; left:-2px; width:12px; background:linear-gradient(180deg,var(--steel),var(--steel-bright),var(--steel)); border-right:1px solid var(--brass); box-shadow:inset 2px 0 0 #fff2, inset -2px 0 0 #0003; }
+.vise::after { content:""; position:absolute; top:var(--space-4); right:var(--space-4); width:24px; height:24px; border:2px solid var(--brass); border-radius:50%; background:var(--steel); box-shadow:0 2px 8px #0005; opacity:.6; }
+
+.vise-panel { display:flex; flex-direction:column; gap:var(--space-4); position:relative; z-index:1; }
+.vise-head { display:flex; align-items:flex-start; justify-content:space-between; gap:var(--space-3); padding:var(--space-3) var(--space-4); background:var(--steel); border:1px solid var(--line-strong); border-radius:var(--radius-3) var(--radius-3) 0 0; margin:calc(-1*var(--space-4)) calc(-1*var(--space-4)) 0; box-shadow:var(--shadow-inner); }
+.vise-title { font-family:var(--serif); font-size:var(--step-2); font-weight:400; color:var(--fg); margin:0; }
+.vise-badge { font:500 var(--step--2) var(--mono); padding:4px 10px; border-radius:var(--radius-pill); text-transform:uppercase; letter-spacing:.05em; flex-shrink:0; border:1px solid; }
+.vise-badge.pub { background:var(--state-canon-wash); color:var(--state-canon); border-color:var(--state-canon); }
+.vise-badge.ill { background:var(--state-caution-wash); color:var(--state-caution); border-color:var(--state-caution); }
+.vise-badge.fric { background:var(--water-pale); color:var(--water); border-color:var(--water); }
+.vise-badge.prop { background:var(--state-proposed-wash); color:var(--state-proposed); border-color:var(--state-proposed); }
+.vise-badge.draft { background:var(--bg); color:var(--muted); border-color:var(--line); }
+
+.vise-body { display:flex; flex-direction:column; gap:var(--space-3); }
+.spec { background:var(--paper); border:1px solid var(--line); border-radius:var(--radius-2); overflow:hidden; }
+.spec-h { padding:var(--space-2) var(--space-3); background:linear-gradient(180deg,#1a161206,transparent); border-bottom:1px solid var(--line); font:500 var(--step--1) var(--mono); text-transform:uppercase; letter-spacing:.1em; color:var(--dim); }
+.spec-g { display:grid; grid-template-columns:auto 1fr; gap:var(--space-2) var(--space-4); padding:var(--space-3); }
+.spec-l { color:var(--dim); font-size:var(--step-0); }
+.spec-v { color:var(--ink); font-weight:500; font-family:var(--mono); text-align:right; }
+.spec-v.canon { color:var(--state-canon); }
+.spec-v.caution { color:var(--state-caution); }
+.spec-v.risk { color:var(--state-risk); }
+.spec-v.prop { color:var(--state-proposed); }
+.spec-v.water { color:var(--water); }
+.spec-v.brass { color:var(--brass); }
+
+.vise-acts { display:flex; gap:var(--space-2); padding-top:var(--space-2); border-top:1px solid var(--line); margin-top:var(--space-2); }
+.v-btn { flex:1; display:inline-flex; align-items:center; justify-content:center; gap:var(--space-1); padding:var(--space-2) var(--space-3); border:1px solid var(--line); border-radius:var(--radius-2); font:500 var(--step--1) var(--sans); color:var(--fg); background:var(--steel); cursor:pointer; transition:all var(--fast); box-shadow:var(--shadow-inner); }
+.v-btn:hover { border-color:var(--brass); color:var(--brass); background:var(--steel-bright); }
+.v-btn.primary { background:linear-gradient(135deg,var(--brass),var(--copper)); border-color:var(--brass); color:var(--ink); font-weight:600; }
+.v-btn.primary:hover { filter:brightness(1.05); box-shadow:0 4px 16px rgba(200,168,104,.3); }
+
+.vise-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:var(--space-8); text-align:center; color:var(--dim); }
+.vise-empty svg { width:72px; height:72px; stroke:var(--hairline); margin-bottom:var(--space-3); }
+.vise-empty-t { font-family:var(--serif); font-size:var(--step-3); color:var(--muted); margin-bottom:var(--space-1); }
+.vise-empty-d { font-size:var(--step-0); line-height:1.6; max-width:280px; }
+
+/* ===== STATUSBAR — Benchmark ===== */
+.status { grid-row:3; grid-column:1/-1; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:var(--space-4); padding:0 var(--space-4); border-top:1px solid var(--line-strong); background:linear-gradient(180deg,#0d120e,#0a0f0c); font:var(--step--2) var(--mono); color:var(--dim); }
+.ledger { display:flex; align-items:center; gap:var(--space-2); padding:var(--space-1) var(--space-3); background:var(--steel); border:1px solid var(--line-strong); border-radius:var(--radius-pill); box-shadow:var(--shadow-inner); }
+.ledger-l { text-transform:uppercase; letter-spacing:.1em; }
+.ledger-h { font-variant-numeric:tabular-nums; color:var(--brass); font-family:var(--mono); }
+.status-c { display:flex; align-items:center; gap:var(--space-4); justify-content:center; }
+.chip { display:flex; align-items:center; gap:var(--space-1); padding:var(--space-1) var(--space-2); background:var(--steel); border:1px solid var(--line); border-radius:var(--radius-pill); font:500 var(--step--2) var(--mono); color:var(--muted); box-shadow:var(--shadow-inner); }
+.chip.canon { border-color:var(--state-canon); color:var(--state-canon); background:var(--state-canon-wash); }
+.chip.prop { border-color:var(--state-proposed); color:var(--state-proposed); background:var(--state-proposed-wash); }
+.chip.caut { border-color:var(--state-caution); color:var(--state-caution); background:var(--state-caution-wash); }
+.chip.risk { border-color:var(--state-risk); color:var(--state-risk); background:var(--state-risk-wash); }
+.status-t { display:flex; align-items:center; gap:var(--space-3); }
+.status-t .clk { font-variant-numeric:tabular-nums; color:var(--muted); }
+.skin-tgl { display:flex; align-items:center; gap:var(--space-1); padding:var(--space-1) var(--space-2); border:1px solid var(--line); border-radius:var(--radius-pill); font:var(--step--2) var(--mono); color:var(--muted); background:var(--steel); cursor:pointer; transition:all var(--fast); box-shadow:var(--shadow-inner); }
+.skin-tgl:hover { border-color:var(--brass); color:var(--brass); background:var(--steel-bright); }
+
+/* ===== TOASTS ===== */
+.toasts { position:fixed; bottom:calc(var(--status-h)+var(--space-3)); left:50%; transform:translateX(-50%); z-index:1000; display:flex; flex-direction:column; gap:var(--space-2); pointer-events:none; }
+.toast { display:flex; align-items:center; gap:var(--space-2); padding:var(--space-2) var(--space-4); border:1px solid var(--line); border-radius:var(--radius-2); background:var(--steel); color:var(--fg); font:500 var(--step--1) var(--sans); box-shadow:var(--shadow-3); opacity:0; transform:translateY(20px); transition:all var(--base); pointer-events:auto; }
+.toast.show { opacity:1; transform:translateY(0); }
+.toast.ok { border-color:var(--state-canon); background:var(--state-canon-wash); color:var(--state-canon); }
+.toast.warn { border-color:var(--state-caution); background:var(--state-caution-wash); color:var(--state-caution); }
+.toast.err { border-color:var(--state-risk); background:var(--state-risk-wash); color:var(--state-risk); }
+.toast.info { border-color:var(--water); background:var(--water-pale); color:var(--water); }
+
+/* ===== SCROLLBARS / FOCUS / SELECTION ===== */
+*{scrollbar-width:thin;scrollbar-color:var(--line) transparent;}
+*::-webkit-scrollbar{width:8px;height:8px;}*::-webkit-scrollbar-track{background:transparent;}*::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:4px;border:2px solid transparent;background-clip:content-box;}*::-webkit-scrollbar-thumb:hover{background:var(--muted);}
+*:focus-visible{outline:2px solid var(--brass);outline-offset:2px;}
+::selection{background:var(--brass);color:var(--ink);}
+</style>
+</head>
+<body>
+<div class="sublime" id="sh">
+  <!-- BAR -->
+  <header class="bar">
+    <a class="brand" href="/" aria-label="APT-LABS Field Desk">
+      <div class="brand-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18.5 12 4l8 14.5M7.1 13h9.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="4" r="1.5" fill="currentColor"/></svg></div>
+      <span class="brand-text">APT—LABS<mark>Field Desk</mark></span>
+    </a>
+    <div class="context"><span class="context-label">Module</span><span class="context-value" id="modLbl">Field Desk</span></div>
+    <div class="coords" id="crds" aria-live="polite"><span>LAT: <span id="lat">-0.4167</span></span><span class="sep">|</span><span>LNG: <span id="lng">37.3833</span></span><span class="sep">|</span><span>REV: <span id="rev">v3</span></span></div>
+    <div class="bar-actions">
+      <button class="tool-btn" id="zIn" title="Zoom in" aria-label="Zoom in"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M11 8v6M8 11h6"/></svg></button>
+      <button class="tool-btn" id="zOut" title="Zoom out" aria-label="Zoom out"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M8 11h6"/></svg></button>
+      <button class="tool-btn" id="zRst" title="Reset view" aria-label="Reset view"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/><circle cx="12" cy="12" r="3"/></svg></button>
+      <button class="tool-btn" id="tGl" title="Toggle grid" aria-label="Toggle grid" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg></button>
+      <button class="tool-btn" id="sGl" title="Log friction signal" aria-label="Log friction signal"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/><circle cx="12" cy="12" r="1"/></svg></button>
+      <button class="profile" id="prof" aria-label="Open identity cabinet" aria-expanded="false"><span class="avatar">SO</span><span class="name">S. Otieno</span><svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 6.5 8 10l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    </div>
+  </header>
+
+  <!-- RAIL -->
+  <nav class="rail" aria-label="Workspace modules">
+    <button class="rail-btn active" data-mod="field-desk" aria-label="Field Desk" title="Field Desk (F4)"><svg viewBox="0 0 24 24"><rect x="3" y="3" w="7" h="7" rx="1"/><rect x="14" y="3" w="7" h="7" rx="1"/><rect x="3" y="14" w="7" h="7" rx="1"/><rect x="14" y="14" w="7" h="7" rx="1"/></svg></button>
+    <button class="rail-btn" data-mod="school-console" aria-label="School Console" title="School Console (F5)"><svg viewBox="0 0 24 24"><path d="M5 3v18M19 3v18M3 7h18M3 13h18M3 19h18"/><path d="M7 7h10M7 13h10"/></svg></button>
+    <div class="rail-divider" aria-hidden="true"></div>
+    <button class="rail-btn" data-mod="commons" aria-label="Commons" title="Commons (F1)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 12l6-6M12 4v4M20 12h-4"/></svg></button>
+    <button class="rail-btn" data-mod="network" aria-label="Network" title="Network (F2)"><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><path d="M3 19v-2a6 6 0 0 1 12 0v2M16 6a3 3 0 0 1 0 6M21 13a3.8 3.8 0 0 1-3 3.8V19h-3"/></svg></button>
+    <button class="rail-btn" data-mod="records" aria-label="Records" title="Records (F3)"><svg viewBox="0 0 24 24"><path d="M6 20.5V3.5a1.5 1.5 0 0 1 1.5-1.5h9a1.5 1.5 0 0 1 1.5 1.5v17a1.5 1.5 0 0 1-1.5 1.5h-9a1.5 1.5 0 0 1-1.5-1.5z"/><path d="M7.5 11h9M7.5 15h6"/></svg></button>
+    <button class="rail-btn" data-mod="intelligence" aria-label="Intelligence" title="Intelligence (F6)"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16z"/><path d="M12 8v4l3 3"/></svg></button>
+    <div class="rail-vernier" aria-label="Precision" role="img" aria-live="polite"><div class="v-tick on"></div><div class="v-tick"></div><div class="v-tick"></div><div class="v-tick"></div><div class="v-tick"></div><div class="v-tick on"></div><div class="v-tick"></div><div class="v-tick"></div><div class="v-tick"></div><div class="v-tick"></div><div class="v-tick on"></div></div>
+  </nav>
+
+  <!-- TOTE -->
+  <aside class="tote" aria-label="Material tote" id="tote">
+    <div class="tote-bg" aria-hidden="true"></div>
+    <section class="tote-sec"><div class="tote-h"><span class="tote-h-text">Published Tenders</span><span class="tote-count" id="cPub">12</span></div><div class="mat-grid" id="gPub"></div></section>
+    <section class="tote-sec"><div class="tote-h"><span class="tote-h-text">Illustrative Scenarios</span><span class="tote-count" id="cIll">3</span></div><div class="mat-stack" id="sIll"></div></section>
+    <section class="tote-sec"><div class="tote-h"><span class="tote-h-text">Friction Signals</span><span class="tote-count" id="cFric">7</span></div><div class="mat-stack" id="sFric"></div></section>
+  </aside>
+
+  <!-- BENCH -->
+  <main class="bench" id="bench">
+    <div class="bench-surface" aria-hidden="true"></div>
+    <article class="blueprint" id="bp" aria-label="Tender blueprint">
+      <header class="bp-head">
+        <div class="bp-title-block"><span class="bp-dwg" id="bpDwg">DWG-NYAMINDI-HYDRO-003</span><span class="bp-title" id="bpTitle">Nyamindi Hydro Mini-Grid</span></div>
+        <div class="bp-rev"><span>Rev</span><strong id="bpRev">v3</strong><span>Sheet</span><strong>1/1</strong><span>Scale</span><strong>1:5000</strong></div>
+      </header>
+      <div class="bp-layer pub" data-layer="pub">
+        <div class="bp-node pub sel" id="nNy" style="top:30%;left:40%" data-name="Nyamindi Hydro" data-cat="energy" data-coords="-0.4167, 37.3833" tabindex="0" role="button" aria-label="Nyamindi Hydro"><div class="bp-marker">⚡</div><div class="bp-label">Nyamindi Hydro</div></div>
+        <div class="bp-node pub" id="nTs" style="top:55%;left:58%" data-name="Tender System" data-cat="software" data-coords="-1.2921, 36.8219" tabindex="0" role="button" aria-label="Tender System"><div class="bp-marker">◉</div><div class="bp-label">Tender System</div></div>
+        <div class="bp-node pub" id="nSc" style="top:20%;left:65%" data-name="Solar Commons" data-cat="energy" data-coords="-0.1500, 37.5000" tabindex="0" role="button" aria-label="Solar Commons"><div class="bp-marker">☀</div><div class="bp-label">Solar Commons</div></div>
+        <div class="bp-node pub" id="nCh" style="top:75%;left:28%" data-name="Coop Housing" data-cat="housing" data-coords="-1.3500, 36.7800" tabindex="0" role="button" aria-label="Coop Housing"><div class="bp-marker">🏠</div><div class="bp-label">Coop Housing</div></div>
+      </div>
+      <div class="bp-layer ill" data-layer="ill">
+        <div class="bp-node ill" id="nMw" style="top:70%;left:25%" data-name="Mwea Animation" data-cat="media" data-coords="-0.7000, 37.6333" tabindex="0" role="button" aria-label="Mwea Animation"><div class="bp-marker">✦</div><div class="bp-label">Mwea Animation</div></div>
+        <div class="bp-node ill" id="nDl" style="top:38%;left:80%" data-name="Open Design Library" data-cat="commons" data-coords="-1.1000, 36.9000" tabindex="0" role="button" aria-label="Open Design Library"><div class="bp-marker">📚</div><div class="bp-label">Open Design Lib</div></div>
+        <div class="bp-node ill" id="nLt" style="top:88%;left:70%" data-name="Community Land Trust" data-cat="land" data-coords="-0.9500, 37.1000" tabindex="0" role="button" aria-label="Community Land Trust"><div class="bp-marker">🌍</div><div class="bp-label">Land Trust</div></div>
+      </div>
+      <div class="bp-layer fric" data-layer="fric">
+        <div class="bp-node fric" id="nFc" style="top:45%;left:20%" data-name="Culture: Authorship" data-cat="culture" data-coords="-0.7000, 37.6333" tabindex="0" role="button" aria-label="Culture friction"><div class="bp-marker">⚠</div><div class="bp-label">Culture: Authorship</div></div>
+        <div class="bp-node fric" id="nFe" style="top:38%;left:64%" data-name="Education: Infrastructure" data-cat="education" data-coords="-0.4167, 37.3833" tabindex="0" role="button" aria-label="Education friction"><div class="bp-marker">⚠</div><div class="bp-label">Education: Infra</div></div>
+        <div class="bp-node fric" id="nFw" style="top:63%;left:75%" data-name="Work: Capability" data-cat="work" data-coords="-1.2921, 36.8219" tabindex="0" role="button" aria-label="Work friction"><div class="bp-marker">⚠</div><div class="bp-label">Work: Capability</div></div>
+      </div>
+      <svg class="bp-conn" style="position:absolute;inset:0;pointer-events:none;z-index:1" aria-hidden="true">
+        <line class="bp-conn active" x1="40%" y1="30%" x2="58%" y2="55%" stroke="var(--brass)" stroke-width="1.5" stroke-dasharray="8,4"/>
+        <line class="bp-conn" x1="40%" y1="30%" x2="65%" y2="20%" stroke="var(--hairline)" stroke-width="1" stroke-dasharray="4,4"/>
+        <line class="bp-conn" x1="58%" y1="55%" x2="70%" y2="75%" stroke="var(--hairline)" stroke-width="1" stroke-dasharray="4,4"/>
+      </svg>
+      <div class="bp-tools"><button class="bp-tool" id="bpZin" title="Zoom in"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M11 8v6M8 11h6"/></svg></button><button class="bp-tool" id="bpZout" title="Zoom out"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M8 11h6"/></svg></button><button class="bp-tool" id="bpRst" title="Reset view"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/><circle cx="12" cy="12" r="3"/></svg></button><button class="bp-tool" id="bpLay" title="Layers"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg></button></div>
+      <div class="bp-legend" aria-label="Legend"><div style="display:flex;gap:12px;align-items:center"><span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:50%;border:2px solid var(--state-canon);background:var(--state-canon-wash)"></span>Published</span><span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:50%;border:2px dashed var(--state-caution);background:var(--state-caution-wash)"></span>Illustrative</span><span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:50%;border:2px solid var(--water);background:var(--water-pale)"></span>Friction</span></div></div>
+    </article>
+  </main>
+
+  <!-- VISE -->
+  <aside class="vise" aria-label="Inspection vise" id="vise">
+    <div class="vise-empty" id="vEmpty"><svg viewBox="0 0 72 72" aria-hidden="true"><rect x="8" y="8" width="56" height="56" rx="4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M36 16v12M36 44v12M16 36h12M44 36h12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><p class="vise-empty-t">No Material Clamped</p><p class="vise-empty-d">Select a tender, scenario, or signal from the tote or blueprint to clamp it in the vise for detailed inspection, specification review, and action.</p></div>
+    <div class="vise-panel" id="vNy" style="display:none"><header class="vise-head"><h3 class="vise-title">Nyamindi Hydro Mini-Grid</h3><span class="vise-badge pub">PUBLISHED</span></header><div class="vise-body"><div class="spec"><div class="spec-h">Asset Specification</div><div class="spec-g"><span class="spec-l">Asset ID</span><span class="spec-v mono">nyamindi-hydro</span><span class="spec-l">Category</span><span class="spec-v">Energy</span><span class="spec-l">Location</span><span class="spec-v">Nyamindi, Embu County</span><span class="spec-l">Coordinates</span><span class="spec-v mono">-0.4167°, 37.3833°</span><span class="spec-l">Grid Ref</span><span class="spec-v mono">37K 402850 9912450</span><span class="spec-l">Build Cost</span><span class="spec-v mono brass">KES 18,750,000</span><span class="spec-l">Funding Target</span><span class="spec-v mono brass">KES 15,000,000</span><span class="spec-l">Settled</span><span class="spec-v mono water">KES 8,250,000 (55%)</span><span class="spec-l">Status</span><span class="spec-v water">MATERIALS</span><span class="spec-l">Blueprint</span><span class="spec-v mono">v3 — 7f3a2e91c4d8...</span><span class="spec-l">Lines</span><span class="spec-v">12 items</span><span class="spec-l">Crew</span><span class="spec-v">Anchor: W. Mbau | Builder: J. Koome | Apprentice: K. Njeri</span></div></div><div class="vise-acts"><button class="v-btn primary" data-act="open-assembly">OPEN ASSEMBLY</button><button class="v-btn" data-act="inspect-blueprint">INSPECT BLUEPRINT</button></div></div></div>
+    <div class="vise-panel" id="vTs" style="display:none"><header class="vise-head"><h3 class="vise-title">Tender System</h3><span class="vise-badge pub">PUBLISHED</span></header><div class="vise-body"><div class="spec"><div class="spec-h">Asset Specification</div><div class="spec-g"><span class="spec-l">Asset ID</span><span class="spec-v mono">tender-system</span><span class="spec-l">Category</span><span class="spec-v">Software</span><span class="spec-l">Location</span><span class="spec-v">Nairobi, Kenya (APT-LABS HQ)</span><span class="spec-l">Coordinates</span><span class="spec-v mono">-1.2921°, 36.8219°</span><span class="spec-l">Grid Ref</span><span class="spec-v mono">37K 448200 9856300</span><span class="spec-l">Build Cost</span><span class="spec-v mono brass">KES 12,400,000</span><span class="spec-l">Funding Target</span><span class="spec-v mono brass">KES 10,000,000</span><span class="spec-l">Settled</span><span class="spec-v mono canon">KES 10,000,000 (100%)</span><span class="spec-l">Status</span><span class="spec-v canon">DEPLOYED</span><span class="spec-l">Roll Entry</span><span class="spec-v mono">roll:tender-system (2026-10-15)</span><span class="spec-l">Crew</span><span class="spec-v">Anchor: S. Otieno | Builder: M. Wambui | Apprentice: L. Kimani</span></div></div><div class="vise-acts"><button class="v-btn primary" data-act="view-roll">VIEW ROLL ENTRY</button><button class="v-btn" data-act="recruit">RECRUIT</button></div></div></div>
+    <div class="vise-panel" id="vMw" style="display:none"><header class="vise-head"><h3 class="vise-title">Mwea Animation Box</h3><span class="vise-badge ill">ILLUSTRATIVE</span></header><div class="vise-body"><div class="spec"><div class="spec-h">Asset Specification</div><div class="spec-g"><span class="spec-l">Asset ID</span><span class="spec-v mono">mwea-animation</span><span class="spec-l">Category</span><span class="spec-v">Media</span><span class="spec-l">Location</span><span class="spec-v">Mwea, Kirinyaga County</span><span class="spec-l">Coordinates</span><span class="spec-v mono">-0.7000°, 37.6333°</span><span class="spec-l">Grid Ref</span><span class="spec-v mono">37K 570000 9922000</span><span class="spec-l">Build Cost</span><span class="spec-v mono brass">KES 2,400,000</span><span class="spec-l">Funding Target</span><span class="spec-v mono brass">KES 2,400,000</span><span class="spec-l">Settled</span><span class="spec-v mono water">KES 0 (0%)</span><span class="spec-l">Status</span><span class="spec-v water">DRAFT</span><span class="spec-l">Blueprint</span><span class="spec-v mono water">v1 proposed (unverified)</span><span class="spec-l">Crew</span><span class="spec-v water">Unassigned — requires community mandate</span></div></div><div class="vise-acts"><button class="v-btn primary" data-act="draft-brief">DRAFT BRIEF</button><button class="v-btn" data-act="recruit">RECRUIT</button></div></div></div>
+    <div class="vise-panel" id="vFc" style="display:none"><header class="vise-head"><h3 class="vise-title">Friction Radar — Culture</h3><span class="vise-badge fric">SIGNAL</span></header><div class="vise-body"><div class="spec"><div class="spec-h">Signal Record</div><div class="spec-g"><span class="spec-l">Room</span><span class="spec-v">Culture / Stories & Authorship</span><span class="spec-l">Signal</span><span class="spec-v">Who can author, own, distribute, and earn from stories rooted in local life?</span><span class="spec-l">Origin</span><span class="spec-v">Mwea · Context to establish with participants</span><span class="spec-l">First Question</span><span class="spec-v">Whose account is missing, and who should hold authorship and rights if new story work is created?</span><span class="spec-l">Collective Response</span><span class="spec-v">Map authorship, language, rights, distribution & livelihood constraints before choosing a medium</span></div></div><div class="vise-acts"><button class="v-btn primary" data-act="log-friction">LOG FRICTION</button><button class="v-btn" data-act="adapt">ADAPT</button></div></div></div>
+  </aside>
+
+  <!-- STATUSBAR -->
+  <footer class="status" role="status" aria-live="polite">
+    <div class="ledger"><span class="ledger-l">Ledger</span><span class="ledger-h" id="lHash">7f3a2e91c4d8...</span></div>
+    <div class="status-c"><span class="chip canon">VERIFIED</span><span class="chip prop">3 PROPOSED</span><span class="chip caut">2 GAPS</span><span class="chip risk">1 RECONCILE</span></div>
+    <div class="status-t"><span class="clk" id="clk">14:32:07</span><button class="skin-tgl" id="skn" aria-label="Toggle theme"><svg width="12" height="12" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="M10 2v4M10 14v4M2 10h4M14 10h4M4.5 4.5l2.8 2.8M12.7 12.7l2.8 2.8M4.5 15.5l2.8-2.8M12.7 7.3l2.8-2.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span id="skL">DARK</span></button></div>
+  </footer>
+
+  <div class="toasts" id="tst" aria-live="polite"></div>
+</div>
+
+<script>
+/* ===== SUBLIME — Single-file Interactive Prototype ===== */
+const sh=document.getElementById('sh'), tote=document.getElementById('tote'), bp=document.getElementById('bp'), vise=document.getElementById('vise'), vEmpty=document.getElementById('vEmpty'), tst=document.getElementById('tst'), clk=document.getElementById('clk'), skn=document.getElementById('skn'), skL=document.getElementById('skL');
+let sel=null, src=null, gridOn=true;
+
+// Data
+const PUB=[{id:'nyamindi-hydro',name:'Nyamindi Hydro',type:'ENERGY',st:'canon',cost:'KES 18.75M',ic:'⚡'},{id:'tender-system',name:'Tender System',type:'SOFTWARE',st:'canon',cost:'KES 12.4M',ic:'◉'},{id:'solar-commons',name:'Solar Commons',type:'ENERGY',st:'canon',cost:'KES 8.2M',ic:'☀'},{id:'coop-housing',name:'Coop Housing',type:'HOUSING',st:'canon',cost:'KES 24.0M',ic:'🏠'},{id:'water-trust',name:'Water Trust',type:'WATER',st:'canon',cost:'KES 5.6M',ic:'💧'},{id:'fiber-loop',name:'Fiber Loop',type:'TELECOM',st:'canon',cost:'KES 15.3M',ic:'🔗'}];
+const ILL=[{id:'mwea-animation',name:'Mwea Animation',type:'MEDIA',st:'prop',cost:'KES 2.4M',ic:'✦'},{id:'design-library',name:'Open Design Library',type:'COMMONS',st:'prop',cost:'KES 1.2M',ic:'📚'},{id:'land-trust',name:'Community Land Trust',type:'LAND',st:'prop',cost:'KES 42.0M',ic:'🌍'}];
+const FRIC=[{id:'friction-culture',name:'Culture: Authorship',type:'CULTURE',st:'caut',cost:'—',ic:'⚠'},{id:'friction-education',name:'Education: Infrastructure',type:'EDUCATION',st:'caut',cost:'—',ic:'⚠'},{id:'friction-work',name:'Work: Capability',type:'WORK',st:'risk',cost:'—',ic:'⚠'},{id:'friction-energy',name:'Energy: Grid Access',type:'ENERGY',st:'caut',cost:'—',ic:'⚠'}];
+const COORDS={'nyamindi-hydro':[-0.4167,37.3833],'tender-system':[-1.2921,36.8219],'solar-commons':[-0.15,37.5],'coop-housing':[-1.35,36.78],'mwea-animation':[-0.7,37.6333],'design-library':[-1.1,36.9],'land-trust':[-0.95,37.1],'friction-culture':[-0.7,37.6333],'friction-education':[-0.4167,37.3833],'friction-work':[-1.2921,36.8219],'friction-energy':[-0.15,37.5]};
+const VISE_ID={'nyamindi-hydro':'vNy','tender-system':'vTs','mwea-animation':'vMw','friction-culture':'vFc','friction-education':'vFc','friction-work':'vFc','friction-energy':'vFc','solar-commons':'vNy','coop-housing':'vNy','design-library':'vMw','land-trust':'vMw'};
+
+// Clock
+setInterval(()=>clk.textContent=new Date().toLocaleTimeString('en-GB',{hour12:false,timeZone:'Africa/Nairobi'}),1000);
+
+// Toast
+const T=(m,t='info')=>{const e=document.createElement('div');e.className=`toast ${t}`;e.textContent=m;tst.append(e);requestAnimationFrame(()=>e.classList.add('show'));setTimeout(()=>{e.classList.remove('show');setTimeout(()=>e.remove(),300)},3000);};
+
+// Render Tote
+const R=()=>{
+  document.getElementById('gPub').innerHTML=PUB.map(m=>`<article class="mat-card${m.id==='nyamindi-hydro'?' sel':''}" data-id="${m.id}" tabindex="0" role="button" aria-label="${m.name}"><span class="mat-type">${m.type}</span><span class="mat-name">${m.name}</span><div class="mat-meta"><span class="mat-status ${m.st}">${m.st.toUpperCase()}</span><span class="mat-cost">${m.cost}</span></div></article>`).join('');
+  document.getElementById('sIll').innerHTML=ILL.map(m=>`<div class="stack${m.id==='mwea-animation'?' sel':''}" data-id="${m.id}" tabindex="0" role="button" aria-label="${m.name}"><div class="stack-sw ${m.st}"></div><div class="stack-info"><span class="stack-name">${m.name}</span><span class="stack-detail">${m.type} · ${m.cost}</span></div><div class="stack-acts"><button class="s-btn" data-act="inspect" aria-label="Inspect ${m.name}"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button><button class="s-btn" data-act="promote" aria-label="Promote ${m.name}"><svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg></button></div></div>`).join('');
+  document.getElementById('sFric').innerHTML=FRIC.map(m=>`<div class="stack${m.id==='friction-culture'?' sel':''}" data-id="${m.id}" tabindex="0" role="button" aria-label="${m.name}"><div class="stack-sw ${m.st}"></div><div class="stack-info"><span class="stack-name">${m.name}</span><span class="stack-detail">${m.type} · ${m.st.toUpperCase()}</span></div><div class="stack-acts"><button class="s-btn" data-act="inspect" aria-label="Inspect ${m.name}"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button><button class="s-btn" data-act="resolve" aria-label="Resolve ${m.name}"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></button></div></div>`).join('');
+  bindTote();
+};
+const bindTote=()=>{
+  document.querySelectorAll('.mat-card,.stack').forEach(el=>{el.onclick=e=>{if(e.target.closest('.s-btn'))return;pick(el,'tote')};el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(el,'tote')}}});
+  document.querySelectorAll('.s-btn').forEach(b=>b.onclick=e=>{e.stopPropagation();T(`Action: ${b.dataset.act}`,'ok')});
+};
+
+// Selection
+const pick=(el,src2)=>{
+  if(sel)sel.classList.remove('sel');
+  document.querySelectorAll('.mat-card,.stack').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');sel=el;src=src2;
+  const id=el.dataset.id,c=COORDS[id]||[0,0];
+  document.getElementById('lat').textContent=c[0]+'°';document.getElementById('lng').textContent=c[1]+'°';
+  document.getElementById('modLbl').textContent=id.split('-')[0].charAt(0).toUpperCase()+id.split('-')[0].slice(1);
+  document.getElementById('bpTitle').textContent=el.dataset.name||id;
+  document.getElementById('bpRev').textContent=el.dataset.rev||'v1';
+  document.getElementById('bpDwg').textContent='DWG-'+id.toUpperCase().replace(/-/g,'-')+'-003';
+  vEmpty.style.display='none';document.querySelectorAll('.vise-panel').forEach(p=>p.style.display='none');
+  const vp=document.getElementById(VISE_ID[id]||'vEmpty');if(vp)vp.style.display='flex';
+  document.querySelectorAll('.bp-node').forEach(n=>n.classList.toggle('sel',n.id==='n'+id.split('-').map(s=>s[0].toUpperCase()+s.slice(1)).join('')||n.dataset.id===id));
+  const bn=document.getElementById('n'+id.split('-').map(s=>s[0].toUpperCase()+s.slice(1)).join(''));if(bn){bn.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});bn.classList.add('sel');sel=bn;src='bp';}
+  T(`Clamped: ${el.dataset.name||id}`,'ok');
+};
+
+// Rail
+document.querySelectorAll('.rail-btn').forEach(b=>b.onclick=()=>{document.querySelectorAll('.rail-btn').forEach(x=>x.classList.toggle('active',x===b));document.getElementById('modLbl').textContent=b.dataset.mod.replace('-',' ').replace(/\b\w/g,c=>c.toUpperCase());T(`Module: ${b.dataset.mod}`);});
+
+// Tools
+document.getElementById('zIn').onclick=()=>T('Zoom in','info');
+document.getElementById('zOut').onclick=()=>T('Zoom out','info');
+document.getElementById('zRst').onclick=()=>{pick(document.getElementById('nNy'),'bp');T('View reset','info');};
+document.getElementById('bpRst').onclick=()=>{pick(document.getElementById('nNy'),'bp');T('View reset','info');};
+document.getElementById('tGl').onclick=()=>{gridOn=!gridOn;document.querySelector('.bench-surface').style.opacity=gridOn?'1':'0';document.getElementById('tGl').setAttribute('aria-pressed',gridOn);T(`Grid: ${gridOn?'on':'off'}`);};
+document.getElementById('sGl').onclick=()=>T('Friction logger: not implemented','warn');
+document.getElementById('bpZin').onclick=()=>T('Zoom in','info');
+document.getElementById('bpZout').onclick=()=>T('Zoom out','info');
+document.getElementById('bpLay').onclick=()=>T('Layers: not implemented','info');
+
+// Blueprint nodes
+document.querySelectorAll('.bp-node').forEach(n=>{n.onclick=()=>pick(n,'bp');n.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(n,'bp')}}});
+
+// Vise actions
+document.querySelectorAll('.v-btn').forEach(b=>b.onclick=()=>T(`Action: ${b.dataset.act}`,'ok'));
+
+// Theme
+skn.onclick=()=>{const l=document.documentElement.getAttribute('data-skin')==='light';document.documentElement.setAttribute('data-skin',l?'dark':'light');skL.textContent=l?'DARK':'LIGHT';skn.querySelector('svg').innerHTML=l?'<circle cx="10" cy="10" r="6"/><path d="M10 2v4M10 14v4M2 10h4M14 10h4M4.5 4.5l2.8 2.8M12.7 12.7l2.8 2.8M4.5 15.5l2.8-2.8M12.7 7.3l2.8-2.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>':'<path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0 1.5a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13z"/><path d="M10 6v4l2.5 2.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>';T(`Theme: ${l?'Dark':'Light'}`,'info');};
+
+// Keyboard
+document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,button,[contenteditable]'))return;if(e.key==='g'&&!e.metaKey&&!e.ctrlKey){document.getElementById('tGl').click();}if(e.key==='t'&&!e.metaKey&&!e.ctrlKey){skn.click();}if(e.key==='Escape'){if(sel){sel.classList.remove('sel');document.querySelectorAll('.mat-card,.stack,.bp-node').forEach(x=>x.classList.remove('sel'));sel=null;vEmpty.style.display='flex';document.querySelectorAll('.vise-panel').forEach(p=>p.style.display='none');}}if(e.key>='1'&&e.key<='6'&&!e.metaKey&&!e.ctrlKey){const m=['commons','network','records','field-desk','school-console','intelligence'];document.querySelector('.rail-btn[data-mod="'+m[parseInt(e.key)-1]+'"]').click();}});
+
+// Init
+R();pick(document.getElementById('nNy'),'bp');
+console.log('✨ SUBLIME loaded — G=grid T=theme 1-6=modules Esc=release');
+</script>
+</body>
+</html>

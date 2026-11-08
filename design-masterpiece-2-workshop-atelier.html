@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APT-LABS — Workshop Atelier (Masterpiece 2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+/* ============================================================================
+   MASTERPIECE 2: WORKSHOP ATELIER
+   Tactile • Craft • Material Intelligence
+   A drafting-table workspace for makers, builders, and tender architects.
+   Every tool has its place. Every material tells a story.
+   ============================================================================ */
+
+:root {
+  /* APT-LABS Dark Signature (from styles.css) */
+  --bg: #0A0F0C;
+  --fg: #E9F1E8;
+  --muted: #8FA08C;
+  --dim: #5C6B5E;
+  --fg-strong: #F0F5EF;
+  --bg-elev: #111713;
+  --bg-subtle: #141A16;
+  --line: rgba(143, 160, 140, 0.18);
+  --line-strong: rgba(143, 160, 140, 0.32);
+  --hairline: rgba(143, 160, 140, 0.10);
+
+  --state-canon: #7FC5BC;
+  --state-canon-wash: rgba(127, 197, 188, 0.12);
+  --state-proposed: #C9F292;
+  --state-proposed-wash: rgba(201, 242, 146, 0.10);
+  --state-risk: #E89670;
+  --state-risk-wash: rgba(232, 150, 112, 0.12);
+  --state-caution: #CBAF6E;
+  --state-caution-wash: rgba(203, 175, 110, 0.12);
+
+  --water: #4A9EBB;
+  --water-pale: rgba(74, 158, 187, 0.14);
+
+  --serif: "DM Serif Display", Georgia, serif;
+  --sans: "Space Grotesk", Inter, system-ui, sans-serif;
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+
+  --step--2: clamp(9px, 0.64rem, 10px);
+  --step--1: clamp(10px, 0.8rem, 11px);
+  --step-0: clamp(12.5px, 1rem, 13px);
+  --step-1: clamp(15.6px, 1.25rem, 16px);
+  --step-2: clamp(19.5px, 1.56rem, 20px);
+  --step-3: clamp(24.4px, 1.95rem, 25px);
+  --step-4: clamp(30.5px, 2.44rem, 31px);
+  --step-5: clamp(38.1px, 3.05rem, 39px);
+
+  --baseline: 8px;
+  --space-1: 8px;  --space-2: 16px;  --space-3: 24px;
+  --space-4: 32px; --space-5: 40px; --space-6: 48px;
+  --space-7: 56px; --space-8: 64px; --space-9: 72px;
+
+  --radius-1: 3px; --radius-2: 6px; --radius-3: 8px; --radius-4: 12px; --radius-pill: 999px;
+
+  --shadow-1: 0 1px 2px rgba(0,0,0,.35), 0 1px 4px rgba(0,0,0,.25);
+  --shadow-2: 0 4px 8px rgba(0,0,0,.45), 0 2px 4px rgba(0,0,0,.3);
+  --shadow-3: 0 8px 24px rgba(0,0,0,.55), 0 4px 12px rgba(0,0,0,.35);
+  --shadow-inner: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.3);
+
+  --fast: 120ms ease;
+  --base: 180ms ease;
+  --slow: 280ms ease;
+
+  /* Workshop-specific tokens */
+  --bench-top-h: 56px;
+  --tool-wall-w: 72px;
+  --tote-w: 320px;
+  --vise-w: 380px;
+  --statusbar-h: 32px;
+
+  /* Material surfaces */
+  --wood-dark: #1a1410;
+  --wood-mid: #2a2018;
+  --wood-light: #3d2f24;
+  --steel: #2a3036;
+  --steel-bright: #3a444c;
+  --brass: #c8a868;
+  --brass-dim: #8a7548;
+  --copper: #b87333;
+  --paper: #f5f0e8;
+  --ink: #1a1612;
+}
+
+/* Light variant - Workshop in daylight */
+[data-skin="light"] {
+  --bg: #f5f0e8;
+  --fg: #1a1612;
+  --muted: #6a6055;
+  --dim: #9a8f82;
+  --fg-strong: #0d0a08;
+  --bg-elev: #fffaf5;
+  --bg-subtle: #efe8de;
+  --line: rgba(26, 22, 18, 0.12);
+  --line-strong: rgba(26, 22, 18, 0.22);
+  --hairline: rgba(26, 22, 18, 0.06);
+
+  --state-canon: #286375;
+  --state-canon-wash: rgba(40, 99, 117, 0.10);
+  --state-proposed: #3d7158;
+  --state-proposed-wash: rgba(61, 113, 88, 0.10);
+  --state-risk: #a5533d;
+  --state-risk-wash: rgba(165, 83, 61, 0.10);
+  --state-caution: #b8955a;
+  --state-caution-wash: rgba(184, 149, 90, 0.10);
+
+  --water: #3a6b8c;
+  --water-pale: rgba(58, 107, 140, 0.12);
+
+  --shadow-1: 0 1px 2px rgba(26,22,18,.06), 0 1px 4px rgba(26,22,18,.04);
+  --shadow-2: 0 4px 12px rgba(26,22,18,.08), 0 2px 6px rgba(26,22,18,.05);
+  --shadow-3: 0 12px 32px rgba(26,22,18,.12), 0 6px 16px rgba(26,22,18,.07);
+  --shadow-inner: inset 0 1px 0 rgba(255,255,255,0.8), inset 0 -1px 0 rgba(26,22,18,0.05);
+
+  --wood-dark: #e8dfd4;
+  --wood-mid: #f0e8dc;
+  --wood-light: #f8f3eb;
+  --steel: #e8edf0;
+  --steel-bright: #f0f4f8;
+  --brass: #b8955a;
+  --brass-dim: #a08048;
+  --copper: #b87333;
+  --paper: #fdfbf7;
+  --ink: #1a1612;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--fg);
+  background: var(--bg);
+  font: var(--step-0)/1.55 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ============================================================================
+   SHELL GRID — The Workbench Top
+   ============================================================================ */
+.atelier-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: var(--bench-top-h) 1fr var(--statusbar-h);
+  grid-template-columns: var(--tool-wall-w) 1fr var(--vise-w);
+  background:
+    /* Wood grain texture */
+    radial-gradient(ellipse at 20% 30%, rgba(0,0,0,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(0,0,0,0.05) 0%, transparent 50%),
+    linear-gradient(180deg, var(--wood-dark), var(--wood-mid));
+  position: relative;
+  isolation: isolate;
+}
+
+.atelier-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.15;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)'/%3E%3C/svg%3E");
+}
+
+/* Bench dog holes pattern */
+.atelier-shell::after {
+  content: "";
+  position: fixed;
+  left: var(--tool-wall-w);
+  right: var(--vise-w);
+  top: var(--bench-top-h);
+  bottom: var(--statusbar-h);
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(circle at 160px 160px, transparent 10px, var(--hairline) 10px, transparent 11px),
+    radial-gradient(circle at 480px 160px, transparent 10px, var(--hairline) 10px, transparent 11px),
+    radial-gradient(circle at 800px 160px, transparent 10px, var(--hairline) 10px, transparent 11px),
+    radial-gradient(circle at 160px 480px, transparent 10px, var(--hairline) 10px, transparent 11px),
+    radial-gradient(circle at 480px 480px, transparent 10px, var(--hairline) 10px, transparent 11px),
+    radial-gradient(circle at 800px 480px, transparent 10px, var(--hairline) 10px, transparent 11px);
+  background-size: 320px 320px;
+  opacity: 0.3;
+}
+
+/* Responsive collapse */
+@media (max-width: 1300px) {
+  .atelier-shell { --vise-w: 340px; --tote-w: 280px; }
+}
+@media (max-width: 1100px) {
+  .atelier-shell {
+    grid-template-columns: var(--tool-wall-w) 1fr;
+    --vise-w: 0;
+  }
+  .atelier-vise { display: none; }
+}
+@media (max-width: 860px) {
+  .atelier-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: var(--bench-top-h) auto 1fr auto var(--statusbar-h);
+    --tool-wall-w: 0;
+  }
+  .atelier-tool-wall { display: none; }
+  .atelier-tote { grid-row: 2; border-bottom: 1px solid var(--line); }
+  .atelier-bench { grid-row: 3; }
+  .atelier-vise { grid-row: 4; display: block; border-top: 1px solid var(--line); }
+}
+@media (max-width: 640px) {
+  .atelier-shell { grid-template-rows: var(--bench-top-h) auto 1fr var(--statusbar-h); }
+  .atelier-vise { display: none; }
+}
+
+/* ============================================================================
+   BENCH TOP — The Tool Bar
+   ============================================================================ */
+.atelier-bench-top {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-4);
+  border-bottom: 2px solid var(--line-strong);
+  background: linear-gradient(180deg, var(--wood-dark), var(--wood-mid));
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+  position: relative;
+  z-index: 20;
+}
+
+.bench-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+  color: var(--fg);
+}
+
+.bench-brand-mark {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  background: var(--steel);
+  border: 2px solid var(--brass);
+  border-radius: var(--radius-2) var(--radius-2) var(--radius-2) 4px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    inset 0 -1px 0 rgba(0,0,0,0.3),
+    0 2px 4px rgba(0,0,0,0.4);
+  position: relative;
+}
+.bench-brand-mark::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--brass), var(--copper), var(--brass));
+  z-index: -1;
+  opacity: 0.3;
+  filter: blur(4px);
+}
+
+.bench-brand-mark svg { width: 24px; height: 24px; stroke: var(--brass); }
+
+.bench-brand-text {
+  font-family: var(--serif);
+  font-size: var(--step-2);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+.bench-brand-text mark {
+  background: linear-gradient(90deg, var(--brass), var(--copper));
+  color: var(--ink);
+  font-style: normal;
+  font-weight: 600;
+  padding: 0 6px;
+  border-radius: var(--radius-1);
+  font-family: var(--sans);
+  font-size: var(--step-0);
+}
+
+.bench-project {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  background: var(--steel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-inner);
+}
+
+.bench-project-label {
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font: 500 var(--step--2) var(--mono);
+}
+
+.bench-project-value {
+  color: var(--fg);
+  font-weight: 600;
+  font-family: var(--mono);
+  font-size: var(--step-0);
+}
+
+.bench-coords {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  background: var(--steel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  color: var(--muted);
+  box-shadow: var(--shadow-inner);
+}
+
+.bench-coords .coord-sep { color: var(--dim); }
+
+.bench-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.bench-tool-btn {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  background: var(--steel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all var(--fast);
+  box-shadow: var(--shadow-inner);
+}
+.bench-tool-btn:hover {
+  border-color: var(--brass);
+  color: var(--brass);
+  background: var(--steel-bright);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.bench-tool-btn:active { transform: translateY(0); }
+.bench-tool-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.bench-profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  background: var(--steel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all var(--fast);
+  box-shadow: var(--shadow-inner);
+}
+.bench-profile:hover { border-color: var(--brass); background: var(--steel-bright); }
+.bench-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brass), var(--copper));
+  display: grid;
+  place-items: center;
+  font: 600 var(--step--1) var(--mono);
+  color: var(--ink);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(0,0,0,0.2);
+}
+.bench-name { font-size: var(--step-0); font-weight: 500; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ============================================================================
+   TOOL WALL — The Pegboard
+   ============================================================================ */
+.atelier-tool-wall {
+  grid-row: 2;
+  position: relative;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--space-4) var(--space-2);
+  border-right: 2px solid var(--line-strong);
+  background: linear-gradient(180deg, var(--wood-dark), var(--wood-mid));
+  background-image:
+    radial-gradient(circle at 18px 18px, transparent 8px, var(--hairline) 8px, transparent 9px);
+  background-size: 36px 36px;
+}
+
+/* Pegboard holes */
+.atelier-tool-wall::before {
+  content: "";
+  position: absolute;
+  top: var(--space-4);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: var(--brass);
+  border-radius: 50%;
+  box-shadow:
+    0 36px 0 var(--brass-dim),
+    0 72px 0 var(--brass-dim),
+    0 108px 0 var(--brass-dim),
+    0 144px 0 var(--brass-dim),
+    0 180px 0 var(--brass-dim),
+    0 216px 0 var(--brass-dim),
+    0 252px 0 var(--brass-dim),
+    0 288px 0 var(--brass-dim);
+  opacity: 0.6;
+}
+
+.tool-rack { display: flex; flex-direction: column; gap: var(--space-3); }
+
+.tool-peg {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--steel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all var(--fast);
+  box-shadow: var(--shadow-inner);
+}
+.tool-peg::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background: var(--brass);
+  border-radius: 50%;
+  border: 2px solid var(--steel);
+  box-shadow: 0 0 0 2px var(--line-strong);
+}
+
+.tool-peg:hover {
+  border-color: var(--brass);
+  color: var(--brass);
+  background: var(--steel-bright);
+  transform: translateX(4px);
+}
+.tool-peg.is-active {
+  border-color: var(--brass);
+  background: linear-gradient(90deg, rgba(200,168,104,0.15), transparent);
+  color: var(--brass);
+}
+
+.tool-peg svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; flex-shrink: 0; }
+.tool-label { font-weight: 500; font-size: var(--step-0); white-space: nowrap; }
+.tool-badge {
+  margin-left: auto;
+  font: 500 var(--step--2) var(--mono);
+  padding: 2px 6px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-1);
+  color: var(--dim);
+}
+
+.tool-divider {
+  height: 1px;
+  background: var(--line);
+  margin: var(--space-2) 0;
+  position: relative;
+}
+.tool-divider::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background: var(--brass-dim);
+  border-radius: 50%;
+  border: 2px solid var(--steel);
+  opacity: 0.6;
+}
+
+.tool-vernier {
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.vernier-tick {
+  width: 24px;
+  height: 2px;
+  background: var(--line);
+  border-radius: 1px;
+  position: relative;
+}
+.vernier-tick::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: var(--brass-dim);
+  border-radius: 50%;
+  opacity: 0.5;
+}
+.vernier-tick:nth-child(5n) { background: var(--line-strong); width: 32px; }
+.vernier-tick.active { background: var(--brass); box-shadow: 0 0 8px var(--brass); }
+.vernier-tick.active::before { background: var(--brass); }
+
+/* ============================================================================
+   TOTE — The Material Bin
+   ============================================================================ */
+.atelier-tote {
+  grid-row: 2;
+  grid-column: 2;
+  position: relative;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--space-4);
+  background: var(--bg);
+  border-left: 1px solid var(--line);
+}
+
+.tote-liner {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, transparent 50%, var(--hairline) 50%),
+    linear-gradient(90deg, transparent 50%, var(--hairline) 50%);
+  background-size: 40px 40px;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.tote-section { margin-bottom: var(--space-5); }
+.tote-section:last-child { margin-bottom: 0; }
+
+.tote-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--line);
+}
+.tote-label-text {
+  font: 500 var(--step--1) var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--dim);
+}
+.tote-count { font: 500 var(--step-0) var(--mono); color: var(--muted); }
+
+/* Material cards */
+.material-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-2);
+}
+
+.material-card {
+  position: relative;
+  padding: var(--space-3);
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-2);
+  cursor: pointer;
+  transition: all var(--fast);
+  overflow: hidden;
+}
+.material-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--line);
+}
+.material-card:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
+}
+.material-card.is-selected {
+  border-color: var(--state-canon);
+  box-shadow: 0 0 0 2px var(--state-canon-wash), var(--shadow-2);
+}
+.material-card.is-selected::before { background: var(--state-canon); }
+
+.material-type {
+  font: 500 var(--step--2) var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--dim);
+  margin-bottom: var(--space-1);
+}
+.material-name {
+  font-family: var(--serif);
+  font-size: var(--step-1);
+  font-weight: 400;
+  color: var(--fg);
+  margin-bottom: var(--space-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.material-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--step--1);
+}
+.material-status { color: var(--muted); }
+.material-status.canon { color: var(--state-canon); }
+.material-status.proposed { color: var(--state-proposed); }
+.material-status.caution { color: var(--state-caution); }
+.material-status.risk { color: var(--state-risk); }
+.material-cost { font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--fg); }
+
+/* Material stacks (for tote sections) */
+.material-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.stack-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-2);
+  cursor: pointer;
+  transition: all var(--fast);
+}
+.stack-item:hover { border-color: var(--line-strong); background: var(--bg-subtle); }
+.stack-item.is-selected { border-color: var(--state-canon); background: var(--state-canon-wash); }
+
+.stack-swatch {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-1);
+  border: 1px solid var(--line-strong);
+  flex-shrink: 0;
+  position: relative;
+}
+.stack-swatch.published { background: linear-gradient(145deg, var(--state-canon-wash), var(--state-canon)); border-color: var(--state-canon); }
+.stack-swatch.illustrative { background: repeating-linear-gradient(45deg, transparent, transparent 6px, var(--state-caution) 6px, var(--state-caution) 12px); border-color: var(--state-caution); }
+.stack-swatch.friction { background: linear-gradient(145deg, var(--water-pale), var(--water)); border-color: var(--water); }
+.stack-swatch.proposed { background: linear-gradient(145deg, var(--state-proposed-wash), var(--state-proposed)); border-color: var(--state-proposed); }
+
+.stack-info { flex: 1; min-width: 0; }
+.stack-name { font-weight: 500; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stack-detail { font: var(--step--1) var(--mono); color: var(--dim); }
+.stack-actions { display: flex; gap: var(--space-1); opacity: 0; transition: opacity var(--fast); }
+.stack-item:hover .stack-actions { opacity: 1; }
+.stack-btn {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-1);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all var(--fast);
+}
+.stack-btn:hover { border-color: var(--state-canon); color: var(--state-canon); background: var(--state-canon-wash); }
+.stack-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+/* ============================================================================
+   BENCH — The Work Surface
+   ============================================================================ */
+.atelier-bench {
+  grid-row: 2;
+  grid-column: 2;
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.bench-surface {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--hairline) 1px, transparent 1px),
+    linear-gradient(90deg, var(--hairline) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Blueprint paper */
+.blueprint {
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-4);
+  right: var(--space-4);
+  bottom: var(--space-4);
+  background: var(--paper);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-3);
+  box-shadow:
+    0 4px 24px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 -1px 0 rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.blueprint::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(26,22,18,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,22,18,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+.blueprint-header {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 60px;
+  background: linear-gradient(180deg, rgba(26,22,18,0.08), transparent);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-4);
+  z-index: 5;
+}
+
+.blueprint-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.blueprint-drawing-no { font: 500 var(--step--1) var(--mono); color: var(--dim); text-transform: uppercase; letter-spacing: 0.1em; }
+.blueprint-drawing-title { font-family: var(--serif); font-size: var(--step-2); color: var(--ink); }
+
+.blueprint-rev-block {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font: var(--step--1) var(--mono);
+  color: var(--muted);
+}
+.rev-label { text-transform: uppercase; letter-spacing: 0.1em; }
+.rev-value { font-weight: 600; color: var(--ink); font-family: var(--mono); }
+
+/* Asset nodes on blueprint */
+.blueprint-node {
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: all var(--fast);
+  z-index: 10;
+}
+.blueprint-node:hover { transform: scale(1.05); z-index: 20; }
+.blueprint-node.is-selected .bp-marker { border-color: var(--brass); box-shadow: 0 0 0 3px rgba(200,168,104,0.3); }
+
+.bp-marker {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--line-strong);
+  background: var(--paper);
+  display: grid;
+  place-items: center;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.5);
+  font-size: 20px;
+  transition: all var(--fast);
+}
+
+.blueprint-node.published .bp-marker { border-color: var(--state-canon); background: var(--state-canon-wash); }
+.blueprint-node.illustrative .bp-marker { border-style: dashed; border-color: var(--state-caution); background: var(--state-caution-wash); }
+.blueprint-node.friction .bp-marker { background: var(--water-pale); border-color: var(--water); }
+.blueprint-node.proposed .bp-marker { border-color: var(--state-proposed); background: var(--state-proposed-wash); }
+
+.bp-label {
+  position: absolute;
+  bottom: 100%; left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 6px;
+  padding: 4px 10px;
+  background: var(--ink);
+  color: var(--paper);
+  font: 500 var(--step--1) var(--mono);
+  border-radius: var(--radius-1);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--fast), transform var(--fast);
+  transform: translateX(-50%) translateY(4px);
+  box-shadow: var(--shadow-2);
+}
+.blueprint-node:hover .bp-label { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Connection lines */
+.bp-connection {
+  position: absolute;
+  height: 1px;
+  background: var(--hairline);
+  transform-origin: 0 0;
+  z-index: 1;
+  opacity: 0.4;
+}
+.bp-connection.active { background: var(--brass); opacity: 0.8; }
+
+/* Blueprint tools */
+.blueprint-tools {
+  position: absolute;
+  bottom: var(--space-4); right: var(--space-4);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.bp-tool {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  background: var(--steel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all var(--fast);
+  box-shadow: var(--shadow-1);
+}
+.bp-tool:hover { border-color: var(--brass); color: var(--brass); background: var(--steel-bright); }
+.bp-tool svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+.blueprint-legend {
+  position: absolute;
+  bottom: var(--space-4); left: var(--space-4);
+  z-index: 5;
+  background: var(--steel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--step--1);
+  box-shadow: var(--shadow-1);
+}
+
+/* ============================================================================
+   VISE — The Inspection Clamp
+   ============================================================================ */
+.atelier-vise {
+  grid-row: 2;
+  grid-column: 3;
+  position: relative;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--space-4);
+  border-left: 2px solid var(--line-strong);
+  background: linear-gradient(180deg, var(--wood-dark), var(--wood-mid));
+  background-image:
+    radial-gradient(circle at 18px 18px, transparent 8px, var(--hairline) 8px, transparent 9px);
+  background-size: 36px 36px;
+}
+
+/* Vise jaw */
+.atelier-vise::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; left: -2px;
+  width: 12px;
+  background: linear-gradient(180deg, var(--steel), var(--steel-bright), var(--steel));
+  border-right: 1px solid var(--brass);
+  box-shadow: inset 2px 0 0 rgba(255,255,255,0.1), inset -2px 0 0 rgba(0,0,0,0.2);
+}
+
+/* Vise handle */
+.atelier-vise::after {
+  content: "";
+  position: absolute;
+  top: var(--space-4); right: var(--space-4);
+  width: 24px; height: 24px;
+  border: 2px solid var(--brass);
+  border-radius: 50%;
+  background: var(--steel);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  opacity: 0.6;
+}
+
+.vise-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  position: relative;
+  z-index: 1;
+}
+
+.vise-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--steel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-3) var(--radius-3) 0 0;
+  margin: calc(-1 * var(--space-4)) calc(-1 * var(--space-4)) 0;
+  box-shadow: var(--shadow-inner);
+}
+
+.vise-title {
+  font-family: var(--serif);
+  font-size: var(--step-2);
+  font-weight: 400;
+  color: var(--fg);
+  margin: 0;
+}
+
+.vise-badge {
+  font: 500 var(--step--2) var(--mono);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.vise-badge.published { background: var(--state-canon-wash); color: var(--state-canon); border: 1px solid var(--state-canon); }
+.vise-badge.illustrative { background: var(--state-caution-wash); color: var(--state-caution); border: 1px solid var(--state-caution); }
+.vise-badge.friction { background: var(--water-pale); color: var(--water); border: 1px solid var(--water); }
+.vise-badge.proposed { background: var(--state-proposed-wash); color: var(--state-proposed); border: 1px solid var(--state-proposed); }
+.vise-badge.draft { background: var(--bg); color: var(--muted); border: 1px solid var(--line); }
+
+.vise-body { display: flex; flex-direction: column; gap: var(--space-3); }
+
+/* Spec sheets */
+.spec-sheet {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-2);
+  overflow: hidden;
+}
+.spec-head {
+  padding: var(--space-2) var(--space-3);
+  background: linear-gradient(180deg, rgba(26,22,18,0.06), transparent);
+  border-bottom: 1px solid var(--line);
+  font: 500 var(--step--1) var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+}
+.spec-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-3);
+}
+.spec-label { color: var(--dim); font-size: var(--step-0); }
+.spec-value { color: var(--ink); font-weight: 500; font-family: var(--mono); text-align: right; }
+.spec-value.mono { font-family: var(--mono); }
+.spec-value.canon { color: var(--state-canon); }
+.spec-value.caution { color: var(--state-caution); }
+.spec-value.risk { color: var(--state-risk); }
+.spec-value.proposed { color: var(--state-proposed); }
+.spec-value.water { color: var(--water); }
+.spec-value.brass { color: var(--brass); }
+
+/* Action bar */
+.vise-actions {
+  display: flex;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--line);
+  margin-top: var(--space-2);
+}
+.vise-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-2);
+  font: 500 var(--step--1) var(--sans);
+  color: var(--fg);
+  background: var(--steel);
+  cursor: pointer;
+  transition: all var(--fast);
+  box-shadow: var(--shadow-inner);
+}
+.vise-btn:hover { border-color: var(--brass); color: var(--brass); background: var(--steel-bright); }
+.vise-btn.primary {
+  background: linear-gradient(135deg, var(--brass), var(--copper));
+  border-color: var(--brass);
+  color: var(--ink);
+  font-weight: 600;
+}
+.vise-btn.primary:hover { filter: brightness(1.05); box-shadow: 0 4px 16px rgba(200,168,104,0.3); }
+
+/* Empty state */
+.vise-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--dim);
+}
+.vise-empty svg { width: 72px; height: 72px; stroke: var(--hairline); margin-bottom: var(--space-3); }
+.vise-empty-title { font-family: var(--serif); font-size: var(--step-3); color: var(--muted); margin-bottom: var(--space-1); }
+.vise-empty-desc { font-size: var(--step-0); line-height: 1.6; max-width: 280px; }
+
+/* ============================================================================
+   STATUSBAR — The Shop Footer
+   ============================================================================ */
+.atelier-statusbar {
+  grid-row: 3;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 0 var(--space-4);
+  border-top: 2px solid var(--line-strong);
+  background: linear-gradient(180deg, var(--wood-mid), var(--wood-dark));
+  font: var(--step--1) var(--mono);
+  color: var(--dim);
+  position: relative;
+}
+
+.statusbar-ledger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  background: var(--steel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-inner);
+}
+.ledger-label { text-transform: uppercase; letter-spacing: 0.1em; }
+.ledger-hash { font-variant-numeric: tabular-nums; color: var(--brass); font-family: var(--mono); }
+
+.statusbar-center { display: flex; align-items: center; gap: var(--space-4); justify-content: center; }
+.status-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: var(--steel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  font: 500 var(--step--2) var(--mono);
+  color: var(--muted);
+  box-shadow: var(--shadow-inner);
+}
+.status-chip.canon { border-color: var(--state-canon); color: var(--state-canon); background: var(--state-canon-wash); }
+.status-chip.proposed { border-color: var(--state-proposed); color: var(--state-proposed); background: var(--state-proposed-wash); }
+.status-chip.caution { border-color: var(--state-caution); color: var(--state-caution); background: var(--state-caution-wash); }
+.status-chip.risk { border-color: var(--state-risk); color: var(--state-risk); background: var(--state-risk-wash); }
+
+.statusbar-tail { display: flex; align-items: center; gap: var(--space-3); }
+.statusbar-tail .clock { font-variant-numeric: tabular-nums; color: var(--muted); }
+.statusbar-tail .skin-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  font: var(--step--2) var(--mono);
+  color: var(--muted);
+  background: var(--steel);
+  cursor: pointer;
+  transition: all var(--fast);
+  box-shadow: var(--shadow-inner);
+}
+.statusbar-tail .skin-toggle:hover { border-color: var(--brass); color: var(--brass); background: var(--steel-bright); }
+
+/* ============================================================================
+   TOAST NOTIFICATIONS
+   ============================================================================ */
+.toast-container {
+  position: fixed;
+  bottom: calc(var(--statusbar-h) + var(--space-3));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-2);
+  background: var(--steel);
+  color: var(--fg);
+  font: 500 var(--step--1) var(--sans);
+  box-shadow: var(--shadow-3);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all var(--base);
+  pointer-events: auto;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.ok { border-color: var(--state-canon); background: var(--state-canon-wash); color: var(--state-canon); }
+.toast.warn { border-color: var(--state-caution); background: var(--state-caution-wash); color: var(--state-caution); }
+.toast.err { border-color: var(--state-risk); background: var(--state-risk-wash); color: var(--state-risk); }
+.toast.info { border-color: var(--water); background: var(--water-pale); color: var(--water); }
+
+/* ============================================================================
+   SCROLLBARS
+   ============================================================================ */
+* { scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 4px; border: 2px solid transparent; background-clip: content-box; }
+*::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ============================================================================
+   FOCUS VISIBLE
+   ============================================================================ */
+*:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+}
+
+/* ============================================================================
+   SELECTION
+   ============================================================================ */
+::selection { background: var(--brass); color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="atelier-shell" id="shell">
+  <!-- BENCH TOP — The Tool Bar -->
+  <header class="atelier-bench-top">
+    <a href="/" class="bench-brand" aria-label="APT-LABS Field Desk">
+      <div class="bench-brand-mark">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18.5 12 4l8 14.5M7.1 13h9.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="4" r="1.5" fill="currentColor"/></svg>
+      </div>
+      <span class="bench-brand-text">APT—LABS<mark>Field Desk</mark></span>
+    </a>
+
+    <div class="bench-project">
+      <span class="bench-project-label">Project</span>
+      <span class="bench-project-value" id="projectName">nyamindi-hydro</span>
+    </div>
+
+    <div class="bench-coords" id="coordsDisplay" aria-live="polite">
+      <span>LAT: <span id="lat">-0.4167</span></span>
+      <span class="coord-sep">|</span>
+      <span>LNG: <span id="lng">37.3833</span></span>
+      <span class="coord-sep">|</span>
+      <span>REV: <span id="rev">v3</span></span>
+    </div>
+
+    <div class="bench-actions">
+      <button class="bench-tool-btn" id="toolZoomIn" title="Zoom in" aria-label="Zoom in"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M11 8v6M8 11h6"/></svg></button>
+      <button class="bench-tool-btn" id="toolZoomOut" title="Zoom out" aria-label="Zoom out"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M8 11h6"/></svg></button>
+      <button class="bench-tool-btn" id="toolReset" title="Reset view" aria-label="Reset view"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/><circle cx="12" cy="12" r="3"/></svg></button>
+      <button class="bench-tool-btn" id="toolSignal" title="Log friction signal" aria-label="Log friction signal"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/><circle cx="12" cy="12" r="1"/></svg></button>
+      <button class="bench-tool-btn" id="toolGrid" title="Toggle grid" aria-label="Toggle grid" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg></button>
+      <button class="bench-profile" id="profileBtn" aria-label="Open identity cabinet" aria-expanded="false" aria-controls="identityCabinet" aria-haspopup="dialog">
+        <span class="bench-avatar">SO</span>
+        <span class="bench-name">S. Otieno</span>
+        <svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 6.5 8 10l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- TOOL WALL — The Pegboard -->
+  <nav class="atelier-tool-wall" aria-label="Primary workspace tools">
+    <div class="tool-rack">
+      <button class="tool-peg is-active" data-tool="field-desk" aria-label="Field Desk" title="Field Desk">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span class="tool-label">Field Desk</span>
+        <span class="tool-badge">F4</span>
+      </button>
+      <button class="tool-peg" data-tool="school-console" aria-label="School Console" title="School Console">
+        <svg viewBox="0 0 24 24"><path d="M5 3v18M19 3v18M3 7h18M3 13h18M3 19h18"/><path d="M7 7h10M7 13h10"/></svg>
+        <span class="tool-label">School Console</span>
+        <span class="tool-badge">F5</span>
+      </button>
+
+      <div class="tool-divider" aria-hidden="true"></div>
+
+      <button class="tool-peg" data-tool="commons" aria-label="Commons" title="Commons">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 12l6-6M12 4v4M20 12h-4"/></svg>
+        <span class="tool-label">Commons</span>
+        <span class="tool-badge">F1</span>
+      </button>
+      <button class="tool-peg" data-tool="network" aria-label="Network" title="Network">
+        <svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><path d="M3 19v-2a6 6 0 0 1 12 0v2M16 6a3 3 0 0 1 0 6M21 13a3.8 3.8 0 0 1-3 3.8V19h-3"/></svg>
+        <span class="tool-label">Network</span>
+        <span class="tool-badge">F2</span>
+      </button>
+      <button class="tool-peg" data-tool="records" aria-label="Records" title="Records">
+        <svg viewBox="0 0 24 24"><path d="M6 20.5V3.5a1.5 1.5 0 0 1 1.5-1.5h9a1.5 1.5 0 0 1 1.5 1.5v17a1.5 1.5 0 0 1-1.5 1.5h-9a1.5 1.5 0 0 1-1.5-1.5z"/><path d="M7.5 11h9M7.5 15h6"/></svg>
+        <span class="tool-label">Records</span>
+        <span class="tool-badge">F3</span>
+      </button>
+      <button class="tool-peg" data-tool="intelligence" aria-label="Intelligence" title="Intelligence">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16z"/><path d="M12 8v4l3 3"/></svg>
+        <span class="tool-label">Intelligence</span>
+        <span class="tool-badge">F6</span>
+      </button>
+
+      <div class="tool-divider" aria-hidden="true"></div>
+
+      <div class="tool-vernier" aria-label="Precision indicator" role="img" aria-live="polite">
+        <div class="vernier-tick active" aria-hidden="true"></div>
+        <div class="vernier-tick" aria-hidden="true"></div>
+        <div class="vernier-tick" aria-hidden="true"></div>
+        <div class="vernier-tick" aria-hidden="true"></div>
+        <div class="vernier-tick" aria-hidden="true"></div>
+        <div class="vernier-tick active" aria-hidden="true"></div>
+        <div class="vernier-tick" aria-hidden="true"></div>
+        <div class="vernier-tick" aria-hidden="true"></div>
+        <div class="vernier-tick" aria-hidden="true"></div>
+        <div class="vernier-tick" aria-hidden="true"></div>
+        <div class="vernier-tick active" aria-hidden="true"></div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- TOTE — The Material Bin -->
+  <aside class="atelier-tote" aria-label="Material tote" id="tote">
+    <div class="tote-liner" aria-hidden="true"></div>
+
+    <div class="tote-section">
+      <div class="tote-label">
+        <span class="tote-label-text">Published Tenders</span>
+        <span class="tote-count">12</span>
+      </div>
+      <div class="material-grid" id="publishedGrid"></div>
+    </div>
+
+    <div class="tote-section">
+      <div class="tote-label">
+        <span class="tote-label-text">Illustrative Scenarios</span>
+        <span class="tote-count">3</span>
+      </div>
+      <div class="material-stack" id="illustrativeStack"></div>
+    </div>
+
+    <div class="tote-section">
+      <div class="tote-label">
+        <span class="tote-label-text">Friction Signals</span>
+        <span class="tote-count">7</span>
+      </div>
+      <div class="material-stack" id="frictionStack"></div>
+    </div>
+  </aside>
+
+  <!-- BENCH — The Work Surface -->
+  <main class="atelier-bench" id="bench">
+    <div class="bench-surface" aria-hidden="true"></div>
+
+    <article class="blueprint" id="blueprint" aria-label="Tender blueprint">
+      <header class="blueprint-header">
+        <div class="blueprint-title-block">
+          <span class="blueprint-drawing-no">DWG-NYAMINDI-HYDRO-003</span>
+          <span class="blueprint-drawing-title" id="bpTitle">Nyamindi Hydro Mini-Grid</span>
+        </div>
+        <div class="blueprint-rev-block">
+          <span class="rev-label">Rev</span>
+          <span class="rev-value" id="bpRev">v3</span>
+          <span class="rev-label">Sheet</span>
+          <span class="rev-value">1/1</span>
+          <span class="rev-label">Scale</span>
+          <span class="rev-value">1:5000</span>
+        </div>
+      </header>
+
+      <!-- Published Layer -->
+      <div class="bp-layer published" data-layer="published">
+        <div class="blueprint-node published" id="bp-nyamindi" style="top: 30%; left: 40%;" data-name="Nyamindi Hydro" data-status="Published" data-category="energy" data-coords="-0.4167, 37.3833" tabindex="0" role="button" aria-label="Nyamindi Hydro Mini-Grid">
+          <div class="bp-marker">⚡</div>
+          <div class="bp-label">Nyamindi Hydro</div>
+        </div>
+        <div class="blueprint-node published" id="bp-tender" style="top: 55%; left: 58%;" data-name="Tender System" data-status="Published" data-category="software" data-coords="-1.2921, 36.8219" tabindex="0" role="button" aria-label="Tender System">
+          <div class="bp-marker">◉</div>
+          <div class="bp-label">Tender System</div>
+        </div>
+        <div class="blueprint-node published" id="bp-solar" style="top: 20%; left: 65%;" data-name="Solar Commons" data-status="Published" data-category="energy" data-coords="-0.1500, 37.5000" tabindex="0" role="button" aria-label="Solar Commons Initiative">
+          <div class="bp-marker">☀</div>
+          <div class="bp-label">Solar Commons</div>
+        </div>
+        <div class="blueprint-node published" id="bp-housing" style="top: 75%; left: 28%;" data-name="Cooperative Housing" data-status="Published" data-category="housing" data-coords="-1.3500, 36.7800" tabindex="0" role="button" aria-label="Cooperative Housing Trust">
+          <div class="bp-marker">🏠</div>
+          <div class="bp-label">Coop Housing</div>
+        </div>
+      </div>
+
+      <!-- Illustrative Layer -->
+      <div class="bp-layer illustrative" data-layer="illustrative">
+        <div class="blueprint-node illustrative" id="bp-mwea" style="top: 70%; left: 25%;" data-name="Mwea Animation" data-status="Illustrative" data-category="media" data-coords="-0.7000, 37.6333" tabindex="0" role="button" aria-label="Mwea Animation Box">
+          <div class="bp-marker">✦</div>
+          <div class="bp-label">Mwea Animation</div>
+        </div>
+        <div class="blueprint-node illustrative" id="bp-design-lib" style="top: 38%; left: 80%;" data-name="Open Design Library" data-status="Illustrative" data-category="commons" data-coords="-1.1000, 36.9000" tabindex="0" role="button" aria-label="Open Design Library">
+          <div class="bp-marker">📚</div>
+          <div class="bp-label">Open Design Lib</div>
+        </div>
+        <div class="blueprint-node illustrative" id="bp-land-trust" style="top: 88%; left: 70%;" data-name="Community Land Trust" data-status="Illustrative" data-category="land" data-coords="-0.9500, 37.1000" tabindex="0" role="button" aria-label="Community Land Trust">
+          <div class="bp-marker">🌍</div>
+          <div class="bp-label">Land Trust</div>
+        </div>
+      </div>
+
+      <!-- Friction Layer -->
+      <div class="bp-layer friction" data-layer="friction">
+        <div class="blueprint-node friction" id="bp-friction-culture" style="top: 45%; left: 20%;" data-name="Culture Friction" data-status="Signal" data-category="culture" data-coords="-0.7000, 37.6333" tabindex="0" role="button" aria-label="Culture friction signal">
+          <div class="bp-marker">⚠</div>
+          <div class="bp-label">Culture: Authorship</div>
+        </div>
+        <div class="blueprint-node friction" id="bp-friction-education" style="top: 38%; left: 64%;" data-name="Education Friction" data-status="Signal" data-category="education" data-coords="-0.4167, 37.3833" tabindex="0" role="button" aria-label="Education friction signal">
+          <div class="bp-marker">⚠</div>
+          <div class="bp-label">Education: Infra</div>
+        </div>
+        <div class="blueprint-node friction" id="bp-friction-work" style="top: 63%; left: 75%;" data-name="Work Friction" data-status="Signal" data-category="work" data-coords="-1.2921, 36.8219" tabindex="0" role="button" aria-label="Work friction signal">
+          <div class="bp-marker">⚠</div>
+          <div class="bp-label">Work: Capability</div>
+        </div>
+      </div>
+
+      <!-- Connections -->
+      <svg class="bp-connections" style="position:absolute; inset:0; pointer-events:none; z-index:1;" aria-hidden="true">
+        <line class="bp-connection active" x1="40%" y1="30%" x2="58%" y2="55%" stroke="var(--brass)" stroke-width="1.5" stroke-dasharray="8,4"/>
+        <line class="bp-connection" x1="40%" y1="30%" x2="65%" y2="20%" stroke="var(--hairline)" stroke-width="1" stroke-dasharray="4,4"/>
+        <line class="bp-connection" x1="58%" y1="55%" x2="70%" y2="75%" stroke="var(--hairline)" stroke-width="1" stroke-dasharray="4,4"/>
+      </svg>
+
+      <div class="blueprint-tools">
+        <button class="bp-tool" id="bpZoomIn" title="Zoom in" aria-label="Zoom in"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M11 8v6M8 11h6"/></svg></button>
+        <button class="bp-tool" id="bpZoomOut" title="Zoom out" aria-label="Zoom out"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M8 11h6"/></svg></button>
+        <button class="bp-tool" id="bpReset" title="Reset view" aria-label="Reset view"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/><circle cx="12" cy="12" r="3"/></svg></button>
+        <button class="bp-tool" id="bpLayers" title="Toggle layers" aria-label="Toggle layers"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg></button>
+      </div>
+
+      <div class="blueprint-legend" aria-label="Blueprint legend">
+        <div style="display:flex; gap:12px; align-items:center;">
+          <span style="display:flex; align-items:center; gap:6px;"><span style="width:12px; height:12px; border-radius:50%; border:2px solid var(--state-canon); background:var(--state-canon-wash);"></span>Published</span>
+          <span style="display:flex; align-items:center; gap:6px;"><span style="width:12px; height:12px; border-radius:50%; border:2px dashed var(--state-caution); background:var(--state-caution-wash);"></span>Illustrative</span>
+          <span style="display:flex; align-items:center; gap:6px;"><span style="width:12px; height:12px; border-radius:50%; border:2px solid var(--water); background:var(--water-pale);"></span>Friction</span>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- VISE — The Inspection Clamp -->
+  <aside class="atelier-vise" aria-label="Inspection vise" id="vise">
+    <!-- Empty State -->
+    <div class="vise-empty" id="viseEmpty">
+      <svg viewBox="0 0 72 72" aria-hidden="true"><rect x="8" y="8" width="56" height="56" rx="4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M36 16v12M36 44v12M16 36h12M44 36h12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <p class="vise-empty-title">No Material Clamped</p>
+      <p class="vise-empty-desc">Select a tender, scenario, or signal from the tote or blueprint to clamp it in the vise for detailed inspection, specification review, and action.</p>
+    </div>
+
+    <!-- Nyamindi Vise Panel -->
+    <div class="vise-panel" id="vise-nyamindi" style="display: none;">
+      <header class="vise-head">
+        <h3 class="vise-title">Nyamindi Hydro Mini-Grid</h3>
+        <span class="vise-badge published">PUBLISHED</span>
+      </header>
+      <div class="vise-body">
+        <div class="spec-sheet">
+          <div class="spec-head">Asset Specification</div>
+          <div class="spec-grid">
+            <span class="spec-label">Asset ID</span><span class="spec-value mono">nyamindi-hydro</span>
+            <span class="spec-label">Category</span><span class="spec-value">Energy</span>
+            <span class="spec-label">Location</span><span class="spec-value">Nyamindi, Embu County</span>
+            <span class="spec-label">Coordinates</span><span class="spec-value mono">-0.4167°, 37.3833°</span>
+            <span class="spec-label">Grid Ref</span><span class="spec-value mono">37K 402850 9912450</span>
+            <span class="spec-label">Build Cost</span><span class="spec-value mono brass">KES 18,750,000</span>
+            <span class="spec-label">Funding Target</span><span class="spec-value mono brass">KES 15,000,000</span>
+            <span class="spec-label">Settled</span><span class="spec-value mono water">KES 8,250,000 (55%)</span>
+            <span class="spec-label">Status</span><span class="spec-value water">MATERIALS</span>
+            <span class="spec-label">Blueprint</span><span class="spec-value mono">v3 — 7f3a2e91c4d8...</span>
+            <span class="spec-label">Lines</span><span class="spec-value">12 items</span>
+            <span class="spec-label">Crew</span><span class="spec-value">Anchor: W. Mbau | Builder: J. Koome | Apprentice: K. Njeri</span>
+          </div>
+        </div>
+        <div class="vise-actions">
+          <button class="vise-btn primary" data-action="open-assembly">OPEN ASSEMBLY</button>
+          <button class="vise-btn" data-action="inspect-blueprint">INSPECT BLUEPRINT</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tender System Vise Panel -->
+    <div class="vise-panel" id="vise-tender" style="display: none;">
+      <header class="vise-head">
+        <h3 class="vise-title">Tender System</h3>
+        <span class="vise-badge published">PUBLISHED</span>
+      </header>
+      <div class="vise-body">
+        <div class="spec-sheet">
+          <div class="spec-head">Asset Specification</div>
+          <div class="spec-grid">
+            <span class="spec-label">Asset ID</span><span class="spec-value mono">tender-system</span>
+            <span class="spec-label">Category</span><span class="spec-value">Software</span>
+            <span class="spec-label">Location</span><span class="spec-value">Nairobi, Kenya (APT-LABS HQ)</span>
+            <span class="spec-label">Coordinates</span><span class="spec-value mono">-1.2921°, 36.8219°</span>
+            <span class="spec-label">Grid Ref</span><span class="spec-value mono">37K 448200 9856300</span>
+            <span class="spec-label">Build Cost</span><span class="spec-value mono brass">KES 12,400,000</span>
+            <span class="spec-label">Funding Target</span><span class="spec-value mono brass">KES 10,000,000</span>
+            <span class="spec-label">Settled</span><span class="spec-value mono canon">KES 10,000,000 (100%)</span>
+            <span class="spec-label">Status</span><span class="spec-value canon">DEPLOYED</span>
+            <span class="spec-label">Roll Entry</span><span class="spec-value mono">roll:tender-system (2026-10-15)</span>
+            <span class="spec-label">Crew</span><span class="spec-value">Anchor: S. Otieno | Builder: M. Wambui | Apprentice: L. Kimani</span>
+          </div>
+        </div>
+        <div class="vise-actions">
+          <button class="vise-btn primary" data-action="view-roll">VIEW ROLL ENTRY</button>
+          <button class="vise-btn" data-action="recruit">RECRUIT</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mwea Vise Panel -->
+    <div class="vise-panel" id="vise-mwea" style="display: none;">
+      <header class="vise-head">
+        <h3 class="vise-title">Mwea Animation Box</h3>
+        <span class="vise-badge illustrative">ILLUSTRATIVE</span>
+      </header>
+      <div class="vise-body">
+        <div class="spec-sheet">
+          <div class="spec-head">Asset Specification</div>
+          <div class="spec-grid">
+            <span class="spec-label">Asset ID</span><span class="spec-value mono">mwea-animation</span>
+            <span class="spec-label">Category</span><span class="spec-value">Media</span>
+            <span class="spec-label">Location</span><span class="spec-value">Mwea, Kirinyaga County</span>
+            <span class="spec-label">Coordinates</span><span class="spec-value mono">-0.7000°, 37.6333°</span>
+            <span class="spec-label">Grid Ref</span><span class="spec-value mono">37K 570000 9922000</span>
+            <span class="spec-label">Build Cost</span><span class="spec-value mono brass">KES 2,400,000</span>
+            <span class="spec-label">Funding Target</span><span class="spec-value mono brass">KES 2,400,000</span>
+            <span class="spec-label">Settled</span><span class="spec-value mono water">KES 0 (0%)</span>
+            <span class="spec-label">Status</span><span class="spec-value water">DRAFT</span>
+            <span class="spec-label">Blueprint</span><span class="spec-value mono water">v1 proposed (unverified)</span>
+            <span class="spec-label">Crew</span><span class="spec-value water">Unassigned — requires community mandate</span>
+          </div>
+        </div>
+        <div class="vise-actions">
+          <button class="vise-btn primary" data-action="draft-brief">DRAFT BRIEF</button>
+          <button class="vise-btn" data-action="recruit">RECRUIT</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Friction Vise Panel -->
+    <div class="vise-panel" id="vise-friction" style="display: none;">
+      <header class="vise-head">
+        <h3 class="vise-title">Friction Radar — Culture</h3>
+        <span class="vise-badge friction">SIGNAL</span>
+      </header>
+      <div class="vise-body">
+        <div class="spec-sheet">
+          <div class="spec-head">Signal Record</div>
+          <div class="spec-grid">
+            <span class="spec-label">Room</span><span class="spec-value">Culture / Stories & Authorship</span>
+            <span class="spec-label">Signal</span><span class="spec-value">Who can author, own, distribute, and earn from stories rooted in local life?</span>
+            <span class="spec-label">Origin</span><span class="spec-value">Mwea · Context to establish with participants</span>
+            <span class="spec-label">First Question</span><span class="spec-value">Whose account is missing, and who should hold authorship and rights if new story work is created?</span>
+            <span class="spec-label">Collective Response</span><span class="spec-value">Map authorship, language, rights, distribution & livelihood constraints before choosing a medium</span>
+          </div>
+        </div>
+        <div class="vise-actions">
+          <button class="vise-btn primary" data-action="log-friction">LOG FRICTION</button>
+          <button class="vise-btn" data-action="adapt">ADAPT</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- STATUSBAR — The Shop Footer -->
+  <footer class="atelier-statusbar" role="status" aria-live="polite">
+    <div class="statusbar-ledger">
+      <span class="ledger-label">Ledger</span>
+      <span class="ledger-hash" id="ledgerHash">7f3a2e91c4d8...</span>
+    </div>
+
+    <div class="statusbar-center">
+      <span class="status-chip canon">VERIFIED</span>
+      <span class="status-chip proposed">3 PROPOSED</span>
+      <span class="status-chip caution">2 GAPS</span>
+      <span class="status-chip risk">1 RECONCILE</span>
+    </div>
+
+    <div class="statusbar-tail">
+      <span class="clock" id="clock">14:32:07</span>
+      <button class="skin-toggle" id="skinToggle" aria-label="Toggle light/dark mode" title="Toggle theme">
+        <svg width="12" height="12" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="M10 2v4M10 14v4M2 10h4M14 10h4M4.5 4.5l2.8 2.8M12.7 12.7l2.8 2.8M4.5 15.5l2.8-2.8M12.7 7.3l2.8-2.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span id="skinLabel">DARK</span>
+      </button>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+</div>
+
+<script>
+/* ============================================================================
+   WORKSHOP ATELIER — Interactive Prototype
+   ============================================================================ */
+
+const shell = document.getElementById('shell');
+const tote = document.getElementById('tote');
+const blueprint = document.getElementById('blueprint');
+const vise = document.getElementById('vise');
+const viseEmpty = document.getElementById('viseEmpty');
+const visePanels = document.querySelectorAll('.vise-panel[id^="vise-"]');
+const blueprintNodes = document.querySelectorAll('.blueprint-node');
+const toteCards = document.querySelectorAll('.material-card');
+const toteStackItems = document.querySelectorAll('.stack-item');
+const toolPegs = document.querySelectorAll('.tool-peg');
+const toastContainer = document.getElementById('toastContainer');
+const skinToggle = document.getElementById('skinToggle');
+const skinLabel = document.getElementById('skinLabel');
+const clockEl = document.getElementById('clock');
+
+let selectedNode = null;
+let selectedSource = null; // 'tote-card', 'tote-stack', 'blueprint'
+let gridEnabled = true;
+
+// --- Data ---
+const publishedMaterials = [
+  { id: 'nyamindi-hydro', name: 'Nyamindi Hydro', type: 'ENERGY', status: 'canon', cost: 'KES 18.75M', icon: '⚡' },
+  { id: 'tender-system', name: 'Tender System', type: 'SOFTWARE', status: 'canon', cost: 'KES 12.4M', icon: '◉' },
+  { id: 'solar-commons', name: 'Solar Commons', type: 'ENERGY', status: 'canon', cost: 'KES 8.2M', icon: '☀' },
+  { id: 'coop-housing', name: 'Coop Housing', type: 'HOUSING', status: 'canon', cost: 'KES 24.0M', icon: '🏠' },
+  { id: 'water-trust', name: 'Water Trust', type: 'WATER', status: 'canon', cost: 'KES 5.6M', icon: '💧' },
+  { id: 'fiber-loop', name: 'Fiber Loop', type: 'TELECOM', status: 'canon', cost: 'KES 15.3M', icon: '🔗' },
+];
+
+const illustrativeMaterials = [
+  { id: 'mwea-animation', name: 'Mwea Animation', type: 'MEDIA', status: 'proposed', cost: 'KES 2.4M', icon: '✦' },
+  { id: 'design-library', name: 'Open Design Library', type: 'COMMONS', status: 'proposed', cost: 'KES 1.2M', icon: '📚' },
+  { id: 'land-trust', name: 'Community Land Trust', type: 'LAND', status: 'proposed', cost: 'KES 42.0M', icon: '🌍' },
+];
+
+const frictionMaterials = [
+  { id: 'friction-culture', name: 'Culture: Authorship', type: 'CULTURE', status: 'caution', cost: '—', icon: '⚠' },
+  { id: 'friction-education', name: 'Education: Infrastructure', type: 'EDUCATION', status: 'caution', cost: '—', icon: '⚠' },
+  { id: 'friction-work', name: 'Work: Capability', type: 'WORK', status: 'risk', cost: '—', icon: '⚠' },
+  { id: 'friction-energy', name: 'Energy: Grid Access', type: 'ENERGY', status: 'caution', cost: '—', icon: '⚠' },
+];
+
+// --- Clock ---
+function updateClock() {
+  const now = new Date();
+  clockEl.textContent = now.toLocaleTimeString('en-GB', { hour12: false, timeZone: 'Africa/Nairobi' });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// --- Toast System ---
+function showToast(message, type = 'info') {
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  toastContainer.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+// --- Render Tote ---
+function renderTote() {
+  const pubGrid = document.getElementById('publishedGrid');
+  pubGrid.innerHTML = publishedMaterials.map(m => `
+    <article class="material-card${m.id === 'nyamindi-hydro' ? ' is-selected' : ''}" data-id="${m.id}" tabindex="0" role="button" aria-label="${m.name}">
+      <span class="material-type">${m.type}</span>
+      <span class="material-name">${m.name}</span>
+      <div class="material-meta">
+        <span class="material-status ${m.status}">${m.status.toUpperCase()}</span>
+        <span class="material-cost">${m.cost}</span>
+      </div>
+    </article>
+  `).join('');
+
+  const illStack = document.getElementById('illustrativeStack');
+  illStack.innerHTML = illustrativeMaterials.map(m => `
+    <div class="stack-item${m.id === 'mwea-animation' ? ' is-selected' : ''}" data-id="${m.id}" tabindex="0" role="button" aria-label="${m.name}">
+      <div class="stack-swatch ${m.status}"></div>
+      <div class="stack-info">
+        <span class="stack-name">${m.name}</span>
+        <span class="stack-detail">${m.type} · ${m.cost}</span>
+      </div>
+      <div class="stack-actions">
+        <button class="stack-btn" data-action="inspect" aria-label="Inspect ${m.name}"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button>
+        <button class="stack-btn" data-action="promote" aria-label="Promote ${m.name}"><svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg></button>
+      </div>
+    </div>
+  `).join('');
+
+  const fricStack = document.getElementById('frictionStack');
+  fricStack.innerHTML = frictionMaterials.map(m => `
+    <div class="stack-item${m.id === 'friction-culture' ? ' is-selected' : ''}" data-id="${m.id}" tabindex="0" role="button" aria-label="${m.name}">
+      <div class="stack-swatch ${m.status}"></div>
+      <div class="stack-info">
+        <span class="stack-name">${m.name}</span>
+        <span class="stack-detail">${m.type} · ${m.status.toUpperCase()}</span>
+      </div>
+      <div class="stack-actions">
+        <button class="stack-btn" data-action="inspect" aria-label="Inspect ${m.name}"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button>
+        <button class="stack-btn" data-action="resolve" aria-label="Resolve ${m.name}"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></button>
+      </div>
+    </div>
+  `).join('');
+
+  // Re-bind events
+  document.querySelectorAll('.material-card').forEach(card => {
+    card.addEventListener('click', () => selectFromTote(card, 'card'));
+    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectFromTote(card, 'card'); } });
+  });
+  document.querySelectorAll('.stack-item').forEach(item => {
+    item.addEventListener('click', e => {
+      if (e.target.closest('.stack-btn')) return;
+      selectFromTote(item, 'stack');
+    });
+    item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectFromTote(item, 'stack'); } });
+  });
+  document.querySelectorAll('.stack-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      showToast(`Action: ${btn.dataset.action}`, 'ok');
+    });
+  });
+}
+
+// --- Selection Logic ---
+function selectNode(node, source) {
+  // Clear previous
+  if (selectedNode) {
+    selectedNode.classList.remove('is-selected');
+  }
+  document.querySelectorAll('.material-card, .stack-item').forEach(el => el.classList.remove('is-selected'));
+
+  // Set new
+  node.classList.add('is-selected');
+  selectedNode = node;
+  selectedSource = source;
+
+  // Update coordinates
+  const coords = node.dataset.coords || (node.dataset.id ? getCoordsForId(node.dataset.id) : null);
+  if (coords) {
+    document.getElementById('lat').textContent = coords.lat + '°';
+    document.getElementById('lng').textContent = coords.lng + '°';
+  }
+
+  // Update project name
+  document.getElementById('projectName').textContent = node.dataset.name || node.dataset.id;
+  document.getElementById('bpTitle').textContent = node.dataset.name || node.dataset.id;
+  document.getElementById('bpRev').textContent = node.dataset.rev || 'v1';
+
+  // Show vise panel
+  viseEmpty.style.display = 'none';
+  visePanels.forEach(p => p.style.display = 'none');
+  const panelId = 'vise-' + node.dataset.id.replace('bp-', '').replace('friction-', '');
+  const panel = document.getElementById(panelId);
+  if (panel) panel.style.display = 'flex';
+
+  // Sync blueprint selection
+  blueprintNodes.forEach(n => n.classList.toggle('is-selected', n.dataset.id === node.dataset.id.replace('bp-', '')));
+
+  showToast(`Clamped: ${node.dataset.name || node.dataset.id}`, 'ok');
+}
+
+function selectFromTote(el, type) {
+  selectNode(el, 'tote-' + type);
+  // Scroll blueprint to node if exists
+  const bpNode = document.getElementById('bp-' + el.dataset.id);
+  if (bpNode) {
+    bpNode.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+    bpNode.classList.add('is-selected');
+    selectedNode = bpNode;
+    selectedSource = 'blueprint';
+  }
+}
+
+function getCoordsForId(id) {
+  const coords = {
+    'nyamindi-hydro': { lat: '-0.4167', lng: '37.3833' },
+    'tender-system': { lat: '-1.2921', lng: '36.8219' },
+    'solar-commons': { lat: '-0.1500', lng: '37.5000' },
+    'coop-housing': { lat: '-1.3500', lng: '36.7800' },
+    'mwea-animation': { lat: '-0.7000', lng: '37.6333' },
+    'design-library': { lat: '-1.1000', lng: '36.9000' },
+    'land-trust': { lat: '-0.9500', lng: '37.1000' },
+    'friction-culture': { lat: '-0.7000', lng: '37.6333' },
+    'friction-education': { lat: '-0.4167', lng: '37.3833' },
+    'friction-work': { lat: '-1.2921', lng: '36.8219' },
+    'friction-energy': { lat: '-0.1500', lng: '37.5000' },
+  };
+  return coords[id] || { lat: '—', lng: '—' };
+}
+
+// --- Tool Peg Switch ---
+function switchTool(tool) {
+  toolPegs.forEach(p => p.classList.toggle('is-active', p.dataset.tool === tool));
+  showToast(`Tool: ${tool.replace('-', ' ').toUpperCase()}`);
+}
+
+// --- Theme Toggle ---
+function toggleTheme() {
+  const isLight = document.documentElement.getAttribute('data-skin') === 'light';
+  document.documentElement.setAttribute('data-skin', isLight ? 'dark' : 'light');
+  skinLabel.textContent = isLight ? 'DARK' : 'LIGHT';
+  skinToggle.querySelector('svg').innerHTML = isLight
+    ? '<circle cx="10" cy="10" r="6"/><path d="M10 2v4M10 14v4M2 10h4M14 10h4M4.5 4.5l2.8 2.8M12.7 12.7l2.8 2.8M4.5 15.5l2.8-2.8M12.7 7.3l2.8-2.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>'
+    : '<path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0 1.5a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13z"/><path d="M10 6v4l2.5 2.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>';
+  showToast(`Theme: ${isLight ? 'Dark' : 'Light'}`, 'info');
+}
+
+// --- Grid Toggle ---
+function toggleGrid() {
+  gridEnabled = !gridEnabled;
+  document.querySelector('.bench-surface').style.opacity = gridEnabled ? '1' : '0';
+  document.getElementById('toolGrid').setAttribute('aria-pressed', gridEnabled);
+  showToast(`Grid: ${gridEnabled ? 'on' : 'off'}`, 'info');
+}
+
+// --- Event Listeners ---
+blueprintNodes.forEach(node => {
+  node.addEventListener('click', () => selectNode(node, 'blueprint'));
+  node.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectNode(node, 'blueprint'); } });
+});
+
+toolPegs.forEach(p => p.addEventListener('click', () => switchTool(p.dataset.tool)));
+
+skinToggle.addEventListener('click', toggleTheme);
+document.getElementById('toolGrid').addEventListener('click', toggleGrid);
+
+document.getElementById('toolReset').addEventListener('click', () => {
+  selectNode(document.getElementById('bp-nyamindi'), 'blueprint');
+  showToast('View reset to Nyamindi Hydro', 'info');
+});
+document.getElementById('bpReset').addEventListener('click', () => {
+  selectNode(document.getElementById('bp-nyamindi'), 'blueprint');
+  showToast('View reset to Nyamindi Hydro', 'info');
+});
+
+document.getElementById('toolSignal').addEventListener('click', () => {
+  showToast('Friction signal logger: not implemented in prototype', 'warn');
+});
+document.getElementById('bpLayers').addEventListener('click', () => {
+  showToast('Layer panel: not implemented in prototype', 'info');
+});
+
+document.querySelectorAll('.vise-btn, .stack-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    showToast(`Action: ${btn.dataset.action}`, 'ok');
+  });
+});
+
+// Initialize
+renderTote();
+selectNode(document.getElementById('bp-nyamindi'), 'blueprint');
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input, textarea, button, [contenteditable]')) return;
+  if (e.key === 'g' && !e.metaKey && !e.ctrlKey) { toggleGrid(); }
+  if (e.key === 't' && !e.metaKey && !e.ctrlKey) { toggleTheme(); }
+  if (e.key === 'Escape') {
+    if (selectedNode) {
+      selectedNode.classList.remove('is-selected');
+      document.querySelectorAll('.material-card, .stack-item').forEach(el => el.classList.remove('is-selected'));
+      selectedNode = null;
+      viseEmpty.style.display = 'flex';
+      visePanels.forEach(p => p.style.display = 'none');
+    }
+  }
+  // Number keys for tools
+  if (e.key >= '1' && e.key <= '6' && !e.metaKey && !e.ctrlKey) {
+    const tools = ['commons', 'network', 'records', 'field-desk', 'school-console', 'intelligence'];
+    switchTool(tools[parseInt(e.key) - 1]);
+  }
+});
+
+console.log('🔨 Workshop Atelier — Masterpiece 2 loaded');
+console.log('Shortcuts: G = grid, T = theme, 1-6 = tools, Esc = release clamp');
+</script>
+</body>
+</html>

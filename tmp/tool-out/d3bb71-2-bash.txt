@@ -1,0 +1,255 @@
+17f5ea4 fix: TypeScript errors in FieldDesk and test setup
+bd76bfc feat: minimal workspace header + naked field desk
+7137260 feat: people workspace - diverse node graph with 50 nodes
+fb5c639 feat: redesign auth page with toggle-based sign in/up
+1a3af18 fix: remove Next.js middleware (incompatible with Vite SPA)
+14a901e fix: remove invalid rootDirectory from vercel.json
+8ec7c44 fix: add rootDirectory to vercel.json for root-level Vite project
+af8c44f fix: add vercel.json for Vite project deployment
+8af6223 feat: strip down to clean Vite + Preact + Wouter project (zeptepi)
+ec32e80 kiss: auto-commit agent work
+8d84f48 feat: Terminal REPL workspace (Design Direction 3)
+253eb32 feat: Terminal REPL workspace (Design Direction 3)
+29080c8 fix: restore landing and workspace styling
+e940649 docs: define visual style recovery design
+2c99530 Agent host session 84688647-dcb5-4b24-abb6-0330f7f535de - baseline checkpoint
+27dee13 fix: restore src/styles.css - remove old workspace-shell component styles that were corrupting the design system render
+978fe40 Agent host session d360254c-f18a-485c-95dd-88444e332d6c - baseline checkpoint
+0d07e6e \ fix: restore workspace-shell component styles - merged old atlas-* classes with new design tokens\
+d066b1b \ feat: fused design system - Field Atlas + Terminal REPL + Workshop constructivist - complete rewrite of styles.css with 5 God Math Principles,three unified color palettes,dark mode,component system,grid and noise textures\
+7a9ef80 Fix school-console.tsx: restore clean JSX structure from commit 8f5bb01
+27c9e4a Fix syntax error in school-console.tsx: close Issue Tender conditional block and wrap publish-boundary in expression
+980e2ae Merge branch 'master' of https://github.com/zion211112/dreamer
+3cf8345 fix: restore school-console.tsx from working state
+10cc009 feat: implement IDE design improvements with consistent panel sizing
+8f5bb01 feat: restore clean workspace structure with IDE design improvements
+00bb5c0 feat: add theme system and staging files
+71fcf26 feat: reset workspace to clean state for IDE design improvements
+0985c10 Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - turn 9
+b4b3eea Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - turn 9 start
+4b016f2 feat: simplify tower floor switching
+b2ce5dc Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - turn 8
+5d9ae41 Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - turn 8 start
+0c542b3 Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - turn 7
+3266217 Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - turn 7 start
+b189a50 Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - turn 6
+1808eac Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - turn 6 start
+a24d76a feat: refine workspace floors and shared layout
+51ead45 Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - turn 5
+ccfd52e Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - turn 5 start
+b11b9ec Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - turn 4
+875eecc Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - turn 4 start
+b45c929 Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - turn 3
+d2c8248 Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - turn 3 start
+3f197a2 Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - turn 2
+29af958 Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - turn 2 start
+1609096 Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - turn 1
+0ba4c68 Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - turn 1 start
+dbc57a3 feat: unified layout, neo highlights, god-math principles, enhanced lift, school console floor design
+6dcfd21 Agent host session 34fd8c56-a6ed-4bdb-a346-87bfbb2b64cd - baseline checkpoint
+e820830 Agent host session f0cafffb-2287-4f75-98e6-4bfaf2496913 - turn 6
+f4f75e9 Agent host session f0cafffb-2287-4f75-98e6-4bfaf2496913 - turn 6 start
+9e879db Add School Console as Second workspace floor
+0885f2e Agent host session f0cafffb-2287-4f75-98e6-4bfaf2496913 - turn 5
+18be8d3 Agent host session f0cafffb-2287-4f75-98e6-4bfaf2496913 - turn 5 start
+bf50494 Refine workspace kernel interactions
+07a795e Agent host session f0cafffb-2287-4f75-98e6-4bfaf2496913 - turn 4
+baa4c6b Agent host session f0cafffb-2287-4f75-98e6-4bfaf2496913 - turn 4 start
+2316024 Agent host session f0cafffb-2287-4f75-98e6-4bfaf2496913 - turn 3
+6bebaf8 Agent host session f0cafffb-2287-4f75-98e6-4bfaf2496913 - turn 3 start
+86e5b7a Refine Basement workspace layout
+d439eb0 Agent host session f0cafffb-2287-4f75-98e6-4bfaf2496913 - turn 2
+3d1b703 Agent host session f0cafffb-2287-4f75-98e6-4bfaf2496913 - turn 2 start
+c6bb19a Agent host session f0cafffb-2287-4f75-98e6-4bfaf2496913 - turn 1
+205aac2 Agent host session f0cafffb-2287-4f75-98e6-4bfaf2496913 - turn 1 start
+c31b8ab Agent host session f0cafffb-2287-4f75-98e6-4bfaf2496913 - baseline checkpoint
+58fc46e Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 13
+d13eda1 Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 13 start
+db8a3e0 Refine Workspace floor navigation and layout
+ac9d424 Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 12
+d7658ab Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 12 start
+e92327f Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 11
+5e7afeb Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 11 start
+bf0ebe6 Build signed-in user profile menu
+e44230f Document signed-in user profile menu design
+08e702d Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 10
+d2af4f5 Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 10 start
+2cf6981 Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 9
+43f593f Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 9 start
+d1fb241 Build Work Engines asset recruitment
+1838130 Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 8
+dc267bc Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 8 start
+6dc368e Simplify floor toggle and asset topology
+999aa88 Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 7
+d8ee7f6 Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 7 start
+f7c3837 Redesign Basement Radar fieldwork room
+17fa347 Build refined tower workspace shell
+de09754 Document APT-LABS tower workspace design
+b3cb3d5 Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 6
+4049006 Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 6 start
+a2ccd93 Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 5
+f55709b Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 5 start
+24fae93 Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 4
+4a4c418 Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 4 start
+6fee931 Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 3
+5ddcb59 Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 3 start
+a462d04 Build Basement friction signal workspace
+c533d6d Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 2
+d059a2b Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 2 start
+d429dd5 Simplify workspace floors and modules
+8f09068 Redesign workspace Field Atlas
+18cba69 Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 1
+f329353 Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - turn 1 start
+7359e36 Agent host session 1655b5bc-ce24-42e1-8709-0f6456717bf4 - baseline checkpoint
+1e9735b workspace-shell: polished 10/10 design (5-module nav, restyled nodes, color palette)
+b7842f2 workspace-shell: 5-module nav + asset topology graph (types fix)
+c245b88 workspace-shell: remove explicit any types (vercel eslint build fix)
+eda1bf3 workspace-shell: minimal asset topology scope (4 nodes, wallet, agent 1.0)
+6e0aef4 Revert styles.css to 2aeb8e0 (restores km-*/kemet-*/app-grid classes matching workspace-shell.tsx)
+c696e9b styles.css: append Field Atlas topology chunk C
+2aeb8e0 feat(workspace): replace neobrutalist shell with quiet-luxury editorial layer
+2809522 feat(workspace): luxury-neobrutalist shell shell + UI pass
+573c15f feat(workspace): port KEMET-OS terminal shell (five modules)
+77bfba4 refine(workspace): recursive sovereignty path, Thoth 1.0 agent, abstract minimal bg
+29522b8 fix(workspace): drop Assets/Commons/Roll from top strip
+3ec19fc fix(workspace): single top header strip with sign-out and workspace toggle
+d4175d7 feat(workspace): port Network Workspace into React with Supabase problem briefs
+860c761 refine(workspace): strip redundancy, tighten copy
+a1b9228 feat(workspace): port distilled Network Workspace prototype into Next.js
+f8438f6 feat(studio): replace the workspace cockpit with the Network Studio workbench
+edd739c refactor(studio): drop the duplicated Assets/Commons/Roll headers
+03b0e60 feat(auth): add local development identity so sign-in opens the studio
+0a6aed1 fix(sign-in): pass next prop to SignInForm
+2bd1cea fix(sign-in): fix AuthEntry TypeScript syntax
+770edce fix(sign-in): clean up AuthEntry props
+acd6295 fix(sign-in): clean up AuthEntry imports
+a0e25fa fix(sign-in): fix SignInForm reference in AuthEntry
+e65f89e fix(sign-in): remove unused getSiteOrigin import
+f82ef1d fix(sign-in): add missing onSuccess prop to SignInForm
+408ed70 fix(sign-in): clean local dev form messages
+87f3847 fix(sign-in): simplify to free email/password entry
+0959776 fix(sign-in): update metadata description for local dev
+a478285 fix(sign-in): remove unused directDevSignInAvailable variable
+ed40936 feat(sign-in): remove Supabase auth, use local dev account system
+ca663cd fix(sign-up): remove configured props from AuthEntry
+b43cd1f feat(sign-in): remove supabase config gates, enable Google sign-up for prototyping
+69d51cf feat(sign-in): remove supabase config gates, enable Google sign-up for prototyping
+e78839a fix(sign-in): remove orphaned dev-sign-in-button import
+93d04f4 chore(sign-in): delete orphaned dev sign-in button
+3958435 chore(env): point dev sign-in at skammba@gmail.com
+79a3110 feat(sign-in): Google-based admin email + drop legacy env fields
+fa0af7c Remove dev one-click sign-in
+7ed3c7d Auto-expand email/password sign-in when configured
+444779c Collapse header auth into one User dashboard control, add dev one-click sign-in
+908579c Record applied migrations in Supabase history table
+f5f3ebb Restore Supabase email/password sign-in and fix auth session handling
+69908ed Add direct sign-in for dev, gate nav lanes behind auth
+a5b565e Fix missing lucide icon imports for build
+4795559 Add admin login and remove guest mode
+31d61d9 Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - turn 9
+0ec4b87 Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - turn 9 start
+834f765 Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - turn 8
+72617e5 Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - turn 8 start
+9127d0d Build asset network studio experience
+b4119d3 Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - turn 7
+54849ae Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - turn 7 start
+a35a3be Build sovereign asset economics and capital intent
+0311fb0 Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - turn 6
+14811c3 Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - turn 6 start
+cb7dafc Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - turn 5
+b120e18 Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - turn 5 start
+cfbe86d docs: clarify Field Atlas spec metadata
+a3601cd docs: clean Field Atlas spec formatting
+11f20c1 docs: design sovereign field atlas redesign
+c82407f Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - turn 4
+55173ca Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - turn 4 start
+4d65e1e Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - turn 3
+7d5e603 Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - turn 3 start
+dd45452 feat: build role-aware workspace cockpit
+d87419a docs: specify role-aware workspace cockpit
+798d586 Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - turn 2
+af1a9a3 Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - turn 2 start
+b5861b7 Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - turn 1
+6468d06 Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - turn 1 start
+15740a5 docs: specify workspace and Commons architecture
+1df56d4 Agent host session 7911eb6c-c200-4f14-a138-25326a3fb221 - baseline checkpoint
+afbd892 feat: build sovereign tender engine
+7ac51b3 docs: specify sovereign tender engine architecture
+a2c11ed feat: port github-sparkle-link design system (ui, workspace, styles)
+98cbe5f chore: add package-lock.json for npm install
+ce8cb1a feat: port to Vite + TanStack Start and adopt github-sparkle-link design
+3049ae8 Reworked workflows and metrics
+51763f6 Changes
+100144c Changes
+08d951a Leaned Ship flow, added ledger
+9f2c404 Changes
+611c53d Changes
+ebb5d67 Changes
+846a630 Changes
+ee1dc08 Work in progress
+face936 fix: resolve build errors for Vercel deployment
+7eeff82 merge: integrate APT-LABS demo app with dreamer history
+8e1d762 feat: APT-LABS minimal masterpiece demo app
+0aebd36 APT-LABS: minimal working prototype with 5-module workspace and GitHub connectivity
+982e27d Initial: Github Sparkle Link Fusion Prototype with APT-LABS 5-module workspace
+8b90fdb Add project README
+62000f2 Added live design editing
+4836715 Changes
+b7520d0 Changes
+aacfcd2 Added Studio design-to-React flow
+0168eaa Changes
+4b1237b Changes
+48d9493 Changes
+41aa31c Changes
+f56c057 Changes
+00f29f5 refine: clean build path, stick to React app, remove Vite, add memory and docs
+cd03db7 fix: relax Tooltip cloneElement typing to avoid tsc error
+57f6582 fix: remove .ts extension from counter import
+65e4818 refine: minimal, typography-first APT-LABS site
+63b7e5a cleanup: strip all Kemet-OS references to 'the record'
+24cc83d refine: minimal, typography-first APT-LABS site
+3681905 distill: tighten hero lede per the teleological blueprint
+8b13bfe refactor: trim Kemet-OS from brand subtext
+374f7ff refactor: cut Kemet-OS duplication, collapse hero label, landing title
+98be7c7 refactor: research not laboratory, the yard not the desktop
+7c70e5a feat: enact the loop — SBT walk, anchor signatures, research submit, tally
+fdb9775 refactor: pages and sub-departments, not files — strip Kemet-OS landing
+0c3f400 feat: Kemet-OS landing, 5-module ontology, the ledger
+ae349ab feat: port task1 control surface design, discard old shell
+9039cbf fix: move Panel/Input tokens inside :root block, add .hairline utility
+1364bfd feat: refactor module system to kernel/network/builds architecture
+9f92b65 feat: add Supply/Demand market view toggle to Explorer
+051fff2 retrocausal control surface: ontology-aware search lane, 6-module nav, SBT kernel graph, contextual agent
+29e7b4d control surface shell: centered 6-module nav, github-style profile, 6-head explorer, instrument serif display font
+5c5ab48 complete workspace shell: top nav, explorer, inspector, editor
+1204c7e proto1: orchestrator interface shell — file tree, editor pane, status bar, command palette
+fa92206 proto1: orchestrator interface shell — file tree, editor pane, status bar, command palette
+5a18f4e newprotoshell: file-manager workspace from zero — sign-in, files, builds, tenders, console, vault
+c0ea361 feat: complete site build with merged token systems, all pages, and epistemic framework
+9906202 docs: add RAGFlow integration reference for session continuity
+eb4257e feat: complete site build with all pages, epistemic framework, and design system
+fe06485 fix: resolve build and check errors; update homepage, styles, contrast script; cleanup deleted files
+13b1c50 fix: stringify lineHeight values for Tailwind config type safety
+5f89689 refine tokens for SaaS matching, 10/10 vs trending SaaS palette
+748b5a8 feat: adopt Docker Desktop exact design system - exact color palette from Docker (dominant #ea1013, surface #04123f, ink #6992fb, accent #5f6584, detail #b2b8c4), Docker typography (Repro for headings, Inter for body), Docker spacing (8px base unit), Docker radius scale, evidence-based temperature colors adapted
+a7779af feat: adopt Docker-inspired light mode design system - clean professional aesthetic with Docker blue, clear hierarchy, evidence-based temperature colors, 2^(1/4) typography scale
+222e00e feat: implement visionary 2050 design system - sovereign dark mode with functional glow, dashboard-inspired cyber-infrastructure aesthetic, 2^(1/4) typography scale, evidence-based temperature colors, signal glow system
+3351b98 Hybrid: line-height string fix + contrast tokens for Vercel build + enhanced evaluability
+ab43421 Phase 7 complete: Finalize design system and pass all verification gates
+0436dbd template: tanstack_start_ts_current-435fd937eb68
+8ac8191 Design system: masterpiece commercial surface tokens + tailwind config
+2ca99df APT-LABS v2: implement reduced IA (5 pages), evidence language (5 states), customer language
+619cab1 Redesign site as system file workspace
+27e46f7 CRAFT: implement workflow hero component and integrate into CompanyHome
+9f1018e Add Kilo configuration file with schema and snapshot settings
+1424e75 CRAFT: on-grid spacing in the identity corner
+bd1c43e CRAFT: kill the three tells
+fcf5963 THE STACK: draw it, and put the company back
+122b950 EPISTEMIC: wire the four mechanisms that existed and were never called
+2523df3 EPISTEMIC: the two instruments that rendered as text
+b1690b9 deps: zod and zustand for the epistemic domain
+1c985c5 EPISTEMIC: eight bugs the green gates did not catch
+402b514 EPISTEMIC: the instrument, on the site
+c037c51 EPISTEMIC: 15 more assertions, and a protection bug they caught
+cf871d8 EPISTEMIC: the semantic palette, and a check that admits its own mistake
+9cb2f1c EPISTEMIC: instruments, trace, branches, adversarial loop
