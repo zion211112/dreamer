@@ -1,0 +1,475 @@
+/* ============================================================================
+   Benben-OS — Styles fused from EduTrack-LMS + school-dashboard inspiration
+   Built on APT-LABS design tokens (tokens.css), our own Vite + Preact stack.
+   ============================================================================ */
+
+/* ---------- App shell ---------- */
+.benben-app {
+  display: flex;
+  height: 100vh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+}
+
+.benben-sidebar {
+  width: var(--shell-sidebar-min);
+  border-right: 1px solid var(--border);
+  background: var(--bg-elev);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.benben-sidebar[data-collapsed="true"] {
+  width: 64px;
+}
+
+.benben-collapse-toggle {
+  position: absolute;
+  left: var(--shell-sidebar-min);
+  top: var(--space-4);
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  background: var(--bg-elev);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--step--2);
+  z-index: var(--z-modal);
+}
+
+.benben-sidebar[data-collapsed="true"] .benben-collapse-toggle {
+  left: 64px;
+  transform: rotate(180deg);
+}
+
+.benben-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.benben-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-3);
+  background: var(--state-canon);
+  color: var(--fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--step-1);
+  font-family: var(--serif);
+}
+
+.benben-name {
+  font-family: var(--serif);
+  font-size: var(--step-1);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.benben-sidebar[data-collapsed="true"] .benben-name {
+  display: none;
+}
+
+.benben-nav {
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+  overflow-y: auto;
+}
+
+.benben-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-3);
+  color: var(--muted);
+  text-decoration: none;
+  font-size: var(--step--1);
+  border: 1px solid transparent;
+  transition: all var(--fast);
+}
+
+.benben-nav-item:hover {
+  background: var(--bg-subtle);
+  color: var(--fg);
+}
+
+.benben-nav-item.active {
+  background: var(--state-canon-wash);
+  color: var(--state-canon);
+  border-color: var(--state-canon);
+}
+
+.benben-nav-icon {
+  width: 16px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: var(--step--2);
+}
+
+.benben-sidebar[data-collapsed="true"] .benben-nav-label,
+.benben-sidebar[data-collapsed="true"] .benben-nav-item:hover .benben-nav-label {
+  display: none;
+}
+
+/* ---------- Topbar ---------- */
+.benben-topbar {
+  height: var(--shell-topbar);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elev);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-4);
+  flex-shrink: 0;
+}
+
+.benben-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.benben-topbar-title {
+  font-family: var(--serif);
+  font-size: var(--step-1);
+  font-weight: 600;
+}
+
+.benben-topbar-divider {
+  color: var(--dim);
+}
+
+.benben-topbar-context {
+  font-size: var(--step--2);
+  color: var(--muted);
+  font-family: var(--mono);
+}
+
+.benben-user {
+  font-size: var(--step--1);
+  color: var(--muted);
+  font-family: var(--mono);
+}
+
+/* ---------- Main ---------- */
+.benben-main {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--bg);
+}
+
+.benben-wrap {
+  padding: var(--space-4) var(--space-6);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* ---------- Page head ---------- */
+.benben-page-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-6);
+}
+
+.benben-page-title {
+  font-family: var(--serif);
+  font-size: var(--step-4);
+  font-weight: 400;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.benben-page-sub {
+  font-size: var(--step-0);
+  color: var(--muted);
+  margin: 0;
+  font-family: var(--sans);
+}
+
+/* ---------- Stats ---------- */
+.benben-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.benben-stat-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.benben-stat-label {
+  font-size: var(--step--2);
+  color: var(--muted);
+  font-family: var(--mono);
+  letter-spacing: 0.1em;
+}
+
+.benben-stat-delta {
+  font-size: var(--step--2);
+  color: var(--dim);
+  margin-top: var(--space-1);
+}
+
+.benben-stat-value {
+  font-family: var(--mono);
+  font-size: var(--step-3);
+  font-weight: 600;
+  margin-top: var(--space-2);
+}
+
+.benben-tone-canon .benben-stat-value { color: var(--state-canon); }
+.benben-tone-proposed .benben-stat-value { color: var(--state-proposed); }
+.benben-tone-risk .benben-stat-value { color: var(--state-risk); }
+.benben-tone-caution .benben-stat-value { color: var(--state-caution); }
+
+/* ---------- Grid ---------- */
+.benben-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-4);
+}
+
+.benben-card-title {
+  font-family: var(--serif);
+  font-size: var(--step-1);
+  font-weight: 500;
+  margin: 0 0 var(--space-3) 0;
+}
+
+.benben-action-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2);
+}
+
+.benben-action-btn {
+  width: 100%;
+  justify-content: flex-start;
+  padding: var(--space-3) var(--space-4);
+}
+
+.benben-card-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.benben-view-all {
+  font-size: var(--step--2);
+  color: var(--state-canon);
+  text-decoration: none;
+  font-family: var(--mono);
+}
+
+.benben-view-all:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Table ---------- */
+.benben-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--step--1);
+}
+
+.benben-table th {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  border-bottom: 1px solid var(--border);
+}
+
+.benben-table td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.benben-table tr:last-child td {
+  border-bottom: none;
+}
+
+.benben-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  font-size: var(--step--2);
+  font-family: var(--mono);
+  font-weight: 500;
+}
+
+.benben-badge--paid { background: var(--ok-bg); color: var(--ok); }
+.benben-badge--partial { background: var(--warn-bg); color: var(--warn); }
+.benben-badge--unpaid { background: var(--danger-pale); color: var(--danger); }
+/* ---------- Toolbar ---------- */
+.benben-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.benben-toolbar-title {
+  font-family: var(--serif);
+  font-size: var(--step-0);
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.benben-search-input {
+  width: 260px;
+}
+
+/* ---------- Rows ---------- */
+.benben-row {
+  transition: background var(--fast);
+}
+
+.benben-row:hover {
+  background: var(--bg-subtle);
+}
+
+.benben-row--edit {
+  background: var(--state-proposed-wash);
+}
+
+.benben-mono {
+  font-family: var(--mono);
+  font-size: var(--step--1);
+}
+
+/* ---------- Inline form ---------- */
+.benben-inline-form {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.benben-form-input {
+  width: 220px;
+}
+
+/* ---------- Teacher cards ---------- */
+.benben-teacher-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.benben-teacher-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.benben-teacher-initial {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  background: var(--state-canon);
+  color: var(--fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-family: var(--serif);
+  font-size: var(--step-1);
+}
+
+.benben-teacher-name {
+  font-weight: 600;
+  font-family: var(--serif);
+  font-size: var(--step-0);
+}
+
+.benben-teacher-subject {
+  font-size: var(--step--2);
+  color: var(--muted);
+  font-family: var(--mono);
+}
+
+.benben-teacher-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--hairline);
+}
+
+.benben-stat-value.benben-tone-can { color: var(--state-canon); }
+.benben-stat-value.benben-tone-risk { color: var(--state-risk); }
+
+/* ---------- Attendance cards ---------- */
+.benben-attendance-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.benben-attendance-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.benben-attendance-name {
+  font-weight: 600;
+  font-family: var(--serif);
+  font-size: var(--step-0);
+}
+
+.benben-attendance-grade {
+  font-size: var(--step--2);
+  color: var(--muted);
+}
+
+.benben-attendance-bar {
+  height: 6px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  margin-bottom: var(--space-3);
+}
+
+.benben-attendance-fill {
+  height: 100%;
+  background: var(--state-canon);
+  transition: width var(--base);
+}
+
+.benben-attendance-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* ---------- Empty state ---------- */
+.benben-empty {
+  text-align: center;
+  padding: var(--space-6);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--step--1);
+}
+
+/* ---------- Tone overrides for stat cards ---------- */
+.benben-tone-can .benben-stat-value { color: var(--state-canon); }
+.benben-tone-risk .benben-stat-value { color: var(--state-risk); }
