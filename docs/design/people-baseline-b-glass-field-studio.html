@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>People · APT-LABS Studio</title>
+<style>
+  /* ============================================================================
+     APT-LABS — People Module · Baseline B · Glass Field Studio (nested-safe)
+     Scope: lives inside WorkspaceShell children region; does not touch shell chrome.
+     All styles scoped to .people-module so nothing leaks out.
+     Images: jfif from imagesinspirationextreme (brand mark + light field backdrop).
+     ============================================================================ */
+  :root{
+    --bg:#fbfaf7;--panel:#ffffff;--panel2:#f4f2ec;--ink:#1b1f1a;--muted:#7a8077;
+    --line:#e4e1da;--mint:#c8f0dd;--lilac:#e4d8ff;--amber:#fbe7b8;--acid:#b9ed78;
+    --serif:Georgia,'Times New Roman',serif;--sans:Inter,ui-sans-serif,system-ui,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Consolas,monospace;
+    --radius:10px;--shadow:0 10px 30px -10px rgba(27,31,26,.12), 4px 4px 0 rgba(27,31,26,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+  body{font-size:13px;line-height:1.5;
+    background-image:
+      linear-gradient(var(--line) 1px,transparent 1px),
+      linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:24px 24px;
+  }
+
+  /* Module container — nested inside shell, self-contained */
+  .people-module{
+    padding:0 clamp(20px,4vw,64px) 48px 48px;max-width:1600px;margin:0 auto;position:relative;
+  }
+  .people-module::before{
+    content:"";position:absolute;inset:-40px;z-index:0;
+    background:
+      radial-gradient(ellipse at 10% 15%,rgba(200,240,221,.25),transparent 45%),
+      radial-gradient(ellipse at 90% 85%,rgba(228,216,255,.22),transparent 45%),
+      radial-gradient(ellipse at 50% 35%,rgba(251,231,184,.18),transparent 55%);
+    pointer-events:none;
+  }
+  .people-module > *{position:relative;z-index:1;}
+
+  /* Header — brand mark (jfif A logo) + title, contained bar */
+  .header{
+    display:flex;align-items:center;justify-content:space-between;padding:28px 0 10px;gap:18px;
+  }
+  .brand{display:flex;align-items:center;gap:14px;}
+  .brand img.mark{width:34px;height:34px;border-radius:9px;box-shadow:3px 3px 0 var(--ink);background:#fff;border:1px solid var(--line);}
+  .brand b{font:700 13px var(--mono);letter-spacing:.15em;color:var(--muted);text-transform:uppercase;}
+  .title{font:800 clamp(30px,4vw,46px)/1.02 var(--serif);letter-spacing:-.04em;color:var(--ink);}
+  .subtitle{font:400 12.5px/1.55 var(--sans);color:var(--muted);max-width:640px;}
+  .actions{display:flex;gap:9px;flex-wrap:wrap;}
+  .btn{
+    border:1px solid var(--ink);background:var(--panel);color:var(--ink);padding:9px 14px;font-size:11px;
+    font-weight:750;box-shadow:3px 3px 0 var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+    backdrop-filter:blur(6px);border-radius:7px;
+  }
+  .btn:hover{background:var(--acid);color:#273b16;transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink);}
+  .btn.primary{background:var(--acid);color:#273b16;font-weight:800;}
+
+  .meta{
+    display:flex;align-items:center;gap:16px;font:600 10px var(--mono);color:var(--muted);letter-spacing:.1em;
+    text-transform:uppercase;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:26px;
+  }
+  .meta .dot{width:6px;height:6px;border-radius:50%;background:var(--acid);box-shadow:0 0 12px var(--acid);}
+
+  /* Layout — directory + inspector, both contained glass panels */
+  .grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(310px,.85fr);gap:16px;}
+  .panel{
+    border:1px solid var(--line);background:var(--panel);border-radius:var(--radius);
+    box-shadow:var(--shadow);min-width:0;overflow:hidden;
+  }
+  .panel-head{padding:14px 19px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+  .panel-head b{font-size:11px;letter-spacing:.04em;}
+  .panel-head span{font:9px var(--mono);color:var(--muted);}
+  .panel-body{padding:17px 19px;}
+
+  /* Directory list — glass rows */
+  .list{display:grid;}
+  .item{
+    display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;
+    padding:12px 3px;border-bottom:1px solid rgba(27,31,26,.06);
+  }
+  .item:last-child{border-bottom:0;}
+  .item.is-sel{background:var(--panel2);border-left:4px solid var(--ink);margin-left:-4px;padding-left:3px;}
+  .tile{
+    width:33px;height:33px;border-radius:8px;display:grid;place-items:center;background:var(--mint);
+    font:700 11px var(--mono);color:#2d4a3b;box-shadow:3px 3px 0 rgba(45,74,59,.35);
+  }
+  .item:nth-child(2) .tile{background:var(--lilac);color:#5b4a8b;}
+  .item:nth-child(3) .tile{background:var(--amber);color:#7a5e12;}
+  .item b{font-size:11px;display:block;letter-spacing:-.01em;}
+  .item small{font-size:9px;color:var(--muted);display:block;margin-top:3px;}
+  .item .pill{font:700 9px var(--mono);border:1px solid var(--line);padding:4px 8px;white-space:nowrap;
+    color:var(--ink);background:var(--bg);border-radius:6px;box-shadow:2px 2px 0 rgba(27,31,26,.08);}
+
+  /* Inspector — sticky, glass */
+  .inspector{position:sticky;top:24px;align-self:start;}
+  .inspector .panel{height:fit-content;}
+  .profile{display:flex;align-items:center;gap:15px;margin:14px 0 18px;}
+  .avatar{
+    width:48px;height:48px;border-radius:12px;display:grid;place-items:center;background:var(--amber);
+    font:700 15px var(--mono);color:#7a5e12;box-shadow:4px 4px 0 rgba(122,94,18,.35);
+  }
+  .profile-name{font:700 16px var(--serif);letter-spacing:-.02em;}
+  .profile-role{font-size:9px;color:var(--muted);margin-top:2px;}
+  .status-line{font-size:9px;color:var(--acid);font-weight:700;letter-spacing:.05em;margin-top:5px;
+    display:flex;align-items:center;gap:6px;}
+  .status-line .dot{width:5px;height:5px;background:var(--acid);border-radius:50%;box-shadow:0 0 10px var(--acid);}
+  .property-group{border-top:1px solid var(--line);padding:13px 0;}
+  .prop-heading{font:700 9px var(--mono);letter-spacing:.14em;color:var(--muted);text-transform:uppercase;
+    margin-bottom:11px;display:flex;justify-content:space-between;}
+  .prop-row{display:flex;justify-content:space-between;gap:8px;margin:8px 0;}
+  .prop-label{font-size:9px;color:var(--muted);}
+  .prop-value{font-size:9px;color:var(--ink);text-align:right;min-width:110px;}
+  .tag-list{display:flex;gap:6px;flex-wrap:wrap;}
+  .tag{font-size:8px;padding:4px 7px;background:var(--panel2);border:1px solid var(--line);border-radius:5px;
+    color:var(--muted);box-shadow:2px 2px 0 rgba(27,31,26,.06);}
+  .relation{display:flex;align-items:center;gap:8px;margin:9px 0;font-size:9px;color:var(--muted);}
+  .relation-badge{width:20px;height:20px;border-radius:5px;display:grid;place-items:center;background:var(--ink);
+    color:var(--acid);font:700 8px var(--mono);box-shadow:2px 2px 0 rgba(27,31,26,.06);}
+  .relation b{color:var(--ink);font-size:10px;letter-spacing:-.01em;}
+  .relation small{color:var(--muted);margin-left:auto;font:8px var(--mono);}
+  .empty{padding:26px;text-align:center;color:var(--muted);font:11px var(--mono);}
+
+  /* Node map preview — contained graph flavor inside inspector */
+  .node-map{position:relative;height:128px;border-radius:8px;overflow:hidden;background:var(--panel2);}
+  .node{position:absolute;border-radius:50%;box-shadow:2px 2px 0 rgba(27,31,26,.25);}
+  .node.mint{background:var(--mint);box-shadow:2px 2px 0 #8bbf9c;}
+  .node.lilac{background:var(--lilac);box-shadow:2px 2px 0 #b5a0d8;}
+  .node.amber{background:var(--amber);box-shadow:2px 2px 0 #d9b97f;}
+  .line-g{position:absolute;height:1px;background:var(--line);transform-origin:left center;}
+  .node-map .n1{width:10px;height:10px;top:24px;left:20px}
+  .node-map .n2{width:10px;height:10px;top:42px;left:92px}
+  .node-map .n3{width:10px;height:10px;top:12px;left:152px}
+  .node-map .n4{width:10px;height:10px;top:88px;left:58px}
+  .node-map .n5{width:10px;height:10px;top:72px;left:142px}
+  .node-map .l1{width:72px;top:29px;left:26px;transform:rotate(12deg)}
+  .node-map .l2{width:58px;top:17px;left:82px;transform:rotate(-18deg)}
+  .node-map .l3{width:90px;top:93px;left:30px;transform:rotate(34deg)}
+  .node-map .l4{width:52px;top:78px;left:94px;transform:rotate(-30deg)}
+
+  @media(max-width:900px){
+    .grid{grid-template-columns:1fr;}
+    .inspector{position:static;}
+    .people-module{padding:0 16px 40px;}
+    .title{font-size:34px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- Backdrop field image (jfif) — contained hero texture for preview only -->
+<div style="position:fixed;inset:0;z-index:-1;opacity:.5;object-fit:cover;width:100%;height:100%;">
+  <img src="../../imagesinspirationextreme/DnWG9wnUogBdVDFXif76lymTlch-LgGvDmYAtz9mSYwT1_XgHSGkPiVS6YG1Gv4_K86Gx876Nv2RSvot_0h8zWmmdvzakgSKQLKsdJhv460tZSAOUuEXZ0x55ERjAYZ2qiaV-hbVrzkl41aMK56buGLOBO__kAW3MtvmPrCPtPsLVB-yBlYG7Hjr7zswr8oK.jfif" alt="" style="width:100%;height:100%;object-fit:cover;filter:brightness(.9) contrast(.95);">
+</div>
+
+<div class="people-module">
+  <div class="header">
+    <div class="brand">
+      <img class="mark" src="../../imagesinspirationextreme/Gemini_Generated_Image_3yy38j3yy38j3yy3.jfif" alt="APT-LABS brand mark">
+      <b>APT-LABS</b>
+    </div>
+    <div>
+      <div class="title">People</div>
+      <div class="subtitle">Capability directory &amp; network map — who knows what, who does what, who enables it.</div>
+    </div>
+    <div class="actions">
+      <button class="btn primary">＋ Add person</button>
+      <button class="btn">Export record</button>
+    </div>
+  </div>
+
+  <div class="meta"><span class="dot" aria-hidden="true"></span><span>CAPABILITY DIRECTORY</span><span>·</span><span>128 RECORDS</span><span>·</span><span>SORTED BY RELEVANCE</span></div>
+
+  <div class="grid">
+    <section class="panel">
+      <div class="panel-head"><b>People directory</b><span>128 records</span></div>
+      <div class="panel-body">
+        <div class="list" id="directory"></div>
+      </div>
+    </section>
+
+    <aside class="inspector">
+      <div class="panel">
+        <div class="panel-head"><b>Inspector</b><span>Selected node</span></div>
+        <div class="panel-body" id="inspector">
+          <div class="empty">Select a person to inspect</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+  const PEOPLE = [
+    { id:'p-1', name:'James Miano', role:'Systems builder · Fikra API', location:'Nairobi', capabilities:['Systems design','API integration','Product strategy','Coordination'], basis:'local-profile', summary:'Designs systems across APT-LABS and Kemetos1; contribution records are linked below.', connections:[{label:'Fikra API',type:'asset',rel:'partner'},{label:'Commons infrastructure',type:'work',rel:'work'},{label:'API specification',type:'evidence',rel:'evidence'}] },
+    { id:'p-2', name:'Amina Wanjiku', role:'Researcher · Research crew', location:'Oaxaca', capabilities:['Research','Synthesis','Data analysis'], basis:'local-profile', summary:'Helps member-owned teams turn shared priorities into practical work.', connections:[{label:'Research Crew',type:'crew',rel:'member of'}] },
+    { id:'p-3', name:'Peter Mwangi', role:'Operations · Kirinyaga', location:'Kirinyaga', capabilities:['Operations','Field delivery','Training'], basis:'project-reported', summary:'Documents local conditions and makes technical decisions easier to verify.', connections:[{label:'Kirinyaga schools',type:'institution',rel:'works with'}] },
+    { id:'p-4', name:'Nia Wanjiru', role:'Field systems designer', location:'Nairobi', capabilities:['Systems design','Community research','Solar planning'], basis:'local-profile', summary:'Turns local infrastructure needs into maintainable, community-run systems.', connections:[{label:'Field Systems Crew',type:'crew',rel:'member of'}] },
+    { id:'p-5', name:'Jabari Otieno', role:'Solar technician', location:'Nairobi', capabilities:['Electrical systems','Solar maintenance','Safety'], basis:'local-profile', summary:'Installs and maintains small-scale energy systems with local crews.', connections:[{label:'Field Systems Crew',type:'crew',rel:'member of'}] },
+    { id:'p-6', name:'Lucia Santos', role:'Cooperative facilitator', location:'Oaxaca', capabilities:['Facilitation','Cooperative governance','Training'], basis:'local-profile', summary:'Helps member-owned teams turn shared priorities into practical work.', connections:[{label:'Mtaa Repair Circle',type:'crew',rel:'member of'}] },
+    { id:'p-7', name:'Kwame Mensah', role:'Water systems researcher', location:'Accra', capabilities:['Field research','Water systems','Measurement'], basis:'project-reported', summary:'Documents local conditions and makes technical decisions easier to verify.', connections:[{label:'Water resilience audit',type:'work',rel:'researches'}] },
+    { id:'p-8', name:'Yuki Tanaka', role:'Knowledge steward', location:'Nairobi', capabilities:['Documentation','Open learning','Workshop design'], basis:'local-profile', summary:'Makes practical learning reusable through open guides and shared records.', connections:[{label:'Open Knowledge Stewards',type:'crew',rel:'member of'}] },
+    { id:'c-1', name:'Field Systems Crew', role:'Installation & maintenance', location:'Nairobi', capabilities:['Commissioning','Electrical safety','Field operations'], basis:'illustrative', summary:'A cross-disciplinary crew coordinating community infrastructure work.', connections:[{label:'Nia Wanjiru',type:'person',rel:'member of'},{label:'Microgrid commissioning',type:'work',rel:'delivers'}] },
+    { id:'c-2', name:'Open Knowledge Stewards', role:'Commons publishing', location:'Distributed', capabilities:['Editing','Archiving','Knowledge sharing'], basis:'illustrative', summary:'A small editorial crew shaping field experience into accessible public guides.', connections:[{label:'Yuki Tanaka',type:'person',rel:'member of'}] },
+    { id:'c-3', name:'Mtaa Repair Circle', role:'Repair & shared learning', location:'Nairobi', capabilities:['Repair','Peer learning','Tool stewardship'], basis:'illustrative', summary:'A neighborhood crew keeping useful tools in service and skills in circulation.', connections:[{label:'Lucia Santos',type:'person',rel:'member of'}] },
+  ];
+
+  const TILES = { 'p-1':'JM','p-2':'AW','p-3':'PM','p-4':'NW','p-5':'JO','p-6':'LS','p-7':'KM','p-8':'YT','c-1':'FC','c-2':'OK','c-3':'MR' };
+  const byId = new Map(PEOPLE.map(x=>[x.id,x]));
+
+  const dir = document.getElementById('directory');
+  const insp = document.getElementById('inspector');
+
+  function basisTag(p){
+    if(p.basis==='illustrative') return '<span class="tag" style="border-color:#e6a18a;color:#b04a3f">illustrative</span>';
+    if(p.basis==='local-profile') return '<span class="tag" style="border-color:#b9ed78;color:#273b16">local-profile</span>';
+    return '<span class="tag" style="border-color:#e4d8ff;color:#5b4a8b">project-reported</span>';
+  }
+
+  function render(selected){
+    dir.innerHTML = PEOPLE.map((p,i)=>`
+      <div class="item${selected===p.id?' is-sel':''}" data-id="${p.id}" role="button" tabindex="0">
+        <div class="tile">${TILES[p.id]||p.id.slice(0,2).toUpperCase()}</div>
+        <div>
+          <b>${p.name}</b>
+          <small>${p.role} · ${p.location}</small>
+        </div>
+        <span class="pill">${i+1}</span>
+      </div>
+    `).join('');
+    renderInspector(selected);
+  }
+
+  function renderInspector(id){
+    const p = byId.get(id);
+    if(!p){ insp.innerHTML = '<div class="empty">Select a person to inspect</div>'; return; }
+    const conns = p.connections.map(c=>`
+      <div class="relation"><span class="relation-badge">${c.type.slice(0,1).toUpperCase()}</span><b>${c.label}</b><small>${c.rel}</small></div>
+    `).join('');
+    const caps = p.capabilities.map(c=>`<span class="tag">${c}</span>`).join('');
+    insp.innerHTML = `
+      <div class="profile">
+        <div class="avatar">${TILES[p.id]||p.id.slice(0,2).toUpperCase()}</div>
+        <div>
+          <div class="profile-name">${p.name}</div>
+          <div class="profile-role">${p.role}</div>
+          <div class="status-line"><span class="dot" aria-hidden="true"></span><span>${p.basis==='illustrative'?'Illustrative':'Owner-held record'}</span></div>
+        </div>
+      </div>
+      <p style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:14px;">${p.summary}</p>
+      <div class="property-group"><div class="prop-heading">Record basis ${basisTag(p)}</div>
+        <div class="prop-row"><span class="prop-label">Location</span><span class="prop-value">${p.location}</span></div>
+      </div>
+      <div class="property-group"><div class="prop-heading">Capabilities</div><div class="tag-list">${caps}</div></div>
+      <div class="property-group"><div class="prop-heading">Connected node graph</div>
+        <div class="node-map" style="margin-top:8px;">
+          <div class="line-g l1"></div><div class="line-g l2"></div><div class="line-g l3"></div><div class="line-g l4"></div>
+          <div class="node n1 mint"></div><div class="node n2 lilac"></div><div class="node n3 amber"></div>
+          <div class="node n4 mint"></div><div class="node n5 lilac"></div>
+        </div>
+      </div>
+      <div class="property-group"><div class="prop-heading">Connected to</div>${conns}</div>
+    `;
+  }
+
+  dir.addEventListener('click',e=>{
+    const item = e.target.closest('.item[data-id]');
+    if(!item) return;
+    document.querySelectorAll('.item').forEach(el=>el.classList.remove('is-sel'));
+    item.classList.add('is-sel');
+    render(item.dataset.id);
+  });
+  dir.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){
+      e.preventDefault();
+      const item = e.target.closest('.item[data-id]');
+      if(item){ document.querySelectorAll('.item').forEach(el=>el.classList.remove('is-sel')); item.classList.add('is-sel'); render(item.dataset.id); }
+    }
+  });
+
+  render(null);
+</script>
+</body>
+</html>
