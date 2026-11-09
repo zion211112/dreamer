@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { Link } from 'wouter';
 import { useWorkbench } from '../../pages/workspace/field-desk/useWorkbench';
+import type { SimulationStage, SimulationPackage } from '../../lib/workbench-simulation';
 import {
-  type SimulationAction,
-  type SimulationStage,
-  type SimulationPackage,
-} from '../../lib/workbench-simulation';
+  buildStageAction,
+  gateState,
+  stageCard,
+  stageIndex,
+} from '../../lib/simulation-machine';
 import { PageHead } from '../PageHead';
 import { ForkGlyph } from '../ForkGlyph';
 import { RingedEvidenceMarker } from '../RingedEvidenceMarker';
@@ -19,24 +21,6 @@ const STAGE_ORDER: SimulationStage[] = [
   'acceptance_simulated',
   'roll_preview',
 ];
-
-const STAGE_LABELS: Record<SimulationStage, string> = {
-  candidate_drafted: 'Tender candidate',
-  tender_review_simulated: 'Tender review',
-  assembly_simulated: 'Assembly',
-  delivery_simulated: 'Delivery evidence',
-  acceptance_simulated: 'Acceptance',
-  roll_preview: 'Roll preview',
-};
-
-const STAGE_GATES: Record<SimulationStage, 'auto' | 'blocked' | 'proceed'> = {
-  candidate_drafted: 'auto',
-  tender_review_simulated: 'proceed',
-  assembly_simulated: 'proceed',
-  delivery_simulated: 'proceed',
-  acceptance_simulated: 'proceed',
-  roll_preview: 'auto',
-};
 
 interface BlockFlowProps {
   currentContext?: string;
@@ -69,11 +53,13 @@ export function WorkbenchBlockFlow(_props: BlockFlowProps) {
   const [gateOutcome, setGateOutcome] = useState<'proceed' | 'blocked' | 'accepted' | 'returned' | 'rejected'>('proceed');
 
   const currentStage = (stage === 'need' ? 'candidate_drafted' : stage) as SimulationStage;
-  const stageIndex = STAGE_ORDER.indexOf(currentStage);
+  const currentStageIndex = stageIndex(currentStage);
+  const card = stageCard(currentStage);
+  const currentGate = status ? gateState({ stage: currentStage, status }) : 'auto';
 
   const simVersionBadge = useMemo(() => {
     if (!simulation?.rollPreview) return null;
-    return `${simulation.id.slice(-8)} · ${simulation.rollPreview.simulatedAt.slice(0, 12)}`;
+    return `${simulation.id.slice(-8)} Â· ${simulation.rollPreview.simulatedAt.slice(0, 12)}`;
   }, [simulation]);
 
   useEffect(() => {
@@ -123,26 +109,10 @@ export function WorkbenchBlockFlow(_props: BlockFlowProps) {
     const note = gateNote.trim();
     if (!note && stage !== 'assembly_simulated') return;
 
-    let action: SimulationAction;
-    switch (stage) {
-      case 'candidate_drafted':
-        action = { type: 'tender-review', outcome: gateOutcome as 'proceed' | 'blocked', note };
-        break;
-      case 'tender_review_simulated':
-        action = { type: 'assembly', outcome: gateOutcome as 'proceed' | 'blocked', note };
-        break;
-      case 'assembly_simulated':
-        action = { type: 'delivery', evidence: gateNote.split('\n').map(l => l.trim()).filter(Boolean) };
-        break;
-      case 'delivery_simulated':
-        action = { type: 'acceptance', outcome: gateOutcome as 'accepted' | 'returned' | 'rejected', note };
-        break;
-      case 'acceptance_simulated':
-        action = { type: 'deployment', note };
-        break;
-      default:
-        return;
-    }
+    const deliveryEvidence = gateNote.split('\n').map(l => l.trim()).filter(Boolean);
+    const action = buildStageAction(currentStage, note, deliveryEvidence, gateOutcome);
+    if (!action) return;
+
     advance(action);
     setGateNote('');
     setActiveBlock(null);
@@ -158,13 +128,11 @@ export function WorkbenchBlockFlow(_props: BlockFlowProps) {
     return plan.packages;
   }, [plan]);
 
-  const currentGate = STAGE_GATES[currentStage];
-
   return (
     <div className="workbench-blockflow-page">
       <PageHead
         eyebrow="Workbench"
-        title={simulation ? `Simulate · ${simulation.source.assetName}` : 'Block-flow builder'}
+        title={simulation ? `Simulate Â· ${simulation.source.assetName}` : 'Block-flow builder'}
         subtitle={simulation
           ? `6-stage pipeline from need to Roll preview. Source: ${simulation.source.need}`
           : 'Drag blocks onto the canvas, advance through stage gates, and record delivery evidence.'}
@@ -185,9 +153,9 @@ export function WorkbenchBlockFlow(_props: BlockFlowProps) {
           { label: 'Discard run', onClick: () => discardSimulation(), disabled: !simulation || status !== 'active' },
         ]}
         metrics={[
-          { label: 'Stage', value: STAGE_LABELS[currentStage], state: status === 'blocked' ? 'risk' : 'canon' },
+          { label: 'Stage', value: card.label, state: status === 'blocked' ? 'risk' : 'canon' },
           { label: 'Gate', value: currentGate === 'proceed' ? 'Proceed' : currentGate === 'blocked' ? 'Blocked' : 'Auto', state: currentGate === 'proceed' ? 'canon' : currentGate === 'blocked' ? 'risk' : 'caution' },
-          { label: 'Version', value: simVersionBadge || '—', state: simVersionBadge ? 'canon' : 'caution' },
+          { label: 'Version', value: simVersionBadge || 'â€”', state: simVersionBadge ? 'canon' : 'caution' },
         ]}
       />
 
@@ -209,9 +177,9 @@ export function WorkbenchBlockFlow(_props: BlockFlowProps) {
           <nav aria-label="Pipeline stages" className="workbench-pipeline-nav">
             <ol className="workbench-pipeline-list">
               {STAGE_ORDER.map((stageId, index) => {
-                const done = index < stageIndex;
-                const current = index === stageIndex;
-                const gate = STAGE_GATES[stageId];
+                const done = index < currentStageIndex;
+                const current = index === currentStageIndex;
+                const gate = status ? gateState({ stage: stageId, status }) : 'auto';
                 const blocked = current && status === 'blocked';
                 return (
                   <li
@@ -221,7 +189,7 @@ export function WorkbenchBlockFlow(_props: BlockFlowProps) {
                     <span className="workbench-pipeline-index">
                       {String(index + 1).padStart(2, '0')}
                     </span>
-                    <span className="workbench-pipeline-label">{STAGE_LABELS[stageId]}</span>
+                    <span className="workbench-pipeline-label">{stageCard(stageId).label}</span>
                     {current && gate === 'proceed' && (
                       <span className="workbench-pipeline-gate">Gate open</span>
                     )}
@@ -232,7 +200,7 @@ export function WorkbenchBlockFlow(_props: BlockFlowProps) {
                       <span className="workbench-pipeline-gate is-blocked">Stopped</span>
                     )}
                     {index < STAGE_ORDER.length - 1 && (
-                      <span className="workbench-pipeline-connector" aria-hidden="true">━</span>
+                      <span className="workbench-pipeline-connector" aria-hidden="true">â”</span>
                     )}
                   </li>
                 );
@@ -287,7 +255,7 @@ export function WorkbenchBlockFlow(_props: BlockFlowProps) {
                   return (
                     <div
                       key={block.id}
-                      className={`workbench-blockflow-canvas-block${isCurrent ? ' is-active' : ''}`}
+                    className={`workbench-blockflow-canvas-block${isCurrent ? ' is-active' : ''}`}
                       style={{
                         left: `${100 + pipelineBlocks.indexOf(block) * 220}px`,
                         top: `${100}px`,
@@ -350,7 +318,7 @@ export function WorkbenchBlockFlow(_props: BlockFlowProps) {
                         value={gateNote}
                         onInput={event => setGateNote(event.currentTarget.value)}
                         rows={3}
-                        placeholder="Record the gate decision rationale…"
+                        placeholder="Record the gate decision rationaleâ€¦"
                       />
                     </>
                   ) : stage === 'assembly_simulated' ? (
@@ -361,7 +329,7 @@ export function WorkbenchBlockFlow(_props: BlockFlowProps) {
                         value={gateNote}
                         onInput={event => setGateNote(event.currentTarget.value)}
                         rows={4}
-                        placeholder="Describe delivery evidence…"
+                        placeholder="Describe delivery evidenceâ€¦"
                       />
                     </>
                   ) : stage === 'delivery_simulated' ? (
@@ -382,7 +350,7 @@ export function WorkbenchBlockFlow(_props: BlockFlowProps) {
                         value={gateNote}
                         onInput={event => setGateNote(event.currentTarget.value)}
                         rows={3}
-                        placeholder="Record acceptance rationale…"
+                        placeholder="Record acceptance rationaleâ€¦"
                       />
                     </>
                   ) : stage === 'acceptance_simulated' ? (
@@ -393,7 +361,7 @@ export function WorkbenchBlockFlow(_props: BlockFlowProps) {
                         value={gateNote}
                         onInput={event => setGateNote(event.currentTarget.value)}
                         rows={3}
-                        placeholder="Record deployment rationale…"
+                        placeholder="Record deployment rationaleâ€¦"
                       />
                     </>
                   ) : null}
@@ -408,9 +376,7 @@ export function WorkbenchBlockFlow(_props: BlockFlowProps) {
                       onClick={handleGateAction}
                       type="button"
                     >
-                      {stage === 'assembly_simulated' ? 'Record simulated delivery'
-                        : stage === 'acceptance_simulated' ? 'Create Roll preview'
-                        : 'Record simulated step'}
+                      {card.advance ? card.advance.label : 'Record simulated step'}
                     </button>
                     <button className="workbench-gate-pause" onClick={() => {}} type="button">Pause</button>
                   </div>
@@ -421,7 +387,7 @@ export function WorkbenchBlockFlow(_props: BlockFlowProps) {
                   <RingedEvidenceMarker size={16} color="var(--state-canon)" filled />
                   <strong>Roll preview</strong>
                   <p>{simulation.rollPreview.assetName}</p>
-                  <code>{simulation.id.slice(-8)} · {simulation.rollPreview.simulatedAt.slice(0, 16)}…</code>
+                  <code>{simulation.id.slice(-8)} Â· {simulation.rollPreview.simulatedAt.slice(0, 16)}â€¦</code>
                   <ul className="workbench-roll-preview-roles">
                     {simulation.rollPreview.simulatedRoles.map(role => (
                       <li key={role}>{role}</li>

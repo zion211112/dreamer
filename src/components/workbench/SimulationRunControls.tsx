@@ -1,5 +1,6 @@
 import { useState } from 'preact/hooks';
-import type { SimulationAction, WorkbenchSimulation } from '../../lib/workbench-simulation';
+import type { WorkbenchSimulation } from '../../lib/workbench-simulation';
+import { advanceOption, stageCard } from '../../lib/simulation-machine';
 
 export function SimulationRunControls({
   simulation,
@@ -11,7 +12,7 @@ export function SimulationRunControls({
   onDiscard,
 }: {
   simulation: WorkbenchSimulation;
-  onAdvance: (action: SimulationAction) => void;
+  onAdvance: (action: import('../../lib/workbench-simulation').SimulationAction) => void;
   onPause: () => void;
   onResume: () => void;
   onCancel: (note: string) => void;
@@ -22,33 +23,25 @@ export function SimulationRunControls({
   const [evidence, setEvidence] = useState('');
   const [outcome, setOutcome] = useState<'proceed' | 'blocked'>('proceed');
   const [acceptance, setAcceptance] = useState<'accepted' | 'returned' | 'rejected'>('accepted');
+  const card = stageCard(simulation.stage);
   const isActive = simulation.status === 'active';
-  const noteRequired = simulation.stage !== 'assembly_simulated';
   const deliveryEvidence = evidence.split('\n').map(item => item.trim()).filter(Boolean);
+  const gateOutcome =
+    simulation.stage === 'delivery_simulated' ? acceptance : outcome;
+  const advance = advanceOption(
+    simulation.stage,
+    simulation.status,
+    note,
+    deliveryEvidence,
+    gateOutcome,
+  );
 
-  function advance() {
-    if (!isActive) return;
-    switch (simulation.stage) {
-      case 'candidate_drafted':
-        onAdvance({ type: 'tender-review', outcome, note: note.trim() });
-        break;
-      case 'tender_review_simulated':
-        onAdvance({ type: 'assembly', outcome, note: note.trim() });
-        break;
-      case 'assembly_simulated':
-        onAdvance({ type: 'delivery', evidence: deliveryEvidence });
-        break;
-      case 'delivery_simulated':
-        onAdvance({ type: 'acceptance', outcome: acceptance, note: note.trim() });
-        break;
-      case 'acceptance_simulated':
-        onAdvance({ type: 'deployment', note: note.trim() });
-        break;
-      case 'roll_preview':
-        return;
-    }
+  function handleAdvance() {
+    if (!advance || advance.disabled) return;
+    onAdvance(advance.action);
     setNote('');
-    setEvidence('');
+    if (simulation.stage === 'delivery_simulated') setAcceptance('accepted');
+    else setOutcome('proceed');
   }
 
   function discard() {
@@ -90,74 +83,60 @@ export function SimulationRunControls({
     );
   }
 
-  const stageLabel = simulation.stage === 'candidate_drafted'
-    ? 'Tender review'
-    : simulation.stage === 'tender_review_simulated'
-      ? 'Assembly'
-      : simulation.stage === 'assembly_simulated'
-        ? 'Delivery evidence'
-        : simulation.stage === 'delivery_simulated'
-          ? 'Acceptance'
-          : 'Deployment preview';
-
   return (
     <section aria-labelledby="workbench-sim-run-title" className="workbench-sim-run">
       <p className="workbench-sim-kicker">NEXT OPERATION / SIMULATED</p>
-      <h2 id="workbench-sim-run-title">{stageLabel}</h2>
-      {simulation.stage === 'candidate_drafted' || simulation.stage === 'tender_review_simulated' ? (
-        <>
+      <h2 id="workbench-sim-run-title">{card.label}</h2>
+      {card.advance && (
+        card.advance.type === 'tender-review' || card.advance.type === 'assembly' ? (
+          <>
+            <label>
+              Gate outcome
+              <select onChange={event => setOutcome((event.currentTarget as HTMLSelectElement).value as typeof outcome)} value={outcome}>
+                <option value="proceed">Proceed in scenario</option>
+                <option value="blocked">Block at this gate</option>
+              </select>
+            </label>
+            <label>
+              Review note
+              <textarea onInput={event => setNote((event.currentTarget as HTMLTextAreaElement).value)} value={note} rows={3} />
+            </label>
+          </>
+        ) : card.advance.type === 'delivery' ? (
           <label>
-            Gate outcome
-            <select onChange={event => setOutcome((event.currentTarget as HTMLSelectElement).value as typeof outcome)} value={outcome}>
-              <option value="proceed">Proceed in scenario</option>
-              <option value="blocked">Block at this gate</option>
-            </select>
+            Scenario evidence Â· one item per line
+            <textarea onInput={event => setEvidence((event.currentTarget as HTMLTextAreaElement).value)} value={evidence} rows={3} />
           </label>
+        ) : card.advance.type === 'acceptance' ? (
+          <>
+            <label>
+              Acceptance outcome
+              <select onChange={event => setAcceptance((event.currentTarget as HTMLSelectElement).value as typeof acceptance)} value={acceptance}>
+                <option value="accepted">Accept in scenario</option>
+                <option value="returned">Return for changes</option>
+                <option value="rejected">Reject at this gate</option>
+              </select>
+            </label>
+            <label>
+              Review note
+              <textarea onInput={event => setNote((event.currentTarget as HTMLTextAreaElement).value)} value={note} rows={3} />
+            </label>
+          </>
+        ) : card.advance.type === 'deployment' ? (
           <label>
-            Review note
+            Deployment note
             <textarea onInput={event => setNote((event.currentTarget as HTMLTextAreaElement).value)} value={note} rows={3} />
           </label>
-        </>
-      ) : simulation.stage === 'assembly_simulated' ? (
-        <label>
-          Scenario evidence · one item per line
-          <textarea onInput={event => setEvidence((event.currentTarget as HTMLTextAreaElement).value)} value={evidence} rows={3} />
-        </label>
-      ) : simulation.stage === 'delivery_simulated' ? (
-        <>
-          <label>
-            Acceptance outcome
-            <select onChange={event => setAcceptance((event.currentTarget as HTMLSelectElement).value as typeof acceptance)} value={acceptance}>
-              <option value="accepted">Accept in scenario</option>
-              <option value="returned">Return for changes</option>
-              <option value="rejected">Reject at this gate</option>
-            </select>
-          </label>
-          <label>
-            Review note
-            <textarea onInput={event => setNote((event.currentTarget as HTMLTextAreaElement).value)} value={note} rows={3} />
-          </label>
-        </>
-      ) : simulation.stage === 'acceptance_simulated' ? (
-        <label>
-          Deployment note
-          <textarea onInput={event => setNote((event.currentTarget as HTMLTextAreaElement).value)} value={note} rows={3} />
-        </label>
-      ) : null}
+        ) : null
+      )}
       <div className="workbench-sim-run-actions">
         <button
           className="workbench-sim-primary"
-          disabled={simulation.stage === 'assembly_simulated'
-            ? deliveryEvidence.length === 0
-            : noteRequired && !note.trim()}
-          onClick={advance}
+          disabled={!advance || advance.disabled}
+          onClick={handleAdvance}
           type="button"
         >
-          {simulation.stage === 'assembly_simulated'
-            ? 'Record simulated delivery'
-            : simulation.stage === 'acceptance_simulated'
-              ? 'Create Roll preview'
-              : 'Record simulated step'}
+          {card.advance ? card.advance.label : 'Record simulated step'}
         </button>
         <button className="workbench-sim-secondary" onClick={onPause} type="button">Pause</button>
         <button className="workbench-sim-text" onClick={() => onCancel(note.trim() || 'Simulation cancelled by user.')} type="button">Cancel run</button>

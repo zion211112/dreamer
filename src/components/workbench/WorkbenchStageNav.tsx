@@ -1,24 +1,5 @@
-import type { SimulationStatus, SimulationStage, WorkbenchViewStage } from '../../lib/workbench-simulation';
-
-const stages: Array<{ id: WorkbenchViewStage; label: string }> = [
-  { id: 'need', label: 'Need' },
-  { id: 'candidate_drafted', label: 'Tender' },
-  { id: 'assembly_simulated', label: 'Assembly' },
-  { id: 'delivery_simulated', label: 'Acceptance' },
-  { id: 'roll_preview', label: 'Roll preview' },
-];
-
-function activeIndex(stage: WorkbenchViewStage, status: SimulationStatus | null, rollApplicable: boolean): number {
-  if (stage === 'need') return 0;
-  if (stage === 'candidate_drafted') return 1;
-  if (stage === 'tender_review_simulated') return status === 'blocked' ? 1 : 2;
-  if (stage === 'assembly_simulated') return status === 'blocked' ? 2 : 3;
-  if (stage === 'delivery_simulated') return 3;
-  if (stage === 'acceptance_simulated') {
-    return rollApplicable && status !== 'blocked' && status !== 'completed' ? 4 : 3;
-  }
-  return 4;
-}
+import type { SimulationStage, SimulationStatus, WorkbenchViewStage } from '../../lib/workbench-simulation';
+import { navigationStages, stageCard, stageIndex } from '../../lib/simulation-machine';
 
 export function WorkbenchStageNav({
   stage,
@@ -29,28 +10,34 @@ export function WorkbenchStageNav({
   status: SimulationStatus | null;
   rollApplicable: boolean;
 }) {
-  const selected = stage === 'need' ? 'need' : stage as SimulationStage;
-  const current = activeIndex(selected, status, rollApplicable);
-  const nonPhysicalComplete = status === 'completed' && stage === 'acceptance_simulated' && !rollApplicable;
+  const stages: WorkbenchViewStage[] = navigationStages();
+  const currentIndex = stage === 'need' ? 0 : stageIndex(stage as SimulationStage) + 1;
+  const completed = status === 'completed';
 
   return (
     <nav aria-label="Simulation stages" className="workbench-sim-stage-nav">
       <ol>
         {stages.map((item, index) => {
-          const currentItem = index === current;
-          const done = index < current || nonPhysicalComplete && index < 4 || stage === 'roll_preview' && index <= 4;
-          const notApplicable = index === 4 && !rollApplicable && status === 'completed';
+          const isNeed = item === 'need';
+          const simStage = isNeed ? null : (item as SimulationStage);
+          const notApplicable = !isNeed && !rollApplicable && item === 'roll_preview' && completed;
+          const done = index < currentIndex + (completed ? 1 : 0) && !notApplicable;
+          const currentItem = index === currentIndex && !completed && !notApplicable;
+          const blocked = currentItem && status === 'blocked';
+          const paused = currentItem && status === 'paused';
           return (
             <li
               aria-current={currentItem ? 'step' : undefined}
-              className={`${currentItem ? 'is-current' : ''}${done ? ' is-done' : ''}${notApplicable ? ' is-na' : ''}`}
-              key={item.id}
+              className={`${currentItem ? 'is-current' : ''}${done ? ' is-done' : ''}${notApplicable ? ' is-na' : ''}${blocked ? ' is-blocked' : ''}${paused ? ' is-paused' : ''}`}
+              key={item}
             >
-              <span className="workbench-sim-stage-index">{notApplicable ? '—' : String(index + 1).padStart(2, '0')}</span>
-              <span>{notApplicable ? 'Roll not applicable' : item.label}</span>
+              <span className="workbench-sim-stage-index">
+                {notApplicable ? 'â€”' : String(index + 1).padStart(2, '0')}
+              </span>
+              <span>{notApplicable ? 'Roll not applicable' : isNeed ? 'Need' : stageCard(simStage!).label}</span>
               {currentItem && <span className="visually-hidden">Current stage</span>}
-              {currentItem && status === 'blocked' && <span className="workbench-sim-stage-state">Blocked</span>}
-              {currentItem && status === 'paused' && <span className="workbench-sim-stage-state">Paused</span>}
+              {blocked && <span className="workbench-sim-stage-state">Blocked</span>}
+              {paused && <span className="workbench-sim-stage-state">Paused</span>}
             </li>
           );
         })}

@@ -6,6 +6,7 @@
    No external data, no external model endpoint — deterministic demo stub.
    ============================================================================ */
 
+import { buildStageAction } from './simulation-machine';
 import type {
   SimulationAction,
   SimulationStage,
@@ -165,20 +166,7 @@ export class AgentHost {
 
   /** Convert a proposal into a SimulationAction suggestion (human must execute). */
   suggestAction(proposal: AgentProposal): SimulationAction | null {
-    switch (proposal.targetStage) {
-      case 'candidate_drafted':
-        return { type: 'tender-review', outcome: 'proceed', note: proposal.content };
-      case 'tender_review_simulated':
-        return { type: 'assembly', outcome: 'proceed', note: proposal.content };
-      case 'assembly_simulated':
-        return { type: 'delivery', evidence: proposal.content.split('\n').map(l => l.trim()).filter(Boolean) };
-      case 'delivery_simulated':
-        return { type: 'acceptance', outcome: 'accepted', note: proposal.content };
-      case 'acceptance_simulated':
-        return { type: 'deployment', note: proposal.content };
-      default:
-        return null;
-    }
+    return buildStageAction(proposal.targetStage as SimulationStage, proposal.content, proposal.content.split('\n'));
   }
 }
 
