@@ -7,7 +7,6 @@ export function WorkspaceOverview() {
     <WorkspaceLayout currentContext="overview">
       <div className="workspace-overview">
         <header className="workspace-overview-heading">
-          <p className="workspace-overview-eyebrow">APT-LABS / WORKSPACE</p>
           <h1>Work, made legible.</h1>
           <p>
             Connect local capacity to meaningful work, and keep the evidence and decisions
@@ -18,7 +17,6 @@ export function WorkspaceOverview() {
         <section aria-labelledby="workspace-surfaces-title" className="workspace-overview-surfaces">
           <header className="workspace-overview-section-heading">
             <h2 id="workspace-surfaces-title">Five working surfaces</h2>
-            <span>ONE SHARED SYSTEM</span>
           </header>
           <ol className="workspace-overview-module-list">
             {WORKSPACE_OVERVIEW_ITEMS.map((item, index) => (

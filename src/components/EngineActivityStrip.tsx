@@ -80,9 +80,11 @@ export function EngineActivityStrip({
           <button className="engine-strip-ask" onClick={() => setCommandOpen(true)} type="button">
             Ask engine
           </button>
-          <span className="engine-strip-ledger" title={`Records ledger head: ${ledgerHeadHash ?? '—'}`}>
-            LEDGER <strong>{ledgerHeadHash ?? '—'}</strong>
-          </span>
+          {ledgerHeadHash !== null && (
+            <span className="engine-strip-ledger" title={`Records ledger head: ${ledgerHeadHash}`}>
+              LEDGER <strong>{ledgerHeadHash}</strong>
+            </span>
+          )}
         </div>
       </footer>
       <dialog

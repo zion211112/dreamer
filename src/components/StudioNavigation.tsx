@@ -203,6 +203,10 @@ export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSid
     }
   }
 
+  function restoreMenuFocus() {
+    window.requestAnimationFrame(() => menuButtonRef.current?.focus());
+  }
+
   function renderRailModule(moduleId: StudioModuleId, href: string, label: string, current: boolean) {
     return (
       <Link
@@ -264,7 +268,9 @@ export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSid
           <span>Current workspace</span>
           <span className="studio-sidebar-context">{getStudioContextLabel(currentContext)}</span>
         </div>
-        <div className="studio-nav-label">{contextDestinations[currentContext].heading}</div>
+        {contextDestinations[currentContext].links.length > 0 && (
+          <div className="studio-nav-label">{contextDestinations[currentContext].heading}</div>
+        )}
         <StudioLinks currentContext={currentContext} />
         <div className="studio-sidebar-bottom">
           <div className="studio-session-indicator"><span>DATA CONTEXT</span><small>Local, sample, and imported records remain distinct.</small></div>
@@ -276,7 +282,10 @@ export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSid
         className="studio-mobile-drawer"
         id="studio-mobile-drawer"
         onCancel={event => { event.preventDefault(); setMobileOpen(false); }}
-        onClose={() => setMobileOpen(false)}
+        onClose={() => {
+          setMobileOpen(false);
+          restoreMenuFocus();
+        }}
         onClick={event => { if (event.target === event.currentTarget) setMobileOpen(false); }}
         onKeyDown={event => { if (event.key === 'Escape') { event.preventDefault(); setMobileOpen(false); } }}
         ref={drawerRef}
@@ -289,12 +298,7 @@ export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSid
           <div className="studio-nav-label">Workspace</div>
           <StudioLinks
             currentContext={currentContext}
-            onNavigate={() => {
-              setMobileOpen(false);
-              window.requestAnimationFrame(() => {
-                window.requestAnimationFrame(() => menuButtonRef.current?.focus());
-              });
-            }}
+            onNavigate={() => setMobileOpen(false)}
           />
           {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} open={identityOpen} />}
           <div className="studio-session-indicator"><span>DATA CONTEXT</span><small>Local, sample, and imported records remain distinct.</small></div>

@@ -87,13 +87,13 @@ export function WorkspaceShell({
           // Show first 16 chars of hash anchor as ledger head indicator
           setLedgerHeadHash(entries[0].hash_anchor.slice(0, 16));
         } else {
-          setLedgerHeadHash('—');
+          setLedgerHeadHash(null);
         }
       }).catch(() => {
         setLedgerHeadHash('—');
       });
     } else {
-      setLedgerHeadHash('—');
+      setLedgerHeadHash(null);
     }
   }, [moduleId]);
 
