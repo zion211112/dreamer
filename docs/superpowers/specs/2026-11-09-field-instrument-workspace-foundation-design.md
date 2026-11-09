@@ -1,6 +1,6 @@
 # Field Instrument Workspace Foundation
 
-**Status:** Draft — pending user review  
+**Status:** Approved for implementation
 **Date:** 2026-11-09  
 **Scope:** Shared workspace shell and the `/workspace` overview only
 

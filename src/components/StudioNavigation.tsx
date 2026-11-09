@@ -232,7 +232,7 @@ export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSid
         >
           <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M3 5.5h14M3 10h14M3 14.5h14" /></svg>
         </button>
-        <BrandMark className="studio-topbar-brand" size="sm" />
+        <BrandMark className="studio-topbar-brand" href="/workspace" size="sm" />
         <span className="studio-topbar-divider" aria-hidden="true" />
         <span className="studio-topbar-context"><strong>Field Studio</strong><span aria-hidden="true">/</span>{getStudioContextLabel(currentContext)}</span>
         <span className="studio-topbar-spacer" />
@@ -283,7 +283,7 @@ export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSid
       >
         <div className="studio-mobile-drawer-panel">
           <header className="studio-mobile-drawer-header">
-            <BrandMark className="studio-brand-mark" size="sm" />
+            <BrandMark className="studio-brand-mark" href="/workspace" size="sm" />
             <button aria-label="Close workspace navigation" autoFocus className="studio-drawer-close" onClick={() => setMobileOpen(false)} type="button">×</button>
           </header>
           <div className="studio-nav-label">Workspace</div>

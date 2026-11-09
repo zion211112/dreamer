@@ -9,7 +9,7 @@ export function Landing() {
         <BrandMark size="md" />
         <Link
           className="landing-demo-link"
-          href="/sign-in?next=%2Fworkspace%2Fpeople"
+          href="/sign-in?next=%2Fworkspace"
         >
           Open the workspace <span aria-hidden="true">↗</span>
         </Link>
@@ -63,7 +63,7 @@ export function Landing() {
               </div>
               <Link
                 className="landing-audience-link"
-                href="/sign-in?next=%2Fworkspace%2Finstitutions"
+                href="/sign-in?next=%2Fworkspace%2Fnetwork%2Finstitutions"
               >
                 Open Institutions <span aria-hidden="true">↗</span>
               </Link>
@@ -78,7 +78,7 @@ export function Landing() {
               </div>
               <Link
                 className="landing-audience-link"
-                href="/sign-in?next=%2Fworkspace%2Fpeople"
+                href="/sign-in?next=%2Fworkspace%2Fnetwork%2Fpeople"
               >
                 Open People <span aria-hidden="true">↗</span>
               </Link>

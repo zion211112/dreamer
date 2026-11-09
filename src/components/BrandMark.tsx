@@ -1,9 +1,10 @@
 interface BrandMarkProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
+  href?: string;
 }
 
-export function BrandMark({ size = 'md', className = '' }: BrandMarkProps) {
+export function BrandMark({ size = 'md', className = '', href = '/' }: BrandMarkProps) {
   const sizes = {
     sm: { symbol: 24, text: '14px' },
     md: { symbol: 30, text: '12px' },
@@ -12,7 +13,7 @@ export function BrandMark({ size = 'md', className = '' }: BrandMarkProps) {
   const { symbol, text } = sizes[size];
 
   return (
-    <a href="/" className={`wordmark ${className}`} style={{ 
+    <a href={href} className={`wordmark ${className}`} style={{
       display: 'flex', 
       alignItems: 'center', 
       gap: '10px',
