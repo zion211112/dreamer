@@ -3,6 +3,7 @@ import {
   STUDIO_FLOW_MODULES,
   STUDIO_NETWORK_VIEWS,
   STUDIO_SECONDARY_MODULES,
+  getStudioContextLabel,
   getStudioModuleForContext,
   getStudioModuleLabel,
   type StudioContext,
@@ -39,6 +40,7 @@ describe('Studio workspace navigation', () => {
 
   it('maps every workspace context to the productive module or its supporting view', () => {
     const contexts: StudioContext[] = [
+      'overview',
       'commons',
       'network:people',
       'network:institutions',
@@ -59,6 +61,7 @@ describe('Studio workspace navigation', () => {
     ];
 
     expect(contexts.map(context => [context, getStudioModuleForContext(context)])).toEqual([
+      ['overview', null],
       ['commons', 'commons'],
       ['network:people', 'network'],
       ['network:institutions', 'network'],
@@ -82,5 +85,7 @@ describe('Studio workspace navigation', () => {
     expect(getStudioModuleLabel('network:people')).toBe('Network');
     expect(getStudioModuleLabel('records:roll')).toBe('Records');
     expect(getStudioModuleLabel('intelligence:coin-lab')).toBe('Intelligence');
+    expect(getStudioContextLabel('overview')).toBe('Overview');
+    expect(contexts.slice(1).map(getStudioContextLabel)).toEqual(contexts.slice(1).map(getStudioModuleLabel));
   });
 });

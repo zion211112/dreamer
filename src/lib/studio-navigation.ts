@@ -1,4 +1,5 @@
 export type StudioContext =
+  | 'overview'
   | 'commons'
   | 'network:people'
   | 'network:institutions'
@@ -90,6 +91,8 @@ export const STUDIO_NETWORK_VIEWS = [
 
 export function getStudioModuleForContext(context: StudioContext): StudioModuleId | null {
   switch (context) {
+    case 'overview':
+      return null;
     case 'commons':
       return 'commons';
     case 'network:people':
@@ -125,4 +128,8 @@ export function getStudioModuleLabel(context: StudioContext): string {
   const module = STUDIO_FLOW_MODULES.find(destination => destination.id === moduleId);
   if (!module) throw new Error(`Studio navigation is missing module "${moduleId}".`);
   return module.label;
+}
+
+export function getStudioContextLabel(context: StudioContext): string {
+  return context === 'overview' ? 'Overview' : getStudioModuleLabel(context);
 }

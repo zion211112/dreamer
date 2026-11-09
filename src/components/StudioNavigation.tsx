@@ -3,8 +3,8 @@ import { Link } from 'wouter';
 import { useAuth } from '../lib/auth/hooks';
 import {
   STUDIO_FLOW_MODULES,
+  getStudioContextLabel,
   getStudioModuleForContext,
-  getStudioModuleLabel,
   type StudioContext,
   type StudioModuleId,
 } from '../lib/studio-navigation';
@@ -59,6 +59,10 @@ const workbenchDestinations = {
 };
 
 const contextDestinations: Record<StudioContext, { heading: string; links: ContextDestination[] }> = {
+  overview: {
+    heading: 'Overview',
+    links: [],
+  },
   commons: {
     heading: 'Commons',
     links: [],
@@ -145,7 +149,9 @@ function StudioLinks({ currentContext, onNavigate }: { currentContext: StudioCon
           {link.label}
         </Link>
       )) : (
-        <p className="studio-context-empty">No destinations in this context.</p>
+        <p className="studio-context-empty">
+          {currentContext === 'overview' ? 'Choose a module to begin.' : 'No destinations in this context.'}
+        </p>
       )}
     </nav>
   );
@@ -178,7 +184,6 @@ export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSid
   const [identityOpen, setIdentityOpen] = useState(false);
   const drawerRef = useRef<HTMLDialogElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const activeModule = getStudioModuleForContext(currentContext) || 'commons';
   const showIdentity = !!profile;
   const profileName = showIdentity ? profile?.display_name || '' : '';
 
@@ -229,7 +234,7 @@ export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSid
         </button>
         <BrandMark className="studio-topbar-brand" size="sm" />
         <span className="studio-topbar-divider" aria-hidden="true" />
-        <span className="studio-topbar-context"><strong>Field Studio</strong><span aria-hidden="true">/</span>{getStudioModuleLabel(currentContext)}</span>
+        <span className="studio-topbar-context"><strong>Field Studio</strong><span aria-hidden="true">/</span>{getStudioContextLabel(currentContext)}</span>
         <span className="studio-topbar-spacer" />
         <WorkspaceQuickSearch destinations={WORKSPACE_SEARCH_DESTINATIONS} />
         <button
@@ -257,7 +262,7 @@ export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSid
       <aside aria-label="Workspace context navigation" className={`studio-sidebar${sidebarCollapsed ? ' is-collapsed' : ''}`}>
         <div className="studio-sidebar-heading">
           <span>Current workspace</span>
-          <span className="studio-sidebar-context">{getStudioModuleLabel(currentContext)}</span>
+          <span className="studio-sidebar-context">{getStudioContextLabel(currentContext)}</span>
         </div>
         <div className="studio-nav-label">{contextDestinations[currentContext].heading}</div>
         <StudioLinks currentContext={currentContext} />
@@ -296,7 +301,7 @@ export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSid
         </div>
       </dialog>
 
-      {showIdentity && <IdentityCabinet currentContext={activeModule} onClose={() => setIdentityOpen(false)} open={identityOpen} />}
+      {showIdentity && <IdentityCabinet currentContext={currentContext} onClose={() => setIdentityOpen(false)} open={identityOpen} />}
     </>
   );
 }

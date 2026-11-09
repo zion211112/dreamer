@@ -1,7 +1,7 @@
 ﻿import { useState, useEffect } from 'preact/hooks';
 import type { ComponentChildren } from 'preact';
 import type { StudioContext } from '../lib/studio-navigation';
-import { getStudioModuleLabel, getStudioModuleForContext } from '../lib/studio-navigation';
+import { getStudioContextLabel, getStudioModuleForContext } from '../lib/studio-navigation';
 import { StudioNavigation } from './StudioNavigation';
 import { RecordInspector, type RecordSelection, type EvidenceGap, type ContextAction, type GateStatus } from './RecordInspector';
 import { ChangeSetDock, type PendingCommit, type EvidenceGapDock, type ReconciliationItem } from './ChangeSetDock';
@@ -54,16 +54,18 @@ export function WorkspaceShell({
 }: WorkspaceShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(readSidebarPreference);
   const [ledgerHeadHash, setLedgerHeadHash] = useState<string | null>(null);
-  const moduleLabel = getStudioModuleLabel(currentContext);
+  const moduleLabel = getStudioContextLabel(currentContext);
   const moduleId = getStudioModuleForContext(currentContext);
   const runtimeLabel = isDemoMode ? 'Local demo' : 'Configured environment';
-  const storageLabel = moduleId === 'records'
-    ? isDemoMode ? 'Demo fixtures + local Roll' : 'Configured Records API'
-    : currentContext === 'workbench:school-console'
-      ? 'School Console · IndexedDB'
-      : moduleId === 'commons' || moduleId === 'workbench'
-        ? `${moduleLabel} · browser-local`
-        : `${moduleLabel} · module-specific data`;
+  const storageLabel = currentContext === 'overview'
+    ? 'Workspace overview · no module data queried'
+    : moduleId === 'records'
+      ? isDemoMode ? 'Demo fixtures + local Roll' : 'Configured Records API'
+      : currentContext === 'workbench:school-console'
+        ? 'School Console · IndexedDB'
+        : moduleId === 'commons' || moduleId === 'workbench'
+          ? `${moduleLabel} · browser-local`
+          : `${moduleLabel} · module-specific data`;
 
   function toggleSidebar() {
     setSidebarCollapsed(current => {
@@ -146,7 +148,7 @@ export function WorkspaceShell({
         />
       )}
       <EngineActivityStrip
-        agentAvailable={true}
+        agentAvailable={false}
         ledgerHeadHash={ledgerHeadHash}
         runs={[]}
         runtimeLabel={runtimeLabel}
