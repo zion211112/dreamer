@@ -1,4 +1,4 @@
-interface BrandMarkProps {
+﻿interface BrandMarkProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   href?: string;
@@ -10,34 +10,17 @@ export function BrandMark({ size = 'md', className = '', href = '/' }: BrandMark
     md: { symbol: 30, text: '12px' },
     lg: { symbol: 40, text: '20px' },
   };
-  const { symbol, text } = sizes[size];
-
+  const { text } = sizes[size];
+  const symbolClass = `wordmark-symbol wordmark-symbol-${size}`;
   return (
-    <a href={href} className={`wordmark ${className}`} style={{
-      display: 'flex', 
-      alignItems: 'center', 
-      gap: '10px',
-      color: 'var(--text)',
-      font: `650 ${text}/1 var(--mono)`,
-      letterSpacing: '.13em',
-      textDecoration: 'none',
-    }} aria-label="APT-LABS Home">
-      <span className="wordmark-symbol" style={{
-        display: 'grid',
-        width: `${symbol}px`,
-        height: `${symbol}px`,
-        placeItems: 'center',
-        border: '1px solid var(--border-strong)',
-        borderRadius: '8px 8px 8px 2px',
-        background: 'linear-gradient(145deg, var(--bg-elev), var(--terrain-pale))',
-        color: 'var(--terrain-ink)',
-        font: `600 ${size === 'sm' ? '12px' : size === 'lg' ? '20px' : '15px'} var(--serif)`,
-      }}>
-        A
-      </span>
-      <span style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
-        APT<span className="wordmark-dash" style={{ color: 'var(--terrain)' }}>—</span>LABS
-      </span>
+    <a
+      className={`wordmark ${className}`.trim()}
+      href={href}
+      aria-label="APT-LABS"
+    >
+      <span className={symbolClass} aria-hidden="true">A</span>
+      <span className="wordmark-dash" aria-hidden="true">â€”</span>
+      <span className="wordmark-label" style={{ fontSize: text }}>Apt Labs</span>
     </a>
   );
 }

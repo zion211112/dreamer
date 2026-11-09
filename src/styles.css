@@ -14363,44 +14363,51 @@ a:focus-visible {
 
 /* Field Studio workspace shell */
 .field-studio-shell {
-  --bg-elev: #172820;
-  --bg-elev: #20362b;
-  --line: rgb(234 231 216 / 13%);
-  --fg: #e9e7dc;
-  --muted: #9da99c;
+  --studio-rail: #172820;
+  --studio-rail-raised: #20362b;
+  --studio-rail-line: rgb(234 231 216 / 13%);
+  --studio-rail-ink: #e9e7dc;
+  --studio-rail-muted: #9da99c;
+  --studio-rail-soft: #b6c8ad;
+  --studio-rail-hover: rgb(255 255 255 / 5%);
+  --studio-rail-active: rgb(214 203 168 / 11%);
+  --studio-rail-active-border: rgb(214 203 168 / 15%);
+  --studio-rail-focus: #d6cba8;
   --studio-module-rail: 52px;
   --studio-context-pane: 206px;
   --studio-inspector: 310px;
   --studio-dock: 96px;
   --studio-topbar: 54px;
   --studio-statusbar: 24px;
+  --studio-navigation: calc(var(--studio-module-rail) + var(--studio-context-pane));
   height: 100dvh;
   min-height: 100dvh;
   display: grid;
-  grid-template-columns: var(--studio-module-rail) var(--studio-context-pane) minmax(0, 1fr) var(--studio-inspector);
-  grid-template-rows: var(--studio-topbar) minmax(0, 1fr) var(--studio-dock) var(--studio-statusbar);
+  grid-template-columns: var(--studio-navigation) minmax(0, 1fr);
+  grid-template-rows: var(--studio-topbar) minmax(0, 1fr) var(--studio-statusbar);
   color: var(--text);
-  background: var(--bg-elev);
+  background: var(--bg);
 }
 
 .field-studio-shell.has-collapsed-sidebar {
-  grid-template-columns: var(--studio-module-rail) 0 minmax(0, 1fr) var(--studio-inspector);
+  grid-template-columns: var(--studio-module-rail) minmax(0, 1fr);
 }
 
 .field-studio-shell.has-record-inspector {
-  grid-template-columns: var(--studio-module-rail) var(--studio-context-pane) minmax(0, 1fr) var(--studio-inspector);
+  grid-template-columns: var(--studio-navigation) minmax(0, 1fr) var(--studio-inspector);
 }
 
 .field-studio-shell.has-record-inspector.has-collapsed-sidebar {
-  grid-template-columns: var(--studio-module-rail) 0 minmax(0, 1fr) var(--studio-inspector);
+  grid-template-columns: var(--studio-module-rail) minmax(0, 1fr) var(--studio-inspector);
+}
+
+.field-studio-shell.has-change-set-dock {
+  grid-template-rows: var(--studio-topbar) minmax(0, 1fr) var(--studio-dock) var(--studio-statusbar);
 }
 
 .field-studio-shell.has-change-set-dock .field-studio-dock {
-  grid-column: 3 / 5;
-}
-
-.field-studio-shell.has-record-inspector.has-change-set-dock .field-studio-main {
-  grid-column: 3;
+  grid-column: 2 / -1;
+  grid-row: -2;
 }
 
 .field-studio-shell.has-collapsed-dock {
@@ -18160,6 +18167,7 @@ a:focus-visible {
     transition: none;
   }
 }
+
 
 
 

@@ -1,49 +1,61 @@
 /* ============================================================================
    APT-LABS — Design Tokens
-   Light Luxury (default); dark signature variant via [data-skin="dark"]
+   Reference commit palette; dark signature variant via [data-skin="dark"]
    ============================================================================ */
 
 :root {
   /* ========================================================================
-     APT-LABS v2 — Light Luxury Palette (default)
-     Warm cream paper base; deep ink / refined moss / teal / green / coral / amber
+     Reference commit palette (default)
+     Warm paper and deep ink with moss, teal, brass, and lime accents
      ======================================================================== */
 
-  /* Color Primitives (light luxury) */
-  --bg: #F7F5F0;           /* warm cream paper */
-  --fg: #1A1D18;           /* deep ink - primary text */
-  --muted: #4A5A52;        /* refined moss - secondary information */
-  --dim: #8FA08C;          /* dim - decorative only (large text only) */
-  --fg-strong: #0F1812;
-  --bg-elev: #FAF9F6;
-  --bg-subtle: #F1EFE8;
-  --line: rgba(26, 29, 24, 0.14);
-  --line-strong: rgba(26, 29, 24, 0.24);
-  --hairline: rgba(26, 29, 24, 0.08);
+  /* Color Primitives */
+  --bg: #f5f3ee;
+  --fg: #1a1d18;
+  --muted: #6b7066;
+  --dim: #969b90;
+  --fg-strong: #0f110d;
+  --bg-elev: #ffffff;
+  --bg-subtle: #ebe7df;
+  --line: rgba(26, 29, 24, .12);
+  --line-strong: rgba(26, 29, 24, .22);
+  --hairline: rgba(26, 29, 24, .08);
+
+  /* Palette colors */
+  --terrain: #5d7a5c;
+  --terrain-pale: #e4ebe3;
+  --terrain-ink: #2e3d2d;
+  --brand-main: #295d70;
+  --brand-main-wash: #e3edf1;
+  --brand-branch: #c6d68e;
+  --brand-branch-wash: rgba(198, 214, 142, .12);
+  --brass: #b8955a;
+  --brass-pale: #f2eadc;
+  --danger: #a84632;
+  --danger-pale: #f6e5df;
+  --phosphor: #8fd98f;
+  --bg-term: #0d110e;
+  --glow-soft: rgba(93, 122, 92, .1);
 
   /* State Colors (semantic - meaning-carrying) */
-  --state-canon: #286375;   /* teal - accepted/canonical/verified */
-  --state-canon-wash: rgba(40, 99, 117, 0.10);
-  --state-proposed: #3D7158; /* green - proposed/draft/active change */
-  --state-proposed-wash: rgba(61, 113, 88, 0.10);
-  --state-risk: #A5533D;    /* coral - risk/exception/unresolved/amendment */
-  --state-risk-wash: rgba(165, 83, 61, 0.10);
-  --state-caution: #B8955A; /* amber - caution/attention/evidence gaps */
-  --state-caution-wash: rgba(184, 149, 90, 0.10);
+  --state-canon: var(--brand-main);
+  --state-canon-wash: var(--brand-main-wash);
+  --state-proposed: var(--brand-branch);
+  --state-proposed-wash: var(--brand-branch-wash);
+  --state-risk: var(--danger);
+  --state-risk-wash: var(--danger-pale);
+  --state-caution: var(--brass);
+  --state-caution-wash: var(--brass-pale);
 
   /* Water (info) */
-  --water: #3A6B8C;
-  --water-pale: rgba(58, 107, 140, 0.12);
+  --water: #3a6b8c;
+  --water-pale: rgba(58, 107, 140, .12);
 
   /* Legacy semantic colors (kept for compatibility during migration) */
-  --brand-branch: var(--state-proposed);
-  --brand-branch-wash: var(--state-proposed-wash);
-  --brass: var(--state-caution);
-  --brass-pale: var(--state-caution-wash);
-  --danger: var(--state-risk);
-  --danger-pale: var(--state-risk-wash);
-  --phosphor: var(--state-proposed);
-  --bg-term: var(--bg);
+  --brass: #b8955a;
+  --brass-pale: #f2eadc;
+  --danger: #a84632;
+  --danger-pale: #f6e5df;
 
   /* Semantic Roles (mapped to new palette) */
   --text: var(--fg);
@@ -53,8 +65,8 @@
   --border-strong: var(--line-strong);
 
   /* State Color Aliases (replaces ok/warn/info/danger) */
-  --ok: var(--state-canon);
-  --ok-bg: var(--state-canon-wash);
+  --ok: var(--terrain);
+  --ok-bg: var(--terrain-pale);
   --warn: var(--state-caution);
   --warn-bg: var(--state-caution-wash);
   --info: var(--water);
@@ -146,37 +158,26 @@
 
 /* Dark Signature Variant — explicit opt-in via [data-skin="dark"] on <html> */
 [data-skin="dark"] {
-  --bg: #0A0F0C;           /* green-black base, never pure black */
-  --fg: #E9F1E8;           /* bone - primary text */
-  --muted: #8FA08C;        /* moss - secondary information */
-  --dim: #5C6B5E;          /* dim - decorative only (3.4:1, large text only) */
-  --fg-strong: #F0F5EF;
-  --bg-elev: #111713;
-  --bg-subtle: #141A16;
-  --line: rgba(143, 160, 140, 0.18);
-  --line-strong: rgba(143, 160, 140, 0.32);
-  --hairline: rgba(143, 160, 140, 0.10);
+  --bg: #0d110e;
+  --fg: #e8ebe5;
+  --muted: #6d7d6e;
+  --dim: #4a554b;
+  --fg-strong: #f4f3ee;
+  --bg-elev: #1a221c;
+  --bg-subtle: #141a15;
+  --line: rgba(109, 125, 110, .3);
+  --line-strong: rgba(109, 125, 110, .5);
+  --hairline: rgba(109, 125, 110, .15);
 
-  --state-canon: #7FC5BC;   /* teal - accepted/canonical/verified */
-  --state-canon-wash: rgba(127, 197, 188, 0.12);
-  --state-proposed: #C9F292; /* lime - proposed/draft/active change */
-  --state-proposed-wash: rgba(201, 242, 146, 0.10);
-  --state-risk: #E89670;    /* coral - risk/exception/unresolved/amendment */
-  --state-risk-wash: rgba(232, 150, 112, 0.12);
-  --state-caution: #CBAF6E; /* amber - caution/attention/evidence gaps */
-  --state-caution-wash: rgba(203, 175, 110, 0.12);
-
-  --water: #4A9EBB;
-  --water-pale: rgba(74, 158, 187, 0.14);
-
-  --brand-branch: var(--state-proposed);
-  --brand-branch-wash: var(--state-proposed-wash);
-  --brass: var(--state-caution);
-  --brass-pale: var(--state-caution-wash);
-  --danger: var(--state-risk);
-  --danger-pale: var(--state-risk-wash);
-  --phosphor: var(--state-proposed);
-  --bg-term: var(--bg);
+  --terrain: #8fd98f;
+  --terrain-pale: #1a2d1a;
+  --terrain-ink: #f0fff0;
+  --brass: #e8c87d;
+  --brass-pale: #3d341a;
+  --water: #7dd3fc;
+  --danger: #f28a73;
+  --danger-pale: #3b211d;
+  --phosphor: #8fd98f;
 
   --text: var(--fg);
   --text-muted: var(--muted);
@@ -184,8 +185,8 @@
   --border: var(--line);
   --border-strong: var(--line-strong);
 
-  --ok: var(--state-canon);
-  --ok-bg: var(--state-canon-wash);
+  --ok: var(--terrain);
+  --ok-bg: var(--terrain-pale);
   --warn: var(--state-caution);
   --warn-bg: var(--state-caution-wash);
   --info: var(--water);

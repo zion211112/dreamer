@@ -1,72 +1,7 @@
-import { WorkspaceLayout } from './WorkspaceLayout';
+﻿import { WorkspaceLayout } from './WorkspaceLayout';
 import { PageHead } from '../../components/PageHead';
-import { CommonsReportForm } from './commons/ReportForm';
-import { CommonsGovernance } from './commons/GovernancePanel';
-import { CommonsOpportunities } from './commons/OpportunitiesPanel';
-import { RadarSpatialPanel } from '../../components/RadarSpatialPanel';
-import { CommonsSignalQueue } from './commons/CommonsSignalQueue';
-import { CommonsSignalDetail } from './commons/CommonsSignalDetail';
-import { useCommons } from './commons/useCommons';
 
 export function Commons() {
-  const {
-    contributeButtonRef,
-    reportInstitutionRef,
-    commonsView,
-    setCommonsView,
-    institutionScope,
-    setInstitutionScope,
-    setSelectedId,
-    filter,
-    setFilter,
-    search,
-    setSearch,
-    setSignalPage,
-    showReportForm,
-    setShowReportForm,
-    showContributionMenu,
-    setShowContributionMenu,
-    selectedOpportunityId,
-    setSelectedOpportunityId,
-    sourceConsoleDraftId,
-    reportTitle,
-    setReportTitle,
-    reportDetails,
-    setReportDetails,
-    error,
-    loaded,
-    actorEmail,
-    governance,
-    showProposalForm,
-    setShowProposalForm,
-    newStewardEmail,
-    setNewStewardEmail,
-    decisionNotes,
-    setDecisionNotes,
-    institutionNames,
-    visibleSignals,
-    paginatedSignals,
-    selected,
-    featuredPossibility,
-    activeInstitutionId,
-    activeInstitutionName,
-    scopeInstitutionName,
-    activeStewards,
-    isSteward,
-    approvedProposal,
-    registerInitialSteward,
-    addSteward,
-    submitProposal,
-    recordDecision,
-    submitReport,
-    closeReportForm,
-    changeStatus,
-    addNote,
-    navigate,
-    note,
-    setNote,
-  } = useCommons();
-
   return (
     <WorkspaceLayout currentContext="commons">
       <div className="signal-desk">
@@ -79,159 +14,73 @@ export function Commons() {
           <div className="signal-head-actions">
             <div className="commons-contribute">
               <button
-                aria-expanded={showContributionMenu}
                 className="signal-primary-action"
-                onClick={() => {
-                  if (showReportForm) closeReportForm();
-                  else setShowContributionMenu(value => !value);
-                }}
-                ref={contributeButtonRef}
                 type="button"
               >
-                {showReportForm ? 'Close form' : '+ Contribute'}
+                + Contribute
               </button>
-              {showContributionMenu && (
-                <div aria-label="Contribution options" className="commons-contribute-menu" role="group">
-                  <button
-                    onClick={() => {
-                      setShowContributionMenu(false);
-                      setShowReportForm(true);
-                    }}
-                    type="button"
-                  >
-                    Add a signal
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowContributionMenu(false);
-                      setCommonsView('opportunities');
-                    }}
-                    type="button"
-                  >
-                    Explore opportunities
-                  </button>
-                </div>
-              )}
             </div>
           </div>
         </div>
 
         <nav className="commons-modebar" aria-label="Commons views">
           <button
-            aria-pressed={commonsView === 'signals'}
-            className={commonsView === 'signals' ? 'is-active' : ''}
-            onClick={() => setCommonsView('signals')}
+            aria-pressed={true}
+            className="is-active"
             type="button"
           >
-            Signals <span>{visibleSignals.length}</span>
+            Signals <span>0</span>
           </button>
           <button
-            aria-pressed={commonsView === 'opportunities'}
-            className={commonsView === 'opportunities' ? 'is-active' : ''}
-            onClick={() => setCommonsView('opportunities')}
+            aria-pressed={false}
             type="button"
           >
             Opportunities
           </button>
           <button
-            aria-pressed={commonsView === 'decisions'}
-            className={commonsView === 'decisions' ? 'is-active' : ''}
-            onClick={() => setCommonsView('decisions')}
+            aria-pressed={false}
             type="button"
           >
-            Decisions <span>{governance.proposals.length}</span>
+            Decisions <span>0</span>
           </button>
-          <label className="commons-scope-select" hidden={commonsView === 'opportunities'}>
-            <span className="visually-hidden">Institution scope</span>
-            <select
-              onChange={event => {
-                const nextInstitutionId = (event.currentTarget as HTMLSelectElement).value;
-                setInstitutionScope(nextInstitutionId);
-                setSignalPage(0);
-              }}
-              value={institutionScope}
-            >
-              <option value="">All institutions</option>
-              {institutionNames && Object.entries(institutionNames).map(([id, name]) => (
-                <option key={id} value={id}>{name}</option>
-              ))}
-            </select>
-          </label>
-          <span className="commons-mode-hint">{scopeInstitutionName}</span>
         </nav>
 
-        {error && <p className="local-data-warning" role="alert">{error}</p>}
-
-        {showReportForm && (
-          <CommonsReportForm
-            institutionNames={institutionNames}
-            onReportDetailsChange={setReportDetails}
-            onReportTitleChange={setReportTitle}
-            onSubmit={submitReport}
-            onCancel={closeReportForm}
-            reportDetails={reportDetails}
-            reportInstitutionRef={reportInstitutionRef}
-            reportTitle={reportTitle}
-            sourceConsoleDraftId={sourceConsoleDraftId}
-          />
-        )}
-
-        <CommonsGovernance
-          activeInstitutionId={activeInstitutionId}
-          activeInstitutionName={activeInstitutionName}
-          activeStewards={activeStewards}
-          addSteward={addSteward}
-          actorEmail={actorEmail}
-          decisionNotes={decisionNotes}
-          governance={governance}
-          isSteward={isSteward}
-          newStewardEmail={newStewardEmail}
-          recordDecision={recordDecision}
-          registerInitialSteward={registerInitialSteward}
-          selected={selected}
-          setDecisionNotes={setDecisionNotes}
-          setNewStewardEmail={setNewStewardEmail}
-          setShowProposalForm={setShowProposalForm}
-          showProposalForm={showProposalForm}
-          submitProposal={submitProposal}
-        />
-
-        <CommonsOpportunities selectedOpportunityId={selectedOpportunityId} setSelectedOpportunityId={setSelectedOpportunityId} />
-
-        <section aria-label="Field signal workspace" className="signal-workspace" hidden={commonsView !== 'signals'}>
-          <CommonsSignalQueue
-            search={search}
-            setSearch={setSearch}
-            filter={filter}
-            setFilter={setFilter}
-            institutionScope={institutionScope}
-            setInstitutionScope={setInstitutionScope}
-            loaded={loaded}
-            paginatedSignals={paginatedSignals}
-            selected={selected}
-            setSelectedId={setSelectedId}
-            featuredPossibility={featuredPossibility}
-            setCommonsView={setCommonsView}
-            setSignalPage={setSignalPage}
-          />
-
-          <RadarSpatialPanel signals={visibleSignals} />
-
-          <CommonsSignalDetail
-            selected={selected}
-            isSteward={isSteward}
-            approvedProposal={approvedProposal}
-            onChangeStatus={changeStatus}
-            onOpenSourceDraft={draftId => navigate(`/workspace/workbench/school-console?draft=${encodeURIComponent(draftId)}#school-draft-${encodeURIComponent(draftId)}`)}
-            onOpenWorkBrief={proposalId => navigate(`/workspace/workbench/examples?proposal=${encodeURIComponent(proposalId)}`)}
-            onSetCommonsView={setCommonsView}
-            onAddNote={addNote}
-            note={note}
-            setNote={setNote}
-          />
+        <section aria-label="Field signal workspace" className="signal-workspace">
+          <div className="signal-queue">
+            <div className="commons-signal-tools">
+              <div className="signal-search">
+                <span className="signal-search-icon" aria-hidden="true">&#8226;</span>
+                <input
+                  type="search"
+                  placeholder="Search signalsâ€¦"
+                  className="signal-search-input"
+                  aria-label="Search signals"
+                />
+              </div>
+              <details className="commons-signal-filter">
+                <summary>Filter</summary>
+                <div className="signal-filters">
+                  <button type="button">All</button>
+                  <button type="button">New</button>
+                  <button type="button">Triaged</button>
+                  <button type="button">Brief</button>
+                </div>
+              </details>
+            </div>
+            <ul className="signal-list" role="list">
+              <li className="signal-list-item">
+                <span className="signal-status-mark signal-status-new" aria-hidden="true"></span>
+                <div className="signal-list-copy">
+                  <strong>Community workshop bench capacity</strong>
+                  <span className="commons-signal-meta">Kibera Makerspace Â· physical-asset</span>
+                  <span className="commons-signal-meta">Signal â€¢ needs crew</span>
+                </div>
+                <span className="signal-list-date">2026-11</span>
+              </li>
+            </ul>
+          </div>
         </section>
       </div>
     </WorkspaceLayout>
   );
 }
-

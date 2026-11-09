@@ -1,156 +1,56 @@
-import { useEffect, useRef, useState } from 'preact/hooks';
+﻿import { useState } from 'preact/hooks';
 import { Link } from 'wouter';
-import { EntityInspector } from '../../components/people/EntityInspector';
-import { NetworkMap } from '../../components/NetworkMap';
-import { PeopleDirectory } from '../../components/people/PeopleDirectory';
-import {
-  importPortablePeopleRecord,
-  isPrimaryEntity,
-  PEOPLE_NETWORK,
-  PEOPLE_RELATIONSHIPS,
-  readImportedPeopleNetworkRecord,
-  ROOT_ENTITY_BY_TYPE,
-  type NetworkEntity,
-  type PeopleNetworkRecord,
-} from '../../lib/people-network';
-import { projectPeopleDirectoryEntries } from '../../lib/people-discovery';
-import {
-  readPeopleProfileOwnerId,
-  readPeopleProfiles,
-  savePeopleProfiles,
-  type PeopleProfileRecord,
-} from '../../lib/people-profiles';
 import { WorkspaceLayout } from './WorkspaceLayout';
-import { PeopleViewTabs } from './people/PeopleViewTabs';
+import { EntityInspector } from '../../components/people/EntityInspector';
+import { PEOPLE_NETWORK, PEOPLE_RELATIONSHIPS, type NetworkEntity, type RelationshipKind } from '../../lib/people-network';
+
+const RELATIONSHIP_KINDS: (RelationshipKind | 'all')[] = [
+  'all',
+  'membership', 'affiliation', 'work', 'stewardship', 'contribution',
+  'evidence', 'owns', 'operates', 'stewards', 'funds',
+  'contributes_to', 'attests', 'issues',
+];
+
+const KIND_LABELS: Record<RelationshipKind | 'all', string> = {
+  all: 'All',
+  membership: 'Membership',
+  affiliation: 'Affiliation',
+  work: 'Work',
+  stewardship: 'Stewardship',
+  contribution: 'Contribution',
+  evidence: 'Evidence',
+  owns: 'Owns',
+  operates: 'Operates',
+  stewards: 'Stewards',
+  funds: 'Funds',
+  contributes_to: 'Contributes to',
+  attests: 'Attests',
+  issues: 'Issues',
+};
 
 export type PeopleView = 'people' | 'crews' | 'network';
 
 export function People() {
-  const sampleRecord: PeopleNetworkRecord = { entities: PEOPLE_NETWORK, relationships: PEOPLE_RELATIONSHIPS };
-  const [importedRecord, setImportedRecord] = useState<PeopleNetworkRecord | null>(null);
-  const [profiles, setProfiles] = useState<PeopleProfileRecord[]>([]);
-  const [profileOwnerId, setProfileOwnerId] = useState('');
-  const [profileStoreReady, setProfileStoreReady] = useState(false);
-  const [activeDataset, setActiveDataset] = useState<'sample' | 'imported'>('sample');
-  const [activeView, setActiveView] = useState<PeopleView>('people');
-  const [rootId, setRootId] = useState(ROOT_ENTITY_BY_TYPE.person);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [query, setQuery] = useState('');
-  const [recordStatus, setRecordStatus] = useState('');
-  const importInput = useRef<HTMLInputElement>(null);
-  const networkRecord = activeDataset === 'imported' && importedRecord ? importedRecord : sampleRecord;
-  const entityById = new Map(networkRecord.entities.map(entity => [entity.id, entity]));
-  const selectedEntity = selectedId ? entityById.get(selectedId) ?? null : null;
-  const importedEntityIds = new Set(networkRecord.entities.map(entity => entity.id));
-  const profilesForActiveDataset = activeDataset === 'imported'
-    ? profiles.filter(profile => profile.origin !== 'user-authored'
-      || profile.ownerId === profileOwnerId
-        && profile.subjectId === profile.sourceRecordId
-        && Boolean(profile.sourceRecordId)
-        && importedEntityIds.has(profile.sourceRecordId ?? ''))
-    : [];
-  const directoryEntries = projectPeopleDirectoryEntries(
-    networkRecord.entities,
-    networkRecord.relationships,
-    profilesForActiveDataset,
-  );
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeFilter, setActiveFilter] = useState<RelationshipKind | 'all'>('all');
+  const [selectedEntity, setSelectedEntity] = useState<NetworkEntity | null>(null);
 
-  useEffect(() => {
-    try {
-      setImportedRecord(readImportedPeopleNetworkRecord());
-    } catch (error) {
-      setRecordStatus(error instanceof Error ? error.message : 'Saved People record could not be read.');
-    }
-    try {
-      setProfiles(readPeopleProfiles());
-      setProfileStoreReady(true);
-    } catch (error) {
-      setProfileStoreReady(false);
-      setRecordStatus(error instanceof Error ? error.message : 'Saved local People profiles could not be read.');
-    }
-    try {
-      setProfileOwnerId(readPeopleProfileOwnerId());
-    } catch (error) {
-      setRecordStatus(error instanceof Error ? error.message : 'Browser-local demo identity could not be read.');
-    }
+  const filteredEntities = PEOPLE_NETWORK.filter(e => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return e.name.toLowerCase().includes(q) ||
+      e.role.toLowerCase().includes(q) ||
+      e.id.toLowerCase().includes(q) ||
+      e.capabilities.some(c => c.toLowerCase().includes(q));
+  });
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setSelectedId(null);
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  function handleEntitySelect(entity: NetworkEntity | null) {
+    setSelectedEntity(entity);
+  }
 
-  const handleImport = async (event: Event) => {
-    const input = event.currentTarget as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-    try {
-      importPortablePeopleRecord(await file.text());
-      const imported = readImportedPeopleNetworkRecord();
-      if (!imported) throw new Error('The imported People record could not be read after import.');
-      setImportedRecord(imported);
-      setActiveDataset('imported');
-      setActiveView('people');
-      const firstPerson = imported.entities.find(entity => entity.type === 'person');
-      setRootId(firstPerson?.id ?? '');
-      setSelectedId(null);
-      setRecordStatus('Portable record imported locally.');
-    } catch (error) {
-      setRecordStatus(error instanceof Error ? error.message : 'Record could not be imported.');
-    } finally {
-      input.value = '';
-    }
-  };
-
-  const chooseEntity = (entity: NetworkEntity) => {
-    if (!isPrimaryEntity(entity)) return;
-    setRootId(entity.id);
-    setSelectedId(entity.id);
-  };
-
-  const selectDataset = (dataset: 'sample' | 'imported') => {
-    if (dataset === 'imported' && !importedRecord) return;
-    const nextRecord = dataset === 'sample' ? sampleRecord : importedRecord;
-    if (!nextRecord) return;
-    const firstPerson = nextRecord.entities.find(entity => entity.type === 'person');
-    setActiveDataset(dataset);
-    setActiveView('people');
-    setRootId(firstPerson?.id ?? '');
-    setSelectedId(null);
-    setQuery('');
-  };
-
-  const saveProfile = (profile: PeopleProfileRecord) => {
-    const importedSubject = importedRecord?.entities.find(entity => (
-      entity.id === profile.subjectId && (entity.type === 'person' || entity.type === 'crew')
-    ));
-    if (activeDataset !== 'imported'
-      || !importedSubject
-      || !profileOwnerId
-      || profile.origin !== 'user-authored'
-      || profile.ownerId !== profileOwnerId
-      || profile.sourceRecordId !== importedSubject.id) {
-      throw new Error('This local revision is not linked to an imported person or crew you can edit.');
-    }
-    if (!profileStoreReady) throw new Error('Local People profile storage is unavailable; the revision was not saved.');
-
-    const nextProfiles = profiles
-      .filter(record => record.id !== profile.id && !(
-        record.origin === 'user-authored'
-        && record.ownerId === profileOwnerId
-        && record.sourceRecordId === profile.sourceRecordId
-      ))
-      .concat(profile);
-    try {
-      savePeopleProfiles(nextProfiles);
-    } catch (error) {
-      setRecordStatus(error instanceof Error ? error.message : 'Local People profile could not be saved.');
-      throw error;
-    }
-    setProfiles(nextProfiles);
-    setRecordStatus('Saved as a browser-local revision. Not published.');
-  };
+  function handleRelationshipFilter(kind: RelationshipKind | 'all') {
+    setActiveFilter(kind);
+  }
 
   return (
     <WorkspaceLayout currentContext="network:people">
@@ -163,111 +63,96 @@ export function People() {
           </div>
           <div className="people-page-status">
             <span className="people-page-status-dot" />
-            {activeDataset === 'sample' ? 'Shared examples · not live records' : 'Imported portable record'}
-            <div aria-label="People dataset" className="people-dataset-switch" role="group">
-              <button
-                aria-pressed={activeDataset === 'sample'}
-                className={activeDataset === 'sample' ? 'is-active' : ''}
-                onClick={() => selectDataset('sample')}
-                type="button"
-              >
-                Shared sample
-              </button>
-              <button
-                aria-pressed={activeDataset === 'imported'}
-                className={activeDataset === 'imported' ? 'is-active' : ''}
-                disabled={!importedRecord}
-                onClick={() => selectDataset('imported')}
-                type="button"
-              >
-                Imported record
-              </button>
-            </div>
-            <input
-              ref={importInput}
-              accept="application/json"
-              aria-label="Import portable People record"
-              className="people-import-input"
-              onChange={event => void handleImport(event)}
-              type="file"
-            />
-            <button className="people-import-trigger" onClick={() => importInput.current?.click()} type="button">
-              Import record
-            </button>
+            <span>Shared examples Â· not live records</span>
           </div>
         </header>
+
         <p className="people-capability-shortcut">
           <span>Looking for a capability directory?</span>
-          <Link href="/workspace/network/capabilities">Browse capabilities <span aria-hidden="true">→</span></Link>
+          <Link href="/workspace/network/capabilities">Browse capabilities <span aria-hidden="true">â†’</span></Link>
         </p>
 
-        <PeopleViewTabs activeView={activeView} setActiveView={setActiveView} />
+        <div className="people-workbench" aria-label="People capability directory and network">
+          <div className="people-directory-panel">
+            <div className="people-directory-controls">
+              <div className="people-directory-search">
+                <span className="people-directory-search-icon" aria-hidden="true">&#8226;</span>
+                <input
+                  type="search"
+                  placeholder="Filter by name, role, capability, IDâ€¦"
+                  value={searchQuery}
+                  onChange={(e: Event) => setSearchQuery((e.target as HTMLInputElement).value)}
+                  className="people-directory-search-input"
+                  aria-label="Search entities"
+                />
+              </div>
+              <div className="people-directory-filters">
+                {RELATIONSHIP_KINDS.filter(k => k !== 'all').map(kind => (
+                  <button
+                    key={kind}
+                    onClick={() => handleRelationshipFilter(kind)}
+                    className={`network-relationship-tag ${activeFilter === kind ? 'is-active' : ''}`}
+                    type="button"
+                  >
+                    {KIND_LABELS[kind]}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-        <section className="people-workbench" aria-label="People capability directory and network">
-          <div
-            id="people-panel-people"
-            className="people-directory-panel"
-            role="tabpanel"
-            aria-labelledby="people-tab-people"
-            hidden={activeView !== 'people'}
-          >
-            <PeopleDirectory
-              entries={directoryEntries}
-              entityType="person"
-              query={query}
-              selectedId={selectedEntity?.id ?? null}
-              onQueryChange={setQuery}
-              onSelect={entry => chooseEntity(entry.entity)}
-            />
+            <div className="people-directory-summary">
+              <span>{filteredEntities.length} of {PEOPLE_NETWORK.length} entities</span>
+              <span>/</span>
+              <span>{PEOPLE_RELATIONSHIPS.length} relationships</span>
+            </div>
+
+            <ul className="people-directory-list" role="list">
+              {filteredEntities.map(entity => (
+                <li key={entity.id} className="people-directory-row" onClick={() => handleEntitySelect(entity)}>
+                  <span
+                    className={`people-type-mark people-type-mark--${entity.type}`}
+                    aria-hidden="true"
+                  />
+                  <div className="people-directory-main">
+                    <div className="people-directory-identity">
+                      <strong>{entity.name}</strong>
+                      <small>{entity.id}</small>
+                    </div>
+                    <div className="people-directory-role">{entity.role}</div>
+                    {entity.capabilities.length > 0 && (
+                      <div className="people-directory-capabilities">
+                        {entity.capabilities.slice(0, 4).map(cap => (
+                          <span key={cap} className="people-directory-capabilities-span">{cap}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <span className="people-directory-open" aria-hidden="true">â†’</span>
+                </li>
+              ))}
+              {filteredEntities.length === 0 && (
+                <li className="people-directory-empty">No entities match your filter.</li>
+              )}
+            </ul>
           </div>
-          <div
-            id="people-panel-crews"
-            className="people-directory-panel"
-            role="tabpanel"
-            aria-labelledby="people-tab-crews"
-            hidden={activeView !== 'crews'}
-          >
-            <PeopleDirectory
-              entries={directoryEntries}
-              entityType="crew"
-              query={query}
-              selectedId={selectedEntity?.id ?? null}
-              onQueryChange={setQuery}
-              onSelect={entry => chooseEntity(entry.entity)}
+
+          {selectedEntity && (
+            <EntityInspector
+              entity={selectedEntity}
+              directoryEntry={undefined}
+              profiles={[]}
+              profileOwnerId=""
+              profileStoreReady={true}
+              mobileOpen={false}
+              entities={PEOPLE_NETWORK}
+              relationships={PEOPLE_RELATIONSHIPS}
+              recordScope="sample"
+              onSelect={handleEntitySelect}
+              onClose={() => handleEntitySelect(null)}
+              onSaveProfile={() => {}}
             />
-          </div>
-          <div
-            id="people-panel-network"
-            className="people-network-panel"
-            role="tabpanel"
-            aria-labelledby="people-tab-network"
-            hidden={activeView !== 'network'}
-          >
-            <NetworkMap
-              rootId={rootId}
-              selectedId={selectedEntity?.id ?? ''}
-              query={query}
-              entities={networkRecord.entities}
-              relationships={networkRecord.relationships}
-              onSelect={chooseEntity}
-            />
-          </div>
-          <EntityInspector
-            entity={selectedEntity}
-            directoryEntry={directoryEntries.find(entry => entry.entity.id === selectedEntity?.id)}
-            profiles={profilesForActiveDataset}
-            profileOwnerId={profileOwnerId}
-            profileStoreReady={profileStoreReady}
-            mobileOpen={selectedEntity !== null}
-            entities={networkRecord.entities}
-            relationships={networkRecord.relationships}
-            recordScope={activeDataset}
-            onSelect={chooseEntity}
-            onClose={() => setSelectedId(null)}
-            onSaveProfile={saveProfile}
-          />
-        </section>
-        {recordStatus && <p className="people-record-status" role="status">{recordStatus}</p>}
+          )}
+        </div>
       </div>
     </WorkspaceLayout>
   );

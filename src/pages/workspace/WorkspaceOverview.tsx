@@ -1,4 +1,4 @@
-import { Link } from 'wouter';
+﻿import { Link } from 'wouter';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import { WORKSPACE_OVERVIEW_ITEMS } from '../../lib/workspace-overview';
 
@@ -7,10 +7,10 @@ export function WorkspaceOverview() {
     <WorkspaceLayout currentContext="overview">
       <div className="workspace-overview">
         <header className="workspace-overview-heading">
-          <h1>Work, made legible.</h1>
+          <h1>APT-LABS makes fragmented productive capacity visible.</h1>
           <p>
-            Connect local capacity to meaningful work, and keep the evidence and decisions
-            around it clear.
+            One workspace for institutions, crews, and stewards to coordinate work â€” from need
+            to verified outcome. Browser-local by design; all demo data labeled illustrative.
           </p>
         </header>
 
@@ -33,7 +33,7 @@ export function WorkspaceOverview() {
                   className="workspace-overview-module-link"
                   href={item.href}
                 >
-                  Open <span aria-hidden="true">→</span>
+                  Open <span aria-hidden="true">â†’</span>
                 </Link>
               </li>
             ))}
