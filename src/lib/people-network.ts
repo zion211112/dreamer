@@ -66,7 +66,7 @@ export const PEOPLE_ROOT_LENSES: Array<{ id: PrimaryEntityType; label: string }>
   { id: 'asset', label: 'Assets' },
 ];
 
-export const PRIMARY_ENTITY_TYPES: PrimaryEntityType[] = ['person', 'crew', 'asset'];
+export const RELATIONSHIP_KINDS: (RelationshipKind | 'all')[] = [\n  'all',\n  'membership', 'affiliation', 'work', 'stewardship', 'contribution',\n  'evidence', 'owns', 'operates', 'stewards', 'funds',\n  'contributes_to', 'attests', 'issues',\n];\n\nexport const KIND_LABELS: Record<RelationshipKind | 'all', string> = {\n  all: 'All',\n  membership: 'Membership',\n  affiliation: 'Affiliation',\n  work: 'Work',\n  stewardship: 'Stewardship',\n  contribution: 'Contribution',\n  evidence: 'Evidence',\n  owns: 'Owns',\n  operates: 'Operates',\n  stewards: 'Stewards',\n  funds: 'Funds',\n  contributes_to: 'Contributes to',\n  attests: 'Attests',\n  issues: 'Issues',\n};\n\nexport const PRIMARY_ENTITY_TYPES: PrimaryEntityType[] = ['person', 'crew', 'asset'];
 
 export function isPrimaryEntity(
   entity: NetworkEntity,
