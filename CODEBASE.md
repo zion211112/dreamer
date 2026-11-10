@@ -69,9 +69,8 @@ Key routes:
 - `/workspace/institutions` — Institutions & assets
 - `/workspace/institutions/network` — Capability directory
 - `/workspace/institutions/school-console` — School Console (nested under Workbench)
-- `/workspace/workbench` — Workbench finder
-- `/workspace/workbench/simulate` — Workbench simulation (Field Desk)
-- `/workspace/field-desk` — alias for workbench/simulate
+- `/workspace/workbench` — Design workbench home (src/modules/workbench)
+- `/workspace/workbench/:pilot` — Design workbench pilot lane (src/modules/workbench)
 - `/workspace/roll` — Roll ledger
 - `/workspace/annals` — Annals chronology
 - `/workspace/apt-coin-lab` — Intelligence research page

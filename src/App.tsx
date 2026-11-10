@@ -10,6 +10,7 @@ import { Records } from './pages/workspace/Records';
 import { AptCoinLab } from './pages/workspace/AptCoinLab';
 import { WorkspaceOverview } from './pages/workspace/WorkspaceOverview';
 import { BenbenOS } from './modules/benben-os';
+import { WorkbenchApp } from './modules/workbench';
 import './modules/benben-os/styles/benben.css';
 
 export function App() {
@@ -20,6 +21,8 @@ export function App() {
       <Route path="/sign-in"><Auth /></Route>
       <Route path="/sign-up"><Auth /></Route>
 
+      <Route path="/workspace/workbench/:pilot"><WorkbenchApp /></Route>
+      <Route path="/workspace/workbench"><WorkbenchApp /></Route>
       <Route path="/workspace"><WorkspaceOverview /></Route>
 
       {/* New 5-module routes */}
