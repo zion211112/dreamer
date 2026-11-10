@@ -1,0 +1,298 @@
+/* ============================================================================
+   Workbench — APT-LABS
+   Lean, factory-ready action module. Five pilot paths, open for more.
+   No simulation — each path is something a steward can work through today.
+   Built on src/tokens.css (light luxury default + [data-skin="dark"]).
+   ============================================================================ */
+
+.wb-root {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  line-height: 1.5;
+}
+
+.wb-page {
+  padding: var(--space-4) var(--space-6);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* ---------- Home: five pilot paths ---------- */
+.wb-paths {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.wb-path-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-3);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--fast), box-shadow var(--fast), background var(--fast);
+}
+
+.wb-path-card:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.wb-path-card:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-1);
+  background: var(--bg-subtle);
+}
+
+.wb-path-title {
+  font-family: var(--serif);
+  font-size: var(--step-2);
+  font-weight: 600;
+  color: var(--fg);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.wb-path-summary {
+  font-size: var(--step--1);
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.wb-path-action {
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--brand-main);
+  margin-top: var(--space-2);
+}
+
+.wb-path-meta {
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  color: var(--muted);
+  margin-top: var(--space-1);
+}
+
+.wb-section-title {
+  font-family: var(--serif);
+  font-size: var(--step-2);
+  font-weight: 600;
+  color: var(--fg);
+  margin: 0 0 var(--space-3) 0;
+}
+
+.wb-terms {
+  margin-top: var(--space-6);
+  padding: var(--space-4);
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-3);
+}
+
+.wb-terms-line {
+  font-size: var(--step--1);
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.wb-item-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.wb-item-status {
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  font-weight: 600;
+  padding: 2px var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--bg-subtle);
+  color: var(--fg);
+}
+
+/* ---------- Page head helpers ---------- */
+.wb-eyebrow {
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin: 0 0 var(--space-1) 0;
+}
+
+.wb-title {
+  font-family: var(--serif);
+  font-size: var(--step-4);
+  font-weight: 400;
+  color: var(--fg);
+  margin: 0 0 var(--space-2) 0;
+  line-height: 1.15;
+}
+
+.wb-sub {
+  font-size: var(--step-0);
+  color: var(--muted);
+  margin: 0 0 var(--space-6) 0;
+  font-family: var(--sans);
+  line-height: 1.5;
+}
+
+/* ---------- Lists / tables ---------- */
+.wb-list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.wb-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-3);
+  transition: border-color var(--fast), box-shadow var(--fast);
+}
+
+.wb-item:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-1);
+}
+
+.wb-item-title {
+  font-family: var(--serif);
+  font-size: var(--step-1);
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.wb-item-meta {
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  color: var(--muted);
+  white-space: nowrap;
+  text-align: right;
+}
+
+.wb-item-value {
+  font-family: var(--mono);
+  font-size: var(--step-1);
+  font-weight: 600;
+  color: var(--brand-main);
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* ---------- Badges ---------- */
+.wb-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-3);
+  border-radius: var(--radius-pill);
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  font-weight: 600;
+}
+
+.wb-badge--evidence { background: var(--terrain-pale); color: var(--terrain-ink); }
+.wb-badge--noevidence { background: var(--danger-pale); color: var(--danger); }
+.wb-badge--draft { background: var(--brand-main-wash); color: var(--brand-main); }
+.wb-badge--submitted { background: var(--terrain-pale); color: var(--terrain-ink); }
+
+/* ---------- Forms ---------- */
+.wb-form {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 520px;
+}
+
+.wb-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.wb-field-label {
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.wb-field-input,
+.wb-field-select,
+.wb-field-textarea {
+  font: inherit;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-3);
+  background: var(--bg-elev);
+  color: var(--fg);
+  min-height: 38px;
+}
+
+.wb-field-input:focus-visible,
+.wb-field-select:focus-visible,
+.wb-field-textarea:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.wb-field-hint {
+  font-size: var(--step--2);
+  color: var(--dim);
+}
+
+.wb-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+/* ---------- Status / empty ---------- */
+.wb-empty {
+  grid-column: 1 / -1;
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--step--1);
+}
+
+.wb-notice {
+  font-size: var(--step--1);
+  color: var(--terrain-ink);
+  background: var(--terrain-pale);
+  border: 1px solid var(--terrain);
+  border-radius: var(--radius-3);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  font-family: var(--sans);
+}
+
+/* Focus ring token fallback */
+:root {
+  --focus-ring: 0 0 0 3px rgba(41, 93, 112, .3);
+}
+
+@media (max-width: 640px) {
+  .wb-page { padding: var(--space-3) var(--space-4); }
+  .wb-item { grid-template-columns: 1fr; gap: var(--space-2); }
+  .wb-item-meta, .wb-item-value { text-align: left; }
+  .wb-actions { flex-direction: column; }
+  .wb-actions button { width: 100%; }
+}
