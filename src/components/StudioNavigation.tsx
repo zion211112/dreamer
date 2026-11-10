@@ -82,6 +82,12 @@ const contextDestinations: Record<StudioContext, { heading: string; links: Conte
       { context: 'network:capabilities', href: '/workspace/network/capabilities', label: 'Capability directory' },
     ],
   },
+  workbench: {
+    heading: 'Workbench',
+    links: [
+      { context: 'workbench', href: '/workspace/workbench', label: 'All pilot lanes' },
+    ],
+  },
   'records:canon': {
     heading: 'Records',
     links: [
@@ -108,11 +114,15 @@ const contextDestinations: Record<StudioContext, { heading: string; links: Conte
   },
   intelligence: {
     heading: 'Intelligence',
-    links: [],
+    links: [
+      { context: 'intelligence:coin-lab', href: '/workspace/intelligence', label: 'Trust and economic intelligence' },
+    ],
   },
   'intelligence:coin-lab': {
     heading: 'Intelligence',
-    links: [],
+    links: [
+      { context: 'intelligence:coin-lab', href: '/workspace/intelligence', label: 'Trust and economic intelligence' },
+    ],
   },
 };
 

@@ -126,7 +126,7 @@ export function Institutions() {
             <p className="eyebrow">APT-LABS <span aria-hidden="true">/</span> STARTER NETWORK REGISTER</p>
             <h1>Institutions <span aria-hidden="true">/</span> Assets</h1>
             <p className="institution-page-intro">
-              A considered index of selected organisations and resources. A record tells you what is on file—not
+              A considered index of selected organisations and resources. A record tells you what is on fileâ€”not
               whether something is operating, available, authorised, or ready to use.
             </p>
           </div>
@@ -138,7 +138,7 @@ export function Institutions() {
 
         <div className="institution-reading-note">
           <span className="institution-note-mark" aria-hidden="true">i</span>
-          <p><strong>Unknown is a useful answer.</strong> Basis describes the record’s source, not verification; links describe context, not ownership or authority.</p>
+          <p><strong>Unknown is a useful answer.</strong> Basis describes the recordâ€™s source, not verification; links describe context, not ownership or authority.</p>
         </div>
 
         <section aria-label="Find a register record" className="institution-controls">
@@ -161,7 +161,7 @@ export function Institutions() {
             })}
           </div>
           <label className="institution-search">
-            <span aria-hidden="true" className="institution-search-icon">⌕</span>
+            <span aria-hidden="true" className="institution-search-icon">âŒ•</span>
             <span className="visually-hidden">Search institutions and assets</span>
             <input
               onInput={event => {
@@ -170,7 +170,7 @@ export function Institutions() {
                 setQuery((event.currentTarget as HTMLInputElement).value);
                 navigate('/workspace/institutions');
               }}
-              placeholder="Search name, place, function…"
+              placeholder="Search name, place, functionâ€¦"
               type="search"
               value={query}
             />
@@ -179,14 +179,14 @@ export function Institutions() {
 
         <div aria-live="polite" className="institution-result-count">
           <span>{results.length === 1 ? '01 RECORD' : `${String(results.length).padStart(2, '0')} RECORDS`}</span>
-          <span>{query && !requestedRecordId ? `MATCHING “${query.trim()}”` : 'STARTER NETWORK'}</span>
+          <span>{query && !requestedRecordId ? `MATCHING â€œ${query.trim()}â€` : 'STARTER NETWORK'}</span>
         </div>
 
         <div className={`institution-workspace${selectedRecord ? '' : ' is-empty'}`}>
           <section aria-label="Institutions and assets" className="institution-index">
             <header className="institution-index-head">
               <span>Index</span>
-              <span>Name <i aria-hidden="true">·</i> Record basis</span>
+              <span>Name <i aria-hidden="true">Â·</i> Record basis</span>
               <span>Place</span>
             </header>
             {results.length > 0 ? (
@@ -222,7 +222,7 @@ export function Institutions() {
                           <span className="institution-record-summary">{entity.summary}</span>
                         </span>
                         <span className="institution-record-place">{record.location}</span>
-                        <span aria-hidden="true" className="institution-record-arrow">{active ? '↗' : '→'}</span>
+                        <span aria-hidden="true" className="institution-record-arrow">{active ? 'â†—' : 'â†’'}</span>
                       </button>
                     </li>
                   );
@@ -253,6 +253,10 @@ export function Institutions() {
           <span>This register reads the bundled starter set; it does not alter imported People records.</span>
           <a className="institution-network-link" href="/workspace/network/capabilities">
             <span>Open Capability Directory</span>
+            <span aria-hidden="true">â†’</span>
+          </a>
+          <a className="institution-network-link" href="/benben-os">
+            <span>Open Benben-OS</span>
             <span aria-hidden="true">→</span>
           </a>
         </footer>

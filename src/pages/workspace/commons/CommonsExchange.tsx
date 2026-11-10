@@ -10,11 +10,11 @@
 // capacity waiting to connect: signal → triage → opportunity → match →
 // work → payment → SBT reputation.
 
-import { useCallback, useMemo, useState } from 'preact/hooks';
-import { PageHead } from '../../components/PageHead';
-import { Button } from '../../components/Button';
-import { Input } from '../../components/Input';
-import type { FieldSignal, SignalStatus } from '../../../lib/local-workflows';
+import { useMemo, useState } from 'preact/hooks';
+import { PageHead } from '../../../components/PageHead';
+import { Button } from '../../../components/Button';
+import { Input } from '../../../components/Input';
+import type { SignalStatus } from '../../../lib/local-workflows';
 
 type PilotPath =
   | 'school-benben-os'
@@ -275,7 +275,7 @@ export function CommonsExchange() {
         <button
           key={tab.id}
           className={view === tab.id ? 'commons-view-tab active' : 'commons-view-tab'}
-          onClick={() => setView(tab.id)}
+          onClick={() => setView(tab.id as typeof view)}
           type="button"
         >
           {tab.label} <span>{tab.count}</span>
@@ -296,7 +296,7 @@ export function CommonsExchange() {
           <Input
             placeholder="Search signals, skills, places…"
             value={search}
-            onChange={(v) => setSearch(v)}
+            onChange={(v: string) => setSearch(v)}
             className="commons-search-input"
           />
           <Button variant="primary" className="commons-contribute-btn" onClick={() => {}}>

@@ -1,0 +1,15 @@
+---
+name: better-design
+description: Load before you build or change any user interface, page, screen, component, form, onboarding or styling, in React, SwiftUI, React Native or HTML. It gives the design system, components and design rules to use.
+---
+
+# Better Design
+
+Do these steps before you create a file or install a package. The tools are named `better-design_<tool>`. If they are not in your tool list yet, the server is still connecting: read the project files once, then call them.
+
+1. Call `better-design_find-design-system` with what the product is and who uses it, such as `habit tracker web app for individuals`. Take the top match whose description fits who uses the product, not its subject: a consumer app never takes a system made for developer tools.
+2. With no project yet, call `better-design_get-design-system-kit` with its `designSystemId`, target `react` and `install: true`. The server creates the project in this empty folder and installs every component. Do not run `npm create vite`, `create-vite` or `tailwindcss init` yourself. For a SwiftUI or React Native app, call it with target `swiftui` or `react-native` instead: the server writes the kit's files into this folder, and its reply lists every view, token and modifier in them. Build from that list. Never open the kit's files: they are long, and reading them fills your context before you write a screen.
+3. In an existing project, or when the kit has no `install` argument, call it without `install` and run its `installCommand` in the project root. With no project and no `install`, run its `newProjectCommand` first.
+4. Icons: keep the icon library the kit names. If it names none, call `better-design_find-icon-library` with the product's style and take the top match. Call `better-design_find-icons` with its `libraryId` for each icon the screen needs, then `better-design_install-icons` once with that `libraryId` and every name. The local server saves the icons into the project itself; import them from `@/components/icons` and use them in the screen. If it returns files instead, save them under `components/icons/` and merge its `index.ts` into an existing one. Never install an icon package or use `@iconify/react`.
+5. When `App.tsx` already holds the starting flow, change it in place with the edit tool: never rewrite the file from scratch, and keep every component it uses. Build the screen from `components/ui/`. Call `better-design_get-ui-principle` before styling a part and `better-design_get-ux-principle` before its behaviour. When it is built, call `better-design_review-ui-code` with the path of each file you wrote, then `better-design_get-review-rules` and `better-design_check-comprehension`, and fix every critical and serious finding.
+6. Finish when `npm run build` passes and you fixed what the review flagged: stop and reply in two lines with what you built and where. Never finish while `npm run build` shows an error: fix it first. Do not start a dev server, write a README, or call another tool after that.

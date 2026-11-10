@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "postToolUse": [
+      {
+        "command": "npx -y better-design@0.50.0 review --hook --host cursor"
+      }
+    ]
+  },
+  "version": 1
+}

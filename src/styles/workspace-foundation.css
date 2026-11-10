@@ -144,6 +144,7 @@
   color: var(--studio-rail-ink);
   background: var(--studio-rail-active);
   border-color: var(--studio-rail-active-border);
+  border-left-color: transparent;
 }
 
 .studio-context-destination.is-active .studio-context-destination-mark {

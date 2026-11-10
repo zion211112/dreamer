@@ -78,8 +78,8 @@ const KIND_LABELS: Record<RelationshipKind, string> = {
   membership: 'Member of',
   affiliation: 'Affiliated with',
   work: 'Works on',
-  stewardship: 'Stewards',
-  contribution: 'Contributes to',
+  stewardship: 'Stewardship',
+  contribution: 'Contribution',
   evidence: 'Evidenced by',
   owns: 'Owns',
   operates: 'Operates',
@@ -220,7 +220,7 @@ export function NetworkMap({
 }: NetworkMapProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const panRef = useRef<HTMLDivElement>(null);
-  const [hoveredEntity] = useState<NetworkEntity | null>(null);
+  const [hoveredEntity, setHoveredEntity] = useState<NetworkEntity | null>(null);
   const [hoveredId, setHoveredId] = useState('');
   const [selectedEntity, setSelectedEntity] = useState<NetworkEntity | null>(null);
   const [legendOpen, setLegendOpen] = useState(true);
@@ -578,13 +578,34 @@ export function NetworkMap({
         {simNodes.map(node => {
           const isSelected = selectedEntity?.id === node.id;
           const isHovered = hoveredEntity?.id === node.id;
-          const isSearchMatch = searchQuery && node.name.toLowerCase().includes(searchQuery.toLowerCase());
+          const isSearchMatch = !normalizedQuery || [node.id, node.type, node.name, node.role, node.summary, node.location, node.context, node.assetReference, node.recordBasis, ...node.capabilities]
+            .some(value => value?.toLowerCase().includes(normalizedQuery));
           const color = ENTITY_COLORS[node.type];
           const radius = ENTITY_RADIUS[node.type];
           return (
             <g
               key={node.id}
               className={`network-node${isSelected || isHovered ? ' is-active' : ''}`}
+              role="button"
+              tabIndex={0}
+              aria-label={`${node.type}: ${node.name}, ${node.role}`}
+              aria-pressed={isSelected}
+              onMouseEnter={() => setHoveredEntity(node)}
+              onMouseLeave={() => setHoveredEntity(null)}
+              onFocus={() => setHoveredEntity(node)}
+              onBlur={() => setHoveredEntity(null)}
+              onClick={(event) => {
+                event.stopPropagation();
+                setSelectedEntity(node);
+                onEntitySelect?.(node);
+              }}
+              onKeyDown={(event: KeyboardEvent) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setSelectedEntity(node);
+                  onEntitySelect?.(node);
+                }
+              }}
             >
               <circle
                 cx={node.x}
@@ -611,7 +632,7 @@ export function NetworkMap({
         })}
       </svg>
 
-      {selectedEntity && (
+      {selectedEntity && !onEntitySelect && (
         <div className="network-map-inspector">
           <div className="network-inspector-card">
             <div className="network-inspector-header">
@@ -619,7 +640,7 @@ export function NetworkMap({
                 {selectedEntity.name}
               </strong>
               <button
-                onClick={() => { setSelectedEntity(null); onEntitySelect?.(null); }}
+                onClick={() => setSelectedEntity(null)}
                 className="network-inspector-close-btn"
                 aria-label="Close inspector"
               >

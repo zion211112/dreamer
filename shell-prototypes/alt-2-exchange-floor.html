@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang= en>
+<head>
+<meta charset=UTF-8>
+<meta name=viewport content=width=device-width initial-scale=1.0>
+<title>APT-LABS — Workspace Shell · The Exchange Floor</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0d110e;
+    --fg: #e8ebe5;
+    --muted: #6d7d6e;
+    --dim: #4a554b;
+    --fg-strong: #f4f3ee;
+    --bg-elev: #1a221c;
+    --bg-subtle: #141a15;
+    --line: rgba(109,125,110,.3);
+    --line-strong: rgba(109,125,110,.5);
+    --hairline: rgba(109,125,110,.15);
+    --terrain: #8fd98f;
+    --terrain-pale: #1a2d1a;
+    --terrain-ink: #f0fff0;
+    --brand-main: #295d70;
+    --brand-branch: #c6d68e;
+    --brass: #e8c87d;
+    --brass-pale: #3d341a;
+    --danger: #f28a73;
+    --danger-pale: #3b211d;
+    --phosphor: #8fd98f;
+    --water: #7dd3fc;
+    --serif: Georgia, Times New Roman, serif;
+    --sans: system-ui, -apple-system, Segoe UI Variable, sans-serif;
+    --mono: JetBrains Mono, SFMono-Regular, Consolas, monospace;
+    --radius-1: 3px; --radius-2: 6px; --radius-3: 8px; --radius-pill: 999px;
+    --space-1: 8px; --space-2: 16px; --space-3: 24px; --space-4: 32px; --space-5: 40px; --space-6: 48px; --space-8: 64px;
+    --step-0: clamp(12.5px, 1rem, 13px); --step-1: clamp(15.6px, 1.25rem, 16px); --step-2: clamp(19.5px, 1.56rem, 20px); --step-3: clamp(24.4px, 1.95rem, 25px); --step-4: clamp(30.5px, 2.44rem, 31px); --step-5: clamp(38.1px, 3.05rem, 39px);
+    --shadow-1: 0 4px 8px rgba(0,0,0,.45), 0 2px 4px rgba(0,0,0,.3);
+    --shadow-2: 0 8px 24px rgba(0,0,0,.55), 0 4px 12px rgba(0,0,0,.35);
+    --shadow-3: 0 16px 48px rgba(0,0,0,.6);
+    --fast: 120ms ease;
+  }
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--fg); line-height: 1.5; font-size: var(--step-0); }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; background: none; border: none; color: inherit; cursor: pointer; }
+
+  /* ===== SHELL ===== */
+  .apt-shell { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+  .apt-topbar { height: 54px; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-3); background: var(--bg-elev); border-bottom: 1px var(--line); z-index: 200; }
+  .apt-brand { display: flex; align-items: center; gap: var(--space-2); color: var(--fg-strong); text-decoration: none; }
+  .apt-mark { width: 30px; height: 30px; border: 1px solid var(--line-strong); border-radius: var(--radius-3); background: var(--bg-elev); color: var(--terrain-ink); font: 600 15px var(--serif); display: flex; align-items: center; justify-content: center; }
+  .apt-wordmark { font: 650 var(--step--1) var(--mono); letter-spacing: 0.13em; color: var(--fg-strong); }
+  .apt-wordmark-dash { color: var(--terrain); }
+  .apt-context { font: var(--mono); font-size: var(--step--1); font-weight: 500; letter-spacing: 0.12em; color: var(--shell-muted, var(--muted)); }
+  .apt-topbar-center { display: flex; align-items: center; gap: var(--space-2); flex: 1; max-width: 560px; }
+  .apt-search { flex: 1; padding: 8px 14px; border: 1px var(--line); border-radius: var(--radius-pill); background: var(--bg-subtle); color: var(--fg); font-family: var(--sans); font-size: var(--step-0); }
+  .apt-topbar-right { display: flex; align-items: center; gap: var(--space-2); }
+  .apt-body { display: flex; flex: 1; overflow: hidden; }
+  .apt-rail { width: 54px; display: flex; flex-direction: column; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-1); background: var(--bg-elev); border-right: 1px var(--line); flex-shrink: 0; }
+  .apt-rail-item { width: 36px; height: 36px; border: 1px var(--line); border-radius: var(--radius-2); background: var(--bg-subtle); color: var(--muted); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--fast); }
+  .apt-rail-item.is-active { border-color: var(--state-canon, var(--terrain)); color: var(--state-canon, var(--terrain)); background: var(--terrain-pale); }
+  .apt-rail-item svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.2px; stroke-linecap: round; stroke-linejoin: round; }
+  .apt-main { flex: 1; overflow-y: auto; background: var(--bg); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-6); }
+  .apt-sidebar { width: 252px; border-right: 1px var(--line); background: var(--bg-elev); display: flex; flex-direction: column; flex-shrink: 0; }
+  .apt-sidebar-head { padding: var(--space-3); border-bottom: 1px var(--line); }
+  .apt-sidebar-label { font: var(--sans); font-size: var(--step--1); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-strong); }
+  .apt-sidebar-ctx { font: var(--mono); font-size: var(--step--2); color: var(--muted); margin-top: var(--space-1); }
+  .apt-nav-group { padding: var(--space-3); }
+  .apt-nav-heading { font: var(--mono); font-size: var(--step--2); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: var(--space-2); }
+  .apt-nav-item { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-3); color: var(--fg); font: var(--sans); font-size: var(--step-0); border-left: 2px solid transparent; transition: all var(--fast); cursor: pointer; }
+  .apt-nav-item:hover { background: var(--bg-subtle); color: var(--fg-strong); }
+  .apt-nav-item.is-active { border-left-color: var(--state-canon, var(--terrain)); color: var(--state-canon, var(--terrain)); background: var(--terrain-pale); }
+  .apt-nav-mark { width: 6px; height: 6px; border-radius: 50%; background: var(--state-canon, var(--terrain)); opacity: 0; }
+  .apt-nav-item.is-active .apt-nav-mark { opacity: 1; }
+  .apt-sidebar-foot { margin-top: auto; padding: var(--space-3); border-top: 1px var(--line); }
+  .apt-session { display: flex; flex-direction: column; gap: var(--space-1); }
+  .apt-session span { font: var(--mono); font-size: var(--step--2); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .apt-session small { font-size: var(--step--2); color: var(--dim); }
+
+  /* ===== HOME OVERVIEW ===== */
+  .apt-home { display: flex; flex-direction: column; gap: var(--space-6); }
+  .apt-home-head { display: flex; flex-direction: column; gap: var(--space-2); padding-top: var(--space-1); }
+  .apt-eyebrow { font: var(--mono); font-size: var(--step--2); font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .apt-home-head h1 { font: var(--serif); font-size: var(--step-4); font-weight: 400; line-height: 1.15; color: var(--fg-strong); letter-spacing: 0.01em; }
+  .apt-home-head p { font: var(--sans); font-size: var(--step-0); font-weight: 400; line-height: 1.5; color: var(--muted); max-width: 46ch; }
+  .apt-section-head { display: flex; align-items: baseline; gap: var(--space-1); margin-bottom: var(--space-2); }
+  .apt-section-head h2 { font: var(--serif); font-size: var(--step-2); font-weight: 500; line-height: 1.2; color: var(--fg-strong); margin: 0; }
+  .apt-module-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--space-4); }
+  .apt-module { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4); border: 1px var(--line); border-radius: var(--radius-3); background: var(--bg-elev); text-decoration: none; color: inherit; transition: all var(--fast); cursor: pointer; }
+  .apt-module:hover { border-color: var(--line-strong); background: var(--bg-subtle); color: var(--fg-strong); }
+  .apt-module-index { width: var(--step-3); height: var(--step-3); border-radius: var(--radius-2); background: var(--bg-subtle); border: 1px var(--hairline); color: var(--muted); font: var(--mono); font-size: var(--step-1); font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .apt-module-copy { flex: 1; display: flex; flex-direction: column; gap: var(--space-1); }
+  .apt-module-copy h3 { font: var(--serif); font-size: var(--step-1); font-weight: 500; line-height: 1.3; color: var(--fg-strong); margin: 0; }
+  .apt-module-copy p { font: var(--sans); font-size: var(--step-0); font-weight: 400; line-height: 1.5; color: var(--muted); margin: 0; }
+  .apt-module-link { display: inline-flex; align-items: center; gap: var(--space-1); padding: var(--space-1) var(--space-2); border: 1px var(--line); border-radius: var(--radius-2); background: transparent; color: var(--state-canon, var(--terrain)); font: var(--mono); font-size: var(--step--1); font-weight: 500; letter-spacing: 0.08em; flex-shrink: 0; }
+  .apt-module-link:hover { border-color: var(--state-canon, var(--terrain)); background: var(--terrain-pale); color: var(--fg-strong); }
+
+  /* ===== EXCHANGE TICKER ===== */
+  .apt-exchange { display: flex; flex-direction: column; gap: var(--space-4); }
+  .apt-exchange-head { display: flex; align-items: baseline; gap: var(--space-1); margin-bottom: var(--space-2); }
+  .apt-ticker { display: flex; gap: var(--space-4); padding: var(--space-5); background: rgba(26,34,28,.5); border: 1px var(--line); border-radius: var(--radius-3); margin-bottom: var(--space-4); box-shadow: var(--shadow-1); }
+  .apt-tick { display: flex; flex-direction: column; gap: var(--space-1); }
+  .apt-tick-label { font: var(--mono); font-size: var(--step--2); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .apt-tick-value { font: var(--mono); font-size: var(--step-3); font-weight: 700; color: var(--fg-strong); }
+  .apt-tick-value.up { color: var(--phosphor); }
+  .apt-tick-value.down { color: var(--danger); }
+  .apt-tick-value.brass { color: var(--brass); }
+
+  /* ===== OPPORTUNITY CARDS ===== */
+  .apt-opportunities { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: var(--space-4); }
+  .apt-opp { background: rgba(26,34,28,.4); border: 1px var(--line); border-radius: var(--radius-3); padding: var(--space-4); box-shadow: var(--shadow-1); transition: all var(--fast); position: relative; overflow: hidden; }
+  .apt-opp:hover { border-color: var(--fg); box-shadow: var(--shadow-2); }
+  .apt-opp::before { content: ; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--brass); opacity: 0; transition: opacity var(--fast); }
+ .apt-opp:hover::before { opacity: 1; }
+ .apt-opp-header { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2); margin-bottom: var(--space-3); }
+ .apt-opp-id { font: var(--mono); font-size: var(--step--2); color: var(--muted); }
+ .apt-opp-badge { font: var(--mono); font-size: var(--step--2); padding: 3px 10px; border-radius: var(--radius-pill); border: 1px var(--line); background: rgba(232,200,125,.1); color: var(--brass); font-weight: 600; }
+ .apt-opp-title { font: var(--serif); font-size: var(--step-1); font-weight: 600; line-height: 1.3; color: var(--fg-strong); margin-bottom: var(--space-2); }
+ .apt-opp-body { font-size: var(--step-0); color: rgba(232,235,229,.9); line-height: 1.5; margin-bottom: var(--space-3); }
+ .apt-opp-foot { display: flex; justify-content: space-between; align-items: center; padding-top: var(--space-3); border-top: 1px rgba(109,125,110,.2); }
+ .apt-opp-actor { font: var(--mono); font-size: var(--step--2); color: var(--muted); display: flex; align-items: center; gap: var(--space-2); }
+ .apt-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--brand-main); color: #0a1a0c; font: var(--serif); font-weight: 700; font-size: var(--step--2); display: flex; align-items: center; justify-content: center; }
+ .apt-opp-price { font: var(--mono); font-size: var(--step-1); font-weight: 700; color: var(--phosphor); }
+ .apt-opp-status { font: var(--mono); font-size: var(--step--2); padding: 3px 10px; border-radius: var(--radius-pill); border: 1px var(--line); background: rgba(109,125,110,.2); color: var(--muted); }
+ .apt-opp-status.open { border-color: var(--phosphor); color: var(--phosphor); }
+
+ /* ===== ECONOMY FOOTER ===== */
+ .apt-economy { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4) 0; border-top: 1px var(--line); margin-top: var(--space-8); }
+ .apt-economy-stats { font: var(--mono); font-size: var(--step--2); color: var(--muted); }
+ .apt-economy-links { display: flex; gap: var(--space-4); }
+ .apt-economy-links a { font: var(--mono); font-size: var(--step--2); color: var(--muted); }
+ .apt-economy-links a:hover { color: var(--fg-strong); text-decoration: underline; }
+
+ /* ===== JOB ENGINE BANNER ===== */
+ .apt-engine-banner { background: var(--bg-elev); border: 1px var(--line); border-left: 4px solid var(--brass); border-radius: var(--radius-3); padding: var(--space-4); margin-bottom: var(--space-6); display: flex; align-items: center; gap: var(--space-4); }
+ .apt-engine-mark { width: 44px; height: 44px; border-radius: var(--radius-3); background: var(--brass); color: #2e2412; font: 700 20px var(--serif); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+ .apt-engine-copy h3 { font: var(--serif); font-size: var(--step-2); font-weight: 500; color: var(--fg-strong); margin: 0 0 var(--space-1) 0; line-height: 1.25; }
+ .apt-engine-copy p { font: var(--sans); font-size: var(--step-0); color: var(--muted); margin: 0; max-width: 38ch; }
+ .apt-engine-trail { font: var(--mono); font-size: var(--step--2); font-weight: 600; letter-spacing: 0.08em; color: var(--terrain-ink); margin-top: var(--space-2); }
+
+ /* ===== PILOT PATHS ===== */
+ .apt-pilots { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-3); margin-top: var(--space-2); }
+ .apt-pilot { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3); border: 1px var(--line); border-radius: var(--radius-3); background: var(--bg-elev); }
+ .apt-pilot-kind { font: var(--mono); font-size: var(--step--2); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--terrain); }
+ .apt-pilot h4 { font: var(--serif); font-size: var(--step-1); font-weight: 500; color: var(--fg-strong); line-height: 1.25; margin: 0; }
+ .apt-pilot p { font: var(--sans); font-size: var(--step--1); color: var(--muted); margin: 0; line-height: 1.45; }
+ .apt-pilot-foot { margin-top: auto; font: var(--mono); font-size: var(--step--2); font-weight: 600; color: var(--brass); }
+
+ [data-skin=light] { --bg: #f5f3ee; --fg: #1a1d18; --muted: #6b7066; --dim: #969b90; --fg-strong: #0f110d; --bg-elev: #ffffff; --bg-subtle: #ebe7df; --line: rgba(26,29,24,.12); --line-strong: rgba(26,29,24,.22); --hairline: rgba(26,29,24,.08); --terrain: #5d7a5c; --terrain-pale: #e4ebe3; --terrain-ink: #2e3d2d; --brass: #b8955a; --brass-pale: #f2eadc; --phosphor: #8fd98f; }
+ @media (max-width: 768px) { .apt-body { flex-direction: column; } .apt-rail { width: auto; flex-direction: row; height: 54px; border-right: none; border-bottom: 1px var(--line); padding: 0 var(--space-2); } .apt-sidebar { display: none; } .apt-module-grid { grid-template-columns: 1fr; } .apt-ticker { gap: var(--space-2); } .apt-engine-banner { flex-direction: column; align-items: flex-start; gap: var(--space-3); } }
+</style>
+</head>
+<body>
+<div class=apt-shell>
+ <header class=apt-topbar>
+ <a href=/ class=apt-brand>
+ <div class=apt-mark>A</div>
+ <div class=apt-wordmark>APT<span class=apt-wordmark-dash>-</span>LABS</div>
+ </a>
+ <div class=apt-topbar-center>
+ <input class=apt-search type=text placeholder=Search signals opportunities people assets...>
+ </div>
+ <div class=apt-topbar-right>
+ <div class=apt-context>Exchange · Opportunity Floor</div>
+ <button class=apt-rail-item is-active title=Post opportunity>+</button>
+ </div>
+ </header>
+
+ <div class=apt-body>
+ <nav class=apt-rail>
+ <div class=apt-rail-item title=Commons aria-label=Commons>C</div>
+ <div class=apt-rail-item title=Network aria-label=Network>N</div>
+ <div class=apt-rail-item title=Workbench aria-label=Workbench>W</div>
+ <div class=apt-rail-item title=Records aria-label=Records>R</div>
+ <div class=apt-rail-item title=Intelligence aria-label=Intelligence>I</div>
+ </nav>
+
+ <main class=apt-main>
+ <aside class=apt-sidebar>
+ <div class=apt-sidebar-head>
+ <div class=apt-sidebar-label>Exchange</div>
+ <div class=apt-sidebar-ctx>signals · opportunities · decisions</div>
+ </div>
+ <div class=apt-nav-group>
+ <div class=apt-nav-heading>Browse</div>
+ <div class=apt-nav-item>Signals</div>
+ <div class=apt-nav-item is-active><div class=apt-nav-mark></div>Opportunities</div>
+ <div class=apt-nav-item>Decisions</div>
+ <div class=apt-nav-item>Map</div>
+ </div>
+ <div class=apt-nav-group>
+ <div class=apt-nav-heading>Pilot paths</div>
+ <div class=apt-nav-item>School · Benben-OS</div>
+ <div class=apt-nav-item>Mwea Animation Box</div>
+ <div class=apt-nav-item>Kemet-OS</div>
+ <div class=apt-nav-item>Kiringa Mini Hydro</div>
+ <div class=apt-nav-item>Fifth Path</div>
+ </div>
+ <div class=apt-sidebar-foot>
+ <div class=apt-session><span>Session</span><small>Browser-local · demo data illustrative</small></div>
+ </div>
+ </aside>
+
+ <div class=apt-home>
+ <header class=apt-home-head>
+ <p class=apt-eyebrow>APT-LABS / WORKSPACE</p>
+ <h1>The Exchange Floor</h1>
+ <p>Verified work opportunities with clear value, urgency, and matching. Every listing is a job waiting for the right hands.</p>
+ </header>
+
+ <section class=apt-engine-banner>
+ <div class=apt-engine-mark>J</div>
+ <div>
+ <div class=apt-engine-copy>
+ <h3>Apt-Labs is a job engine, not a feed</h3>
+ <p>Signals become opportunities, opportunities become matches, matches become work, work becomes payment, and payment becomes on-chain reputation (SBT).</p>
+ </div>
+ <div class=apt-engine-trail>Signal ? Match ? Work ? Payment ? SBT</div>
+ </div>
+ </section>
+
+ <section class=apt-exchange>
+ <div class=apt-exchange-head><h2>Live opportunities</h2></div>
+ <div class=apt-ticker>
+ <div class=apt-tick><span class=apt-tick-label>Active value</span><span class=apt-tick-value up>KES 4.2M</span></div>
+ <div class=apt-tick><span class=apt-tick-label>Open signals</span><span class=apt-tick-value>128</span></div>
+ <div class=apt-tick><span class=apt-tick-label>Matched today</span><span class=apt-tick-value up>14</span></div>
+ <div class=apt-tick><span class=apt-tick-label>Avg fill time</span><span class=apt-tick-value>6.2 hrs</span></div>
+ <div class=apt-tick><span class=apt-tick-label>SBTs issued</span><span class=apt-tick-value brass>218</span></div>
+ </div>
+ <div class=apt-opportunities>
+ <article class=apt-opp>
+ <div class=apt-opp-header><span class=apt-opp-id>#OPP-0891</span><span class=apt-opp-badge>High demand</span></div>
+ <div class=apt-opp-title>Masonry crew — Thiba Hydro canal lining</div>
+ <div class=apt-opp-body>4 masons + 2 assistants. Stone masonry and concrete finishing required. Tools provided. Start Monday.</div>
+ <div class=apt-opp-foot>
+ <div class=apt-opp-actor><div class=apt-avatar>JM</div><div>James Mwangi</div></div>
+ <span class=apt-opp-price>KES 48,000</span>
+ <span class=apt-opp-status open>Open</span>
+ </div>
+ </article>
+ <article class=apt-opp>
+ <div class=apt-opp-header><span class=apt-opp-id>#OPP-0890</span><span class=apt-opp-badge>Urgent</span></div>
+ <div class=apt-opp-title>Maize mill operator — Kirembe co-op</div>
+ <div class=apt-opp-body>Harvest ready. Need experienced posho mill operator for 3 days. Immediate start.</div>
+ <div class=apt-opp-foot>
+ <div class=apt-opp-actor><div class=apt-avatar>SN</div><div>Samuel Njoroge</div></div>
+ <span class=apt-opp-price>KES 15,000</span>
+ <span class=apt-opp-status open>Open</span>
+ </div>
+ </article>
+ <article class=apt-opp>
+ <div class=apt-opp-header><span class=apt-opp-id>#OPP-0889</span><span class=apt-opp-badge>Skilled trade</span></div>
+ <div class=apt-opp-title>Certified electrician — wiring &amp; troubleshooting</div>
+ <div class=apt-opp-body>8 years experience. Residential and commercial wiring, fault finding, solar basics. Nairobi and Kiambu.</div>
+ <div class=apt-opp-foot>
+ <div class=apt-opp-actor><div class=apt-avatar>OM</div><div>Otieno Moses</div></div>
+ <span class=apt-opp-price>KES 3,000 / day</span>
+ <span class=apt-opp-status open>Open</span>
+ </div>
+ </article>
+ <article class=apt-opp>
+ <div class=apt-opp-header><span class=apt-opp-id>#OPP-0888</span><span class=apt-opp-badge>Transport</span></div>
+ <div class=apt-opp-title>3-ton truck — Nakuru to Eldoret</div>
+ <div class=apt-opp-body>Tuesday and Thursday availability. Building materials, farm produce, or general cargo.</div>
+ <div class=apt-opp-foot>
+ <div class=apt-opp-actor><div class=apt-avatar>DK</div><div>David Koech</div></div>
+ <span class=apt-opp-price>KES 8,000 / trip</span>
+ <span class=apt-opp-status open>Open</span>
+ </div>
+ </article>
+ </div>
+ </section>
+
+ <section>
+ <div class=apt-section-head><h2>Five working surfaces</h2></div>
+ <div class=apt-module-grid>
+ <a href=/workspace/commons class=apt-module><span class=apt-module-index>01</span><div class=apt-module-copy><h3>Commons</h3><p>Surface needs, offers, resources, opportunities, and problems for shared stewardship.</p></div><div class=apt-module-link>Open <span aria-hidden=true>?</span></div></a>
+ <a href=/workspace/network/people class=apt-module><span class=apt-module-index>02</span><div class=apt-module-copy><h3>Network</h3><p>Understand people, crews, institutions, assets, capabilities, and relationships.</p></div><div class=apt-module-link>Open <span aria-hidden=true>?</span></div></a>
+ <a href=/workspace/workbench class=apt-module><span class=apt-module-index>03</span><div class=apt-module-copy><h3>Workbench</h3><p>Scope, assemble, coordinate, and manage productive work.</p></div><div class=apt-module-link>Open <span aria-hidden=true>?</span></div></a>
+ <a href=/workspace/records/roll class=apt-module><span class=apt-module-index>04</span><div class=apt-module-copy><h3>Records</h3><p>Inspect structural records, event history, provenance, and supporting evidence.</p></div><div class=apt-module-link>Open <span aria-hidden=true>?</span></div></a>
+ <a href=/workspace/intelligence/coin-lab class=apt-module><span class=apt-module-index>05</span><div class=apt-module-copy><h3>Intelligence</h3><p>Explore the research surface. APT Coin Lab is research-only.</p></div><div class=apt-module-link>Open <span aria-hidden=true>?</span></div></a>
+ </div>
+ </section>
+
+ <section>
+ <div class=apt-section-head><h2>Pilot paths</h2></div>
+ <div class=apt-pilots>
+ <div class=apt-pilot><div class=apt-pilot-kind>Pilot 1 · Education</div><h4>School · Benben-OS</h4><p>Cognitive skill development and practical methods. First builds: animator calls, Mwea Animation Box.</p><div class=apt-pilot-foot>Open console ?</div></div>
+ <div class=apt-pilot><div class=apt-pilot-kind>Asset · Creative</div><h4>Mwea Animation Box</h4><p>Investable animation capability. People can invest in the asset and share revenue.</p><div class=apt-pilot-foot>Invest ?</div></div>
+ <div class=apt-pilot><div class=apt-pilot-kind>Asset · Systems</div><h4>Kemet-OS</h4><p>Those who build and maintain APT-LABS. Mine aptcoins by building.</p><div class=apt-pilot-foot>Build ?</div></div>
+ <div class=apt-pilot><div class=apt-pilot-kind>Engineering</div><h4>Kiringa Mini Hydro</h4><p>150 kW micro-hydro engineering project for industrial sovereignty.</p><div class=apt-pilot-foot>Specs ?</div></div>
+ <div class=apt-pilot><div class=apt-pilot-kind>Open frontier</div><h4>Fifth Path</h4><p>Community-proposed pilot work. The frontier is open.</p><div class=apt-pilot-foot>Propose ?</div></div>
+ </div>
+ </section>
+
+ <footer class=apt-economy>
+ <div class=apt-economy-stats>128 open · 14 matched today · KES 4.2M active value · 218 SBTs</div>
+ <div class=apt-economy-links><a href=/workspace/network>Network</a><a href=/workspace/workbench>Workbench</a><a href=/workspace/records>Records</a></div>
+ </footer>
+ </div>
+ </main>
+ </div>
+</div>
+</body>
+</html>

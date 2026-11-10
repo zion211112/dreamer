@@ -191,17 +191,17 @@ Roll preview applies to physical component. SBT attestations minted for anchor/b
 
 ## 7. Design System
 
-**Light Luxury** is the default theme (`:root`). Dark Signature is an explicit variant via `[data-skin="dark"]` on `<html>`.
+**Signature Dark Instrument** is the active design proposal (charter Decision B4, 2026-11-10): deep green-black signature default, light variant. Implementation requires separate authorization. Current code in `src/tokens.css` implements Light Luxury as the `:root` default with `[data-skin="dark"]` as the variant; this will be reconciled in a future implementation phase.
 
-| Token | Light (default) | Dark (`[data-skin="dark"]`) |
-|-------|-----------------|----------------------------|
-| `--bg` | `#F7F5F0` (warm cream) | `#0A0F0C` (green-black) |
-| `--fg` | `#1A1D18` (deep ink) | `#E9F1E8` (bone) |
-| `--muted` | `#4A5A52` (refined moss) | `#8FA08C` (moss) |
-| `--state-canon` | `#286375` (teal) | `#7FC5BC` (teal) |
-| `--state-proposed` | `#3D7158` (green) | `#C9F292` (lime) |
-| `--state-risk` | `#A5533D` (coral) | `#E89670` (coral) |
-| `--state-caution` | `#B8955A` (amber) | `#CBAF6E` (amber) |
+| Token | Dark signature (proposal) | Light variant |
+|-------|---------------------------|---------------|
+| `--bg` | `#0A0F0C` (green-black) | `#F7F5F0` (warm cream) |
+| `--fg` | `#E9F1E8` (bone) | `#1A1D18` (deep ink) |
+| `--muted` | `#8FA08C` (moss) | `#4A5A52` (refined moss) |
+| `--state-canon` | `#7FC5BC` (teal) | `#286375` (teal) |
+| `--state-proposed` | `#C9F292` (lime) | `#3D7158` (green) |
+| `--state-risk` | `#E89670` (coral) | `#A5533D` (coral) |
+| `--state-caution` | `#CBAF6E` (amber) | `#B8955A` (amber) |
 
 **Typography:**
 - Serif (Georgia): record/page names

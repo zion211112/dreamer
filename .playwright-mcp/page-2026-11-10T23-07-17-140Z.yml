@@ -1,0 +1,67 @@
+- generic [ref=f6e3]:
+  - banner [ref=f6e4]:
+    - link "APT-LABS" [ref=f6e5] [cursor=pointer]:
+      - /url: /workspace
+      - generic [aria-hidden] [ref=f6e6]: A
+      - generic [aria-hidden] [ref=f6e7]: â€”
+      - generic [ref=f6e8]: Apt Labs
+    - generic [ref=f6e10]: Intelligence
+    - 'generic "Environment: Local demo" [ref=f6e11]': Local demo
+    - button "Search modules and tasks" [ref=f6e12] [cursor=pointer]:
+      - generic [ref=f6e16]: Search
+      - generic [ref=f6e17]: Ctrl K
+    - button "Hide context navigation" [ref=f6e18] [cursor=pointer]
+    - button "Reset workspace layout" [ref=f6e21] [cursor=pointer]
+  - navigation "Primary workspace modules" [ref=f6e25]:
+    - link "Home" [ref=f6e26] [cursor=pointer]:
+      - /url: /workspace
+    - link "Commons" [ref=f6e31] [cursor=pointer]:
+      - /url: /workspace/commons
+    - link "Network" [ref=f6e37] [cursor=pointer]:
+      - /url: /workspace/network/people
+    - link "Workbench" [ref=f6e42] [cursor=pointer]:
+      - /url: /workspace/workbench
+    - link "The Roll" [ref=f6e47] [cursor=pointer]:
+      - /url: /workspace/records/roll
+    - link "Intelligence" [ref=f6e52] [cursor=pointer]:
+      - /url: /workspace/intelligence
+  - complementary "Workspace context navigation" [ref=f6e61]:
+    - generic [ref=f6e62]:
+      - generic [ref=f6e63]: Current workspace
+      - generic [ref=f6e64]: Intelligence
+    - generic [ref=f6e65]: Intelligence
+    - navigation "Intelligence destinations" [ref=f6e66]:
+      - link "Trust and economic intelligence" [ref=f6e67] [cursor=pointer]:
+        - /url: /workspace/intelligence
+    - generic [ref=f6e70]:
+      - generic [ref=f6e71]: DATA CONTEXT
+      - generic [ref=f6e72]: Local, sample, and imported records remain distinct.
+  - main [ref=f6e73]:
+    - generic [ref=f6e75]:
+      - generic [ref=f6e76]:
+        - generic [ref=f6e77]: Intelligence
+        - generic [ref=f6e78]:
+          - heading "Intelligence" [level=1] [ref=f6e79]
+          - paragraph [ref=f6e80]: "Trust and economic intelligence — identity, attestation, and economic interaction. Research-only: no balances, transfers, rewards, or coin-gated access."
+      - generic [ref=f6e81]:
+        - article [ref=f6e82]:
+          - heading "APT Passport — attestations" [level=3] [ref=f6e83]
+          - paragraph [ref=f6e84]: Bounded, scoped claims about a participant's productive reality — issued by an issuer, scoped, consent-based, portable. Not a reputation score; not authority, credit, or ownership.
+        - article [ref=f6e85]:
+          - heading "APT Coin — economic instrument" [level=3] [ref=f6e86]
+          - paragraph [ref=f6e87]: "A defined arrangement for economic interaction: purpose, terms, participants, settlement rules. Conditional — purpose undecided until a real coordination problem is evidenced."
+        - article [ref=f6e88]:
+          - heading "Intelligence Engine — findings" [level=3] [ref=f6e89]
+          - paragraph [ref=f6e90]: Interprets relationships between identity, credentials, productive activity, institutional records, and economic interactions. The engine assesses; the authorized party decides.
+      - generic [ref=f6e91]:
+        - heading "Central relationship" [level=2] [ref=f6e92]
+        - paragraph [ref=f6e93]:
+          - strong [ref=f6e94]: Identity → Contribution → Attestation → Economic interaction.
+          - text: Each transition has its own rules; none is automatic.
+      - generic [ref=f6e95]:
+        - heading "Boundaries" [level=2] [ref=f6e96]
+        - list [ref=f6e97]:
+          - listitem [ref=f6e98]: Credentials are not custody — participants retain and present them.
+          - listitem [ref=f6e99]: No coin balances, transfers, token rewards, wages, or coin-gated access.
+          - listitem [ref=f6e100]: No universal reputation score; a credential is not authority, credit, or ownership.
+          - listitem [ref=f6e101]: The engine recommends; the authorized financing party decides.

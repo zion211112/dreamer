@@ -958,8 +958,9 @@
 
 @media (max-width: 760px) {
   .network-profile-sidecar {
-    width: 100vw;
-    max-width: 100vw;
+    inset: 0;
+    width: auto;
+    max-width: none;
   }
   .network-main {
     flex-direction: column;

@@ -1,0 +1,183 @@
+- generic [ref=f4e3]:
+  - banner [ref=f4e4]:
+    - link "APT-LABS" [ref=f4e5] [cursor=pointer]:
+      - /url: /workspace
+      - generic [aria-hidden] [ref=f4e6]: A
+      - generic [aria-hidden] [ref=f4e7]: â€”
+      - generic [ref=f4e8]: Apt Labs
+    - generic [ref=f4e10]: Network
+    - 'generic "Environment: Local demo" [ref=f4e11]': Local demo
+    - button "Search modules and tasks" [ref=f4e12] [cursor=pointer]:
+      - generic [ref=f4e16]: Search
+      - generic [ref=f4e17]: Ctrl K
+    - button "Hide context navigation" [ref=f4e18] [cursor=pointer]
+    - button "Reset workspace layout" [ref=f4e21] [cursor=pointer]
+  - navigation "Primary workspace modules" [ref=f4e25]:
+    - link "Home" [ref=f4e26] [cursor=pointer]:
+      - /url: /workspace
+    - link "Commons" [ref=f4e31] [cursor=pointer]:
+      - /url: /workspace/commons
+    - link "Network" [ref=f4e37] [cursor=pointer]:
+      - /url: /workspace/network/people
+    - link "Workbench" [ref=f4e42] [cursor=pointer]:
+      - /url: /workspace/workbench
+    - link "The Roll" [ref=f4e47] [cursor=pointer]:
+      - /url: /workspace/records/roll
+    - link "Intelligence" [ref=f4e52] [cursor=pointer]:
+      - /url: /workspace/intelligence
+  - complementary "Workspace context navigation" [ref=f4e61]:
+    - generic [ref=f4e62]:
+      - generic [ref=f4e63]: Current workspace
+      - generic [ref=f4e64]: Network
+    - generic [ref=f4e65]: Network
+    - navigation "Network destinations" [ref=f4e66]:
+      - link "People & crews" [ref=f4e67] [cursor=pointer]:
+        - /url: /workspace/network/people
+      - link "Institutions & assets" [ref=f4e69] [cursor=pointer]:
+        - /url: /workspace/network/institutions
+      - link "Capability directory" [ref=f4e71] [cursor=pointer]:
+        - /url: /workspace/network/capabilities
+    - generic [ref=f4e74]:
+      - generic [ref=f4e75]: DATA CONTEXT
+      - generic [ref=f4e76]: Local, sample, and imported records remain distinct.
+  - main [ref=f4e77]:
+    - generic [ref=f4e79]:
+      - generic [ref=f4e80]:
+        - generic [ref=f4e81]:
+          - paragraph [ref=f4e82]: APT-LABS / STARTER NETWORK REGISTER
+          - heading "Institutions Assets" [level=1] [ref=f4e83]: Institutions / Assets
+          - paragraph [ref=f4e84]: A considered index of selected organisations and resources. A record tells you what is on fileâ€”not whether something is operating, available, authorised, or ready to use.
+        - generic "5 records in the starter network" [ref=f4e85]:
+          - generic [ref=f4e86]: "05"
+          - generic [ref=f4e87]: recordsin this register
+      - generic [ref=f4e88]:
+        - generic [aria-hidden] [ref=f4e89]: i
+        - paragraph [ref=f4e90]:
+          - strong [ref=f4e91]: Unknown is a useful answer.
+          - text: Basis describes the recordâ€™s source, not verification; links describe context, not ownership or authority.
+      - region "Find a register record" [ref=f4e92]:
+        - group "Filter records" [ref=f4e93]:
+          - button "All 05" [pressed] [ref=f4e94] [cursor=pointer]:
+            - text: All
+            - generic [ref=f4e95]: "05"
+          - button "Institutions 02" [ref=f4e96] [cursor=pointer]:
+            - text: Institutions
+            - generic [ref=f4e97]: "02"
+          - button "Assets 03" [ref=f4e98] [cursor=pointer]:
+            - text: Assets
+            - generic [ref=f4e99]: "03"
+        - generic [ref=f4e100]:
+          - generic [aria-hidden] [ref=f4e101]: âŒ•
+          - generic [ref=f4e102]: Search institutions and assets
+          - searchbox "Search institutions and assets" [ref=f4e103]
+      - generic [ref=f4e104]:
+        - generic [ref=f4e105]: 05 RECORDS
+        - generic [ref=f4e106]: STARTER NETWORK
+      - generic [ref=f4e107]:
+        - region "Institutions and assets" [ref=f4e108]:
+          - generic [ref=f4e109]:
+            - generic [ref=f4e110]: Index
+            - generic [ref=f4e111]: Name Â· Record basis
+            - generic [ref=f4e112]: Place
+          - list [ref=f4e113]:
+            - listitem [ref=f4e114] [cursor=pointer]:
+              - button "Inspect Kemetos1, Asset" [ref=f4e115]:
+                - generic [ref=f4e116]: "01"
+                - generic [ref=f4e118]:
+                  - generic [ref=f4e119]:
+                    - generic [ref=f4e120]: Asset
+                    - generic [ref=f4e121]: ·AGI systems asset
+                    - generic [ref=f4e122]: ·Project-reported
+                  - generic [ref=f4e123]: Kemetos1
+                  - generic [ref=f4e124]: A reusable AGI systems asset that anchors Crew0 research, infrastructure, and operational work.
+                - generic [ref=f4e125]: Distributed
+                - generic [aria-hidden] [ref=f4e126]: â†—
+            - listitem [ref=f4e127] [cursor=pointer]:
+              - button "Inspect Community Tool Library, Asset" [ref=f4e128]:
+                - generic [ref=f4e129]: "02"
+                - generic [ref=f4e131]:
+                  - generic [ref=f4e132]:
+                    - generic [ref=f4e133]: Asset
+                    - generic [ref=f4e134]: ·Shared equipment
+                    - generic [ref=f4e135]: ·Illustrative
+                  - generic [ref=f4e136]: Community Tool Library
+                  - generic [ref=f4e137]: Shared equipment library; location, operator, and condition are not established in this record.
+                - generic [ref=f4e138]: Not recorded
+                - generic [aria-hidden] [ref=f4e139]: â†’
+            - listitem [ref=f4e140] [cursor=pointer]:
+              - button "Inspect School Management Console, Asset" [ref=f4e141]:
+                - generic [ref=f4e142]: "03"
+                - generic [ref=f4e144]:
+                  - generic [ref=f4e145]:
+                    - generic [ref=f4e146]: Asset
+                    - generic [ref=f4e147]: ·Local-first software product
+                    - generic [ref=f4e148]: ·Illustrative
+                  - generic [ref=f4e149]: School Management Console
+                  - generic [ref=f4e150]: A browser-local teaching and school operations prototype; it is not the school or its physical infrastructure.
+                - generic [ref=f4e151]: Not recorded
+                - generic [aria-hidden] [ref=f4e152]: â†’
+            - listitem [ref=f4e153] [cursor=pointer]:
+              - button "Inspect Kibera Makerspace, Institution" [ref=f4e154]:
+                - generic [ref=f4e155]: "04"
+                - generic [ref=f4e157]:
+                  - generic [ref=f4e158]:
+                    - generic [ref=f4e159]: Institution
+                    - generic [ref=f4e160]: ·Community workshop
+                    - generic [ref=f4e161]: ·Not recorded
+                  - generic [ref=f4e162]: Kibera Makerspace
+                  - generic [ref=f4e163]: A locally managed space for practical learning, repair, and making.
+                - generic [ref=f4e164]: Nairobi
+                - generic [aria-hidden] [ref=f4e165]: â†’
+            - listitem [ref=f4e166] [cursor=pointer]:
+              - button "Inspect Mwea Water Cooperative, Institution" [ref=f4e167]:
+                - generic [ref=f4e168]: "05"
+                - generic [ref=f4e170]:
+                  - generic [ref=f4e171]:
+                    - generic [ref=f4e172]: Institution
+                    - generic [ref=f4e173]: ·Cooperative
+                    - generic [ref=f4e174]: ·Illustrative
+                  - generic [ref=f4e175]: Mwea Water Cooperative
+                  - generic [ref=f4e176]: A water cooperative included in the starter network; its mandate and operating arrangements are not established here.
+                - generic [ref=f4e177]: Not recorded
+                - generic [aria-hidden] [ref=f4e178]: â†’
+        - complementary "Kemetos1" [ref=f4e179]:
+          - generic [ref=f4e180]:
+            - generic [ref=f4e181]: Record 01
+            - generic [ref=f4e182]: Asset
+          - paragraph [ref=f4e185]: AGI systems asset
+          - heading "Kemetos1" [level=2] [ref=f4e186]
+          - paragraph [ref=f4e187]: A reusable AGI systems asset that anchors Crew0 research, infrastructure, and operational work.
+          - generic [ref=f4e188]:
+            - generic [ref=f4e189]:
+              - term [ref=f4e190]: Record basis
+              - definition [ref=f4e191]: Project-reported
+            - generic [ref=f4e192]:
+              - term [ref=f4e193]: Location
+              - definition [ref=f4e194]: Distributed
+            - generic [ref=f4e195]:
+              - term [ref=f4e196]: Condition
+              - definition [ref=f4e197]: Not recorded
+            - generic [ref=f4e198]:
+              - term [ref=f4e199]: Availability
+              - definition [ref=f4e200]: Not established
+          - paragraph [ref=f4e201]: Asset record; no institution or external affiliation inferred.
+          - region "Recorded links 06" [ref=f4e202]:
+            - heading "Recorded links 06" [level=3] [ref=f4e203]:
+              - text: Recorded links
+              - generic [ref=f4e204]: "06"
+            - list [ref=f4e205]:
+              - listitem [ref=f4e206]: Kemoly Murage architects Kemetos1
+              - listitem [ref=f4e207]: Horus the Young builds Kemetos1
+              - listitem [ref=f4e208]: Tehuti coordinates Kemetos1
+              - listitem [ref=f4e209]: Crew0 maintains Kemetos1
+              - listitem [ref=f4e210]: APT-LABS design · 3 SBTs records design work for Kemetos1
+              - listitem [ref=f4e211]: Kemetos1 research papers verified by project Kemetos1
+      - generic [ref=f4e212]:
+        - generic [ref=f4e213]: APT-LABS / RECORDS, NOT ASSUMPTIONS
+        - generic [ref=f4e214]: This register reads the bundled starter set; it does not alter imported People records.
+        - link "Open Capability Directory" [ref=f4e215] [cursor=pointer]:
+          - /url: /workspace/network/capabilities
+          - generic [aria-hidden] [ref=f4e217]: â†’
+        - link "Open Benben-OS" [ref=f4e218] [cursor=pointer]:
+          - /url: /benben-os
+          - generic [aria-hidden] [ref=f4e220]: →

@@ -1,0 +1,77 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - link "APT-LABS" [ref=e5] [cursor=pointer]:
+      - /url: /workspace
+      - generic [aria-hidden] [ref=e6]: A
+      - generic [aria-hidden] [ref=e7]: â€”
+      - generic [ref=e8]: Apt Labs
+    - generic [ref=e10]: Home
+    - 'generic "Environment: Local demo" [ref=e11]': Local demo
+    - button "Search modules and tasks" [ref=e12] [cursor=pointer]:
+      - generic [ref=e16]: Search
+      - generic [ref=e17]: Ctrl K
+    - button "Hide context navigation" [ref=e18] [cursor=pointer]
+    - button "Reset workspace layout" [ref=e21] [cursor=pointer]
+  - navigation "Primary workspace modules" [ref=e25]:
+    - link "Home" [ref=e26] [cursor=pointer]:
+      - /url: /workspace
+    - link "Commons" [ref=e31] [cursor=pointer]:
+      - /url: /workspace/commons
+    - link "Network" [ref=e37] [cursor=pointer]:
+      - /url: /workspace/network/people
+    - link "Workbench" [ref=e42] [cursor=pointer]:
+      - /url: /workspace/workbench
+    - link "The Roll" [ref=e47] [cursor=pointer]:
+      - /url: /workspace/records/roll
+    - link "Intelligence" [ref=e52] [cursor=pointer]:
+      - /url: /workspace/intelligence
+  - complementary "Workspace context navigation" [ref=e61]:
+    - generic [ref=e62]:
+      - generic [ref=e63]: Current workspace
+      - generic [ref=e64]: Home
+    - navigation "Overview destinations" [ref=e65]:
+      - paragraph [ref=e66]: Choose a module to begin.
+    - generic [ref=e68]:
+      - generic [ref=e69]: DATA CONTEXT
+      - generic [ref=e70]: Local, sample, and imported records remain distinct.
+  - main [ref=e71]:
+    - generic [ref=e73]:
+      - generic [ref=e74]:
+        - paragraph [ref=e75]: APT-LABS workspace
+        - heading "Welcome to APT-LABS." [level=1] [ref=e76]
+      - generic [ref=e77]:
+        - region "Your work" [ref=e78]:
+          - heading "Your work" [level=2] [ref=e79]
+          - paragraph [ref=e80]: Personal assignments and review requests are not connected here yet. When work is linked to your profile, it will appear in this space.
+        - navigation "A useful first step" [ref=e81]:
+          - heading "A useful first step" [level=2] [ref=e82]
+          - link "Open Commons Browse needs, offers, opportunities, and shared knowledge." [ref=e83] [cursor=pointer]:
+            - /url: /workspace/commons
+            - generic [ref=e84]:
+              - strong [ref=e85]: Open Commons
+              - generic [ref=e86]: Browse needs, offers, opportunities, and shared knowledge.
+            - generic [aria-hidden] [ref=e87]: →
+          - link "Explore the network Find people, crews, institutions, and capabilities to work with." [ref=e88] [cursor=pointer]:
+            - /url: /workspace/network/people
+            - generic [ref=e89]:
+              - strong [ref=e90]: Explore the network
+              - generic [ref=e91]: Find people, crews, institutions, and capabilities to work with.
+            - generic [aria-hidden] [ref=e92]: →
+          - link "Open Workbench Review pilot lanes and coordinated work." [ref=e93] [cursor=pointer]:
+            - /url: /workspace/workbench
+            - generic [ref=e94]:
+              - strong [ref=e95]: Open Workbench
+              - generic [ref=e96]: Review pilot lanes and coordinated work.
+            - generic [aria-hidden] [ref=e97]: →
+          - link "Review the Roll Inspect durable records and supporting evidence." [ref=e98] [cursor=pointer]:
+            - /url: /workspace/records/roll
+            - generic [ref=e99]:
+              - strong [ref=e100]: Review the Roll
+              - generic [ref=e101]: Inspect durable records and supporting evidence.
+            - generic [aria-hidden] [ref=e102]: →
+          - link "Open Intelligence Review trust and economic intelligence research." [ref=e103] [cursor=pointer]:
+            - /url: /workspace/intelligence
+            - generic [ref=e104]:
+              - strong [ref=e105]: Open Intelligence
+              - generic [ref=e106]: Review trust and economic intelligence research.
+            - generic [aria-hidden] [ref=e107]: →

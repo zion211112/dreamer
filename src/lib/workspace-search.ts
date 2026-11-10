@@ -9,7 +9,9 @@ export const WORKSPACE_SEARCH_DESTINATIONS: readonly WorkspaceSearchDestination[
   { id: 'home', label: 'Home', module: 'Home', href: '/workspace' },
   { id: 'commons', label: 'Commons', module: 'Commons', href: '/workspace/commons' },
   { id: 'network', label: 'People & crews', module: 'Network', href: '/workspace/network/people' },
+  { id: 'workbench', label: 'Pilot lanes', module: 'Workbench', href: '/workspace/workbench' },
   { id: 'records', label: 'The Roll', module: 'The Roll', href: '/workspace/records/roll' },
+  { id: 'intelligence', label: 'Intelligence', module: 'Intelligence', href: '/workspace/intelligence' },
 ];
 
 export function filterWorkspaceDestinations(

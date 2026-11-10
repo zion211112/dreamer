@@ -300,7 +300,6 @@
 }
 
 .studio-context-destination.is-active {
-  border-left-color: var(--state-canon);
   color: var(--state-canon);
   background: var(--terrain-pale);
 }

@@ -1,0 +1,1073 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AptLabs — Workspace Shell</title>
+<style>
+  :root{
+    --bg:#0a0b0f;
+    --surface-1:#0f1116;
+    --surface-2:#14171f;
+    --surface-3:#1a1e28;
+    --line:#232833;
+    --line-soft:#1b1f28;
+    --text:#cfd5e3;
+    --text-dim:#8b93a7;
+    --text-mute:#5b6377;
+    --accent:#7c6cff;
+    --accent-soft:rgba(124,108,255,.14);
+    --cyan:#22d3ee;
+    --green:#34d399;
+    --amber:#fbbf24;
+    --red:#f87171;
+
+    --rail:48px;
+    --sidebar:264px;
+    --inspector:300px;
+    --titlebar:44px;
+    --status:26px;
+    --panel-h:196px;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:ui-sans-serif,-apple-system,"Segoe UI",Inter,system-ui,sans-serif;
+    font-size:13px;
+    color:var(--text);
+    background:var(--bg);
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace}
+  button{font:inherit;color:inherit}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:#20242e;border-radius:6px;border:3px solid transparent;background-clip:content-box}
+  ::-webkit-scrollbar-thumb:hover{background:#2c313d;background-clip:content-box;border:3px solid transparent}
+  ::-webkit-scrollbar-track{background:transparent}
+
+  /* ─────────────── SHELL GRID ─────────────── */
+  .shell{
+    height:100vh;
+    display:grid;
+    grid-template-columns:var(--rail) var(--sidebar) 1fr var(--inspector);
+    grid-template-rows:var(--titlebar) 1fr var(--status);
+    grid-template-areas:
+      "title  title title title"
+      "rail   side  main  insp"
+      "status status status status";
+  }
+  body.sidebar-hidden{--sidebar:0px}
+  body.sidebar-hidden .sidebar{display:none}
+  body.panel-hidden .panel{display:none}
+
+  /* ─────────────── TITLEBAR ─────────────── */
+  .titlebar{
+    grid-area:title;
+    display:flex;align-items:center;gap:8px;
+    padding:0 10px;
+    background:linear-gradient(180deg,#12141b,#0e1015);
+    border-bottom:1px solid var(--line);
+    position:relative;z-index:30;
+  }
+  .brand{display:flex;align-items:center;gap:8px;padding-right:4px}
+  .brand-mark{
+    width:22px;height:22px;border-radius:7px;
+    background:linear-gradient(140deg,var(--accent),var(--cyan));
+    display:grid;place-items:center;
+    color:#0a0b0f;font-weight:800;font-size:12px;
+    box-shadow:0 0 0 1px rgba(255,255,255,.08),0 4px 12px rgba(124,108,255,.35);
+  }
+  .brand-name{font-weight:650;letter-spacing:.01em}
+  .brand-name b{color:var(--text-mute);font-weight:500}
+
+  .divider{width:1px;height:18px;background:var(--line);margin:0 4px}
+
+  .ws-pill{
+    display:flex;align-items:center;gap:7px;
+    height:26px;padding:0 10px;border-radius:7px;
+    background:var(--surface-2);border:1px solid var(--line);
+    color:var(--text-dim);cursor:pointer;
+  }
+  .ws-pill:hover{background:var(--surface-3);color:var(--text)}
+  .ws-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+
+  .menu{display:flex;gap:2px;margin-left:4px}
+  .menu button{
+    background:none;border:0;padding:5px 9px;border-radius:6px;
+    color:var(--text-dim);cursor:pointer;font-size:12.5px;
+  }
+  .menu button:hover{background:var(--surface-3);color:var(--text)}
+
+  .cmd-trigger{
+    flex:1;max-width:440px;margin:0 auto;
+    display:flex;align-items:center;gap:8px;
+    height:28px;padding:0 8px 0 10px;border-radius:8px;
+    background:var(--surface-2);border:1px solid var(--line);
+    color:var(--text-mute);cursor:pointer;
+  }
+  .cmd-trigger:hover{border-color:#2f3542;color:var(--text-dim)}
+  .cmd-trigger svg{width:14px;height:14px;flex:none}
+  .cmd-trigger .txt{flex:1;text-align:left;font-size:12.5px}
+  kbd{
+    font-family:inherit;font-size:10.5px;
+    padding:2px 5px;border-radius:5px;
+    background:var(--surface-3);border:1px solid var(--line);
+    color:var(--text-dim);
+  }
+
+  .title-right{display:flex;align-items:center;gap:2px;margin-left:auto}
+  .icon-btn{
+    width:28px;height:28px;border-radius:7px;border:0;background:transparent;
+    display:grid;place-items:center;color:var(--text-mute);cursor:pointer;
+  }
+  .icon-btn:hover{background:var(--surface-3);color:var(--text)}
+  .icon-btn svg{width:16px;height:16px}
+  .avatar{
+    width:24px;height:24px;border-radius:50%;margin-left:6px;
+    background:linear-gradient(140deg,#22d3ee,#7c6cff);
+    display:grid;place-items:center;font-size:10px;font-weight:700;color:#0a0b0f;
+    cursor:pointer;
+  }
+
+  /* ─────────────── RAIL ─────────────── */
+  .rail{
+    grid-area:rail;
+    background:var(--surface-1);
+    border-right:1px solid var(--line);
+    display:flex;flex-direction:column;align-items:center;
+    padding:8px 0;gap:2px;
+  }
+  .rail-btn{
+    width:36px;height:36px;border-radius:9px;border:0;background:transparent;
+    display:grid;place-items:center;color:var(--text-mute);
+    cursor:pointer;position:relative;transition:color .12s,background .12s;
+  }
+  .rail-btn svg{width:18px;height:18px}
+  .rail-btn:hover{color:var(--text);background:var(--surface-3)}
+  .rail-btn.active{color:#fff;background:var(--accent-soft)}
+  .rail-btn.active::before{
+    content:"";position:absolute;left:-6px;top:9px;bottom:9px;width:2px;
+    border-radius:2px;background:var(--accent);
+  }
+  .rail-spacer{flex:1}
+  .rail-btn .badge{
+    position:absolute;top:5px;right:5px;
+    min-width:13px;height:13px;padding:0 3px;border-radius:7px;
+    background:var(--accent);color:#fff;font-size:9px;font-weight:700;
+    display:grid;place-items:center;
+  }
+
+  /* ─────────────── SIDEBAR ─────────────── */
+  .sidebar{
+    grid-area:side;
+    background:var(--surface-1);
+    border-right:1px solid var(--line);
+    position:relative;
+    display:flex;flex-direction:column;
+    min-width:0;overflow:hidden;
+  }
+  .side-head{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 8px 0 14px;height:38px;flex:none;
+    font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--text-mute);font-weight:600;
+  }
+  .side-head .acts{display:flex;gap:1px}
+  .side-head .acts button{
+    width:24px;height:24px;border:0;border-radius:6px;background:transparent;
+    display:grid;place-items:center;color:var(--text-mute);cursor:pointer;
+  }
+  .side-head .acts button:hover{background:var(--surface-3);color:var(--text)}
+  .side-head .acts svg{width:14px;height:14px}
+
+  .side-panel{display:none;flex:1;min-height:0;overflow:auto;padding-bottom:12px}
+  .side-panel.active{display:block}
+
+  /* file tree */
+  .row{
+    display:flex;align-items:center;gap:6px;
+    height:24px;padding-right:10px;
+    padding-left:calc(10px + var(--depth) * 14px);
+    color:var(--text-dim);cursor:pointer;user-select:none;
+    font-size:12.5px;white-space:nowrap;
+  }
+  .row:hover{background:var(--surface-2)}
+  .row.sel{background:var(--accent-soft);color:#fff;box-shadow:inset 2px 0 0 var(--accent)}
+  .row .chev{
+    width:12px;height:12px;flex:none;color:var(--text-mute);
+    transition:transform .13s ease;
+  }
+  .row.dir.open .chev{transform:rotate(90deg)}
+  .row .fi{width:14px;height:14px;flex:none;color:var(--text-mute)}
+  .row.dir .fi{color:#8b93a7}
+  .row .nm{overflow:hidden;text-overflow:ellipsis}
+  .row .tag{
+    margin-left:auto;font-size:10px;color:var(--text-mute);
+    background:var(--surface-3);padding:1px 5px;border-radius:4px;
+  }
+
+  /* search panel bits */
+  .pad{padding:0 12px}
+  .field{
+    display:flex;align-items:center;gap:7px;height:28px;margin-bottom:8px;
+    padding:0 9px;border-radius:7px;
+    background:var(--surface-2);border:1px solid var(--line);
+  }
+  .field svg{width:14px;height:14px;color:var(--text-mute);flex:none}
+  .field input{
+    flex:1;background:none;border:0;outline:0;color:var(--text);
+    font-size:12.5px;font-family:inherit;
+  }
+  .field input::placeholder{color:var(--text-mute)}
+  .muted-note{color:var(--text-mute);font-size:11.5px;padding:6px 2px 12px}
+
+  /* ─────────────── MAIN / CANVAS ─────────────── */
+  .main{
+    grid-area:main;
+    display:flex;flex-direction:column;
+    min-width:0;min-height:0;
+    background:var(--bg);
+    position:relative;
+  }
+
+  .tabs{
+    display:flex;align-items:stretch;height:38px;flex:none;
+    background:var(--surface-1);border-bottom:1px solid var(--line);
+    overflow-x:auto;scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    display:flex;align-items:center;gap:8px;
+    padding:0 8px 0 13px;
+    border-right:1px solid var(--line-soft);
+    color:var(--text-dim);cursor:pointer;position:relative;
+    white-space:nowrap;font-size:12.5px;
+  }
+  .tab:hover{background:var(--surface-2)}
+  .tab.active{background:var(--bg);color:var(--text)}
+  .tab.active::after{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);
+  }
+  .tab .ti{width:13px;height:13px;flex:none;color:var(--cyan);opacity:.85}
+  .tab .x{
+    width:16px;height:16px;border-radius:4px;display:grid;place-items:center;
+    font-size:13px;line-height:1;color:var(--text-mute);opacity:0;
+  }
+  .tab:hover .x,.tab.active .x{opacity:1}
+  .tab .x:hover{background:var(--surface-3);color:var(--text)}
+  .tab .dirty{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+
+  .crumbs{
+    display:flex;align-items:center;gap:6px;flex:none;
+    height:28px;padding:0 14px;
+    font-size:11.5px;color:var(--text-mute);
+    background:var(--bg);border-bottom:1px solid var(--line-soft);
+  }
+  .crumbs b{color:var(--text-dim);font-weight:500}
+  .crumbs .sep{opacity:.5}
+
+  .code{
+    flex:1;min-height:0;overflow:auto;
+    padding:12px 0 60vh;
+    font-size:12.5px;line-height:21px;
+  }
+  .ln{display:flex;min-height:21px}
+  .ln:hover{background:rgba(255,255,255,.017)}
+  .ln.active{background:rgba(124,108,255,.075);box-shadow:inset 2px 0 0 var(--accent)}
+  .gut{
+    width:54px;flex:none;padding-right:16px;text-align:right;
+    color:#3f465a;user-select:none;
+  }
+  .ln.active .gut{color:var(--text-dim)}
+  .src{white-space:pre;padding-right:24px;color:#a9b2c6}
+  .k{color:#c792ea}
+  .t{color:#ffcb6b}
+  .s{color:#c3e88d}
+  .f{color:#82aaff}
+  .c{color:#5b6377;font-style:italic}
+  .n{color:#f78c6c}
+  .p{color:#89ddff}
+
+  /* ─────────────── PANEL DOCK ─────────────── */
+  .panel{
+    height:var(--panel-h);flex:none;
+    display:flex;flex-direction:column;
+    background:var(--surface-1);
+    border-top:1px solid var(--line);
+    position:relative;min-height:0;
+  }
+  .panel-head{
+    display:flex;align-items:center;gap:2px;height:34px;flex:none;
+    padding:0 8px 0 6px;border-bottom:1px solid var(--line-soft);
+  }
+  .ptab{
+    height:24px;padding:0 10px;border:0;border-radius:6px;background:transparent;
+    color:var(--text-mute);cursor:pointer;font-size:12px;
+    display:flex;align-items:center;gap:6px;
+  }
+  .ptab:hover{color:var(--text-dim);background:var(--surface-2)}
+  .ptab.active{color:var(--text);background:var(--surface-3)}
+  .ptab .count{
+    font-size:10px;background:var(--amber);color:#1a1300;
+    border-radius:6px;padding:0 5px;font-weight:700;
+  }
+  .panel-head .acts{margin-left:auto;display:flex;gap:1px}
+  .panel-body{flex:1;min-height:0;overflow:auto;padding:10px 14px}
+  .term{font-size:12px;line-height:19px;color:var(--text-dim)}
+  .term .pr{color:var(--green)}
+  .term .path{color:var(--cyan)}
+  .term .ok{color:var(--green)}
+  .term .dim{color:var(--text-mute)}
+  .term .cur{
+    display:inline-block;width:7px;height:14px;vertical-align:-2px;
+    background:var(--text-dim);animation:blink 1.1s steps(1) infinite;
+  }
+  @keyframes blink{50%{opacity:0}}
+
+  /* ─────────────── INSPECTOR ─────────────── */
+  .inspector{
+    grid-area:insp;
+    background:var(--surface-1);
+    border-left:1px solid var(--line);
+    position:relative;
+    display:flex;flex-direction:column;
+    min-width:0;overflow:hidden;
+  }
+  .insp-sec{border-bottom:1px solid var(--line-soft)}
+  .insp-h{
+    display:flex;align-items:center;justify-content:space-between;
+    height:32px;padding:0 12px 0 14px;
+    font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--text-mute);font-weight:600;cursor:pointer;
+  }
+  .insp-h:hover{color:var(--text-dim)}
+  .insp-h .chev{width:12px;height:12px;transition:transform .13s}
+  .insp-sec.closed .insp-h .chev{transform:rotate(-90deg)}
+  .insp-sec.closed .insp-b{display:none}
+  .insp-b{padding:0 8px 10px}
+
+  .oitem{
+    display:flex;align-items:center;gap:8px;height:24px;padding:0 8px;
+    border-radius:6px;color:var(--text-dim);cursor:pointer;font-size:12.5px;
+  }
+  .oitem:hover{background:var(--surface-2);color:var(--text)}
+  .oitem .kind{
+    width:16px;height:16px;flex:none;border-radius:4px;
+    display:grid;place-items:center;font-size:9.5px;font-weight:800;
+  }
+  .kind.fn{background:rgba(130,170,255,.15);color:#82aaff}
+  .kind.ty{background:rgba(255,203,107,.15);color:#ffcb6b}
+  .kind.va{background:rgba(52,211,153,.15);color:#34d399}
+
+  .diag{
+    display:flex;gap:8px;padding:6px 8px;border-radius:6px;
+    font-size:12px;color:var(--text-dim);cursor:pointer;line-height:1.45;
+  }
+  .diag:hover{background:var(--surface-2)}
+  .diag .sev{width:7px;height:7px;border-radius:50%;flex:none;margin-top:5px}
+  .sev.warn{background:var(--amber)}
+  .sev.err{background:var(--red)}
+  .diag .loc{display:block;color:var(--text-mute);font-size:11px}
+
+  .card{
+    margin:2px 0 8px;padding:10px 11px;border-radius:9px;
+    background:linear-gradient(160deg,rgba(124,108,255,.13),rgba(34,211,238,.06));
+    border:1px solid rgba(124,108,255,.28);
+    font-size:12px;line-height:1.55;color:var(--text-dim);
+  }
+  .card b{color:var(--text);font-weight:600}
+  .card .acts{display:flex;gap:6px;margin-top:9px}
+  .btn{
+    height:24px;padding:0 10px;border-radius:6px;cursor:pointer;
+    border:1px solid var(--line);background:var(--surface-2);
+    color:var(--text-dim);font-size:11.5px;
+  }
+  .btn:hover{background:var(--surface-3);color:var(--text)}
+  .btn.primary{
+    background:var(--accent);border-color:transparent;color:#fff;font-weight:600;
+  }
+  .btn.primary:hover{filter:brightness(1.1)}
+
+  /* ─────────────── STATUS BAR ─────────────── */
+  .statusbar{
+    grid-area:status;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 10px;
+    background:linear-gradient(180deg,#12141b,#0e1015);
+    border-top:1px solid var(--line);
+    font-size:11.5px;color:var(--text-dim);
+    position:relative;z-index:30;
+  }
+  .statusbar .grp{display:flex;align-items:center;gap:2px}
+  .statusbar button{
+    display:flex;align-items:center;gap:5px;
+    height:20px;padding:0 7px;border:0;border-radius:5px;
+    background:transparent;color:var(--text-dim);cursor:pointer;font-size:11.5px;
+  }
+  .statusbar button:hover{background:var(--surface-3);color:var(--text)}
+  .statusbar svg{width:12px;height:12px}
+  .statusbar .accent{color:var(--accent)}
+  .statusbar .live{
+    width:6px;height:6px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 8px var(--green);
+  }
+
+  /* ─────────────── RESIZERS ─────────────── */
+  .rs{position:absolute;z-index:25;background:transparent;transition:background .12s}
+  .rs.v{top:0;bottom:0;width:7px;cursor:col-resize}
+  .rs.h{left:0;right:0;height:7px;cursor:row-resize}
+  .rs:hover,.rs.dragging{background:rgba(124,108,255,.55)}
+
+  /* ─────────────── COMMAND PALETTE ─────────────── */
+  .overlay{
+    position:fixed;inset:0;z-index:100;
+    background:rgba(5,6,9,.55);
+    backdrop-filter:blur(3px);
+    display:none;justify-content:center;align-items:flex-start;
+    padding-top:12vh;
+  }
+  .overlay.open{display:flex}
+  .palette{
+    width:min(620px,92vw);
+    background:var(--surface-2);
+    border:1px solid #2b3140;border-radius:12px;
+    box-shadow:0 30px 80px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.03) inset;
+    overflow:hidden;
+    animation:pop .13s ease-out;
+  }
+  @keyframes pop{from{transform:translateY(-8px) scale(.99);opacity:0}}
+  .pal-input{
+    display:flex;align-items:center;gap:10px;
+    height:48px;padding:0 14px;border-bottom:1px solid var(--line);
+  }
+  .pal-input svg{width:16px;height:16px;color:var(--text-mute);flex:none}
+  .pal-input input{
+    flex:1;background:none;border:0;outline:0;color:var(--text);
+    font-size:14px;font-family:inherit;
+  }
+  .pal-input input::placeholder{color:var(--text-mute)}
+  .pal-list{max-height:340px;overflow:auto;padding:6px}
+  .pal-item{
+    display:flex;align-items:center;gap:10px;
+    height:34px;padding:0 10px;border-radius:7px;
+    color:var(--text-dim);cursor:pointer;font-size:13px;
+  }
+  .pal-item .hint{color:var(--text-mute);font-size:11.5px}
+  .pal-item.sel{background:var(--accent-soft);color:#fff}
+  .pal-item.sel .hint{color:var(--text-dim)}
+  .pal-item .grow{flex:1}
+  .pal-foot{
+    display:flex;gap:14px;padding:8px 14px;border-top:1px solid var(--line);
+    font-size:11px;color:var(--text-mute);
+  }
+
+  @media (max-width:1180px){
+    :root{--inspector:0px}
+    .inspector{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ══════════ TITLEBAR ══════════ -->
+  <header class="titlebar">
+    <div class="brand">
+      <div class="brand-mark">A</div>
+      <div class="brand-name">AptLabs <b>/ shell</b></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <button class="ws-pill">
+      <span class="dot"></span>
+      acme-platform
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+
+    <nav class="menu">
+      <button>File</button>
+      <button>Edit</button>
+      <button>View</button>
+      <button>Run</button>
+    </nav>
+
+    <button class="cmd-trigger" id="cmdTrigger">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6"/><path d="m20 20-3.6-3.6"/></svg>
+      <span class="txt">Search or run a command…</span>
+      <kbd>⌘K</kbd>
+    </button>
+
+    <div class="title-right">
+      <button class="icon-btn" title="Notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M18 15v-4a6 6 0 1 0-12 0v4l-2 3h16z"/><path d="M10 21h4"/></svg>
+      </button>
+      <button class="icon-btn" title="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h9M17 7h3M4 17h4M12 17h8"/><circle cx="15" cy="7" r="2.1"/><circle cx="10" cy="17" r="2.1"/></svg>
+      </button>
+      <div class="avatar">JD</div>
+    </div>
+  </header>
+
+  <!-- ══════════ RAIL ══════════ -->
+  <nav class="rail">
+    <button class="rail-btn active" data-view="explorer" title="Explorer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+    </button>
+    <button class="rail-btn" data-view="search" title="Search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="6"/><path d="m20 20-3.6-3.6"/></svg>
+    </button>
+    <button class="rail-btn" data-view="scm" title="Source Control">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="6" r="2.2"/><circle cx="7" cy="18" r="2.2"/><circle cx="17" cy="9" r="2.2"/><path d="M7 8.2v7.6M17 11.2c0 3-3.2 2.4-5.6 3.2"/></svg>
+      <span class="badge">3</span>
+    </button>
+    <button class="rail-btn" data-view="runs" title="Runs">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8.5"/><path d="M10.4 9.1 15 12l-4.6 2.9z" fill="currentColor" stroke="none"/></svg>
+    </button>
+    <button class="rail-btn" data-view="agents" title="Agents">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 3.5 12.5 8.5 17.5 10 12.5 11.5 11 16.5 9.5 11.5 4.5 10 9.5 8.5z"/><path d="M17.5 15.5 18 17l1.5.5-1.5.5-.5 1.5-.5-1.5L15.5 18l1.5-.5z"/></svg>
+    </button>
+    <button class="rail-btn" data-view="ext" title="Extensions">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>
+    </button>
+
+    <div class="rail-spacer"></div>
+
+    <button class="rail-btn" title="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 7 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3 15a1.6 1.6 0 0 0-1.5-1H1.4a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 3 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 7 4.6h.1A1.6 1.6 0 0 0 8.1 3V2.9a2 2 0 1 1 4 0V3a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1h.1a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg>
+    </button>
+  </nav>
+
+  <!-- ══════════ SIDEBAR ══════════ -->
+  <aside class="sidebar">
+    <div class="rs v" data-resize="sidebar"></div>
+
+    <!-- Explorer -->
+    <section class="side-panel active" data-panel="explorer">
+      <div class="side-head">
+        Explorer
+        <div class="acts">
+          <button title="New file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg></button>
+          <button title="New folder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></button>
+          <button title="Collapse all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 9h8M8 15h8"/></svg></button>
+        </div>
+      </div>
+
+      <div class="tree" id="tree">
+        <div class="row dir open" data-depth="0" style="--depth:0">
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m9 6 6 6-6 6"/></svg>
+          <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          <span class="nm">src</span>
+        </div>
+
+        <div class="row dir open" data-depth="1" style="--depth:1">
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m9 6 6 6-6 6"/></svg>
+          <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          <span class="nm">shell</span>
+        </div>
+
+        <div class="row sel" data-depth="2" style="--depth:2">
+          <span class="chev"></span>
+          <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.7"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>
+          <span class="nm">editor-shell.tsx</span>
+          <span class="tag">M</span>
+        </div>
+        <div class="row" data-depth="2" style="--depth:2">
+          <span class="chev"></span>
+          <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.7"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>
+          <span class="nm">command-bar.tsx</span>
+        </div>
+        <div class="row" data-depth="2" style="--depth:2">
+          <span class="chev"></span>
+          <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.7"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>
+          <span class="nm">inspector.tsx</span>
+        </div>
+
+        <div class="row dir open" data-depth="1" style="--depth:1">
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m9 6 6 6-6 6"/></svg>
+          <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          <span class="nm">lib</span>
+        </div>
+        <div class="row" data-depth="2" style="--depth:2">
+          <span class="chev"></span>
+          <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.7"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>
+          <span class="nm">transport.ts</span>
+        </div>
+        <div class="row" data-depth="2" style="--depth:2">
+          <span class="chev"></span>
+          <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.7"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>
+          <span class="nm">runtime.ts</span>
+        </div>
+
+        <div class="row dir" data-depth="1" style="--depth:1">
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m9 6 6 6-6 6"/></svg>
+          <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          <span class="nm">tests</span>
+        </div>
+        <div class="row" data-depth="2" style="--depth:2;display:none">
+          <span class="chev"></span>
+          <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.7"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>
+          <span class="nm">shell.spec.ts</span>
+        </div>
+
+        <div class="row" data-depth="0" style="--depth:0">
+          <span class="chev"></span>
+          <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="#ffcb6b" stroke-width="1.7"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>
+          <span class="nm">package.json</span>
+        </div>
+        <div class="row" data-depth="0" style="--depth:0">
+          <span class="chev"></span>
+          <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>
+          <span class="nm">README.md</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Search -->
+    <section class="side-panel" data-panel="search">
+      <div class="side-head">Search</div>
+      <div class="pad">
+        <div class="field">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6"/><path d="m20 20-3.6-3.6"/></svg>
+          <input placeholder="Search in workspace" />
+        </div>
+        <div class="field">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+          <input placeholder="Replace" />
+        </div>
+        <div class="muted-note">3 results in 2 files</div>
+      </div>
+    </section>
+
+    <!-- Source control -->
+    <section class="side-panel" data-panel="scm">
+      <div class="side-head">Source Control</div>
+      <div class="pad">
+        <div class="field"><input value="feat: split shell into panes" /></div>
+        <div class="muted-note">3 changes · main → origin/main</div>
+      </div>
+    </section>
+
+    <!-- Runs -->
+    <section class="side-panel" data-panel="runs">
+      <div class="side-head">Runs</div>
+      <div class="pad"><div class="muted-note">No active runs. Press ⌘R to start the dev server.</div></div>
+    </section>
+
+    <!-- Agents -->
+    <section class="side-panel" data-panel="agents">
+      <div class="side-head">Agents</div>
+      <div class="pad">
+        <div class="card">
+          <b>Shell Architect</b><br/>
+          Reviewing layout topology…
+        </div>
+        <div class="card" style="background:linear-gradient(160deg,rgba(52,211,153,.1),rgba(34,211,238,.05));border-color:rgba(52,211,153,.28)">
+          <b>Refactor Scout</b><br/>
+          Found 2 duplicate panel registries.
+        </div>
+      </div>
+    </section>
+
+    <!-- Extensions -->
+    <section class="side-panel" data-panel="ext">
+      <div class="side-head">Extensions</div>
+      <div class="pad"><div class="muted-note">4 installed · 1 update available</div></div>
+    </section>
+  </aside>
+
+  <!-- ══════════ MAIN CANVAS ══════════ -->
+  <main class="main">
+
+    <div class="tabs" id="tabs">
+      <div class="tab active" data-name="editor-shell.tsx">
+        <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>
+        editor-shell.tsx
+        <span class="dirty"></span>
+        <span class="x">×</span>
+      </div>
+      <div class="tab" data-name="transport.ts">
+        <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>
+        transport.ts
+        <span class="x">×</span>
+      </div>
+      <div class="tab" data-name="runtime.ts">
+        <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/></svg>
+        runtime.ts
+        <span class="x">×</span>
+      </div>
+    </div>
+
+    <div class="crumbs">
+      <b>src</b><span class="sep">›</span><b>shell</b><span class="sep">›</span>
+      <span id="crumbFile">editor-shell.tsx</span><span class="sep">›</span>
+      <span>createShell</span>
+    </div>
+
+    <div class="code mono" id="code">
+      <div class="ln"><span class="gut">1</span><span class="src"><span class="k">import</span> { createSignal, onMount } <span class="k">from</span> <span class="s">"@apt/core"</span>;</span></div>
+      <div class="ln"><span class="gut">2</span><span class="src"><span class="k">import</span> { Transport } <span class="k">from</span> <span class="s">"@/lib/transport"</span>;</span></div>
+      <div class="ln"><span class="gut">3</span><span class="src"></span></div>
+      <div class="ln"><span class="gut">4</span><span class="src"><span class="k">type</span> <span class="t">ShellOptions</span> = {</span></div>
+      <div class="ln"><span class="gut">5</span><span class="src">  workspace: <span class="t">string</span>;</span></div>
+      <div class="ln"><span class="gut">6</span><span class="src">  panels: <span class="t">PanelKind</span>[];</span></div>
+      <div class="ln"><span class="gut">7</span><span class="src">};</span></div>
+      <div class="ln"><span class="gut">8</span><span class="src"></span></div>
+      <div class="ln"><span class="gut">9</span><span class="src"><span class="c">/**</span></span></div>
+      <div class="ln"><span class="gut">10</span><span class="src"><span class="c"> * Boots the AptLabs workspace shell.</span></span></div>
+      <div class="ln"><span class="gut">11</span><span class="src"><span class="c"> * rail → sidebar → canvas → inspector</span></span></div>
+      <div class="ln"><span class="gut">12</span><span class="src"><span class="c"> */</span></span></div>
+      <div class="ln"><span class="gut">13</span><span class="src"><span class="k">export</span> <span class="k">function</span> <span class="f">createShell</span>(opts: <span class="t">ShellOptions</span>) {</span></div>
+      <div class="ln active"><span class="gut">14</span><span class="src">  <span class="k">const</span> [active, setActive] = <span class="f">createSignal</span>&lt;<span class="t">PanelKind</span>&gt;(<span class="s">"explorer"</span>);</span></div>
+      <div class="ln"><span class="gut">15</span><span class="src">  <span class="k">const</span> bus = <span class="k">new</span> <span class="t">Transport</span>({ channel: opts.workspace });</span></div>
+      <div class="ln"><span class="gut">16</span><span class="src"></span></div>
+      <div class="ln"><span class="gut">17</span><span class="src">  <span class="f">onMount</span>(() =&gt; bus.<span class="f">connect</span>());</span></div>
+      <div class="ln"><span class="gut">18</span><span class="src"></span></div>
+      <div class="ln"><span class="gut">19</span><span class="src">  <span class="k">return</span> {</span></div>
+      <div class="ln"><span class="gut">20</span><span class="src">    active,</span></div>
+      <div class="ln"><span class="gut">21</span><span class="src">    <span class="f">open</span>(panel: <span class="t">PanelKind</span>) {</span></div>
+      <div class="ln"><span class="gut">22</span><span class="src">      bus.<span class="f">emit</span>(<span class="s">"panel:open"</span>, panel);</span></div>
+      <div class="ln"><span class="gut">23</span><span class="src">      <span class="f">setActive</span>(panel);</span></div>
+      <div class="ln"><span class="gut">24</span><span class="src">    },</span></div>
+      <div class="ln"><span class="gut">25</span><span class="src">  };</span></div>
+      <div class="ln"><span class="gut">26</span><span class="src">}</span></div>
+    </div>
+
+    <!-- Panel dock -->
+    <section class="panel">
+      <div class="rs h" data-resize="panel"></div>
+      <div class="panel-head">
+        <button class="ptab active">Terminal</button>
+        <button class="ptab">Output</button>
+        <button class="ptab">Problems <span class="count">2</span></button>
+        <button class="ptab">Logs</button>
+        <div class="acts">
+          <button class="icon-btn" title="Split"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v16M4 8h4M16 8h4"/></svg></button>
+          <button class="icon-btn" title="Kill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        </div>
+      </div>
+      <div class="panel-body term mono">
+        <div><span class="path">aptlabs ▸ acme-platform</span> <span class="dim">~/work/acme-platform</span></div>
+        <div><span class="pr">$</span> apt dev --watch</div>
+        <div>&nbsp;&nbsp;<span class="ok">⚡ runtime</span> <span class="dim">ready in 214ms</span></div>
+        <div>&nbsp;&nbsp;<span class="ok">⚡ transport</span> <span class="dim">ws://localhost:4000 connected</span></div>
+        <div>&nbsp;&nbsp;<span class="ok">⚡ shell</span> <span class="dim">mounted 4 panels, 1 inspector</span></div>
+        <div><span class="pr">$</span> <span class="cur"></span></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ══════════ INSPECTOR ══════════ -->
+  <aside class="inspector">
+    <div class="rs v" data-resize="inspector"></div>
+
+    <section class="insp-sec">
+      <div class="insp-h">
+        Outline
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="insp-b">
+        <div class="oitem"><span class="kind fn">ƒ</span> createShell</div>
+        <div class="oitem"><span class="kind ty">T</span> ShellOptions</div>
+        <div class="oitem"><span class="kind va">v</span> active</div>
+        <div class="oitem"><span class="kind va">v</span> open</div>
+      </div>
+    </section>
+
+    <section class="insp-sec">
+      <div class="insp-h">
+        Diagnostics
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="insp-b">
+        <div class="diag"><span class="sev warn"></span><div>Unused parameter <code>opts.panels</code><span class="loc">editor-shell.tsx · 13:36</span></div></div>
+        <div class="diag"><span class="sev err"></span><div>Cannot find module <code>@/lib/runtime</code><span class="loc">runtime.ts · 3:24</span></div></div>
+      </div>
+    </section>
+
+    <section class="insp-sec">
+      <div class="insp-h">
+        Copilot
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="insp-b">
+        <div class="card">
+          <b>Wire the panes together.</b><br/>
+          Bind <code>setActive</code> to the rail so the sidebar and canvas stay in sync.
+          <div class="acts">
+            <button class="btn primary">Apply</button>
+            <button class="btn">Diff</button>
+            <button class="btn">Dismiss</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </aside>
+
+  <!-- ══════════ STATUS BAR ══════════ -->
+  <footer class="statusbar">
+    <div class="grp">
+      <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="7" cy="6" r="2.2"/><circle cx="7" cy="18" r="2.2"/><circle cx="17" cy="9" r="2.2"/><path d="M7 8.2v7.6M17 11.2c0 3-3.2 2.4-5.6 3.2"/></svg> main</button>
+      <button><span class="live"></span> synced</button>
+      <button>✓ 0</button>
+      <button>⚠ 2</button>
+    </div>
+    <div class="grp">
+      <button>Ln 14, Col 22</button>
+      <button>Spaces: 2</button>
+      <button>UTF-8</button>
+      <button>TypeScript JSX</button>
+      <button class="accent">⚡ aptlabs cloud</button>
+    </div>
+  </footer>
+</div>
+
+<!-- ══════════ COMMAND PALETTE ══════════ -->
+<div class="overlay" id="overlay">
+  <div class="palette">
+    <div class="pal-input">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 12 5 5L20 7"/></svg>
+      <input id="palInput" placeholder="Type a command or search files…" autocomplete="off" spellcheck="false" />
+      <kbd>esc</kbd>
+    </div>
+    <div class="pal-list" id="palList"></div>
+    <div class="pal-foot">
+      <span>↑↓ navigate</span><span>↵ run</span><span>⌘B toggle sidebar</span><span>⌘J toggle panel</span>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const root = document.documentElement;
+
+  /* ───────────── resizable panes ───────────── */
+  function attachResize(el){
+    const key = el.dataset.resize;
+    const cfg = {
+      sidebar:   { axis:'x', dir: 1, min:180, max:480, var:'--sidebar' },
+      inspector: { axis:'x', dir:-1, min:220, max:520, var:'--inspector' },
+      panel:     { axis:'y', dir:-1, min:90,  max:560, var:'--panel-h' }
+    }[key];
+    if(!cfg) return;
+
+    el.addEventListener('pointerdown', (ev) => {
+      ev.preventDefault();
+      el.setPointerCapture(ev.pointerId);
+      el.classList.add('dragging');
+      const startX = ev.clientX, startY = ev.clientY;
+      const start = parseFloat(getComputedStyle(root).getPropertyValue(cfg.var)) || 0;
+
+      const move = (e) => {
+        const d = cfg.axis === 'x' ? (e.clientX - startX) : (e.clientY - startY);
+        const v = Math.max(cfg.min, Math.min(cfg.max, start + d * cfg.dir));
+        root.style.setProperty(cfg.var, v + 'px');
+      };
+      const up = () => {
+        el.classList.remove('dragging');
+        el.removeEventListener('pointermove', move);
+        el.removeEventListener('pointerup', up);
+      };
+      el.addEventListener('pointermove', move);
+      el.addEventListener('pointerup', up);
+    });
+  }
+  document.querySelectorAll('.rs').forEach(attachResize);
+
+  /* ───────────── rail ↔ sidebar ───────────── */
+  const railBtns = document.querySelectorAll('.rail-btn[data-view]');
+
+  function showView(view){
+    railBtns.forEach(b => b.classList.toggle('active', b.dataset.view === view));
+    document.querySelectorAll('.side-panel').forEach(p =>
+      p.classList.toggle('active', p.dataset.panel === view)
+    );
+    document.body.classList.remove('sidebar-hidden');
+  }
+
+  railBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const isActive = btn.classList.contains('active');
+      if (isActive && !document.body.classList.contains('sidebar-hidden')) {
+        document.body.classList.add('sidebar-hidden');
+      } else {
+        showView(btn.dataset.view);
+      }
+    });
+  });
+
+  /* ───────────── file tree ───────────── */
+  const tree = document.getElementById('tree');
+  const rows = () => Array.from(tree.querySelectorAll('.row'));
+
+  function refreshTree(){
+    let collapseAt = Infinity;
+    for (const r of rows()) {
+      const d = +r.dataset.depth;
+      if (d > collapseAt) { r.hidden = true; continue; }
+      collapseAt = Infinity;
+      r.hidden = false;
+      if (r.classList.contains('dir') && !r.classList.contains('open')) collapseAt = d;
+    }
+  }
+
+  tree.addEventListener('click', (e) => {
+    const row = e.target.closest('.row');
+    if (!row) return;
+    if (row.classList.contains('dir')) {
+      row.classList.toggle('open');
+      refreshTree();
+    } else {
+      rows().forEach(r => r.classList.remove('sel'));
+      row.classList.add('sel');
+      const name = row.querySelector('.nm').textContent;
+      openFileTab(name);
+    }
+  });
+
+  /* ───────────── tabs ───────────── */
+  const tabsEl = document.getElementById('tabs');
+  const crumbFile = document.getElementById('crumbFile');
+
+  function activateTab(tab){
+    tabsEl.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t === tab));
+    crumbFile.textContent = tab.dataset.name;
+  }
+
+  function openFileTab(name){
+    const existing = Array.from(tabsEl.querySelectorAll('.tab'))
+      .find(t => t.dataset.name === name);
+    if (existing) { activateTab(existing); return; }
+    const tab = document.createElement('div');
+    tab.className = 'tab';
+    tab.dataset.name = name;
+    tab.innerHTML = `
+      <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/>
+      </svg>
+      ${name}<span class="x">×</span>`;
+    tabsEl.appendChild(tab);
+    activateTab(tab);
+  }
+
+  tabsEl.addEventListener('click', (e) => {
+    const closeBtn = e.target.closest('.x');
+    const tab = e.target.closest('.tab');
+    if (!tab) return;
+
+    if (closeBtn) {
+      e.stopPropagation();
+      const wasActive = tab.classList.contains('active');
+      const next = tab.nextElementSibling || tab.previousElementSibling;
+      tab.remove();
+      if (wasActive && next) activateTab(next);
+      return;
+    }
+    activateTab(tab);
+  });
+
+  /* ───────────── panel / inspector collapse ───────────── */
+  function togglePanel(){ document.body.classList.toggle('panel-hidden'); }
+
+  document.querySelectorAll('.insp-h').forEach(h => {
+    h.addEventListener('click', () => h.parentElement.classList.toggle('closed'));
+  });
+
+  document.querySelectorAll('.ptab').forEach(t => {
+    t.addEventListener('click', () => {
+      t.parentElement.querySelectorAll('.ptab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+    });
+  });
+
+  /* ───────────── command palette ───────────── */
+  const overlay  = document.getElementById('overlay');
+  const palInput = document.getElementById('palInput');
+  const palList  = document.getElementById('palList');
+
+  const COMMANDS = [
+    { label:'Toggle Sidebar',            hint:'View',       keys:'⌘B', run:() => document.body.classList.toggle('sidebar-hidden') },
+    { label:'Toggle Panel',              hint:'View',       keys:'⌘J', run:togglePanel },
+    { label:'Go to File…',               hint:'Navigate',   keys:'⌘P', run:()=>{} },
+    { label:'New Terminal',              hint:'Terminal',   keys:'⌃`', run:()=>{} },
+    { label:'Run Workspace Task: dev',   hint:'Run',        keys:'⌘R', run:()=>{} },
+    { label:'Open Inspector',            hint:'Layout',     keys:'',   run:()=>document.documentElement.style.setProperty('--inspector','300px') },
+    { label:'Ask AptLabs Agent',         hint:'AI',         keys:'⌘I', run:()=>showView('agents') },
+    { label:'Format Document',           hint:'Editor',     keys:'⇧⌥F',run:()=>{} },
+    { label:'Reload Window',             hint:'Developer',  keys:'',   run:()=>location.reload() }
+  ];
+
+  let filtered = COMMANDS.slice();
+  let cursor = 0;
+
+  function renderPalette(){
+    palList.innerHTML = '';
+    if (!filtered.length) {
+      palList.innerHTML = '<div class="pal-item" style="cursor:default;color:var(--text-mute)">No matching commands</div>';
+      return;
+    }
+    filtered.forEach((cmd, i) => {
+      const el = document.createElement('div');
+      el.className = 'pal-item' + (i === cursor ? ' sel' : '');
+      el.innerHTML = `<span class="grow">${cmd.label}</span>
+                      <span class="hint">${cmd.hint}</span>
+                      ${cmd.keys ? `<kbd>${cmd.keys}</kbd>` : ''}`;
+      el.addEventListener('mouseenter', () => { cursor = i; renderPalette(); });
+      el.addEventListener('click', () => execute(cmd));
+      palList.appendChild(el);
+    });
+  }
+
+  function filterPalette(q){
+    const s = q.trim().toLowerCase();
+    filtered = !s ? COMMANDS.slice()
+      : COMMANDS.filter(c => (c.label + ' ' + c.hint).toLowerCase().includes(s));
+    cursor = 0;
+    renderPalette();
+  }
+
+  function execute(cmd){
+    closePalette();
+    cmd.run && cmd.run();
+  }
+
+  function openPalette(){
+    overlay.classList.add('open');
+    palInput.value = '';
+    filterPalette('');
+    setTimeout(() => palInput.focus(), 0);
+  }
+  function closePalette(){ overlay.classList.remove('open'); }
+
+  palInput.addEventListener('input', () => filterPalette(palInput.value));
+  palInput.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); cursor = Math.min(cursor + 1, filtered.length - 1); renderPalette(); }
+    if (e.key === 'ArrowUp')   { e.preventDefault(); cursor = Math.max(cursor - 1, 0); renderPalette(); }
+    if (e.key === 'Enter' && filtered[cursor]) execute(filtered[cursor]);
+  });
+
+  overlay.addEventListener('mousedown', (e) => { if (e.target === overlay) closePalette(); });
+  document.getElementById('cmdTrigger').addEventListener('click', openPalette);
+
+  /* ───────────── shortcuts ───────────── */
+  window.addEventListener('keydown', (e) => {
+    const mod = e.metaKey || e.ctrlKey;
+    const k = e.key.toLowerCase();
+
+    if (mod && k === 'k') { e.preventDefault(); overlay.classList.contains('open') ? closePalette() : openPalette(); }
+    if (mod && k === 'b') { e.preventDefault(); document.body.classList.toggle('sidebar-hidden'); }
+    if (mod && k === 'j') { e.preventDefault(); togglePanel(); }
+    if (e.key === 'Escape') closePalette();
+  });
+
+  /* ───────────── boot ───────────── */
+  refreshTree();
+  renderPalette();
+})();
+</script>
+</body>
+</html>

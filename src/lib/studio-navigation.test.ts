@@ -10,16 +10,18 @@ import {
 } from './studio-navigation';
 
 describe('Studio workspace navigation', () => {
-  it('keeps the productive path primary and supporting views secondary', () => {
+  it('exposes every workspace module in the primary navigation', () => {
     expect(STUDIO_FLOW_MODULES.map(({ id, label, href }) => ({ id, label, href }))).toEqual([
       { id: 'home', label: 'Home', href: '/workspace' },
       { id: 'commons', label: 'Commons', href: '/workspace/commons' },
       { id: 'network', label: 'Network', href: '/workspace/network/people' },
+      { id: 'workbench', label: 'Workbench', href: '/workspace/workbench' },
       { id: 'records', label: 'The Roll', href: '/workspace/records/roll' },
+      { id: 'intelligence', label: 'Intelligence', href: '/workspace/intelligence' },
     ]);
-    expect(STUDIO_FLOW_MODULES).toHaveLength(4);
-    expect(STUDIO_FLOW_MODULES.some(module => module.id === 'intelligence')).toBe(false);
-    expect(STUDIO_FLOW_MODULES.some(module => module.id === 'workbench')).toBe(false);
+    expect(STUDIO_FLOW_MODULES).toHaveLength(6);
+    expect(STUDIO_FLOW_MODULES.some(module => module.id === 'intelligence')).toBe(true);
+    expect(STUDIO_FLOW_MODULES.some(module => module.id === 'workbench')).toBe(true);
 
     expect(STUDIO_SECONDARY_MODULES.map(({ id, label, href }) => ({ id, label, href }))).toEqual([]);
 
@@ -36,6 +38,7 @@ describe('Studio workspace navigation', () => {
       'network:people',
       'network:institutions',
       'network:capabilities',
+      'workbench',
       'records:canon',
       'records:annals',
       'records:roll',
@@ -49,6 +52,7 @@ describe('Studio workspace navigation', () => {
       ['network:people', 'network'],
       ['network:institutions', 'network'],
       ['network:capabilities', 'network'],
+      ['workbench', 'workbench'],
       ['records:canon', 'records'],
       ['records:annals', 'records'],
       ['records:roll', 'records'],
@@ -59,6 +63,7 @@ describe('Studio workspace navigation', () => {
     expect(getStudioModuleLabel('overview')).toBe('Home');
     expect(getStudioModuleLabel('commons')).toBe('Commons');
     expect(getStudioModuleLabel('network:people')).toBe('Network');
+    expect(getStudioModuleLabel('workbench')).toBe('Workbench');
     expect(getStudioModuleLabel('records:roll')).toBe('The Roll');
     expect(getStudioModuleLabel('intelligence:coin-lab')).toBe('Intelligence');
     expect(getStudioContextLabel('overview')).toBe('Home');

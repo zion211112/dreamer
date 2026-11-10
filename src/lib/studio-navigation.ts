@@ -4,6 +4,7 @@ export type StudioContext =
   | 'network:people'
   | 'network:institutions'
   | 'network:capabilities'
+  | 'workbench'
   | 'records:canon'
   | 'records:annals'
   | 'records:roll'
@@ -14,6 +15,7 @@ export type StudioModuleId =
   | 'home'
   | 'commons'
   | 'network'
+  | 'workbench'
   | 'records'
   | 'intelligence';
 
@@ -44,10 +46,22 @@ export const STUDIO_FLOW_MODULES: readonly StudioNavigationModule[] = [
     contexts: ['network:people', 'network:institutions', 'network:capabilities'],
   },
   {
+    id: 'workbench',
+    label: 'Workbench',
+    href: '/workspace/workbench',
+    contexts: ['workbench'],
+  },
+  {
     id: 'records',
     label: 'The Roll',
     href: '/workspace/records/roll',
     contexts: ['records:canon', 'records:annals', 'records:roll'],
+  },
+  {
+    id: 'intelligence',
+    label: 'Intelligence',
+    href: '/workspace/intelligence',
+    contexts: ['intelligence', 'intelligence:coin-lab'],
   },
 ];
 
@@ -76,6 +90,8 @@ export function getStudioModuleForContext(context: StudioContext): StudioModuleI
     case 'network:institutions':
     case 'network:capabilities':
       return 'network';
+    case 'workbench':
+      return 'workbench';
     case 'records:canon':
     case 'records:annals':
     case 'records:roll':

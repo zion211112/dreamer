@@ -1,72 +1,94 @@
-import { useState } from 'preact/hooks';
+import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import { PageHead, type PageHeadMetric } from '../../components/PageHead';
 import { NetworkMap } from '../../components/NetworkMap';
-import { ForkGlyph } from '../../components/ForkGlyph';
-import { RingedEvidenceMarker } from '../../components/RingedEvidenceMarker';
-import { PEOPLE_NETWORK, PEOPLE_RELATIONSHIPS, type NetworkEntity, type RelationshipKind } from '../../lib/people-network';
+import {
+  RELATIONSHIP_KINDS, KIND_LABELS,
+  type NetworkEntity, type RelationshipKind,
+} from '../../lib/people-network';
+import {
+  readPeopleNetworkRecord, createPortablePeopleRecord, importPortablePeopleRecord,
+} from '../../lib/people-network';
 
 const ENTITY_TYPES = [
-  { id: 'person' as const, label: 'People', count: PEOPLE_NETWORK.filter(e => e.type === 'person').length },
-  { id: 'crew' as const, label: 'Crews', count: PEOPLE_NETWORK.filter(e => e.type === 'crew').length },
-  { id: 'asset' as const, label: 'Assets', count: PEOPLE_NETWORK.filter(e => e.type === 'asset').length },
-  { id: 'work' as const, label: 'Work', count: PEOPLE_NETWORK.filter(e => e.type === 'work').length },
-  { id: 'institution' as const, label: 'Institutions', count: PEOPLE_NETWORK.filter(e => e.type === 'institution').length },
-  { id: 'evidence' as const, label: 'Evidence', count: PEOPLE_NETWORK.filter(e => e.type === 'evidence').length },
+  { id: 'person' as const, label: 'People' },
+  { id: 'crew' as const, label: 'Crews' },
+  { id: 'asset' as const, label: 'Assets' },
+  { id: 'work' as const, label: 'Work' },
+  { id: 'institution' as const, label: 'Institutions' },
+  { id: 'evidence' as const, label: 'Evidence' },
 ];
-
-const RELATIONSHIP_KINDS: (RelationshipKind | 'all')[] = [
-  'all',
-  'membership', 'affiliation', 'work', 'stewardship', 'contribution',
-  'evidence', 'owns', 'operates', 'stewards', 'funds',
-  'contributes_to', 'attests', 'issues',
-];
-
-const KIND_LABELS: Record<RelationshipKind | 'all', string> = {
-  all: 'All',
-  membership: 'Membership',
-  affiliation: 'Affiliation',
-  work: 'Work',
-  stewardship: 'Stewardship',
-  contribution: 'Contribution',
-  evidence: 'Evidence',
-  owns: 'Owns',
-  operates: 'Operates',
-  stewards: 'Stewards',
-  funds: 'Funds',
-  contributes_to: 'Contributes to',
-  attests: 'Attests',
-  issues: 'Issues',
-};
 
 export function Network() {
+  const [record, setRecord] = useState(() => readPeopleNetworkRecord());
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<RelationshipKind | 'all'>('all');
   const [selectedEntity, setSelectedEntity] = useState<NetworkEntity | null>(null);
-  const [timeScrubberValue, setTimeScrubberValue] = useState(0);
-  const [legendOpen, setLegendOpen] = useState(true);
+  const mapWrapperRef = useRef<HTMLDivElement>(null);
+  const [mapWidth, setMapWidth] = useState(320);
 
-  const filteredEntities = PEOPLE_NETWORK.filter(e => {
+  const entities = record.entities;
+  const relationships = record.relationships;
+  const entityById = new Map(entities.map(entity => [entity.id, entity]));
+
+  useLayoutEffect(() => {
+    const wrapper = mapWrapperRef.current;
+    if (!wrapper) return;
+    const resizeObserver = new ResizeObserver(() => setMapWidth(wrapper.clientWidth));
+    resizeObserver.observe(wrapper);
+    setMapWidth(wrapper.clientWidth);
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  const filteredEntities = entities.filter(e => {
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
-    return e.name.toLowerCase().includes(q) ||
-      e.role.toLowerCase().includes(q) ||
-      e.id.toLowerCase().includes(q) ||
-      e.capabilities.some(c => c.toLowerCase().includes(q));
+    return [e.id, e.type, e.name, e.role, e.summary, e.location, e.context, e.assetReference, e.recordBasis, ...e.capabilities]
+      .some(value => value?.toLowerCase().includes(q));
   });
+
+  const filteredRelationships = activeFilter === 'all' ? relationships : relationships.filter(r => r.kind === activeFilter);
 
   const metrics: PageHeadMetric[] = [
     { label: 'Entities', value: filteredEntities.length, state: 'canon' },
-    { label: 'Relationships', value: PEOPLE_RELATIONSHIPS.length, state: 'proposed' },
+    { label: 'Relationships', value: relationships.length, state: 'proposed' },
     { label: 'Kinds', value: RELATIONSHIP_KINDS.length - 1, state: 'caution' },
   ];
 
-  function handleEntitySelect(entity: NetworkEntity | null) {
-    setSelectedEntity(entity);
+  function handleExport() {
+    const json = createPortablePeopleRecord(record);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `aptlabs-people-network-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
-  function handleRelationshipFilter(kind: RelationshipKind | 'all') {
-    setActiveFilter(kind);
+  function handleImport() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = (event: Event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          importPortablePeopleRecord(reader.result as string);
+          setRecord(readPeopleNetworkRecord());
+        } catch (err) {
+          alert(err instanceof Error ? err.message : 'Import failed.');
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  }
+
+  function handleSelect(entity: NetworkEntity | null) {
+    setSelectedEntity(entity);
   }
 
   return (
@@ -74,12 +96,12 @@ export function Network() {
       <div className="network-page">
         <PageHead
           eyebrow="Network"
-          title="People Network"
-          subtitle="Force-directed graph of 31 entities, 34 relationships across 17 kinds. Entity-type colors: teal=Person, lime=Crew, amber=Asset, coral=Institution, mono=Work, dim=Evidence."
+          title="Network"
+          subtitle="Discover who exists, understand what they can do, and see how they connect."
           metrics={metrics}
           quietActions={[
-            { label: 'Export portable record', onClick: () => {} },
-            { label: 'Import record', onClick: () => {} },
+            { label: 'Export portable record', onClick: handleExport },
+            { label: 'Import record', onClick: handleImport },
           ]}
         />
 
@@ -90,7 +112,7 @@ export function Network() {
               <input
                 id="network-search"
                 type="search"
-                placeholder="Filter by name, role, capability, ID…"
+                placeholder="Filter by name, role, capability, ID..."
                 value={searchQuery}
                 onChange={(e: Event) => setSearchQuery((e.target as HTMLInputElement).value)}
                 className="network-search-input"
@@ -98,13 +120,12 @@ export function Network() {
               />
             </label>
           </div>
-
           <div className="network-toolbar-filters">
             <label className="network-filter-label">
-              <span className="network-toolbar-caption">Filter</span>
+              <span className="network-toolbar-caption">Relationships</span>
               <select
                 value={activeFilter}
-                onChange={(e: Event) => handleRelationshipFilter((e.target as HTMLSelectElement).value as RelationshipKind | 'all')}
+                onChange={(e: Event) => setActiveFilter((e.target as HTMLSelectElement).value as RelationshipKind | 'all')}
                 className="network-filter-select"
                 aria-label="Filter by relationship kind"
               >
@@ -113,158 +134,117 @@ export function Network() {
                 ))}
               </select>
             </label>
-
-            <label className="network-time-label">
-              <span className="network-toolbar-caption">Time</span>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={timeScrubberValue}
-                onChange={(e: Event) => setTimeScrubberValue(Number((e.target as HTMLInputElement).value))}
-                disabled
-                className="network-time-input"
-                aria-label="Evidence as of (disabled — requires Annals event stream)"
-              />
-              <span className="network-time-disabled">(disabled)</span>
-            </label>
           </div>
         </div>
 
         <div className="network-main">
-          <div className="network-map-wrapper">
+          {!selectedEntity && (
+            <aside className="network-sidebar">
+              <section className="network-sidebar-section">
+                <header className="network-section-header">
+                  <strong className="network-section-title">Entity types</strong>
+                </header>
+                <ul className="network-entity-list">
+                  {ENTITY_TYPES.map(type => {
+                    const count = entities.filter(e => e.type === type.id).length;
+                    return (
+                      <li key={type.id} className="network-entity-item">
+                        <span className={`network-entity-dot network-entity-dot--${type.id}`} />
+                        <span className="network-entity-label">{type.label}</span>
+                        <span className="network-entity-count">{count}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            </aside>
+          )}
+
+          <div className="network-map-wrapper" ref={mapWrapperRef}>
             <NetworkMap
               entities={filteredEntities}
-              relationships={PEOPLE_RELATIONSHIPS}
-              onEntitySelect={handleEntitySelect}
-              onRelationshipFilter={handleRelationshipFilter}
-              searchQuery={searchQuery}
+              relationships={filteredRelationships}
+              onEntitySelect={handleSelect}
+              onRelationshipFilter={setActiveFilter}
               activeFilter={activeFilter}
-              width={Math.max(600, window.innerWidth - 400)}
-              height={Math.max(400, window.innerHeight - 250)}
+              searchQuery={searchQuery}
+              width={mapWidth}
+              height={Math.max(400, window.innerHeight - 260)}
             />
           </div>
 
-          <aside className="network-sidebar">
-            <section className="network-sidebar-section">
-              <header className="network-section-header">
-                <strong className="network-section-title">
-                  Entity Types ({filteredEntities.length})
-                </strong>
-              </header>
-              <ul className="network-entity-list">
-                {ENTITY_TYPES.map(type => (
-                  <li key={type.id} className="network-entity-item">
-                    <span
-                      className={`network-entity-dot network-entity-dot--${type.id}`}
-                    />
-                    {type.id === 'evidence' && <RingedEvidenceMarker size={10} color="var(--state-dim)" />}
-                    <span className="network-entity-label">{type.label}</span>
-                    <span className="network-entity-count">{type.count}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            {selectedEntity && (
-              <section className="network-sidebar-section-compact">
-                <header className="network-section-header">
-                  <strong className="network-section-title">Selected Entity</strong>
-                  <button
-                    onClick={() => setSelectedEntity(null)}
-                    className="network-clear-selection-btn"
-                    aria-label="Clear selection"
-                  >
-                    ×
-                  </button>
+          {selectedEntity && (
+            <aside className="network-profile-sidecar is-open" aria-label="Entity profile">
+              <button type="button" className="network-profile-close" onClick={() => handleSelect(null)} aria-label="Close profile">
+                ×
+              </button>
+              <div className="network-profile-body">
+                <header className="network-profile-header">
+                  <div className={`network-profile-name network-profile-name--${selectedEntity.type}`}>{selectedEntity.name}</div>
+                  <div className="network-profile-type">{selectedEntity.type.toUpperCase()} · {selectedEntity.id}</div>
+                  <p className="network-profile-summary">{selectedEntity.summary}</p>
+                  {selectedEntity.location && <div className="network-profile-location">{selectedEntity.location}</div>}
+                  {(selectedEntity.context || selectedEntity.assetReference || selectedEntity.recordBasis) && (
+                    <section className="network-profile-section">
+                      <div className="network-section-title">Record context</div>
+                      {selectedEntity.context && <p className="network-profile-summary">{selectedEntity.context}</p>}
+                      {selectedEntity.assetReference && <div className="network-profile-type">Reference: {selectedEntity.assetReference}</div>}
+                      {selectedEntity.recordBasis && (
+                        <div className="network-profile-type">
+                          Basis: {selectedEntity.recordBasis === 'local-profile' ? 'Local profile'
+                            : selectedEntity.recordBasis === 'project-reported' ? 'Project reported' : 'Illustrative'}
+                        </div>
+                      )}
+                    </section>
+                  )}
                 </header>
-                <div className="network-selected-entity">
-                  <div
-                    className={`network-selected-entity-name network-selected-entity-name--${selectedEntity.type}`}
-                  >
-                    {selectedEntity.name}
-                  </div>
-                  <div className="network-selected-entity-type">
-                    {selectedEntity.type} / {selectedEntity.id}
-                    {selectedEntity.recordBasis === 'illustrative' && (
-                      <span className="network-entity-illustrative-mark">
-                        <ForkGlyph size={10} />
-                      </span>
-                    )}
-                  </div>
-                  <div className="network-selected-entity-summary">
-                    {selectedEntity.summary}
-                  </div>
-                  {selectedEntity.location && (
-                    <div className="network-selected-entity-location">
-                      {selectedEntity.location}
-                    </div>
-                  )}
-                  {selectedEntity.capabilities.length > 0 && (
-                    <div>
-                      <div className="network-capabilities-title">Capabilities</div>
-                      <div className="network-capabilities-list">
-                        {selectedEntity.capabilities.slice(0, 8).map((cap, i) => (
-                          <span key={i} className="network-capability-chip">
-                            {cap}
-                          </span>
-                        ))}
-                        {selectedEntity.capabilities.length > 8 && (
-                          <span className="network-capability-more">
-                            +{selectedEntity.capabilities.length - 8} more
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </section>
-            )}
 
-            <section className="network-sidebar-section-compact">
-              <header className="network-section-header">
-                <strong className="network-section-title">Relationship Kinds</strong>
-                <button
-                  onClick={() => setLegendOpen(!legendOpen)}
-                  className="network-legend-toggle"
-                  aria-label={legendOpen ? 'Collapse' : 'Expand'}
-                >
-                  {legendOpen ? '−' : '+'}
-                </button>
-              </header>
-              {legendOpen && (
-                <div className="network-relationship-tags">
-                  {RELATIONSHIP_KINDS.filter(k => k !== 'all').map(kind => (
-                    <button
-                      key={kind}
-                      onClick={() => handleRelationshipFilter(kind)}
-                      className={`network-relationship-tag ${activeFilter === kind ? 'is-active' : ''}`}
-                    >
-                      {KIND_LABELS[kind]}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </section>
+                <section className="network-profile-section">
+                  <div className="network-section-title">Capabilities</div>
+                  <div className="network-capability-list">
+                    {selectedEntity.capabilities.map(cap => (
+                      <span key={cap} className="network-capability-chip">{cap}</span>
+                    ))}
+                    {selectedEntity.capabilities.length === 0 && <span className="network-capability-empty">No capabilities recorded.</span>}
+                  </div>
+                </section>
 
-            <section className="network-sidebar-section-compact">
-              <strong className="network-section-title">Cross-module paths</strong>
-              <ul className="network-cross-module-list">
-                <li className="network-cross-module-item">
-                  Entity then Annals events then Roll evidence
-                </li>
-                <li className="network-cross-module-item">
-                  Roll entry then Annals timeline then Canon state
-                </li>
-                <li className="network-cross-module-item">
-                  Annals event then Roll evidence then Entity profile
-                </li>
-              </ul>
-            </section>
-          </aside>
+                <section className="network-profile-section">
+                  <div className="network-section-title">Relationships</div>
+                  <div className="network-relationship-list">
+                    {relationships
+                      .filter(r => r.sourceId === selectedEntity.id || r.targetId === selectedEntity.id)
+                      .map(r => {
+                        const related = entityById.get(r.sourceId === selectedEntity.id ? r.targetId : r.sourceId);
+                        if (!related) return null;
+                        const dir = r.sourceId === selectedEntity.id ? '→' : '←';
+                        return (
+                          <div key={r.id} className="network-connection-row">
+                            <span className="network-connection-verb">{r.verb}</span>
+                            <span className="network-connection-arrow">{dir}</span>
+                            <span className="network-connection-name">{related.name}</span>
+                            <span className="network-connection-type">{related.type}</span>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </section>
+
+                <section className="network-profile-section">
+                  <div className="network-section-title">Availability</div>
+                  <div className="network-profile-availability">
+                    {selectedEntity.location ? `Active in ${selectedEntity.location}` : 'Availability not stated.'}
+                  </div>
+                </section>
+
+                <footer className="network-profile-footer">
+                  Connections and evidence are explicit, declared relationships—not assumptions of authority or worth.
+                </footer>
+              </div>
+            </aside>
+          )}
         </div>
       </div>
     </WorkspaceLayout>
   );
 }
-
