@@ -7,12 +7,12 @@ import { Input } from '../components/Input';
 import { BrandMark } from '../components/BrandMark';
 
 const workspacePaths = {
-  annals: '/workspace/annals',
-  people: '/workspace/people',
+  annals: '/workspace',
+  people: '/workspace/network/people',
   school: '/workspace/workbench/school-console',
   commons: '/workspace/commons',
   workbench: '/workspace/workbench',
-  roll: '/workspace/roll',
+  roll: '/workspace/records/roll',
 } as const;
 
 const workspaces = [

@@ -1333,6 +1333,117 @@
   padding: var(--space-1) var(--space-2);
 }
 
+/* ── Modules hub ── */
+.commons-modules-hub {
+  margin-top: var(--space-4);
+  border: 1px var(--shell-line);
+  border-radius: var(--radius-3);
+  background: var(--bg-elev);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.commons-modules-head {
+  padding: var(--space-3);
+  border-bottom: 1px var(--shell-hairline);
+  background: var(--bg-elev);
+}
+
+.commons-modules-head .eyebrow {
+  font: var(--eyebrow-font);
+  font-size: var(--eyebrow-size);
+  font-weight: var(--eyebrow-weight);
+  letter-spacing: var(--eyebrow-tracking);
+  color: var(--state-canon);
+  margin: 0 0 var(--space-1) 0;
+  text-transform: uppercase;
+}
+
+.commons-modules-head h2 {
+  font: var(--serif);
+  font-size: var(--step-2);
+  font-weight: 500;
+  color: var(--fg-strong);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.commons-modules-head p {
+  font: var(--sans);
+  font-size: var(--step-0);
+  color: var(--shell-muted);
+  margin: 0;
+}
+
+.commons-modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+
+.commons-module-link {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px var(--shell-line);
+  border-radius: var(--radius-2);
+  background: var(--bg-elev);
+  color: var(--fg);
+  text-decoration: none;
+  font: var(--sans);
+  font-size: var(--step-0);
+  transition: all var(--fast);
+}
+
+.commons-module-link:hover {
+  border-color: var(--shell-line-strong);
+  background: var(--bg-subtle);
+  color: var(--fg-strong);
+}
+
+.commons-module-link.is-active {
+  border-color: var(--state-canon);
+  background: var(--terrain-pale);
+  color: var(--fg-strong);
+}
+
+.commons-module-icon {
+  flex-shrink: 0;
+  font: var(--serif);
+  font-size: var(--step-1);
+  color: var(--state-canon);
+}
+
+.commons-module-link.is-active .commons-module-icon {
+  color: var(--state-canon);
+}
+
+.commons-module-copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.commons-module-label {
+  font: var(--serif);
+  font-size: var(--step-0);
+  font-weight: 500;
+  color: var(--fg-strong);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.commons-module-desc {
+  font: var(--sans);
+  font-size: var(--step--1);
+  color: var(--shell-muted);
+  line-height: 1.4;
+}
+
 /* ── Report form ── */
 .signal-report-form {
   border: 1px var(--shell-line);
