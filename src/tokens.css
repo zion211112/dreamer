@@ -146,14 +146,15 @@
 
   /* Shell Grid Tokens */
   --shell-topbar: 54px;
-  --shell-rail: 54px;
-  --shell-sidebar-min: 196px;
-  --shell-sidebar-max: 252px;
+  --shell-rail: 72px;
+  --shell-sidebar-min: 200px;
+  --shell-sidebar-max: 240px;
   --shell-inspector-min: 286px;
   --shell-inspector-max: 360px;
   --shell-dock-min: 132px;
   --shell-dock-max: 174px;
   --shell-statusbar: 24px;
+  --shell-focus: var(--brand-main);
 }
 
 /* Dark Signature Variant — explicit opt-in via [data-skin="dark"] on <html> */
@@ -178,6 +179,7 @@
   --danger: #f28a73;
   --danger-pale: #3b211d;
   --phosphor: #8fd98f;
+  --shell-focus: var(--terrain);
 
   --text: var(--fg);
   --text-muted: var(--muted);

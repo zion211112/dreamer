@@ -82,6 +82,12 @@ export function WorkspaceQuickSearch({ destinations }: WorkspaceQuickSearchProps
         onClick={event => {
           if (event.target === event.currentTarget) close();
         }}
+        onKeyDown={event => {
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            close();
+          }
+        }}
         ref={dialogRef}
       >
         <div className="workspace-quick-search-panel">

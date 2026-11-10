@@ -17,17 +17,22 @@ interface StudioNavigationProps {
   currentContext: StudioContext;
   sidebarCollapsed: boolean;
   onToggleSidebar: () => void;
+  onResetSidebar: () => void;
+  environmentLabel: string;
+  recordSelected: boolean;
+  inspectorOpen: boolean;
+  onToggleInspector: () => void;
 }
 
 function ContextIcon({ id }: { id: StudioModuleId }) {
+  if (id === 'home') {
+    return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m2.5 9 7.5-6 7.5 6" /><path d="M4.5 8v9h11V8M8 17v-5h4v5" /></svg>;
+  }
   if (id === 'commons') {
     return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" /><circle cx="10" cy="10" r="3" /><path d="m10 10 5-5M10 2v2m8 6h-2" /></svg>;
   }
   if (id === 'network') {
     return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="7" cy="6.5" r="2.5" /><path d="M2.5 16v-1.2a4.5 4.5 0 0 1 9 0V16zM13 4.5a2.3 2.3 0 0 1 0 4.5m1.5 2a3.8 3.8 0 0 1 3 3.7V16h-3" /></svg>;
-  }
-  if (id === 'workbench') {
-    return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M3 7.5h14v9H3zM7 7.5V5h6v2.5M3 10.5h14m-9 0v2h4v-2" /><path d="m6 4 2-2m6 2-2-2" /></svg>;
   }
   if (id === 'records') {
     return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 16.5V3.5a1.5 1.5 0 0 1 1.5-1.5h11a1.5 1.5 0 0 1 1.5 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-11a1.5 1.5 0 0 1-1.5-1.5z" /><path d="M5.5 9h9M5.5 13h6" /></svg>;
@@ -43,20 +48,6 @@ interface ContextDestination {
   href: string;
   label: string;
 }
-
-const workbenchDestinations = {
-  heading: 'Workbench',
-  links: [
-    { context: 'workbench', href: '/workspace/workbench', label: 'Find capacity' },
-    { context: 'workbench:plan', href: '/workspace/workbench/plan', label: 'Build a work plan' },
-    { context: 'workbench:examples', href: '/workspace/workbench/examples', label: 'Local examples' },
-    { context: 'workbench:field-desk', href: '/workspace/workbench/field-desk', label: 'Field desk' },
-    { context: 'workbench:school-console', href: '/workspace/workbench/school-console', label: 'School console' },
-    { context: 'workbench:applications', href: '/workspace/workbench/applications', label: 'Opportunities' },
-    { context: 'workbench:review', href: '/workspace/workbench/review', label: 'Review & authorize' },
-    { context: 'workbench:delivery', href: '/workspace/workbench/delivery', label: 'Track delivery' },
-  ] satisfies ContextDestination[],
-};
 
 const contextDestinations: Record<StudioContext, { heading: string; links: ContextDestination[] }> = {
   overview: {
@@ -91,14 +82,6 @@ const contextDestinations: Record<StudioContext, { heading: string; links: Conte
       { context: 'network:capabilities', href: '/workspace/network/capabilities', label: 'Capability directory' },
     ],
   },
-  workbench: workbenchDestinations,
-  'workbench:plan': workbenchDestinations,
-  'workbench:examples': workbenchDestinations,
-  'workbench:field-desk': workbenchDestinations,
-  'workbench:school-console': workbenchDestinations,
-  'workbench:applications': workbenchDestinations,
-  'workbench:review': workbenchDestinations,
-  'workbench:delivery': workbenchDestinations,
   'records:canon': {
     heading: 'Records',
     links: [
@@ -178,12 +161,22 @@ function ProfileEntry({ name, onOpen, open }: { name: string; onOpen: () => void
   );
 }
 
-export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSidebar }: StudioNavigationProps) {
+export function StudioNavigation({
+  currentContext,
+  sidebarCollapsed,
+  onToggleSidebar,
+  onResetSidebar,
+  environmentLabel,
+  recordSelected,
+  inspectorOpen,
+  onToggleInspector,
+}: StudioNavigationProps) {
   const { profile } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [identityOpen, setIdentityOpen] = useState(false);
   const drawerRef = useRef<HTMLDialogElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const inspectorToggleRef = useRef<HTMLButtonElement>(null);
   const showIdentity = !!profile;
   const profileName = showIdentity ? profile?.display_name || '' : '';
 
@@ -207,17 +200,22 @@ export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSid
     window.requestAnimationFrame(() => menuButtonRef.current?.focus());
   }
 
+  useEffect(() => {
+    if (recordSelected && !inspectorOpen) {
+      window.requestAnimationFrame(() => inspectorToggleRef.current?.focus());
+    }
+  }, [inspectorOpen, recordSelected]);
+
   function renderRailModule(moduleId: StudioModuleId, href: string, label: string, current: boolean) {
     return (
       <Link
         aria-current={current ? 'location' : undefined}
-        aria-label={label}
         className={`studio-rail-link${current ? ' is-active' : ''}`}
         href={href}
         key={moduleId}
-        title={label}
       >
         <ContextIcon id={moduleId} />
+        <span className="studio-rail-label">{label}</span>
       </Link>
     );
   }
@@ -228,7 +226,7 @@ export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSid
         <button
           aria-controls="studio-mobile-drawer"
           aria-expanded={mobileOpen}
-          aria-label="Open workspace navigation"
+          aria-label="Open context navigation"
           className="studio-mobile-menu-button"
           onClick={() => setMobileOpen(true)}
           ref={menuButtonRef}
@@ -238,18 +236,44 @@ export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSid
         </button>
         <BrandMark className="studio-topbar-brand" href="/workspace" size="sm" />
         <span className="studio-topbar-divider" aria-hidden="true" />
-        <span className="studio-topbar-context"><strong>Field Studio</strong><span aria-hidden="true">/</span>{getStudioContextLabel(currentContext)}</span>
+        <span className="studio-topbar-context">{getStudioContextLabel(currentContext)}</span>
+        <span aria-label={`Environment: ${environmentLabel}`} className="studio-environment-indicator">
+          {environmentLabel}
+        </span>
         <span className="studio-topbar-spacer" />
         <WorkspaceQuickSearch destinations={WORKSPACE_SEARCH_DESTINATIONS} />
+        {recordSelected && (
+          <button
+            aria-controls="record-inspector"
+            aria-expanded={inspectorOpen}
+            aria-label={inspectorOpen ? 'Hide record details' : 'Show record details'}
+            className="studio-inspector-toggle"
+            onClick={onToggleInspector}
+            ref={inspectorToggleRef}
+            type="button"
+          >
+            {inspectorOpen ? 'Hide details' : 'Show details'}
+          </button>
+        )}
         <button
-          aria-label={sidebarCollapsed ? 'Show workspace navigation pane' : 'Hide workspace navigation pane'}
+          aria-controls="workspace-context-navigation"
+          aria-label={sidebarCollapsed ? 'Show context navigation' : 'Hide context navigation'}
           aria-pressed={sidebarCollapsed}
           className="studio-context-toggle"
           onClick={onToggleSidebar}
-          title={sidebarCollapsed ? 'Show navigation pane' : 'Hide navigation pane'}
+          title={sidebarCollapsed ? 'Show context navigation' : 'Hide context navigation'}
           type="button"
         >
           <svg aria-hidden="true" viewBox="0 0 20 20"><rect x="2.5" y="3" width="15" height="14"/><path d="M7.5 3v14"/></svg>
+        </button>
+        <button
+          aria-label="Reset workspace layout"
+          className="studio-layout-reset"
+          onClick={onResetSidebar}
+          title="Reset workspace layout"
+          type="button"
+        >
+          <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4.5 7.5A6 6 0 1 1 4 11"/><path d="M4.5 3.5v4h4" /></svg>
         </button>
         {showIdentity && <ProfileEntry name={profileName} onOpen={() => setIdentityOpen(true)} open={identityOpen} />}
       </header>
@@ -263,7 +287,11 @@ export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSid
         ))}
       </nav>
 
-      <aside aria-label="Workspace context navigation" className={`studio-sidebar${sidebarCollapsed ? ' is-collapsed' : ''}`}>
+      <aside
+        aria-label="Workspace context navigation"
+        className={`studio-sidebar${sidebarCollapsed ? ' is-collapsed' : ''}`}
+        id="workspace-context-navigation"
+      >
         <div className="studio-sidebar-heading">
           <span>Current workspace</span>
           <span className="studio-sidebar-context">{getStudioContextLabel(currentContext)}</span>
@@ -295,7 +323,7 @@ export function StudioNavigation({ currentContext, sidebarCollapsed, onToggleSid
             <BrandMark className="studio-brand-mark" href="/workspace" size="sm" />
             <button aria-label="Close workspace navigation" autoFocus className="studio-drawer-close" onClick={() => setMobileOpen(false)} type="button">×</button>
           </header>
-          <div className="studio-nav-label">Workspace</div>
+          <div className="studio-nav-label">{getStudioContextLabel(currentContext)}</div>
           <StudioLinks
             currentContext={currentContext}
             onNavigate={() => setMobileOpen(false)}

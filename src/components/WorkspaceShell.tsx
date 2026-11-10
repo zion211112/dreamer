@@ -1,13 +1,11 @@
 ﻿import { useState, useEffect } from 'preact/hooks';
 import type { ComponentChildren } from 'preact';
 import type { StudioContext } from '../lib/studio-navigation';
-import { getStudioContextLabel, getStudioModuleForContext } from '../lib/studio-navigation';
+import { getStudioContextLabel } from '../lib/studio-navigation';
 import { StudioNavigation } from './StudioNavigation';
 import { RecordInspector, type RecordSelection, type EvidenceGap, type ContextAction, type GateStatus } from './RecordInspector';
 import { ChangeSetDock, type PendingCommit, type EvidenceGapDock, type ReconciliationItem } from './ChangeSetDock';
-import { queryRollEntries } from '../lib/db/roll';
 import { isDemoMode } from '../lib/supabase/client';
-import { EngineActivityStrip } from './EngineActivityStrip';
 
 interface WorkspaceShellProps {
   children: ComponentChildren;
@@ -53,19 +51,14 @@ export function WorkspaceShell({
   changeSetData = {},
 }: WorkspaceShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(readSidebarPreference);
-  const [ledgerHeadHash, setLedgerHeadHash] = useState<string | null>(null);
+  const [inspectorOpen, setInspectorOpen] = useState(Boolean(recordSelection));
+  const [dockCollapsed, setDockCollapsed] = useState(false);
   const moduleLabel = getStudioContextLabel(currentContext);
-  const moduleId = getStudioModuleForContext(currentContext);
-  const runtimeLabel = isDemoMode ? 'Local demo' : 'Configured environment';
-  const storageLabel = currentContext === 'overview'
-    ? 'Workspace overview · no module data queried'
-    : moduleId === 'records'
-      ? isDemoMode ? 'Demo fixtures + local Roll' : 'Configured Records API'
-      : currentContext === 'workbench:school-console'
-        ? 'School Console · IndexedDB'
-        : moduleId === 'commons' || moduleId === 'workbench'
-          ? `${moduleLabel} · browser-local`
-          : `${moduleLabel} · module-specific data`;
+  const environmentLabel = isDemoMode ? 'Local demo' : 'Configured';
+
+  useEffect(() => {
+    setInspectorOpen(Boolean(recordSelection));
+  }, [recordSelection?.id]);
 
   function toggleSidebar() {
     setSidebarCollapsed(current => {
@@ -79,30 +72,16 @@ export function WorkspaceShell({
     });
   }
 
-  // Fetch ledger head hash for Records module (Roll lens)
-  useEffect(() => {
-    if (moduleId === 'records') {
-      queryRollEntries({ limit: 1 }).then(entries => {
-        if (entries.length > 0 && entries[0].hash_anchor) {
-          // Show first 16 chars of hash anchor as ledger head indicator
-          setLedgerHeadHash(entries[0].hash_anchor.slice(0, 16));
-        } else {
-          setLedgerHeadHash(null);
-        }
-      }).catch(() => {
-        setLedgerHeadHash('—');
-      });
-    } else {
-      setLedgerHeadHash(null);
+  function resetSidebar() {
+    setSidebarCollapsed(false);
+    try {
+      localStorage.setItem('studioSidebarCollapsed', 'false');
+    } catch (error) {
+      console.error('Could not reset the Studio sidebar preference.', error);
     }
-  }, [moduleId]);
+  }
 
-  const hasInspectorContent = recordSelection && (
-    (inspectorData.relationships?.length ?? 0) > 0 ||
-    (inspectorData.evidenceGaps?.length ?? 0) > 0 ||
-    (inspectorData.gateStatus?.length ?? 0) > 0 ||
-    (inspectorData.contextActions?.length ?? 0) > 0
-  );
+  const hasInspectorContent = Boolean(recordSelection && inspectorOpen);
 
   const hasChangeSetContent = changeSetData && (
     (changeSetData.pendingCommits?.length ?? 0) > 0 ||
@@ -111,10 +90,15 @@ export function WorkspaceShell({
   );
 
   return (
-    <div className={`field-studio-shell${sidebarCollapsed ? ' has-collapsed-sidebar' : ''}${hasInspectorContent ? ' has-record-inspector' : ''}${hasChangeSetContent ? ' has-change-set-dock' : ''}`}>
+    <div className={`field-studio-shell${sidebarCollapsed ? ' has-collapsed-sidebar' : ''}${hasInspectorContent ? ' has-record-inspector' : ''}${hasChangeSetContent ? ' has-change-set-dock' : ''}${hasChangeSetContent && dockCollapsed ? ' has-collapsed-dock' : ''}`}>
       <StudioNavigation
         currentContext={currentContext}
+        environmentLabel={environmentLabel}
+        inspectorOpen={inspectorOpen}
+        onToggleInspector={() => setInspectorOpen(current => !current)}
+        onResetSidebar={resetSidebar}
         onToggleSidebar={toggleSidebar}
+        recordSelected={Boolean(recordSelection)}
         sidebarCollapsed={sidebarCollapsed}
       />
       <main className="field-studio-main">
@@ -123,19 +107,22 @@ export function WorkspaceShell({
       {hasInspectorContent && recordSelection && (
         <RecordInspector
           selection={recordSelection}
-          relationships={inspectorData.relationships ?? []}
-          evidenceGaps={inspectorData.evidenceGaps ?? []}
-          contextActions={inspectorData.contextActions ?? []}
-          gateStatus={inspectorData.gateStatus ?? []}
+          relationships={inspectorData.relationships}
+          evidenceGaps={inspectorData.evidenceGaps}
+          contextActions={inspectorData.contextActions}
+          gateStatus={inspectorData.gateStatus}
           renderRelationships={inspectorData.renderRelationships}
           renderEvidenceGaps={inspectorData.renderEvidenceGaps}
           renderContextActions={inspectorData.renderContextActions}
           renderGateStatus={inspectorData.renderGateStatus}
+          onDismiss={() => setInspectorOpen(false)}
         />
       )}
       {hasChangeSetContent && (
         <ChangeSetDock
+          collapsed={dockCollapsed}
           module={moduleLabel}
+          onToggleCollapsed={() => setDockCollapsed(current => !current)}
           pendingCommits={changeSetData.pendingCommits ?? []}
           evidenceGaps={changeSetData.evidenceGaps ?? []}
           reconciliationQueue={changeSetData.reconciliationQueue ?? []}
@@ -147,13 +134,6 @@ export function WorkspaceShell({
           onReconcileAction={changeSetData.onReconcileAction}
         />
       )}
-      <EngineActivityStrip
-        agentAvailable={false}
-        ledgerHeadHash={ledgerHeadHash}
-        runs={[]}
-        runtimeLabel={runtimeLabel}
-        storageLabel={storageLabel}
-      />
     </div>
   );
 }

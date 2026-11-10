@@ -4,14 +4,6 @@ export type StudioContext =
   | 'network:people'
   | 'network:institutions'
   | 'network:capabilities'
-  | 'workbench'
-  | 'workbench:plan'
-  | 'workbench:examples'
-  | 'workbench:field-desk'
-  | 'workbench:school-console'
-  | 'workbench:applications'
-  | 'workbench:review'
-  | 'workbench:delivery'
   | 'records:canon'
   | 'records:annals'
   | 'records:roll'
@@ -19,9 +11,9 @@ export type StudioContext =
   | 'intelligence:coin-lab';
 
 export type StudioModuleId =
+  | 'home'
   | 'commons'
   | 'network'
-  | 'workbench'
   | 'records'
   | 'intelligence';
 
@@ -33,6 +25,12 @@ export interface StudioNavigationModule {
 }
 
 export const STUDIO_FLOW_MODULES: readonly StudioNavigationModule[] = [
+  {
+    id: 'home',
+    label: 'Home',
+    href: '/workspace',
+    contexts: ['overview'],
+  },
   {
     id: 'commons',
     label: 'Commons',
@@ -46,31 +44,10 @@ export const STUDIO_FLOW_MODULES: readonly StudioNavigationModule[] = [
     contexts: ['network:people', 'network:institutions', 'network:capabilities'],
   },
   {
-    id: 'workbench',
-    label: 'Workbench',
-    href: '/workspace/workbench',
-    contexts: [
-      'workbench',
-      'workbench:plan',
-      'workbench:examples',
-      'workbench:field-desk',
-      'workbench:school-console',
-      'workbench:applications',
-      'workbench:review',
-      'workbench:delivery',
-    ],
-  },
-  {
     id: 'records',
-    label: 'Records',
+    label: 'The Roll',
     href: '/workspace/records/roll',
     contexts: ['records:canon', 'records:annals', 'records:roll'],
-  },
-  {
-    id: 'intelligence',
-    label: 'Intelligence',
-    href: '/workspace/intelligence/coin-lab',
-    contexts: ['intelligence', 'intelligence:coin-lab'],
   },
 ];
 
@@ -92,22 +69,13 @@ export const STUDIO_NETWORK_VIEWS = [
 export function getStudioModuleForContext(context: StudioContext): StudioModuleId | null {
   switch (context) {
     case 'overview':
-      return null;
+      return 'home';
     case 'commons':
       return 'commons';
     case 'network:people':
     case 'network:institutions':
     case 'network:capabilities':
       return 'network';
-    case 'workbench':
-    case 'workbench:plan':
-    case 'workbench:examples':
-    case 'workbench:field-desk':
-    case 'workbench:school-console':
-    case 'workbench:applications':
-    case 'workbench:review':
-    case 'workbench:delivery':
-      return 'workbench';
     case 'records:canon':
     case 'records:annals':
     case 'records:roll':
@@ -123,13 +91,15 @@ export function getStudioModuleForContext(context: StudioContext): StudioModuleI
 }
 
 export function getStudioModuleLabel(context: StudioContext): string {
+  if (context === 'intelligence' || context === 'intelligence:coin-lab') return 'Intelligence';
   const moduleId = getStudioModuleForContext(context);
-  if (!moduleId) return 'Unknown';
+  if (!moduleId) throw new Error(`Studio context "${context}" has no primary module label.`);
   const module = STUDIO_FLOW_MODULES.find(destination => destination.id === moduleId);
+  if (moduleId === 'intelligence') return 'Intelligence';
   if (!module) throw new Error(`Studio navigation is missing module "${moduleId}".`);
   return module.label;
 }
 
 export function getStudioContextLabel(context: StudioContext): string {
-  return context === 'overview' ? 'Overview' : getStudioModuleLabel(context);
+  return getStudioModuleLabel(context);
 }

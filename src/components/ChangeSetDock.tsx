@@ -26,6 +26,7 @@ export interface ReconciliationItem {
 
 export interface ChangeSetDockProps {
   module: string;
+  collapsed: boolean;
   pendingCommits: PendingCommit[];
   evidenceGaps: EvidenceGapDock[];
   reconciliationQueue: ReconciliationItem[];
@@ -35,10 +36,12 @@ export interface ChangeSetDockProps {
   onCommitAction?: (commit: PendingCommit, action: 'view' | 'edit' | 'submit' | 'cancel') => void;
   onGapAction?: (gap: EvidenceGapDock, action: 'view' | 'resolve') => void;
   onReconcileAction?: (item: ReconciliationItem, action: 'view' | 'resolve') => void;
+  onToggleCollapsed: () => void;
 }
 
 export function ChangeSetDock({
   module,
+  collapsed,
   pendingCommits,
   evidenceGaps,
   reconciliationQueue,
@@ -48,62 +51,42 @@ export function ChangeSetDock({
   onCommitAction,
   onGapAction,
   onReconcileAction,
+  onToggleCollapsed,
 }: ChangeSetDockProps) {
   const hasContent = pendingCommits.length > 0 || evidenceGaps.length > 0 || reconciliationQueue.length > 0;
 
   if (!hasContent) return null;
 
   return (
-    <section className="field-studio-dock" aria-label={`Change set dock: ${module}`}>
+    <section className="field-studio-dock" aria-label={`Evidence and activity: ${module}`}>
       <header className="field-studio-dock-header">
-        <span className="field-studio-dock-title">CHANGE SET</span>
-        <span className="field-studio-dock-module">{module.toUpperCase()}</span>
-        <div className="field-studio-dock-tabs" role="tablist" aria-label="Change set views">
+        <span className="field-studio-dock-title">Evidence & activity</span>
+        <div className="field-studio-dock-tabs" aria-label="Available item groups">
           {pendingCommits.length > 0 && (
-            <button
-              aria-controls="field-studio-dock-commits"
-              aria-selected={true}
-              className="field-studio-dock-tab"
-              id="field-studio-tab-commits"
-              role="tab"
-              tabIndex={0}
-              type="button"
-            >
-              Commits ({pendingCommits.length})
-            </button>
+            <span className="field-studio-dock-tab">Changes ({pendingCommits.length})</span>
           )}
           {evidenceGaps.length > 0 && (
-            <button
-              aria-controls="field-studio-dock-gaps"
-              aria-selected={false}
-              className="field-studio-dock-tab"
-              id="field-studio-tab-gaps"
-              role="tab"
-              tabIndex={-1}
-              type="button"
-            >
-              Evidence Gaps ({evidenceGaps.length})
-            </button>
+            <span className="field-studio-dock-tab">Evidence gaps ({evidenceGaps.length})</span>
           )}
           {reconciliationQueue.length > 0 && (
-            <button
-              aria-controls="field-studio-dock-reconcile"
-              aria-selected={false}
-              className="field-studio-dock-tab"
-              id="field-studio-tab-reconcile"
-              role="tab"
-              tabIndex={-1}
-              type="button"
-            >
-              Reconciliation ({reconciliationQueue.length})
-            </button>
+            <span className="field-studio-dock-tab">To reconcile ({reconciliationQueue.length})</span>
           )}
         </div>
+        <button
+          aria-controls="field-studio-dock-panel"
+          aria-expanded={!collapsed}
+          aria-label={collapsed ? 'Show evidence and activity' : 'Hide evidence and activity'}
+          className="field-studio-dock-toggle"
+          onClick={onToggleCollapsed}
+          type="button"
+        >
+          {collapsed ? 'Show' : 'Hide'}
+        </button>
       </header>
-      <div className="field-studio-dock-panel" id="field-studio-dock-panel" role="tabpanel">
+      <div aria-label="Evidence and activity items" className="field-studio-dock-panel" hidden={collapsed} id="field-studio-dock-panel" role="region">
         {pendingCommits.length > 0 && (
           <section className="field-dock-section">
-            <span className="field-studio-section-label">PENDING COMMITS</span>
+            <span className="field-studio-section-label">Pending changes</span>
             {renderPendingCommits
               ? renderPendingCommits(pendingCommits)
               : (
@@ -135,7 +118,7 @@ export function ChangeSetDock({
 
         {evidenceGaps.length > 0 && (
           <section className="field-dock-section">
-            <span className="field-studio-section-label">EVIDENCE GAPS</span>
+            <span className="field-studio-section-label">Evidence gaps</span>
             {renderEvidenceGaps
               ? renderEvidenceGaps(evidenceGaps)
               : (
@@ -163,7 +146,7 @@ export function ChangeSetDock({
 
         {reconciliationQueue.length > 0 && (
           <section className="field-dock-section">
-            <span className="field-studio-section-label">RECONCILIATION QUEUE</span>
+            <span className="field-studio-section-label">Items to reconcile</span>
             {renderReconciliationQueue
               ? renderReconciliationQueue(reconciliationQueue)
               : (
