@@ -592,11 +592,7 @@ export function NetworkMap({
           return (
             <g
               key={node.id}
-              className="network-node"
-              onClick={e => handleEntityClick(node, e)}
-              onMouseEnter={() => setHoveredEntity(node)}
-              onMouseLeave={() => setHoveredEntity(null)}
-              style={{ cursor: 'pointer', filter: isSelected || isHovered ? 'url(#glow)' : 'none' }}
+              className={`network-node${isSelected || isHovered ? ' is-active' : ''}`}
             >
               <circle
                 cx={node.x}
@@ -624,72 +620,53 @@ export function NetworkMap({
       </svg>
 
       {selectedEntity && (
-        <div className="network-map-inspector" style={{ position: 'absolute', right: 16, top: 16, maxWidth: 280 }}>
-          <div className="network-inspector-card" style={{
-            background: 'var(--panel)',
-            border: '1px solid var(--line)',
-            borderRadius: '4px',
-            padding: '12px',
-            fontSize: '11px',
-            fontFamily: 'var(--mono)',
-            color: 'var(--fg)',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <strong style={{ fontFamily: 'var(--l1-font)', fontSize: '14px', color: ENTITY_COLORS[selectedEntity.type] }}>
+        <div className="network-map-inspector">
+          <div className="network-inspector-card">
+            <div className="network-inspector-header">
+              <strong className="network-inspector-name" style={{ color: ENTITY_COLORS[selectedEntity.type] }}>
                 {selectedEntity.name}
               </strong>
               <button
                 onClick={() => { setSelectedEntity(null); onEntitySelect?.(null); }}
-                style={{
-                  background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer',
-                  fontSize: '16px', lineHeight: 1, padding: '0 4px'
-                }}
+                className="network-inspector-close-btn"
                 aria-label="Close inspector"
               >
                 ×
               </button>
             </div>
-            <div style={{ marginBottom: '8px', color: 'var(--muted)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div className="network-inspector-type-id">
               {selectedEntity.type.toUpperCase()} · {selectedEntity.id}
             </div>
-            <div style={{ marginBottom: '8px', color: 'var(--text-muted)', fontSize: '11px' }}>
+            <div className="network-inspector-summary">
               {selectedEntity.summary}
             </div>
             {selectedEntity.location && (
-              <div style={{ marginBottom: '8px', fontSize: '10px', color: 'var(--dim)' }}>
+              <div className="network-inspector-location">
                 📍 {selectedEntity.location}
               </div>
             )}
             {selectedEntity.capabilities.length > 0 && (
-              <div style={{ marginBottom: '8px' }}>
-                <div style={{ fontSize: '10px', textTransform: 'uppercase', color: 'var(--dim)', marginBottom: '4px' }}>CAPABILITIES</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+              <div className="network-inspector-capabilities">
+                <div className="network-inspector-capabilities-label">CAPABILITIES</div>
+                <div className="network-inspector-capability-list">
                   {selectedEntity.capabilities.slice(0, 6).map((cap: string, i: number) => (
-                    <span key={i} style={{
-                      background: 'var(--bg)', border: '1px solid var(--line)',
-                      borderRadius: '3px', padding: '2px 6px', fontSize: '9px'
-                    }}>
+                    <span key={i} className="network-inspector-capability-chip">
                       {cap}
                     </span>
                   ))}
                   {selectedEntity.capabilities.length > 6 && (
-                    <span style={{ fontSize: '9px', color: 'var(--dim)' }}>
+                    <span className="network-inspector-capability-more">
                       +{selectedEntity.capabilities.length - 6} more
                     </span>
                   )}
                 </div>
               </div>
             )}
-            <div style={{ borderTop: '1px solid var(--line)', paddingTop: '8px', marginTop: '8px' }}>
-              <div style={{ fontSize: '10px', textTransform: 'uppercase', color: 'var(--dim)', marginBottom: '4px' }}>RELATIONSHIPS</div>
+            <div className="network-inspector-relationships">
+              <div className="network-inspector-relationships-label">RELATIONSHIPS</div>
               <button
                 onClick={() => onRelationshipFilter?.('all')}
-                style={{
-                  width: '100%', textAlign: 'left', background: 'none', border: 'none',
-                  color: 'var(--fg)', fontSize: '10px', fontFamily: 'var(--mono)',
-                  padding: '4px 0', cursor: 'pointer'
-                }}
+                className="network-inspector-show-all-btn"
               >
                 Show all connections
               </button>
@@ -698,18 +675,12 @@ export function NetworkMap({
         </div>
       )}
 
-      <aside className="network-legend" style={{
-        position: 'absolute', left: 16, bottom: 16, zIndex: 10,
-        background: 'var(--panel)', border: '1px solid var(--line)',
-        borderRadius: '4px', padding: '12px', fontSize: '10px',
-        fontFamily: 'var(--mono)', color: 'var(--fg)',
-        minWidth: '160px',
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-          <strong style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Legend</strong>
+      <aside className="network-legend">
+        <div className="network-legend-header">
+          <strong className="network-legend-title">Legend</strong>
           <button
             onClick={() => setLegendOpen(!legendOpen)}
-            style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '12px', lineHeight: 1 }}
+            className="network-legend-toggle-btn"
             aria-label={legendOpen ? 'Collapse legend' : 'Expand legend'}
           >
             {legendOpen ? '−' : '+'}
@@ -717,33 +688,23 @@ export function NetworkMap({
         </div>
         {legendOpen && (
           <>
-            <div style={{ marginBottom: '12px' }}>
-              <div style={{ fontSize: '9px', textTransform: 'uppercase', color: 'var(--dim)', marginBottom: '6px' }}>ENTITY TYPES</div>
+            <div className="network-legend-entity-types">
+              <div className="network-legend-entity-types-label">ENTITY TYPES</div>
               {(Object.entries(ENTITY_COLORS) as [EntityType, string][]).map(([type, color]) => (
-                <div key={type} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                  <span style={{
-                    width: '10px', height: '10px', borderRadius: '50%',
-                    background: color, border: '1px solid var(--line)',
-                    flexShrink: 0,
-                  }} />
-                  <span style={{ textTransform: 'capitalize', fontSize: '10px' }}>{type}</span>
+                <div key={type} className="network-legend-entity-type">
+                  <span className="network-legend-color-dot" style={{ background: color }} />
+                  <span className="network-legend-entity-type-name">{type}</span>
                 </div>
               ))}
             </div>
-            <div>
-              <div style={{ fontSize: '9px', textTransform: 'uppercase', color: 'var(--dim)', marginBottom: '6px' }}>RELATIONSHIP KINDS</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+            <div className="network-legend-relationship-kinds">
+              <div className="network-legend-relationship-kinds-label">RELATIONSHIP KINDS</div>
+              <div className="network-legend-relationship-kind-list">
                 {RELATIONSHIP_KINDS.map(kind => (
                   <button
                     key={kind}
                     onClick={() => onRelationshipFilter?.(kind)}
-                    style={{
-                      background: activeFilter === kind ? 'var(--state-canon)' : 'var(--bg)',
-                      border: `1px solid ${activeFilter === kind ? 'var(--state-canon)' : 'var(--line)'}`,
-                      borderRadius: '3px', padding: '2px 6px', fontSize: '9px',
-                      color: activeFilter === kind ? 'var(--bg)' : 'var(--fg)',
-                      cursor: 'pointer', textTransform: 'capitalize',
-                    }}
+                    className={`network-legend-relationship-kind ${activeFilter === kind ? 'is-active' : ''}`}
                   >
                     {KIND_LABELS[kind]}
                   </button>

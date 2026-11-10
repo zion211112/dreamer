@@ -156,10 +156,7 @@ export function Network() {
                 {ENTITY_TYPES.map(type => (
                   <li key={type.id} className="network-entity-item">
                     <span
-                      className="network-entity-dot"
-                      style={{
-                        background: `var(--state-${type.id === 'person' ? 'canon' : type.id === 'crew' ? 'proposed' : type.id === 'asset' ? 'caution' : type.id === 'institution' ? 'risk' : type.id === 'work' ? 'muted' : 'dim'})`,
-                      }}
+                      className={`network-entity-dot network-entity-dot--${type.id}`}
                     />
                     {type.id === 'evidence' && <RingedEvidenceMarker size={10} color="var(--state-dim)" />}
                     <span className="network-entity-label">{type.label}</span>
@@ -183,17 +180,14 @@ export function Network() {
                 </header>
                 <div className="network-selected-entity">
                   <div
-                    className="network-selected-entity-name"
-                    style={{
-                      color: `var(--state-${selectedEntity.type === 'person' ? 'canon' : selectedEntity.type === 'crew' ? 'proposed' : selectedEntity.type === 'asset' ? 'caution' : selectedEntity.type === 'institution' ? 'risk' : selectedEntity.type === 'work' ? 'muted' : 'dim'})`,
-                    }}
+                    className={`network-selected-entity-name network-selected-entity-name--${selectedEntity.type}`}
                   >
                     {selectedEntity.name}
                   </div>
                   <div className="network-selected-entity-type">
                     {selectedEntity.type} / {selectedEntity.id}
                     {selectedEntity.recordBasis === 'illustrative' && (
-                      <span style={{ marginLeft: '6px', opacity: 0.6 }}>
+                      <span className="network-entity-illustrative-mark">
                         <ForkGlyph size={10} />
                       </span>
                     )}

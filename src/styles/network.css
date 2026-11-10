@@ -1,0 +1,627 @@
+/* ============================================================================
+   APT-LABS — Network Module Styles
+   Scope: .network-page only — nothing leaks into WorkspaceShell chrome.
+   Uses shell design tokens from tokens.css.
+   ============================================================================ */
+
+.network-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 64vh;
+  padding: 32px clamp(20px, 4vw, 64px);
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: var(--step-0);
+  line-height: 1.55;
+}
+
+/* ---------- Toolbar ---------- */
+.network-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  border-bottom: 1px var(--line);
+}
+
+.network-toolbar-search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.network-toolbar-search-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font: var(--mono);
+  font-size: var(--step--2);
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.network-search-input {
+  flex: 1;
+  padding: var(--space-1) var(--space-2);
+  border: 1px var(--line);
+  border-radius: var(--radius-2);
+  background: var(--bg-elev);
+  color: var(--fg);
+  font: var(--sans);
+  font-size: var(--step-0);
+  outline: none;
+}
+
+.network-search-input:focus {
+  border-color: var(--state-canon);
+}
+
+.network-toolbar-filters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.network-filter-label,
+.network-time-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font: var(--mono);
+  font-size: var(--step--2);
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.network-filter-select {
+  padding: var(--space-1) var(--space-2);
+  border: 1px var(--line);
+  border-radius: var(--radius-2);
+  background: var(--bg-elev);
+  color: var(--fg);
+  font: var(--sans);
+  font-size: var(--step-0);
+  outline: none;
+  cursor: pointer;
+}
+
+.network-filter-select:focus {
+  border-color: var(--state-canon);
+}
+
+.network-time-input {
+  width: 80px;
+  padding: var(--space-1);
+  border: 1px var(--line);
+  border-radius: var(--radius-2);
+  background: var(--bg-elev);
+  color: var(--fg);
+  font: var(--mono);
+  font-size: var(--step--2);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.network-time-disabled {
+  font: var(--mono);
+  font-size: var(--step--2);
+  color: var(--dim);
+}
+
+/* ---------- Main layout ---------- */
+.network-main {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.network-map-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+.network-sidebar {
+  width: min(320px, 100%);
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+/* ---------- Sidebar sections ---------- */
+.network-sidebar-section,
+.network-sidebar-section-compact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.network-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.network-section-title {
+  font: var(--mono);
+  font-size: var(--step--2);
+  font-weight: 600;
+  color: var(--fg-strong);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.network-clear-selection-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-2);
+  border: 1px var(--line);
+  background: var(--bg-subtle);
+  color: var(--fg);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--step-0);
+  line-height: 1;
+  padding: 0;
+}
+
+.network-clear-selection-btn:hover {
+  background: var(--state-canon);
+  color: var(--bg);
+}
+
+/* ---------- Entity types ---------- */
+.network-entity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.network-entity-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+  font: var(--sans);
+  font-size: var(--step-0);
+  color: var(--fg);
+}
+
+.network-entity-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.network-entity-dot--person { background: var(--state-canon); }
+.network-entity-dot--crew { background: var(--state-proposed); }
+.network-entity-dot--asset { background: var(--state-caution); }
+.network-entity-dot--institution { background: var(--state-risk); }
+.network-entity-dot--work { background: var(--muted); }
+.network-entity-dot--evidence { background: var(--dim); }
+
+.network-entity-label {
+  flex: 1;
+  font-size: var(--step-0);
+  color: var(--fg);
+}
+
+.network-entity-count {
+  font: var(--mono);
+  font-size: var(--step--2);
+  color: var(--muted);
+}
+
+/* ---------- Selected entity ---------- */
+.network-selected-entity {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.network-selected-entity-name {
+  font: 700 var(--step-1) var(--serif);
+  color: var(--fg);
+  letter-spacing: -0.01em;
+}
+
+.network-selected-entity-name--person { color: var(--state-canon); }
+.network-selected-entity-name--crew { color: var(--state-proposed); }
+.network-selected-entity-name--asset { color: var(--state-caution); }
+.network-selected-entity-name--institution { color: var(--state-risk); }
+.network-selected-entity-name--work { color: var(--muted); }
+.network-selected-entity-name--evidence { color: var(--dim); }
+
+.network-selected-entity-type {
+  font: var(--mono);
+  font-size: var(--step--2);
+  color: var(--muted);
+}
+
+.network-selected-entity-summary {
+  font: var(--sans);
+  font-size: var(--step--1);
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.network-selected-entity-location {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font: var(--mono);
+  font-size: var(--step--2);
+  color: var(--dim);
+}
+
+.network-entity-illustrative-mark {
+  margin-left: 6px;
+  opacity: 0.6;
+}
+
+/* ---------- Capabilities ---------- */
+.network-capabilities-title {
+  font: var(--mono);
+  font-size: var(--step--2);
+  font-weight: 600;
+  color: var(--dim);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: var(--space-2) 0 var(--space-1) 0;
+}
+
+.network-capabilities-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.network-capability-chip {
+  padding: 2px 6px;
+  border: 1px var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--bg-subtle);
+  font: 600 var(--step--2) var(--mono);
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+.network-capability-more {
+  font: var(--mono);
+  font-size: var(--step--2);
+  color: var(--dim);
+}
+
+/* ---------- Relationship tags ---------- */
+.network-relationship-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.network-relationship-tag {
+  padding: 2px 6px;
+  border: 1px var(--line);
+  border-radius: var(--radius-2);
+  background: var(--bg-elev);
+  color: var(--muted);
+  font: var(--sans);
+  font-size: var(--step--1);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--fast);
+}
+
+.network-relationship-tag:hover {
+  border-color: var(--state-canon);
+  color: var(--fg-strong);
+}
+
+.network-relationship-tag.is-active {
+  border-color: var(--state-canon);
+  background: var(--state-canon-wash);
+  color: var(--fg-strong);
+}
+
+/* ---------- Cross-module paths ---------- */
+.network-cross-module-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.network-cross-module-item {
+  font: var(--mono);
+  font-size: var(--step--2);
+  color: var(--muted);
+  padding: var(--space-1) 0;
+}
+
+/* ---------- Map container ---------- */
+.network-map-container {
+  position: relative;
+}
+
+.network-node {
+  cursor: pointer;
+}
+
+.network-node.is-active {
+  filter: url(#glow);
+}
+
+/* ---------- Map inspector ---------- */
+.network-map-inspector {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  max-width: 280px;
+}
+
+.network-inspector-card {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-2);
+  padding: 12px;
+  font-size: var(--step--1);
+  font-family: var(--mono);
+  color: var(--fg);
+  box-shadow: var(--shadow-2);
+}
+
+.network-inspector-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.network-inspector-name {
+  font-family: var(--l1-font);
+  font-size: 14px;
+}
+
+.network-inspector-close-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 4px;
+}
+
+.network-inspector-close-btn:hover {
+  color: var(--fg-strong);
+}
+
+.network-inspector-type-id {
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.network-inspector-summary {
+  margin-bottom: 8px;
+  color: var(--text-muted);
+  font-size: var(--step--1);
+}
+
+.network-inspector-location {
+  margin-bottom: 8px;
+  font-size: 10px;
+  color: var(--dim);
+}
+
+.network-inspector-capabilities {
+  margin-bottom: 8px;
+}
+
+.network-inspector-capabilities-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 4px;
+}
+
+.network-inspector-capability-chip {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-size: 9px;
+  display: inline-block;
+  margin: 0 4px 4px 0;
+}
+
+.network-inspector-capability-more {
+  font-size: 9px;
+  color: var(--dim);
+}
+
+.network-inspector-capability-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.network-inspector-relationships {
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+.network-inspector-relationships-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 4px;
+}
+
+.network-inspector-show-all-btn {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--fg);
+  font-size: 10px;
+  font-family: var(--mono);
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+.network-inspector-show-all-btn:hover {
+  color: var(--fg-strong);
+}
+
+/* ---------- Legend ---------- */
+.network-legend {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  z-index: 10;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-2);
+  padding: 12px;
+  font-size: 10px;
+  font-family: var(--mono);
+  color: var(--fg);
+  min-width: 160px;
+}
+
+.network-legend-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.network-legend-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.network-legend-toggle-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.network-legend-toggle-btn:hover {
+  color: var(--fg-strong);
+}
+
+.network-legend-entity-types {
+  margin-bottom: 12px;
+}
+
+.network-legend-entity-types-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 6px;
+}
+
+.network-legend-entity-type {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.network-legend-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.network-legend-entity-type-name {
+  text-transform: capitalize;
+  font-size: 10px;
+}
+
+.network-legend-relationship-kinds {
+  margin-bottom: 0;
+}
+
+.network-legend-relationship-kinds-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 6px;
+}
+
+.network-legend-relationship-kind-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.network-legend-relationship-kind {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-size: 9px;
+  color: var(--fg);
+  cursor: pointer;
+  text-transform: capitalize;
+  transition: all var(--fast);
+}
+
+.network-legend-relationship-kind:hover {
+  border-color: var(--state-canon);
+  color: var(--fg-strong);
+}
+
+.network-legend-relationship-kind.is-active {
+  background: var(--state-canon);
+  border-color: var(--state-canon);
+  color: var(--bg);
+}
+
+/* ---------- Responsiveness ---------- */
+@media (max-width: 900px) {
+  .network-main {
+    flex-direction: column;
+  }
+
+  .network-sidebar {
+    width: 100%;
+  }
+
+  .network-page {
+    padding: 0 16px 40px;
+  }
+}
