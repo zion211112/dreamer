@@ -413,3 +413,37 @@ export const CALL_SHEET_STEP: Record<GateState, { step: number; label: string }>
   pending_acceptance: { step: 4, label: 'Verification' },
   accepted: { step: 4, label: 'Settled' },
 };
+
+/* ------------------------------------------------------------------ */
+/* Gate transitions & aggregate metrics                                 */
+/* ------------------------------------------------------------------ */
+
+export const ALL_GATE_STATES: readonly GateState[] = [
+  'draft', 'proposed', 'in_review', 'pending_authorization',
+  'authorized', 'in_execution', 'pending_acceptance', 'accepted',
+];
+
+/** Next gate state; `null` when the undertaking is settled (terminal). */
+export const NEXT_GATE: Record<GateState, GateState | null> = {
+  draft: 'proposed',
+  proposed: 'in_review',
+  in_review: 'pending_authorization',
+  pending_authorization: 'authorized',
+  authorized: 'in_execution',
+  in_execution: 'pending_acceptance',
+  pending_acceptance: 'accepted',
+  accepted: null,
+};
+
+export interface HomeMetrics {
+  publishedLanes: number;
+  totalCapital: number;
+  activeCount: number;
+}
+
+export function homeMetrics(): HomeMetrics {
+  const publishedLanes = PILOTS.filter((p) => p.status === 'published').length;
+  const totalCapital = WORK_ITEMS.reduce((sum, i) => sum + i.capital.financial, 0);
+  const activeCount = WORK_ITEMS.filter((i) => i.gate !== 'accepted').length;
+  return { publishedLanes, totalCapital, activeCount };
+}

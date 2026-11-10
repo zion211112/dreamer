@@ -349,14 +349,15 @@
 /* ---------- Work item row (editorial, not card) ---------- */
 .wb-item-row {
   display: grid;
-  grid-template-columns: 2fr auto auto auto;
+  grid-template-columns: minmax(0, 1fr) auto auto auto auto;
   gap: var(--space-3);
-  align-items: baseline;
+  align-items: start;
   padding: var(--space-3) var(--space-4);
   background: var(--bg-elev);
   border: 1px solid var(--line);
   border-radius: var(--radius-3);
-  transition: border-color 0.12s ease;
+  cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease;
 }
 
 .wb-item-row:hover {
@@ -535,12 +536,251 @@
   color: var(--state-canon);
 }
 
+/* ---------- Gate filter tabs (salvaged: .workbench-sim-stage-nav) ---------- */
+.wb-gate-filter {
+  display: flex;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+  scrollbar-width: thin;
+  margin-bottom: var(--space-4);
+}
+.wb-gate-filter-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 48px;
+  padding: 0 var(--space-3);
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font: 600 10px var(--mono);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.12s ease, border-color 0.12s ease;
+}
+.wb-gate-filter-tab:hover { color: var(--fg); }
+.wb-gate-filter-tab.is-current { border-bottom-color: var(--state-caution); color: var(--fg); }
+.wb-gate-filter-tab.is-current.wb-gate-filter-tab--canon   { border-bottom-color: var(--state-canon); }
+.wb-gate-filter-tab.is-current.wb-gate-filter-tab--proposed { border-bottom-color: var(--state-proposed); }
+.wb-gate-filter-tab.is-current.wb-gate-filter-tab--risk     { border-bottom-color: var(--state-risk); }
+.wb-gate-filter-tab.is-current.wb-gate-filter-tab--caution  { border-bottom-color: var(--state-caution); }
+.wb-gate-filter-count {
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--dim);
+}
+
+/* ---------- Item group wrapper ---------- */
+.wb-item-group {
+  margin-bottom: var(--space-2);
+}
+
+/* ---------- Item row expanded state ---------- */
+.wb-item-row--expanded {
+  border-color: var(--line-strong);
+  background: var(--bg-subtle);
+}
+
+/* ---------- Item main content column ---------- */
+.wb-item-main {
+  min-width: 0;
+}
+
+/* ---------- Crew compact tags (salvaged: .workbench-pipeline-index pattern) ---------- */
+.wb-crew-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+.wb-crew-tag {
+  font: 600 9px var(--mono);
+  color: var(--dim);
+  padding: 1px 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+.wb-crew-tag--builder    { color: var(--state-proposed); border-color: var(--state-proposed); }
+.wb-crew-tag--apprentice { color: var(--state-canon);    border-color: var(--state-canon); }
+
+/* ---------- Expand toggle ---------- */
+.wb-item-expand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  font: 600 14px var(--mono);
+  color: var(--dim);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-3);
+  background: var(--bg-elev);
+  flex-shrink: 0;
+}
+.wb-item-row--expanded .wb-item-expand {
+  color: var(--state-canon);
+  border-color: var(--state-canon);
+}
+
+/* ---------- Detail panel (salvaged: .capacity-inspector sticky side pattern) ---------- */
+.wb-item-detail {
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-subtle);
+  border: 1px solid var(--line);
+  border-top: none;
+  border-radius: 0 0 var(--radius-3) var(--radius-3);
+}
+.wb-item-detail-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: var(--space-4);
+}
+.wb-detail-section {
+  min-width: 0;
+}
+.wb-detail-heading {
+  font: 600 10px var(--mono);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 var(--space-2) 0;
+}
+.wb-detail-note {
+  font-size: var(--step--1);
+  color: var(--muted);
+  margin: 0 0 var(--space-2) 0;
+  line-height: 1.5;
+}
+.wb-detail-note--done { color: var(--state-canon); }
+.wb-detail-sub {
+  font: 600 9px var(--mono);
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: block;
+  margin-bottom: var(--space-1);
+}
+.wb-detail-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-2) 0;
+  display: grid;
+  gap: var(--space-1);
+}
+.wb-detail-list li {
+  font-size: var(--step--2);
+  color: var(--fg);
+  padding-left: var(--space-3);
+  position: relative;
+}
+.wb-detail-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 6px;
+  height: 1px;
+  background: var(--line-strong);
+}
+
+/* ---------- Records link ---------- */
+.wb-records-link {
+  font: 600 10px var(--mono);
+  color: var(--state-canon);
+  text-decoration: none;
+  display: inline-block;
+  margin-top: var(--space-2);
+}
+.wb-records-link:hover { text-decoration: underline; }
+
+/* ---------- Gate advance button (salvaged: .workbench-gate-run) ---------- */
+.wb-gate-advance {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--state-proposed);
+  border-radius: var(--radius-3);
+  background: var(--terrain-pale);
+  color: var(--state-proposed);
+  font: 600 10px var(--mono);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+.wb-gate-advance:hover { background: rgba(201, 242, 146, 0.25); }
+.wb-gate-advance-note {
+  font: 400 9px var(--mono);
+  color: var(--state-caution);
+  margin: var(--space-1) 0 0 0;
+}
+
+/* ---------- Section filter label ---------- */
+.wb-section-filter {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+/* ---------- Value / evidence group wrappers ---------- */
+.wb-value-group,
+.wb-evidence-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+}
+
+/* ---------- Light variant override (applied when [data-skin="light"] is set on .wb-root) ---------- */
+[data-skin="light"].wb-root {
+  --bg: #F8F9F7;
+  --fg: #1a2a1f;
+  --muted: #5a6e5f;
+  --dim: #8a9e8f;
+  --line: rgba(90, 110, 95, 0.25);
+  --line-strong: rgba(90, 110, 95, 0.5);
+  --bg-elev: rgba(240, 244, 240, 0.6);
+  --bg-subtle: rgba(240, 244, 240, 0.3);
+  --brand-main: #1a5d4a;
+  --terrain: #2a8a5a;
+  --terrain-pale: rgba(42, 138, 90, 0.1);
+  --state-canon: #1a7a6a;
+  --state-proposed: #5a9a3a;
+  --state-risk: #c05a2a;
+  --state-caution: #8a6a2a;
+}
+
+@media (min-width: 1728px) {
+  .wb-page {
+    padding: var(--space-5) var(--space-6);
+    max-width: 1680px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .wb-item-detail-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .wb-item-row {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
+  .wb-evidence-group {
+    display: none;
+  }
+}
+
 @media (max-width: 640px) {
   .wb-page { padding: var(--space-3) var(--space-4); }
   .wb-path-row,
   .wb-item-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: var(--space-2);
+    padding: var(--space-3);
   }
   .wb-path-meta,
   .wb-path-status,
@@ -548,6 +788,16 @@
   .wb-item-meta,
   .wb-item-value {
     text-align: left;
+  }
+  .wb-value-group {
+    align-items: flex-start;
+  }
+  .wb-evidence-group,
+  .wb-item-expand {
+    display: none;
+  }
+  .wb-item-detail-grid {
+    grid-template-columns: 1fr;
   }
   .wb-metrics {
     flex-direction: column;
@@ -557,5 +807,8 @@
     border-top: 2px solid var(--state-canon);
     padding-top: var(--space-3);
     margin-top: var(--space-3);
+  }
+  .wb-gate-filter {
+    flex-wrap: wrap;
   }
 }

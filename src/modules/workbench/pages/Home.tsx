@@ -1,9 +1,10 @@
 import { Link } from 'wouter';
 import { PageHead } from '@/components/PageHead';
-import { PILOTS } from '../data';
+import { PILOTS, homeMetrics } from '../data';
 import '../styles/workbench.css';
 
 export function Workbench() {
+  const metrics = homeMetrics();
   return (
     <div className="wb-root">
       <div className="wb-page">
@@ -12,6 +13,27 @@ export function Workbench() {
           title="Workbench"
           subtitle="Five pilot lanes. Published rates in KES; local stewardship, work stays in the community."
         />
+
+        <div className="wb-metrics">
+          <div className="wb-metric">
+            <span className="wb-metric-label">Published Lanes</span>
+            <span className="wb-metric-value wb-metric-value--canon">
+              {metrics.publishedLanes}
+            </span>
+          </div>
+          <div className="wb-metric">
+            <span className="wb-metric-label">Total Capital Committed</span>
+            <span className="wb-metric-value wb-metric-value--proposed">
+              KES {metrics.totalCapital.toLocaleString('en-KE')}
+            </span>
+          </div>
+          <div className="wb-metric">
+            <span className="wb-metric-label">Active Undertakings</span>
+            <span className="wb-metric-value wb-metric-value--caution">
+              {metrics.activeCount}
+            </span>
+          </div>
+        </div>
 
         <section>
           <h2 className="wb-section-title">Pilot lanes</h2>
