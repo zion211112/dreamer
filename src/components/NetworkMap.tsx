@@ -220,7 +220,7 @@ export function NetworkMap({
 }: NetworkMapProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const panRef = useRef<HTMLDivElement>(null);
-  const [hoveredEntity, setHoveredEntity] = useState<NetworkEntity | null>(null);
+  const [hoveredEntity] = useState<NetworkEntity | null>(null);
   const [hoveredId, setHoveredId] = useState('');
   const [selectedEntity, setSelectedEntity] = useState<NetworkEntity | null>(null);
   const [legendOpen, setLegendOpen] = useState(true);
@@ -510,14 +510,6 @@ export function NetworkMap({
     setSimulation({ nodes: simNodes, links: simLinks, alpha: 1 });
     requestAnimationFrame(tick);
   }, [nodes, links, width, height]);
-
-  function handleEntityClick(entity: NetworkEntity, event: MouseEvent) {
-    event.stopPropagation();
-    const isSelected = selectedEntity?.id === entity.id;
-    setSelectedEntity(isSelected ? null : entity);
-    onEntitySelect?.(isSelected ? null : entity);
-    onSelect?.(entity);
-  }
 
   function handleCanvasClick() {
     setSelectedEntity(null);
