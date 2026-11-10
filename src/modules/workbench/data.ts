@@ -47,6 +47,8 @@ export interface Capital {
   conditions: string[];
   /** Whether committed resources have actually been deployed. */
   deployed: boolean;
+  /** Whether capital is locked in programmatic escrow (Step 3). */
+  escrowed: boolean;
 }
 
 export interface Crew {
@@ -153,6 +155,12 @@ export interface WorkItem {
   crew: Crew;
   /** Only shown when the pilot is published; illustrative lanes show gate instead. */
   publishedValue?: string;
+  /** Step 1 (caveman): structured work brief — scope, BOM, acceptance criteria. No human padding. */
+  callSheet?: { scope: string; bom: string[]; acceptance: string[] };
+  /** Step 2 (impeccable): APT Passport SBT credential required to claim this job. */
+  credential?: string;
+  /** Step 4 (ponytail): telemetry verification state. */
+  verification?: { telemetrySource?: string; verifiedAt?: string; attestationId?: string };
 }
 
 export const WORK_ITEMS: readonly WorkItem[] = [
@@ -170,8 +178,15 @@ export const WORK_ITEMS: readonly WorkItem[] = [
       materials: ['Console parts', 'Learner record forms'],
       conditions: ['Steward sign-off', 'Learner privacy check'],
       deployed: false,
+      escrowed: true,
     },
     crew: { anchor: 'School Console steward', builder: '—', apprentice: '—' },
+    callSheet: {
+      scope: 'Console upkeep for learner operations',
+      bom: ['Console parts', 'Learner record forms'],
+      acceptance: ['Steward sign-off', 'Learner privacy check'],
+    },
+    credential: 'Learning Operations Steward',
     publishedValue: 'KES 6,000',
   },
   {
@@ -187,8 +202,15 @@ export const WORK_ITEMS: readonly WorkItem[] = [
       materials: ['Record ledger', 'Hash anchor'],
       conditions: ['Anchor authorization'],
       deployed: true,
+      escrowed: true,
     },
     crew: { anchor: 'School Console steward', builder: 'Records clerk', apprentice: '—' },
+    callSheet: {
+      scope: 'Audit learner records for accuracy',
+      bom: ['Record ledger', 'Hash anchor'],
+      acceptance: ['Anchor authorization'],
+    },
+    verification: { telemetrySource: 'Record ledger hash', attestationId: 'att-2026-10-17-01' },
     publishedValue: 'KES 4,000',
   },
   // Kemetos — published
@@ -205,8 +227,14 @@ export const WORK_ITEMS: readonly WorkItem[] = [
       materials: ['Cable', 'Conduit', 'Breaker panel'],
       conditions: ['Certified electrician sign-off'],
       deployed: false,
+      escrowed: false,
     },
     crew: { anchor: 'Kemetos steward', builder: '—', apprentice: '—' },
+    callSheet: {
+      scope: 'Kemetos AGI1 wiring installation',
+      bom: ['Cable', 'Conduit', 'Breaker panel'],
+      acceptance: ['Certified electrician sign-off'],
+    },
     publishedValue: 'KES 12,000',
   },
   {
@@ -222,8 +250,15 @@ export const WORK_ITEMS: readonly WorkItem[] = [
       materials: ['Solar panels', 'Inverter', 'Mounting rails'],
       conditions: ['Anchor authorization', 'Electrical inspection'],
       deployed: false,
+      escrowed: true,
     },
     crew: { anchor: 'Kemetos steward', builder: '—', apprentice: '—' },
+    callSheet: {
+      scope: 'Solar basic installation',
+      bom: ['Solar panels', 'Inverter', 'Mounting rails'],
+      acceptance: ['Anchor authorization', 'Electrical inspection'],
+    },
+    credential: 'Certified Electrician',
     publishedValue: 'KES 18,000',
   },
   // Mini Hydro — published
@@ -240,8 +275,15 @@ export const WORK_ITEMS: readonly WorkItem[] = [
       materials: ['Portland cement', 'Stone', 'Reinforcement'],
       conditions: ['Community sign-off', 'Water flow check'],
       deployed: true,
+      escrowed: true,
     },
     crew: { anchor: 'Thiba community steward', builder: 'Masonry crew lead', apprentice: '—' },
+    callSheet: {
+      scope: 'Thiba canal lining',
+      bom: ['Portland cement', 'Stone', 'Reinforcement'],
+      acceptance: ['Community sign-off', 'Water flow check'],
+    },
+    verification: { telemetrySource: 'Water flow sensor', attestationId: 'att-2026-10-17-02' },
     publishedValue: 'KES 48,000',
   },
   {
@@ -257,8 +299,14 @@ export const WORK_ITEMS: readonly WorkItem[] = [
       materials: ['Turbine parts', 'Lubricant'],
       conditions: ['Crew assembly'],
       deployed: false,
+      escrowed: false,
     },
     crew: { anchor: 'Thiba community steward', builder: '—', apprentice: '—' },
+    callSheet: {
+      scope: 'Turbine tending',
+      bom: ['Turbine parts', 'Lubricant'],
+      acceptance: ['Crew assembly'],
+    },
     publishedValue: 'KES 22,000',
   },
   // Mwea Animation Box — published
@@ -275,8 +323,15 @@ export const WORK_ITEMS: readonly WorkItem[] = [
       materials: ['Irrigation box', 'Pump'],
       conditions: ['Local operator sign-off'],
       deployed: true,
+      escrowed: true,
     },
     crew: { anchor: 'Mwea operators steward', builder: 'Box operator', apprentice: '—' },
+    callSheet: {
+      scope: 'Mwea irrigation box operation',
+      bom: ['Irrigation box', 'Pump'],
+      acceptance: ['Local operator sign-off'],
+    },
+    credential: 'Local Box Operator',
     publishedValue: 'KES 9,500',
   },
   {
@@ -292,8 +347,15 @@ export const WORK_ITEMS: readonly WorkItem[] = [
       materials: ['Animation rig', 'Storage'],
       conditions: ['Content review'],
       deployed: true,
+      escrowed: true,
     },
     crew: { anchor: 'Mwea operators steward', builder: 'Animator', apprentice: '—' },
+    callSheet: {
+      scope: 'Local animation content production',
+      bom: ['Animation rig', 'Storage'],
+      acceptance: ['Content review'],
+    },
+    verification: { telemetrySource: 'Content review log', attestationId: 'att-2026-10-17-03' },
     publishedValue: 'KES 15,000',
   },
 ];
@@ -336,4 +398,18 @@ export const GATE_FORK: Record<GateState, boolean> = {
   in_execution: false,
   pending_acceptance: false,
   accepted: false,
+};
+
+/** Maps each tender gate to one of the 4 Workbench execution steps.
+   Step 1 (caveman): Signal → Call Sheet   Step 2 (impeccable): Credential → Claim
+   Step 3 (impeccable): Escrow lock        Step 4 (ponytail): Verify → Settle */
+export const CALL_SHEET_STEP: Record<GateState, { step: number; label: string }> = {
+  draft: { step: 1, label: 'Signal' },
+  proposed: { step: 1, label: 'Call Sheet' },
+  in_review: { step: 2, label: 'Discovery' },
+  pending_authorization: { step: 2, label: 'Claim' },
+  authorized: { step: 3, label: 'Escrow' },
+  in_execution: { step: 3, label: 'Execution' },
+  pending_acceptance: { step: 4, label: 'Verification' },
+  accepted: { step: 4, label: 'Settled' },
 };
