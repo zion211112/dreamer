@@ -1,6 +1,6 @@
 # APT-LABS Workspace Shell Design
 
-**Status:** Approved visual direction; design handoff for review  
+**Status:** Revised design handoff; awaiting visual review
 **Date:** 2026-11-10  
 **Scope:** Shared APT-LABS workspace shell and personal Home. Module interiors are out of scope.
 
@@ -14,6 +14,31 @@ Use the approved **Quiet Brutal** direction in the **light** variant: precise ge
 dividers, considered whitespace, restrained mineral-lime emphasis, and a softly translucent
 topbar. Glass is a small material detail, not the page language. Avoid dark surfaces, dashboard
 clutter, decorative charts, generic card grids, and false activity.
+
+### Visual composition
+
+The beauty comes from proportion, typography, and material contrast rather than decoration:
+
+- Treat the warm paper canvas as uninterrupted space. Use raised white surfaces only where they
+  clarify a real boundary, such as a menu, dialog, or contextual overlay.
+- Use an editorial rhythm: a clear page title, generous breathing room around section starts, and
+  compact, aligned working content. Follow the existing 8px spacing baseline; reserve 32px desktop
+  and 16px narrow-screen page insets for the Home surface.
+- Use Georgia for the Home greeting, page titles, and selected record identity; use the existing
+  sans stack for controls and working content. Keep mono to genuine environment, time, or evidence
+  readouts. Never use mono labels as ornamental texture.
+- Keep geometry crisp: 3px/6px corner radii for controls and small surfaces; no pill-shaped
+  navigation, nested cards, or broad soft shadows. Reserve the lightest existing shadow for
+  transient overlays.
+- Give the labeled module rail one precise active treatment: a mineral-lime wash behind the active
+  icon and label, plus a non-color cue such as a slim edge marker and `aria-current`. Keep inactive
+  destinations unboxed. Use the same restrained accent for one primary Home action, not every link.
+- Let the topbar read as a fine, softly translucent layer over the warm canvas, separated by one
+  hairline divider. Disable blur under reduced-transparency preferences and use an opaque surface
+  when backdrop blur is unavailable.
+- Keep the shell's visual signature in its alignment, paper/ink contrast, and a single mineral-lime
+  selection. Do not add a background grid, ornamental chart, decorative glow, or fabricated
+  illustration to make the frame feel finished.
 
 The approved shell-level module set is **Commons, Network, Workbench, and The Roll**. Workbench
 is a primary module; implementing its work surface is explicitly outside this design scope.
@@ -57,6 +82,16 @@ Home is the user's desk, not a product tour or an organisation-wide KPI dashboar
 4. A first-use/empty state that helps a new participant enter the network without inventing tasks,
    activity, collaborators, or counts.
 
+### Home composition
+
+On desktop, place the greeting and verified organisation/role context together at the start of the
+work surface. Follow with an open, editorial **Your work** list that receives the largest share of
+the content width. A narrower **Start in the network** area may sit alongside it only when it offers
+real, permitted entry actions; present those as plainly labeled links, not a row of cards. On tablet
+and mobile, stack these regions in the same reading order. If there is no personal work source, let
+the empty state breathe and make one real next step obvious; do not fill the space with a greeting
+hero, decorative art, or organization-wide metrics.
+
 The current application has profile fields but no verified cross-module personal work feed. Until a
 reliable, permission-aware source exists, show an honest empty state and useful real module links.
 Do not fabricate assignments, “recently viewed” items, due dates, review counts, or success states.
@@ -72,7 +107,7 @@ children. Preserve navigation and context through structural changes instead of 
 
 | Viewport | Layout |
 |---|---|
-| **1280–1920 CSS px** | Desktop shell: topbar, vertical labeled module rail (target 68–76px), collapsible context pane (target 200–240px), and flexible main surface. A contextual inspector may share the row only while content retains a useful minimum width; otherwise open it as an overlay/drawer. |
+| **1280–1920 CSS px** | Desktop shell: topbar, vertical labeled module rail (target 72–76px), collapsible context pane (target 200–240px), and flexible main surface. A contextual inspector may share the row only while content retains a useful minimum width; otherwise open it as an overlay/drawer. |
 | **1024–1279 CSS px** | Keep the labeled module rail; collapse context navigation to a drawer or a user-controlled narrow pane. Inspector is an overlay/drawer, never another fixed column. |
 | **768–1023 CSS px** | Transform the primary rail into a compact horizontal, icon-over-label module strip. Context navigation opens from an explicit control. Give the main surface the remaining width. |
 | **430–767 CSS px** | Single-column shell below the topbar. Use a labeled, touch-sized horizontal module strip, followed by the work surface. Context navigation and inspectors use native dialogs/drawers or dedicated views with managed focus. |
@@ -122,6 +157,10 @@ a stable semantic role. The active shell direction uses the light token values:
 | Focus | Add a dedicated `--shell-focus` semantic alias | Use a contrast-tested dark teal/blue distinct from decorative brass |
 | Disabled/unavailable | Add semantic aliases derived from `--muted` and `--line` | Remain legible; do not encode state by opacity alone |
 | Typography | `--serif`, `--sans`, `--mono` | Existing Georgia, system sans, and JetBrains Mono stacks |
+| Spacing | `--baseline`, `--space-2`, `--space-3`, `--space-4` | 8px rhythm; 16px compact inset; 24px section gap; 32px desktop Home inset |
+| Shape | `--radius-1`, `--radius-2` | 3px for controls; 6px for small raised surfaces |
+| Elevation | `--shadow-1` | Transient overlays only; default work surfaces stay flat |
+| Labeled rail | `--shell-rail` | Raise current 54px token to 72–76px so icon-over-label navigation has usable width |
 
 The brighter mineral-lime used for Quiet Brutal is a restrained selection/hover surface, not a new
 meaning for lifecycle, evidence, risk, or synchronisation. Status always has a readable label and,
@@ -198,7 +237,7 @@ authorization, execution, acceptance, and settlement distinct.
 - Keep the first usable shell fast; avoid adding dependencies for shell composition.
 - Avoid heavy chart/map/graph bundles on Home. Load module-specific visualizations with their
   modules.
-- Keep layout stable during profile/status loading; avoid layout-shifting identity placeholders.
+- Keep layout stable while profile/status loads; avoid shifting identity content.
 - Persist only small, non-sensitive UI preferences. Do not put permissions, authority, or security
   decisions in client-side layout state.
 - Measure Core Web Vitals against LCP ≤2.5s, INP <200ms, CLS <0.1 at p75; do not claim targets met
@@ -264,6 +303,8 @@ authorization, execution, acceptance, and settlement distinct.
 ## 13. Design acceptance criteria
 
 - The light Quiet Brutal shell has a restrained graphic identity, clear hierarchy, and no clutter.
+- Its visual character comes from paper/ink contrast, editorial type, measured spacing, crisp
+  dividers, and one mineral-lime selection—not generic cards or decorative effects.
 - Home feels personal while displaying only authoritative user/workspace information.
 - Home's empty state helps a new participant begin without fabricated activity.
 - All four domain modules are housed in the primary navigation, with Workbench's working route
