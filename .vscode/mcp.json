@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "better-design": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "better-design@0.50.0", "mcp"]
+    }
+  }
+}

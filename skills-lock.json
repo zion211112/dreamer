@@ -21,11 +21,25 @@
       "computedHash": "482387065ecc2502379bbd95c6b8170d528380c94ce357434d05b2cbb63cd550",
       "installMode": "copy"
     },
+    "megacave": {
+      "source": "JuliusBrussee/caveman",
+      "sourceType": "github",
+      "skillPath": "skills/megacave/SKILL.md",
+      "computedHash": "60da384ce09cedf553e2b6dfe4669ffb4e53f34c3df8ce2c8012a32e06f8e187",
+      "installMode": "copy"
+    },
     "ponytail": {
       "source": "DietrichGebert/ponytail",
       "sourceType": "github",
       "skillPath": "skills/ponytail/SKILL.md",
       "computedHash": "9feedbe220d039ba30720217b3fce16214817063fb54a48843d89368c86554e9",
+      "installMode": "copy"
+    },
+    "ultracave": {
+      "source": "JuliusBrussee/caveman",
+      "sourceType": "github",
+      "skillPath": "skills/ultracave/SKILL.md",
+      "computedHash": "d2e5de7e5e664e95c0c93ea0fb84c6b78a4bb2351c71964c453a8a35c63869eb",
       "installMode": "copy"
     }
   }
