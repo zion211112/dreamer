@@ -1,6 +1,6 @@
 # APT-LABS Workspace Shell Design
 
-**Status:** Revised design handoff; awaiting visual review
+**Status:** Approved design handoff
 **Date:** 2026-11-10  
 **Scope:** Shared APT-LABS workspace shell and personal Home. Module interiors are out of scope.
 
