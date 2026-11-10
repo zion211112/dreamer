@@ -421,10 +421,6 @@ function ClaimsEvidenceView({ entries }: { entries: RollEntry[] }) {
     </section>
   );
 
-  const publicEv = entry.evidence.filter((e) => e.layer === 'public').length;
-  const participantEv = entry.evidence.filter((e) => e.layer === 'participant').length;
-  const restrictedEv = entry.evidence.filter((e) => e.layer === 'restricted').length;
-
   return (
     <section className="records-lens records-lens-annals" aria-labelledby="claims-evidence-title">
       <div className="lens-head">
@@ -569,9 +565,7 @@ function RecordDetailView({ entry, onClose }: { entry: RollEntry; onClose: () =>
   const publicEv = entry.evidence.filter((e) => e.layer === 'public').length;
   const participantEv = entry.evidence.filter((e) => e.layer === 'participant').length;
   const restrictedEv = entry.evidence.filter((e) => e.layer === 'restricted').length;
-  const hasAcceptance = !!entry.acceptance.accepted_by;
   const hasCost = !!entry.acceptance.cost_disclosed;
-  const hasInspection = !!entry.acceptance.inspection_report_id;
 
   return (
     <section className="record-detail-view" aria-labelledby="record-detail-title">
@@ -795,148 +789,5 @@ export function Records() {
         )}
       </div>
     </WorkspaceLayout>
-  );
-}
-  const publicEv = entry.evidence.filter((e) => e.layer === 'public').length;
-  const participantEv = entry.evidence.filter((e) => e.layer === 'participant').length;
-  const restrictedEv = entry.evidence.filter((e) => e.layer === 'restricted').length;
-
-  return (
-    <section className="records-lens records-lens-annals" aria-labelledby="claims-evidence-title">
-      <div className="lens-head">
-        <div className="lens-identity">
-          <p className="kicker">APT-LABS <span className="sep">/</span> RECORDS <span className="sep">/</span> CLAIMS</p>
-          <h1 className="lens-title" id="claims-evidence-title">Claims & evidence</h1>
-          <p className="lens-subtitle">How a claim is substantiated — subject, predicate, evidence, method, review, and challenge history. Claim is not evidence.</p>
-        </div>
-        <div className="lens-metrics">
-          <div className="metric metric-primary">
-            <span className="metric-label">Claim</span>
-            <div className="metric-value mono">clm-2026-10-17-01</div>
-            <span className="metric-tag">bounded assertion</span>
-          </div>
-          <div className="metric">
-            <span className="metric-label">Verdict</span>
-            <div className="metric-value">Substantiated</div>
-            <span className="metric-tag">evidence-based</span>
-          </div>
-          <div className="metric">
-            <span className="metric-label">Basis</span>
-            <div className="metric-value mono">{entry.id}</div>
-            <span className="metric-tag">Roll entry</span>
-          </div>
-        </div>
-      </div>
-      <hr className="lens-rule" />
-      <div className="claim-card">
-        <div className="claim-head">
-          <div className="claim-meta-row">
-            <span className="verdict-badge verdict-substantiated">Substantiated</span>
-            <span className="claim-type mono dim">claim · evidence-based</span>
-          </div>
-          <h2 className="claim-title serif">{entry.title}</h2>
-        </div>
-        <div className="claim-grid">
-          <div className="claim-body">
-            <div className="claim-field">
-              <span className="field-label">Subject</span>
-              <div className="field-val serif">{entry.title} · {entry.undertaking_id}</div>
-            </div>
-            <div className="claim-field">
-              <span className="field-label">Predicate</span>
-              <div className="field-val">Delivered and accepted on-site per undertaking scope</div>
-            </div>
-            <div className="claim-field">
-              <span className="field-label">Assertion</span>
-              <div className="field-val strong">{entry.scope}</div>
-            </div>
-            <div className="claim-field">
-              <span className="field-label">Claimant</span>
-              <div className="field-val"><strong>Commons steward · person-09</strong></div>
-            </div>
-            <div className="claim-field">
-              <span className="field-label">Effective time</span>
-              <div className="field-val mono">{formatDateTime(entry.recorded_at)} EAT</div>
-            </div>
-            <div className="claim-field">
-              <span className="field-label">Recorded time</span>
-              <div className="field-val mono">{formatDateTime(entry.recorded_at)} EAT</div>
-            </div>
-            <div className="claim-field">
-              <span className="field-label">Method & basis</span>
-              <div className="field-val">On-site inspection + delivery photo + anchor attestation (public + participant layers)</div>
-            </div>
-            <div className="claim-field">
-              <span className="field-label">Reviewer</span>
-              <div className="field-val">Roll steward · person-14</div>
-            </div>
-            <div className="claim-field">
-              <span className="field-label">Review result</span>
-              <div className="field-val"><strong>Substantiated</strong> — evidence supports the claim within stated scope</div>
-            </div>
-          </div>
-          <aside className="claim-rail" aria-label="Claim inspector">
-            <div className="rail-head">
-              <span className="section-label">Claim metadata</span>
-              <span className="rail-cap mono dim">Governed claim record</span>
-            </div>
-            <div className="rail-body">
-              <div className="rail-item">
-                <span className="field-label">Claim ID</span>
-                <div className="field-val mono">clm-2026-10-17-01</div>
-              </div>
-              <div className="rail-item">
-                <span className="field-label">Schema version</span>
-                <div className="field-val mono">v1</div>
-              </div>
-              <div className="rail-item">
-                <span className="field-label">Origin</span>
-                <div className="field-val">Roll entry · {entry.id}</div>
-              </div>
-              <div className="rail-item">
-                <span className="field-label">Subject org</span>
-                <div className="field-val">{entry.commissioned_by.name} · inst-04</div>
-              </div>
-              <div className="rail-item">
-                <span className="field-label">Disclosure</span>
-                <div className="field-val">Public · participant</div>
-              </div>
-              <div className="rail-item">
-                <span className="field-label">Consent basis</span>
-                <div className="field-val">Undertaking terms</div>
-              </div>
-              <div className="rail-item">
-                <span className="field-label">Retention</span>
-                <div className="field-val">Institutional memory</div>
-              </div>
-            </div>
-          </aside>
-        </div>
-        <div className="evidence-panel">
-          <div className="evidence-head">
-            <span className="section-label">Supporting evidence</span>
-            <span className="evidence-count mono dim">{entry.evidence.length} artifacts · 3 layers</span>
-          </div>
-          <div className="evidence-list">
-            {entry.evidence.map((ev) => (
-              <div key={ev.id} className="evidence-item">
-                <div className="evidence-role">
-                  <RingedEvidenceMarker size={10} color={ev.layer === 'public' ? 'var(--state-canon)' : ev.layer === 'participant' ? 'var(--terrain)' : 'var(--muted)'} filled={ev.layer === 'restricted'} />
-                  <span className="evidence-role-label">{ev.title}</span>
-                </div>
-                <span className="evidence-description">{ev.description || 'No description recorded'}</span>
-                <span className="evidence-layer-tag mono dim">{ev.layer.charAt(0).toUpperCase() + ev.layer.slice(1)} · {ev.layer}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      <div className="ontology-panel">
-        <span className="ontology-label">Ontology in this view</span>
-        <p><b className="distinction-type">Claim</b> ≠ Evidence: the assertion is bounded by subject, predicate, and scope; each artifact is linked as evidence explaining how and within what scope it supports the claim.</p>
-        <p>Origin, claim basis, verification method, lifecycle, and disclosure are separate. A record-level badge is not universal evidence of truth.</p>
-      </div>
-      <p className="lens-note">Browser-local demo. Synthetic records stay in this browser. Sample acceptance and visibility labels are not authoritative.</p>
-    </section>
   );
 }
