@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en" data-skin="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0a0f0c" />
+<title>Roll · Evidence ledger · APT-LABS</title>
+<style>
+  /* ============================================================================
+     APT-LABS — Records · Roll evidence ledger
+     Signature Dark Instrument. Single-file preview for review.
+     Tokens mirror src/tokens.css dark variant.
+     ============================================================================ */
+  :root{
+    --bg:#0a0f0c;--fg:#e9f1e8;--muted:#8fa08c;--dim:#4a554b;--fg-strong:#f4f3ee;
+    --bg-elev:#1a221c;--bg-subtle:#141a15;--line:rgba(109,125,110,.3);--line-strong:rgba(109,125,110,.5);--hairline:rgba(109,125,110,.15);
+    --terrain:#8fd98f;--terrain-pale:#1a2d1a;--terrain-ink:#f0fff0;
+    --brand-main:#7fc5bc;--brand-main-wash:rgba(127,197,188,.10);
+    --brand-branch:#c9f292;--brand-branch-wash:rgba(201,242,146,.10);
+    --brass:#cbaf6e;--brass-pale:rgba(203,175,110,.10);
+    --danger:#e89670;--danger-pale:rgba(232,150,112,.10);
+    --phosphor:#8fd98f;
+    --state-canon:var(--brand-main);--state-canon-wash:var(--brand-main-wash);
+    --state-proposed:var(--brand-branch);--state-proposed-wash:var(--brand-branch-wash);
+    --state-risk:var(--danger);--state-risk-wash:var(--danger-pale);
+    --state-caution:var(--brass);--state-caution-wash:var(--brass-pale);
+    --water:#7dd3fc;--water-pale:rgba(125,211,252,.10);
+    --serif:Georgia,"Times New Roman",serif;--sans:system-ui,-apple-system,Segoe UI Variable,sans-serif;--mono:"JetBrains Mono","SFMono-Regular",Consolas,monospace;
+    --step--2:clamp(9px,.64rem,10px);--step--1:clamp(10px,.8rem,11px);--step-0:clamp(12.5px,1rem,13px);--step-1:clamp(15.6px,1.25rem,16px);--step-2:clamp(19.5px,1.56rem,20px);--step-3:clamp(24.4px,1.95rem,25px);--step-4:clamp(30.5px,2.44rem,31px);--step-5:clamp(38.1px,3.05rem,39px);
+    --baseline:8px;--space-1:8px;--space-2:16px;--space-3:24px;--space-4:32px;--space-5:40px;--space-6:48px;--space-7:56px;--space-8:64px;
+    --radius-2:6px;--radius-3:8px;--radius-4:12px;--radius-pill:999px;
+    --shadow-2:0 4px 8px rgba(0,0,0,.45),0 2px 4px rgba(0,0,0,.3);--shadow-3:0 8px 24px rgba(0,0,0,.55),0 4px 12px rgba(0,0,0,.35);
+    --fast:120ms ease;--base:180ms ease;
+    --shell-topbar:54px;--shell-rail:54px;--shell-sidebar-min:196px;--shell-sidebar-max:252px;--shell-inspector-min:286px;--shell-inspector-max:360px;--shell-dock-min:132px;--shell-dock-max:174px;--shell-statusbar:24px;
+  }
+  *{box-sizing:border-box;margin:0}
+  html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:var(--step-0);line-height:1.5;overflow:hidden}
+  body{font-feature-settings:"kern"1,"liga"1;}
+  a{color:var(--state-canon);text-decoration:none;border-bottom:1px solid transparent}
+  a:hover{border-color:var(--state-canon);color:var(--fg-strong)}
+  button,input,select,textarea{font:inherit;color:inherit;background:transparent;border:0;margin:0}
+  button{cursor:pointer}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--state-canon);outline-offset:2px;border-radius:2px}
+  .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+
+  /* ============ Shell ============ */
+  .app{height:100vh;min-height:620px;display:grid;grid-template-rows:var(--shell-topbar) 1fr;background:radial-gradient(ellipse at 60% -10%,rgba(143,217,143,.06),transparent 50%),var(--bg)}
+  .topbar{height:var(--shell-topbar);display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid var(--line);background:rgba(10,15,12,.92);position:sticky;top:0;z-index:200}
+  .brand{display:flex;align-items:center;gap:9px;min-width:210px}
+  .mark{width:24px;height:24px;border:1px solid rgba(201,242,146,.55);border-radius:7px;display:grid;place-items:center;color:var(--brand-branch);font-weight:800;font-size:13px;transform:rotate(-2deg);box-shadow:inset 0 0 14px rgba(201,242,146,.06);font-family:var(--mono)}
+  .brandname{font-size:12px;letter-spacing:.16em;font-weight:750;font-family:var(--sans)}
+  .brandname span{color:var(--muted);font-weight:500;letter-spacing:.06em;margin-left:6px}
+  .top-spacer{flex:1}
+  .context{display:flex;align-items:center;gap:10px}
+  .pill{border:1px solid var(--line);border-radius:7px;padding:4px 10px;color:var(--muted);font-size:var(--step--2);font-family:var(--mono);background:rgba(20,26,21,.6)}
+  .pill.is-active{color:var(--fg-strong);border-color:var(--state-canon);background:var(--state-canon-wash)}
+  .top-action{border:1px solid transparent;background:transparent;color:var(--muted);height:29px;min-width:29px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;padding:0 9px}
+  .top-action:hover{background:var(--bg-subtle);border-color:var(--line);color:var(--fg-strong)}
+  .avatar{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#d8e6c5,#8da47c);color:#1d291c;font-size:10px;font-weight:800;border:2px solid #273229;font-family:var(--mono)}
+
+  /* ============ Page layout ============ */
+  .layout{min-height:0;display:grid;grid-template-columns:var(--shell-sidebar-max) minmax(420px,1fr);grid-template-rows:1fr;}
+  .sidebar{grid-row:1/2;grid-column:1;background:#0d1410;border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+  .side-head{height:54px;padding:0 15px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+  .ws-label{display:flex;align-items:center;gap:8px}
+  .ws-glyph{width:24px;height:24px;border-radius:7px;background:#1c261f;color:var(--brand-branch);display:grid;place-items:center;font-weight:800;font-size:12px;font-family:var(--mono)}
+  .ws-title{font-weight:650;font-size:12px;letter-spacing:.02em}
+  .ws-sub{font-size:9px;color:var(--dim);margin-top:1px;font-family:var(--mono)}
+  .side-scroll{overflow-y:auto;padding:14px 10px 10px;flex:1}
+  .section-label{font:9px var(--mono);letter-spacing:.16em;color:#5a6b5f;padding:10px 9px 6px;display:flex;align-items:center;justify-content:space-between}
+  .nav-item{width:100%;height:34px;border:0;background:transparent;border-radius:7px;display:flex;align-items:center;gap:10px;padding:0 10px;color:var(--muted);font-size:12px;text-align:left;cursor:pointer;position:relative}
+  .nav-item:hover{background:var(--bg-subtle);color:var(--fg-strong)}
+  .nav-item.is-active{background:var(--state-canon-wash);color:var(--fg-strong);box-shadow:inset 2px 0 0 0 var(--state-canon)}
+  .nav-item .mod{font-family:var(--mono);font-size:10px;color:var(--dim);margin-left:auto}
+  .sidefoot{margin-top:auto;border-top:1px solid var(--line);padding:12px 10px;background:#0b120e;font-size:var(--step--2);color:var(--dim);line-height:1.5}
+
+  main{grid-column:2;min-width:0;overflow-y:auto;padding:28px clamp(16px,3vw,42px) 46px 34px;scrollbar-gutter:stable}
+  .inner{max-width:76rem;margin:0 auto}
+
+  /* ============ PageHead ============ */
+  .pagehead{margin-bottom:6px}
+  .eyebrow{font:10px var(--mono);letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin:0 0 8px}
+  h1.page-title{font-family:var(--serif);font-size:var(--step-4);font-weight:450;line-height:1.12;letter-spacing:normal;margin:0 0 3px;color:var(--fg-strong)}
+  .readout{display:flex;align-items:baseline;gap:10px;color:var(--muted);font-size:var(--step--1);font-family:var(--mono)}
+  .readout b{color:var(--fg-strong);font-weight:500;margin-right:4px}
+  .rule{border:0;border-top:1px solid var(--line);height:1px;margin:16px 0}
+
+  /* ============ Roll header ============ */
+  .roll-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:14px 22px;margin:2px 0 26px;border-bottom:1px solid var(--line-strong);padding-bottom:18px}
+  .roll-meta{display:flex;flex-direction:column;gap:6px}
+  .roll-id{font:12px var(--mono);letter-spacing:0.14em;color:var(--state-canon);font-weight:600}
+  .roll-type{font:10px var(--mono);letter-spacing:.16em;color:var(--muted);text-transform:uppercase;padding:2px 8px;border:1px solid var(--line);border-radius:7px;background:var(--bg-subtle)}
+  .roll-status{font:10px var(--mono);letter-spacing:.14em;color:var(--terrain-ink);font-weight:600;text-transform:uppercase;padding:3px 10px;border-radius:7px;display:inline-block}
+  .roll-status.accepted{background:var(--state-canon-wash);color:#0b2d24;border:1px solid rgba(127,197,188,.35)}
+  .roll-status.proposed{background:var(--state-proposed-wash);color:#1d3a0d;border:1px solid rgba(201,242,146,.35)}
+  .roll-status.partial{background:var(--state-caution-wash);color:#2e220b;border:1px solid rgba(203,175,110,.35)}
+  .roll-status.disputed{background:var(--state-risk-wash);color:#3d1a13;border:1px solid rgba(232,150,112,.35)}
+  .roll-actions{display:flex;gap:8px;align-items:center}
+  .btn{border:1px solid var(--line);background:var(--bg-subtle);color:var(--fg);border-radius:7px;padding:7px 14px;font-size:11px;font-weight:600;font-family:var(--sans);display:inline-flex;align-items:center;gap:7px}
+  .btn:hover{background:var(--bg-elev);border-color:var(--line-strong);color:var(--fg-strong)}
+  .btn.primary{background:var(--state-canon);color:#061a13;border-color:transparent}
+  .btn.primary:hover{background:#6fb0ab}
+  .btn.ghost{border-color:transparent;color:var(--muted)}
+  .btn.ghost:hover{color:var(--fg-strong);background:var(--bg-elev)}
+  .kbd{font:10px var(--mono);border:1px solid var(--line);border-radius:4px;padding:2px 6px;color:var(--muted)}
+
+  /* ============ Sections ============ */
+  .section{margin-bottom:30px}
+  .section:last-child{margin-bottom:0}
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .section-head h2{font-family:var(--serif);font-size:var(--step-2);font-weight:450;line-height:1.2;color:var(--fg-strong);letter-spacing:normal}
+  .section-head .sub{font:11px var(--mono);color:var(--muted);letter-spacing:.12em}
+  .section-head .count{font:10px var(--mono);color:var(--dim);letter-spacing:.12em}
+
+  /* ============ Entry card ============ */
+  .entry{border:1px solid var(--line);border-radius:var(--radius-4);background:var(--bg-elev);overflow:hidden}
+  .entry-head{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .entry-title{font-family:var(--serif);font-size:var(--step-3);font-weight:450;line-height:1.25;color:var(--fg-strong);margin:0}
+  .entry-meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .evidence-band{display:flex;align-items:center;gap:8px;padding:3px 10px;border:1px solid var(--line);border-radius:7px;background:var(--bg-subtle);font:10px var(--mono);color:var(--muted)}
+  .evidence-band .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .evidence-band.public .dot{background:var(--state-canon);box-shadow:0 0 10px var(--state-canon)}
+  .evidence-band.participant .dot{background:var(--brand-branch);box-shadow:0 0 10px var(--brand-branch)}
+  .evidence-band.restricted .dot{background:var(--dim);box-shadow:0 0 10px var(--dim)}
+  .evidence-band b{color:var(--fg-strong);margin-left:2px}
+
+  /* Evidence layers detail */
+  .layers{display:flex;flex-direction:column;gap:10px}
+  .layer{border:1px solid var(--line);border-radius:var(--radius-3);background:var(--bg-subtle);padding:12px 14px;display:grid;grid-template-columns:110px 1fr auto;gap:12px 16px;align-items:start}
+  .layer .layer-label{font:10px var(--mono);letter-spacing:.16em;color:var(--muted);text-transform:uppercase;grid-column:1}
+  .layer .layer-items{grid-column:2;display:flex;flex-direction:column;gap:6px}
+  .layer-item{display:flex;align-items:baseline;gap:8px;font-size:var(--step-0);color:var(--fg)}
+  .layer-item .item-title{font-weight:600;color:var(--fg-strong);min-width:150px}
+  .layer-item .item-kind{font:10px var(--mono);color:var(--muted);margin-left:auto}
+  .layer .layer-control{grid-column:3;justify-self:end;text-align:right}
+
+  /* Acceptance */
+  .acceptance{border:1px solid var(--line);border-radius:var(--radius-3);background:var(--bg-subtle);padding:16px 18px;display:grid;grid-template-columns:150px 1fr 170px;gap:14px 24px;align-items:baseline}
+  .acc-label{font:10px var(--mono);letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
+  .acc-value{font-size:var(--step-0);color:var(--fg)}
+  .acc-value strong{color:var(--fg-strong);font-weight:600}
+  code.hash{font:11px var(--mono);color:var(--state-canon);background:rgba(127,197,188,.10);border:1px solid rgba(127,197,188,.25);border-radius:4px;padding:2px 7px;display:inline-block}
+
+  /* Verification */
+  .verify{border:1px solid var(--line);border-radius:var(--radius-4);background:var(--bg-elev);overflow:hidden}
+  .verify-head{padding:14px 18px;border-bottom:1px solid var(--line);background:var(--bg-subtle);display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .verify-head h3{font-family:var(--serif);font-size:var(--step-1);font-weight:450;color:var(--fg-strong);margin:0}
+  .verify-head .tag{font:10px var(--mono);letter-spacing:.16em;color:var(--state-canon);text-transform:uppercase;padding:2px 8px;border:1px solid rgba(127,197,188,.35);border-radius:7px;background:rgba(127,197,188,.08)}
+  .verify-body{padding:18px;display:grid;grid-template-columns:1fr;gap:16px}
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .compare .field{border:1px solid var(--line);border-radius:var(--radius-3);background:var(--bg-subtle);padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+  .compare .field .lbl{font:10px var(--mono);letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
+  .compare .field .val{font:11px var(--mono);color:var(--fg-strong);word-break:break-all}
+  .result{border:1px solid var(--line);border-radius:var(--radius-3);background:var(--bg-elev);padding:14px 16px;display:flex;align-items:center;gap:10px}
+  .result .ok{width:14px;height:14px;border-radius:50%;background:var(--state-canon);box-shadow:0 0 12px var(--state-canon)}
+  .result .msg{font-size:var(--step-0);color:var(--fg)}
+  .result .msg b{color:var(--fg-strong)}
+  .note{font:10px var(--mono);color:var(--dim);line-height:1.6;margin-top:6px}
+
+  .json-wrap{border:1px solid var(--line);border-radius:var(--radius-3);background:#080c0a}
+  details summary{font:10px var(--mono);letter-spacing:.14em;color:var(--muted);cursor:pointer;list-style:none;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--bg-subtle)}
+  details[open] summary{border-bottom-color:var(--line-strong)}
+  details summary::marker{content:"";display:none}
+  pre.json{font:10px var(--mono);color:#b8d4cc;padding:14px 16px;overflow:auto;line-height:1.5}
+  pre.json .k{color:var(--brand-branch)}pre.json .s{color:#e2a3a3}pre.json .n{color:#a3c8e8}pre.json .bool{color:var(--state-proposed)}
+
+  /* empty */
+  .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:42vh;color:var(--muted);text-align:center}
+  .empty b{color:var(--fg);font-size:var(--step-2);font-family:var(--serif);margin-bottom:8px}
+
+  @media (max-width:900px){
+    .layout{grid-template-columns:1fr}
+    .sidebar{display:none}
+    main{padding:20px 16px}
+    .acceptance{grid-template-columns:1fr}
+    .compare{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark" aria-hidden="true">A</div>
+      <div class="brandname">APT-LABS<span>/ Records</span></div>
+    </div>
+    <div class="top-spacer"></div>
+    <div class="context">
+      <span class="pill is-active">records:roll</span>
+      <button class="top-action" title="Skip to content">Skip</button>
+      <button class="top-action" aria-label="Help">?</button>
+      <div class="avatar" aria-hidden="true">ZA</div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="Workspace modules">
+      <div class="side-head">
+        <div class="ws-label">
+          <div class="ws-glyph">&#9632;</div>
+          <div>
+            <div class="ws-title">Workspace</div>
+            <div class="ws-sub">APT-LABS &#8226; dark signature</div>
+          </div>
+        </div>
+      </div>
+      <div class="side-scroll">
+        <div class="section-label">Modules</div>
+        <button class="nav-item" title="Commons"><span>Commons</span><span class="mod">needs &#8226; offers</span></button>
+        <button class="nav-item" title="Network"><span>Network</span><span class="mod">people &#8226; assets</span></button>
+        <button class="nav-item" title="Workbench"><span>Workbench</span><span class="mod">scope &#8226; coordinate</span></button>
+        <button class="nav-item is-active" title="Records"><span>Records</span><span class="mod">canon &#8226; annals &#8226; roll</span></button>
+        <button class="nav-item" title="Intelligence"><span>Intelligence</span><span class="mod">agents &#8226; matching</span></button>
+        <div class="section-label" style="margin-top:14px">Within Records</div>
+        <button class="nav-item"><span>Roll</span><span class="mod">evidence ledger</span></button>
+        <button class="nav-item"><span>Canon</span><span class="mod">qualified state</span></button>
+        <button class="nav-item"><span>Annals</span><span class="mod">chronology</span></button>
+      </div>
+      <div class="sidefoot">
+        <b style="color:var(--fg-strong)">Roll entry</b>
+        <div style="margin-top:4px">One substantiated record. Evidence layers, acceptance block, and SHA-256 hash anchor verified in-browser.</div>
+      </div>
+    </aside>
+
+    <main aria-label="Roll evidence ledger" tabindex="-1">
+      <div class="inner">
+        <div class="pagehead">
+          <p class="eyebrow">APT-LABS <span style="color:#4a554b" aria-hidden="true">/</span> ROLL</p>
+          <h1 class="page-title">Evidence ledger</h1>
+          <div class="readout"><b>Record:</b> roll-2026-10-17-03 <b>Kind:</b> physical-asset <b>Status:</b> accepted</div>
+        </div>
+        <hr class="rule">
+
+        <section class="section">
+          <div class="roll-head">
+            <div class="roll-meta">
+              <div class="roll-id">roll-2026-10-17-03</div>
+              <div class="roll-type">undertaking &#8226; physical-asset</div>
+              <span class="roll-status accepted">accepted</span>
+            </div>
+            <div class="roll-actions">
+              <button class="btn ghost" title="Open in Canon"><span style="color:var(--muted)" aria-hidden="true">&#8592;</span> Canon state</button>
+              <button class="btn ghost" title="Open in Annals"><span style="color:var(--muted)" aria-hidden="true">&#8592;</span> Annals chronology</button>
+              <button class="btn primary">Verify SHA-256 anchor</button>
+            </div>
+          </div>
+
+          <div class="entry">
+            <div class="entry-head">
+              <h2 class="entry-title">Kibera workshop bench set</h2>
+              <div class="entry-meta">
+                <div class="evidence-band public"><span class="dot"></span>public <b>4</b></div>
+                <div class="evidence-band participant"><span class="dot"></span>participant <b>2</b></div>
+                <div class="evidence-band restricted"><span class="dot"></span>restricted <b>1</b></div>
+              </div>
+            </div>
+
+            <div class="section" style="margin:0">
+              <div class="section-head" style="margin-bottom:10px">
+                <h2 style="font-size:var(--step-1)">Evidence layers</h2>
+                <span class="count">7 items across 3 layers</span>
+              </div>
+              <div class="layers">
+                <div class="layer">
+                  <span class="layer-label">public</span>
+                  <div class="layer-items">
+                    <div class="layer-item"><span class="item-title">Undertaking scope &amp; terms</span><span class="item-kind">document &#8226; signed</span></div>
+                    <div class="layer-item"><span class="item-title">Blueprint: workbench top &#215;4</span><span class="item-kind">media &#8226; PDF</span></div>
+                    <div class="layer-item"><span class="item-title">Delivery photo (on-site)</span><span class="item-kind">image &#8226; 2026-10-16</span></div>
+                    <div class="layer-item"><span class="item-title">Commissioning institution</span><span class="item-kind">Kibera Makerspace</span></div>
+                  </div>
+                  <div class="layer-control"><button class="btn ghost">View layer</button></div>
+                </div>
+                <div class="layer">
+                  <span class="layer-label">participant</span>
+                  <div class="layer-items">
+                    <div class="layer-item"><span class="item-title">Anchor sign-off (master tradesperson)</span><span class="item-kind">attestation &#8226; verified</span></div>
+                    <div class="layer-item"><span class="item-title">Builder delivery note</span><span class="item-kind">note &#8226; contributor</span></div>
+                  </div>
+                  <div class="layer-control"><button class="btn ghost">View layer</button></div>
+                </div>
+                <div class="layer">
+                  <span class="layer-label">restricted</span>
+                  <div class="layer-items">
+                    <div class="layer-item"><span class="item-title">Wage settlement receipt</span><span class="item-kind">financial &#8226; payee-consented</span></div>
+                  </div>
+                  <div class="layer-control"><button class="btn ghost" style="color:var(--dim)">Access governed</button></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section" style="margin:26px 0 0 0">
+              <div class="section-head" style="margin-bottom:10px">
+                <h2 style="font-size:var(--step-1)">Acceptance</h2>
+                <span class="count">Accepted &#8226; 2026-10-17</span>
+              </div>
+              <div class="acceptance">
+                <div><span class="acc-label">Accepted by</span><div class="acc-value"><strong>Anchor &#8226; Kibera Makerspace</strong></div></div>
+                <div><span class="acc-label">At</span><div class="acc-value"><strong>2026-10-17 14:20 EAT</strong></div></div>
+                <div><span class="acc-label">Hash anchor</span><div class="acc-value"><code class="hash">e3b0c442&#8230;4fc8</code></div></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="verify">
+            <div class="verify-head">
+              <h3>Integrity check</h3>
+              <span class="tag">recomputed in-browser</span>
+            </div>
+            <div class="verify-body">
+              <div class="compare">
+                <div class="field">
+                  <span class="lbl">Stored hash anchor</span>
+                  <div class="val">e3b0c4&#8230;4fc828</div>
+                </div>
+                <div class="field">
+                  <span class="lbl">Computed SHA-256</span>
+                  <div class="val">e3b0c4&#8230;4fc828</div>
+                </div>
+              </div>
+              <div class="result">
+                <div class="ok" aria-hidden="true"></div>
+                <div class="msg"><b>Canonical fields match the stored SHA-256.</b> This confirms a digest match for the committed fields only; it does not verify the claims, identity, acceptance, or evidence itself.</div>
+              </div>
+              <p class="note"><strong>Committed fields:</strong> undertaking ID and type, title, scope, deliverables, commissioner, participants, acceptance. <strong>Not committed:</strong> evidence objects/files, reusable designs, maintenance obligations, recording metadata, version.</p>
+              <details>
+                <summary>Inspect canonical JSON used for this comparison</summary>
+                <div class="json-wrap"><pre class="json"><code>{&quot;undertakingId&quot;:&quot;roll-2026-10-17-03&quot;,&quot;type&quot;:&quot;physical-asset&quot;,&quot;title&quot;:&quot;Kibera workshop bench set&quot;,&quot;scope&quot;:[&quot;workbench top &#215;4&quot;,&quot;bench vice &#215;4&quot;,&quot;tool cabinet &#215;2&quot;,&quot;safety signage &#215;1&quot;]},&quot;commissioner&quot;:&quot;Kibera Makerspace&quot;,&quot;participants&quot;:[{&quot;role&quot;:&quot;anchor&quot;,&quot;actor&quot;:&quot;person-09&quot;},{&quot;role&quot;:&quot;builder&quot;,&quot;actor&quot;:&quot;person-12&quot;},{&quot;role&quot;:&quot;apprentice&quot;,&quot;actor&quot;:&quot;person-21&quot;}],&quot;acceptance&quot;:{&quot;acceptedBy&quot;:&quot;person-09&quot;,&quot;acceptedAt&quot;:&quot;2026-10-17T14:20:00+03:00&quot;},&quot;hashAnchor&quot;:&quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;}</code></pre></div>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        <p style="margin-top:18px;font:10px var(--mono);color:var(--dim);letter-spacing:.12em">Local demo &#8212; synthetic records stay in this browser. Sample acceptance and visibility labels are not authoritative.</p>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>
