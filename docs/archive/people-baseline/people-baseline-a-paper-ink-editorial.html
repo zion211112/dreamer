@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>People · APT-LABS Studio</title>
+<style>
+  /* ============================================================================
+     APT-LABS — People Module · Baseline A · Paper & Ink Editorial
+     Inspiration: imagesinspirationextreme (Tuko rada. cream studio + antislop workspace)
+     Cream paper, deep ink, acid green, serif headlines, offset print shadows,
+     geometric dot grid. People module only — no shell chrome.
+     ============================================================================ */
+  :root{
+    --paper:#e9e7df;--surface:#f2f0e9;--surface2:#e3e1d8;--ink:#20231f;
+    --muted:#74776e;--line:#c9c8bd;--acid:#d5f15b;--blue:#b9d4df;--coral:#e6a18a;
+    --serif:Georgia,'Times New Roman',serif;--sans:Inter,ui-sans-serif,system-ui,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(--sans)}
+  body{
+    font-size:13px;line-height:1.5;
+    background:
+      radial-gradient(ellipse at 18% 22%,rgba(32,35,31,.07),transparent 42%),
+      radial-gradient(ellipse at 82% 78%,rgba(32,35,31,.05),transparent 42%),
+      var(--paper);
+    background-image:
+      radial-gradient(var(--ink) 0.6px,transparent 0.6px);
+    background-size:26px 26px;
+  }
+
+  /* Hero band — full bleed editorial, inspiration image as backdrop */
+  .hero{
+    position:relative;padding:46px clamp(18px,3.5vw,60px) 40px;
+    overflow:hidden;
+  }
+  .hero img.backdrop{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55;
+    pointer-events:none;z-index:0;
+  }
+  .hero::after{
+    content:"";position:absolute;inset:0;background:linear-gradient(180deg,var(--paper) 0%,var(--paper) 55%,rgba(233,231,223,.7) 100%);
+    z-index:1;pointer-events:none;
+  }
+  .hero-content{position:relative;z-index:2;max-width:1300px;margin:0 auto;display:flex;flex-direction:column;gap:14px;}
+  .eyebrow{
+    display:flex;align-items:center;gap:10px;font:700 9px var(--mono);letter-spacing:.17em;color:var(--muted);text-transform:uppercase;
+  }
+  .eyebrow .rule{width:24px;height:2px;background:var(--ink);flex-shrink:0;}
+  h1{font:800 clamp(40px,6vw,72px)/.92 var(--serif);letter-spacing:-.06em;margin:0;color:var(--ink);}
+  .page-desc{font:400 14px/1.6 var(--sans);color:var(--muted);max-width:620px;margin:0;}
+  .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:2px;}
+  .btn{
+    border:1px solid var(--ink);background:var(--surface);color:var(--ink);padding:10px 15px;font-size:11px;font-weight:750;
+    box-shadow:2px 2px 0 var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn:hover{background:var(--acid);transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink);}
+  .btn.primary{background:var(--acid);color:var(--ink);font-weight:800;}
+
+  .shell{padding:0 clamp(18px,3.5vw,60px) 52px;max-width:1500px;margin:0 auto;}
+  .meta{
+    display:flex;align-items:center;gap:16px;font:600 10px var(--mono);color:var(--muted);letter-spacing:.1em;text-transform:uppercase;
+    border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:26px;
+  }
+  .meta .dot{width:6px;height:6px;border-radius:50%;background:var(--acid);box-shadow:0 0 10px var(--acid);}
+
+  /* Directory grid — editorial panels, not uniform cards */
+  .grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(290px,.85fr);gap:15px;}
+  .panel{border:1px solid var(--ink);background:var(--surface);min-width:0;}
+  .panel-head{padding:12px 16px;border-bottom:1px solid var(--ink);display:flex;justify-content:space-between;align-items:center;}
+  .panel-head b{font-size:11px;letter-spacing:.05em;}
+  .panel-head span{font:9px var(--mono);color:var(--muted);}
+  .panel-body{padding:15px 16px;}
+
+  .list{display:grid;}
+  .item{
+    display:grid;grid-template-columns:30px 1fr auto;gap:11px;align-items:center;
+    padding:12px 2px;border-bottom:1px solid var(--line);
+  }
+  .item:last-child{border-bottom:0;}
+  .tile{
+    width:29px;height:29px;border:1px solid var(--ink);display:grid;place-items:center;background:var(--blue);
+    font:700 11px var(--mono);color:var(--ink);
+  }
+  .item:nth-child(2) .tile{background:var(--coral);color:#2d1f1a;}
+  .item:nth-child(3) .tile{background:var(--acid);color:var(--ink);}
+  .item:nth-child(4) .tile{background:var(--surface2);color:var(--muted);}
+  .item b{font-size:11px;display:block;letter-spacing:-.01em;}
+  .item small{font-size:9px;color:var(--muted);display:block;margin-top:3px;}
+  .item .pill{
+    font:700 9px var(--mono);border:1px solid var(--line);padding:4px 7px;white-space:nowrap;color:var(--ink);
+  }
+  .item .pill.live{background:#e4edc5;border-color:#9eb15c;}
+
+  /* Inspector panel */
+  .inspector{position:sticky;top:24px;align-self:start;}
+  .inspector .panel{height:fit-content;}
+  .profile{display:flex;align-items:center;gap:12px;margin:14px 0 16px;}
+  .avatar{
+    width:44px;height:44px;border:1px solid var(--ink);border-radius:11px;display:grid;place-items:center;
+    background:var(--coral);color:#2d1f1a;font:700 15px var(--mono);
+  }
+  .profile-name{font:700 16px var(--serif);letter-spacing:-.02em;}
+  .profile-role{font-size:9px;color:var(--muted);margin-top:2px;}
+  .status-line{font-size:9px;color:var(--acid);font-weight:700;letter-spacing:.05em;margin-top:5px;display:flex;align-items:center;gap:6px;}
+  .status-line .dot{width:5px;height:5px;background:var(--acid);border-radius:50%;box-shadow:0 0 8px var(--acid);}
+  .property-group{border-top:1px solid var(--line);padding:13px 0;}
+  .prop-heading{font:700 9px var(--mono);letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:11px;display:flex;justify-content:space-between;}
+  .prop-row{display:flex;justify-content:space-between;gap:8px;margin:8px 0;}
+  .prop-label{font-size:9px;color:var(--muted);}
+  .prop-value{font-size:9px;color:var(--ink);text-align:right;min-width:110px;}
+  .tag-list{display:flex;gap:6px;flex-wrap:wrap;}
+  .tag{font-size:8px;padding:4px 7px;background:var(--surface2);border:1px solid var(--line);border-radius:5px;color:var(--muted);}
+  .relation{display:flex;align-items:center;gap:8px;margin:9px 0;font-size:9px;color:var(--muted);}
+  .relation-badge{width:20px;height:20px;border-radius:5px;display:grid;place-items:center;background:var(--ink);color:var(--acid);font:700 8px var(--mono);}
+  .relation b{color:var(--ink);font-size:10px;letter-spacing:-.01em;}
+  .relation small{color:var(--muted);margin-left:auto;font:8px var(--mono);}
+
+  .empty{padding:26px;text-align:center;color:var(--muted);font:11px var(--mono);}
+
+  @media(max-width:900px){
+    .grid{grid-template-columns:1fr;}
+    .inspector{position:static;}
+    .shell{padding:0 16px 40px;}
+    h1{font-size:36px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <img class="backdrop" src="../../imagesinspirationextreme/83244848-66b6-4cb8-964f-78f75110c556.png" alt="">
+  <div class="hero-content">
+    <div class="eyebrow"><span class="rule" aria-hidden="true"></span><span>STUDIO &nbsp;/&nbsp; NETWORK</span></div>
+    <h1>People are capability.</h1>
+    <p class="page-desc">Profiles are only the surface. Map what people know, do, and enable — connected by work and evidence.</p>
+    <div class="actions">
+      <button class="btn primary">＋ Add person</button>
+      <button class="btn">Export record</button>
+    </div>
+  </div>
+</div>
+
+<div class="shell">
+  <div class="meta"><span class="dot" aria-hidden="true"></span><span>CAPABILITY DIRECTORY</span><span>·</span><span>128 RECORDS</span><span>·</span><span>SORTED BY RELEVANCE</span></div>
+
+  <div class="grid">
+    <section class="panel">
+      <div class="panel-head"><b>People directory</b><span>128 records</span></div>
+      <div class="panel-body">
+        <div class="list" id="directory"></div>
+      </div>
+    </section>
+
+    <aside class="inspector">
+      <div class="panel">
+        <div class="panel-head"><b>Inspector</b><span>Selected node</span></div>
+        <div class="panel-body" id="inspector">
+          <div class="empty">Select a person to inspect</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+  const PEOPLE = [
+    { id:'p-1', name:'James Miano', role:'Systems builder · Fikra API', location:'Nairobi', capabilities:['Systems design','API integration','Product strategy','Coordination'], basis:'local-profile', summary:'Designs systems across APT-LABS and Kemetos1; contribution records are linked below.', connections:[{label:'Fikra API',type:'asset',rel:'partner'},{label:'Commons infrastructure',type:'work',rel:'work'},{label:'API specification',type:'evidence',rel:'evidence'}] },
+    { id:'p-2', name:'Amina Wanjiku', role:'Researcher · Research crew', location:'Oaxaca', capabilities:['Research','Synthesis','Data analysis'], basis:'local-profile', summary:'Helps member-owned teams turn shared priorities into practical work.', connections:[{label:'Research Crew',type:'crew',rel:'member of'}] },
+    { id:'p-3', name:'Peter Mwangi', role:'Operations · Kirinyaga', location:'Kirinyaga', capabilities:['Operations','Field delivery','Training'], basis:'project-reported', summary:'Documents local conditions and makes technical decisions easier to verify.', connections:[{label:'Kirinyaga schools',type:'institution',rel:'works with'}] },
+    { id:'p-4', name:'Nia Wanjiru', role:'Field systems designer', location:'Nairobi', capabilities:['Systems design','Community research','Solar planning'], basis:'local-profile', summary:'Turns local infrastructure needs into maintainable, community-run systems.', connections:[{label:'Field Systems Crew',type:'crew',rel:'member of'}] },
+    { id:'p-5', name:'Jabari Otieno', role:'Solar technician', location:'Nairobi', capabilities:['Electrical systems','Solar maintenance','Safety'], basis:'local-profile', summary:'Installs and maintains small-scale energy systems with local crews.', connections:[{label:'Field Systems Crew',type:'crew',rel:'member of'}] },
+    { id:'p-6', name:'Lucia Santos', role:'Cooperative facilitator', location:'Oaxaca', capabilities:['Facilitation','Cooperative governance','Training'], basis:'local-profile', summary:'Helps member-owned teams turn shared priorities into practical work.', connections:[{label:'Mtaa Repair Circle',type:'crew',rel:'member of'}] },
+    { id:'p-7', name:'Kwame Mensah', role:'Water systems researcher', location:'Accra', capabilities:['Field research','Water systems','Measurement'], basis:'project-reported', summary:'Documents local conditions and makes technical decisions easier to verify.', connections:[{label:'Water resilience audit',type:'work',rel:'researches'}] },
+    { id:'p-8', name:'Yuki Tanaka', role:'Knowledge steward', location:'Nairobi', capabilities:['Documentation','Open learning','Workshop design'], basis:'local-profile', summary:'Makes practical learning reusable through open guides and shared records.', connections:[{label:'Open Knowledge Stewards',type:'crew',rel:'member of'}] },
+    { id:'c-1', name:'Field Systems Crew', role:'Installation & maintenance', location:'Nairobi', capabilities:['Commissioning','Electrical safety','Field operations'], basis:'illustrative', summary:'A cross-disciplinary crew coordinating community infrastructure work.', connections:[{label:'Nia Wanjiru',type:'person',rel:'member of'},{label:'Microgrid commissioning',type:'work',rel:'delivers'}] },
+    { id:'c-2', name:'Open Knowledge Stewards', role:'Commons publishing', location:'Distributed', capabilities:['Editing','Archiving','Knowledge sharing'], basis:'illustrative', summary:'A small editorial crew shaping field experience into accessible public guides.', connections:[{label:'Yuki Tanaka',type:'person',rel:'member of'}] },
+    { id:'c-3', name:'Mtaa Repair Circle', role:'Repair & shared learning', location:'Nairobi', capabilities:['Repair','Peer learning','Tool stewardship'], basis:'illustrative', summary:'A neighborhood crew keeping useful tools in service and skills in circulation.', connections:[{label:'Lucia Santos',type:'person',rel:'member of'}] },
+  ];
+
+  const TILES = { 'p-1':'JM','p-2':'AW','p-3':'PM','p-4':'NW','p-5':'JO','p-6':'LS','p-7':'KM','p-8':'YT','c-1':'FC','c-2':'OK','c-3':'MR' };
+  const byId = new Map(PEOPLE.map(x=>[x.id,x]));
+
+  const dir = document.getElementById('directory');
+  const insp = document.getElementById('inspector');
+
+  function basisTag(p){
+    if(p.basis==='illustrative') return '<span class="tag" style="border-color:#e6a18a;color:#b04a3f">illustrative</span>';
+    if(p.basis==='local-profile') return '<span class="tag" style="border-color:#d5f15b;color:#4d6b1a">local-profile</span>';
+    return '<span class="tag" style="border-color:#b9d4df;color:#5a6a72">project-reported</span>';
+  }
+
+  function render(selected){
+    dir.innerHTML = PEOPLE.map((p,i)=>`
+      <div class="item${selected===p.id?' is-sel':''}" onclick="app.select('${p.id}')" role="button" tabindex="0">
+        <div class="tile">${TILES[p.id]||p.id.slice(0,2).toUpperCase()}</div>
+        <div>
+          <b>${p.name}</b>
+          <small>${p.role} · ${p.location}</small>
+        </div>
+        <span class="pill">${i+1}</span>
+      </div>
+    `).join('');
+    renderInspector(selected);
+  }
+
+  function renderInspector(id){
+    const p = byId.get(id);
+    if(!p){ insp.innerHTML = '<div class="empty">Select a person to inspect</div>'; return; }
+    const conns = p.connections.map(c=>`
+      <div class="relation"><span class="relation-badge">${c.type.slice(0,1).toUpperCase()}</span><b>${c.label}</b><small>${c.rel}</small></div>
+    `).join('');
+    const caps = p.capabilities.map(c=>`<span class="tag">${c}</span>`).join('');
+    insp.innerHTML = `
+      <div class="profile">
+        <div class="avatar">${TILES[p.id]||p.id.slice(0,2).toUpperCase()}</div>
+        <div>
+          <div class="profile-name">${p.name}</div>
+          <div class="profile-role">${p.role}</div>
+          <div class="status-line"><span class="dot" aria-hidden="true"></span><span>${p.basis==='illustrative'?'Illustrative':'Owner-held record'}</span></div>
+        </div>
+      </div>
+      <p style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:14px;">${p.summary}</p>
+      <div class="property-group"><div class="prop-heading">Record basis ${basisTag(p)}</div>
+        <div class="prop-row"><span class="prop-label">Location</span><span class="prop-value">${p.location}</span></div>
+      </div>
+      <div class="property-group"><div class="prop-heading">Capabilities</div><div class="tag-list">${caps}</div></div>
+      <div class="property-group"><div class="prop-heading">Connected to</div>${conns}</div>
+    `;
+  }
+
+  window.app = { select:(id)=>{ document.querySelectorAll('.item').forEach(el=>el.classList.toggle('is-sel', el.onclick && false)); render(id); } };
+  // simple selection highlight via dataset
+  (function(){
+    dir.addEventListener('click',e=>{
+      const item = e.target.closest('.item');
+      if(!item) return;
+      const id = item.id;
+      document.querySelectorAll('.item').forEach(el=>el.classList.remove('is-sel'));
+      item.classList.add('is-sel');
+      render(id);
+    });
+  })();
+
+  render(null);
+</script>
+</body>
+</html>

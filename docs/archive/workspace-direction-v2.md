@@ -1,8 +1,10 @@
 # APT-LABS — Workspace Direction v2 (SUPERSEDED)
 
-**This document is superseded.** The design direction it describes (dark signature as default, dark palette in `:root`) was replaced by the **Light Luxury** default implemented in `src/tokens.css` (light mode is `:root` default, dark moved to `[data-skin="dark"]`).
+**This document is superseded.** Superseded by the APT-LABS Constitution refoundation (`docs/design/charter.md`, 2026-11-10). The design direction it describes (dark signature as default, dark palette in `:root`) was replaced by the **Light Luxury** default implemented in `src/tokens.css` (light mode is `:root` default, dark moved to `[data-skin="dark"]`).
 
-See `docs/APT-LABS-SYSTEM.md` for the current consolidated system reference, including the end-to-end flow, three demo scenarios, design tokens, and architecture.
+The Signature Dark Instrument direction from this document is now carried as a mutable product and design decision (Decision B4) in the charter, with implementation requiring separate authorization. See `docs/APT-LABS-SYSTEM.md` for the current consolidated system reference.
+
+This document is historical reference only; it does not define current authority.
 
 ---
 

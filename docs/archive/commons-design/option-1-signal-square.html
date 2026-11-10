@@ -1,0 +1,182 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Benben-OS Commons — The Signal Square</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f7f5f0;
+    --fg: #1a1d18;
+    --muted: #6b7066;
+    --line: rgba(26,29,24,.12);
+    --terrain: #5d7a5c;
+    --terrain-pale: #e4ebe3;
+    --brand-main: #295d70;
+    --brass: #b8955a;
+    --danger: #a84632;
+    --phosphor: #8fd98f;
+    --serif: Georgia, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI Variable", sans-serif;
+    --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+    --radius-3: 8px;
+    --space-2: 16px;
+    --space-4: 32px;
+    --shadow-1: 0 1px 2px rgba(26,29,24,.06), 0 1px 4px rgba(26,29,24,.04);
+  }
+  body { font-family: var(--sans); background: var(--bg); color: var(--fg); line-height: 1.5; }
+  .shell { max-width: 1200px; margin: 0 auto; padding: 0 var(--space-4); }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4) 0; border-bottom: 1px solid var(--line); margin-bottom: var(--space-6); }
+  .brand { font-family: var(--serif); font-size: 1.5rem; font-weight: 600; letter-spacing: .02em; display: flex; align-items: center; gap: var(--space-2); }
+  .mark { width: 32px; height: 32px; border-radius: var(--radius-3); background: var(--brand-main); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+  .context { font-family: var(--mono); font-size: .75rem; color: var(--muted); letter-spacing: .1em; }
+  .actions { display: flex; gap: var(--space-2); }
+  .btn { display: inline-flex; align-items: center; gap: var(--space-2); padding: 10px 18px; border: 1px solid var(--line); border-radius: var(--radius-3); background: #fff; color: var(--fg); font-family: var(--sans); font-size: .875rem; cursor: pointer; transition: all .12s ease; }
+  .btn:hover { border-color: var(--fg); }
+  .btn--primary { background: var(--brand-main); border-color: var(--brand-main); color: #fff; }
+  .btn--ghost { background: transparent; }
+  .rail { display: flex; gap: var(--space-2); padding: var(--space-4) 0; border-bottom: 1px solid var(--line); margin-bottom: var(--space-6); overflow-x: auto; }
+  .rail-item { padding: 10px 16px; border: 1px solid var(--line); border-radius: var(--radius-3); background: #fff; color: var(--muted); font-family: var(--mono); font-size: .8125rem; cursor: pointer; white-space: nowrap; }
+  .rail-item.active { border-color: var(--brand-main); color: var(--brand-main); background: #eef4f7; }
+  .page-head { display: flex; flex-direction: column; gap: var(--space-2); margin-bottom: var(--space-6); }
+  .eyebrow { font-family: var(--mono); font-size: .75rem; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+  h1 { font-family: var(--serif); font-size: 2rem; font-weight: 400; letter-spacing: .01em; }
+  .sub { font-size: 1rem; color: var(--muted); }
+  .signals { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: var(--space-4); }
+  .signal-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-3); padding: var(--space-4); box-shadow: var(--shadow-1); transition: transform .12s ease, box-shadow .12s ease; position: relative; overflow: hidden; }
+  .signal-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(26,29,24,.10); border-color: rgba(26,29,24,.22); }
+  .signal-card::before { content: ""; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--terrain); }
+  .signal-card.urgent::before { background: var(--danger); }
+  .signal-card.opportunity::before { background: var(--phosphor); }
+  .signal-meta { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2); margin-bottom: var(--space-2); }
+  .signal-id { font-family: var(--mono); font-size: .75rem; color: var(--muted); }
+  .signal-type { font-family: var(--mono); font-size: .75rem; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--line); background: var(--terrain-pale); color: var(--terrain); font-weight: 600; }
+  .signal-title { font-family: var(--serif); font-size: 1.125rem; font-weight: 600; margin-bottom: var(--space-2); line-height: 1.3; }
+  .signal-body { font-size: .9375rem; color: var(--fg); margin-bottom: var(--space-3); line-height: 1.5; }
+  .signal-footer { display: flex; justify-content: space-between; align-items: center; padding-top: var(--space-3); border-top: 1px solid rgba(26,29,24,.06); }
+  .signal-actor { font-family: var(--mono); font-size: .8125rem; color: var(--muted); display: flex; align-items: center; gap: var(--space-2); }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; background: #e4ebe3; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-weight: 700; font-size: .8125rem; color: #2e3d2d; }
+  .signal-value { font-family: var(--mono); font-size: 1rem; font-weight: 700; color: var(--brand-main); }
+  .signal-status { font-family: var(--mono); font-size: .75rem; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--line); background: #fff; color: var(--muted); }
+  .signal-status.new { border-color: var(--brand-main); color: var(--brand-main); }
+  .bottombar { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4) 0; border-top: 1px solid var(--line); margin-top: var(--space-8); }
+  .stats { font-family: var(--mono); font-size: .8125rem; color: var(--muted); }
+  .footer-links { display: flex; gap: var(--space-4); }
+  .footer-links a { font-family: var(--mono); font-size: .8125rem; color: var(--muted); text-decoration: none; }
+  .footer-links a:hover { color: var(--fg); text-decoration: underline; }
+  @media (max-width: 640px) { .signals { grid-template-columns: 1fr; } .rail-item { font-size: .75rem; padding: 8px 12px; } }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <div class="brand"><div class="mark">B</div><div>Benben-OS</div></div>
+    <div class="context">Commons · Signal Square</div>
+    <div class="actions">
+      <button class="btn btn--ghost">Search</button>
+      <button class="btn btn--primary">Express a need</button>
+    </div>
+  </header>
+  <nav class="rail">
+    <div class="rail-item active">Signals</div>
+    <div class="rail-item">Opportunities</div>
+    <div class="rail-item">Decisions</div>
+    <div class="rail-item">Map</div>
+  </nav>
+  <section class="page-head">
+    <p class="eyebrow">APT-LABS / COMMONS</p>
+    <h1>The Signal Square</h1>
+    <p class="sub">Needs, offers, and opportunities expressed by your community. Every signal is economic capacity waiting to connect.</p>
+  </section>
+  <div class="signals">
+    <article class="signal-card opportunity">
+      <div class="signal-meta">
+        <span class="signal-id">#S-0421</span>
+        <span class="signal-type">Need · Labor</span>
+      </div>
+      <div class="signal-title">Masonry crew for Thiba Hydro canal lining</div>
+      <div class="signal-body">Need 4 masons and 2 assistants for canal lining work starting Monday. Must have experience with stone masonry and concrete finishing. Tools provided.</div>
+      <div class="signal-footer">
+        <div class="signal-actor"><div class="avatar">JM</div><div>James Mwangi</div></div>
+        <span class="signal-value">KES 48,000</span>
+        <span class="signal-status new">New</span>
+      </div>
+    </article>
+    <article class="signal-card">
+      <div class="signal-meta">
+        <span class="signal-id">#S-0420</span>
+        <span class="signal-type">Offer · Equipment</span>
+      </div>
+      <div class="signal-title">Concrete mixer available for hire — Nyeri</div>
+      <div class="signal-body">900L electric concrete mixer in good working condition. Available daily or weekly rates. Delivery within 20km of Nyeri town.</div>
+      <div class="signal-footer">
+        <div class="signal-actor"><div class="avatar">WK</div><div>Wambui Karimi</div></div>
+        <span class="signal-value">KES 2,500 / day</span>
+        <span class="signal-status new">New</span>
+      </div>
+    </article>
+    <article class="signal-card urgent">
+      <div class="signal-meta">
+        <span class="signal-id">#S-0419</span>
+        <span class="signal-type">Need · Urgent</span>
+      </div>
+      <div class="signal-title">Maize mill operator needed — this week</div>
+      <div class="signal-body">Harvest ready at Kirembe cooperative. Need experienced mill operator to run posho mill for 3 days. Immediate start.</div>
+      <div class="signal-footer">
+        <div class="signal-actor"><div class="avatar">SN</div><div>Samuel Njoroge</div></div>
+        <span class="signal-value">KES 15,000</span>
+        <span class="signal-status new">New</span>
+      </div>
+    </article>
+    <article class="signal-card">
+      <div class="signal-meta">
+        <span class="signal-id">#S-0418</span>
+        <span class="signal-type">Offer · Skill</span>
+      </div>
+      <div class="signal-title">Certified electrician — wiring & troubleshooting</div>
+      <div class="signal-body">Registered wireman with 8 years experience. Residential and commercial wiring, fault finding, solar basic installation. Available in Nairobi and Kiambu.</div>
+      <div class="signal-footer">
+        <div class="signal-actor"><div class="avatar">OM</div><div>Otieno Moses</div></div>
+        <span class="signal-value">KES 3,000 / day</span>
+        <span class="signal-status new">New</span>
+      </div>
+    </article>
+    <article class="signal-card">
+      <div class="signal-meta">
+        <span class="signal-id">#S-0417</span>
+        <span class="signal-type">Need · Materials</span>
+      </div>
+      <div class="signal-title">50 bags of cement — Kisumu site</div>
+      <div class="signal-body">Need Portland cement for foundation work. Delivery to Kisumu industrial area by Friday. Bulk pricing preferred.</div>
+      <div class="signal-footer">
+        <div class="signal-actor"><div class="avatar">AK</div><div>Akinyi Karisa</div></div>
+        <span class="signal-value">KES 42,500</span>
+        <span class="signal-status new">New</span>
+      </div>
+    </article>
+    <article class="signal-card">
+      <div class="signal-meta">
+        <span class="signal-id">#S-0416</span>
+        <span class="signal-type">Offer · Transport</span>
+      </div>
+      <div class="signal-title">3-ton truck for hire — Nakuru to Eldoret</div>
+      <div class="signal-body">Available Tuesday and Thursday. Can carry building materials, farm produce, or general cargo. Driver with 10 years experience.</div>
+      <div class="signal-footer">
+        <div class="signal-actor"><div class="avatar">DK</div><div>David Koech</div></div>
+        <span class="signal-value">KES 8,000 / trip</span>
+        <span class="signal-status new">New</span>
+      </div>
+    </article>
+  </div>
+  <footer class="bottombar">
+    <div class="stats">42 signals · 18 triaged this week · KES 2.4M value active</div>
+    <div class="footer-links">
+      <a href="#">Network</a>
+      <a href="#">Workbench</a>
+      <a href="#">Records</a>
+    </div>
+  </footer>
+</div>
+</body>
+</html>
