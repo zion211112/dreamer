@@ -12,7 +12,6 @@ interface InputProps {
   min?: number;
   step?: number;
   className?: string;
-  style?: Record<string, string>;
   'aria-invalid'?: boolean;
   'aria-describedby'?: string;
 }
@@ -31,7 +30,6 @@ export function Input({
   min,
   step,
   className = '',
-  style = {},
   'aria-invalid': ariaInvalid,
   'aria-describedby': ariaDescribedby,
 }: InputProps) {
@@ -50,7 +48,6 @@ export function Input({
       min={min}
       step={step}
       className={`input ${className}`}
-      style={style}
       aria-invalid={ariaInvalid}
       aria-describedby={ariaDescribedby}
     />

@@ -1,12 +1,11 @@
 interface CardProps {
   children: any;
   className?: string;
-  style?: Record<string, string>;
 }
 
-export function Card({ children, className = '', style = {} }: CardProps) {
+export function Card({ children, className = '' }: CardProps) {
   return (
-    <div className={`panel ${className}`} style={style}>
+    <div className={`panel ${className}`}>
       {children}
     </div>
   );
@@ -15,12 +14,11 @@ export function Card({ children, className = '', style = {} }: CardProps) {
 interface CardHeadProps {
   children: any;
   className?: string;
-  style?: Record<string, string>;
 }
 
-export function CardHead({ children, className = '', style = {} }: CardHeadProps) {
+export function CardHead({ children, className = '' }: CardHeadProps) {
   return (
-    <div className={`panel-head ${className}`} style={style}>
+    <div className={`panel-head ${className}`}>
       {children}
     </div>
   );
@@ -29,12 +27,11 @@ export function CardHead({ children, className = '', style = {} }: CardHeadProps
 interface CardBodyProps {
   children: any;
   className?: string;
-  style?: Record<string, string>;
 }
 
-export function CardBody({ children, className = '', style = {} }: CardBodyProps) {
+export function CardBody({ children, className = '' }: CardBodyProps) {
   return (
-    <div className={`panel-body ${className}`} style={style}>
+    <div className={`panel-body ${className}`}>
       {children}
     </div>
   );
@@ -43,12 +40,11 @@ export function CardBody({ children, className = '', style = {} }: CardBodyProps
 interface CardFootProps {
   children: any;
   className?: string;
-  style?: Record<string, string>;
 }
 
-export function CardFoot({ children, className = '', style = {} }: CardFootProps) {
+export function CardFoot({ children, className = '' }: CardFootProps) {
   return (
-    <div className={`panel-foot ${className}`} style={style}>
+    <div className={`panel-foot ${className}`}>
       {children}
     </div>
   );
