@@ -478,6 +478,63 @@
   box-shadow: 0 0 0 3px rgba(127, 197, 188, 0.2);
 }
 
+/* ---------- Step badge (diagram-design: editorial, 4px grid, 1px hairlines) ---------- */
+.wb-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-3);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--bg-elev);
+}
+
+/* ---------- Call sheet tag (caveman: lean, no padding, answer first) ---------- */
+.wb-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  font-weight: 600;
+  padding: 1px var(--space-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  color: var(--muted);
+  background: transparent;
+}
+
+.wb-tag--call-sheet { color: var(--state-proposed); border-color: var(--state-proposed); }
+.wb-tag--credential { color: var(--state-canon); border-color: var(--state-canon); }
+
+/* ---------- Call sheet brief (caveman: one idea per sentence, exact numbers) ---------- */
+.wb-call-sheet-brief {
+  font-family: var(--sans);
+  font-size: var(--step--1);
+  color: var(--muted);
+  margin: var(--space-1) 0 0 0;
+}
+
+/* ---------- Escrow state (impeccable: deterministic, shared vocabulary) ---------- */
+.wb-escrow-state {
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  font-weight: 600;
+  color: var(--state-canon);
+}
+
+/* ---------- Verification state (ponytail: lightweight following) ---------- */
+.wb-verification-state {
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  color: var(--state-canon);
+}
+
 @media (max-width: 640px) {
   .wb-page { padding: var(--space-3) var(--space-4); }
   .wb-path-row,

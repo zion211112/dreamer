@@ -7,6 +7,7 @@ import {
   GATE_LABELS,
   GATE_COLORS,
   GATE_FORK,
+  CALL_SHEET_STEP,
 } from '../data';
 import '../styles/workbench.css';
 
@@ -24,55 +25,74 @@ export function Pilot() {
       </div>
     );
   }
-
-  const proposedCount = items.filter((i) => i.gate === 'proposed').length;
-  const authorizedCount = items.filter((i) => i.gate === 'authorized').length;
-  const inExecutionCount = items.filter((i) => i.gate === 'in_execution').length;
-
-  return (
+  return (
     <div className="wb-root">
       <div className="wb-page">
         <PageHead
-          eyebrow={`Pilot · ${pilot.location}`}
+          eyebrow={`Pilot ${pilot.location}`}
           title={pilot.label}
           subtitle={pilot.terms}
-          metrics={[
-            { label: 'Proposed', value: proposedCount, state: 'proposed' },
-            { label: 'Authorized', value: authorizedCount, state: 'canon' },
-            { label: 'In execution', value: inExecutionCount, state: 'canon' },
-          ]}
         />
 
         <section className="wb-grid">
           <h2 className="wb-section-title">Undertakings</h2>
           <div className="wb-paths">
-            {items.map((item) => (
-              <div key={item.id} className="wb-item-row">
-                <div>
-                  <h3 className="wb-item-title">{item.title}</h3>
-                  <p className="wb-item-meta">
-                    {item.discipline} · {item.location}
-                  </p>
-                </div>
-                <span
-                  className={`wb-gate wb-gate--${GATE_COLORS[item.gate]}`}
-                >
-                  {GATE_FORK[item.gate] ? '└─ ' : ''}
-                  {GATE_LABELS[item.gate]}
-                </span>
-                <span className="wb-item-value wb-item-value--published">
-                  {item.publishedValue || '—'}
-                </span>
-                <span className="wb-evidence">
-                  {item.evidence.map((layer) => (
+            {items.map((item) => {
+              const step = CALL_SHEET_STEP[item.gate];
+              return (
+                <div key={item.id} className="wb-item-row">
+                  <div>
+                    <h3 className="wb-item-title">{item.title}</h3>
+                    <p className="wb-item-meta">
+                      {item.discipline} {item.location}
+                    </p>
+                    {item.callSheet && (
+                      <p className="wb-call-sheet-brief">{item.callSheet.scope}</p>
+                    )}
+                  </div>
+                  <span className="wb-gate-group">
                     <span
-                      key={layer}
-                      className={`wb-evidence-ring wb-evidence-ring--${layer}`}
-                    />
-                  ))}
-                </span>
-              </div>
-            ))}
+                      className={`wb-gate wb-gate--${GATE_COLORS[item.gate]}`}
+                    >
+                      <span className="wb-step">{step.step}</span>
+                      {GATE_FORK[item.gate] ? '└─ ' : ''}
+                      {GATE_LABELS[item.gate]}
+                    </span>
+                    {item.callSheet && (
+                      <span className="wb-tag wb-tag--call-sheet">CS</span>
+                    )}
+                    {item.credential && (
+                      <span className="wb-tag wb-tag--credential">{item.credential}</span>
+                    )}
+                  </span>
+                  <span className="wb-value-group">
+                    <span className="wb-item-value wb-item-value--published">
+                      {item.publishedValue || '—'}
+                    </span>
+                    {item.capital.escrowed !== undefined && (
+                      <span className="wb-escrow-state">
+                        {item.capital.escrowed ? 'locked' : 'open'}
+                      </span>
+                    )}
+                  </span>
+                  <span className="wb-evidence-group">
+                    <span className="wb-evidence">
+                      {item.evidence.map((layer) => (
+                        <span
+                          key={layer}
+                          className={`wb-evidence-ring wb-evidence-ring--${layer}`}
+                        />
+                      ))}
+                    </span>
+                    {item.verification && (
+                      <span className="wb-verification-state">
+                        {item.verification.attestationId}
+                      </span>
+                    )}
+                  </span>
+                </div>
+              );
+            })}
             {items.length === 0 && (
               <p className="wb-empty">No undertakings in this lane yet.</p>
             )}
@@ -82,3 +102,4 @@ export function Pilot() {
     </div>
   );
 }
+

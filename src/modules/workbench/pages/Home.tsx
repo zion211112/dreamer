@@ -8,7 +8,7 @@ export function Workbench() {
     <div className="wb-root">
       <div className="wb-page">
         <PageHead
-          eyebrow="APT-LABS / WORKBENCH"
+          eyebrow="APT-LABS / Workbench"
           title="Workbench"
           subtitle="Five pilot lanes. Published rates in KES; local stewardship, work stays in the community."
         />
