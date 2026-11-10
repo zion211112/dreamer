@@ -21,73 +21,111 @@ export type PilotKey =
   | 'mwea-animation-box'
   | 'open';
 
+/**
+ * Tender gate state machine. Each work item sits at exactly one gate. Gates
+ * are thresholds, not status badges: each shows what blocks it, who holds the
+ * key, and what evidence is required to cross.
+ */
+export type GateState =
+  | 'draft'
+  | 'proposed'
+  | 'in_review'
+  | 'pending_authorization'
+  | 'authorized'
+  | 'in_execution'
+  | 'pending_acceptance'
+  | 'accepted';
+
+export type EvidenceLayer = 'public' | 'participant' | 'restricted';
+
+export interface Capital {
+  /** KES committed to the undertaking. */
+  financial: number;
+  /** Materials and equipment provided. */
+  materials: string[];
+  /** Conditions that must be met before release. */
+  conditions: string[];
+  /** Whether committed resources have actually been deployed. */
+  deployed: boolean;
+}
+
+export interface Crew {
+  /** Anchor: holds authority, signs off, accepts delivery. */
+  anchor?: string;
+  /** Builder: accepts obligations, executes the work. */
+  builder?: string;
+  /** Apprentice: learns under supervision, optional. */
+  apprentice?: string;
+}
+
 export interface Pilot {
   key: PilotKey;
   label: string;
   href: string;
-  summary: string;
-  action: string;
+  character: string;
   location: string;
   terms: string;
-  character: string;
+  /** 'illustrative' = not yet live; 'published' = rates and terms are real. */
+  status: 'illustrative' | 'published';
+  steward: string;
 }
 
 /**
  * The five pilot lanes that ship inside the Workbench module. The registry is
  * intentionally open: additional pilots can be registered here without
  * changing any page or the router. No lane is a simulation — each is an
- * action surface where a steward can claim, track, and deliver real work.
+ * action surface where a steward can work through real undertakings.
  */
 export const PILOTS: readonly Pilot[] = [
   {
     key: 'benbenos',
     label: 'Benbenos',
     href: '/workspace/workbench/benbenos',
-    summary: 'School console and learning operations. Module upkeep, console stewardship, and learner records.',
-    action: 'Open Benbenos lane',
+    character: 'Learning operations',
     location: 'Nairobi',
     terms: 'Published rates in KES. Steward-owned; work stays with the local school.',
-    character: 'Learning operations',
+    status: 'published',
+    steward: 'School Console steward',
   },
   {
     key: 'kemetos',
     label: 'Kemetos',
     href: '/workspace/workbench/kemetos',
-    summary: 'Electrical and solar wiring work. Fault finding, residential and commercial wiring, basic solar installation.',
-    action: 'Open Kemetos lane',
+    character: 'Electrical and solar',
     location: 'Nairobi',
     terms: 'Published rates in KES. Certified electricians set their own day rate.',
-    character: 'Electrical and solar',
+    status: 'published',
+    steward: 'Kemetos steward',
   },
   {
     key: 'minihydro',
     label: 'Mini Hydro',
     href: '/workspace/workbench/minihydro',
-    summary: 'Micro-hydro power operations. Canal lining, turbine tending, and grid connection for off-grid villages.',
-    action: 'Open Mini Hydro lane',
+    character: 'Micro-hydro power',
     location: 'Thiba',
     terms: 'Published rates in KES. Community-owned power; crews are paid per trip and per task.',
-    character: 'Micro-hydro power',
+    status: 'published',
+    steward: 'Thiba community steward',
   },
   {
     key: 'mwea-animation-box',
     label: 'Mwea Animation Box',
     href: '/workspace/workbench/mwea-animation-box',
-    summary: 'Mwea irrigation and animation operations. Irrigation box operation and local animation content.',
-    action: 'Open Mwea Animation Box lane',
+    character: 'Irrigation and animation',
     location: 'Mwea',
     terms: 'Published rates in KES. Local operators run the box; animation value stays in Mwea.',
-    character: 'Irrigation and animation',
+    status: 'published',
+    steward: 'Mwea operators steward',
   },
   {
     key: 'open',
     label: 'Open pilot',
     href: '/workspace/workbench/open',
-    summary: 'Reserved for the next pilot. Register it here to add a new lane to the workbench.',
-    action: 'Register next pilot',
+    character: 'Open',
     location: '—',
     terms: 'Terms set when the pilot is registered.',
-    character: 'Open',
+    status: 'illustrative',
+    steward: '—',
   },
 ];
 
@@ -103,104 +141,199 @@ export function pilotByHref(href: string): Pilot | undefined {
 /* Work items — browser-local, illustrative, one source per pilot     */
 /* ------------------------------------------------------------------ */
 
-export type WorkItem = {
+export interface WorkItem {
   id: string;
   pilot: PilotKey;
   title: string;
   discipline: string;
-  value: string;
   location: string;
-  status: 'open' | 'claimed' | 'in-progress' | 'delivered' | 'accepted';
-  claimable: boolean;
-};
+  gate: GateState;
+  evidence: EvidenceLayer[];
+  capital: Capital;
+  crew: Crew;
+  /** Only shown when the pilot is published; illustrative lanes show gate instead. */
+  publishedValue?: string;
+}
 
 export const WORK_ITEMS: readonly WorkItem[] = [
-  // Benbenos
+  // Benbenos — published
   {
     id: 'wi-01',
     pilot: 'benbenos',
     title: 'Benbenos console upkeep',
     discipline: 'Learning operations',
-    value: 'KES 6,000',
     location: 'Nairobi',
-    status: 'open',
-    claimable: true,
+    gate: 'proposed',
+    evidence: ['public'],
+    capital: {
+      financial: 6000,
+      materials: ['Console parts', 'Learner record forms'],
+      conditions: ['Steward sign-off', 'Learner privacy check'],
+      deployed: false,
+    },
+    crew: { anchor: 'School Console steward', builder: '—', apprentice: '—' },
+    publishedValue: 'KES 6,000',
   },
   {
     id: 'wi-02',
     pilot: 'benbenos',
     title: 'Learner record audit',
     discipline: 'Records',
-    value: 'KES 4,000',
     location: 'Nairobi',
-    status: 'claimed',
-    claimable: false,
+    gate: 'in_execution',
+    evidence: ['public', 'participant'],
+    capital: {
+      financial: 4000,
+      materials: ['Record ledger', 'Hash anchor'],
+      conditions: ['Anchor authorization'],
+      deployed: true,
+    },
+    crew: { anchor: 'School Console steward', builder: 'Records clerk', apprentice: '—' },
+    publishedValue: 'KES 4,000',
   },
-  // Kemetos
+  // Kemetos — published
   {
     id: 'wi-03',
     pilot: 'kemetos',
     title: 'Kemetos AGI1 wiring',
     discipline: 'Electrical',
-    value: 'KES 12,000',
     location: 'Nairobi',
-    status: 'open',
-    claimable: true,
+    gate: 'draft',
+    evidence: ['public'],
+    capital: {
+      financial: 12000,
+      materials: ['Cable', 'Conduit', 'Breaker panel'],
+      conditions: ['Certified electrician sign-off'],
+      deployed: false,
+    },
+    crew: { anchor: 'Kemetos steward', builder: '—', apprentice: '—' },
+    publishedValue: 'KES 12,000',
   },
   {
     id: 'wi-04',
     pilot: 'kemetos',
     title: 'Solar basic installation',
     discipline: 'Solar',
-    value: 'KES 18,000',
     location: 'Nairobi',
-    status: 'open',
-    claimable: true,
+    gate: 'pending_authorization',
+    evidence: ['public'],
+    capital: {
+      financial: 18000,
+      materials: ['Solar panels', 'Inverter', 'Mounting rails'],
+      conditions: ['Anchor authorization', 'Electrical inspection'],
+      deployed: false,
+    },
+    crew: { anchor: 'Kemetos steward', builder: '—', apprentice: '—' },
+    publishedValue: 'KES 18,000',
   },
-  // Mini Hydro
+  // Mini Hydro — published
   {
     id: 'wi-05',
     pilot: 'minihydro',
     title: 'Thiba canal lining',
     discipline: 'Masonry',
-    value: 'KES 48,000',
     location: 'Thiba',
-    status: 'in-progress',
-    claimable: false,
+    gate: 'in_execution',
+    evidence: ['public', 'participant'],
+    capital: {
+      financial: 48000,
+      materials: ['Portland cement', 'Stone', 'Reinforcement'],
+      conditions: ['Community sign-off', 'Water flow check'],
+      deployed: true,
+    },
+    crew: { anchor: 'Thiba community steward', builder: 'Masonry crew lead', apprentice: '—' },
+    publishedValue: 'KES 48,000',
   },
   {
     id: 'wi-06',
     pilot: 'minihydro',
     title: 'Turbine tending',
     discipline: 'Hydro operations',
-    value: 'KES 22,000',
     location: 'Thiba',
-    status: 'open',
-    claimable: true,
+    gate: 'proposed',
+    evidence: ['public'],
+    capital: {
+      financial: 22000,
+      materials: ['Turbine parts', 'Lubricant'],
+      conditions: ['Crew assembly'],
+      deployed: false,
+    },
+    crew: { anchor: 'Thiba community steward', builder: '—', apprentice: '—' },
+    publishedValue: 'KES 22,000',
   },
-  // Mwea Animation Box
+  // Mwea Animation Box — published
   {
     id: 'wi-07',
     pilot: 'mwea-animation-box',
     title: 'Mwea irrigation box operation',
     discipline: 'Irrigation',
-    value: 'KES 9,500',
     location: 'Mwea',
-    status: 'open',
-    claimable: true,
+    gate: 'authorized',
+    evidence: ['public', 'participant'],
+    capital: {
+      financial: 9500,
+      materials: ['Irrigation box', 'Pump'],
+      conditions: ['Local operator sign-off'],
+      deployed: true,
+    },
+    crew: { anchor: 'Mwea operators steward', builder: 'Box operator', apprentice: '—' },
+    publishedValue: 'KES 9,500',
   },
   {
     id: 'wi-08',
     pilot: 'mwea-animation-box',
     title: 'Local animation content',
     discipline: 'Animation',
-    value: 'KES 15,000',
     location: 'Mwea',
-    status: 'delivered',
-    claimable: false,
+    gate: 'pending_acceptance',
+    evidence: ['participant', 'restricted'],
+    capital: {
+      financial: 15000,
+      materials: ['Animation rig', 'Storage'],
+      conditions: ['Content review'],
+      deployed: true,
+    },
+    crew: { anchor: 'Mwea operators steward', builder: 'Animator', apprentice: '—' },
+    publishedValue: 'KES 15,000',
   },
 ];
 
 export function workItemsForPilot(pilot: PilotKey): readonly WorkItem[] {
   return WORK_ITEMS.filter((w) => w.pilot === pilot);
 }
+
+/** Human-readable label for each gate state. */
+export const GATE_LABELS: Record<GateState, string> = {
+  draft: 'Draft',
+  proposed: 'Proposed',
+  in_review: 'In review',
+  pending_authorization: 'Awaiting authorization',
+  authorized: 'Authorized',
+  in_execution: 'In execution',
+  pending_acceptance: 'Pending acceptance',
+  accepted: 'Accepted',
+};
+
+/** Semantic color token for each gate state. */
+export const GATE_COLORS: Record<GateState, 'canon' | 'proposed' | 'risk' | 'caution'> = {
+  draft: 'caution',
+  proposed: 'proposed',
+  in_review: 'caution',
+  pending_authorization: 'risk',
+  authorized: 'canon',
+  in_execution: 'canon',
+  pending_acceptance: 'caution',
+  accepted: 'canon',
+};
+
+/** Whether the fork glyph (└─) appears at this gate — only at 'proposed'. */
+export const GATE_FORK: Record<GateState, boolean> = {
+  draft: false,
+  proposed: true,
+  in_review: false,
+  pending_authorization: false,
+  authorized: false,
+  in_execution: false,
+  pending_acceptance: false,
+  accepted: false,
+};

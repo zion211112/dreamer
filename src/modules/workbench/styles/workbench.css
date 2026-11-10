@@ -1,11 +1,46 @@
 /* ============================================================================
    Workbench — APT-LABS
-   Lean, factory-ready action module. Five pilot paths, open for more.
-   No simulation — each path is something a steward can work through today.
-   Built on src/tokens.css (light luxury default + [data-skin="dark"]).
+   Signature Dark Instrument. Dark green-black default; light is a variant,
+   not a second product. Editorial rows, tender gates, crew arrangement,
+   capital as covenant, evidence vs claim. No card kits, no all-caps eyebrows,
+   no middle-dot meta, no decorative metrics.
    ============================================================================ */
 
+/* Dark signature token scope — overrides light luxury from src/tokens.css */
 .wb-root {
+  --bg: #0A0F0C;
+  --fg: #E9F1E8;
+  --muted: #8FA08C;
+  --dim: #5C6B5E;
+  --line: rgba(143, 160, 140, 0.25);
+  --line-strong: rgba(143, 160, 140, 0.5);
+  --bg-elev: rgba(26, 34, 28, 0.5);
+  --bg-subtle: rgba(26, 34, 28, 0.2);
+  --brand-main: #295d70;
+  --terrain: #8fd98f;
+  --terrain-pale: rgba(143, 217, 143, 0.1);
+  --state-canon: #7FC5BC;
+  --state-proposed: #C9F292;
+  --state-risk: #E89670;
+  --state-caution: #CBAF6E;
+  --radius-3: 6px;
+  --radius-pill: 999px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --space-6: 48px;
+  --step--2: 0.75rem;
+  --step--1: 0.875rem;
+  --step-0: 1rem;
+  --step-1: 1.125rem;
+  --step-2: 1.5rem;
+  --step-4: 2rem;
+  --sans: system-ui, -apple-system, "Segoe UI Variable", sans-serif;
+  --serif: Georgia, "Times New Roman", serif;
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+
   background: var(--bg);
   color: var(--fg);
   font-family: var(--sans);
@@ -16,41 +51,119 @@
   padding: var(--space-4) var(--space-6);
   max-width: 1440px;
   margin: 0 auto;
+  background: var(--bg);
+  color: var(--fg);
 }
 
-/* ---------- Home: five pilot paths ---------- */
+/* ---------- Surveyor grid background on work surfaces ---------- */
+.wb-grid {
+  background-image: linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: 0 0, 0 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-3);
+}
+
+/* ---------- Page head: L1 serif → L2 mono → L3 metrics ---------- */
+.wb-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin: 0 0 var(--space-1) 0;
+  text-transform: none;
+}
+
+.wb-title {
+  font-family: var(--serif);
+  font-size: var(--step-4);
+  font-weight: 400;
+  color: var(--fg);
+  margin: 0 0 var(--space-1) 0;
+  line-height: 1.15;
+}
+
+.wb-sub {
+  font-size: var(--step-0);
+  color: var(--muted);
+  margin: 0 0 var(--space-4) 0;
+  font-family: var(--sans);
+  line-height: 1.5;
+}
+
+/* L3 metrics — only when they drive the current decision, max 3,
+   2px left border, first in teal. */
+.wb-metrics {
+  display: flex;
+  gap: var(--space-4);
+  margin: var(--space-3) 0 var(--space-4) 0;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--state-canon);
+}
+
+.wb-metric {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.wb-metric-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: none;
+}
+
+.wb-metric-value {
+  font-family: var(--mono);
+  font-size: var(--step-1);
+  font-weight: 700;
+  color: var(--fg);
+  white-space: nowrap;
+}
+
+.wb-metric-value--canon { color: var(--state-canon); }
+.wb-metric-value--proposed { color: var(--state-proposed); }
+.wb-metric-value--risk { color: var(--state-risk); }
+.wb-metric-value--caution { color: var(--state-caution); }
+
+/* ---------- Pilot paths — editorial rows, not cards ---------- */
 .wb-paths {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: var(--space-4);
+  gap: var(--space-3);
   margin-bottom: var(--space-6);
 }
 
-.wb-path-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-5);
+.wb-path-row {
+  display: grid;
+  grid-template-columns: 2fr auto auto auto;
+  gap: var(--space-3);
+  align-items: baseline;
+  padding: var(--space-3) var(--space-4);
   background: var(--bg-elev);
   border: 1px solid var(--line);
   border-radius: var(--radius-3);
   text-decoration: none;
   color: inherit;
-  transition: border-color var(--fast), box-shadow var(--fast), background var(--fast);
+  transition: border-color 0.12s ease, background 0.12s ease;
 }
 
-.wb-path-card:focus-visible {
+.wb-path-row:focus-visible {
   outline: none;
-  box-shadow: var(--focus-ring);
+  border-color: var(--state-canon);
+  box-shadow: 0 0 0 3px rgba(127, 197, 188, 0.2);
 }
 
-.wb-path-card:hover {
+.wb-path-row:hover {
   border-color: var(--line-strong);
-  box-shadow: var(--shadow-1);
   background: var(--bg-subtle);
 }
 
-.wb-path-title {
+.wb-path-label {
   font-family: var(--serif);
   font-size: var(--step-2);
   font-weight: 600;
@@ -59,38 +172,47 @@
   line-height: 1.2;
 }
 
-.wb-path-summary {
+.wb-path-character {
+  font-family: var(--sans);
   font-size: var(--step--1);
   color: var(--muted);
-  margin: 0;
-  line-height: 1.5;
-  flex: 1;
-}
-
-.wb-path-action {
-  font-family: var(--mono);
-  font-size: var(--step--2);
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  color: var(--brand-main);
-  margin-top: var(--space-2);
+  margin: var(--space-1) 0 0 0;
 }
 
 .wb-path-meta {
   font-family: var(--mono);
   font-size: var(--step--2);
   color: var(--muted);
-  margin-top: var(--space-1);
+  white-space: nowrap;
+  text-align: right;
 }
 
-.wb-section-title {
-  font-family: var(--serif);
-  font-size: var(--step-2);
+.wb-path-status {
+  font-family: var(--mono);
+  font-size: var(--step--2);
   font-weight: 600;
+  padding: 2px var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--bg-subtle);
   color: var(--fg);
-  margin: 0 0 var(--space-3) 0;
+  text-align: right;
 }
 
+.wb-path-status--proposed { color: var(--state-proposed); }
+.wb-path-status--authorized { color: var(--state-canon); }
+.wb-path-status--caution { color: var(--state-caution); }
+.wb-path-status--risk { color: var(--state-risk); }
+
+.wb-path-action {
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  font-weight: 600;
+  color: var(--brand-main);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ---------- Terms ---------- */
 .wb-terms {
   margin-top: var(--space-6);
   padding: var(--space-4);
@@ -106,12 +228,11 @@
   line-height: 1.6;
 }
 
-.wb-item-actions {
-  display: flex;
+/* ---------- Tender gate ---------- */
+.wb-gate {
+  display: inline-flex;
+  align-items: center;
   gap: var(--space-2);
-}
-
-.wb-item-status {
   font-family: var(--mono);
   font-size: var(--step--2);
   font-weight: 600;
@@ -121,55 +242,125 @@
   color: var(--fg);
 }
 
-/* ---------- Page head helpers ---------- */
-.wb-eyebrow {
+.wb-gate--canon { color: var(--state-canon); }
+.wb-gate--proposed { color: var(--state-proposed); }
+.wb-gate--risk { color: var(--state-risk); }
+.wb-gate--caution { color: var(--state-caution); }
+
+.wb-fork {
   font-family: var(--mono);
   font-size: var(--step--2);
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  color: var(--muted);
-  text-transform: uppercase;
-  margin: 0 0 var(--space-1) 0;
+  color: var(--state-proposed);
 }
 
-.wb-title {
-  font-family: var(--serif);
-  font-size: var(--step-4);
-  font-weight: 400;
-  color: var(--fg);
-  margin: 0 0 var(--space-2) 0;
-  line-height: 1.15;
-}
-
-.wb-sub {
-  font-size: var(--step-0);
-  color: var(--muted);
-  margin: 0 0 var(--space-6) 0;
-  font-family: var(--sans);
-  line-height: 1.5;
-}
-
-/* ---------- Lists / tables ---------- */
-.wb-list {
-  display: grid;
-  gap: var(--space-3);
-}
-
-.wb-item {
-  display: grid;
-  grid-template-columns: 1fr auto auto auto;
-  gap: var(--space-3);
+/* ---------- Ringed evidence marker ---------- */
+.wb-evidence {
+  display: inline-flex;
   align-items: center;
+  gap: var(--space-1);
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  color: var(--muted);
+}
+
+.wb-evidence-ring {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--bg-elev);
+}
+
+.wb-evidence-ring--public { border-color: var(--state-canon); }
+.wb-evidence-ring--participant { border-color: var(--state-proposed); }
+.wb-evidence-ring--restricted { border-color: var(--state-risk); }
+
+/* ---------- Crew arrangement ---------- */
+.wb-crew {
+  display: grid;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+  padding: var(--space-4);
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-3);
+}
+
+.wb-crew-role {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.wb-crew-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: none;
+}
+
+.wb-crew-value {
+  font-family: var(--serif);
+  font-size: var(--step-1);
+  color: var(--fg);
+}
+
+/* ---------- Capital as covenant ---------- */
+.wb-capital {
+  display: grid;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+  padding: var(--space-4);
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-3);
+  border-left: 2px solid var(--state-canon);
+}
+
+.wb-capital-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.wb-capital-label {
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  color: var(--muted);
+}
+
+.wb-capital-value {
+  font-family: var(--mono);
+  font-size: var(--step-1);
+  font-weight: 600;
+  color: var(--fg);
+  white-space: nowrap;
+}
+
+.wb-capital-value--deployed { color: var(--state-canon); }
+.wb-capital-value--pending { color: var(--state-caution); }
+
+/* ---------- Work item row (editorial, not card) ---------- */
+.wb-item-row {
+  display: grid;
+  grid-template-columns: 2fr auto auto auto;
+  gap: var(--space-3);
+  align-items: baseline;
   padding: var(--space-3) var(--space-4);
   background: var(--bg-elev);
   border: 1px solid var(--line);
   border-radius: var(--radius-3);
-  transition: border-color var(--fast), box-shadow var(--fast);
+  transition: border-color 0.12s ease;
 }
 
-.wb-item:hover {
+.wb-item-row:hover {
   border-color: var(--line-strong);
-  box-shadow: var(--shadow-1);
 }
 
 .wb-item-title {
@@ -177,6 +368,8 @@
   font-size: var(--step-1);
   font-weight: 600;
   color: var(--fg);
+  margin: 0;
+  line-height: 1.2;
 }
 
 .wb-item-meta {
@@ -196,74 +389,62 @@
   text-align: right;
 }
 
-/* ---------- Badges ---------- */
-.wb-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px var(--space-3);
-  border-radius: var(--radius-pill);
-  font-family: var(--mono);
-  font-size: var(--step--2);
-  font-weight: 600;
-}
+.wb-item-value--published { color: var(--state-canon); }
 
-.wb-badge--evidence { background: var(--terrain-pale); color: var(--terrain-ink); }
-.wb-badge--noevidence { background: var(--danger-pale); color: var(--danger); }
-.wb-badge--draft { background: var(--brand-main-wash); color: var(--brand-main); }
-.wb-badge--submitted { background: var(--terrain-pale); color: var(--terrain-ink); }
-
-/* ---------- Forms ---------- */
-.wb-form {
-  display: grid;
-  gap: var(--space-3);
-  max-width: 520px;
-}
-
-.wb-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.wb-field-label {
-  font-family: var(--mono);
-  font-size: var(--step--2);
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  color: var(--muted);
-}
-
-.wb-field-input,
-.wb-field-select,
-.wb-field-textarea {
-  font: inherit;
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-3);
-  background: var(--bg-elev);
-  color: var(--fg);
-  min-height: 38px;
-}
-
-.wb-field-input:focus-visible,
-.wb-field-select:focus-visible,
-.wb-field-textarea:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-}
-
-.wb-field-hint {
-  font-size: var(--step--2);
-  color: var(--dim);
-}
-
+/* ---------- Actions ---------- */
 .wb-actions {
   display: flex;
   gap: var(--space-2);
   margin-top: var(--space-2);
 }
 
-/* ---------- Status / empty ---------- */
+.wb-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-3);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: var(--step-0);
+  cursor: pointer;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.wb-button:hover {
+  border-color: var(--fg);
+  background: var(--bg-subtle);
+}
+
+.wb-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.wb-button--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--muted);
+}
+
+.wb-button--ghost:hover {
+  border-color: var(--fg);
+  color: var(--fg);
+}
+
+.wb-button--primary {
+  background: var(--state-proposed);
+  border-color: var(--state-proposed);
+  color: #0A1A0C;
+}
+
+.wb-button--primary:hover {
+  background: #d4f8a8;
+  border-color: #d4f8a8;
+}
+
 .wb-empty {
   grid-column: 1 / -1;
   padding: var(--space-6);
@@ -273,9 +454,17 @@
   font-size: var(--step--1);
 }
 
+.wb-section-title {
+  font-family: var(--serif);
+  font-size: var(--step-2);
+  font-weight: 600;
+  color: var(--fg);
+  margin: 0 0 var(--space-3) 0;
+}
+
 .wb-notice {
   font-size: var(--step--1);
-  color: var(--terrain-ink);
+  color: var(--state-canon);
   background: var(--terrain-pale);
   border: 1px solid var(--terrain);
   border-radius: var(--radius-3);
@@ -284,15 +473,32 @@
   font-family: var(--sans);
 }
 
-/* Focus ring token fallback */
-:root {
-  --focus-ring: 0 0 0 3px rgba(41, 93, 112, .3);
+.wb-focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(127, 197, 188, 0.2);
 }
 
 @media (max-width: 640px) {
   .wb-page { padding: var(--space-3) var(--space-4); }
-  .wb-item { grid-template-columns: 1fr; gap: var(--space-2); }
-  .wb-item-meta, .wb-item-value { text-align: left; }
-  .wb-actions { flex-direction: column; }
-  .wb-actions button { width: 100%; }
+  .wb-path-row,
+  .wb-item-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+  .wb-path-meta,
+  .wb-path-status,
+  .wb-path-action,
+  .wb-item-meta,
+  .wb-item-value {
+    text-align: left;
+  }
+  .wb-metrics {
+    flex-direction: column;
+    gap: var(--space-2);
+    padding-left: 0;
+    border-left: none;
+    border-top: 2px solid var(--state-canon);
+    padding-top: var(--space-3);
+    margin-top: var(--space-3);
+  }
 }

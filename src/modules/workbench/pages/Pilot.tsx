@@ -1,12 +1,12 @@
-import { useState } from 'preact/hooks';
 import { useParams } from 'wouter';
 import { PageHead } from '@/components/PageHead';
-import { Button } from '@/components/Button';
 import {
   pilotByKey,
   workItemsForPilot,
   type PilotKey,
-  type WorkItem,
+  GATE_LABELS,
+  GATE_COLORS,
+  GATE_FORK,
 } from '../data';
 import '../styles/workbench.css';
 
@@ -16,90 +16,68 @@ export function Pilot() {
   const pilot = pilotByKey(key);
   const items = pilot ? workItemsForPilot(key) : [];
 
-  const [work, setWork] = useState<WorkItem[]>(items.slice());
-
-  const claim = (id: string) => {
-    setWork((ws) =>
-      ws.map((w) => (w.id === id ? { ...w, status: 'claimed' } : w)),
-    );
-  };
-
-  const deliver = (id: string) => {
-    setWork((ws) =>
-      ws.map((w) => (w.id === id ? { ...w, status: 'delivered' } : w)),
-    );
-  };
-
   if (!pilot) {
     return (
       <div className="wb-root wb-page">
         <PageHead eyebrow="APT-LABS / WORKBENCH" title="Pilot not found" />
-        <p className="wb-empty">
-          No such pilot lane. Register it in the workbench to open it.
-        </p>
+        <p className="wb-empty">No such pilot lane. Register it in the workbench to open it.</p>
       </div>
     );
   }
 
-  const openCount = work.filter((w) => w.status === 'open').length;
-  const activeCount = work.filter(
-    (w) => w.status === 'claimed' || w.status === 'in-progress',
-  ).length;
-  const doneCount = work.filter(
-    (w) => w.status === 'delivered' || w.status === 'accepted',
-  ).length;
+  const proposedCount = items.filter((i) => i.gate === 'proposed').length;
+  const authorizedCount = items.filter((i) => i.gate === 'authorized').length;
+  const inExecutionCount = items.filter((i) => i.gate === 'in_execution').length;
 
   return (
     <div className="wb-root">
-      <PageHead
-        eyebrow={`Pilot · ${pilot.location}`}
-        title={pilot.label}
-        subtitle={pilot.summary}
-        primaryAction={{ label: pilot.action, onClick: () => {} }}
-        quietActions={[{ label: 'Terms', onClick: () => {} }]}
-        metrics={[
-          { label: 'Open work', value: openCount },
-          { label: 'Claimed', value: activeCount },
-          { label: 'Delivered', value: doneCount },
-        ]}
-      />
-
       <div className="wb-page">
-        <p className="wb-notice">{pilot.terms}</p>
+        <PageHead
+          eyebrow={`Pilot · ${pilot.location}`}
+          title={pilot.label}
+          subtitle={pilot.terms}
+          metrics={[
+            { label: 'Proposed', value: proposedCount, state: 'proposed' },
+            { label: 'Authorized', value: authorizedCount, state: 'canon' },
+            { label: 'In execution', value: inExecutionCount, state: 'canon' },
+          ]}
+        />
 
-        <div className="wb-list">
-          {work.map((item) => (
-            <article key={item.id} className="wb-item">
-              <div>
-                <div className="wb-item-title">{item.title}</div>
-                <div className="wb-item-meta">
-                  {item.discipline} · {item.location}
+        <section className="wb-grid">
+          <h2 className="wb-section-title">Undertakings</h2>
+          <div className="wb-paths">
+            {items.map((item) => (
+              <div key={item.id} className="wb-item-row">
+                <div>
+                  <h3 className="wb-item-title">{item.title}</h3>
+                  <p className="wb-item-meta">
+                    {item.discipline} · {item.location}
+                  </p>
                 </div>
+                <span
+                  className={`wb-gate wb-gate--${GATE_COLORS[item.gate]}`}
+                >
+                  {GATE_FORK[item.gate] ? '└─ ' : ''}
+                  {GATE_LABELS[item.gate]}
+                </span>
+                <span className="wb-item-value wb-item-value--published">
+                  {item.publishedValue || '—'}
+                </span>
+                <span className="wb-evidence">
+                  {item.evidence.map((layer) => (
+                    <span
+                      key={layer}
+                      className={`wb-evidence-ring wb-evidence-ring--${layer}`}
+                    />
+                  ))}
+                </span>
               </div>
-              <span className="wb-item-value">{item.value}</span>
-              <span className="wb-item-status">{item.status}</span>
-              <div className="wb-item-actions">
-                {item.status === 'open' && item.claimable ? (
-                  <Button variant="ghost" size="sm" onClick={() => claim(item.id)}>
-                    Claim work
-                  </Button>
-                ) : (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => deliver(item.id)}
-                    disabled={item.status === 'accepted'}
-                  >
-                    Mark delivered
-                  </Button>
-                )}
-              </div>
-            </article>
-          ))}
-          {work.length === 0 && (
-            <p className="wb-empty">No work items in this lane yet.</p>
-          )}
-        </div>
+            ))}
+            {items.length === 0 && (
+              <p className="wb-empty">No undertakings in this lane yet.</p>
+            )}
+          </div>
+        </section>
       </div>
     </div>
   );
