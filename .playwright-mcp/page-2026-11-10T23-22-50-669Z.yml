@@ -1,0 +1,145 @@
+- generic [ref=f8e108]:
+  - banner [ref=f8e109]:
+    - link "APT-LABS" [ref=f8e110] [cursor=pointer]:
+      - /url: /workspace
+      - generic [aria-hidden] [ref=f8e111]: A
+      - generic [aria-hidden] [ref=f8e112]: â€”
+      - generic [ref=f8e113]: Apt Labs
+    - generic [ref=f8e115]: Commons
+    - 'generic "Environment: Local demo" [ref=f8e116]': Local demo
+    - button "Search modules and tasks" [ref=f8e117] [cursor=pointer]:
+      - generic [ref=f8e121]: Search
+      - generic [ref=f8e122]: Ctrl K
+    - button "Hide context navigation" [ref=f8e123] [cursor=pointer]
+    - button "Reset workspace layout" [ref=f8e126] [cursor=pointer]
+  - navigation "Primary workspace modules" [ref=f8e130]:
+    - link "Home" [ref=f8e131] [cursor=pointer]:
+      - /url: /workspace
+    - link "Commons" [ref=f8e136] [cursor=pointer]:
+      - /url: /workspace/commons
+    - link "Network" [ref=f8e142] [cursor=pointer]:
+      - /url: /workspace/network/people
+    - link "Workbench" [ref=f8e147] [cursor=pointer]:
+      - /url: /workspace/workbench
+    - link "The Roll" [ref=f8e152] [cursor=pointer]:
+      - /url: /workspace/records/roll
+    - link "Intelligence" [ref=f8e157] [cursor=pointer]:
+      - /url: /workspace/intelligence
+  - complementary "Workspace context navigation" [ref=f8e166]:
+    - generic [ref=f8e167]:
+      - generic [ref=f8e168]: Current workspace
+      - generic [ref=f8e169]: Commons
+    - navigation "Commons destinations" [ref=f8e170]:
+      - paragraph [ref=f8e171]: No destinations in this context.
+    - generic [ref=f8e173]:
+      - generic [ref=f8e174]: DATA CONTEXT
+      - generic [ref=f8e175]: Local, sample, and imported records remain distinct.
+  - main [ref=f8e176]:
+    - generic [ref=f8e178]:
+      - generic [ref=f8e179]:
+        - generic [ref=f8e180]:
+          - generic [ref=f8e181]: Commons
+          - generic [ref=f8e182]:
+            - heading "Signals and decisions" [level=1] [ref=f8e183]
+            - paragraph [ref=f8e184]: Capture local observations, review opportunities, and record steward decisions.
+        - button "+ Contribute" [ref=f8e187] [cursor=pointer]
+      - navigation "Commons views" [ref=f8e188]:
+        - button "Signals 01" [pressed] [ref=f8e189] [cursor=pointer]:
+          - text: Signals
+          - generic [ref=f8e190]: "01"
+        - button "Opportunities" [ref=f8e191] [cursor=pointer]
+        - button "Decisions 00" [ref=f8e192] [cursor=pointer]:
+          - text: Decisions
+          - generic [ref=f8e193]: "00"
+        - generic [ref=f8e194]:
+          - generic [ref=f8e195]: Institution scope
+          - combobox "Institution scope" [ref=f8e196] [cursor=pointer]:
+            - option "All institutions"
+            - option "Kibera Makerspace" [selected]
+            - option "Mwea Water Cooperative"
+        - generic [ref=f8e197]: Kibera Makerspace
+      - region "Field signal workspace" [ref=f8e198]:
+        - complementary [ref=f8e199]:
+          - generic [ref=f8e200]:
+            - generic [ref=f8e201]:
+              - generic [aria-hidden] [ref=f8e202]: ⌕
+              - textbox "Search signals" [ref=f8e203]:
+                - /placeholder: Find a signal
+            - group [ref=f8e204]:
+              - generic "Filter" [ref=f8e205] [cursor=pointer]
+          - button "Ground · Example signal What would help describe local making capacity? Kibera Makerspace" [ref=f8e207] [cursor=pointer]:
+            - generic:
+              - generic: Ground · Example signal
+              - strong: What would help describe local making capacity?
+              - generic: Kibera Makerspace
+          - navigation "Signal pages" [ref=f8e209]:
+            - generic [ref=f8e210]: Showing 1–1 of 1 local matches
+            - generic [ref=f8e211]:
+              - button "Previous signal page" [disabled] [ref=f8e212]: Previous
+              - generic [ref=f8e213]: Page 1 of 1
+              - button "Next signal page" [disabled] [ref=f8e214]: Next
+          - generic [ref=f8e215]:
+            - paragraph [ref=f8e216]: Possibility · example signal
+            - heading "What would help describe local making capacity?" [level=3] [ref=f8e217]
+            - paragraph [ref=f8e218]: Kibera Makerspace
+            - button "Review signal" [ref=f8e219] [cursor=pointer]
+            - generic [ref=f8e220]: Illustrative · not verified
+        - region "A map-shaped simulation" [ref=f8e221]:
+          - generic [ref=f8e222]:
+            - generic [ref=f8e223]:
+              - paragraph [ref=f8e224]: SPATIAL VIEW / MOCK PROVIDER
+              - heading "A map-shaped simulation" [level=2] [ref=f8e225]
+              - paragraph [ref=f8e226]: This schematic is generated locally. It is not a real place and does not position signal records.
+            - 'generic "Map provider status: local mock, offline" [ref=f8e227]':
+              - generic [ref=f8e229]:
+                - generic [ref=f8e230]: PROVIDER
+                - strong [ref=f8e231]: Mock · offline
+          - generic [ref=f8e232]:
+            - img "Synthetic map preview A fictional schematic with five sample markers. It is not a real location and none of the markers represent signal records." [ref=f8e233]
+            - generic [ref=f8e257]: FICTIONAL SCHEMATIC / NOT TO SCALE
+            - status [ref=f8e258]:
+              - strong [ref=f8e259]: SIMULATION ONLY
+              - text: Sample markers are not real places or signal locations.
+            - generic [aria-hidden] [ref=f8e260]: NO TILES / NO GEOCODING / NO RECORD PINS
+          - generic [ref=f8e261]:
+            - generic [ref=f8e262]:
+              - generic [ref=f8e263]: VISIBLE IN THIS VIEW
+              - strong [ref=f8e264]: "1"
+              - generic [ref=f8e265]: Browser-local records
+            - generic "Signal status counts" [ref=f8e266]:
+              - generic [ref=f8e267]:
+                - term [ref=f8e268]: New
+                - definition [ref=f8e269]: "1"
+              - generic [ref=f8e270]:
+                - term [ref=f8e271]: Being checked
+                - definition [ref=f8e272]: "0"
+              - generic [ref=f8e273]:
+                - term [ref=f8e274]: Work planning
+                - definition [ref=f8e275]: "0"
+              - generic [ref=f8e276]:
+                - term [ref=f8e277]: Closed
+                - definition [ref=f8e278]: "0"
+        - article [ref=f8e279]:
+          - generic [ref=f8e280]:
+            - generic [ref=f8e281]:
+              - generic [ref=f8e282]:
+                - generic [ref=f8e283]: New
+                - generic [ref=f8e284]: EXAMPLE SIGNAL
+              - heading "What would help describe local making capacity?" [level=2] [ref=f8e285]
+              - paragraph [ref=f8e286]: Kibera Makerspace · Not recorded
+            - generic [ref=f8e287]: ILLUSTRATIVE
+          - generic [ref=f8e288]:
+            - paragraph [ref=f8e289]: OBSERVATION
+            - paragraph [ref=f8e290]: "Illustrative prompt: explore what information would help describe practical learning, repair, and making around Kibera Makerspace. No asset, condition, authority, approval, or live report is represented."
+            - generic [ref=f8e291]: Illustrative record · not live or verified.
+          - group "Example evidence and review boundary" [ref=f8e292]:
+            - generic "Evidence checks" [ref=f8e293] [cursor=pointer]
+          - generic [ref=f8e295]:
+            - paragraph [ref=f8e296]: NEXT STEP
+            - strong [ref=f8e297]: Identify what is known, what remains unestablished, and which sources could support a future record.
+            - generic [ref=f8e298]: Example only · no work authorized.
+          - group [ref=f8e299]:
+            - generic "Activity & notes 01 +" [ref=f8e300] [cursor=pointer]:
+              - generic [ref=f8e301]: Activity & notes
+              - generic [ref=f8e302]: "01"
+              - text: +

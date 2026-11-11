@@ -1,0 +1,77 @@
+- generic [ref=f8e3]:
+  - banner [ref=f8e4]:
+    - link "APT-LABS" [ref=f8e5] [cursor=pointer]:
+      - /url: /workspace
+      - generic [aria-hidden] [ref=f8e6]: A
+      - generic [aria-hidden] [ref=f8e7]: â€”
+      - generic [ref=f8e8]: Apt Labs
+    - generic [ref=f8e10]: Home
+    - 'generic "Environment: Local demo" [ref=f8e11]': Local demo
+    - button "Search modules and tasks" [ref=f8e12] [cursor=pointer]:
+      - generic [ref=f8e16]: Search
+      - generic [ref=f8e17]: Ctrl K
+    - button "Hide context navigation" [ref=f8e18] [cursor=pointer]
+    - button "Reset workspace layout" [ref=f8e21] [cursor=pointer]
+  - navigation "Primary workspace modules" [ref=f8e25]:
+    - link "Home" [ref=f8e26] [cursor=pointer]:
+      - /url: /workspace
+    - link "Commons" [ref=f8e31] [cursor=pointer]:
+      - /url: /workspace/commons
+    - link "Network" [ref=f8e37] [cursor=pointer]:
+      - /url: /workspace/network/people
+    - link "Workbench" [ref=f8e42] [cursor=pointer]:
+      - /url: /workspace/workbench
+    - link "The Roll" [ref=f8e47] [cursor=pointer]:
+      - /url: /workspace/records/roll
+    - link "Intelligence" [ref=f8e52] [cursor=pointer]:
+      - /url: /workspace/intelligence
+  - complementary "Workspace context navigation" [ref=f8e61]:
+    - generic [ref=f8e62]:
+      - generic [ref=f8e63]: Current workspace
+      - generic [ref=f8e64]: Home
+    - navigation "Overview destinations" [ref=f8e65]:
+      - paragraph [ref=f8e66]: Choose a module to begin.
+    - generic [ref=f8e68]:
+      - generic [ref=f8e69]: DATA CONTEXT
+      - generic [ref=f8e70]: Local, sample, and imported records remain distinct.
+  - main [ref=f8e71]:
+    - generic [ref=f8e73]:
+      - generic [ref=f8e74]:
+        - paragraph [ref=f8e75]: APT-LABS workspace
+        - heading "Welcome to APT-LABS." [level=1] [ref=f8e76]
+      - generic [ref=f8e77]:
+        - region "Your work" [ref=f8e78]:
+          - heading "Your work" [level=2] [ref=f8e79]
+          - paragraph [ref=f8e80]: Personal assignments and review requests are not connected here yet. When work is linked to your profile, it will appear in this space.
+        - navigation "A useful first step" [ref=f8e81]:
+          - heading "A useful first step" [level=2] [ref=f8e82]
+          - link "Open Commons Browse needs, offers, opportunities, and shared knowledge." [ref=f8e83] [cursor=pointer]:
+            - /url: /workspace/commons
+            - generic [ref=f8e84]:
+              - strong [ref=f8e85]: Open Commons
+              - generic [ref=f8e86]: Browse needs, offers, opportunities, and shared knowledge.
+            - generic [aria-hidden] [ref=f8e87]: →
+          - link "Explore the network Find people, crews, institutions, and capabilities to work with." [ref=f8e88] [cursor=pointer]:
+            - /url: /workspace/network/people
+            - generic [ref=f8e89]:
+              - strong [ref=f8e90]: Explore the network
+              - generic [ref=f8e91]: Find people, crews, institutions, and capabilities to work with.
+            - generic [aria-hidden] [ref=f8e92]: →
+          - link "Open Workbench Review pilot lanes and coordinated work." [ref=f8e93] [cursor=pointer]:
+            - /url: /workspace/workbench
+            - generic [ref=f8e94]:
+              - strong [ref=f8e95]: Open Workbench
+              - generic [ref=f8e96]: Review pilot lanes and coordinated work.
+            - generic [aria-hidden] [ref=f8e97]: →
+          - link "Review the Roll Inspect durable records and supporting evidence." [ref=f8e98] [cursor=pointer]:
+            - /url: /workspace/records/roll
+            - generic [ref=f8e99]:
+              - strong [ref=f8e100]: Review the Roll
+              - generic [ref=f8e101]: Inspect durable records and supporting evidence.
+            - generic [aria-hidden] [ref=f8e102]: →
+          - link "Open Intelligence Review trust and economic intelligence research." [ref=f8e103] [cursor=pointer]:
+            - /url: /workspace/intelligence
+            - generic [ref=f8e104]:
+              - strong [ref=f8e105]: Open Intelligence
+              - generic [ref=f8e106]: Review trust and economic intelligence research.
+            - generic [aria-hidden] [ref=f8e107]: →

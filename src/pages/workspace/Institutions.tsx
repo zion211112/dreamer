@@ -126,7 +126,7 @@ export function Institutions() {
             <p className="eyebrow">APT-LABS <span aria-hidden="true">/</span> STARTER NETWORK REGISTER</p>
             <h1>Institutions <span aria-hidden="true">/</span> Assets</h1>
             <p className="institution-page-intro">
-              A considered index of selected organisations and resources. A record tells you what is on fileâ€”not
+              A considered index of selected organisations and resources. A record tells you what is on file—not
               whether something is operating, available, authorised, or ready to use.
             </p>
           </div>
@@ -138,7 +138,7 @@ export function Institutions() {
 
         <div className="institution-reading-note">
           <span className="institution-note-mark" aria-hidden="true">i</span>
-          <p><strong>Unknown is a useful answer.</strong> Basis describes the recordâ€™s source, not verification; links describe context, not ownership or authority.</p>
+          <p><strong>Unknown is a useful answer.</strong> Basis describes the record’s source, not verification; links describe context, not ownership or authority.</p>
         </div>
 
         <section aria-label="Find a register record" className="institution-controls">
@@ -179,7 +179,7 @@ export function Institutions() {
 
         <div aria-live="polite" className="institution-result-count">
           <span>{results.length === 1 ? '01 RECORD' : `${String(results.length).padStart(2, '0')} RECORDS`}</span>
-          <span>{query && !requestedRecordId ? `MATCHING â€œ${query.trim()}â€` : 'STARTER NETWORK'}</span>
+          <span>{query && !requestedRecordId ? `MATCHING “${query.trim()}”` : 'STARTER NETWORK'}</span>
         </div>
 
         <div className={`institution-workspace${selectedRecord ? '' : ' is-empty'}`}>

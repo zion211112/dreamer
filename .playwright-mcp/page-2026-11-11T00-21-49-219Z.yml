@@ -1,0 +1,227 @@
+- generic [ref=f5e3]:
+  - banner [ref=f5e4]:
+    - link "APT-LABS" [ref=f5e5] [cursor=pointer]:
+      - /url: /workspace
+      - generic [aria-hidden] [ref=f5e6]: A
+      - generic [aria-hidden] [ref=f5e7]: —
+      - generic [ref=f5e8]: Apt Labs
+    - generic [ref=f5e10]: Network
+    - 'generic "Environment: Local demo" [ref=f5e11]': Local demo
+    - button "Search modules and tasks" [ref=f5e12] [cursor=pointer]:
+      - generic [ref=f5e16]: Search
+      - generic [ref=f5e17]: Ctrl K
+    - button "Hide context navigation" [ref=f5e18] [cursor=pointer]
+    - button "Reset workspace layout" [ref=f5e21] [cursor=pointer]
+  - navigation "Primary workspace modules" [ref=f5e25]:
+    - link "Home" [ref=f5e26] [cursor=pointer]:
+      - /url: /workspace
+    - link "Commons" [ref=f5e31] [cursor=pointer]:
+      - /url: /workspace/commons
+    - link "Network" [ref=f5e37] [cursor=pointer]:
+      - /url: /workspace/network/people
+    - link "Workbench" [ref=f5e42] [cursor=pointer]:
+      - /url: /workspace/workbench
+    - link "The Roll" [ref=f5e47] [cursor=pointer]:
+      - /url: /workspace/records/roll
+    - link "Intelligence" [ref=f5e52] [cursor=pointer]:
+      - /url: /workspace/intelligence
+  - complementary "Workspace context navigation" [ref=f5e61]:
+    - generic [ref=f5e62]:
+      - generic [ref=f5e63]: Current workspace
+      - generic [ref=f5e64]: Network
+    - generic [ref=f5e65]: Network
+    - navigation "Network destinations" [ref=f5e66]:
+      - link "People & crews" [ref=f5e67] [cursor=pointer]:
+        - /url: /workspace/network/people
+      - link "Institutions & assets" [ref=f5e69] [cursor=pointer]:
+        - /url: /workspace/network/institutions
+      - link "Capability directory" [ref=f5e71] [cursor=pointer]:
+        - /url: /workspace/network/capabilities
+    - generic [ref=f5e74]:
+      - generic [ref=f5e75]: Data context
+      - generic [ref=f5e76]: Local, sample, and imported records remain distinct.
+  - main [ref=f5e77]:
+    - generic [ref=f5e79]:
+      - generic [ref=f5e80]:
+        - generic [ref=f5e81]: APT-LABS
+        - generic [ref=f5e85]:
+          - heading "People" [level=1] [ref=f5e86]
+          - generic [aria-hidden] [ref=f5e87]: /
+          - generic [ref=f5e88]: Capability directory · network map
+        - generic [ref=f5e89]:
+          - button "＋ Add person" [ref=f5e90] [cursor=pointer]
+          - button "Export record" [ref=f5e91] [cursor=pointer]
+      - generic [ref=f5e92]:
+        - generic [ref=f5e94]: CAPABILITY DIRECTORY
+        - generic [ref=f5e95]: ·
+        - generic [ref=f5e96]: 14 RECORDS
+        - generic [ref=f5e97]: ·
+        - generic [ref=f5e98]: 33 RELATIONSHIPS
+      - generic [ref=f5e99]:
+        - region "People directory" [ref=f5e101]:
+          - generic [ref=f5e102]:
+            - generic [ref=f5e103]:
+              - generic [aria-hidden] [ref=f5e104]: ⌕
+              - searchbox "Search people" [ref=f5e105]
+            - generic "Directory filters" [ref=f5e106]:
+              - generic [ref=f5e107]:
+                - generic [ref=f5e108]: Capability
+                - combobox "Capability" [ref=f5e109]:
+                  - option "All capabilities" [selected]
+                  - option "AGI systems"
+                  - option "Community research"
+                  - option "Cooperative governance"
+                  - option "Crew administration"
+                  - option "Documentation"
+                  - option "Electrical systems"
+                  - option "Facilitation"
+                  - option "Field research"
+                  - option "Learning-focused communication"
+                  - option "Measurement"
+                  - option "Open learning"
+                  - option "Protocol design"
+                  - option "Research and prototyping"
+                  - option "Safety"
+                  - option "Solar maintenance"
+                  - option "Solar planning"
+                  - option "Storyboarding"
+                  - option "Systems architecture"
+                  - option "Systems design"
+                  - option "Training"
+                  - option "Water systems"
+                  - option "Workshop design"
+              - generic [ref=f5e110]:
+                - generic [ref=f5e111]: Service area
+                - combobox "Service area" [ref=f5e112]:
+                  - option "All areas" [selected]
+                  - option "Accra"
+                  - option "Distributed"
+                  - option "Nairobi"
+                  - option "Oaxaca"
+          - generic [ref=f5e113]:
+            - generic [ref=f5e114]: 9 results
+            - generic [ref=f5e115]: Individual practice
+          - list [ref=f5e116]:
+            - listitem [ref=f5e117]:
+              - button "Nia Wanjiru Person Field systems designer Systems design Community research Solar planning Nairobi ·Work · Microgrid commissioning" [ref=f5e118] [cursor=pointer]:
+                - generic [ref=f5e120]:
+                  - generic [ref=f5e121]:
+                    - strong [ref=f5e122]: Nia Wanjiru
+                    - generic [ref=f5e123]: Person
+                  - generic [ref=f5e124]: Field systems designer
+                  - generic [ref=f5e125]:
+                    - generic [ref=f5e126]: Systems design
+                    - generic [ref=f5e127]: Community research
+                    - generic [ref=f5e128]: Solar planning
+                  - generic [ref=f5e129]:
+                    - generic [ref=f5e130]: Nairobi
+                    - generic [ref=f5e131]: ·Work · Microgrid commissioning
+                - generic [aria-hidden] [ref=f5e132]: →
+            - listitem [ref=f5e133]:
+              - button "Jabari Otieno Person Solar technician Electrical systems Solar maintenance Safety Nairobi ·Work · Microgrid commissioning" [ref=f5e134] [cursor=pointer]:
+                - generic [ref=f5e136]:
+                  - generic [ref=f5e137]:
+                    - strong [ref=f5e138]: Jabari Otieno
+                    - generic [ref=f5e139]: Person
+                  - generic [ref=f5e140]: Solar technician
+                  - generic [ref=f5e141]:
+                    - generic [ref=f5e142]: Electrical systems
+                    - generic [ref=f5e143]: Solar maintenance
+                    - generic [ref=f5e144]: Safety
+                  - generic [ref=f5e145]:
+                    - generic [ref=f5e146]: Nairobi
+                    - generic [ref=f5e147]: ·Work · Microgrid commissioning
+                - generic [aria-hidden] [ref=f5e148]: →
+            - listitem [ref=f5e149]:
+              - button "Lucia Santos Person Cooperative facilitator Facilitation Cooperative governance Training Oaxaca ·Work · Repair guide & workshop" [ref=f5e150] [cursor=pointer]:
+                - generic [ref=f5e152]:
+                  - generic [ref=f5e153]:
+                    - strong [ref=f5e154]: Lucia Santos
+                    - generic [ref=f5e155]: Person
+                  - generic [ref=f5e156]: Cooperative facilitator
+                  - generic [ref=f5e157]:
+                    - generic [ref=f5e158]: Facilitation
+                    - generic [ref=f5e159]: Cooperative governance
+                    - generic [ref=f5e160]: Training
+                  - generic [ref=f5e161]:
+                    - generic [ref=f5e162]: Oaxaca
+                    - generic [ref=f5e163]: ·Work · Repair guide & workshop
+                - generic [aria-hidden] [ref=f5e164]: →
+            - listitem [ref=f5e165]:
+              - button "Kwame Mensah Person Water systems researcher Field research Water systems Measurement Accra ·Work · Water resilience audit" [ref=f5e166] [cursor=pointer]:
+                - generic [ref=f5e168]:
+                  - generic [ref=f5e169]:
+                    - strong [ref=f5e170]: Kwame Mensah
+                    - generic [ref=f5e171]: Person
+                  - generic [ref=f5e172]: Water systems researcher
+                  - generic [ref=f5e173]:
+                    - generic [ref=f5e174]: Field research
+                    - generic [ref=f5e175]: Water systems
+                    - generic [ref=f5e176]: Measurement
+                  - generic [ref=f5e177]:
+                    - generic [ref=f5e178]: Accra
+                    - generic [ref=f5e179]: ·Work · Water resilience audit
+                - generic [aria-hidden] [ref=f5e180]: →
+            - listitem [ref=f5e181]:
+              - button "Yuki Tanaka Person Knowledge steward Documentation Open learning Workshop design Nairobi ·Work · Repair guide & workshop" [ref=f5e182] [cursor=pointer]:
+                - generic [ref=f5e184]:
+                  - generic [ref=f5e185]:
+                    - strong [ref=f5e186]: Yuki Tanaka
+                    - generic [ref=f5e187]: Person
+                  - generic [ref=f5e188]: Knowledge steward
+                  - generic [ref=f5e189]:
+                    - generic [ref=f5e190]: Documentation
+                    - generic [ref=f5e191]: Open learning
+                    - generic [ref=f5e192]: Workshop design
+                  - generic [ref=f5e193]:
+                    - generic [ref=f5e194]: Nairobi
+                    - generic [ref=f5e195]: ·Work · Repair guide & workshop
+                - generic [aria-hidden] [ref=f5e196]: →
+            - listitem [ref=f5e197]:
+              - button "Kemoly Murage Person Systems architect Systems architecture Protocol design AGI systems Distributed" [ref=f5e198] [cursor=pointer]:
+                - generic [ref=f5e200]:
+                  - generic [ref=f5e201]:
+                    - strong [ref=f5e202]: Kemoly Murage
+                    - generic [ref=f5e203]: Person
+                  - generic [ref=f5e204]: Systems architect
+                  - generic [ref=f5e205]:
+                    - generic [ref=f5e206]: Systems architecture
+                    - generic [ref=f5e207]: Protocol design
+                    - generic [ref=f5e208]: AGI systems
+                  - generic [ref=f5e209]: Distributed
+                - generic [aria-hidden] [ref=f5e211]: →
+            - listitem [ref=f5e212]:
+              - button "Horus the Young Person AGI systems contributor AGI systems Research and prototyping Distributed" [ref=f5e213] [cursor=pointer]:
+                - generic [ref=f5e215]:
+                  - generic [ref=f5e216]:
+                    - strong [ref=f5e217]: Horus the Young
+                    - generic [ref=f5e218]: Person
+                  - generic [ref=f5e219]: AGI systems contributor
+                  - generic [ref=f5e220]:
+                    - generic [ref=f5e221]: AGI systems
+                    - generic [ref=f5e222]: Research and prototyping
+                  - generic [ref=f5e223]: Distributed
+                - generic [aria-hidden] [ref=f5e225]: →
+            - listitem [ref=f5e226]:
+              - button "Tehuti Person Crew0 administrator Crew administration Distributed" [ref=f5e227] [cursor=pointer]:
+                - generic [ref=f5e229]:
+                  - generic [ref=f5e230]:
+                    - strong [ref=f5e231]: Tehuti
+                    - generic [ref=f5e232]: Person
+                  - generic [ref=f5e233]: Crew0 administrator
+                  - generic [ref=f5e234]: Crew administration
+                  - generic [ref=f5e236]: Distributed
+                - generic [aria-hidden] [ref=f5e238]: →
+            - listitem [ref=f5e239]:
+              - button "Zuri Kamau Person Illustrative learning animator Storyboarding Learning-focused communication" [ref=f5e240] [cursor=pointer]:
+                - generic [ref=f5e242]:
+                  - generic [ref=f5e243]:
+                    - strong [ref=f5e244]: Zuri Kamau
+                    - generic [ref=f5e245]: Person
+                  - generic [ref=f5e246]: Illustrative learning animator
+                  - generic [ref=f5e247]:
+                    - generic [ref=f5e248]: Storyboarding
+                    - generic [ref=f5e249]: Learning-focused communication
+                - generic [aria-hidden] [ref=f5e250]: →
+        - complementary [ref=f5e251]:
+          - generic [ref=f5e252]: Select a person or crew to inspect

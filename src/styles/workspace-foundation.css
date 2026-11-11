@@ -52,9 +52,9 @@
 }
 
 .studio-topbar {
-  gap: 18px;
-  padding-right: 22px;
-  padding-left: 22px;
+  gap: 16px;
+  padding-right: 16px;
+  padding-left: 16px;
   background: var(--bg-elev);
   border-bottom-color: var(--line);
 }
@@ -67,7 +67,7 @@
 }
 
 .studio-topbar-context {
-  gap: 10px;
+  gap: 8px;
   color: var(--muted);
 }
 
@@ -77,7 +77,7 @@
 
 .studio-module-rail {
   grid-row: 2 / -1;
-  padding-top: 15px;
+  padding-top: 16px;
   background: var(--studio-rail);
   border-right-color: var(--studio-rail-line);
 }
@@ -102,7 +102,7 @@
 .studio-sidebar {
   grid-row: 2 / -1;
   height: auto;
-  padding: 18px 12px 14px;
+  padding: 16px 8px 16px;
   color: var(--studio-rail-ink);
   background: var(--studio-rail-raised);
   border-right-color: var(--studio-rail-line);
@@ -121,7 +121,7 @@
 }
 
 .studio-sidebar .studio-nav-label {
-  margin: 16px 8px 9px;
+  margin: 16px 8px 8px;
   color: var(--studio-rail-muted);
   font-size: 9px;
 }
@@ -132,8 +132,8 @@
 
 .studio-context-destination {
   min-height: 40px;
-  gap: 10px;
-  padding: 0 10px;
+  gap: 8px;
+  padding: 0 8px;
   color: var(--studio-rail-muted);
   border-radius: var(--radius-2);
   font-size: 12px;
@@ -153,7 +153,7 @@
 }
 
 .studio-context-empty {
-  margin: 2px 8px;
+  margin: 4px 8px;
   color: var(--studio-rail-muted);
   font-size: 11px;
 }
@@ -254,7 +254,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(220px, .8fr);
   align-items: start;
-  gap: 56px;
+  gap: 48px;
 }
 
 .workspace-overview-work,
@@ -266,7 +266,7 @@
 .workspace-overview-work h2,
 .workspace-overview-start h2 {
   margin: 0;
-  padding: 14px 0 12px;
+  padding: 16px 0 12px;
   color: var(--fg);
   font: 600 14px/1.4 var(--sans);
 }
@@ -292,7 +292,7 @@
 
 .workspace-overview-start-link > span:first-child {
   display: grid;
-  gap: 5px;
+  gap: 4px;
 }
 
 .workspace-overview-start-link strong {
@@ -390,7 +390,7 @@
     width: 100%;
     height: 100%;
     flex-direction: column;
-    padding: 20px 15px 15px;
+    padding: 16px 16px 16px;
     background: var(--bg-elev);
   }
 
@@ -541,7 +541,7 @@
 
 @media (max-width: 429px) {
   .studio-topbar {
-    gap: 6px;
+    gap: 4px;
     padding-right: 8px;
     padding-left: 8px;
   }

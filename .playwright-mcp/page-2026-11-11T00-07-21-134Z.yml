@@ -1,0 +1,87 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - link "APT-LABS" [ref=e5] [cursor=pointer]:
+      - /url: /workspace
+      - generic [aria-hidden] [ref=e6]: A
+      - generic [aria-hidden] [ref=e7]: â€”
+      - generic [ref=e8]: Apt Labs
+    - generic [ref=e10]: Home
+    - 'generic "Environment: Local demo" [ref=e11]': Local demo
+    - button "Search modules and tasks" [ref=e12] [cursor=pointer]:
+      - generic [ref=e16]: Search
+      - generic [ref=e17]: Ctrl K
+    - button "Hide context navigation" [ref=e18] [cursor=pointer]
+    - button "Reset workspace layout" [ref=e21] [cursor=pointer]
+  - navigation "Primary workspace modules" [ref=e25]:
+    - link "Home" [ref=e26] [cursor=pointer]:
+      - /url: /workspace
+    - link "Commons" [ref=e31] [cursor=pointer]:
+      - /url: /workspace/commons
+    - link "Network" [ref=e37] [cursor=pointer]:
+      - /url: /workspace/network/people
+    - link "Workbench" [ref=e42] [cursor=pointer]:
+      - /url: /workspace/workbench
+    - link "The Roll" [ref=e47] [cursor=pointer]:
+      - /url: /workspace/records/roll
+    - link "Intelligence" [ref=e52] [cursor=pointer]:
+      - /url: /workspace/intelligence
+  - complementary "Workspace context navigation" [ref=e61]:
+    - generic [ref=e62]:
+      - generic [ref=e63]: Current workspace
+      - generic [ref=e64]: Home
+    - generic [ref=e65]: Workspace
+    - navigation "Workspace destinations" [ref=e66]:
+      - link "Commons" [ref=e67] [cursor=pointer]:
+        - /url: /workspace/commons
+      - link "Network" [ref=e69] [cursor=pointer]:
+        - /url: /workspace/network/people
+      - link "Workbench" [ref=e71] [cursor=pointer]:
+        - /url: /workspace/workbench
+      - link "Records" [ref=e73] [cursor=pointer]:
+        - /url: /workspace/records/roll
+      - link "Intelligence" [ref=e75] [cursor=pointer]:
+        - /url: /workspace/intelligence
+    - generic [ref=e78]:
+      - generic [ref=e79]: Data context
+      - generic [ref=e80]: Local, sample, and imported records remain distinct.
+  - main [ref=e81]:
+    - generic [ref=e83]:
+      - generic [ref=e84]:
+        - paragraph [ref=e85]: APT-LABS workspace
+        - heading "Welcome to APT-LABS." [level=1] [ref=e86]
+      - generic [ref=e87]:
+        - region "Your work" [ref=e88]:
+          - heading "Your work" [level=2] [ref=e89]
+          - paragraph [ref=e90]: Personal assignments and review requests are not connected here yet. When work is linked to your profile, it will appear in this space.
+        - navigation "A useful first step" [ref=e91]:
+          - heading "A useful first step" [level=2] [ref=e92]
+          - link "Open Commons Browse needs, offers, opportunities, and shared knowledge." [ref=e93] [cursor=pointer]:
+            - /url: /workspace/commons
+            - generic [ref=e94]:
+              - strong [ref=e95]: Open Commons
+              - generic [ref=e96]: Browse needs, offers, opportunities, and shared knowledge.
+            - generic [aria-hidden] [ref=e97]: →
+          - link "Explore the network Find people, crews, institutions, and capabilities to work with." [ref=e98] [cursor=pointer]:
+            - /url: /workspace/network/people
+            - generic [ref=e99]:
+              - strong [ref=e100]: Explore the network
+              - generic [ref=e101]: Find people, crews, institutions, and capabilities to work with.
+            - generic [aria-hidden] [ref=e102]: →
+          - link "Open Workbench Review pilot lanes and coordinated work." [ref=e103] [cursor=pointer]:
+            - /url: /workspace/workbench
+            - generic [ref=e104]:
+              - strong [ref=e105]: Open Workbench
+              - generic [ref=e106]: Review pilot lanes and coordinated work.
+            - generic [aria-hidden] [ref=e107]: →
+          - link "Review the Roll Inspect durable records and supporting evidence." [ref=e108] [cursor=pointer]:
+            - /url: /workspace/records/roll
+            - generic [ref=e109]:
+              - strong [ref=e110]: Review the Roll
+              - generic [ref=e111]: Inspect durable records and supporting evidence.
+            - generic [aria-hidden] [ref=e112]: →
+          - link "Open Intelligence Review trust and economic intelligence research." [ref=e113] [cursor=pointer]:
+            - /url: /workspace/intelligence
+            - generic [ref=e114]:
+              - strong [ref=e115]: Open Intelligence
+              - generic [ref=e116]: Review trust and economic intelligence research.
+            - generic [aria-hidden] [ref=e117]: →

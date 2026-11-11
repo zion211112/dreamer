@@ -19,7 +19,7 @@ export function BrandMark({ size = 'md', className = '', href = '/' }: BrandMark
       aria-label="APT-LABS"
     >
       <span className={symbolClass} aria-hidden="true">A</span>
-      <span className="wordmark-dash" aria-hidden="true">â€”</span>
+      <span className="wordmark-dash" aria-hidden="true">—</span>
       <span className="wordmark-label" style={{ fontSize: text }}>Apt Labs</span>
     </a>
   );

@@ -51,12 +51,22 @@ interface ContextDestination {
 
 const contextDestinations: Record<StudioContext, { heading: string; links: ContextDestination[] }> = {
   overview: {
-    heading: 'Overview',
-    links: [],
+    heading: 'Workspace',
+    links: [
+      { context: 'commons', href: '/workspace/commons', label: 'Commons' },
+      { context: 'network:people', href: '/workspace/network/people', label: 'Network' },
+      { context: 'workbench', href: '/workspace/workbench', label: 'Workbench' },
+      { context: 'records:roll', href: '/workspace/records/roll', label: 'Records' },
+      { context: 'intelligence', href: '/workspace/intelligence', label: 'Intelligence' },
+    ],
   },
   commons: {
     heading: 'Commons',
-    links: [],
+    links: [
+      { context: 'commons', href: '/workspace/commons', label: 'Field signals' },
+      { context: 'commons', href: '/workspace/commons', label: 'Opportunities' },
+      { context: 'commons', href: '/workspace/commons', label: 'Decisions' },
+    ],
   },
   'network:people': {
     heading: 'Network',
@@ -69,17 +79,17 @@ const contextDestinations: Record<StudioContext, { heading: string; links: Conte
   'network:institutions': {
     heading: 'Network',
     links: [
-      { context: 'network:people', href: '/workspace/network/people', label: 'People & crews' },
       { context: 'network:institutions', href: '/workspace/network/institutions', label: 'Institutions & assets' },
+      { context: 'network:people', href: '/workspace/network/people', label: 'People & crews' },
       { context: 'network:capabilities', href: '/workspace/network/capabilities', label: 'Capability directory' },
     ],
   },
   'network:capabilities': {
     heading: 'Network',
     links: [
+      { context: 'network:capabilities', href: '/workspace/network/capabilities', label: 'Capability directory' },
       { context: 'network:people', href: '/workspace/network/people', label: 'People & crews' },
       { context: 'network:institutions', href: '/workspace/network/institutions', label: 'Institutions & assets' },
-      { context: 'network:capabilities', href: '/workspace/network/capabilities', label: 'Capability directory' },
     ],
   },
   workbench: {
@@ -99,29 +109,30 @@ const contextDestinations: Record<StudioContext, { heading: string; links: Conte
   'records:annals': {
     heading: 'Records',
     links: [
-      { context: 'records:canon', href: '/workspace/records/canon', label: 'Canon' },
       { context: 'records:annals', href: '/workspace/records/annals', label: 'Annals' },
+      { context: 'records:canon', href: '/workspace/records/canon', label: 'Canon' },
       { context: 'records:roll', href: '/workspace/records/roll', label: 'Roll' },
     ],
   },
   'records:roll': {
     heading: 'Records',
     links: [
+      { context: 'records:roll', href: '/workspace/records/roll', label: 'Roll' },
       { context: 'records:canon', href: '/workspace/records/canon', label: 'Canon' },
       { context: 'records:annals', href: '/workspace/records/annals', label: 'Annals' },
-      { context: 'records:roll', href: '/workspace/records/roll', label: 'Roll' },
     ],
   },
   intelligence: {
     heading: 'Intelligence',
     links: [
-      { context: 'intelligence:coin-lab', href: '/workspace/intelligence', label: 'Trust and economic intelligence' },
+      { context: 'intelligence', href: '/workspace/intelligence', label: 'Trust and economic intelligence' },
     ],
   },
   'intelligence:coin-lab': {
     heading: 'Intelligence',
     links: [
-      { context: 'intelligence:coin-lab', href: '/workspace/intelligence', label: 'Trust and economic intelligence' },
+      { context: 'intelligence', href: '/workspace/intelligence', label: 'Trust and economic intelligence' },
+      { context: 'intelligence:coin-lab', href: '/workspace/intelligence/coin-lab', label: 'Coin lab' },
     ],
   },
 };
@@ -311,7 +322,7 @@ export function StudioNavigation({
         )}
         <StudioLinks currentContext={currentContext} />
         <div className="studio-sidebar-bottom">
-          <div className="studio-session-indicator"><span>DATA CONTEXT</span><small>Local, sample, and imported records remain distinct.</small></div>
+          <div className="studio-session-indicator"><span>Data context</span><small>Local, sample, and imported records remain distinct.</small></div>
         </div>
       </aside>
 
@@ -339,7 +350,7 @@ export function StudioNavigation({
             onNavigate={() => setMobileOpen(false)}
           />
           {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} open={identityOpen} />}
-          <div className="studio-session-indicator"><span>DATA CONTEXT</span><small>Local, sample, and imported records remain distinct.</small></div>
+          <div className="studio-session-indicator"><span>Data context</span><small>Local, sample, and imported records remain distinct.</small></div>
         </div>
       </dialog>
 

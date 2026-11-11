@@ -1,0 +1,99 @@
+- generic [ref=f10e3]:
+  - banner [ref=f10e4]:
+    - link "APT-LABS" [ref=f10e5] [cursor=pointer]:
+      - /url: /workspace
+      - generic [aria-hidden] [ref=f10e6]: A
+      - generic [aria-hidden] [ref=f10e7]: â€”
+      - generic [ref=f10e8]: Apt Labs
+    - generic [ref=f10e10]: Workbench
+    - 'generic "Environment: Local demo" [ref=f10e11]': Local demo
+    - button "Search modules and tasks" [ref=f10e12] [cursor=pointer]:
+      - generic [ref=f10e16]: Search
+      - generic [ref=f10e17]: Ctrl K
+    - button "Hide context navigation" [ref=f10e18] [cursor=pointer]
+    - button "Reset workspace layout" [ref=f10e21] [cursor=pointer]
+  - navigation "Primary workspace modules" [ref=f10e25]:
+    - link "Home" [ref=f10e26] [cursor=pointer]:
+      - /url: /workspace
+    - link "Commons" [ref=f10e31] [cursor=pointer]:
+      - /url: /workspace/commons
+    - link "Network" [ref=f10e37] [cursor=pointer]:
+      - /url: /workspace/network/people
+    - link "Workbench" [ref=f10e42] [cursor=pointer]:
+      - /url: /workspace/workbench
+    - link "The Roll" [ref=f10e47] [cursor=pointer]:
+      - /url: /workspace/records/roll
+    - link "Intelligence" [ref=f10e52] [cursor=pointer]:
+      - /url: /workspace/intelligence
+  - complementary "Workspace context navigation" [ref=f10e61]:
+    - generic [ref=f10e62]:
+      - generic [ref=f10e63]: Current workspace
+      - generic [ref=f10e64]: Workbench
+    - generic [ref=f10e65]: Workbench
+    - navigation "Workbench destinations" [ref=f10e66]:
+      - link "All pilot lanes" [ref=f10e67] [cursor=pointer]:
+        - /url: /workspace/workbench
+    - generic [ref=f10e70]:
+      - generic [ref=f10e71]: DATA CONTEXT
+      - generic [ref=f10e72]: Local, sample, and imported records remain distinct.
+  - main [ref=f10e73]:
+    - generic [ref=f10e76]:
+      - generic [ref=f10e77]:
+        - generic [ref=f10e78]: APT-LABS / Workbench
+        - generic [ref=f10e79]:
+          - heading "Workbench" [level=1] [ref=f10e80]
+          - paragraph [ref=f10e81]: Five pilot lanes. Published rates in KES; local stewardship, work stays in the community.
+      - generic [ref=f10e82]:
+        - generic [ref=f10e83]:
+          - generic [ref=f10e84]: Published Lanes
+          - generic [ref=f10e85]: "4"
+        - generic [ref=f10e86]:
+          - generic [ref=f10e87]: Total Capital Committed
+          - generic [ref=f10e88]: KES 134,500
+        - generic [ref=f10e89]:
+          - generic [ref=f10e90]: Active Undertakings
+          - generic [ref=f10e91]: "8"
+      - generic [ref=f10e92]:
+        - heading "Pilot lanes" [level=2] [ref=f10e93]
+        - generic [ref=f10e94]:
+          - link "Benbenos" [ref=f10e95] [cursor=pointer]:
+            - /url: /workspace/workbench/benbenos
+            - generic [ref=f10e96]:
+              - heading "Benbenos" [level=3] [ref=f10e97]
+              - paragraph [ref=f10e98]: Learning operations
+            - generic [ref=f10e99]: Nairobi
+            - generic [ref=f10e100]: Published
+            - generic [ref=f10e101]: Open lane
+          - link "Kemetos" [ref=f10e102] [cursor=pointer]:
+            - /url: /workspace/workbench/kemetos
+            - generic [ref=f10e103]:
+              - heading "Kemetos" [level=3] [ref=f10e104]
+              - paragraph [ref=f10e105]: Electrical and solar
+            - generic [ref=f10e106]: Nairobi
+            - generic [ref=f10e107]: Published
+            - generic [ref=f10e108]: Open lane
+          - link "Mini Hydro" [ref=f10e109] [cursor=pointer]:
+            - /url: /workspace/workbench/minihydro
+            - generic [ref=f10e110]:
+              - heading "Mini Hydro" [level=3] [ref=f10e111]
+              - paragraph [ref=f10e112]: Micro-hydro power
+            - generic [ref=f10e113]: Thiba
+            - generic [ref=f10e114]: Published
+            - generic [ref=f10e115]: Open lane
+          - link "Mwea Animation Box" [ref=f10e116] [cursor=pointer]:
+            - /url: /workspace/workbench/mwea-animation-box
+            - generic [ref=f10e117]:
+              - heading "Mwea Animation Box" [level=3] [ref=f10e118]
+              - paragraph [ref=f10e119]: Irrigation and animation
+            - generic [ref=f10e120]: Mwea
+            - generic [ref=f10e121]: Published
+            - generic [ref=f10e122]: Open lane
+          - link "Open pilot" [ref=f10e123] [cursor=pointer]:
+            - /url: /workspace/workbench/open
+            - generic [ref=f10e124]:
+              - heading "Open pilot" [level=3] [ref=f10e125]
+              - paragraph [ref=f10e126]: Open
+            - generic [ref=f10e127]: —
+            - generic [ref=f10e128]: Illustrative
+            - generic [ref=f10e129]: Register pilot
+      - paragraph [ref=f10e131]: Published rates in KES before work is claimed. Stewards set their own terms; the workbench coordinates delivery, never extracts.
