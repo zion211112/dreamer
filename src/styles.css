@@ -18173,3 +18173,38 @@ a:focus-visible {
 
 
 
+/* ============================================================================
+   Refinement layer — Structural Emergence polish (2026-11-11)
+   Editorial typography, text-wrap balance, serif headings on auth,
+   and subtle shell refinements. Kept additive: no token changes, no
+   shared contract edits.
+   ============================================================================ */
+
+/* Landing — editorial heading balance */
+.landing-hero h1,
+.landing-section-heading h2,
+.landing-contact h2,
+.landing-investor-intro h2 {
+  text-wrap: balance;
+}
+
+/* Auth — editorial serif heading to match landing voice */
+.auth-heading h1 {
+  font-family: var(--landing-serif);
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+/* Workspace shell — tighter module rail active state */
+.studio-rail-link.is-active::before {
+  left: -8px;
+  width: 3px;
+  background: var(--state-canon);
+}
+
+.studio-context-destination.is-active {
+  border-color: var(--state-canon);
+  background: color-mix(in srgb, var(--state-canon) 12%, var(--bg-elev));
+}
