@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import { PageHead, type PageHeadMetric } from '../../components/PageHead';
 import { NetworkMap } from '../../components/NetworkMap';
+import { Button, Input, Select } from '../../components/ui';
 import {
   RELATIONSHIP_KINDS, KIND_LABELS,
   type NetworkEntity, type RelationshipKind,
@@ -18,6 +19,24 @@ const ENTITY_TYPES = [
   { id: 'institution' as const, label: 'Institutions' },
   { id: 'evidence' as const, label: 'Evidence' },
 ];
+
+const ENTITY_DOT_VARIANTS: Record<string, string> = {
+  person: 'network-entity-dot--person',
+  crew: 'network-entity-dot--crew',
+  asset: 'network-entity-dot--asset',
+  work: 'network-entity-dot--work',
+  institution: 'network-entity-dot--institution',
+  evidence: 'network-entity-dot--evidence',
+};
+
+const PROFILE_NAME_VARIANTS: Record<string, string> = {
+  person: 'network-profile-name--person',
+  crew: 'network-profile-name--crew',
+  asset: 'network-profile-name--asset',
+  work: 'network-profile-name--work',
+  institution: 'network-profile-name--institution',
+  evidence: 'network-profile-name--evidence',
+};
 
 export function Network() {
   const [record, setRecord] = useState(() => readPeopleNetworkRecord());
@@ -97,7 +116,7 @@ export function Network() {
         <PageHead
           eyebrow="Network"
           title="Network"
-          subtitle="Discover who exists, understand what they can do, and see how they connect."
+          subtitle="See who exists, what they can do, how they connect."
           metrics={metrics}
           quietActions={[
             { label: 'Export portable record', onClick: handleExport },
@@ -109,7 +128,7 @@ export function Network() {
           <div className="network-toolbar-search">
             <label className="network-toolbar-search-label" htmlFor="network-search">
               <span className="network-toolbar-caption">Search</span>
-              <input
+              <Input
                 id="network-search"
                 type="search"
                 placeholder="Filter by name, role, capability, ID..."
@@ -123,7 +142,7 @@ export function Network() {
           <div className="network-toolbar-filters">
             <label className="network-filter-label">
               <span className="network-toolbar-caption">Relationships</span>
-              <select
+              <Select
                 value={activeFilter}
                 onChange={(e: Event) => setActiveFilter((e.target as HTMLSelectElement).value as RelationshipKind | 'all')}
                 className="network-filter-select"
@@ -132,7 +151,7 @@ export function Network() {
                 {RELATIONSHIP_KINDS.map(kind => (
                   <option key={kind} value={kind}>{KIND_LABELS[kind]}</option>
                 ))}
-              </select>
+              </Select>
             </label>
           </div>
         </div>
@@ -149,7 +168,7 @@ export function Network() {
                     const count = entities.filter(e => e.type === type.id).length;
                     return (
                       <li key={type.id} className="network-entity-item">
-                        <span className={`network-entity-dot network-entity-dot--${type.id}`} />
+                        <span className={`network-entity-dot ${ENTITY_DOT_VARIANTS[type.id]}`} />
                         <span className="network-entity-label">{type.label}</span>
                         <span className="network-entity-count">{count}</span>
                       </li>
@@ -175,12 +194,12 @@ export function Network() {
 
           {selectedEntity && (
             <aside className="network-profile-sidecar is-open" aria-label="Entity profile">
-              <button type="button" className="network-profile-close" onClick={() => handleSelect(null)} aria-label="Close profile">
+              <Button type="button" className="network-profile-close" onClick={() => handleSelect(null)} aria-label="Close profile">
                 ×
-              </button>
+              </Button>
               <div className="network-profile-body">
                 <header className="network-profile-header">
-                  <div className={`network-profile-name network-profile-name--${selectedEntity.type}`}>{selectedEntity.name}</div>
+                  <div className={`network-profile-name ${PROFILE_NAME_VARIANTS[selectedEntity.type]}`}>{selectedEntity.name}</div>
                   <div className="network-profile-type">{selectedEntity.type.toUpperCase()} · {selectedEntity.id}</div>
                   <p className="network-profile-summary">{selectedEntity.summary}</p>
                   {selectedEntity.location && <div className="network-profile-location">{selectedEntity.location}</div>}
@@ -238,7 +257,7 @@ export function Network() {
                 </section>
 
                 <footer className="network-profile-footer">
-                  Connections and evidence are explicit, declared relationships—not assumptions of authority or worth.
+                  Connections and evidence are explicit, declared relationships, not assumptions of authority or worth.
                 </footer>
               </div>
             </aside>

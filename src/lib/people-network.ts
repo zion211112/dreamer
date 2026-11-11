@@ -159,7 +159,7 @@ export const PEOPLE_NETWORK: NetworkEntity[] = [
     role: 'Systems architect',
     summary: 'Designs systems across APT-LABS and Kemetos1; contribution records are linked below.',
     location: 'Distributed',
-    capabilities: ['Systems architecture', 'Protocol design', 'AGI systems'],
+    capabilities: ['Systems architecture', 'Protocol design', 'advanced systems'],
     context: 'Three APT-LABS design SBTs reported; Kemetos1 paper verification stated by project.',
     recordBasis: 'local-profile',
   },
@@ -167,10 +167,10 @@ export const PEOPLE_NETWORK: NetworkEntity[] = [
     id: 'person-horus-young',
     type: 'person',
     name: 'Horus the Young',
-    role: 'AGI systems contributor',
-    summary: 'Works on AGI systems within Kemetos1. No additional credentials are asserted here.',
+    role: 'advanced systems contributor',
+    summary: 'Works on advanced systems within Kemetos1. No additional credentials are asserted here.',
     location: 'Distributed',
-    capabilities: ['AGI systems', 'Research and prototyping'],
+    capabilities: ['advanced systems', 'Research and prototyping'],
   },
   {
     id: 'person-tehuti',
@@ -195,10 +195,10 @@ export const PEOPLE_NETWORK: NetworkEntity[] = [
     id: 'asset-kemetos1',
     type: 'asset',
     name: 'Kemetos1',
-    role: 'AGI systems asset',
-    summary: 'A reusable AGI systems asset that anchors Crew0 research, infrastructure, and operational work.',
+    role: 'advanced systems asset',
+    summary: 'A reusable advanced systems asset that anchors Crew0 research, infrastructure, and operational work.',
     location: 'Distributed',
-    capabilities: ['AGI systems', 'Inference', 'Agent infrastructure'],
+    capabilities: ['advanced systems', 'Inference', 'Agent infrastructure'],
     context: 'Asset record; no institution or external affiliation inferred.',
     assetReference: 'EX-AS-01',
     recordBasis: 'project-reported',
@@ -237,10 +237,10 @@ export const PEOPLE_NETWORK: NetworkEntity[] = [
     id: 'crew-crew0',
     type: 'crew',
     name: 'Crew0',
-    role: 'AGI systems crew',
+    role: 'advanced systems crew',
     summary: 'A three-person crew working on the Kemetos1 project.',
     location: 'Distributed',
-    capabilities: ['AGI systems', 'Project work'],
+    capabilities: ['advanced systems', 'Project work'],
     context: 'Three members · administration assigned to Tehuti.',
   },
   {
@@ -476,7 +476,7 @@ export function readPeopleNetworkRecord(): PeopleNetworkRecord {
 
   return {
     entities: parsed.entities.map(entity => entity.id === legacyKemetos.id
-      ? { ...entity, id: 'asset-kemetos1', type: 'asset', role: 'AGI systems asset' }
+      ? { ...entity, id: 'asset-kemetos1', type: 'asset', role: 'advanced systems asset' }
       : entity),
     relationships: parsed.relationships.map(relationship => ({
       ...relationship,
