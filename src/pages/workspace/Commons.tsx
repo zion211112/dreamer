@@ -1,5 +1,7 @@
 ﻿import { WorkspaceLayout } from './WorkspaceLayout';
 import { PageHead } from '../../components/PageHead';
+import { Button } from '@/components/ui/Button';
+import { Select } from '@/components/ui/Select';
 import { CommonsReportForm } from './commons/ReportForm';
 import { CommonsSignalQueue } from './commons/CommonsSignalQueue';
 import { CommonsSignalDetail } from './commons/CommonsSignalDetail';
@@ -78,7 +80,7 @@ export function Commons() {
            />
            <div className="signal-head-actions">
              <div className="commons-contribute">
-               <button
+               <Button
                  aria-expanded={showContributionMenu}
                  className="signal-primary-action"
                  onClick={() => {
@@ -89,10 +91,10 @@ export function Commons() {
                  type="button"
                >
                  {showReportForm ? 'Close form' : '+ Contribute'}
-               </button>
+               </Button>
                {showContributionMenu && (
                  <div aria-label="Contribution options" className="commons-contribute-menu" role="group">
-                   <button
+                   <Button
                      onClick={() => {
                        setShowContributionMenu(false);
                        setShowReportForm(true);
@@ -100,8 +102,8 @@ export function Commons() {
                      type="button"
                    >
                      Add a signal
-                   </button>
-                   <button
+                   </Button>
+                   <Button
                      onClick={() => {
                        setShowContributionMenu(false);
                        setCommonsView('opportunities');
@@ -109,7 +111,7 @@ export function Commons() {
                      type="button"
                    >
                      Explore opportunities
-                   </button>
+                   </Button>
                  </div>
                )}
              </div>
@@ -117,33 +119,33 @@ export function Commons() {
          </div>
 
          <nav className="commons-modebar" aria-label="Commons views">
-           <button
+           <Button
              aria-pressed={commonsView === 'signals'}
              className={commonsView === 'signals' ? 'is-active' : ''}
              onClick={() => setCommonsView('signals')}
              type="button"
            >
              Signals <span>{visibleSignals.length.toString().padStart(2, '0')}</span>
-           </button>
-           <button
+           </Button>
+           <Button
              aria-pressed={commonsView === 'opportunities'}
              className={commonsView === 'opportunities' ? 'is-active' : ''}
              onClick={() => setCommonsView('opportunities')}
              type="button"
            >
              Opportunities
-           </button>
-           <button
+           </Button>
+           <Button
              aria-pressed={commonsView === 'decisions'}
              className={commonsView === 'decisions' ? 'is-active' : ''}
              onClick={() => setCommonsView('decisions')}
              type="button"
            >
              Decisions <span>{governance.proposals.length.toString().padStart(2, '0')}</span>
-           </button>
+           </Button>
           <label className="commons-scope-select" hidden={commonsView === 'opportunities'}>
             <span className="visually-hidden">Institution scope</span>
-            <select
+            <Select
               onChange={event => {
                 setInstitutionScope((event.currentTarget as HTMLSelectElement).value);
                 setSignalPage(0);
@@ -154,7 +156,7 @@ export function Commons() {
               {Object.entries(institutionNames).map(([id, name]) => (
                 <option key={id} value={id}>{name}</option>
               ))}
-            </select>
+            </Select>
           </label>
           <span className="commons-mode-hint">{scopeInstitutionName}</span>
          </nav>
@@ -234,6 +236,17 @@ export function Commons() {
               <div className="commons-module-copy">
                 <span className="commons-module-label">Intelligence</span>
                 <span className="commons-module-desc">Trust and economic intelligence research.</span>
+              </div>
+            </a>
+            <a
+              href="/workspace/kemetos1"
+              className="commons-module-link"
+              aria-label="Open Kemetos1 Coordinator"
+            >
+              <div className="commons-module-icon" aria-hidden="true">⌘</div>
+              <div className="commons-module-copy">
+                <span className="commons-module-label">Kemetos1 Coordinator</span>
+                <span className="commons-module-desc">Coordinate the Kemetos pilot: grasp essence, verify, route, attest.</span>
               </div>
             </a>
           </div>

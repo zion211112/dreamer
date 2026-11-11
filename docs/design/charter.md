@@ -117,14 +117,25 @@ Topbar: working-context identity. Rail: module switching (exactly five icons). S
 | Field | Value |
 |-------|-------|
 | Decision ID | B4 |
-| Date | 2026-11-10 |
-| Rationale | Signature Dark Instrument as the active design proposal |
+| Date | 2026-11-11 |
+| Rationale | Structural Emergence Design Constitution supersedes Signature Dark Instrument |
 | Scope | Visual system (tokens, typography, layout, devices) |
-| Status | Proposal — implementation requires separate authorization |
+| Status | Active |
 | Dependencies | None |
-| Supersedes | Light Luxury default in APT-LABS-SYSTEM.md §7 |
+| Supersedes | Prior B4 "Signature Dark Instrument" (2026-11-10); Light Luxury default in APT-LABS-SYSTEM.md §7 |
 
-Retain the Signature Dark Instrument direction: deep green-black signature default (#0A0F0C), light variant, serif record identity, sans interface text, mono technical readouts, contextual semantic accents (teal canonical, lime proposed, coral risk, amber caution), spatial precision where relevant (surveyor grid, fork glyph, ringed evidence markers, 24px survey lines), high-quality typography, composition, interaction, and accessibility.
+Active design language: **Structural Emergence** — warm ivory base, earthy neutrals, restrained sage, deep forest/ink, selective lilac/peach accents. Editorial serif for record names; precise operational sans/mono for interface and readouts. Six emergence operations guide visual hierarchy and interaction:
+
+1. **Indeterminacy** — clean, spacious field.
+2. **Differentiation** — clear boundaries and hierarchy.
+3. **Polarity** — meaningful relationships exposed.
+4. **Recursion** — feedback, iteration, self-reference.
+5. **Identity** — persistent, coherent structures.
+6. **Emergence** — whole system greater than individual components.
+
+Hard anti-patterns (no exception): generic SaaS dashboards, endless card grids, decorative gradients/glows, unnecessary glassmorphism, arbitrary rounded corners, fake spatial depth, unexplained visual metaphors, excessive animation, decorative graphs without operational meaning, beautiful screens with incomplete functionality.
+
+Quality standard: every visual decision must have a structural or experiential reason. Every interaction must have a clear consequence. Every complex workflow must have an understandable entry point, progression, feedback, and completion state. The finished product should feel precise, warm, intelligent, quietly monumental, and unmistakably original.
 
 ### B5. Anti-slop converted to design tests
 

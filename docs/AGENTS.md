@@ -62,9 +62,13 @@ proposes-never-executes. localStorage `aptlabs:agent-proposals:v1`. Singleton `a
 
 ## Design tokens
 
-Light luxury default (`:root`): #F7F5F0 cream, #1A1D18 ink. Dark variant `[data-skin="dark"]`: #0A0F0C green-black, #E9F1E8 bone.
+Warm ivory default (`:root`): #FAF8F2 ivory base, #1A1F1A forest ink. Dark variant `[data-skin="dark"]`: #0F1410 forest-black, #D4DCC8 pale sage-light.
 
-Semantic state colors: --state-canon (teal), --state-proposed (green), --state-risk (coral), --state-caution (amber).
+Semantic state colors: --state-canon (forest), --state-proposed (lilac), --state-risk (peach), --state-caution (sage).
+
+Type: Georgia serif for record names; system-ui sans for UI; JetBrains Mono for instrument readouts.
+
+Constitution: Structural Emergence — warm ivory / earthy neutrals / restrained sage / deep forest-ink / selective lilac-peach. Six emergence operations (Indeterminacy, Differentiation, Polarity, Recursion, Identity, Emergence) govern hierarchy. See `docs/design/charter.md` B4 for full anti-pattern list and quality standard.
 
 ## Guardrails (from root AGENTS.md)
 

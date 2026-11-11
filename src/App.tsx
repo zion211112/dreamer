@@ -11,6 +11,7 @@ import { AptCoinLab } from './pages/workspace/AptCoinLab';
 import { WorkspaceOverview } from './pages/workspace/WorkspaceOverview';
 import { BenbenOS } from './modules/benben-os';
 import { WorkbenchApp } from './modules/workbench';
+import { Kemetos1App } from './modules/kemetos1';
 import './modules/benben-os/styles/benben.css';
 
 export function App() {
@@ -23,6 +24,7 @@ export function App() {
 
       <Route path="/workspace/workbench/:pilot"><WorkbenchApp /></Route>
       <Route path="/workspace/workbench"><WorkbenchApp /></Route>
+      <Route path="/workspace/kemetos1"><Kemetos1App /></Route>
       <Route path="/workspace"><WorkspaceOverview /></Route>
 
       {/* New 5-module routes */}

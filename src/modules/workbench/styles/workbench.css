@@ -16,7 +16,7 @@
   --line-strong: rgba(143, 160, 140, 0.5);
   --bg-elev: rgba(26, 34, 28, 0.5);
   --bg-subtle: rgba(26, 34, 28, 0.2);
-  --brand-main: #295d70;
+  --brand-main: var(--state-canon);
   --terrain: #8fd98f;
   --terrain-pale: rgba(143, 217, 143, 0.1);
   --state-canon: #7FC5BC;

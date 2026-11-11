@@ -146,7 +146,7 @@ function StudioLinks({ currentContext, onNavigate }: { currentContext: StudioCon
           aria-current={currentContext === link.context ? 'page' : undefined}
           className={`studio-context-destination${currentContext === link.context ? ' is-active' : ''}`}
           href={link.href}
-          key={link.context}
+          key={link.label}
           onClick={onNavigate}
         >
           <span aria-hidden="true" className="studio-context-destination-mark" />

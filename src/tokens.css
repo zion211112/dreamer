@@ -1,72 +1,80 @@
 /* ============================================================================
    APT-LABS — Design Tokens
-   Reference commit palette; dark signature variant via [data-skin="dark"]
+   Structural Emergence Constitution (2026-11-11)
+   Light: warm ivory / earthy neutrals / restrained sage / deep forest-ink
+          / selective lilac-peach accents
+   Dark:  deep forest-black / pale sage-light / lighter accent variants
    ============================================================================ */
 
 :root {
   /* ========================================================================
-     Reference commit palette (default)
-     Warm paper and deep ink with moss, teal, brass, and lime accents
+     Warm Ivory + Earthy Neutrals (light default)
      ======================================================================== */
 
   /* Color Primitives */
-  --bg: #f5f3ee;
-  --fg: #1a1d18;
-  --muted: #6b7066;
-  --dim: #969b90;
-  --fg-strong: #0f110d;
+  --bg: #faf8f2;
+  --fg: #1a1f1a;
+  --muted: #7a8070;
+  --dim: #a8ad9e;
+  --fg-strong: #0d110d;
   --bg-elev: #ffffff;
-  --bg-subtle: #ebe7df;
-  --line: rgba(26, 29, 24, .12);
-  --line-strong: rgba(26, 29, 24, .22);
-  --hairline: rgba(26, 29, 24, .08);
+  --bg-subtle: #edeae2;
+  --line: rgba(26, 31, 26, .12);
+  --line-strong: rgba(26, 31, 26, .22);
+  --hairline: rgba(26, 31, 26, .08);
 
-  /* Palette colors */
-  --terrain: #5d7a5c;
-  --terrain-pale: #e4ebe3;
+  /* Palette — Structural Emergence */
+  --sage: #7d8f78;
+  --sage-pale: #dde3d8;
+  --forest: #2e4a3a;
+  --forest-pale: #d8e3d8;
+  --lilac: #a88fa8;
+  --lilac-pale: #ede4ed;
+  --peach: #d49578;
+  --peach-pale: #f5e4d8;
+  --ivory: #faf8f2;
+  --ink: #1a1f1a;
+
+  /* Legacy aliases kept for compatibility (mapped to new palette) */
+  --terrain: var(--sage);
+  --terrain-pale: var(--sage-pale);
   --terrain-ink: #2e3d2d;
-  --brand-main: #295d70;
-  --brand-main-wash: #e3edf1;
-  --brand-branch: #c6d68e;
-  --brand-branch-wash: rgba(198, 214, 142, .12);
-  --brass: #b8955a;
-  --brass-pale: #f2eadc;
-  --danger: #a84632;
-  --danger-pale: #f6e5df;
-  --phosphor: #8fd98f;
+  --brand-main: var(--forest);
+  --brand-main-wash: var(--forest-pale);
+  --brand-branch: var(--lilac);
+  --brand-branch-wash: var(--lilac-pale);
+  --brass: var(--peach);
+  --brass-pale: var(--peach-pale);
+  --danger: var(--peach);
+  --danger-pale: var(--peach-pale);
+  --phosphor: #9bbf97;
   --bg-term: #0d110e;
-  --glow-soft: rgba(93, 122, 92, .1);
+  --glow-soft: rgba(125, 143, 120, .1);
 
-  /* State Colors (semantic - meaning-carrying) */
-  --state-canon: var(--brand-main);
-  --state-canon-wash: var(--brand-main-wash);
-  --state-proposed: var(--brand-branch);
-  --state-proposed-wash: var(--brand-branch-wash);
-  --state-risk: var(--danger);
-  --state-risk-wash: var(--danger-pale);
-  --state-caution: var(--brass);
-  --state-caution-wash: var(--brass-pale);
+  /* State Colors (semantic — Structural Emergence mapping) */
+  --state-canon: var(--forest);
+  --state-canon-wash: var(--forest-pale);
+  --state-proposed: var(--lilac);
+  --state-proposed-wash: var(--lilac-pale);
+  --state-risk: var(--peach);
+  --state-risk-wash: var(--peach-pale);
+  --state-caution: var(--sage);
+  --state-caution-wash: var(--sage-pale);
 
   /* Water (info) */
-  --water: #3a6b8c;
-  --water-pale: rgba(58, 107, 140, .12);
+  --water: var(--forest);
+  --water-pale: var(--forest-pale);
 
-  /* Legacy semantic colors (kept for compatibility during migration) */
-  --brass: #b8955a;
-  --brass-pale: #f2eadc;
-  --danger: #a84632;
-  --danger-pale: #f6e5df;
-
-  /* Semantic Roles (mapped to new palette) */
+  /* Semantic Roles */
   --text: var(--fg);
   --text-muted: var(--muted);
   --text-faint: var(--dim);
   --border: var(--line);
   --border-strong: var(--line-strong);
 
-  /* State Color Aliases (replaces ok/warn/info/danger) */
-  --ok: var(--terrain);
-  --ok-bg: var(--terrain-pale);
+  /* State Color Aliases */
+  --ok: var(--sage);
+  --ok-bg: var(--sage-pale);
   --warn: var(--state-caution);
   --warn-bg: var(--state-caution-wash);
   --info: var(--water);
@@ -157,29 +165,45 @@
   --shell-focus: var(--brand-main);
 }
 
-/* Dark Signature Variant — explicit opt-in via [data-skin="dark"] on <html> */
+/* Dark Variant — explicit opt-in via [data-skin="dark"] on <html> */
 [data-skin="dark"] {
-  --bg: #0d110e;
-  --fg: #e8ebe5;
-  --muted: #6d7d6e;
-  --dim: #4a554b;
-  --fg-strong: #f4f3ee;
+  --bg: #0f1410;
+  --fg: #d4dcc8;
+  --muted: #6b7d6b;
+  --dim: #4a5a4a;
+  --fg-strong: #e8ede0;
   --bg-elev: #1a221c;
   --bg-subtle: #141a15;
-  --line: rgba(109, 125, 110, .3);
-  --line-strong: rgba(109, 125, 110, .5);
-  --hairline: rgba(109, 125, 110, .15);
+  --line: rgba(107, 125, 107, .28);
+  --line-strong: rgba(107, 125, 107, .48);
+  --hairline: rgba(107, 125, 107, .14);
 
-  --terrain: #8fd98f;
-  --terrain-pale: #1a2d1a;
+  /* Dark variant accents — lighter for contrast on dark bg */
+  --sage: #9bbf97;
+  --sage-pale: #1a2d1a;
+  --forest: #6b9a85;
+  --forest-pale: #1a2d2a;
+  --lilac: #c4a8c4;
+  --lilac-pale: #2a1f2a;
+  --peach: #e8a87c;
+  --peach-pale: #3b2a1a;
+  --ivory: #0f1410;
+  --ink: #d4dcc8;
+
+  /* Legacy aliases (dark variant) */
+  --terrain: var(--sage);
+  --terrain-pale: var(--sage-pale);
   --terrain-ink: #f0fff0;
-  --brass: #e8c87d;
-  --brass-pale: #3d341a;
-  --water: #7dd3fc;
-  --danger: #f28a73;
-  --danger-pale: #3b211d;
-  --phosphor: #8fd98f;
-  --shell-focus: var(--terrain);
+  --brand-main: var(--forest);
+  --brand-main-wash: var(--forest-pale);
+  --brand-branch: var(--lilac);
+  --brand-branch-wash: var(--lilac-pale);
+  --brass: var(--peach);
+  --brass-pale: var(--peach-pale);
+  --danger: var(--peach);
+  --danger-pale: var(--peach-pale);
+  --phosphor: #9bbf97;
+  --shell-focus: var(--forest);
 
   --text: var(--fg);
   --text-muted: var(--muted);
@@ -187,12 +211,12 @@
   --border: var(--line);
   --border-strong: var(--line-strong);
 
-  --ok: var(--terrain);
-  --ok-bg: var(--terrain-pale);
+  --ok: var(--sage);
+  --ok-bg: var(--sage-pale);
   --warn: var(--state-caution);
   --warn-bg: var(--state-caution-wash);
-  --info: var(--water);
-  --info-bg: var(--water-pale);
+  --info: var(--forest);
+  --info-bg: var(--forest-pale);
 
   --shadow-1: 0 1px 2px rgba(0,0,0,.35), 0 1px 4px rgba(0,0,0,.25);
   --shadow-2: 0 4px 8px rgba(0,0,0,.45), 0 2px 4px rgba(0,0,0,.3);
