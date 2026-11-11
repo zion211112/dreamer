@@ -1,35 +1,36 @@
-# APT-LABS — Verified Repo Fact Base (2026-11-05)
+# APT-LABS — Verified Repo Fact Base
 
-Every claim below was checked against the working tree on 2026-11-05 (direct reads + verified
-agent inventory). Trust this over memory; open the cited file to confirm details.
+Route and module facts below were updated against the working tree on 2026-11-11. Other sections
+retain the 2026-11-05 snapshot and should be rechecked before use.
 
 ## Routes (src/App.tsx — VERIFIED by direct read)
 
 ```
-/                      Landing
-/investor-memo         InvestorMemo
-/sign-in /sign-up      Auth (browser-local demo, localStorage `authUser`)
-/workspace/people                    People
-/workspace/annals                    Annals (static chronology prototype)
-/workspace/institutions              Institutions
-/workspace/institutions/network      Network (CapabilityDirectory)
-/workspace/institutions/school-console  SchoolConsole (nested local-first boundary)
-/workspace/commons                   Commons (Radar)
-/workspace/workbench                 WorkbenchFinder
-/workspace/workbench/simulate        Workbench (FieldDesk simulation)
-/workspace/field-desk                alias of workbench/simulate
-/workspace/roll                      Roll
-/workspace/apt-coin-lab              AptCoinLab (static research page)
+/                           Landing
+/investor-memo              InvestorMemo
+/sign-in /sign-up           Auth
+/workspace                  Workspace overview
+/workspace/commons          Commons
+/workspace/network          Network
+/workspace/network/people   People and crews
+/workspace/network/institutions  Institutions and assets
+/workspace/network/capabilities  Capability directory
+/workspace/workbench        Workbench home
+/workspace/workbench/:pilot Workbench pilot lane
+/workspace/records          Records
+/workspace/records/canon    Canon lens
+/workspace/records/annals   Annals lens
+/workspace/records/roll     Roll lens
+/workspace/intelligence     Intelligence research page
+/workspace/intelligence/coin-lab  Coin Lab view
+/benben-os                  Separate BenbenOS school-management prototype
 ```
 
 ## Module naming today (src/lib/studio-navigation.ts — VERIFIED)
 
-Primary rail: **Radar** → /workspace/commons · **Network** → /workspace/people (contexts:
-people, institutions, capabilities) · **Undertakings** → /workspace/workbench (workbench,
-field-desk) · **Roll** → /workspace/roll.
-Secondary: **Annals** → /workspace/annals · **APT Coin Lab** → /workspace/apt-coin-lab.
-Context labels in the shell: commons="Radar", people/capabilities/institutions="Network",
-workbench/field-desk="Undertakings", plus "School Console", "Roll", "Annals", "APT Coin Lab".
+Primary modules: **Commons**, **Network**, **Workbench**, **Records**, **Intelligence**.
+Canon, Annals, and Roll are lenses within Records. BenbenOS is separately routed and is not an
+APT-LABS module.
 
 ## Shell (src/components/WorkspaceShell.tsx, untracked, ~280 lines — VERIFIED by direct read)
 

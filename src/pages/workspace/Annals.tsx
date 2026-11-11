@@ -176,7 +176,7 @@ export function Annals() {
               <span className="annals-source-icon" aria-hidden="true">↗</span>
               <p><strong>Source trail</strong><br />Source, actor, time, authority, evidence, and correction path travel with each real event.</p>
             </div>
-            <Link className="annals-text-link" href={view === 'records' ? '/workspace/people' : '/workspace/workbench'}>
+            <Link className="annals-text-link" href={view === 'records' ? '/workspace/network/people' : '/workspace/workbench'}>
               {view === 'records' ? 'Inspect Network records' : 'Continue in Undertakings'}
               <span aria-hidden="true">→</span>
             </Link>

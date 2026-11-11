@@ -115,7 +115,7 @@ export function Institutions() {
     setRequestedRecordId('');
     setFilter(nextFilter);
     setSelectedRecordId('');
-    navigate('/workspace/institutions');
+    navigate('/workspace/network/institutions');
   }
 
   return (
@@ -168,7 +168,7 @@ export function Institutions() {
                 setRequestedRecordId('');
                 setSelectedRecordId('');
                 setQuery((event.currentTarget as HTMLInputElement).value);
-                navigate('/workspace/institutions');
+                navigate('/workspace/network/institutions');
               }}
               placeholder="Search name, place, functionâ€¦"
               type="search"

@@ -65,15 +65,17 @@ Canonical routes under `/workspace/{module}`. Wouter `Switch` renders first matc
 
 Key routes:
 - `/workspace/commons` — Commons field signals
-- `/workspace/people` — People network
-- `/workspace/institutions` — Institutions & assets
-- `/workspace/institutions/network` — Capability directory
-- `/workspace/institutions/school-console` — School Console (nested under Workbench)
+- `/workspace/network/people` — People and crews
+- `/workspace/network/institutions` — Institutions & assets
+- `/workspace/network/capabilities` — Capability directory
 - `/workspace/workbench` — Design workbench home (src/modules/workbench)
 - `/workspace/workbench/:pilot` — Design workbench pilot lane (src/modules/workbench)
-- `/workspace/roll` — Roll ledger
-- `/workspace/annals` — Annals chronology
-- `/workspace/apt-coin-lab` — Intelligence research page
+- `/workspace/records/canon` — Canon lens
+- `/workspace/records/annals` — Annals lens
+- `/workspace/records/roll` — Roll lens
+- `/workspace/intelligence` — Intelligence research page
+- `/workspace/intelligence/coin-lab` — Coin Lab view
+- `/benben-os` — Separate BenbenOS school-management prototype; not an APT-LABS module
 
 ## Auth
 Demo mode (localStorage) when `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` are unset, or `VITE_DEMO_MODE=true`. Roles: `institution` | `founder` | `coordinator` | `admin`.

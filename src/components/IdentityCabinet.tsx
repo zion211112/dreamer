@@ -58,9 +58,7 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
 
   const profileName = profile?.display_name?.trim() || '';
   const networkProfile = profileName ? network?.entities.find(entity => entity.type === 'person' && entity.name === profileName) ?? null : null;
-  const currentPath = useLocation()[0].split('?')[0];
-  const normalizedContext = currentPath === '/workspace/workbench/field-desk' ? 'workbench' : currentContext;
-  const contextLabel = normalizedContext.replace('-', ' ');
+  const contextLabel = currentContext.replace('-', ' ');
   const localEvidence = networkProfile && network
     ? network.relationships
       .filter(relationship => relationship.sourceId === networkProfile.id && relationship.kind === 'evidence')
@@ -219,7 +217,7 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
               <section className="identity-section identity-portability">
                 <SectionHeading>Portability & session</SectionHeading>
                 <div className="identity-action-grid">
-                  <button onClick={() => { onClose(); navigate('/workspace/people'); }} type="button">View People profile</button>
+                  <button onClick={() => { onClose(); navigate('/workspace/network/people'); }} type="button">View People profile</button>
                   <button onClick={exportRecord} type="button">Export People record</button>
                 </div>
                 {actionStatus && <p className="identity-action-status" role="status">{actionStatus}</p>}

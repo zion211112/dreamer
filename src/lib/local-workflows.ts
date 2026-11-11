@@ -367,7 +367,7 @@ export function createWorkbenchSimulationLink(sourceConsoleDraftId: string, sign
   const params = [`sourceConsoleDraftId=${encodeURIComponent(draftId)}`];
   const normalizedSignalId = signalId?.trim();
   if (normalizedSignalId) params.push(`signal=${encodeURIComponent(normalizedSignalId)}`);
-  return `/workspace/workbench/field-desk?${params.join('&')}`;
+  return `/workspace/workbench?${params.join('&')}`;
 }
 
 export function parseConsoleDraftId(search: string): string | null {

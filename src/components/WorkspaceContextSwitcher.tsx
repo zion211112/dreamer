@@ -2,8 +2,8 @@ import { useSignal } from '@preact/signals';
 import { useLocation } from 'wouter';
 
 const contexts = [
-  { id: 'people', label: 'People', subtitle: 'Skill in motion', path: '/workspace/people' },
-  { id: 'institutions', label: 'Institutions', subtitle: 'Purposeful backing', path: '/workspace/institutions' },
+  { id: 'people', label: 'People', subtitle: 'Skill in motion', path: '/workspace/network/people' },
+  { id: 'institutions', label: 'Institutions', subtitle: 'Purposeful backing', path: '/workspace/network/institutions' },
   { id: 'commons', label: 'Commons', subtitle: 'Work that stands', path: '/workspace/commons' },
   { id: 'workbench', label: 'Workbench', subtitle: 'Make work legible', path: '/workspace/workbench' },
 ];
@@ -30,7 +30,7 @@ export function WorkspaceContextSwitcher() {
     if (typeof window !== 'undefined') {
       localStorage.setItem('workspaceContext', contextId);
     }
-    navigate(contexts.find(c => c.id === contextId)?.path || '/workspace/people');
+    navigate(contexts.find(c => c.id === contextId)?.path || '/workspace/network/people');
   };
 
   return (

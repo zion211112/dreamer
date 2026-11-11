@@ -32,7 +32,7 @@ interface CommonsSignalDetailProps {
   isSteward: boolean;
   approvedProposal: { id: string } | null;
   onChangeStatus: (status: SignalStatus) => void;
-  onOpenSourceDraft: (draftId: string) => void;
+  onOpenWorkbench: () => void;
   onOpenWorkBrief: (proposalId: string) => void;
   onSetCommonsView: (view: 'signals' | 'opportunities' | 'decisions') => void;
   onAddNote: (event: Event) => void;
@@ -45,7 +45,7 @@ export function CommonsSignalDetail({
   isSteward,
   approvedProposal,
   onChangeStatus,
-  onOpenSourceDraft,
+  onOpenWorkbench,
   onOpenWorkBrief,
   onSetCommonsView,
   onAddNote,
@@ -69,10 +69,10 @@ export function CommonsSignalDetail({
           {selected.sourceConsoleDraftId && (
             <button
               className="signal-source-console-link"
-              onClick={() => onOpenSourceDraft(selected.sourceConsoleDraftId!)}
+              onClick={onOpenWorkbench}
               type="button"
             >
-              Open source Console draft
+              Go to Workbench
             </button>
           )}
         </div>

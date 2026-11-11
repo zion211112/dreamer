@@ -41,12 +41,12 @@ APT-LABS has one workspace and one shared underlying system. The primary modules
 | Module | Job | Route |
 |--------|-----|-------|
 | **Commons** | Discover and express needs, offers, resources, opportunities, knowledge, problems | `/workspace/commons` |
-| **Network** | Understand and connect people, crews, institutions, assets, capabilities, relationships | `/workspace/people`, `/workspace/institutions`, `/workspace/institutions/network` |
-| **Workbench** | Scope, assemble, coordinate, manage productive work | `/workspace/workbench`, `/workspace/workbench/simulate`, `/workspace/field-desk` |
-| **Records** | Inspect durable history, provenance, evidence, credentials, attestations | `/workspace/roll`, `/workspace/annals` |
-| **Intelligence** | Agents, graph analysis, matching, forecasting, analytics | `/workspace/apt-coin-lab` |
+| **Network** | Understand and connect people, crews, institutions, assets, capabilities, relationships | `/workspace/network/people`, `/workspace/network/institutions`, `/workspace/network/capabilities` |
+| **Workbench** | Scope, assemble, coordinate, manage productive work | `/workspace/workbench`, `/workspace/workbench/:pilot` |
+| **Records** | Inspect durable history, provenance, evidence, credentials, attestations | `/workspace/records/canon`, `/workspace/records/annals`, `/workspace/records/roll` |
+| **Intelligence** | Agents, graph analysis, matching, forecasting, analytics | `/workspace/intelligence`, `/workspace/intelligence/coin-lab` |
 
-**School Console** is a nested operational boundary under Workbench (a workplace where people take jobs), not a primary module: `/workspace/institutions/school-console`.
+**BenbenOS** is a separate school-management prototype at `/benben-os`, not an APT-LABS module. The Workbench's Benbenos pilot lane is a separate surface; the two do not share data.
 
 **Hard navigation constraints:**
 - No Main/Branch workspace modes.
@@ -160,7 +160,7 @@ Roll preview applies to physical component. SBT attestations minted for anchor/b
 | WorkspaceShell | `src/components/WorkspaceShell.tsx` | App shell, `agentAvailable` flag |
 | PageAgentPanel | `src/components/workbench/PageAgentPanel.tsx` | Agent proposals per simulation stage |
 | EngineCommandDock | `src/components/EngineCommandDock.tsx` | Scoped request dialog ("Ask engine") |
-| useWorkbench hook | `src/pages/workspace/field-desk/useWorkbench.ts` | Simulation state, advance → Roll + SBT |
+| Workbench app | `src/modules/workbench/App.tsx` | Pilot routes under the shared workspace shell |
 
 ### Domain Layer — `src/lib`
 
@@ -273,7 +273,7 @@ These are not directives — they are areas where the system could grow:
 
 - **Local workbench acceptance → SBT:** When `workStatus` reaches `accepted` in `local-workbench.ts`, `mintSBTForAcceptedLocalWork()` now creates a Roll entry if needed, then mints SBT. This path could be wired into a UI trigger.
 - **Records module:** Canon/Annals/Roll lenses are conceptually defined but the Records page UI is not yet built.
-- **Intelligence module:** Currently a static research page (`/workspace/apt-coin-lab`). No matching/forecasting/graph-analysis UI exists.
+- **Intelligence module:** Currently a static research page (`/workspace/intelligence`). No matching/forecasting/graph-analysis UI exists.
 - **Unified event stream:** Annals lens is blocked on a unified cross-module event stream.
 - **School Console placement:** Belongs under Workbench as an operational boundary, not under Assets as a static record.
 
