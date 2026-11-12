@@ -17,3 +17,12 @@ Thumbs.db
 /scripts/.build/
 /scripts/.verify/
 /supabase/.temp/
+
+# Python virtual environments and local tool state
+engine/.venv/
+.chainlit/
+.codebase-memory/
+.playwright-mcp/
+capture-*.json
+inspect-spacing-*.json
+/public/capture-script.js
