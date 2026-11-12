@@ -9,7 +9,7 @@ import { BrandMark } from '../components/BrandMark';
 const workspacePaths = {
   annals: '/workspace',
   people: '/workspace/network/people',
-  school: '/workspace/workbench/school-console',
+  school: '/benben-os',
   commons: '/workspace/commons',
   workbench: '/workspace/workbench',
   roll: '/workspace/records/roll',
@@ -18,7 +18,7 @@ const workspacePaths = {
 const workspaces = [
   { id: 'annals', label: 'Branch / Annals' },
   { id: 'people', label: 'Parent / caregiver' },
-  { id: 'school', label: 'School team' },
+  { id: 'school', label: 'School team (Benben-OS)' },
   { id: 'commons', label: 'Community member' },
   { id: 'workbench', label: 'Local provider / crew' },
   { id: 'roll', label: 'Coordinator / steward' },

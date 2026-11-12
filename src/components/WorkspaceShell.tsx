@@ -90,7 +90,7 @@ export function WorkspaceShell({
   );
 
   return (
-    <div className={`field-studio-shell${sidebarCollapsed ? ' has-collapsed-sidebar' : ''}${hasInspectorContent ? ' has-record-inspector' : ''}${hasChangeSetContent ? ' has-change-set-dock' : ''}${hasChangeSetContent && dockCollapsed ? ' has-collapsed-dock' : ''}`}>
+    <div className={`field-studio-shell${currentContext === 'overview' ? ' is-home' : ''}${sidebarCollapsed ? ' has-collapsed-sidebar' : ''}${hasInspectorContent ? ' has-record-inspector' : ''}${hasChangeSetContent ? ' has-change-set-dock' : ''}${hasChangeSetContent && dockCollapsed ? ' has-collapsed-dock' : ''}`}>
       <StudioNavigation
         currentContext={currentContext}
         environmentLabel={environmentLabel}

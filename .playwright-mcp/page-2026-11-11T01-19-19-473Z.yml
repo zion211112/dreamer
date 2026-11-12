@@ -1,0 +1,140 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - link "APT-LABS" [ref=e5] [cursor=pointer]:
+      - /url: /
+      - generic [aria-hidden] [ref=e6]: A
+      - generic [aria-hidden] [ref=e7]: —
+      - generic [ref=e8]: Apt Labs
+    - link "Open the workspace" [ref=e9] [cursor=pointer]:
+      - /url: /sign-in?next=%2Fworkspace
+      - text: Open the workspace
+      - generic [aria-hidden] [ref=e10]: ↗
+  - main [ref=e11]:
+    - region "From institutional need to accepted local work." [ref=e12]:
+      - generic [ref=e13]:
+        - paragraph [ref=e14]: LOCAL WORK / HUMAN-AUTHORIZED MODEL
+        - heading [level=1] [ref=e16]:
+          - text: From institutional need to
+          - emphasis [ref=e17]: accepted local work.
+        - paragraph [ref=e18]: APT-LABS coordinates institutional needs, local delivery teams, community context, and accountable records in one workflow.
+        - link "Trace the model" [ref=e20] [cursor=pointer]:
+          - /url: "#model"
+          - text: Trace the model
+          - generic [aria-hidden] [ref=e21]: ↓
+      - figure "Proposed operating sequence" [ref=e22]:
+        - generic [ref=e23]:
+          - strong [ref=e24]: Proposed operating sequence
+          - generic [ref=e25]: Human authorization retained at every gate
+        - list "Five proposed work stages" [ref=e26]:
+          - listitem [ref=e27]:
+            - generic [ref=e31]:
+              - generic [ref=e32]:
+                - generic [ref=e33]: "01"
+                - heading "Need recorded" [level=4] [ref=e34]
+                - generic [ref=e35]: In prototype
+              - paragraph [ref=e36]: Asset, inspection, or draft
+          - listitem [ref=e37]:
+            - generic [ref=e41]:
+              - generic [ref=e42]:
+                - generic [ref=e43]: "02"
+                - heading "Scope approved" [level=4] [ref=e44]
+                - generic [ref=e45]: In prototype
+              - paragraph [ref=e46]: Buyer sets budget & criteria
+          - listitem [ref=e47]:
+            - generic [ref=e51]:
+              - generic [ref=e52]:
+                - generic [ref=e53]: "03"
+                - heading "Team assembled" [level=4] [ref=e54]
+                - generic [ref=e55]: Proposed
+              - paragraph [ref=e56]: Qualified local delivery
+          - listitem [ref=e57]:
+            - generic [ref=e61]:
+              - generic [ref=e62]:
+                - generic [ref=e63]: "04"
+                - heading "Work accepted" [level=4] [ref=e64]
+                - generic [ref=e65]: Proposed
+              - paragraph [ref=e66]: Buyer reviews evidence
+          - listitem [ref=e67]:
+            - generic [ref=e70]:
+              - generic [ref=e71]:
+                - generic [ref=e72]: "05"
+                - heading "Outcome recorded" [level=4] [ref=e73]
+                - generic [ref=e74]: Proposed
+              - paragraph [ref=e75]: Consent and issuer required
+        - 'generic "Legend: prototype vs proposed" [ref=e76]':
+          - generic [ref=e77]: In the browser prototype
+          - generic [ref=e79]: Proposed live model
+        - paragraph [ref=e81]: Manual simulation only. No real-world transactions, provider assignment, or payment.
+    - region "Choose your role." [ref=e82]:
+      - generic [ref=e83]:
+        - paragraph [ref=e84]: ONE SYSTEM / FOUR ENTRY POINTS
+        - heading "Choose your role." [level=2] [ref=e86]
+      - generic [ref=e87]:
+        - article [ref=e88]:
+          - generic [ref=e89]: 01 / BUYERS
+          - generic [ref=e90]:
+            - heading "Institutions" [level=3] [ref=e91]
+            - paragraph [ref=e92]: Define needs, authorize scope, accept outcomes.
+          - link "Open Institutions" [ref=e93] [cursor=pointer]:
+            - /url: /sign-in?next=%2Fworkspace%2Fnetwork%2Finstitutions
+            - text: Open Institutions ↗
+        - article [ref=e94]:
+          - generic [ref=e95]: 02 / DELIVERY
+          - generic [ref=e96]:
+            - heading "Local teams" [level=3] [ref=e97]
+            - paragraph [ref=e98]: Browse capabilities, claim work, submit evidence.
+          - link "Open People" [ref=e99] [cursor=pointer]:
+            - /url: /sign-in?next=%2Fworkspace%2Fnetwork%2Fpeople
+            - text: Open People ↗
+        - article [ref=e100]:
+          - generic [ref=e101]: 03 / STEWARDSHIP
+          - generic [ref=e102]:
+            - heading "Community stewards" [level=3] [ref=e103]
+            - paragraph [ref=e104]: Record observations, steward decisions, maintain context.
+          - link "Open Commons" [ref=e105] [cursor=pointer]:
+            - /url: /sign-in?next=%2Fworkspace%2Fcommons
+            - text: Open Commons ↗
+        - article [ref=e106]:
+          - generic [ref=e107]: 04 / CAPITAL & DELIVERY PARTNERS
+          - generic [ref=e108]:
+            - heading "Investors and partners" [level=3] [ref=e109]
+            - paragraph [ref=e110]: Read the investment memorandum and inspect the simulation.
+          - link "Read the memo" [ref=e111] [cursor=pointer]:
+            - /url: /investor-memo
+            - text: Read the memo ↗
+    - region "Working surfaces. Proposed model. Unproven economics." [ref=e112]:
+      - generic [ref=e113]:
+        - paragraph [ref=e114]: EVIDENCE / WHAT EXISTS
+        - heading "Working surfaces. Proposed model. Unproven economics." [level=2] [ref=e116]
+      - generic [ref=e117]:
+        - article [ref=e118]:
+          - paragraph [ref=e119]: IN THE WORKSPACE
+          - heading "Working local surfaces" [level=3] [ref=e120]
+          - list [ref=e121]:
+            - listitem [ref=e122]: People, Institutions, Commons, Workbench, and a local simulation.
+        - article [ref=e123]:
+          - paragraph [ref=e124]: PROPOSED OPERATING MODEL
+          - heading "Human-reviewed work" [level=3] [ref=e125]
+          - list [ref=e126]:
+            - listitem [ref=e127]: Buyer-scoped work, qualified providers, acceptance before payment.
+        - article [ref=e128]:
+          - paragraph [ref=e129]: TO PROVE
+          - heading "Commercial viability" [level=3] [ref=e130]
+          - list [ref=e131]:
+            - listitem [ref=e132]: Buyer demand, procurement fit, repeat orders, positive unit economics.
+    - region "Start with one real work category." [ref=e133]:
+      - generic [ref=e134]:
+        - paragraph [ref=e135]: CONTACT / PILOT
+        - heading "Start with one real work category." [level=2] [ref=e137]
+        - paragraph [ref=e138]: Discuss a bounded pilot and its approval and acceptance criteria.
+      - link "Discuss a pilot on WhatsApp" [ref=e139] [cursor=pointer]:
+        - /url: https://wa.me/254704260906?text=Hello%20APT-LABS%2C%20I%27d%20like%20to%20discuss%20a%20pilot.
+        - text: Discuss a pilot on WhatsApp
+        - generic [aria-hidden] [ref=e140]: ↗
+  - contentinfo [ref=e141]:
+    - link "APT-LABS" [ref=e142] [cursor=pointer]:
+      - /url: /
+      - generic [aria-hidden] [ref=e143]: A
+      - generic [aria-hidden] [ref=e144]: —
+      - generic [ref=e145]: Apt Labs
+    - paragraph [ref=e146]: Browser-local workspace. No live institutional, payment, telemetry, or credential connections.

@@ -85,6 +85,10 @@
   --sans: system-ui, -apple-system, Segoe UI Variable, sans-serif;
   --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
 
+  /* Landing editorial typography */
+  --landing-serif: Georgia, "Times New Roman", serif;
+  --landing-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+
   /* Modular Scale (1.25) */
   --step--2: clamp(9px, 0.64rem, 10px);
   --step--1: clamp(10px, 0.8rem, 11px);

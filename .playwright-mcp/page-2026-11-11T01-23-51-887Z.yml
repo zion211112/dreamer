@@ -1,0 +1,134 @@
+- generic [ref=f4e3]:
+  - banner [ref=f4e4]:
+    - link "APT-LABS" [ref=f4e5] [cursor=pointer]:
+      - /url: /workspace
+      - generic [aria-hidden] [ref=f4e6]: A
+      - generic [aria-hidden] [ref=f4e7]: —
+      - generic [ref=f4e8]: Apt Labs
+    - generic [ref=f4e10]: The Roll
+    - 'generic "Environment: Local demo" [ref=f4e11]': Local demo
+    - button "Search modules and tasks" [ref=f4e12] [cursor=pointer]:
+      - generic [ref=f4e16]: Search
+      - generic [ref=f4e17]: Ctrl K
+    - button "Hide context navigation" [ref=f4e18] [cursor=pointer]
+    - button "Reset workspace layout" [ref=f4e21] [cursor=pointer]
+  - navigation "Primary workspace modules" [ref=f4e25]:
+    - link "Home" [ref=f4e26] [cursor=pointer]:
+      - /url: /workspace
+    - link "Commons" [ref=f4e31] [cursor=pointer]:
+      - /url: /workspace/commons
+    - link "Network" [ref=f4e37] [cursor=pointer]:
+      - /url: /workspace/network/people
+    - link "Workbench" [ref=f4e42] [cursor=pointer]:
+      - /url: /workspace/workbench
+    - link "The Roll" [ref=f4e47] [cursor=pointer]:
+      - /url: /workspace/records/roll
+    - link "Intelligence" [ref=f4e52] [cursor=pointer]:
+      - /url: /workspace/intelligence
+  - complementary "Workspace context navigation" [ref=f4e61]:
+    - generic [ref=f4e62]:
+      - generic [ref=f4e63]: Current workspace
+      - generic [ref=f4e64]: The Roll
+    - generic [ref=f4e65]: Records
+    - navigation "Records destinations" [ref=f4e66]:
+      - link "Roll" [ref=f4e67] [cursor=pointer]:
+        - /url: /workspace/records/roll
+      - link "Canon" [ref=f4e69] [cursor=pointer]:
+        - /url: /workspace/records/canon
+      - link "Annals" [ref=f4e71] [cursor=pointer]:
+        - /url: /workspace/records/annals
+    - generic [ref=f4e74]:
+      - generic [ref=f4e75]: Data context
+      - generic [ref=f4e76]: Local, sample, and imported records remain distinct.
+  - main [ref=f4e77]:
+    - generic [ref=f4e79]:
+      - generic [ref=f4e80]:
+        - generic [ref=f4e81]: Records
+        - generic [ref=f4e82]:
+          - heading "Records" [level=1] [ref=f4e83]
+          - paragraph [ref=f4e84]: "Three lenses on the same evidence: Canon (qualified state), Annals (event chronology), Roll (evidence ledger)"
+      - tablist "Records lenses" [ref=f4e85]:
+        - tab "Roll Close-out ledger" [selected] [ref=f4e86] [cursor=pointer]:
+          - generic [ref=f4e87]: Roll
+          - generic [ref=f4e88]: Close-out ledger
+        - tab "Canon Qualified state" [ref=f4e89] [cursor=pointer]:
+          - generic [ref=f4e90]: Canon
+          - generic [ref=f4e91]: Qualified state
+        - tab "Annals Claims & evidence" [ref=f4e92] [cursor=pointer]:
+          - generic [ref=f4e93]: Annals
+          - generic [ref=f4e94]: Claims & evidence
+      - group "Global time axis (scrubs all lenses)" [ref=f4e95]:
+        - generic [ref=f4e96]: Time axis
+        - generic [ref=f4e97]:
+          - button "2026-09" [ref=f4e98] [cursor=pointer]
+          - button "2026-10" [ref=f4e99] [cursor=pointer]
+          - button "2026-11" [ref=f4e100] [cursor=pointer]
+          - button "2026-12" [pressed] [ref=f4e101] [cursor=pointer]
+      - tabpanel "Roll Close-out ledger" [ref=f4e102]:
+        - region "Close-out ledger" [ref=f4e103]:
+          - generic [ref=f4e104]:
+            - generic [ref=f4e105]:
+              - paragraph [ref=f4e106]:
+                - text: APT-LABS
+                - generic [ref=f4e107]: /
+                - text: RECORDS
+                - generic [ref=f4e108]: /
+                - text: ROLL
+              - heading "Close-out ledger" [level=1] [ref=f4e109]
+              - paragraph [ref=f4e110]: "Institutional memory: every undertaking's outcome, acceptance, and hash anchor across the pilot network."
+            - generic [ref=f4e111]:
+              - generic [ref=f4e112]:
+                - generic [ref=f4e113]: Close-out records
+                - generic [ref=f4e114]: "0"
+                - generic [ref=f4e115]: undertakings closed
+              - generic [ref=f4e116]:
+                - generic [ref=f4e117]: Accepted
+                - generic [ref=f4e118]: "0"
+                - generic [ref=f4e119]: of 0 closed
+              - generic [ref=f4e120]:
+                - generic [ref=f4e121]: Non-success
+                - generic [ref=f4e122]: "0"
+                - generic [ref=f4e123]: partial · disputed · cancelled
+              - generic [ref=f4e124]:
+                - generic [ref=f4e125]: Hash-anchored
+                - generic [ref=f4e126]: "0"
+                - generic [ref=f4e127]: SHA-256
+              - generic [ref=f4e128]:
+                - generic [ref=f4e129]: Proposed
+                - generic [ref=f4e130]: "0"
+                - generic [ref=f4e131]: not yet settled
+          - separator [ref=f4e132]
+          - grid "Roll close-out records" [ref=f4e133]:
+            - rowgroup [ref=f4e134]:
+              - row [ref=f4e135]:
+                - columnheader "Record" [ref=f4e136]
+                - columnheader "Pilot · undertaking" [ref=f4e137]
+                - columnheader "Outcome" [ref=f4e138]
+                - columnheader "Evidence" [ref=f4e139]
+                - columnheader "Disclosure" [ref=f4e140]
+                - columnheader "Accepted at" [ref=f4e141]
+                - columnheader "Hash" [ref=f4e142]
+            - rowgroup
+          - generic [ref=f4e143]:
+            - generic [ref=f4e144]: Ontology in this view
+            - paragraph [ref=f4e145]:
+              - strong [ref=f4e146]: "Outcome vocabulary preserved:"
+              - text: accepted · partial · disputed · cancelled · unresolved · proposed · not recorded. A non-success record is institutional knowledge — not a participant judgment.
+            - paragraph [ref=f4e147]:
+              - strong [ref=f4e148]: Hashing establishes integrity of covered content, not truth or validity.
+              - text: Acceptance does not prove settlement; a contribution is preserved independently of the outcome.
+            - paragraph [ref=f4e149]:
+              - strong [ref=f4e150]: Disclosure is not evidence quality.
+              - text: Public, participant, and restricted are access classifications. A restricted artifact may be the strongest evidence in the record.
+          - paragraph [ref=f4e151]: Browser-local demo. Synthetic records stay in this browser. Sample acceptance and visibility labels are not authoritative.
+      - complementary "Cross-lens navigation" [ref=f4e152]:
+        - heading "Cross-lens paths" [level=3] [ref=f4e153]
+        - list [ref=f4e154]:
+          - listitem [ref=f4e155]:
+            - link "Entity in Network" [ref=f4e156] [cursor=pointer]:
+              - /url: /workspace/network/people
+            - text: then Annals events then Roll evidence
+          - listitem [ref=f4e157]:
+            - link "Roll entry" [ref=f4e158] [cursor=pointer]:
+              - /url: /workspace/records/roll
+            - text: then Annals timeline then Canon state

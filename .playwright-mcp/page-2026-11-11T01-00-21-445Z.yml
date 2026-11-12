@@ -1,0 +1,211 @@
+- generic [ref=f7e3]:
+  - banner [ref=f7e4]:
+    - button "Open context navigation" [ref=f7e5] [cursor=pointer]
+    - link "APT-LABS" [ref=f7e8] [cursor=pointer]:
+      - /url: /workspace
+      - generic [aria-hidden] [ref=f7e9]: A
+      - generic [aria-hidden] [ref=f7e10]: —
+      - generic [ref=f7e11]: Apt Labs
+    - generic [ref=f7e13]: Network
+    - 'generic "Environment: Local demo" [ref=f7e14]': Local demo
+    - button "Search modules and tasks" [ref=f7e15] [cursor=pointer]:
+      - generic [ref=f7e19]: Search
+      - generic [ref=f7e20]: Ctrl K
+  - navigation "Primary workspace modules" [ref=f7e21]:
+    - link "Home" [ref=f7e22] [cursor=pointer]:
+      - /url: /workspace
+    - link "Commons" [ref=f7e27] [cursor=pointer]:
+      - /url: /workspace/commons
+    - link "Network" [ref=f7e33] [cursor=pointer]:
+      - /url: /workspace/network/people
+    - link "Workbench" [ref=f7e38] [cursor=pointer]:
+      - /url: /workspace/workbench
+    - link "The Roll" [ref=f7e43] [cursor=pointer]:
+      - /url: /workspace/records/roll
+    - link "Intelligence" [ref=f7e48] [cursor=pointer]:
+      - /url: /workspace/intelligence
+  - main [ref=f7e57]:
+    - generic [ref=f7e59]:
+      - generic [ref=f7e60]:
+        - generic [ref=f7e61]: APT-LABS
+        - generic [ref=f7e65]:
+          - heading "People" [level=1] [ref=f7e66]
+          - generic [aria-hidden] [ref=f7e67]: /
+          - generic [ref=f7e68]: Capability directory · network map
+        - generic [ref=f7e69]:
+          - button "＋ Add person" [ref=f7e70] [cursor=pointer]
+          - button "Export record" [ref=f7e71] [cursor=pointer]
+      - generic [ref=f7e72]:
+        - generic [ref=f7e74]: CAPABILITY DIRECTORY
+        - generic [ref=f7e75]: ·
+        - generic [ref=f7e76]: 14 RECORDS
+        - generic [ref=f7e77]: ·
+        - generic [ref=f7e78]: 33 RELATIONSHIPS
+      - generic [ref=f7e79]:
+        - region "People directory" [ref=f7e81]:
+          - generic [ref=f7e82]:
+            - generic [ref=f7e83]:
+              - generic [aria-hidden] [ref=f7e84]: ⌕
+              - searchbox "Search people" [ref=f7e85]
+            - generic "Directory filters" [ref=f7e86]:
+              - generic [ref=f7e87]:
+                - generic [ref=f7e88]: Capability
+                - combobox "Capability" [ref=f7e89]:
+                  - option "All capabilities" [selected]
+                  - option "Community research"
+                  - option "Cooperative governance"
+                  - option "Crew administration"
+                  - option "Documentation"
+                  - option "Electrical systems"
+                  - option "Facilitation"
+                  - option "Field research"
+                  - option "Learning-focused communication"
+                  - option "Measurement"
+                  - option "Open learning"
+                  - option "Protocol design"
+                  - option "Research and prototyping"
+                  - option "Safety"
+                  - option "Solar maintenance"
+                  - option "Solar planning"
+                  - option "Storyboarding"
+                  - option "Systems architecture"
+                  - option "Systems design"
+                  - option "Training"
+                  - option "Water systems"
+                  - option "Workshop design"
+                  - option "advanced systems"
+              - generic [ref=f7e90]:
+                - generic [ref=f7e91]: Service area
+                - combobox "Service area" [ref=f7e92]:
+                  - option "All areas" [selected]
+                  - option "Accra"
+                  - option "Distributed"
+                  - option "Nairobi"
+                  - option "Oaxaca"
+          - generic [ref=f7e93]:
+            - generic [ref=f7e94]: 9 results
+            - generic [ref=f7e95]: Individual practice
+          - list [ref=f7e96]:
+            - listitem [ref=f7e97]:
+              - button "Nia Wanjiru Person Field systems designer Systems design Community research Solar planning Nairobi ·Work · Microgrid commissioning" [ref=f7e98] [cursor=pointer]:
+                - generic [ref=f7e100]:
+                  - generic [ref=f7e101]:
+                    - strong [ref=f7e102]: Nia Wanjiru
+                    - generic [ref=f7e103]: Person
+                  - generic [ref=f7e104]: Field systems designer
+                  - generic [ref=f7e105]:
+                    - generic [ref=f7e106]: Systems design
+                    - generic [ref=f7e107]: Community research
+                    - generic [ref=f7e108]: Solar planning
+                  - generic [ref=f7e109]:
+                    - generic [ref=f7e110]: Nairobi
+                    - generic [ref=f7e111]: ·Work · Microgrid commissioning
+                - generic [aria-hidden] [ref=f7e112]: →
+            - listitem [ref=f7e113]:
+              - button "Jabari Otieno Person Solar technician Electrical systems Solar maintenance Safety Nairobi ·Work · Microgrid commissioning" [ref=f7e114] [cursor=pointer]:
+                - generic [ref=f7e116]:
+                  - generic [ref=f7e117]:
+                    - strong [ref=f7e118]: Jabari Otieno
+                    - generic [ref=f7e119]: Person
+                  - generic [ref=f7e120]: Solar technician
+                  - generic [ref=f7e121]:
+                    - generic [ref=f7e122]: Electrical systems
+                    - generic [ref=f7e123]: Solar maintenance
+                    - generic [ref=f7e124]: Safety
+                  - generic [ref=f7e125]:
+                    - generic [ref=f7e126]: Nairobi
+                    - generic [ref=f7e127]: ·Work · Microgrid commissioning
+                - generic [aria-hidden] [ref=f7e128]: →
+            - listitem [ref=f7e129]:
+              - button "Lucia Santos Person Cooperative facilitator Facilitation Cooperative governance Training Oaxaca ·Work · Repair guide & workshop" [ref=f7e130] [cursor=pointer]:
+                - generic [ref=f7e132]:
+                  - generic [ref=f7e133]:
+                    - strong [ref=f7e134]: Lucia Santos
+                    - generic [ref=f7e135]: Person
+                  - generic [ref=f7e136]: Cooperative facilitator
+                  - generic [ref=f7e137]:
+                    - generic [ref=f7e138]: Facilitation
+                    - generic [ref=f7e139]: Cooperative governance
+                    - generic [ref=f7e140]: Training
+                  - generic [ref=f7e141]:
+                    - generic [ref=f7e142]: Oaxaca
+                    - generic [ref=f7e143]: ·Work · Repair guide & workshop
+                - generic [aria-hidden] [ref=f7e144]: →
+            - listitem [ref=f7e145]:
+              - button "Kwame Mensah Person Water systems researcher Field research Water systems Measurement Accra ·Work · Water resilience audit" [ref=f7e146] [cursor=pointer]:
+                - generic [ref=f7e148]:
+                  - generic [ref=f7e149]:
+                    - strong [ref=f7e150]: Kwame Mensah
+                    - generic [ref=f7e151]: Person
+                  - generic [ref=f7e152]: Water systems researcher
+                  - generic [ref=f7e153]:
+                    - generic [ref=f7e154]: Field research
+                    - generic [ref=f7e155]: Water systems
+                    - generic [ref=f7e156]: Measurement
+                  - generic [ref=f7e157]:
+                    - generic [ref=f7e158]: Accra
+                    - generic [ref=f7e159]: ·Work · Water resilience audit
+                - generic [aria-hidden] [ref=f7e160]: →
+            - listitem [ref=f7e161]:
+              - button "Yuki Tanaka Person Knowledge steward Documentation Open learning Workshop design Nairobi ·Work · Repair guide & workshop" [ref=f7e162] [cursor=pointer]:
+                - generic [ref=f7e164]:
+                  - generic [ref=f7e165]:
+                    - strong [ref=f7e166]: Yuki Tanaka
+                    - generic [ref=f7e167]: Person
+                  - generic [ref=f7e168]: Knowledge steward
+                  - generic [ref=f7e169]:
+                    - generic [ref=f7e170]: Documentation
+                    - generic [ref=f7e171]: Open learning
+                    - generic [ref=f7e172]: Workshop design
+                  - generic [ref=f7e173]:
+                    - generic [ref=f7e174]: Nairobi
+                    - generic [ref=f7e175]: ·Work · Repair guide & workshop
+                - generic [aria-hidden] [ref=f7e176]: →
+            - listitem [ref=f7e177]:
+              - button "Kemoly Murage Person Systems architect Systems architecture Protocol design advanced systems Distributed" [ref=f7e178] [cursor=pointer]:
+                - generic [ref=f7e180]:
+                  - generic [ref=f7e181]:
+                    - strong [ref=f7e182]: Kemoly Murage
+                    - generic [ref=f7e183]: Person
+                  - generic [ref=f7e184]: Systems architect
+                  - generic [ref=f7e185]:
+                    - generic [ref=f7e186]: Systems architecture
+                    - generic [ref=f7e187]: Protocol design
+                    - generic [ref=f7e188]: advanced systems
+                  - generic [ref=f7e189]: Distributed
+                - generic [aria-hidden] [ref=f7e191]: →
+            - listitem [ref=f7e192]:
+              - button "Horus the Young Person advanced systems contributor advanced systems Research and prototyping Distributed" [ref=f7e193] [cursor=pointer]:
+                - generic [ref=f7e195]:
+                  - generic [ref=f7e196]:
+                    - strong [ref=f7e197]: Horus the Young
+                    - generic [ref=f7e198]: Person
+                  - generic [ref=f7e199]: advanced systems contributor
+                  - generic [ref=f7e200]:
+                    - generic [ref=f7e201]: advanced systems
+                    - generic [ref=f7e202]: Research and prototyping
+                  - generic [ref=f7e203]: Distributed
+                - generic [aria-hidden] [ref=f7e205]: →
+            - listitem [ref=f7e206]:
+              - button "Tehuti Person Crew0 administrator Crew administration Distributed" [ref=f7e207] [cursor=pointer]:
+                - generic [ref=f7e209]:
+                  - generic [ref=f7e210]:
+                    - strong [ref=f7e211]: Tehuti
+                    - generic [ref=f7e212]: Person
+                  - generic [ref=f7e213]: Crew0 administrator
+                  - generic [ref=f7e214]: Crew administration
+                  - generic [ref=f7e216]: Distributed
+                - generic [aria-hidden] [ref=f7e218]: →
+            - listitem [ref=f7e219]:
+              - button "Zuri Kamau Person Illustrative learning animator Storyboarding Learning-focused communication" [ref=f7e220] [cursor=pointer]:
+                - generic [ref=f7e222]:
+                  - generic [ref=f7e223]:
+                    - strong [ref=f7e224]: Zuri Kamau
+                    - generic [ref=f7e225]: Person
+                  - generic [ref=f7e226]: Illustrative learning animator
+                  - generic [ref=f7e227]:
+                    - generic [ref=f7e228]: Storyboarding
+                    - generic [ref=f7e229]: Learning-focused communication
+                - generic [aria-hidden] [ref=f7e230]: →
+        - complementary [ref=f7e231]:
+          - generic [ref=f7e232]: Select a person or crew to inspect

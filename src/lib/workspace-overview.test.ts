@@ -1,34 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { WORKSPACE_HOME_START_ACTIONS } from './workspace-overview';
+import { getWorkspaceHomePersona } from './workspace-overview';
 
-describe('Workspace Home starting actions', () => {
-  it('offers a direct starting point for each product module', () => {
-    expect(WORKSPACE_HOME_START_ACTIONS).toEqual([
-      {
-        href: '/workspace/commons',
-        label: 'Open Commons',
-        description: 'Browse needs, offers, opportunities, and shared knowledge.',
-      },
-      {
-        href: '/workspace/network/people',
-        label: 'Explore the network',
-        description: 'Find people, crews, institutions, and capabilities to work with.',
-      },
-      {
-        href: '/workspace/workbench',
-        label: 'Open Workbench',
-        description: 'Review pilot lanes and coordinated work.',
-      },
-      {
-        href: '/workspace/records/roll',
-        label: 'Review the Roll',
-        description: 'Inspect durable records and supporting evidence.',
-      },
-      {
-        href: '/workspace/intelligence',
-        label: 'Open Intelligence',
-        description: 'Review trust and economic intelligence research.',
-      },
-    ]);
+describe('Workspace Home persona', () => {
+  it('provides three role-aware next steps without exposing module names', () => {
+    const founder = getWorkspaceHomePersona('founder');
+    const institution = getWorkspaceHomePersona('institution');
+
+    expect(founder.actions).toHaveLength(3);
+    expect(institution.actions).toHaveLength(3);
+    expect(founder.actions.map(action => action.label)).not.toEqual(institution.actions.map(action => action.label));
+    expect(founder.actions.every(action => !/commons|network|workbench|roll|intelligence/i.test(action.label))).toBe(true);
+    expect(founder.actions.map(action => action.stage)).toEqual(['Signal', 'Capability', 'Commitment']);
+    expect(founder.pathTitle).toBe('From need to undertaking');
+    expect(getWorkspaceHomePersona(null).roleLabel).toBe('Member');
   });
 });

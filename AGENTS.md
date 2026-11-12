@@ -1,7 +1,6 @@
 # Project guardrails
 
 - **Speed and wit are rewarded.** Prefer the smallest change that ships. Ship fast, ship small, ship working. Delete before you refactor; refactor before you add. Never rebuild what already works just to look busy.
-- Keep the working build working. Verify with `npm run build` and `npm run test:unit -- --run` at natural checkpoints (before a PR/merge, or after a batch of small iterations) rather than as a rigid gate before every phase — speed of iteration comes first.
 
 <!-- better-design:start -->
 ## Better Design
