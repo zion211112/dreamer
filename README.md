@@ -1,67 +1,58 @@
-# APT-LABS
+# APT-LABS (dreamer)
 
-APT-LABS is an active Vite + Preact application. Its Studio brings together
-People, Institutions, Commons, and Workbench in one workspace.
+Infrastructure for making fragmented productive capacity visible, connectable, governable, locally retained, and cumulative.
 
-## Run locally
+One workspace, one shared graph, five modules: **Commons, Network, Workbench, Records, Intelligence**. School Console is a nested operational boundary under Workbench.
+
+## Stack
+
+- Preact 10.24 + Vite 6.4.5 + TypeScript 5.6
+- Wouter client-side routing
+- Vitest 5.0.5 (unit tests)
+- Supabase (demo mode fallback when env vars unset)
+
+## Key commands
 
 ```sh
-npm ci
-npm run dev
+npm ci              # install dependencies
+npm run dev         # start dev server (localhost:3000)
+npm run build       # tsc + vite build → dist/
+npm run test:unit -- --run  # vitest
+npx tsc --noEmit    # type check
 ```
 
-Create a production build with:
-
-```sh
-npm run build
-```
+Seed demo data from the browser console: `window.seedAPTLabsDemo()`
 
 ## Routes
 
-- `/` — landing page
-- `/sign-in` and `/sign-up` — browser-local demo authentication
-- `/workspace/commons` — local observations and steward decisions
-- `/workspace/network` — Network module hub
-- `/workspace/network/people` — People network
-- `/workspace/network/institutions` — institution and asset register
-- `/workspace/network/capabilities` — People capability directory
-- `/workspace/workbench` — Workbench hub
-- `/workspace/workbench/field-desk` — Workbench simulation (compose a school need into Tender → Assembly → Acceptance → Roll-preview)
-- `/workspace/workbench/school-console` — browser-local School Console prototype (nested under Workbench as operational boundary)
-- `/workspace/records` — Records hub
-- `/workspace/records/canon` — Canon lens (entity registry)
-- `/workspace/records/annals` — Annals lens (chronological events)
-- `/workspace/records/roll` — Roll lens (evidential ledger)
-- `/workspace/intelligence` — Intelligence hub
-- `/workspace/intelligence/coin-lab` — research-only area; no coin balances, transfers, rewards, access, voting, or authority
+| Route | Module |
+|-------|--------|
+| `/` | Landing |
+| `/sign-in`, `/sign-up` | Demo auth |
+| `/workspace/commons` | Commons — field signals, steward decisions |
+| `/workspace/network/people` | Network — people & crews |
+| `/workspace/network/institutions` | Network — institution & asset register |
+| `/workspace/network/capabilities` | Network — capability directory |
+| `/workspace/workbench` | Workbench — scope, assemble, coordinate work |
+| `/workspace/workbench/:pilot` | Workbench — pilot lane |
+| `/workspace/workbench/school-console` | School Console (nested under Workbench) |
+| `/workspace/records/canon` | Records — canon lens |
+| `/workspace/records/annals` | Records — annals lens |
+| `/workspace/records/roll` | Records — roll lens |
+| `/workspace/intelligence` | Intelligence — research page |
+| `/workspace/intelligence/coin-lab` | Intelligence — coin lab (research only) |
+| `/benben-os` | BenbenOS (separate prototype, not an APT-LABS module) |
 
-Authentication and workspace workflows are browser-local demo functionality,
-not connected services. Passwords are not stored; there is no live
-authentication, external service connection, or live transaction.
+## Docs
 
-Workbench examples are static and not live opportunities. Interest is saved
-only in this browser; it is non-binding and does not contact an institution.
-The finder does not negotiate terms or start work.
+- `docs/architecture.md` — verified current technical architecture
+- `docs/domain-model.md` — approved six-structure domain model
+- `docs/decisions/` — accepted architectural decisions (ADRs)
+- `docs/design/charter.md` — constitution (enduring principles + mutable decisions)
+- `docs/APT-LABS-SYSTEM.md` — system reference (what exists, how pieces fit)
 
-The separate simulation reads a selected School Console need draft and can
-reference an existing Commons observation or Institutions asset by ID.
-Simulation records are stored separately in this browser; they do not publish
-work, assign providers, authorize delivery, create registry assets, or create
-a real Roll. Page Agent is unavailable until protected model infrastructure
-exists.
+## Guardrails
 
-Run domain and persistence tests with `npm run test:unit -- --run`.
-
-## Project layout
-
-- `src/` — active Vite + Preact application
-- `src/pages/workspace/` — Studio workspace routes and shared shell
-- `src/components/` — shared interface components
-- `src/lib/` — browser-local workflow and domain data
-- `src/styles.css` — shared visual tokens and application styles
-- `docs/superpowers/specs/` — current design specifications
-- `bin/` — historical source and design archive; not part of the active build
-
-Local planning/session state, generated tool output, environment files,
-dependencies, and build output are not application source and should not be
-committed.
+- Smallest change that ships. Read the file before changing it.
+- `npm run build` and `npm run test:unit -- --run` must be green before the next phase.
+- Never break the working build.
