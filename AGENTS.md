@@ -73,7 +73,15 @@ Demo mode (localStorage) when `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` are
 
 ## Reference docs
 
+- `QUICKSTART.md` — tools, skills, MCPs, setup, design gates (read first)
 - `docs/architecture.md` — current technical architecture
 - `docs/domain-model.md` — six-structure domain model
 - `docs/decisions/` — accepted ADRs (B1–B8)
 - `docs/design/charter.md` — constitution (principles + decisions)
+
+## Tool / skill / MCP layout
+
+- **Skills** live in `.agents/skills/` (canonical). `.claude/skills`, `.github/skills`, `.kilo/skills` are junctions to it.
+- **MCP** — `.mcp.json` is the shared config; tool-specific configs (`.kilo/kilo.jsonc`, `.claude/settings.json`, etc.) override per-tool.
+- **Codebase index** — `.codebase-memory/` (codebase-memory-mcp). Run `index_repository` once after major refactors.
+- **Engine (Python)** — `engine/` with `.venv/`. Install via `uv pip install --python engine/.venv/Scripts/python.exe <pkg>`.
