@@ -1,175 +1,228 @@
 import { Link } from 'wouter';
 import { BrandMark } from '../components/BrandMark';
-import { OperatingMap } from '../components/landing/OperatingMap';
 
 const MODULES = [
   { id: 'commons', label: 'Commons', hint: 'Field signals and steward decisions', href: '/workspace/commons' },
-  { id: 'network', label: 'Network', hint: 'People, crews, assets, institutions and their relationships', href: '/workspace/network' },
-  { id: 'workbench', label: 'Workbench', hint: 'Opportunities, applications, delivery and simulation', href: '/workspace/workbench' },
-  { id: 'records', label: 'Records', hint: 'Canon, annals and the roll evidence ledger', href: '/workspace/records' },
-  { id: 'intelligence', label: 'Intelligence', hint: 'Research, assessment, attestations', href: '/workspace/intelligence' },
+  { id: 'network', label: 'Network', hint: 'People, crews, institutions, capabilities', href: '/workspace/network' },
+  { id: 'workbench', label: 'Workbench', hint: 'Scope, assemble, coordinate work', href: '/workspace/workbench' },
+  { id: 'records', label: 'Records', hint: 'Canon, annals, roll evidence ledger', href: '/workspace/records' },
+  { id: 'intelligence', label: 'Intelligence', hint: 'Matching, forecasting, analytics', href: '/workspace/intelligence' },
 ];
 
 const STRUCTURES = [
-  { id: 'actors', label: 'Actors', detail: 'People, crews, coordinators and institutions with persistent identity.' },
-  { id: 'resources', label: 'Resources', detail: 'Assets, work and capabilities that actors steward or operate.' },
-  { id: 'intentions', label: 'Intentions', detail: 'Proposed actions and recorded needs that initiate work.' },
-  { id: 'commitments', label: 'Commitments', detail: 'Undertakings and packages that bind actors to scope and acceptance.' },
-  { id: 'activity', label: 'Activity', detail: 'Recorded outcomes, evidence and hash-anchored roll entries.' },
-  { id: 'knowledge', label: 'Knowledge', detail: 'Findings, attestations and instruments that institutions can act on.' },
+  { id: 'actors', label: 'Actors', detail: 'People, crews, enterprises, institutions with persistent identity', accent: 'olive' },
+  { id: 'resources', label: 'Resources', detail: 'Skills, assets, capital, knowledge that actors steward or operate', accent: 'sage' },
+  { id: 'intentions', label: 'Intentions', detail: 'Proposed actions and recorded needs that initiate work', accent: 'clay' },
+  { id: 'commitments', label: 'Commitments', detail: 'Undertakings and packages that bind actors to scope and acceptance', accent: 'brass' },
+  { id: 'activity', label: 'Activity', detail: 'Recorded outcomes, evidence, and hash-anchored roll entries', accent: 'umber' },
+  { id: 'knowledge', label: 'Knowledge', detail: 'Findings, attestations, and instruments that institutions can act on', accent: 'olive' },
 ];
 
-const UBUNTU_GEOMETRY = (
-  <svg
-    width="100%"
-    height="100%"
-    viewBox="0 0 240 240"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    aria-hidden="true"
-  >
-    <circle cx="120" cy="120" r="100" stroke="#b89a72" stroke-width="1" />
-    <circle cx="120" cy="73" r="48" stroke="#40573d" stroke-width="2" />
-    <circle cx="79" cy="145" r="48" stroke="#263d56" stroke-width="2" />
-    <circle cx="161" cy="145" r="48" stroke="#bd863d" stroke-width="2" />
-    <path d="M120 25V120M38 169L120 120M202 169L120 120" stroke="#b89a72" stroke-width="1.5" />
-    <circle cx="120" cy="73" r="5" fill="#40573d" />
-    <circle cx="79" cy="145" r="5" fill="#263d56" />
-    <circle cx="161" cy="145" r="5" fill="#bd863d" />
-    <circle cx="120" cy="120" r="13" fill="var(--cloak-forest)" />
-    <circle cx="120" cy="120" r="4" fill="#fbf8ef" />
-  </svg>
-);
+const FACTORY_STAGES = [
+  { num: '01', title: 'Intake', detail: 'Receive and structure demand' },
+  { num: '02', title: 'Diagnose', detail: 'Understand the actual problem' },
+  { num: '03', title: 'Compose', detail: 'Design the solution and resources' },
+  { num: '04', title: 'Authorise', detail: 'Establish authority and commitments' },
+  { num: '05', title: 'Produce', detail: 'Coordinate and execute work' },
+  { num: '06', title: 'Inspect', detail: 'Test against defined requirements' },
+  { num: '07', title: 'Settle', detail: 'Resolve obligations and exchange' },
+  { num: '08', title: 'Learn', detail: 'Preserve evidence and improve' },
+];
+
+const DEMO_WORKORDER = {
+  title: 'Kibera workshop bench set',
+  meta: [
+    ['Institution', 'Kibera Makerspace'],
+    ['Work kind', 'Physical-asset'],
+    ['Build cost', 'KES 85,000'],
+    ['Annual yield', 'KES 120,000'],
+    ['Local spend', '78%'],
+  ],
+  total: ['Net contribution', 'KES 35,000'],
+  stages: [
+    { num: '01', title: 'Need recorded', detail: 'Buyer defines scope and criteria. Workshop bench set, four tops, two cabinets.', active: true },
+    { num: '02', title: 'Work accepted', detail: 'Buyer reviews evidence — photos, receipts, crew sign-off — and accepts.' },
+    { num: '03', title: 'Payment released', detail: 'Payment releases on acceptance. 90% to local crew, 10% coordination fee.' },
+    { num: '04', title: 'Evidence anchored', detail: 'SHA-256 hash of canonical record. Roll entry created. SBT attestations minted.' },
+  ],
+};
 
 export function Landing() {
   return (
     <div className="landing-shell">
       <header className="landing-header">
         <BrandMark size="md" href="/" />
-        <Link className="landing-action landing-action--primary" href="/sign-in?next=%2Fworkspace">
-          Start working
-        </Link>
+        <nav className="landing-nav" aria-label="Primary">
+          <Link href="#model">The model</Link>
+          <Link href="#structures">Structures</Link>
+          <Link href="#modules">Modules</Link>
+          <Link href="/investor-memo">Memo</Link>
+          <Link className="landing-nav-cta" href="/sign-in?next=%2Fworkspace">Start working</Link>
+        </nav>
       </header>
 
-      <main className="landing-main">
-        <section className="landing-hero" aria-labelledby="landing-title">
-          <div className="landing-hero-grid">
-            <div className="landing-hero-copy">
-              <h1 id="landing-title">
-                <span>Work.</span>
-                <span className="landing-h1-em">Evidence.</span>
-                <span>Acceptance.</span>
-              </h1>
-              <p className="landing-lede">
-                APT Labs makes productive capacity visible, connectable and
-                governable. Actors, resources, intentions, commitments,
-                activity and knowledge share one ontology.
-              </p>
-              <div className="landing-actions">
-                <Link className="landing-action landing-action--primary" href="/sign-in?next=%2Fworkspace">
-                  Start working
-                </Link>
-                <Link className="landing-action landing-action--quiet" href="/investor-memo">
-                  Read the memo
-                </Link>
-              </div>
+      <main>
+        {/* 1: Hero — Operating Floor */}
+        <section className="landing-hero">
+          <div className="landing-hero-copy">
+            <h1>Work. Evidence. <em>Acceptance.</em></h1>
+            <p className="landing-hero-lede">
+              APT Labs makes fragmented productive capacity visible, connectable,
+              and governable. Six structures share one ontology. One need becomes
+              one acceptance becomes one payment.
+            </p>
+            <div className="landing-hero-actions">
+              <Link className="landing-hero-primary" href="/sign-in?next=%2Fworkspace">
+                Enter the workspace
+              </Link>
+              <Link className="landing-hero-quiet" href="/investor-memo">Read the memo</Link>
             </div>
-            <div className="landing-hero-anchor" aria-hidden="true">
-              {UBUNTU_GEOMETRY}
+            <p className="landing-hero-note">Browser-local demo. No live connections. Three seeded scenarios you can click through.</p>
+          </div>
+        </section>
+
+        {/* 2: Live Demo Strip */}
+        <section className="landing-demo-strip" id="model">
+          <p className="landing-demo-label">The buyer path</p>
+          <h2>One need. One acceptance. One payment.</h2>
+          <p className="landing-demo-sub">
+            A work order from Kibera Makerspace, rendered live. Click through the stages —
+            it runs in your browser, no server.
+          </p>
+          <div className="landing-workorder">
+            <div className="landing-workorder-meta">
+              <p className="landing-workorder-meta-label">Work order</p>
+              <h3>{DEMO_WORKORDER.title}</h3>
+              <dl>
+                {DEMO_WORKORDER.meta.map(([dt, dd]) => (
+                  <div key={dt} className="landing-workorder-row">
+                    <dt>{dt}</dt>
+                    <dd>{dd}</dd>
+                  </div>
+                ))}
+                <div className="landing-workorder-row landing-workorder-total">
+                  <dt>{DEMO_WORKORDER.total[0]}</dt>
+                  <dd>{DEMO_WORKORDER.total[1]}</dd>
+                </div>
+              </dl>
+            </div>
+            <div className="landing-workorder-stages">
+              {DEMO_WORKORDER.stages.map((s) => (
+                <div key={s.num} className={`landing-workorder-stage${s.active ? ' active' : ''}`}>
+                  <p className="landing-workorder-stage-num">{s.num}</p>
+                  <h4>{s.title}</h4>
+                  <p className="landing-workorder-stage-detail">{s.detail}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="landing-demo-footer">
+            <p>Manual simulation only. No live transactions, buyer commitments, or revenue are claimed.</p>
+            <Link className="landing-demo-cta" href="/workspace/workbench">Run this in the workspace →</Link>
+          </div>
+        </section>
+
+        {/* 3: Factory Grammar */}
+        <section className="landing-factory">
+          <div className="landing-factory-inner">
+            <h2>Eight stages. Every cycle.</h2>
+            <p className="landing-factory-lede">
+              Not every stage runs in every cycle. The grammar names what each stage does when it runs.
+            </p>
+            <div className="landing-factory-timeline">
+              {FACTORY_STAGES.map((s) => (
+                <div key={s.num} className="landing-factory-stage">
+                  <div className="landing-factory-stage-marker">
+                    <span>{s.num}</span>
+                  </div>
+                  <h3>{s.title}</h3>
+                  <p>{s.detail}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
-        <div className="landing-break landing-break--full" />
-
-        <div className="landing-story" role="group" aria-label="How APT Labs coordinates work">
-          <section className="landing-operating-map" aria-labelledby="landing-map-title">
-            <div className="landing-operating-map-inner">
-              <div className="landing-operating-map-copy">
-                <h2 id="landing-map-title" className="landing-section-heading">
-                  The buyer path
-                </h2>
-                <p className="landing-operating-map-lede">
-                  One need. One acceptance. One payment.
-                </p>
-              </div>
-              <OperatingMap />
-            </div>
-          </section>
-
-          <section className="landing-what" aria-labelledby="landing-what-title">
-            <div className="landing-what-inner">
-              <div className="landing-what-copy">
-                <h2 id="landing-what-title" className="landing-section-heading">
-                  Six structures
-                </h2>
-                <p className="landing-what-lede">
-                  Connected. None stands alone.
-                </p>
-              </div>
-              <div className="landing-flow-map">
-                <svg className="landing-flow-thread" viewBox="0 0 900 40" preserveAspectRatio="none" aria-hidden="true">
-                  <path d="M75 15C125 5 175 25 225 15S325 5 375 15S475 25 525 15S625 5 675 15S775 25 825 15" stroke="var(--cloak-sisal)" stroke-width="5" fill="none" />
-                  <path d="M75 15C125 5 175 25 225 15S325 5 375 15S475 25 525 15S625 5 675 15S775 25 825 15" stroke="var(--cloak-indigo)" stroke-width="1.5" stroke-dasharray="2 9" fill="none" />
-                </svg>
-                <ol className="landing-flow" role="list" aria-label="Institutional structures in sequence">
-                  {STRUCTURES.map((s, index) => (
-                    <li key={s.id} className="landing-flow-item">
-                      <div className="landing-flow-connector">
-                        <span className="landing-flow-number">{String(index + 1).padStart(2, '0')}</span>
-                      </div>
-                      <div className="landing-flow-body">
-                        <h3 className="landing-flow-title">{s.label}</h3>
-                        <p className="landing-flow-detail">{s.detail}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            </div>
-          </section>
-
-          <section className="landing-architecture" aria-labelledby="landing-architecture-title">
-            <div className="landing-architecture-inner">
-              <div className="landing-architecture-copy">
-                <h2 id="landing-architecture-title" className="landing-section-heading">
-                  Five boundaries
-                </h2>
-                <p className="landing-architecture-lede">
-                  One system, shared across every action.
-                </p>
-              </div>
-              <div className="landing-module-constellation">
-                <svg className="landing-module-thread" viewBox="0 0 900 48" preserveAspectRatio="none" aria-hidden="true">
-                  <path d="M450 2C360 7 170 7 90 18M450 2C390 8 320 10 270 18M450 2V18M450 2C510 8 580 10 630 18M450 2C540 7 730 7 810 18" stroke="var(--cloak-forest)" stroke-width="1.5" fill="none" />
-                  <circle cx="450" cy="3" r="4" fill="var(--cloak-forest)" />
-                </svg>
-                <div className="landing-module-field" role="list" aria-label="Institution modules">
-                  {MODULES.map((m) => (
-                    <div key={m.id} className="landing-module" role="listitem">
-                      <h3 className="landing-module-title">{m.label}</h3>
-                      <p className="landing-module-hint">{m.hint}</p>
-                      <Link className="landing-module-link" href={m.href}>
-                        Open
-                      </Link>
-                    </div>
-                  ))}
+        {/* 4: Six Structures */}
+        <section className="landing-structures" id="structures">
+          <div className="landing-structures-inner">
+            <h2>Six structures. None stands alone.</h2>
+            <p className="landing-structures-lede">
+              Every product, sector, and workflow in APT Labs expresses the same six underlying structures.
+            </p>
+            <div className="landing-structures-grid">
+              {STRUCTURES.map((s, i) => (
+                <div key={s.id} className={`landing-structure-card accent-${s.accent}`}>
+                  <p className="landing-structure-card-num">{String(i + 1).padStart(2, '0')}</p>
+                  <h3>{s.label}</h3>
+                  <p>{s.detail}</p>
                 </div>
-              </div>
+              ))}
             </div>
-          </section>
-          <p className="landing-why-line">Evidence you can trace. Outcomes that are accepted.</p>
-        </div>
+          </div>
+        </section>
+
+        {/* 5: Five Modules as Control Room */}
+        <section className="landing-modules" id="modules">
+          <div className="landing-modules-inner">
+            <h2>Five boundaries. One shared graph.</h2>
+            <p className="landing-modules-lede">
+              One system, shared across every action. Each module has one job.
+            </p>
+            <div className="landing-modules-grid">
+              {MODULES.map((m) => (
+                <div key={m.id} className="landing-module-cell">
+                  <div className="landing-module-cell-dot" aria-hidden="true" />
+                  <h3>{m.label}</h3>
+                  <p>{m.hint}</p>
+                  <Link href={m.href}>Open</Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 6: Intelligence Observatory */}
+        <section className="landing-observatory">
+          <p className="landing-observatory-tag">Intelligence / Observatory</p>
+          <h2>Dark observatory for the Intelligence module.</h2>
+          <p className="landing-observatory-lede">
+            The Intelligence module gets its own visual identity: a dark observatory where
+            matching, forecasting, and analytics live. The limestone platform gives way to basalt and forest.
+          </p>
+          <div className="landing-observatory-grid">
+            <div className="landing-observatory-cell">
+              <p className="landing-observatory-value">12</p>
+              <h4>Active agents</h4>
+              <p>Matching, forecasting, and assessment agents running in the observatory.</p>
+            </div>
+            <div className="landing-observatory-cell">
+              <p className="landing-observatory-value">34</p>
+              <h4>Relationship types</h4>
+              <p>Typed edges connecting people, crews, institutions, assets, and evidence.</p>
+            </div>
+            <div className="landing-observatory-cell">
+              <p className="landing-observatory-value">3</p>
+              <h4>Seeded scenarios</h4>
+              <p>Browser-local work orders demonstrating the full production cycle.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* 7: CTA */}
+        <section className="landing-cta">
+          <h2>This is a working model.</h2>
+          <p>Three seeded scenarios. Browser-local. No signup to explore.</p>
+          <div className="landing-cta-actions">
+            <Link className="landing-cta-primary" href="/sign-in?next=%2Fworkspace">Enter the workspace</Link>
+            <Link className="landing-cta-secondary" href="/investor-memo">Read the memo</Link>
+          </div>
+        </section>
       </main>
 
       <footer className="landing-footer">
-        <BrandMark size="sm" href="/" />
-        <div className="landing-footer-copy">
-          <p>
-            Browser-local. No live institutional, payment, telemetry, or
-            credential connections.
-          </p>
-        </div>
+        <span className="landing-footer-brand">APT Labs</span>
+        <p>Browser-local. No live institutional, payment, telemetry, or credential connections.</p>
       </footer>
     </div>
   );
