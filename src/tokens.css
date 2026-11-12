@@ -12,13 +12,13 @@
      ======================================================================== */
 
   /* Color Primitives */
-  --bg: #faf8f2;
+  --bg: #f7f4ed;
   --fg: #1a1f1a;
   --muted: #7a8070;
   --dim: #a8ad9e;
   --fg-strong: #0d110d;
   --bg-elev: #ffffff;
-  --bg-subtle: #edeae2;
+  --bg-subtle: #ece8df;
   --line: rgba(26, 31, 26, .12);
   --line-strong: rgba(26, 31, 26, .22);
   --hairline: rgba(26, 31, 26, .08);
@@ -32,7 +32,7 @@
   --lilac-pale: #ede4ed;
   --peach: #d49578;
   --peach-pale: #f5e4d8;
-  --ivory: #faf8f2;
+  --ivory: #f7f4ed;
   --ink: #1a1f1a;
 
   /* Legacy aliases kept for compatibility (mapped to new palette) */
