@@ -12,6 +12,8 @@ These are foundational principles, not arbitrary implementation prohibitions. Th
 
 APT-LABS is infrastructure for making fragmented productive capacity visible, connectable, governable, locally retained, and cumulative. It makes relationships between people, crews, institutions, assets, skills, needs, opportunities, work, and evidence legible and actionable.
 
+The full thesis, aetiology, and transformation chain live in `docs/ontology.md`.
+
 The underlying progression:
 
 **Reality → structured records → relationships → coordinated work → verified outcomes → reusable intelligence → economic value.**

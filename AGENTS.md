@@ -69,9 +69,10 @@ Run `npm run build` and `npm run test:unit -- --run` before shipping. Not a gate
 
 ## Reference docs
 
-- `QUICKSTART.md` — tools, skills, MCPs, setup, design gates (read first)
+- `docs/ontology.md` — APT-LABS ontology: thesis, aetiology, six structures, transformation chain, design principles, what-this-is-NOT (read first for domain work)
+- `QUICKSTART.md` — tools, skills, MCPs, setup, design gates (read first for coding sessions)
 - `docs/architecture.md` — current technical architecture
-- `docs/domain-model.md` — six-structure domain model
+- `docs/domain-model.md` — six-structure quick reference (points to ontology.md)
 - `docs/decisions/` — accepted ADRs (B1–B8)
 - `docs/design/charter.md` — constitution (principles + decisions)
 
