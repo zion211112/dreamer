@@ -5,28 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>APT-LABS — The Structural Blueprint</title>
 <style>
-/* ── Structural Emergence tokens ── */
+/* ── Structural Emergence tokens — Dark Warm ── */
 :root {
-  --bg: #f7f4ed;
-  --fg: #1a1f1a;
-  --muted: #5c6355;
-  --dim: #8a9080;
-  --fg-strong: #0d110d;
-  --bg-elev: #ffffff;
-  --bg-subtle: #ece8df;
-  --line: rgba(26,31,26,.12);
-  --line-strong: rgba(26,31,26,.24);
-  --hairline: rgba(26,31,26,.07);
-  --sage: #6b7f66;
-  --sage-pale: #dde3d8;
-  --forest: #2e4a3a;
-  --forest-pale: #d8e3d8;
-  --lilac: #957e96;
-  --lilac-pale: #ede4ed;
-  --peach: #c4835f;
-  --peach-pale: #f5e4d8;
-  --ivory: #f7f4ed;
+  --bg: #1e1a14;
+  --bg-subtle: #26221a;
+  --bg-elev: #2a251e;
+  --fg: #e8e2d4;
+  --fg-strong: #f5f0e4;
+  --muted: #9a9484;
+  --dim: #6e6960;
+  --line: rgba(232,226,212,.12);
+  --line-strong: rgba(232,226,212,.22);
+  --hairline: rgba(232,226,212,.07);
+
+  /* Accents tuned for dark bg — lighter, more luminous */
+  --sage: #8ba87e;
+  --sage-pale: #3a4a34;
+  --forest: #5a8a6a;
+  --forest-pale: #2a3a2c;
+  --lilac: #b896b8;
+  --lilac-pale: #3a2e3a;
+  --peach: #d8a070;
+  --peach-pale: #3a2e20;
+
+  --ivory: #e8e2d4;
   --ink: #141210;
+
   --serif: Georgia, "Times New Roman", serif;
   --sans: system-ui, -apple-system, "Segoe UI Variable", sans-serif;
   --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
@@ -60,7 +64,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: var(--space-3) clamp(24px, 6vw, 80px);
-  border-bottom: 1px solid var(--fg-strong);
+  border-bottom: 1px solid var(--line-strong);
 }
 .brand {
   display: flex;
@@ -102,6 +106,10 @@ body {
   letter-spacing: -.02em;
   margin-bottom: var(--space-4);
 }
+.thesis h1 em {
+  font-style: normal;
+  color: var(--sage);
+}
 .thesis-sub {
   font-size: 15px;
   line-height: 1.75;
@@ -117,9 +125,9 @@ body {
 }
 .thesis-cta a {
   font: 500 13px/1 var(--sans);
-  color: var(--forest);
+  color: var(--sage);
   text-decoration: none;
-  border-bottom: 1px solid var(--forest);
+  border-bottom: 1px solid var(--sage);
   padding-bottom: 2px;
   transition: color .15s, border-color .15s;
 }
@@ -129,6 +137,7 @@ body {
 /* ── 2: Structural Diagram ── */
 .structure-diagram {
   padding: clamp(56px, 8vw, 96px) clamp(24px, 6vw, 80px);
+  background: var(--bg-subtle);
   border-top: 1px solid var(--line);
 }
 .sd-inner {
@@ -174,7 +183,7 @@ body {
   height: 10px;
   border-radius: 50%;
   border: 2px solid var(--sage);
-  background: var(--bg);
+  background: var(--bg-subtle);
   position: relative;
   z-index: 1;
   margin-left: 40px;
@@ -202,7 +211,6 @@ body {
 /* ── 3: Aetiology ── */
 .aetiology {
   padding: clamp(56px, 8vw, 96px) clamp(24px, 6vw, 80px);
-  background: var(--bg-subtle);
   border-top: 1px solid var(--line);
 }
 .aetiology-inner {
@@ -232,7 +240,7 @@ body {
   grid-template-columns: repeat(2, 1fr);
   gap: 0;
   border: 1px solid var(--line);
-  background: var(--bg);
+  background: var(--bg-subtle);
 }
 .aetiology-item {
   padding: var(--space-3) var(--space-4);
@@ -257,6 +265,8 @@ body {
 /* ── 4: Scenario Plates ── */
 .scenarios {
   padding: clamp(56px, 8vw, 96px) clamp(24px, 6vw, 80px);
+  background: var(--bg-subtle);
+  border-top: 1px solid var(--line);
 }
 .scenarios-inner {
   max-width: 1040px;
@@ -332,7 +342,6 @@ body {
 /* ── 5: Floor Plan ── */
 .floorplan {
   padding: clamp(56px, 8vw, 96px) clamp(24px, 6vw, 80px);
-  background: var(--bg-subtle);
   border-top: 1px solid var(--line);
 }
 .floorplan-inner {
@@ -368,7 +377,7 @@ body {
   margin-top: var(--space-5);
 }
 .floorplan-room {
-  background: var(--bg);
+  background: var(--bg-subtle);
   padding: var(--space-3);
   text-align: center;
 }
@@ -390,11 +399,13 @@ body {
   color: var(--sage);
   text-decoration: none;
 }
-.floorplan-room a:hover { text-decoration: underline; }
+.floorplan-room a:hover { text-decoration: underline; color: var(--fg-strong); }
 
 /* ── 6: What This Is Not ── */
 .nota {
   padding: clamp(56px, 8vw, 96px) clamp(24px, 6vw, 80px);
+  background: var(--bg-subtle);
+  border-top: 1px solid var(--line);
 }
 .nota-inner {
   max-width: 640px;
@@ -434,13 +445,13 @@ body {
 }
 .cta h2 {
   font: 400 clamp(24px, 3vw, 32px)/1.2 var(--serif);
-  color: var(--ivory);
+  color: var(--fg-strong);
   margin-bottom: var(--space-2);
 }
 .cta p {
   font-size: 14px;
   line-height: 1.6;
-  color: rgba(247,244,237,.55);
+  color: var(--muted);
   margin-bottom: var(--space-5);
 }
 .cta-actions {
@@ -464,20 +475,20 @@ body {
   text-decoration: none;
   transition: background .15s;
 }
-.cta a.primary:hover { background: #5a7054; }
+.cta a.primary:hover { background: #7a9668; }
 .cta a.secondary {
   display: inline-flex;
   align-items: center;
   min-height: 48px;
   padding: 0 20px;
-  color: rgba(247,244,237,.6);
+  color: var(--muted);
   font: 500 11px/1 var(--mono);
   letter-spacing: .08em;
   text-transform: uppercase;
   text-decoration: none;
   transition: color .15s;
 }
-.cta a.secondary:hover { color: var(--ivory); }
+.cta a.secondary:hover { color: var(--fg-strong); }
 
 /* ── Footer ── */
 .footer {
@@ -538,7 +549,7 @@ body {
 
 <!-- 1: Thesis -->
 <section class="thesis">
-  <h1>Fragmentation is the problem.<br>Legibility is the product.</h1>
+  <h1>Fragmentation is the problem.<br><em>Legibility</em> is the product.</h1>
   <p class="thesis-sub">
     APT Labs makes productive capacity visible, connectable, governable,
     locally retained, and cumulative. The intelligence already exists —
@@ -670,24 +681,24 @@ body {
     <h2>Five rooms, one shared graph.</h2>
     <p>Each module has one job. They connect through the shared graph, not through each other.</p>
     <svg class="floorplan-svg" viewBox="0 0 720 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <circle cx="360" cy="100" r="24" stroke="#2e4a3a" stroke-width="1.5"/>
-      <circle cx="360" cy="100" r="4" fill="#2e4a3a"/>
-      <text x="360" y="148" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#8a9080" letter-spacing="0.1em">SHARED GRAPH</text>
-      <rect x="20" y="60" width="120" height="80" stroke="#6b7f66" stroke-width="1" fill="none"/>
-      <text x="80" y="104" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#1a1f1a">Commons</text>
-      <line x1="140" y1="100" x2="336" y2="100" stroke="rgba(26,31,26,.24)" stroke-width="1"/>
-      <rect x="170" y="20" width="120" height="56" stroke="#2e4a3a" stroke-width="1" fill="none"/>
-      <text x="230" y="52" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#1a1f1a">Network</text>
-      <line x1="290" y1="48" x2="344" y2="92" stroke="rgba(26,31,26,.24)" stroke-width="1"/>
-      <rect x="430" y="20" width="120" height="56" stroke="#957e96" stroke-width="1" fill="none"/>
-      <text x="490" y="52" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#1a1f1a">Workbench</text>
-      <line x1="430" y1="48" x2="376" y2="92" stroke="rgba(26,31,26,.24)" stroke-width="1"/>
-      <rect x="580" y="60" width="120" height="80" stroke="#c4835f" stroke-width="1" fill="none"/>
-      <text x="640" y="104" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#1a1f1a">Records</text>
-      <line x1="580" y1="100" x2="384" y2="100" stroke="rgba(26,31,26,.24)" stroke-width="1"/>
-      <rect x="280" y="150" width="160" height="48" stroke="#2e4a3a" stroke-width="1" fill="none"/>
-      <text x="360" y="180" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#1a1f1a">Intelligence</text>
-      <line x1="360" y1="150" x2="360" y2="124" stroke="rgba(26,31,26,.24)" stroke-width="1"/>
+      <circle cx="360" cy="100" r="24" stroke="#5a8a6a" stroke-width="1.5"/>
+      <circle cx="360" cy="100" r="4" fill="#5a8a6a"/>
+      <text x="360" y="148" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6e6960" letter-spacing="0.1em">SHARED GRAPH</text>
+      <rect x="20" y="60" width="120" height="80" stroke="#8ba87e" stroke-width="1" fill="none"/>
+      <text x="80" y="104" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#e8e2d4">Commons</text>
+      <line x1="140" y1="100" x2="336" y2="100" stroke="rgba(232,226,212,.22)" stroke-width="1"/>
+      <rect x="170" y="20" width="120" height="56" stroke="#5a8a6a" stroke-width="1" fill="none"/>
+      <text x="230" y="52" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#e8e2d4">Network</text>
+      <line x1="290" y1="48" x2="344" y2="92" stroke="rgba(232,226,212,.22)" stroke-width="1"/>
+      <rect x="430" y="20" width="120" height="56" stroke="#b896b8" stroke-width="1" fill="none"/>
+      <text x="490" y="52" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#e8e2d4">Workbench</text>
+      <line x1="430" y1="48" x2="376" y2="92" stroke="rgba(232,226,212,.22)" stroke-width="1"/>
+      <rect x="580" y="60" width="120" height="80" stroke="#d8a070" stroke-width="1" fill="none"/>
+      <text x="640" y="104" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#e8e2d4">Records</text>
+      <line x1="580" y1="100" x2="384" y2="100" stroke="rgba(232,226,212,.22)" stroke-width="1"/>
+      <rect x="280" y="150" width="160" height="48" stroke="#5a8a6a" stroke-width="1" fill="none"/>
+      <text x="360" y="180" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#e8e2d4">Intelligence</text>
+      <line x1="360" y1="150" x2="360" y2="124" stroke="rgba(232,226,212,.22)" stroke-width="1"/>
     </svg>
     <div class="floorplan-rooms">
       <div class="floorplan-room">
