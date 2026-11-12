@@ -51,8 +51,8 @@ type SetDecisionNotes = (value: Record<string, string> | ((prev: Record<string, 
 export interface CommonsHook {
   contributeButtonRef: RefObject<HTMLButtonElement>;
   reportInstitutionRef: RefObject<HTMLSelectElement>;
-  commonsView: 'signals' | 'opportunities' | 'decisions';
-  setCommonsView: (view: 'signals' | 'opportunities' | 'decisions') => void;
+  commonsView: 'signals' | 'opportunities' | 'decisions' | 'arrival';
+  setCommonsView: (view: 'signals' | 'opportunities' | 'decisions' | 'arrival') => void;
   institutionScope: string;
   setInstitutionScope: (id: string) => void;
   signals: FieldSignal[];
@@ -117,7 +117,7 @@ export function useCommons(): CommonsHook {
   const [, navigate] = useLocation();
   const contributeButtonRef = useRef<HTMLButtonElement>(null);
   const reportInstitutionRef = useRef<HTMLSelectElement>(null);
-  const [commonsView, setCommonsView] = useState<'signals' | 'opportunities' | 'decisions'>('signals');
+  const [commonsView, setCommonsView] = useState<'signals' | 'opportunities' | 'decisions' | 'arrival'>('arrival');
   const [institutionScope, setInstitutionScope] = useState('');
   const [signals, setSignals] = useState<FieldSignal[]>([]);
   const [selectedId, setSelectedId] = useState('');

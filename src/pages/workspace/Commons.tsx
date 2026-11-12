@@ -8,6 +8,7 @@ import { CommonsSignalDetail } from './commons/CommonsSignalDetail';
 import { CommonsGovernance } from './commons/GovernancePanel';
 import { CommonsOpportunities } from './commons/OpportunitiesPanel';
 import { useCommons } from './commons/useCommons';
+import { CommonsArrival } from './commons/CommonsArrival';
 import { RadarSpatialPanel } from '../../components/RadarSpatialPanel';
 
 export function Commons() {
@@ -71,7 +72,22 @@ export function Commons() {
 
    return (
      <WorkspaceLayout currentContext="commons">
-       <div className="signal-desk">
+       {commonsView === 'arrival' ? (
+         <CommonsArrival
+           onExplore={(query: string) => {
+             setSearch(query);
+             setCommonsView('signals');
+           }}
+           onOpenPath={(id: string) => {
+             if (id === 'share') {
+               setShowContributionMenu(true);
+             } else {
+               setCommonsView('signals');
+             }
+           }}
+         />
+       ) : (
+         <div className="signal-desk">
          <div className="signal-desk-head">
            <PageHead
              eyebrow="Commons"
@@ -327,7 +343,8 @@ export function Commons() {
              />
            </section>
          )}
-       </div>
+         </div>
+       )}
      </WorkspaceLayout>
    );
 }

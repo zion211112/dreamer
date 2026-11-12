@@ -8,6 +8,7 @@ import './styles/people.css';
 import './styles/institutions.css';
 import './styles/network.css';
 import './styles/commons.css';
+import './styles/commons-arrival.css';
 import './styles/workbench.css';
 import './styles/records.css';
 
