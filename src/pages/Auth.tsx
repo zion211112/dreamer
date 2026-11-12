@@ -129,6 +129,26 @@ export function Auth() {
 
   return (
     <main className="auth-layout">
+      <svg className="auth-ubuntu-pattern" viewBox="0 0 1000 800" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <pattern id="auth-community-weave" width="192" height="192" patternUnits="userSpaceOnUse">
+            <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M96 0C96 30 132 32 132 62C132 80 114 92 96 96C78 100 60 112 60 130C60 160 96 162 96 192" stroke="#40573d" stroke-width="2" stroke-opacity=".24" />
+              <path d="M0 96C30 96 32 60 62 60C80 60 92 78 96 96C100 114 112 132 130 132C160 132 162 96 192 96" stroke="#263d56" stroke-width="1.5" stroke-opacity=".2" />
+              <path d="M96 0C104 32 128 42 150 64C172 86 150 106 128 108C106 110 84 128 64 150C44 172 32 152 24 128" stroke="#b89a72" stroke-width="1" stroke-opacity=".24" />
+              <path d="M96 0C104 32 128 42 150 64C172 86 150 106 128 108C106 110 84 128 64 150C44 172 32 152 24 128" stroke="#b89a72" stroke-width="1" stroke-opacity=".24" transform="rotate(90 96 96)" />
+              <path d="M96 0C104 32 128 42 150 64C172 86 150 106 128 108C106 110 84 128 64 150C44 172 32 152 24 128" stroke="#b89a72" stroke-width="1" stroke-opacity=".24" transform="rotate(180 96 96)" />
+              <path d="M96 0C104 32 128 42 150 64C172 86 150 106 128 108C106 110 84 128 64 150C44 172 32 152 24 128" stroke="#b89a72" stroke-width="1" stroke-opacity=".24" transform="rotate(270 96 96)" />
+            </g>
+            <circle cx="96" cy="96" r="7" fill="#bd863d" fill-opacity=".36" />
+            <circle cx="96" cy="12" r="2.5" fill="#40573d" fill-opacity=".38" />
+            <circle cx="180" cy="96" r="2" fill="#263d56" fill-opacity=".34" />
+            <circle cx="96" cy="180" r="2.5" fill="#bd863d" fill-opacity=".34" />
+            <circle cx="12" cy="96" r="2" fill="#40573d" fill-opacity=".3" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#auth-community-weave)" />
+      </svg>
       <header className="auth-header">
         <BrandMark size="sm" />
       </header>
