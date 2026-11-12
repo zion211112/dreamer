@@ -1,68 +1,70 @@
 /* ============================================================================
    APT-LABS — Design Tokens
-   Structural Emergence Constitution (2026-11-12)
-   Dark Warm: aged amber base / warm bone text / luminous earth accents
-   Light:     warm porcelain / deep ink / earthy neutrals
+   Limestone, Charcoal & Olive (2026-11-12)
+   Light: soft parchment / warm taupe / olive forest / muted brass / clay
+   Observatory: basalt / forest (Intelligence module dark identity)
    ============================================================================ */
 
 :root {
   /* ========================================================================
-     Dark Warm — Aged Amber + Warm Bone (default)
+     Limestone + Charcoal + Olive (light default)
      ======================================================================== */
 
   /* Color Primitives */
-  --bg: #1e1a14;
-  --fg: #e8e2d4;
-  --muted: #9a9484;
-  --dim: #6e6960;
-  --fg-strong: #f5f0e4;
-  --bg-elev: #2a251e;
-  --bg-subtle: #26221a;
-  --line: rgba(232, 226, 212, .12);
-  --line-strong: rgba(232, 226, 212, .22);
-  --hairline: rgba(232, 226, 212, .07);
+  --bg: #F4F1E9;
+  --fg: #292B25;
+  --muted: #6B6558;
+  --dim: #9E9889;
+  --fg-strong: #1a1c16;
+  --bg-elev: #FDFCF8;
+  --bg-subtle: #E9E3D7;
+  --line: rgba(41, 43, 37, .12);
+  --line-strong: rgba(41, 43, 37, .24);
+  --hairline: rgba(41, 43, 37, .06);
 
-  /* Palette — Structural Emergence (tuned for dark bg) */
-  --sage: #8ba87e;
-  --sage-pale: #3a4a34;
-  --forest: #5a8a6a;
-  --forest-pale: #2a3a2c;
-  --lilac: #b896b8;
-  --lilac-pale: #3a2e3a;
-  --peach: #d8a070;
-  --peach-pale: #3a2e20;
-  --ivory: #e8e2d4;
-  --ink: #141210;
+  /* Palette — Limestone, Charcoal & Olive */
+  --olive: #344438;
+  --olive-pale: #dde3d4;
+  --umber: #514337;
+  --umber-pale: #e8e2da;
+  --brass: #AD8B55;
+  --brass-pale: #f0e8d8;
+  --clay: #A66F55;
+  --clay-pale: #f0e0d4;
+  --sage: #A8B0A0;
+  --sage-pale: #e4e8de;
+  --limestone: #E9E3D7;
+  --parchment: #F4F1E9;
 
   /* Legacy aliases kept for compatibility (mapped to new palette) */
   --terrain: var(--sage);
   --terrain-pale: var(--sage-pale);
-  --terrain-ink: #5a8a6a;
-  --brand-main: var(--forest);
-  --brand-main-wash: var(--forest-pale);
-  --brand-branch: var(--lilac);
-  --brand-branch-wash: var(--lilac-pale);
-  --brass: var(--peach);
-  --brass-pale: var(--peach-pale);
-  --danger: var(--peach);
-  --danger-pale: var(--peach-pale);
-  --phosphor: #9bbf97;
-  --bg-term: #0d110e;
-  --glow-soft: rgba(139, 168, 126, .08);
+  --terrain-ink: var(--umber);
+  --brand-main: var(--olive);
+  --brand-main-wash: var(--olive-pale);
+  --brand-branch: var(--clay);
+  --brand-branch-wash: var(--clay-pale);
+  --brass: var(--brass);
+  --brass-pale: var(--brass-pale);
+  --danger: var(--clay);
+  --danger-pale: var(--clay-pale);
+  --phosphor: var(--sage);
+  --bg-term: #1a1e1a;
+  --glow-soft: rgba(52, 68, 56, .06);
 
-  /* State Colors (semantic — Structural Emergence mapping) */
-  --state-canon: var(--forest);
-  --state-canon-wash: var(--forest-pale);
-  --state-proposed: var(--lilac);
-  --state-proposed-wash: var(--lilac-pale);
-  --state-risk: var(--peach);
-  --state-risk-wash: var(--peach-pale);
-  --state-caution: var(--sage);
-  --state-caution-wash: var(--sage-pale);
+  /* State Colors (semantic — Limestone mapping) */
+  --state-canon: var(--olive);
+  --state-canon-wash: var(--olive-pale);
+  --state-proposed: var(--sage);
+  --state-proposed-wash: var(--sage-pale);
+  --state-risk: var(--clay);
+  --state-risk-wash: var(--clay-pale);
+  --state-caution: var(--brass);
+  --state-caution-wash: var(--brass-pale);
 
   /* Water (info) */
-  --water: var(--forest);
-  --water-pale: var(--forest-pale);
+  --water: var(--olive);
+  --water-pale: var(--olive-pale);
 
   /* Semantic Roles */
   --text: var(--fg);
@@ -140,10 +142,10 @@
   /* Border Radius */
   --radius-1: 3px; --radius-2: 6px; --radius-3: 8px; --radius-4: 12px; --radius-pill: 999px;
 
-  /* Shadows (dark bg — subtle, warm) */
-  --shadow-1: 0 1px 2px rgba(0,0,0,.3), 0 1px 4px rgba(0,0,0,.2);
-  --shadow-2: 0 4px 8px rgba(0,0,0,.35), 0 2px 4px rgba(0,0,0,.2);
-  --shadow-3: 0 8px 24px rgba(0,0,0,.45), 0 4px 12px rgba(0,0,0,.25);
+  /* Shadows (light bg — subtle, warm) */
+  --shadow-1: 0 1px 2px rgba(41,43,37,.06), 0 1px 4px rgba(41,43,37,.04);
+  --shadow-2: 0 4px 8px rgba(41,43,37,.08), 0 2px 4px rgba(41,43,37,.05);
+  --shadow-3: 0 8px 24px rgba(41,43,37,.10), 0 4px 12px rgba(41,43,37,.06);
 
   /* Transitions */
   --fast: 120ms ease;
@@ -168,45 +170,43 @@
   --shell-focus: var(--brand-main);
 }
 
-/* Light Variant — explicit opt-in via [data-skin="light"] on <html> */
-[data-skin="light"] {
-  --bg: #f7f4ed;
-  --fg: #1a1f1a;
-  --muted: #5c6355;
-  --dim: #8a9080;
-  --fg-strong: #0d110d;
-  --bg-elev: #ffffff;
-  --bg-subtle: #ece8df;
-  --line: rgba(26, 31, 26, .12);
-  --line-strong: rgba(26, 31, 26, .22);
-  --hairline: rgba(26, 31, 26, .07);
+/* Observatory Variant — Intelligence module dark identity, opt-in via [data-skin="observatory"] */
+[data-skin="observatory"] {
+  --bg: #1a1e1a;
+  --fg: #d4d8cc;
+  --muted: #7a8a74;
+  --dim: #4a5a48;
+  --fg-strong: #e8ede0;
+  --bg-elev: #222822;
+  --bg-subtle: #1e241e;
+  --line: rgba(212, 216, 204, .12);
+  --line-strong: rgba(212, 216, 204, .24);
+  --hairline: rgba(212, 216, 204, .07);
 
-  /* Light variant accents — earthy, grounded */
-  --sage: #6b7f66;
-  --sage-pale: #dde3d8;
-  --forest: #2e4a3a;
-  --forest-pale: #d8e3d8;
-  --lilac: #957e96;
-  --lilac-pale: #ede4ed;
-  --peach: #c4835f;
-  --peach-pale: #f5e4d8;
-  --ivory: #f7f4ed;
-  --ink: #141210;
+  --olive: #5a8a6a;
+  --olive-pale: #2a3a2c;
+  --umber: #6a5a48;
+  --umber-pale: #2a2420;
+  --brass: #c4a060;
+  --brass-pale: #3a3020;
+  --clay: #c48a68;
+  --clay-pale: #3a2a20;
+  --sage: #8ba87e;
+  --sage-pale: #2a3a24;
+  --limestone: #2a2e28;
+  --parchment: #d4d8cc;
 
-  /* Legacy aliases (light variant) */
   --terrain: var(--sage);
   --terrain-pale: var(--sage-pale);
-  --terrain-ink: #2e3d2d;
-  --brand-main: var(--forest);
-  --brand-main-wash: var(--forest-pale);
-  --brand-branch: var(--lilac);
-  --brand-branch-wash: var(--lilac-pale);
-  --brass: var(--peach);
-  --brass-pale: var(--peach-pale);
-  --danger: var(--peach);
-  --danger-pale: var(--peach-pale);
-  --phosphor: #9bbf97;
-  --shell-focus: var(--forest);
+  --terrain-ink: var(--umber);
+  --brand-main: var(--olive);
+  --brand-main-wash: var(--olive-pale);
+  --brand-branch: var(--clay);
+  --brand-branch-wash: var(--clay-pale);
+  --danger: var(--clay);
+  --danger-pale: var(--clay-pale);
+  --phosphor: var(--sage);
+  --shell-focus: var(--olive);
 
   --text: var(--fg);
   --text-muted: var(--muted);
@@ -218,10 +218,10 @@
   --ok-bg: var(--sage-pale);
   --warn: var(--state-caution);
   --warn-bg: var(--state-caution-wash);
-  --info: var(--forest);
-  --info-bg: var(--forest-pale);
+  --info: var(--olive);
+  --info-bg: var(--olive-pale);
 
-  --shadow-1: 0 1px 2px rgba(26,29,24,.06), 0 1px 4px rgba(26,29,24,.04);
-  --shadow-2: 0 4px 8px rgba(26,29,24,.08), 0 2px 4px rgba(26,29,24,.05);
-  --shadow-3: 0 8px 24px rgba(26,29,24,.10), 0 4px 12px rgba(26,29,24,.06);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.35), 0 1px 4px rgba(0,0,0,.25);
+  --shadow-2: 0 4px 8px rgba(0,0,0,.45), 0 2px 4px rgba(0,0,0,.3);
+  --shadow-3: 0 8px 24px rgba(0,0,0,.55), 0 4px 12px rgba(0,0,0,.35);
 }
