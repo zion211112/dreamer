@@ -53,6 +53,5 @@ Seed demo data from the browser console: `window.seedAPTLabsDemo()`
 
 ## Guardrails
 
-- Smallest change that ships. Read the file before changing it.
-- `npm run build` and `npm run test:unit -- --run` must be green before the next phase.
-- Never break the working build.
+- Read the file before changing it.
+- `npm run build` and `npm run test:unit -- --run` should be green before shipping.

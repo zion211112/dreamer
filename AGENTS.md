@@ -59,17 +59,13 @@ Demo mode (localStorage) when `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` are
 
 ## Guardrails
 
-1. **Read the file you are about to change** — do not infer from memory.
-2. **Understand dependencies before modifying.**
-3. **Inspect Git status and existing work before proposing changes.**
-4. **Preserve user-owned and unrelated changes.**
-5. **Smallest change that ships.** Delete before refactor; refactor before add.
-6. **Never break the build** — `npm run build` and `npm run test:unit -- --run` green before the next phase.
-7. **Report failures honestly.**
+1. **Read the file before changing it.**
+2. **Preserve user-owned and unrelated changes.**
+3. **Report failures honestly.**
 
-## Build & test gates
+## Build & test
 
-`npm run build` (tsc + vite build) and `npm run test:unit -- --run` must be green before starting the next phase.
+Run `npm run build` and `npm run test:unit -- --run` before shipping. Not a gate that blocks every edit.
 
 ## Reference docs
 

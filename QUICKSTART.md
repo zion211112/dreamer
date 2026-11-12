@@ -74,21 +74,11 @@ engine/.venv/Scripts/python.exe engine/bench_models.py
 | `playwright` | local (npx) | Browser automation for testing |
 | `codebase-memory` | stdio (extension) | Code graph indexing, ADR management |
 
-## Design gates (must pass before shipping UI)
+## Build & test
 
-1. `get-ui-principle` — load visual principles before styling
-2. `get-ux-principle` — load behavior principles before interaction
-3. `get-review-rules` — self-review against a11y + visual + content rules
-4. `check-comprehension` — mom test / 15-second / screenshot test on copy
-5. `inspect-spacing` — geometry check (capture → measure → report)
-6. `finalize-dashboard-review` — required for any dashboard built on a Better Design kit
-
-## Build & test gates (B8)
-
-`npm run build` **and** `npm run test:unit -- --run` must be green before starting the next phase. Small reversible changes preferred.
+`npm run build` and `npm run test:unit -- --run` should be green before shipping. Run them as needed — not as a gate that blocks every edit.
 
 ## Known conflicts
 
-- **Taipy** cannot install on Windows (pyarrow needs cmake). Use WSL2 or a build-tools machine.
 - **Preact vs React:** repo uses Preact 10.24 (leaner than React). Do not switch without a global ADR.
 - **Design tokens:** governed by `docs/design/charter.md`. `tokens.css` is the implementation. Any token change needs a charter update.

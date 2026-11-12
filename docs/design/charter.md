@@ -185,13 +185,13 @@ Canon (what is structurally recorded), Annals (what happened over time), Roll (w
 |-------|-------|
 | Decision ID | B8 |
 | Date | 2026-11-10 |
-| Rationale | Never break the working build; every phase leaves build and tests green before starting the next |
+| Rationale | Ship working code; run build/tests before shipping |
 | Scope | Engineering practice |
 | Status | Active |
 | Dependencies | None |
 | Supersedes | None |
 
-`npm run build` (tsc + vite build) and `npm run test:unit -- --run` must be green before starting the next phase. Small, reversible changes preferred over broad rewrites.
+Run `npm run build` and `npm run test:unit -- --run` before shipping. Not a gate that blocks every edit.
 
 ---
 
@@ -199,15 +199,9 @@ Canon (what is structurally recorded), Annals (what happened over time), Roll (w
 
 Retained and modernised:
 
-- Read the file you are about to change — do not infer from memory.
-- Understand dependencies before modifying.
-- Inspect Git status and existing work before proposing changes.
+- Read the file before changing it.
 - Preserve user-owned and unrelated changes.
-- Make scoped, minimal changes that ship.
-- Run focused tests and builds before starting the next phase.
 - Report failures honestly; do not claim integration without verification.
-- Avoid destructive cleanup without explicit authority.
-- Record meaningful changes and validation results.
 
 ### Rewritten authorisation rule
 

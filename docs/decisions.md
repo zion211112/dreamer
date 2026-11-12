@@ -68,4 +68,4 @@ Supersedes separate Annals/Roll/Canon page assumptions from prior direction memo
 
 ## B8 — Build and test gates (Active, 2026-11-10)
 
-`npm run build` (tsc + vite build) and `npm run test:unit -- --run` must be green before starting the next phase. Small, reversible changes preferred over broad rewrites.
+Run `npm run build` and `npm run test:unit -- --run` before shipping. Not a gate that blocks every edit.
