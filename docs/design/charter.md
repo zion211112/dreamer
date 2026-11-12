@@ -133,7 +133,7 @@ Active design language: **Structural Emergence** — warm ivory base, earthy neu
 5. **Identity** — persistent, coherent structures.
 6. **Emergence** — whole system greater than individual components.
 
-Hard anti-patterns (no exception): generic SaaS dashboards, endless card grids, decorative gradients/glows, unnecessary glassmorphism, arbitrary rounded corners, fake spatial depth, unexplained visual metaphors, excessive animation, decorative graphs without operational meaning, beautiful screens with incomplete functionality.
+Hard anti-patterns (design tests, not bans): generic SaaS dashboards, endless card grids, decorative gradients/glows, unnecessary glassmorphism, arbitrary rounded corners, fake spatial depth, unexplained visual metaphors, excessive animation, decorative graphs without operational meaning, beautiful screens with incomplete functionality. Use a pattern when it serves a structural or experiential reason; skip it when it doesn't.
 
 Quality standard: every visual decision must have a structural or experiential reason. Every interaction must have a clear consequence. Every complex workflow must have an understandable entry point, progression, feedback, and completion state. The finished product should feel precise, warm, intelligent, quietly monumental, and unmistakably original.
 
@@ -149,7 +149,7 @@ Quality standard: every visual decision must have a structural or experiential r
 | Dependencies | B4 |
 | Supersedes | charter §8 "Anti-slop rules" (permanent bans) |
 
-Former anti-slop items (gradient washes, rounded-card kits, all-caps eyebrows, arbitrary micro-labels, generic AI dashboard layouts, unnecessary animation, motion without user action, decorative metrics, fake functionality) are converted into design tests: each pattern must achieve a clear semantic or interaction purpose, communicate meaning rather than decorate, and pass WCAG AA. The agent must still challenge generic, decorative, inaccessible, or misleading implementations.
+Former anti-slop items are design tests: each pattern must achieve a clear semantic or interaction purpose, communicate meaning rather than decorate, and pass WCAG AA.
 
 ### B6. Page-head hierarchy
 
@@ -207,11 +207,7 @@ Retained and modernised:
 
 An explicit user instruction authorises work within its stated scope. Do not ask for duplicate permission to perform clearly authorised work.
 
-If a proposed action materially exceeds that scope, is destructive, discards existing work, or changes an unrelated product boundary, stop and obtain the necessary authority.
-
-Do not interpret a general design discussion as authorisation for unlimited repository modification.
-
-A direction memo is not permission to edit code. A design review is not permission to build a mockup. A request for analysis is not permission to clean the repository.
+If a proposed action is destructive, discards existing work, or changes an unrelated product boundary, stop and obtain the necessary authority.
 
 ---
 

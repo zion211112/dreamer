@@ -191,17 +191,16 @@ Roll preview applies to physical component. SBT attestations minted for anchor/b
 
 ## 7. Design System
 
-**Signature Dark Instrument** is the active design proposal (charter Decision B4, 2026-11-10): deep green-black signature default, light variant. Implementation requires separate authorization. Current code in `src/tokens.css` implements Light Luxury as the `:root` default with `[data-skin="dark"]` as the variant; this will be reconciled in a future implementation phase.
+**Structural Emergence** is the active design direction (charter Decision B4, 2026-11-11): warm ivory base, earthy neutrals, restrained sage, deep forest/ink, selective lilac/peach accents. Implementation lives in `src/tokens.css` (`:root` light default, `[data-skin="dark"]` variant).
 
-| Token | Dark signature (proposal) | Light variant |
-|-------|---------------------------|---------------|
-| `--bg` | `#0A0F0C` (green-black) | `#F7F5F0` (warm cream) |
-| `--fg` | `#E9F1E8` (bone) | `#1A1D18` (deep ink) |
-| `--muted` | `#8FA08C` (moss) | `#4A5A52` (refined moss) |
-| `--state-canon` | `#7FC5BC` (teal) | `#286375` (teal) |
-| `--state-proposed` | `#C9F292` (lime) | `#3D7158` (green) |
-| `--state-risk` | `#E89670` (coral) | `#A5533D` (coral) |
-| `--state-caution` | `#CBAF6E` (amber) | `#B8955A` (amber) |
+| Token | Light (default) | Dark variant |
+|-------|-----------------|-------------|
+| `--bg` | `#faf8f2` (warm ivory) | `#0f1410` (deep forest-black) |
+| `--fg` | `#1a1f1a` (deep ink) | `#d4dcc8` (pale sage-light) |
+| `--sage` | `#7d8f78` | `#9bbf97` |
+| `--forest` | `#2e4a3a` | `#6b9a85` |
+| `--lilac` | `#a88fa8` | `#c4a8c4` |
+| `--peach` | `#d49578` | `#e8a87c` |
 
 **Typography:**
 - Serif (Georgia): record/page names
@@ -211,8 +210,6 @@ Roll preview applies to physical component. SBT attestations minted for anchor/b
 **PageHead hierarchy:** L1 serif record name → L2 sans subtitle → L3 mono instrument readout.
 
 **Signature devices:** surveyor grid, fork glyph, ringed evidence markers — used selectively, never decorative.
-
----
 
 ## 8. Trust, Credentials, and SBTs
 
@@ -243,7 +240,7 @@ A credential should communicate:
 npm ci          # install dependencies
 npm run dev     # start dev server
 npm run build   # production build (tsc + vite)
-npm run test:unit -- --run  # vitest, 17 files, 123 tests
+npm run test:unit -- --run  # vitest, 12 files, 74 tests
 ```
 
 Seed demo data: open the browser console and run `window.seedAPTLabsDemo()`.

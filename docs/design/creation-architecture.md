@@ -57,12 +57,12 @@ Make relationships navigable. Make transformations inspectable. Make evidence tr
 - Beautiful screens with incomplete functionality.
 
 ### Quality standard
-Every visual decision must have a structural or experiential reason.
+Every visual decision should have a structural or experiential reason.
 
-Every interaction must have a clear consequence.
+Every interaction should have a clear consequence.
 
-Every complex workflow must have an understandable entry point, progression, feedback and completion state.
+Every complex workflow should have an understandable entry point, progression, feedback and completion state.
 
 The finished product should feel precise, warm, intelligent, quietly monumental and unmistakably original.
 
-Do not imitate a reference. Derive a coherent visual system and implement a complete, functional workspace.
+A reference can inform the direction; the implementation must be complete and functional in its own right.

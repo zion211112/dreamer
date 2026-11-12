@@ -46,18 +46,16 @@ APT-LABS module.
 - NOT present: splitters/resizable panes, record-level inspector, change-set/ledger dock,
   environment switcher, surveyor grid, fork glyph.
 
-## Design tokens (src/styles.css — VERIFIED)
+## Design tokens (src/tokens.css — VERIFIED)
 
-- Current system is light-first "field atlas": `--paper #f5f3ee`, `--ink #1a1d18`,
-  `--terrain #5d7a5c`, `--brand-main #295d70` (teal), `--brand-branch #c6d68e` (pale lime),
-  `--brass #b8955a`, `--water #3a6b8c`, `--danger #a84632`, `--phosphor #8fd98f`,
-  `--bg-term #0d110e`; a `.dark` class overrides to terminal look.
-- Type stacks: Georgia (serif) / Inter (sans) / JetBrains Mono (mono); clamp() step scale;
+- Current system is "Structural Emergence": `--bg #faf8f2` (warm ivory), `--fg #1a1f1a` (deep ink),
+  `--sage #7d8f78`, `--forest #2e4a3a`, `--lilac #a88fa8`, `--peach #d49578`;
+  `[data-skin="dark"]` overrides to deep forest-black palette.
+- Type stacks: Georgia (serif) / system-ui (sans) / JetBrains Mono (mono); clamp() step scale;
   8px + Fibonacci spacing; radii, shadows, transitions, z-index tokens.
-- **No `[data-env]` blocks and no dark signature palette exist in src yet** (grep-verified).
-- Known defect: `--info-bg` referenced but undefined. Auth-page styles (~lines 239–595) sit in
-  styles.css, which AGENTS.md says should be handled carefully (shared tokens + auth-page styles
-  belong there, but keep changes small).
+- Tailwind v4 is active via `@tailwindcss/vite`; CVA primitives in `src/components/ui/`.
+- Legacy aliases in `tokens.css` map old names (`--terrain`, `--brand-main`, etc.) to the
+  Structural Emergence palette for compatibility.
 
 ## Domain data (VERIFIED)
 

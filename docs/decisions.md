@@ -38,19 +38,19 @@ Active design language: **Structural Emergence** — warm ivory base, earthy neu
 
 **Six emergence operations:** Indeterminacy, Differentiation, Polarity, Recursion, Identity, Emergence.
 
-**Hard anti-patterns (no exception):** generic SaaS dashboards, endless card grids, decorative gradients/glows, unnecessary glassmorphism, arbitrary rounded corners, fake spatial depth, unexplained visual metaphors, excessive animation, decorative graphs without operational meaning, beautiful screens with incomplete functionality.
+**Hard anti-patterns (design tests, not bans):** generic SaaS dashboards, endless card grids, decorative gradients/glows, unnecessary glassmorphism, arbitrary rounded corners, fake spatial depth, unexplained visual metaphors, excessive animation, decorative graphs without operational meaning, beautiful screens with incomplete functionality.
 
 Supersedes prior B4 "Signature Dark Instrument" (2026-11-10); Light Luxury default in APT-LABS-SYSTEM.md §7.
 
 ## B5 — Anti-slop converted to design tests (Active, 2026-11-10)
 
-Do not ban a component merely because it can be misused. Do not use it without a clear semantic or interaction purpose. Former anti-slop items are converted into design tests: each pattern must achieve a clear semantic or interaction purpose, communicate meaning rather than decorate, and pass WCAG AA.
+Do not ban a component merely because it can be misused. Do not use it without a clear semantic or interaction purpose. Former anti-slop items are design tests: each pattern must achieve a clear semantic or interaction purpose, communicate meaning rather than decorate, and pass WCAG AA.
 
 Dependencies: B4. Supersedes charter §8 "Anti-slop rules."
 
 ## B6 — Page-head hierarchy (Active, 2026-11-10)
 
-Pattern: eyebrow (module/context, mono 8px) → h1 (record/page name, serif) → subtitle (one sentence, operational) → primary action → quiet actions → L3 metrics (only when they drive the current decision, max 3, 2px left border, first in teal).
+Pattern: eyebrow (module/context, mono 8px) → h1 (record/page name, serif) → subtitle (one sentence, operational) → primary action → quiet actions → L3 metrics (only when they drive the current decision, max 3).
 
 Supersedes fixed four-metric header ritual from prior direction memos.
 
