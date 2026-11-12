@@ -1,20 +1,17 @@
 const stageDetails = [
-  { number: '01', title: 'Need recorded', detail: 'Asset, inspection, or draft', state: 'built', stateLabel: 'Prototype surface' },
-  { number: '02', title: 'Scope approved', detail: 'Buyer sets budget & criteria', state: 'built', stateLabel: 'Prototype surface' },
-  { number: '03', title: 'Team assembled', detail: 'Qualified local delivery', state: 'proposed', stateLabel: 'Proposed live model' },
-  { number: '04', title: 'Work accepted', detail: 'Buyer reviews evidence', state: 'proposed', stateLabel: 'Proposed live model' },
-  { number: '05', title: 'Outcome recorded', detail: 'Consent and issuer required', state: 'proposed', stateLabel: 'Proposed live model' },
+  { number: '01', title: 'Need recorded', detail: 'Buyer defines scope and criteria.', state: 'accepted' },
+  { number: '02', title: 'Work accepted', detail: 'Buyer reviews evidence, accepts outcome.', state: 'proposed' },
+  { number: '03', title: 'Payment released', detail: 'Payment releases on acceptance.', state: 'proposed' },
 ];
 
 export function OperatingMap() {
   return (
-    <figure className="landing-atlas-map" id="model" aria-labelledby="atlas-map-title">
-      <figcaption className="landing-atlas-map-heading">
-        <strong id="atlas-map-title">Proposed operating sequence</strong>
-        <span>Human authorization retained at every gate</span>
-      </figcaption>
-
-      <ol className="landing-atlas-route" role="list" aria-label="Five proposed work stages">
+    <figure className="landing-atlas-map" id="model" aria-label="Buyer path stages">
+      <svg className="landing-atlas-thread" viewBox="0 0 900 48" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M4 24C106 4 192 44 300 24S496 4 600 24s194 20 296 0" stroke="var(--cloak-sisal)" stroke-width="5" fill="none" />
+        <path d="M4 24C106 4 192 44 300 24S496 4 600 24s194 20 296 0" stroke="var(--cloak-forest)" stroke-width="1.5" stroke-dasharray="2 9" fill="none" />
+      </svg>
+      <ol className="landing-atlas-route" role="list" aria-label="Buyer path stages">
         {stageDetails.map((stage, index) => (
           <li key={stage.number} className="landing-atlas-stop">
             <div className="landing-atlas-connector" aria-hidden="true">
@@ -28,9 +25,6 @@ export function OperatingMap() {
               <div className="landing-atlas-step-head">
                 <span className="landing-atlas-step-number">{stage.number}</span>
                 <h4 className="landing-atlas-step-title">{stage.title}</h4>
-                <span className={`landing-atlas-state-badge ${stage.state}`}>
-                  {stage.state === 'built' ? 'In prototype' : 'Proposed'}
-                </span>
               </div>
               <p className="landing-atlas-step-detail">{stage.detail}</p>
             </div>
@@ -38,19 +32,8 @@ export function OperatingMap() {
         ))}
       </ol>
 
-      <div className="landing-atlas-legend" aria-label="Legend: prototype vs proposed">
-        <span className="landing-atlas-legend-item">
-          <span className="landing-atlas-legend-dot built" aria-hidden="true" />
-          In the browser prototype
-        </span>
-        <span className="landing-atlas-legend-item">
-          <span className="landing-atlas-legend-dot proposed" aria-hidden="true" />
-          Proposed live model
-        </span>
-      </div>
-
       <p className="landing-atlas-note">
-        Manual simulation only. No real-world transactions, provider assignment, or payment.
+        Buyer reviews evidence and accepts before payment releases. Manual simulation only.
       </p>
     </figure>
   );
