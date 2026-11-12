@@ -3,7 +3,6 @@
    Inspired by Field Atlas + Terminal REPL + Workshop fusion
    ============================================================================ */
 @import "./tokens.css";
-@import "./components.css";
 
 
 
@@ -666,10 +665,8 @@ a:focus-visible {
   padding: 4px 7px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--state-caution) 12%, transparent);
-  color: var(--fg);
+  color: var(--text-muted);
   font: 600 8px var(--mono);
-  letter-spacing: .08em;
-  text-transform: uppercase;
 }
 
 .ws-user-summary {
@@ -717,8 +714,6 @@ a:focus-visible {
 .ws-user-meta span {
   color: var(--text-faint);
   font: 8px var(--mono);
-  letter-spacing: .07em;
-  text-transform: uppercase;
 }
 
 .ws-user-meta strong {
@@ -736,8 +731,6 @@ a:focus-visible {
 .ws-user-value > span {
   color: var(--text-faint);
   font: 8px var(--mono);
-  letter-spacing: .07em;
-  text-transform: uppercase;
 }
 
 .ws-user-value > strong {
@@ -768,8 +761,6 @@ a:focus-visible {
   background: var(--bg-subtle);
   color: var(--text-muted);
   font: 600 9px var(--mono);
-  letter-spacing: .06em;
-  text-transform: uppercase;
 }
 
 .ws-user-actions {
@@ -974,8 +965,6 @@ a:focus-visible {
   margin: 32px 10px 12px;
   color: var(--text-faint);
   font: 600 9px/1.2 var(--mono);
-  letter-spacing: .16em;
-  text-transform: uppercase;
 }
 
 .studio-destinations {
@@ -995,8 +984,6 @@ a:focus-visible {
   margin: 0 10px 5px;
   color: var(--text-faint);
   font: 600 8px/1.2 var(--mono);
-  letter-spacing: .12em;
-  text-transform: uppercase;
 }
 
 .studio-secondary-destinations .studio-destination {
@@ -1405,8 +1392,6 @@ a:focus-visible {
   gap: var(--space-2);
   color: var(--text-muted);
   font: var(--step--1)/1 var(--mono);
-  letter-spacing: .04em;
-  text-transform: uppercase;
 }
 
 .workspace-topbar-context strong {
@@ -1598,8 +1583,6 @@ a:focus-visible {
 .workspace-left-title {
   color: var(--text-muted);
   font: 600 var(--step--2)/1 var(--mono);
-  letter-spacing: .08em;
-  text-transform: uppercase;
 }
 
 .workspace-left-collapsed {
@@ -2097,8 +2080,6 @@ a:focus-visible {
 .identity-section-heading > span {
   color: var(--text-muted);
   font: 9px/1.2 var(--mono);
-  letter-spacing: .11em;
-  text-transform: uppercase;
 }
 
 .identity-cabinet-header h2 {
@@ -2201,8 +2182,6 @@ a:focus-visible {
 .identity-session-grid span {
   color: var(--text-muted);
   font: 8px/1.2 var(--mono);
-  letter-spacing: .06em;
-  text-transform: uppercase;
 }
 
 .identity-session-grid strong {
@@ -2530,11 +2509,9 @@ a:focus-visible {
   .studio-mobile-current {
     overflow: hidden;
     margin-left: auto;
-    color: #bdc5b8;
+    color: var(--text-muted);
     font: 9px/1.2 var(--mono);
-    letter-spacing: .07em;
     text-overflow: ellipsis;
-    text-transform: uppercase;
     white-space: nowrap;
   }
 
@@ -2717,10 +2694,8 @@ a:focus-visible {
 
 .annals-kicker,
 .annals-section-label {
-  color: var(--state-caution);
+  color: var(--text-muted);
   font: 600 9px/1.3 var(--mono);
-  letter-spacing: .14em;
-  text-transform: uppercase;
 }
 
 .annals-kicker span {
@@ -2786,7 +2761,6 @@ a:focus-visible {
   padding: 11px 13px;
   background: color-mix(in srgb, var(--bg-elev) 72%, var(--state-caution-wash));
   border: 1px solid var(--border);
-  border-left: 2px solid var(--state-caution);
 }
 
 .annals-boundary-mark {
@@ -2997,10 +2971,8 @@ a:focus-visible {
 
 .annals-step-index {
   margin-bottom: 9px;
-  color: #a7b49f;
+  color: var(--text-muted);
   font: 8px/1.2 var(--mono);
-  letter-spacing: .04em;
-  text-transform: uppercase;
 }
 
 .annals-step strong {
@@ -3029,11 +3001,11 @@ a:focus-visible {
   margin-top: 12px;
   padding: 10px 11px;
   background: rgb(255 255 255 / 3%);
-  border-left: 2px solid #819275;
+  border: 1px solid var(--border);
 }
 
 .annals-fork-note.is-branch {
-  border-left-color: var(--state-caution);
+  border-color: var(--state-caution);
 }
 
 .annals-fork-glyph {

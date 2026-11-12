@@ -1,3 +1,5 @@
+import { Input as BaseInput } from '@/components/ui/Input';
+
 interface InputProps {
   type?: 'text' | 'email' | 'password' | 'number';
   placeholder?: string;
@@ -33,12 +35,16 @@ export function Input({
   'aria-invalid': ariaInvalid,
   'aria-describedby': ariaDescribedby,
 }: InputProps) {
+  const handleInput = (e: Event) => {
+    onChange?.((e.target as HTMLInputElement).value);
+  };
+
   return (
-    <input
+    <BaseInput
       type={type}
       placeholder={placeholder}
       value={value}
-      onInput={(e: Event) => onChange?.((e.target as HTMLInputElement).value)}
+      onInput={handleInput}
       onBlur={onBlur}
       disabled={disabled}
       required={required}
@@ -47,7 +53,7 @@ export function Input({
       autoComplete={autoComplete}
       min={min}
       step={step}
-      className={`input ${className}`}
+      className={className}
       aria-invalid={ariaInvalid}
       aria-describedby={ariaDescribedby}
     />

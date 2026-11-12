@@ -1,14 +1,17 @@
+import {
+  Card as BaseCard,
+  CardHead as BaseCardHead,
+  CardBody as BaseCardBody,
+  CardFoot as BaseCardFoot,
+} from '@/components/ui/Card';
+
 interface CardProps {
   children: any;
   className?: string;
 }
 
 export function Card({ children, className = '' }: CardProps) {
-  return (
-    <div className={`panel ${className}`}>
-      {children}
-    </div>
-  );
+  return <BaseCard className={className}>{children}</BaseCard>;
 }
 
 interface CardHeadProps {
@@ -17,11 +20,7 @@ interface CardHeadProps {
 }
 
 export function CardHead({ children, className = '' }: CardHeadProps) {
-  return (
-    <div className={`panel-head ${className}`}>
-      {children}
-    </div>
-  );
+  return <BaseCardHead className={className}>{children}</BaseCardHead>;
 }
 
 interface CardBodyProps {
@@ -30,11 +29,7 @@ interface CardBodyProps {
 }
 
 export function CardBody({ children, className = '' }: CardBodyProps) {
-  return (
-    <div className={`panel-body ${className}`}>
-      {children}
-    </div>
-  );
+  return <BaseCardBody className={className}>{children}</BaseCardBody>;
 }
 
 interface CardFootProps {
@@ -43,9 +38,5 @@ interface CardFootProps {
 }
 
 export function CardFoot({ children, className = '' }: CardFootProps) {
-  return (
-    <div className={`panel-foot ${className}`}>
-      {children}
-    </div>
-  );
+  return <BaseCardFoot className={className}>{children}</BaseCardFoot>;
 }

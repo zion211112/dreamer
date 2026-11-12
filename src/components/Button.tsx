@@ -1,4 +1,5 @@
-import { ComponentChildren } from 'preact';
+import type { ComponentChildren } from 'preact';
+import { Button as BaseButton } from '@/components/ui/Button';
 
 interface ButtonProps {
   children: ComponentChildren;
@@ -20,13 +21,8 @@ export function Button({
   disabled = false,
 }: ButtonProps) {
   return (
-    <button
-      type={type}
-      className={`btn btn--${variant} btn--${size} ${className}`}
-      onClick={onClick}
-      disabled={disabled}
-    >
+    <BaseButton variant={variant} size={size} className={className} type={type} onClick={onClick} disabled={disabled}>
       {children}
-    </button>
+    </BaseButton>
   );
 }

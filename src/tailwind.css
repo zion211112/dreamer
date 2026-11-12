@@ -1,0 +1,181 @@
+/* ============================================================================
+   APT-LABS — Tailwind CSS v4 Configuration
+   Structural Emergence Constitution (2026-11-11)
+   Theme values reference the existing CSS custom properties in tokens.css.
+   ============================================================================ */
+@import "tailwindcss";
+
+@theme {
+  /* Color Primitives */
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-dim: var(--dim);
+  --color-fg-strong: var(--fg-strong);
+  --color-bg-elev: var(--bg-elev);
+  --color-bg-subtle: var(--bg-subtle);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-hairline: var(--hairline);
+
+  /* Palette — Structural Emergence */
+  --color-sage: var(--sage);
+  --color-sage-pale: var(--sage-pale);
+  --color-forest: var(--forest);
+  --color-forest-pale: var(--forest-pale);
+  --color-lilac: var(--lilac);
+  --color-lilac-pale: var(--lilac-pale);
+  --color-peach: var(--peach);
+  --color-peach-pale: var(--peach-pale);
+  --color-ivory: var(--ivory);
+  --color-ink: var(--ink);
+
+  /* Legacy aliases */
+  --color-terrain: var(--terrain);
+  --color-terrain-pale: var(--terrain-pale);
+  --color-terrain-ink: var(--terrain-ink);
+  --color-brand-main: var(--brand-main);
+  --color-brand-main-wash: var(--brand-main-wash);
+  --color-brand-branch: var(--brand-branch);
+  --color-brand-branch-wash: var(--brand-branch-wash);
+  --color-brass: var(--brass);
+  --color-brass-pale: var(--brass-pale);
+  --color-danger: var(--danger);
+  --color-danger-pale: var(--danger-pale);
+  --color-phosphor: var(--phosphor);
+  --color-bg-term: var(--bg-term);
+  --color-glow-soft: var(--glow-soft);
+
+  /* State Colors */
+  --color-state-canon: var(--state-canon);
+  --color-state-canon-wash: var(--state-canon-wash);
+  --color-state-proposed: var(--state-proposed);
+  --color-state-proposed-wash: var(--state-proposed-wash);
+  --color-state-risk: var(--state-risk);
+  --color-state-risk-wash: var(--state-risk-wash);
+  --color-state-caution: var(--state-caution);
+  --color-state-caution-wash: var(--state-caution-wash);
+
+  /* Water */
+  --color-water: var(--water);
+  --color-water-pale: var(--water-pale);
+
+  /* Semantic Roles */
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-text-faint: var(--text-faint);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  /* Semantic Aliases */
+  --color-ok: var(--ok);
+  --color-ok-bg: var(--ok-bg);
+
+  /* Module accent — set per module via --accent / --accent-wash */
+  --color-accent: var(--accent, var(--forest));
+  --color-accent-wash: var(--accent-wash, var(--forest-pale));
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+
+  /* Typography */
+  --font-serif: var(--serif);
+  --font-sans: var(--sans);
+  --font-mono: var(--mono);
+
+  /* Typography — Landing */
+  --font-landing-serif: var(--landing-serif);
+  --font-landing-mono: var(--landing-mono);
+
+  /* Modular Scale (1.25) */
+  --text-step--2: var(--step--2);
+  --text-step--1: var(--step--1);
+  --text-step-0: var(--step-0);
+  --text-step-1: var(--step-1);
+  --text-step-2: var(--step-2);
+  --text-step-3: var(--step-3);
+  --text-step-4: var(--step-4);
+  --text-step-5: var(--step-5);
+
+  /* Spacing: Baseline Grid (8px) */
+  --space-1: var(--space-1);
+  --space-2: var(--space-2);
+  --space-3: var(--space-3);
+  --space-4: var(--space-4);
+  --space-5: var(--space-5);
+  --space-6: var(--space-6);
+  --space-7: var(--space-7);
+  --space-8: var(--space-8);
+  --space-9: var(--space-9);
+  --space-10: var(--space-10);
+  --space-11: var(--space-11);
+  --space-12: var(--space-12);
+
+  /* Fibonacci Spacing */
+  --space-fib-1: var(--fib-1);
+  --space-fib-2: var(--fib-2);
+  --space-fib-3: var(--fib-3);
+  --space-fib-4: var(--fib-4);
+  --space-fib-5: var(--fib-5);
+  --space-fib-6: var(--fib-6);
+  --space-fib-7: var(--fib-7);
+
+  /* Border Radius */
+  --radius-1: var(--radius-1);
+  --radius-2: var(--radius-2);
+  --radius-3: var(--radius-3);
+  --radius-4: var(--radius-4);
+  --radius-pill: var(--radius-pill);
+
+  /* Transitions */
+  --transition-fast: var(--fast);
+  --transition-base: var(--base);
+  --transition-slow: var(--slow);
+
+  /* Shadows */
+  --shadow-1: var(--shadow-1);
+  --shadow-2: var(--shadow-2);
+  --shadow-3: var(--shadow-3);
+
+  /* Z-Index */
+  --z-base: var(--z-base);
+  --z-modal: var(--z-modal);
+  --z-tooltip: var(--z-tooltip);
+
+  /* Shell Grid */
+  --shell-topbar: var(--shell-topbar);
+  --shell-rail: var(--shell-rail);
+  --shell-sidebar-min: var(--shell-sidebar-min);
+  --shell-sidebar-max: var(--shell-sidebar-max);
+  --shell-inspector-min: var(--shell-inspector-min);
+  --shell-inspector-max: var(--shell-inspector-max);
+  --shell-dock-min: var(--shell-dock-min);
+  --shell-dock-max: var(--shell-dock-max);
+  --shell-statusbar: var(--shell-statusbar);
+  --shell-focus: var(--shell-focus);
+}
+
+/* Module themes — five accents drawn from the shared token palette.
+   Each module sets --accent / --accent-wash; components use bg-accent /
+   text-accent / border-accent so one token change ripples everywhere. */
+[data-module="commons"] {
+  --accent: var(--sage);
+  --accent-wash: var(--sage-pale);
+}
+[data-module="network"] {
+  --accent: var(--forest);
+  --accent-wash: var(--forest-pale);
+}
+[data-module="workbench"] {
+  --accent: var(--lilac);
+  --accent-wash: var(--lilac-pale);
+}
+[data-module="records"] {
+  --accent: var(--peach);
+  --accent-wash: var(--peach-pale);
+}
+[data-module="intelligence"] {
+  --accent: var(--ink);
+  --accent-wash: var(--bg-subtle);
+}

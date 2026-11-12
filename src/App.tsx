@@ -12,6 +12,7 @@ import { WorkspaceOverview } from './pages/workspace/WorkspaceOverview';
 import { BenbenOS } from './modules/benben-os';
 import { WorkbenchApp } from './modules/workbench';
 import { Kemetos1App } from './modules/kemetos1';
+import { DesignLab } from './pages/DesignLab';
 import './modules/benben-os/styles/benben.css';
 
 export function App() {
@@ -41,6 +42,7 @@ export function App() {
       <Route path="/workspace/intelligence/coin-lab"><AptCoinLab /></Route>
       <Route path="/benben-os"><BenbenOS /></Route>
 
+      <Route path="/design-lab"><DesignLab /></Route>
     </Switch>
   );
 }

@@ -1,6 +1,7 @@
 import { render } from 'preact';
 import { App } from './App';
 import './styles.css';
+import './tailwind.css';
 import './styles/workspace-foundation.css';
 import './styles/shell.css';
 import './styles/people.css';
