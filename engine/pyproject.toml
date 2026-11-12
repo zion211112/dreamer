@@ -1,0 +1,22 @@
+[project]
+name = "llm-exec-engine"
+version = "0.1.0"
+description = "Lightweight async multi-model LLM execution engine targeting 10k aggregate output tokens/sec via free FCC gateway"
+requires-python = ">=3.10"
+dependencies = [
+    "httpx",
+    "pydantic",
+    "pyyaml",
+    "rich",
+    "reflex==0.11.0",
+    "chainlit==2.12.0",
+    # taipy==4.1.1 blocked on Windows: taipy-gui/pyarrow requires cmake to build
+    # from source and has no prebuilt Windows wheels for Python 3.14. Install
+    # taipy in WSL2 or on a machine with cmake + Visual C++ build tools.
+]
+
+[project.scripts]
+llm-exec = "engine.cli:main"
+
+[tool.black]
+line-length = 88
