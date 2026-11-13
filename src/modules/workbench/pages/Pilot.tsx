@@ -1,6 +1,10 @@
-import { useState } from 'preact/hooks';
+import { useState, useCallback } from 'preact/hooks';
 import { Link, useParams } from 'wouter';
 import { PageHead } from '@/components/PageHead';
+import {
+  finalizeAcceptedLocalWork,
+  type RollAndAttestations,
+} from '@/lib/roll-sbt-bridge';
 import {
   pilotByKey,
   workItemsForPilot,
@@ -14,6 +18,42 @@ import {
   ALL_GATE_STATES,
   NEXT_GATE,
 } from '../data';
+
+type ParticipantInput = {
+  role: 'anchor' | 'builder' | 'apprentice' | 'coordinator';
+  personId: string;
+  personName: string;
+  profileId: string | null;
+  capabilityClaims: string[];
+  evidenceIds: string[];
+};
+
+const PILOT_INSTITUTIONS: Record<string, { id: string; name: string; coordinatorId: string }> = {
+  benbenos: { id: 'inst-school-console', name: 'School Console', coordinatorId: 'coord-school-01' },
+  kemetos: { id: 'inst-kemetos', name: 'Kemetos AGI1', coordinatorId: 'coord-kemetos-01' },
+  minihydro: { id: 'inst-thiba-hydro', name: 'Thiba Hydro', coordinatorId: 'coord-thiba-01' },
+  'mwea-animation-box': { id: 'inst-mwea-ops', name: 'Mwea Operators', coordinatorId: 'coord-mwea-01' },
+  open: { id: 'inst-open-pilot', name: 'Open Pilot', coordinatorId: 'coord-open-01' },
+};
+
+function crewToParticipants(crew: WorkItem['crew'], itemId: string): ParticipantInput[] {
+  const participants: ParticipantInput[] = [];
+  const add = (role: 'anchor' | 'builder' | 'apprentice' | 'coordinator', name?: string) => {
+    if (!name || name === '—') return;
+    participants.push({
+      role,
+      personId: `person-${itemId}-${role}`,
+      personName: name,
+      profileId: null,
+      capabilityClaims: [],
+      evidenceIds: [],
+    });
+  };
+  add('anchor', crew.anchor);
+  add('builder', crew.builder);
+  add('apprentice', crew.apprentice);
+  return participants;
+}
 
 function CrewInline({ crew }: { crew: WorkItem['crew'] }) {
   const tags: [string, string, string][] = [
@@ -32,8 +72,32 @@ function CrewInline({ crew }: { crew: WorkItem['crew'] }) {
   );
 }
 
-function DetailPanel({ item }: { item: WorkItem }) {
+function DetailPanel({
+  item,
+  onFinalizeAccepted,
+}: {
+  item: WorkItem;
+  onFinalizeAccepted?: () => Promise<RollAndAttestations | null>;
+}) {
   const nextGate = NEXT_GATE[item.gate];
+  const [finalizing, setFinalizing] = useState(false);
+  const [finalized, setFinalized] = useState(false);
+  const [finalizeError, setFinalizeError] = useState<string | null>(null);
+
+  const handleFinalize = useCallback(async () => {
+    if (!onFinalizeAccepted) return;
+    setFinalizing(true);
+    setFinalizeError(null);
+    try {
+      const result = await onFinalizeAccepted();
+      setFinalized(Boolean(result));
+    } catch (error) {
+      setFinalizeError(error instanceof Error ? error.message : 'Acceptance could not be recorded.');
+    } finally {
+      setFinalizing(false);
+    }
+  }, [onFinalizeAccepted]);
+
   return (
     <div className="wb-item-detail">
       <div className="wb-item-detail-grid">
@@ -120,10 +184,37 @@ function DetailPanel({ item }: { item: WorkItem }) {
           )}
         </div>
 
-        {/* Next step */}
+        {/* Next step / acceptance gate */}
         <div className="wb-detail-section">
           <h4 className="wb-detail-heading">Next Step</h4>
-          {nextGate ? (
+          {nextGate === 'accepted' ? (
+            <>
+              <p className="wb-detail-note">
+                Acceptance gate — close this undertaking into the Roll and
+                issue SBT attestations to the crew.
+              </p>
+              {finalized ? (
+                <p className="wb-detail-note wb-detail-note--done">
+                  Settled. Roll entry recorded and SBT attestations issued.
+                </p>
+              ) : (
+                <>
+                  {finalizeError && (
+                    <p className="wb-detail-note" style={{ color: '#E89670' }}>
+                      {finalizeError}
+                    </p>
+                  )}
+                  <button
+                    className="wb-gate-advance"
+                    disabled={finalizing || finalized}
+                    onClick={handleFinalize}
+                  >
+                    {finalizing ? 'Closing into Roll…' : 'Accept & record to Roll'}
+                  </button>
+                </>
+              )}
+            </>
+          ) : nextGate ? (
             <>
               <p className="wb-detail-note">
                 Advance to <strong>{GATE_LABELS[nextGate]}</strong>
@@ -301,7 +392,50 @@ export function Pilot() {
                   </div>
 
                   {/* Detail panel */}
-                  {isExpanded && <DetailPanel item={item} />}
+                  {isExpanded && (
+                    <DetailPanel
+                      item={item}
+                      onFinalizeAccepted={
+                        item.gate === 'pending_acceptance'
+                          ? async () => {
+                              const institution =
+                                PILOT_INSTITUTIONS[item.pilot];
+                              if (!institution) throw new Error('No institution configured for this pilot lane.');
+                              const participants = crewToParticipants(
+                                item.crew,
+                                item.id
+                              );
+                              if (participants.length === 0) {
+                                throw new Error(
+                                  'No crew participants recorded for this undertaking.'
+                                );
+                              }
+                              return finalizeAcceptedLocalWork({
+                                application: {
+                                  id: item.id,
+                                  opportunityId: item.id,
+                                  applicant: item.crew.anchor ?? 'anchor',
+                                  deliveryEvidence: 'Delivery evidence recorded at acceptance gate.',
+                                  decisionNote: 'Accepted at the Workbench acceptance gate; rolled into the Roll and SBT attestations issued.',
+                                },
+                                undertaking: {
+                                  id: item.id,
+                                  type: item.capital.materials.length > 0
+                                    ? ('hybrid' as const)
+                                    : ('physical' as const),
+                                  title: item.title,
+                                  scope: item.callSheet?.scope ?? item.title,
+                                  deliverables: item.capital.materials,
+                                },
+                                institution,
+                                participants,
+                                recordedBy: item.crew.anchor ?? institution.coordinatorId,
+                              });
+                            }
+                          : undefined
+                      }
+                    />
+                  )}
                 </div>
               );
             })}
