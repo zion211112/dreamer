@@ -1943,3 +1943,42 @@
   }
 }
 
+/* Annals layer — unified event stream */
+@layer components {
+  .annals-page { width: min(100%, 960px); margin: 0 auto; display: flex; flex-direction: column; gap: var(--space-4); }
+  .annals-controls { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: var(--space-3); margin-bottom: var(--space-3); }
+  .annals-filter-label { font: var(--mono); font-size: var(--step--2); color: var(--dim); letter-spacing: 0.05em; }
+  .annals-module-select, .annals-search-input { font: var(--sans); font-size: var(--step-0); padding: var(--space-1) var(--space-2); border: 1px solid var(--line); border-radius: var(--radius-1); background: var(--bg-elev); color: var(--fg); }
+  .annals-module-select { min-width: 150px; }
+  .annals-search-input { min-width: 220px; }
+  .annals-count { font: var(--mono); font-size: var(--step--2); color: var(--dim); }
+  .annals-error { padding: var(--space-3); border: 1px solid var(--clay); border-radius: var(--radius-1); background: var(--clay-pale); color: var(--umber); font: var(--sans); font-size: var(--step-0); line-height: 1.5; }
+  .annals-error strong { display: block; margin-bottom: var(--space-1); color: var(--umber); font-weight: 600; }
+  .annals-error p { margin: 0; color: var(--umber); }
+  .annals-loading { padding: var(--space-6); font-family: var(--mono); font-size: var(--step--1); color: var(--muted); display: flex; align-items: center; gap: var(--space-1); }
+  .annals-empty { padding: var(--space-6); text-align: center; color: var(--muted); }
+  .annals-empty-mark { font-size: var(--step-2); }
+  .annals-empty-title { font: var(--serif); font-size: var(--step-3); font-weight: 500; color: var(--fg-strong); margin: var(--space-2) 0 var(--space-1) 0; }
+  .annals-empty-sub { font: var(--sans); font-size: var(--step-0); color: var(--muted); margin: 0; }
+  .annals-timeline { display: flex; flex-direction: column; gap: var(--space-1); }
+  .annals-list { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+  .annals-event { display: grid; grid-template-columns: 150px 1fr; gap: var(--space-3); padding: var(--space-2) var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-1); background: var(--bg-elev); align-items: start; }
+  .annals-event-time { font: var(--mono); font-size: var(--step--2); color: var(--dim); white-space: nowrap; }
+  .annals-event-body { display: flex; flex-direction: column; gap: var(--space-1); }
+  .annals-event-module { font: 600 var(--step--2) var(--sans); letter-spacing: 0.02em; }
+  .annals-event-type { font: var(--mono); font-size: var(--step--2); color: var(--dim); }
+  .annals-event-description { font: var(--sans); font-size: var(--step-0); color: var(--fg); margin: 0; line-height: 1.5; }
+  .annals-event-meta { display: flex; flex-wrap: wrap; gap: var(--space-2); font: var(--mono); font-size: var(--step--2); color: var(--dim); }
+  .annals-ontology { padding: var(--space-3) var(--space-4); border: 1px solid var(--hairline); border-radius: var(--radius-1); background: var(--rec-surface-subtle); margin-top: var(--space-2); }
+  .annals-ontology-label { font: var(--mono); font-size: var(--step--2); color: var(--dim); letter-spacing: 0.05em; }
+  .annals-ontology p { font: var(--sans); font-size: var(--step-0); color: var(--muted); line-height: 1.6; margin: var(--space-1) 0 0 0; }
+  .annals-ontology p + p { margin-top: var(--space-1); }
+  @media (max-width: 640px) {
+    .annals-event { grid-template-columns: 1fr; }
+    .annals-controls { flex-direction: column; align-items: stretch; gap: var(--space-2); }
+    .annals-search-input { min-width: 100%; }
+  }
+}
+
+/* Intelligence layer */
+
