@@ -72,19 +72,19 @@ Representations must not imply functionality or evidence that does not exist. No
 
 These are reasoned, revisable decisions. Each carries a decision identifier, date, rationale, scope, status, dependencies, and supersession history. A decision may be binding for a particular release but is not an eternal product principle.
 
-### B1. Five-module navigation scope
+### B1. Six-module navigation scope
 
 | Field | Value |
 |-------|-------|
 | Decision ID | B1 |
-| Date | 2026-11-10 |
-| Rationale | One workspace, one shared graph, five distinct user jobs (Commons, Network, Workbench, Records, Intelligence) |
+| Date | 2026-11-13 |
+| Rationale | One workspace, one shared graph, six distinct user jobs. Home is the user's personal entry point for quick acts, personal context, and module selection; Commons, Network, Workbench, Records, and Intelligence remain the productive modules. |
 | Scope | Module structure and navigation |
 | Status | Active |
 | Dependencies | None |
-| Supersedes | charter §4 "Hard navigation constraints" (permanent bans converted to revisable decision) |
+| Supersedes | charter §4 "Hard navigation constraints" (permanent bans converted to revisable decision); prior B1 five-module limit |
 
-The five modules are Commons, Network, Workbench, Records, Intelligence. School Console remains a nested operational boundary under Workbench, not a primary module. No sixth primary module unless a genuinely independent user job cannot fit into the five.
+The six modules are Home, Commons, Network, Workbench, Records, Intelligence. Home is the personal shell context (`/workspace`) where a user chooses quick acts, sees personal assignments and linked updates, and selects a productive module. School Console remains a nested operational boundary under Workbench, not a primary module. Home is not a seventh constraint; it is the context in which the five productive modules are entered.
 
 ### B2. Main/Branch prohibition
 
@@ -112,7 +112,7 @@ No Main/Branch workspace modes. The fork glyph (└─) may remain as an identit
 | Dependencies | None |
 | Supersedes | Fixed panel and shell assumptions from prior direction memos |
 
-Topbar: working-context identity. Rail: module switching (exactly five icons). Sidebar: within-module context only. Main: work surface. Inspector: contextual, opens on selection. Dock: contextual per-module change-set/evidence strip. Statusbar: single boundary line + ledger head state.
+Topbar: working-context identity. Rail: module switching (six icons: Home plus exactly five productive module icons). Sidebar: within-module context only. Main: work surface. Inspector: contextual, opens on selection. Dock: contextual per-module change-set/evidence strip. Statusbar: single boundary line + ledger head state.
 
 ### B4. Visual design direction
 

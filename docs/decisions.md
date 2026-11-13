@@ -2,13 +2,13 @@
 
 All decisions below are from `docs/design/charter.md` Layer B (mutable product and design decisions, dated 2026-11-10 / 2026-11-11). They are revisable, not eternal principles.
 
-## B1 — Five-module navigation scope (Active, 2026-11-10)
+## B1 — Six-module navigation scope (Active, 2026-11-13)
 
-One workspace, one shared graph, five distinct user jobs: Commons, Network, Workbench, Records, Intelligence. School Console remains a nested operational boundary under Workbench, not a primary module. No sixth primary module unless a genuinely independent user job cannot fit into the five.
+One workspace, one shared graph, six distinct user jobs: Home, Commons, Network, Workbench, Records, Intelligence. Home is the personal shell context where a user chooses quick acts, sees personal assignments and linked updates, and selects a productive module. School Console remains a nested operational boundary under Workbench, not a primary module. No seventh primary module unless a genuinely independent user job cannot fit into the six.
 
-**Routes:** `/workspace/commons` | `/workspace/network/{people,institutions,capabilities}` | `/workspace/workbench`, `/workspace/workbench/:pilot` | `/workspace/records/{canon,annals,roll}` | `/workspace/intelligence`
+**Routes:** `/workspace` (Home) | `/workspace/commons` | `/workspace/network/{people,institutions,capabilities}` | `/workspace/workbench`, `/workspace/workbench/:pilot` | `/workspace/records/{canon,annals,roll}` | `/workspace/intelligence`
 
-Supersedes charter §4 "Hard navigation constraints."
+Supersedes charter §4 "Hard navigation constraints" and prior B1 five-module limit.
 
 ## B2 — No Main/Branch workspace modes (Active, 2026-11-10)
 
@@ -23,7 +23,7 @@ Each shell pane has one job; no duplicate navigation systems.
 | Pane | Job |
 |------|-----|
 | Topbar | Working-context identity |
-| Rail | Module switching (exactly five icons) |
+| Rail | Module switching (six icons: Home plus five productive modules) |
 | Sidebar | Within-module context only |
 | Main | Work surface |
 | Inspector | Contextual, opens on selection |

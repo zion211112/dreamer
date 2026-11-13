@@ -34,12 +34,13 @@ The deeper product is an **operating and economic network for productive activit
 
 ---
 
-## 2. The Five Modules
+## 2. The Six Modules
 
 APT-LABS has one workspace and one shared underlying system. The primary modules are:
 
 | Module | Job | Route |
 |--------|-----|-------|
+| **Home** | Personal entry point: quick acts, personal assignments, linked updates, module selection | `/workspace` |
 | **Commons** | Discover and express needs, offers, resources, opportunities, knowledge, problems | `/workspace/commons` |
 | **Network** | Understand and connect people, crews, institutions, assets, capabilities, relationships | `/workspace/network/people`, `/workspace/network/institutions`, `/workspace/network/capabilities` |
 | **Workbench** | Scope, assemble, coordinate, manage productive work | `/workspace/workbench`, `/workspace/workbench/:pilot` |
@@ -50,7 +51,7 @@ APT-LABS has one workspace and one shared underlying system. The primary modules
 
 **Hard navigation constraints:**
 - No Main/Branch workspace modes.
-- No sixth primary module unless a genuinely independent user job cannot fit into the five.
+- No seventh primary module unless a genuinely independent user job cannot fit into the six.
 - No duplicate navigation systems inside individual pages.
 - No workspace-within-workspace architecture unless an actual permission or operational boundary requires it.
 
