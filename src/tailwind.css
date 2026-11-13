@@ -1980,7 +1980,9 @@
   }
 }
 
-/* Landing layer — African-modernist editorial, spacious and bold */
+/* Landing layer — Lusona / mirror curves: continuous paths, reflective
+relationships, dots, intersections, closed loops. Fine lines, node points,
+offset strips, modular rectangles, alternating densities. */
 @layer components {
   .landing-shell {
     min-height: 100vh;
@@ -2001,67 +2003,39 @@
     border-bottom: 1px solid var(--line);
     background: rgba(244, 241, 233, 0.02);
   }
-  .landing-nav {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    flex-wrap: wrap;
+  .landing-wordmark {
+    font: 600 var(--step-1) var(--serif);
+    letter-spacing: 0.04em;
+    color: var(--fg-strong);
   }
-  .landing-nav a {
-    font: var(--mono);
-    font-size: var(--step--2);
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    text-decoration: none;
-    padding: var(--space-1) var(--space-2);
-    border: 1px solid transparent;
-    border-radius: var(--radius-1);
-    transition: color var(--fast), border-color var(--fast);
-  }
-  .landing-nav a:hover { color: var(--fg-strong); border-color: var(--line-strong); }
-  .landing-nav-cta {
-    color: var(--bg);
-    background: var(--state-canon);
-    border-color: var(--state-canon);
-    font-weight: 600;
-  }
-  .landing-nav-cta:hover { background: var(--fg-strong); border-color: var(--fg-strong); color: var(--bg); }
 
+  /* ── Hero: mirror-curve figure + copy ── */
   .landing-hero {
-    padding: var(--space-12) var(--space-8) var(--space-10);
+    padding: var(--space-14) var(--space-8) var(--space-12);
     border-bottom: 1px solid var(--line);
     background: radial-gradient(ellipse at 90% -10%, rgba(52,68,56,0.06), transparent 60%),
                 linear-gradient(180deg, var(--bg), var(--bg-elev));
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-10);
+    gap: var(--space-12);
     align-items: center;
   }
   .landing-hero-copy { max-width: 64ch; }
-  .landing-hero-kicker {
-    font: var(--mono);
-    font-size: var(--step--2);
-    letter-spacing: 0.2em;
-    color: var(--olive);
-    text-transform: uppercase;
-    margin: 0 0 var(--space-3) 0;
-    display: inline-block;
-  }
   .landing-hero h1 {
-    font: 700 clamp(42px, 6vw, 72px) / 1.0 var(--serif);
-    letter-spacing: -0.05em;
+    font: 700 clamp(44px, 7vw, 80px) / 0.98 var(--serif);
+    letter-spacing: -0.06em;
     color: var(--fg-strong);
-    margin: 0 0 var(--space-4) 0;
-    line-height: 1.05;
+    margin: 0 0 var(--space-5) 0;
+    line-height: 1.02;
   }
   .landing-hero-break { display: none; }
   .landing-hero-lede {
     font: var(--sans);
-    font-size: var(--step-1);
+    font-size: var(--step-0);
     color: var(--muted);
-    margin: 0 0 var(--space-6) 0;
+    margin: 0 0 var(--space-7) 0;
     max-width: 52ch;
-    line-height: 1.75;
+    line-height: 1.8;
   }
   .landing-hero-actions {
     display: flex;
@@ -2101,28 +2075,26 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    height: 560px;
+    height: 620px;
   }
-  .landing-hero-grid {
-    position: relative;
-    width: 420px;
-    height: 420px;
-    border: 1px solid var(--line);
-    background-image:
-      linear-gradient(var(--line-strong) 1px, transparent 1px),
-      linear-gradient(90deg, var(--line-strong) 1px, transparent 1px);
-    background-size: 40px 40px;
-    background-color: var(--bg-elev);
-    mask-image: radial-gradient(circle at 50% 50%, black 45%, transparent 70%);
-    animation: landing-grid-pulse 8s ease-in-out infinite;
+  .landing-mirror-curve {
+    width: 560px;
+    height: 520px;
+    display: block;
   }
-  @keyframes landing-grid-pulse {
-    0%, 100% { opacity: 0.6; }
-    50% { opacity: 1; }
+  .landing-mirror-path {
+    stroke-dasharray: 620;
+    stroke-dashoffset: 620;
+    animation: landing-draw 10s ease-in-out infinite;
+  }
+  @keyframes landing-draw {
+    0%, 40% { stroke-dashoffset: 620; opacity: 0.3; }
+    60%, 100% { stroke-dashoffset: 0; opacity: 0.9; }
   }
 
+  /* ── Buyer path: raw line, fine stage nodes ── */
   .landing-path {
-    padding: var(--space-10) var(--space-8);
+    padding: var(--space-12) var(--space-8);
     border-bottom: 1px solid var(--line);
     background: var(--bg-elev);
   }
@@ -2137,42 +2109,40 @@
     letter-spacing: 0.2em;
     color: var(--clay);
     text-transform: uppercase;
-    margin: 0 0 var(--space-2) 0;
+    margin: 0 0 var(--space-1) 0;
     display: inline-block;
   }
-  .landing-path h2 {
-    font: 700 clamp(36px, 5vw, 56px) / 1.05 var(--serif);
+  .landing-path-line {
+    font: 700 clamp(30px, 5vw, 48px) / 1.05 var(--serif);
     letter-spacing: -0.05em;
     color: var(--fg-strong);
-    margin: 0 0 var(--space-6) 0;
-    line-height: 1.1;
+    margin: 0 0 var(--space-8) 0;
   }
   .landing-path-stage-lane {
     display: flex;
-    gap: var(--space-3);
+    gap: var(--space-4);
     align-items: center;
     overflow-x: auto;
-    padding-bottom: var(--space-2);
+    padding-bottom: var(--space-3);
     scrollbar-width: none;
   }
   .landing-path-stage-lane::-webkit-scrollbar { display: none; }
   .landing-path-stage {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
+    gap: var(--space-1);
     flex: 0 0 auto;
-    min-width: 260px;
-    border: 1px solid var(--line);
+    min-width: 240px;
+    padding: var(--space-3);
     border-radius: var(--radius-2);
     background: var(--bg);
-    padding: var(--space-3);
-    position: relative;
+    border: 1px solid var(--hairline);
     transition: border-color var(--fast), background var(--fast), box-shadow var(--fast);
   }
   .landing-path-stage.is-active {
     border-color: var(--state-canon);
     background: var(--olive-pale);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--state-canon) 20%, transparent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--state-canon) 25%, transparent);
   }
   .landing-path-stage-num {
     font: 600 var(--step--1) var(--mono);
@@ -2195,160 +2165,27 @@
   .landing-path-stage-connector {
     width: 1px;
     height: 100%;
-    background: var(--hairline);
+    background: var(--line);
     align-self: stretch;
-    margin: 0 var(--space-1);
-  }
-  .landing-path-note {
-    margin: var(--space-5) 0 0;
-    text-align: center;
-    font: var(--mono);
-    font-size: var(--step--2);
-    color: var(--dim);
+    margin: 0 var(--space-1.5);
   }
 
-  .landing-cycle {
-    padding: var(--space-10) var(--space-8);
+  /* ── Shared ontology: intersection field + modular taxonomy ── */
+  .landing-ontology {
+    padding: var(--space-14) var(--space-8);
     border-bottom: 1px solid var(--line);
     background: var(--bg);
   }
-  .landing-cycle-inner {
+  .landing-ontology-inner {
     max-width: 90rem;
     margin: 0 auto;
     padding: 0 var(--space-8);
   }
-  .landing-cycle-head {
-    max-width: 52ch;
+  .landing-ontology-head {
+    max-width: 60ch;
     margin-bottom: var(--space-10);
   }
-  .landing-cycle-kicker {
-    font: var(--mono);
-    font-size: var(--step--2);
-    letter-spacing: 0.2em;
-    color: var(--sage);
-    text-transform: uppercase;
-    margin: 0 0 var(--space-2) 0;
-    display: inline-block;
-  }
-  .landing-cycle-head h2 {
-    font: 700 clamp(36px, 5vw, 56px) / 1.05 var(--serif);
-    letter-spacing: -0.05em;
-    color: var(--fg-strong);
-    margin: 0;
-    line-height: 1.1;
-  }
-  .landing-cycle-ring {
-    position: relative;
-    width: 640px;
-    height: 640px;
-    margin: 0 auto;
-    border: 1px solid var(--line);
-    border-radius: 50%;
-    background: radial-gradient(circle at 50% 50%, rgba(52,68,56,0.03), transparent 70%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: landing-cycle-rotate 24s linear infinite;
-  }
-  .landing-cycle-stage {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 170px;
-    transform-origin: center center;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-    padding: var(--space-2);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-2);
-    background: var(--bg);
-    text-align: center;
-    animation: landing-cycle-counterrotate 24s linear infinite;
-  }
-  .landing-cycle-stage-marker {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    border: 1px solid var(--line);
-    background: var(--bg-elev);
-    display: grid;
-    place-items: center;
-    margin: 0 auto var(--space-1);
-    font: 600 var(--step--2) var(--mono);
-    color: var(--dim);
-  }
-  .landing-cycle-stage-title {
-    font: 500 var(--step-0) / 1.2 var(--serif);
-    color: var(--fg-strong);
-    margin: 0;
-    letter-spacing: -0.01em;
-  }
-  .landing-cycle-stage-detail {
-    font: var(--mono);
-    font-size: var(--step--2);
-    color: var(--muted);
-    margin: 0;
-    line-height: 1.5;
-  }
-  .landing-cycle-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    border: 1px solid var(--state-canon);
-    background: var(--state-canon-wash);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-1);
-  }
-  .landing-cycle-center-dot {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: var(--state-canon);
-    box-shadow: 0 0 14px color-mix(in srgb, var(--state-canon) 40%, transparent);
-  }
-  .landing-cycle-center-label {
-    font: 400 var(--step--2) var(--mono);
-    color: var(--fg-strong);
-    letter-spacing: 0.05em;
-  }
-  @keyframes landing-cycle-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-  @keyframes landing-cycle-counterrotate { from { transform: rotate(0deg) translate(220px); } to { transform: rotate(-360deg) translate(220px); } }
-  @media (max-width: 768px) {
-    .landing-cycle-ring { width: 420px; height: 420px; }
-    .landing-cycle-stage { width: 130px; transform: translate(-50%, -50%) translateX(170px); }
-    .landing-cycle-stage-marker { width: 22px; height: 22px; }
-    .landing-cycle-center { width: 70px; height: 70px; }
-  }
-  @media (max-width: 480px) {
-    .landing-cycle-ring { width: 300px; height: 300px; }
-    .landing-cycle-stage { width: 110px; transform: translate(-50%, -50%) translateX(120px); }
-    .landing-cycle-stage-marker { width: 20px; height: 20px; font-size: var(--step--2); }
-    .landing-cycle-center { width: 60px; height: 60px; }
-  }
-
-  .landing-structures {
-    padding: var(--space-10) var(--space-8);
-    border-bottom: 1px solid var(--line);
-    background: var(--bg-subtle);
-  }
-  .landing-structures-inner {
-    max-width: 90rem;
-    margin: 0 auto;
-    padding: 0 var(--space-8);
-  }
-  .landing-structures-head {
-    max-width: 64ch;
-    margin-bottom: var(--space-8);
-  }
-  .landing-structures-kicker {
+  .landing-ontology-kicker {
     font: var(--mono);
     font-size: var(--step--2);
     letter-spacing: 0.2em;
@@ -2357,24 +2194,35 @@
     margin: 0 0 var(--space-2) 0;
     display: inline-block;
   }
-  .landing-structures-head h2 {
-    font: 700 clamp(36px, 5vw, 56px) / 1.05 var(--serif);
+  .landing-ontology-head h2 {
+    font: 700 clamp(34px, 5vw, 52px) / 1.05 var(--serif);
     letter-spacing: -0.05em;
     color: var(--fg-strong);
     margin: 0;
     line-height: 1.1;
   }
-  .landing-structures-ribbon {
-    display: flex;
-    gap: var(--space-3);
-    overflow-x: auto;
-    padding-bottom: var(--space-2);
-    scrollbar-width: none;
+  .landing-ontology-field {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    margin-bottom: var(--space-10);
+    overflow: visible;
   }
-  .landing-structures-ribbon::-webkit-scrollbar { display: none; }
-  .landing-structure-card {
-    flex: 0 0 auto;
-    width: 280px;
+  .landing-ontology-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .ontology-node {
+    transition: r var(--fast), fill var(--fast);
+  }
+  .ontology-node--hub {
+    r: 7;
+    fill: var(--brass);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--brass) 40%, transparent);
+  }
+  .landing-ontology-item {
+    width: 260px;
     padding: var(--space-4);
     border: 1px solid var(--line);
     border-radius: var(--radius-2);
@@ -2382,36 +2230,55 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-1);
+    animation: landing-item-fade 1.2s ease both;
   }
-  .landing-structure-card-num {
-    font: 600 var(--step--2) var(--mono);
+  @keyframes landing-item-fade {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+  }
+  .landing-ontology-item-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    margin-bottom: var(--space-1);
+  }
+  .landing-ontology-item-kind {
+    font: 400 var(--step--2) var(--mono);
+    letter-spacing: 0.1em;
     color: var(--dim);
+    text-transform: uppercase;
   }
-  .landing-structure-card h3 {
+  .landing-ontology-item-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+  .landing-ontology-item h3 {
     font: 500 var(--step-0) / 1.25 var(--serif);
     color: var(--fg-strong);
     margin: 0 0 var(--space-1) 0;
     letter-spacing: -0.01em;
   }
-  .landing-structure-card p {
+  .landing-ontology-item p {
     font: var(--mono);
     font-size: var(--step--2);
     color: var(--muted);
     margin: 0;
     line-height: 1.5;
   }
-  .accent-olive .landing-structure-card-num { color: var(--olive); }
-  .accent-sage .landing-structure-card-num { color: var(--sage); }
-  .accent-clay .landing-structure-card-num { color: var(--clay); }
-  .accent-brass .landing-structure-card-num { color: var(--brass); }
-  .accent-umber .landing-structure-card-num { color: var(--umber); }
+  .accent-olive .landing-ontology-item-dot { background: var(--olive); }
+  .accent-sage .landing-ontology-item-dot { background: var(--sage); }
+  .accent-clay .landing-ontology-item-dot { background: var(--clay); }
+  .accent-brass .landing-ontology-item-dot { background: var(--brass); }
+  .accent-umber .landing-ontology-item-dot { background: var(--umber); }
   @media (max-width: 640px) {
-    .landing-structures-ribbon { grid-template-columns: 1fr; gap: var(--space-3); overflow-x: visible; padding-bottom: 0; }
-    .landing-structure-card { width: 100%; }
+    .landing-ontology-item { width: 100%; }
   }
 
+  /* ── Modules: grid, quiet ── */
   .landing-modules {
-    padding: var(--space-10) var(--space-8);
+    padding: var(--space-12) var(--space-8);
     border-bottom: 1px solid var(--line);
   }
   .landing-modules-inner {
@@ -2434,10 +2301,11 @@
     gap: var(--space-1);
   }
   .landing-module-cell-dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: var(--state-canon);
+    opacity: 0.6;
   }
   .landing-module-cell h3 {
     font: 500 var(--step-0) / 1.25 var(--serif);
@@ -2465,8 +2333,9 @@
     .landing-modules-grid { grid-template-columns: 1fr; }
   }
 
+  /* ── Bottom CTA: Iko Live ── */
   .landing-cta {
-    padding: var(--space-12) var(--space-8);
+    padding: var(--space-14) var(--space-8);
     text-align: center;
     border-bottom: 1px solid var(--line);
     background: radial-gradient(ellipse at 50% 0%, rgba(52,68,56,0.04), transparent 60%);
@@ -2476,11 +2345,11 @@
     margin: 0 auto;
   }
   .landing-cta h2 {
-    font: 700 clamp(36px, 5vw, 52px) / 1.05 var(--serif);
+    font: 700 clamp(40px, 6vw, 56px) / 1.02 var(--serif);
     letter-spacing: -0.05em;
     color: var(--fg-strong);
     margin: 0 0 var(--space-3) 0;
-    line-height: 1.1;
+    line-height: 1.05;
   }
   .landing-cta p {
     font: var(--sans);
