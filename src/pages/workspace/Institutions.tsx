@@ -123,8 +123,8 @@ export function Institutions() {
       <div className="institution-page">
         <header className="institution-page-head">
           <div className="institution-heading">
-            <p className="eyebrow">APT-LABS <span aria-hidden="true">/</span> STARTER NETWORK REGISTER</p>
-            <h1>Institutions <span aria-hidden="true">/</span> Assets</h1>
+            <p className="eyebrow">Institutions &amp; assets</p>
+            <h1>Register</h1>
             <p className="institution-page-intro">
               A considered index of selected organisations and resources. A record tells you what is on file—not
               whether something is operating, available, authorised, or ready to use.
@@ -136,9 +136,8 @@ export function Institutions() {
           </div>
         </header>
 
-        <div className="institution-reading-note">
-          <span className="institution-note-mark" aria-hidden="true">i</span>
-          <p><strong>Unknown is a useful answer.</strong> Basis describes the record’s source, not verification; links describe context, not ownership or authority.</p>
+        <div className="institution-reading-note" role="note">
+          <p>Basis describes the record’s source, not verification; links describe context, not ownership or authority.</p>
         </div>
 
         <section aria-label="Find a register record" className="institution-controls">
@@ -161,7 +160,6 @@ export function Institutions() {
             })}
           </div>
           <label className="institution-search">
-            <span aria-hidden="true" className="institution-search-icon">âŒ•</span>
             <span className="visually-hidden">Search institutions and assets</span>
             <input
               onInput={event => {
@@ -170,7 +168,7 @@ export function Institutions() {
                 setQuery((event.currentTarget as HTMLInputElement).value);
                 navigate('/workspace/network/institutions');
               }}
-              placeholder="Search name, place, functionâ€¦"
+              placeholder="Search name, place, function"
               type="search"
               value={query}
             />
@@ -178,15 +176,15 @@ export function Institutions() {
         </section>
 
         <div aria-live="polite" className="institution-result-count">
-          <span>{results.length === 1 ? '01 RECORD' : `${String(results.length).padStart(2, '0')} RECORDS`}</span>
-          <span>{query && !requestedRecordId ? `MATCHING “${query.trim()}”` : 'STARTER NETWORK'}</span>
+          <span>{results.length === 1 ? '01 record' : `${String(results.length).padStart(2, '0')} records`}</span>
+          <span>{query && !requestedRecordId ? `matching “${query.trim()}”` : 'starter network'}</span>
         </div>
 
         <div className={`institution-workspace${selectedRecord ? '' : ' is-empty'}`}>
           <section aria-label="Institutions and assets" className="institution-index">
             <header className="institution-index-head">
               <span>Index</span>
-              <span>Name <i aria-hidden="true">Â·</i> Record basis</span>
+              <span>Name <i aria-hidden="true">·</i> Record basis</span>
               <span>Place</span>
             </header>
             {results.length > 0 ? (
@@ -249,11 +247,10 @@ export function Institutions() {
 
         {storageError && <p className="local-data-warning" role="alert">{storageError}</p>}
         <footer className="institution-page-footer">
-          <span>APT-LABS <i aria-hidden="true">/</i> RECORDS, NOT ASSUMPTIONS</span>
           <span>This register reads the bundled starter set; it does not alter imported People records.</span>
           <a className="institution-network-link" href="/workspace/network/capabilities">
             <span>Open Capability Directory</span>
-            <span aria-hidden="true">â†’</span>
+            <span aria-hidden="true">→</span>
           </a>
           <a className="institution-network-link" href="/benben-os">
             <span>Open Benben-OS</span>

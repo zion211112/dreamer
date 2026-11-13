@@ -182,9 +182,8 @@ export function Commons() {
         <section aria-labelledby="commons-modules-title" className="commons-modules-hub">
           <div className="commons-modules-head">
             <div>
-              <p className="eyebrow">Commons · modules</p>
+              <p className="eyebrow">commons / modules</p>
               <h2 id="commons-modules-title">All modules</h2>
-              <p>Open any workspace module from here.</p>
             </div>
           </div>
           <div className="commons-modules-grid">
@@ -193,77 +192,56 @@ export function Commons() {
               className="commons-module-link"
               aria-label="Open workspace home"
             >
-              <div className="commons-module-icon" aria-hidden="true">⌂</div>
-              <div className="commons-module-copy">
-                <span className="commons-module-label">Workspace home</span>
-                <span className="commons-module-desc">Your personal space and first steps.</span>
-              </div>
+              <span className="commons-module-label">Workspace home</span>
+              <span className="commons-module-desc">Your personal space and first steps.</span>
             </a>
             <a
               href="/workspace/commons"
               className="commons-module-link is-active"
               aria-label="Open Commons"
             >
-              <div className="commons-module-icon" aria-hidden="true">⊕</div>
-              <div className="commons-module-copy">
-                <span className="commons-module-label">Commons</span>
-                <span className="commons-module-desc">Field signals, opportunities, steward decisions.</span>
-              </div>
+              <span className="commons-module-label">Commons</span>
+              <span className="commons-module-desc">Field signals, opportunities, steward decisions.</span>
             </a>
             <a
               href="/workspace/network/people"
               className="commons-module-link"
               aria-label="Open Network"
             >
-              <div className="commons-module-icon" aria-hidden="true">∴</div>
-              <div className="commons-module-copy">
-                <span className="commons-module-label">Network</span>
-                <span className="commons-module-desc">People, crews, institutions, capabilities.</span>
-              </div>
+              <span className="commons-module-label">Network</span>
+              <span className="commons-module-desc">People, crews, institutions, capabilities.</span>
             </a>
             <a
               href="/workspace/workbench"
               className="commons-module-link"
               aria-label="Open Workbench"
             >
-              <div className="commons-module-icon" aria-hidden="true">▭</div>
-              <div className="commons-module-copy">
-                <span className="commons-module-label">Workbench</span>
-                <span className="commons-module-desc">Pilot lanes and coordinated work.</span>
-              </div>
+              <span className="commons-module-label">Workbench</span>
+              <span className="commons-module-desc">Pilot lanes and coordinated work.</span>
             </a>
             <a
               href="/workspace/records/roll"
               className="commons-module-link"
               aria-label="Open Records"
             >
-              <div className="commons-module-icon" aria-hidden="true">≡</div>
-              <div className="commons-module-copy">
-                <span className="commons-module-label">Records</span>
-                <span className="commons-module-desc">Canon, Annals, and the Roll ledger.</span>
-              </div>
+              <span className="commons-module-label">Records</span>
+              <span className="commons-module-desc">Canon, Annals, and the Roll ledger.</span>
             </a>
             <a
               href="/workspace/intelligence"
               className="commons-module-link"
               aria-label="Open Intelligence"
             >
-              <div className="commons-module-icon" aria-hidden="true">⌘</div>
-              <div className="commons-module-copy">
-                <span className="commons-module-label">Intelligence</span>
-                <span className="commons-module-desc">Trust and economic intelligence research.</span>
-              </div>
+              <span className="commons-module-label">Intelligence</span>
+              <span className="commons-module-desc">Trust and economic intelligence research.</span>
             </a>
             <a
               href="/workspace/kemetos1"
               className="commons-module-link"
               aria-label="Open Kemetos1 Coordinator"
             >
-              <div className="commons-module-icon" aria-hidden="true">⌘</div>
-              <div className="commons-module-copy">
-                <span className="commons-module-label">Kemetos1 Coordinator</span>
-                <span className="commons-module-desc">Coordinate the Kemetos pilot: grasp essence, verify, route, attest.</span>
-              </div>
+              <span className="commons-module-label">Kemetos1 Coordinator</span>
+              <span className="commons-module-desc">Coordinate the Kemetos pilot: grasp essence, verify, route, attest.</span>
             </a>
           </div>
         </section>

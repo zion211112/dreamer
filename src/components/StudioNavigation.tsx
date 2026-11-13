@@ -22,6 +22,8 @@ interface StudioNavigationProps {
   recordSelected: boolean;
   inspectorOpen: boolean;
   onToggleInspector: () => void;
+  skin?: 'light' | 'observatory';
+  onToggleSkin?: () => void;
 }
 
 function ContextIcon({ id }: { id: StudioModuleId }) {
@@ -191,6 +193,8 @@ export function StudioNavigation({
   recordSelected,
   inspectorOpen,
   onToggleInspector,
+  skin = 'light',
+  onToggleSkin,
 }: StudioNavigationProps) {
   const { profile } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -261,6 +265,23 @@ export function StudioNavigation({
         <span aria-label={`Environment: ${environmentLabel}`} className="studio-environment-indicator">
           {environmentLabel}
         </span>
+        {onToggleSkin && (
+          <button
+            aria-label={skin === 'light' ? 'Switch to observatory skin' : 'Switch to light skin'}
+            aria-pressed={skin === 'observatory'}
+            className="studio-skin-toggle"
+            onClick={onToggleSkin}
+            title={skin === 'light' ? 'Switch to observatory skin' : 'Switch to light skin'}
+            type="button"
+          >
+            <svg aria-hidden="true" viewBox="0 0 20 20">
+              {skin === 'light'
+                ? <><circle cx="10" cy="10" r="3.5" /><path d="M10 3.5v1.5m0 10v1.5M16.5 10H15M5 10H3.5m4.5-4.5L6.5 6.5m7 7l1.5 1.5m0-10-1.5 1.5m-7 7-1.5 1.5" /></>
+                : <><path d="M6 10.5a4.5 4.5 0 1 0 5-5.5A4.5 4.5 0 0 1 6 10.5z" /></>}
+            </svg>
+            {skin === 'light' ? 'Observe' : 'Light'}
+          </button>
+        )}
         <span className="studio-topbar-spacer" />
         <WorkspaceQuickSearch destinations={WORKSPACE_SEARCH_DESTINATIONS} />
         {recordSelected && (

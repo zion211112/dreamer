@@ -26,7 +26,7 @@ function CrewInline({ crew }: { crew: WorkItem['crew'] }) {
     <div className="wb-crew-inline">
       {tags.map(([role, name, extra]) => (
         <span key={role} className={`wb-crew-tag ${extra}`}>
-          {role[0].toUpperCase()}·{name}
+          {name}
         </span>
       ))}
     </div>

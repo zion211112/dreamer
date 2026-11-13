@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'preact/hooks';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import { PageHead } from '../../components/PageHead';
 import { RingedEvidenceMarker } from '../../components/RingedEvidenceMarker';
@@ -65,6 +65,19 @@ const DISCLOSURE_LABELS: Record<string, string> = {
   participant: 'Participant',
   restricted: 'Restricted',
 };
+
+export function Breadcrumb({ segments }: { segments: string[] }) {
+  return (
+    <p className="lens-breadcrumb" aria-label={segments.join(' / ')}>
+      {segments.map((seg, i) => (
+        <span key={i}>
+          {i > 0 && <span className="crumb-sep" aria-hidden="true"> / </span>}
+          <span className={i === segments.length - 1 ? 'crumb crumb-current' : 'crumb'}>{seg}</span>
+        </span>
+      ))}
+    </p>
+  );
+}
 
 function buildRollCloseOutRows(entries: RollEntry[], timeIndex: number): RollCloseOutRow[] {
   const monthKey = TIME_AXIS_LABELS[timeIndex];
@@ -186,7 +199,7 @@ function RollCloseOutView({ entries, timeIndex, onSelect }: {
     <section className="records-lens records-lens-roll" aria-labelledby="roll-closeout-title">
       <div className="lens-head">
         <div className="lens-identity">
-          <p className="kicker">APT-LABS <span className="sep">/</span> RECORDS <span className="sep">/</span> ROLL</p>
+          <Breadcrumb segments={['apt-labs', 'records', 'roll']} />
           <h1 className="lens-title" id="roll-closeout-title">Close-out ledger</h1>
           <p className="lens-subtitle">Institutional memory: every undertaking's outcome, acceptance, and hash anchor across the pilot network.</p>
         </div>
@@ -223,7 +236,7 @@ function RollCloseOutView({ entries, timeIndex, onSelect }: {
         <thead>
           <tr>
             <th style={{ width: '24%' }}>Record</th>
-            <th style={{ width: '20%' }}>Pilot · undertaking</th>
+            <th style={{ width: '20%' }}>Pilot, undertaking</th>
             <th style={{ width: '14%' }}>Outcome</th>
             <th style={{ width: '12%' }}>Evidence</th>
             <th style={{ width: '12%' }}>Disclosure</th>
@@ -322,7 +335,7 @@ function CanonQualifiedView() {
     <section className="records-lens records-lens-canon" aria-labelledby="canon-qualified-title">
       <div className="lens-head">
         <div className="lens-identity">
-          <p className="kicker">APT-LABS <span className="sep">/</span> RECORDS <span className="sep">/</span> CANON</p>
+          <Breadcrumb segments={['apt-labs', 'records', 'canon']} />
           <h1 className="lens-title" id="canon-qualified-title">Qualified state</h1>
           <p className="lens-subtitle">Canon — current authoritative representation within a defined domain. What is structurally recorded right now, not universal truth.</p>
         </div>
@@ -408,7 +421,7 @@ function ClaimsEvidenceView({ entries }: { entries: RollEntry[] }) {
     <section className="records-lens records-lens-annals" aria-labelledby="claims-evidence-title">
       <div className="lens-head">
         <div className="lens-identity">
-          <p className="kicker">APT-LABS <span className="sep">/</span> RECORDS <span className="sep">/</span> CLAIMS</p>
+          <Breadcrumb segments={['apt-labs', 'records', 'annals']} />
           <h1 className="lens-title" id="claims-evidence-title">Claims & evidence</h1>
           <p className="lens-subtitle">How a claim is substantiated — subject, predicate, evidence, method, review, and challenge history.</p>
         </div>
@@ -425,7 +438,7 @@ function ClaimsEvidenceView({ entries }: { entries: RollEntry[] }) {
     <section className="records-lens records-lens-annals" aria-labelledby="claims-evidence-title">
       <div className="lens-head">
         <div className="lens-identity">
-          <p className="kicker">APT-LABS <span className="sep">/</span> RECORDS <span className="sep">/</span> CLAIMS</p>
+          <Breadcrumb segments={['apt-labs', 'records', 'annals']} />
           <h1 className="lens-title" id="claims-evidence-title">Claims & evidence</h1>
           <p className="lens-subtitle">How a claim is substantiated — subject, predicate, evidence, method, review, and challenge history. Claim is not evidence.</p>
         </div>
@@ -575,9 +588,7 @@ function RecordDetailView({ entry, onClose }: { entry: RollEntry; onClose: () =>
         </button>
         <div className="detail-meta-strip">
           <span className="detail-id mono">{entry.id}</span>
-          <span className="detail-sep mono dim">·</span>
           <span className="detail-version mono">v{entry.version}</span>
-          <span className="detail-sep mono dim">·</span>
           <span className="detail-recorded mono">{formatDateShort(entry.recorded_at)} EAT</span>
         </div>
       </div>
@@ -705,7 +716,18 @@ function RecordDetailView({ entry, onClose }: { entry: RollEntry; onClose: () =>
 }
 
 export function Records() {
+  const [location] = useLocation();
   const [lens, setLens] = useState<Lens>('roll');
+
+  const routeLens = (() => {
+    if (location.endsWith('/canon')) return 'canon';
+    if (location.endsWith('/annals')) return 'annals';
+    return 'roll';
+  })();
+
+  useEffect(() => {
+    setLens(routeLens);
+  }, [location]);
   const [timeIndex, setTimeIndex] = useState(TIME_AXIS_LABELS.length - 1);
   const [rollEntries, setRollEntries] = useState<RollEntry[]>([]);
   const [selectedEntry, setSelectedEntry] = useState<RollEntry | null>(null);

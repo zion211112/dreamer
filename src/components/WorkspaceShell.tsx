@@ -7,6 +7,25 @@ import { RecordInspector, type RecordSelection, type EvidenceGap, type ContextAc
 import { ChangeSetDock, type PendingCommit, type EvidenceGapDock, type ReconciliationItem } from './ChangeSetDock';
 import { isDemoMode } from '../lib/supabase/client';
 
+type SkinMode = 'light' | 'observatory';
+
+function readSkinPreference(): SkinMode {
+  try {
+    return (localStorage.getItem('studioSkin') as SkinMode) || 'light';
+  } catch {
+    return 'light';
+  }
+}
+
+function applySkin(skin: SkinMode) {
+  const root = document.documentElement;
+  if (skin === 'light') {
+    root.removeAttribute('data-skin');
+  } else {
+    root.setAttribute('data-skin', skin);
+  }
+}
+
 interface WorkspaceShellProps {
   children: ComponentChildren;
   currentContext: StudioContext;
@@ -53,12 +72,26 @@ export function WorkspaceShell({
   const [sidebarCollapsed, setSidebarCollapsed] = useState(readSidebarPreference);
   const [inspectorOpen, setInspectorOpen] = useState(Boolean(recordSelection));
   const [dockCollapsed, setDockCollapsed] = useState(false);
+  const [skin, setSkin] = useState<SkinMode>(readSkinPreference);
   const moduleLabel = getStudioContextLabel(currentContext);
   const environmentLabel = isDemoMode ? 'Local demo' : 'Configured';
 
   useEffect(() => {
+    applySkin(skin);
+    try {
+      localStorage.setItem('studioSkin', skin);
+    } catch (error) {
+      console.error('Could not save the Studio skin preference.', error);
+    }
+  }, [skin]);
+
+  useEffect(() => {
     setInspectorOpen(Boolean(recordSelection));
   }, [recordSelection?.id]);
+
+  function toggleSkin() {
+    setSkin(current => (current === 'light' ? 'observatory' : 'light'));
+  }
 
   function toggleSidebar() {
     setSidebarCollapsed(current => {
@@ -100,6 +133,8 @@ export function WorkspaceShell({
         onToggleSidebar={toggleSidebar}
         recordSelected={Boolean(recordSelection)}
         sidebarCollapsed={sidebarCollapsed}
+        skin={skin}
+        onToggleSkin={toggleSkin}
       />
       <main className="field-studio-main">
         <div className="studio-content">{children}</div>
@@ -118,6 +153,16 @@ export function WorkspaceShell({
           onDismiss={() => setInspectorOpen(false)}
         />
       )}
+      <footer className="field-studio-statusbar" aria-label="Workspace status">
+        <span className="field-studio-statusbar-module">
+          <strong>{moduleLabel}</strong>
+          <span className="field-studio-statusbar-module-context">APT-LABS</span>
+        </span>
+        <span className="field-studio-statusbar-notice">
+          <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" /><path d="M10 7v4m0 3v.5" /></svg>
+          {environmentLabel}
+        </span>
+      </footer>
       {hasChangeSetContent && (
         <ChangeSetDock
           collapsed={dockCollapsed}

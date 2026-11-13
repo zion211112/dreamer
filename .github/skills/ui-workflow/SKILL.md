@@ -11,7 +11,7 @@ Use this skill for user-facing interface work in the active application. Follow 
 
 - Identify whether the task is new UI, a change to an existing surface, a design review, or behavior testing.
 - Read the target route/component, nearby styles and tests, and the applicable repository instructions before editing.
-- State one local hypothesis about the requested behavior and the cheapest check that could disconfirm it. Make the smallest change that tests that hypothesis.
+- State one local hypothesis about the requested behavior and make the change that tests it.
 - Preserve existing visual language and interaction patterns unless the user asks for a redesign. For unclear requirements that would materially change the result, ask one focused question.
 
 ## Design and Implement
@@ -53,10 +53,9 @@ Separate observed issues from assumptions. If no issues are found, say so and no
 
 ## Validate
 
-- After a substantive UI edit, run the cheapest behavior-scoped or component check available before doing more work.
+- After a substantive UI edit, run the behavior-scoped or component check available.
 - Run `npm run build` before shipping. Run `npm run test:unit -- --run` when the changed behavior is covered by or relevant to the unit suite.
-- If browser or screenshot tools are available, verify the changed flow and relevant responsive states in the rendered app. Inspect console errors when appropriate.
-- Do not assume Playwright is installed. Do not add browser-test tooling just to follow this skill; use available project/browser tools and state what could not be verified.
+- If browser or screenshot tools are available, verify the changed flow in the rendered app. Inspect console errors when appropriate.
 - Report checks actually run and any remaining visual or interaction gaps.
 
 ## Source Inspiration

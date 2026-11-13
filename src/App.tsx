@@ -8,6 +8,7 @@ import { Network } from './pages/workspace/Network';
 import { Commons } from './pages/workspace/Commons';
 import { Records } from './pages/workspace/Records';
 import { AptCoinLab } from './pages/workspace/AptCoinLab';
+import { Intelligence } from './pages/workspace/Intelligence';
 import { WorkspaceOverview } from './pages/workspace/WorkspaceOverview';
 import { BenbenOS } from './modules/benben-os';
 import { WorkbenchApp } from './modules/workbench';
@@ -38,7 +39,7 @@ export function App() {
       <Route path="/workspace/records/canon"><Records /></Route>
       <Route path="/workspace/records/annals"><Records /></Route>
       <Route path="/workspace/records/roll"><Records /></Route>
-      <Route path="/workspace/intelligence"><AptCoinLab /></Route>
+      <Route path="/workspace/intelligence"><Intelligence /></Route>
       <Route path="/workspace/intelligence/coin-lab"><AptCoinLab /></Route>
       <Route path="/benben-os"><BenbenOS /></Route>
 

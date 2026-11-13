@@ -92,7 +92,6 @@ export function RollEntryCard({
           </div>
           <div className="roll-entry-meta">
             <span className="roll-entry-institution">{entry.commissioned_by.name}</span>
-            <span aria-hidden="true">·</span>
             <span className="roll-entry-date">{formatDate(entry.recorded_at)}</span>
           </div>
         </div>

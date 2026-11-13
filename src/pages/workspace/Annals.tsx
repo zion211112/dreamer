@@ -195,17 +195,17 @@ export function Annals() {
             <div className="annals-lane">
               <span className="annals-lane-index">01</span>
               <span className="annals-lane-name"><strong>Commons / Radar</strong><small>Observations, proposals, and local decisions</small></span>
-              <span className="annals-lane-status">LOCAL RECORDS</span>
+              <span className="annals-lane-status">Local records</span>
             </div>
             <div className="annals-lane">
               <span className="annals-lane-index">02</span>
               <span className="annals-lane-name"><strong>Undertakings / Workbench</strong><small>Workflow stages and explicitly marked simulations</small></span>
-              <span className="annals-lane-status is-muted">SIMULATION ≠ EVENT</span>
+              <span className="annals-lane-status is-muted">Simulation ≠ event</span>
             </div>
             <div className="annals-lane">
               <span className="annals-lane-index">03</span>
               <span className="annals-lane-name"><strong>Roll</strong><small>Evidence, outcomes, and visible revisions</small></span>
-              <span className="annals-lane-status">SCOPED RECORDS</span>
+              <span className="annals-lane-status">Scoped records</span>
             </div>
           </div>
         </section>

@@ -1,13 +1,22 @@
 /* ============================================================================
    APT-LABS — Institutions Module Styles
-   Light luxury register: warm paper, deep ink, hairline borders.
-   No cards, no gradients, no glass, no AI dashboard slop.
+   Scope: .institution-page only — nothing leaks into WorkspaceShell chrome.
+   Precise, warm, operational index: numbered rows with type marks, location,
+   basis; inspector panel; filters and search. Reading note made a quiet footnote.
+   Uses tokens.css.
    ============================================================================ */
 
 .institution-page {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+  min-height: 64vh;
+  padding: 32px clamp(20px, 4vw, 64px);
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: var(--step-0);
+  line-height: 1.55;
 }
 
 /* ── Page header ── */
@@ -15,8 +24,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  padding: var(--space-2) 0;
-  border-bottom: 1px var(--shell-line);
+  padding: 0 0 var(--space-3);
+  border-bottom: 1px solid var(--hairline);
 }
 
 .institution-heading {
@@ -26,30 +35,23 @@
 }
 
 .institution-heading .eyebrow {
-  font: var(--eyebrow-font);
-  font-size: var(--eyebrow-size);
-  font-weight: var(--eyebrow-weight);
-  letter-spacing: var(--eyebrow-tracking);
-  color: var(--eyebrow-color);
+  font: 500 var(--step--2) var(--mono);
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  text-transform: uppercase;
   margin: 0;
 }
 
 .institution-heading h1 {
-  font: var(--l1-font);
-  font-size: var(--l1-size);
-  font-weight: var(--l1-weight);
-  line-height: var(--l1-line);
-  letter-spacing: var(--l1-tracking);
+  font: 600 clamp(28px, 4vw, 44px) var(--serif);
+  letter-spacing: -0.01em;
   color: var(--fg-strong);
   margin: 0;
 }
 
 .institution-page-intro {
-  font: var(--l2-font);
-  font-size: var(--l2-size);
-  font-weight: var(--l2-weight);
-  line-height: var(--l2-line);
-  color: var(--shell-muted);
+  font: 500 var(--step-0) var(--sans);
+  color: var(--text-muted);
   margin: 0;
   max-width: 54ch;
 }
@@ -58,53 +60,12 @@
   display: flex;
   align-items: baseline;
   gap: var(--space-1);
-  font: var(--mono);
-  font-size: var(--step-2);
-  font-weight: 600;
+  font: 600 var(--step-2) var(--mono);
   color: var(--fg-strong);
 }
 
 .institution-index-number {
   font-variant-numeric: tabular-nums;
-}
-
-/* ── Reading note ── */
-.institution-reading-note {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-2);
-  padding: var(--space-3);
-  border: 1px var(--shell-hairline);
-  border-radius: var(--radius-2);
-  background: var(--bg-subtle);
-  font: var(--sans);
-  font-size: var(--step-0);
-  color: var(--shell-muted);
-}
-
-.institution-note-mark {
-  width: var(--step-1);
-  height: var(--step-1);
-  border-radius: var(--radius-2);
-  background: var(--state-canon);
-  color: var(--bg);
-  font: var(--mono);
-  font-size: var(--step--2);
-  font-weight: 600;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.institution-reading-note p {
-  margin: 0;
-  color: var(--shell-muted);
-}
-
-.institution-reading-note strong {
-  color: var(--fg-strong);
 }
 
 /* ── Controls ── */
@@ -113,9 +74,10 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3);
-  border: 1px var(--shell-line);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius-3);
   background: var(--bg-elev);
+  flex-wrap: wrap;
 }
 
 .institution-filters {
@@ -129,10 +91,10 @@
   align-items: center;
   gap: var(--space-1);
   padding: var(--space-1) var(--space-2);
-  border: 1px var(--shell-line);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius-2);
   background: var(--bg-elev);
-  color: var(--shell-muted);
+  color: var(--text-muted);
   font: var(--sans);
   font-size: var(--step-0);
   font-weight: 500;
@@ -141,19 +103,19 @@
 }
 
 .institution-filter:hover {
-  border-color: var(--shell-line-strong);
+  border-color: var(--state-canon);
   color: var(--fg-strong);
 }
 
 .institution-filter.is-active {
   border-color: var(--state-canon);
-  background: var(--terrain-pale);
+  background: var(--state-canon-wash);
   color: var(--fg-strong);
 }
 
 .institution-filter span {
   font-variant-numeric: tabular-nums;
-  color: var(--shell-muted);
+  color: var(--text-muted);
 }
 
 .institution-filter.is-active span {
@@ -166,24 +128,19 @@
   align-items: center;
   gap: var(--space-1);
   position: relative;
-}
-
-.institution-search-icon {
-  font-size: var(--step-0);
-  color: var(--shell-muted);
+  min-width: 180px;
 }
 
 .institution-search input {
   flex: 1;
   padding: var(--space-1) var(--space-2);
-  border: 1px var(--shell-line);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius-2);
   background: var(--bg-elev);
   color: var(--fg);
   font: var(--sans);
   font-size: var(--step-0);
   outline: none;
-  transition: all var(--fast);
 }
 
 .institution-search input:focus {
@@ -195,10 +152,8 @@
   display: flex;
   align-items: baseline;
   gap: var(--space-1);
-  font: var(--mono);
-  font-size: var(--step--1);
-  font-weight: 600;
-  color: var(--shell-muted);
+  font: 500 var(--step--1) var(--mono);
+  color: var(--text-faint);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -215,22 +170,20 @@
 }
 
 .institution-index {
-  border: 1px var(--shell-line);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius-3);
   background: var(--bg-elev);
 }
 
 .institution-index-head {
   display: grid;
-  grid-template-columns: 44px 1fr 160px;
+  grid-template-columns: 44px 1fr 160px auto;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
-  border-bottom: 1px var(--shell-hairline);
+  border-bottom: 1px solid var(--hairline);
   background: var(--bg-subtle);
-  font: var(--mono);
-  font-size: var(--step--2);
-  font-weight: 500;
-  color: var(--shell-muted);
+  font: 500 var(--step--2) var(--mono);
+  color: var(--text-faint);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -252,14 +205,14 @@
   width: 100%;
   padding: var(--space-2) var(--space-3);
   border: none;
-  border-bottom: 1px var(--shell-hairline);
+  border-bottom: 1px solid var(--hairline);
   background: transparent;
   color: var(--fg);
   font: var(--sans);
   font-size: var(--step-0);
   cursor: pointer;
   text-align: left;
-  transition: all var(--fast);
+  transition: background var(--fast);
 }
 
 .institution-record:last-child {
@@ -272,7 +225,7 @@
 }
 
 .institution-record.is-selected {
-  background: var(--terrain-pale);
+  background: var(--state-canon-wash);
   border-right: 2px solid var(--state-canon);
   padding-right: calc(var(--space-3) - 2px);
   color: var(--fg-strong);
@@ -292,7 +245,7 @@
 
 .institution-record-index {
   font-variant-numeric: tabular-nums;
-  color: var(--shell-muted);
+  color: var(--text-faint);
   flex-shrink: 0;
 }
 
@@ -301,6 +254,7 @@
   height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
+  border: 1px solid var(--hairline);
 }
 
 .institution-record--Institution .institution-record-mark {
@@ -324,7 +278,7 @@
   gap: var(--space-1);
   font: var(--mono);
   font-size: var(--step--2);
-  color: var(--shell-muted);
+  color: var(--text-muted);
 }
 
 .institution-record-name {
@@ -337,21 +291,21 @@
 .institution-record-summary {
   font: var(--sans);
   font-size: var(--step--1);
-  color: var(--shell-muted);
+  color: var(--text-muted);
   line-height: 1.4;
 }
 
 .institution-record-place {
   font: var(--mono);
   font-size: var(--step--1);
-  color: var(--shell-muted);
+  color: var(--text-muted);
 }
 
 .institution-record-arrow {
   width: 12px;
   height: 12px;
   flex-shrink: 0;
-  color: var(--shell-muted);
+  color: var(--text-muted);
   font: var(--mono);
   font-size: var(--step--1);
 }
@@ -362,7 +316,7 @@
   text-align: center;
   font: var(--sans);
   font-size: var(--step-0);
-  color: var(--shell-muted);
+  color: var(--text-muted);
 }
 
 .institution-empty .eyebrow {
@@ -382,12 +336,12 @@
 
 .institution-empty p {
   margin: 0;
-  color: var(--shell-muted);
+  color: var(--text-muted);
 }
 
 /* ── Inspector ── */
 .institution-inspector {
-  border-left: 1px var(--shell-line);
+  border-left: 1px solid var(--hairline);
   background: var(--bg-elev);
   display: flex;
   flex-direction: column;
@@ -398,17 +352,17 @@
   align-items: baseline;
   gap: var(--space-1);
   padding: var(--space-3);
-  border-bottom: 1px var(--shell-line);
+  border-bottom: 1px solid var(--hairline);
   background: var(--bg-elev);
   font: var(--mono);
   font-size: var(--step--1);
-  color: var(--shell-muted);
+  color: var(--text-muted);
 }
 
 .institution-inspector-symbol {
   width: var(--step-3);
   height: var(--step-3);
-  border: 1px var(--shell-line-strong);
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius-2);
   background: var(--bg-elev);
   display: flex;
@@ -430,26 +384,21 @@
 .institution-inspector-role {
   font: var(--sans);
   font-size: var(--step--1);
-  color: var(--shell-muted);
+  color: var(--text-muted);
   margin: 0;
 }
 
 .institution-inspector h2 {
-  font: var(--l1-font);
-  font-size: var(--l1-size);
-  font-weight: var(--l1-weight);
-  line-height: var(--l1-line);
-  letter-spacing: var(--l1-tracking);
+  font: 600 var(--step-2) var(--serif);
+  letter-spacing: -0.01em;
   color: var(--fg-strong);
   margin: var(--space-3) var(--space-3) var(--space-1) var(--space-3);
 }
 
 .institution-inspector-summary {
-  font: var(--l2-font);
-  font-size: var(--l2-size);
-  font-weight: var(--l2-weight);
-  line-height: var(--l2-line);
-  color: var(--shell-muted);
+  font: 500 var(--step-0) var(--sans);
+  color: var(--text-muted);
+  line-height: 1.5;
   margin: 0 0 var(--space-3) var(--space-3);
   max-width: 42ch;
 }
@@ -468,14 +417,14 @@
   display: flex;
   gap: var(--space-3);
   padding: var(--space-1) var(--space-2);
-  border-bottom: 1px var(--shell-hairline);
+  border-bottom: 1px solid var(--hairline);
   font: var(--sans);
   font-size: var(--step-0);
 }
 
 .institution-facts dt {
   font-weight: 600;
-  color: var(--shell-muted);
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
@@ -489,14 +438,14 @@
   font: var(--mono);
   font-size: var(--step--1);
   color: var(--state-canon);
-  border-bottom: 1px var(--shell-hairline);
+  border-bottom: 1px solid var(--hairline);
   background: var(--state-canon-wash);
 }
 
 /* ── Relationships ── */
 .institution-relationships {
   padding: var(--space-3);
-  border-bottom: 1px var(--shell-hairline);
+  border-bottom: 1px solid var(--hairline);
 }
 
 .institution-relationships h3 {
@@ -513,7 +462,7 @@
 .institution-relationships h3 span {
   font: var(--mono);
   font-size: var(--step--1);
-  color: var(--shell-muted);
+  color: var(--text-muted);
 }
 
 .institution-relationships ul {
@@ -527,7 +476,7 @@
 
 .institution-relationships li {
   padding: var(--space-1) var(--space-2);
-  border: 1px var(--shell-hairline);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius-2);
   background: var(--bg-subtle);
   font: var(--sans);
@@ -539,7 +488,7 @@
   margin: 0;
   font: var(--sans);
   font-size: var(--step-0);
-  color: var(--shell-muted);
+  color: var(--text-muted);
   padding: var(--space-1) var(--space-2);
 }
 
@@ -550,7 +499,7 @@
   gap: var(--space-1);
   padding: var(--space-2) var(--space-3);
   border: none;
-  border-bottom: 1px var(--shell-hairline);
+  border-bottom: 1px solid var(--hairline);
   background: transparent;
   color: var(--state-canon);
   font: var(--mono);
@@ -562,13 +511,13 @@
 }
 
 .institution-context-link:hover {
-  background: var(--terrain-pale);
+  background: var(--state-canon-wash);
   color: var(--fg-strong);
 }
 
 .institution-context-link small {
   font-size: var(--step--2);
-  color: var(--shell-muted);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -583,10 +532,10 @@
   flex-direction: column;
   gap: var(--space-1);
   padding: var(--space-3) 0;
-  border-top: 1px var(--shell-line);
+  border-top: 1px solid var(--hairline);
   font: var(--mono);
   font-size: var(--step--1);
-  color: var(--shell-muted);
+  color: var(--text-muted);
 }
 
 .institution-page-footer span {
@@ -599,7 +548,7 @@
   align-items: center;
   gap: var(--space-1);
   padding: var(--space-1) var(--space-2);
-  border: 1px var(--shell-line);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius-2);
   background: var(--bg-elev);
   color: var(--state-canon);
@@ -613,17 +562,17 @@
 
 .institution-network-link:hover {
   border-color: var(--state-canon);
-  background: var(--terrain-pale);
+  background: var(--state-canon-wash);
   color: var(--fg-strong);
 }
 
 /* ── Local data warning ── */
 .local-data-warning {
   padding: var(--space-2) var(--space-3);
-  border: 1px var(--shell-line);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius-2);
-  background: var(--danger-pale);
-  color: var(--danger);
+  background: var(--state-risk-wash);
+  color: var(--state-risk);
   font: var(--sans);
   font-size: var(--step--1);
   margin-top: var(--space-2);
@@ -642,7 +591,7 @@
   }
 
   .institution-index-head {
-    grid-template-columns: 36px 1fr 140px;
+    grid-template-columns: 36px 1fr 140px auto;
     gap: var(--space-1);
     padding: var(--space-1) var(--space-2);
     font-size: var(--step--2);

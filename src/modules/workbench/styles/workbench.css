@@ -1,21 +1,24 @@
 /* ============================================================================
    Workbench — APT-LABS
-   Signature Dark Instrument. Dark green-black default; light is a variant,
-   not a second product. Editorial rows, tender gates, crew arrangement,
-   capital as covenant, evidence vs claim. No card kits, no all-caps eyebrows,
-   no middle-dot meta, no decorative metrics.
+   Operational dark instrument. Dark green-black base, refined for precise,
+   scannable work coordination: pilot lanes as editorial rows, quiet gate
+   filter strip, undertaking rows (serif title, mono microcopy, gate chip,
+   published value, escrow state, evidence rings, expand toggle), four-column
+   detail panel (call sheet / capital / verification / next step).
+   Capital as covenant, evidence vs claim, propose-never-executes.
+   No emoji. No all-caps eyebrows. No middle-dot meta. Hairline borders.
    ============================================================================ */
 
 /* Dark signature token scope — overrides light luxury from src/tokens.css */
 .wb-root {
-  --bg: #0A0F0C;
-  --fg: #E9F1E8;
-  --muted: #8FA08C;
-  --dim: #5C6B5E;
-  --line: rgba(143, 160, 140, 0.25);
-  --line-strong: rgba(143, 160, 140, 0.5);
-  --bg-elev: rgba(26, 34, 28, 0.5);
-  --bg-subtle: rgba(26, 34, 28, 0.2);
+  --bg: #0B0E0A;
+  --fg: #E8E2D8;
+  --muted: #8A9288;
+  --dim: #5A6258;
+  --line: rgba(138, 146, 136, 0.22);
+  --line-strong: rgba(138, 146, 136, 0.45);
+  --bg-elev: rgba(22, 28, 24, 0.55);
+  --bg-subtle: rgba(22, 28, 24, 0.35);
   --brand-main: var(--state-canon);
   --terrain: #8fd98f;
   --terrain-pale: rgba(143, 217, 143, 0.1);
@@ -23,14 +26,15 @@
   --state-proposed: #C9F292;
   --state-risk: #E89670;
   --state-caution: #CBAF6E;
+  --radius-1: 3px;
   --radius-3: 6px;
   --radius-pill: 999px;
   --space-1: 4px;
   --space-2: 8px;
-  --space-3: 16px;
-  --space-4: 32px;
-  --space-5: 40px;
-  --space-6: 48px;
+  --space-3: 12px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 40px;
   --step--2: 0.75rem;
   --step--1: 0.875rem;
   --step-0: 1rem;
@@ -55,17 +59,7 @@
   color: var(--fg);
 }
 
-/* ---------- Surveyor grid background on work surfaces ---------- */
-.wb-grid {
-  background-image: linear-gradient(var(--line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size: 24px 24px;
-  background-position: 0 0, 0 0;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-3);
-}
-
-/* ---------- Page head: L1 serif → L2 mono → L3 metrics ---------- */
+/* ---------- Page head ---------- */
 .wb-eyebrow {
   font-family: var(--mono);
   font-size: 10px;
@@ -93,8 +87,7 @@
   line-height: 1.5;
 }
 
-/* L3 metrics — only when they drive the current decision, max 3,
-   2px left border, first in teal. */
+/* ---------- Metrics ---------- */
 .wb-metrics {
   display: flex;
   gap: var(--space-4);
@@ -131,7 +124,7 @@
 .wb-metric-value--risk { color: var(--state-risk); }
 .wb-metric-value--caution { color: var(--state-caution); }
 
-/* ---------- Pilot paths — editorial rows, not cards ---------- */
+/* ---------- Pilot lanes (home) — editorial rows ---------- */
 .wb-paths {
   display: grid;
   gap: var(--space-3);
@@ -198,10 +191,8 @@
   text-align: right;
 }
 
-.wb-path-status--proposed { color: var(--state-proposed); }
-.wb-path-status--authorized { color: var(--state-canon); }
-.wb-path-status--caution { color: var(--state-caution); }
-.wb-path-status--risk { color: var(--state-risk); }
+.wb-path-status--published { color: var(--state-canon); }
+.wb-path-status--illustrative { color: var(--state-caution); }
 
 .wb-path-action {
   font-family: var(--mono);
@@ -212,141 +203,43 @@
   white-space: nowrap;
 }
 
-/* ---------- Terms ---------- */
-.wb-terms {
-  margin-top: var(--space-6);
-  padding: var(--space-4);
-  background: var(--bg-elev);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-3);
+/* ---------- Gate filter strip (quiet, precise) ---------- */
+.wb-gate-filter {
+  display: flex;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+  scrollbar-width: thin;
+  margin-bottom: var(--space-4);
 }
-
-.wb-terms-line {
-  font-size: var(--step--1);
-  color: var(--muted);
-  margin: 0;
-  line-height: 1.6;
-}
-
-/* ---------- Tender gate ---------- */
-.wb-gate {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-family: var(--mono);
-  font-size: var(--step--2);
-  font-weight: 600;
-  padding: 2px var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--bg-subtle);
-  color: var(--fg);
-}
-
-.wb-gate--canon { color: var(--state-canon); }
-.wb-gate--proposed { color: var(--state-proposed); }
-.wb-gate--risk { color: var(--state-risk); }
-.wb-gate--caution { color: var(--state-caution); }
-
-.wb-fork {
-  font-family: var(--mono);
-  font-size: var(--step--2);
-  color: var(--state-proposed);
-}
-
-/* ---------- Ringed evidence marker ---------- */
-.wb-evidence {
+.wb-gate-filter-tab {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  font-family: var(--mono);
-  font-size: var(--step--2);
+  min-height: 40px;
+  padding: 0 var(--space-3);
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
   color: var(--muted);
-}
-
-.wb-evidence-ring {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 12px;
-  height: 12px;
-  border: 1px solid var(--line-strong);
-  border-radius: 50%;
-  background: var(--bg-elev);
-}
-
-.wb-evidence-ring--public { border-color: var(--state-canon); }
-.wb-evidence-ring--participant { border-color: var(--state-proposed); }
-.wb-evidence-ring--restricted { border-color: var(--state-risk); }
-
-/* ---------- Crew arrangement ---------- */
-.wb-crew {
-  display: grid;
-  gap: var(--space-3);
-  margin: var(--space-4) 0;
-  padding: var(--space-4);
-  background: var(--bg-elev);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-3);
-}
-
-.wb-crew-role {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.wb-crew-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  color: var(--muted);
-  text-transform: none;
-}
-
-.wb-crew-value {
-  font-family: var(--serif);
-  font-size: var(--step-1);
-  color: var(--fg);
-}
-
-/* ---------- Capital as covenant ---------- */
-.wb-capital {
-  display: grid;
-  gap: var(--space-3);
-  margin: var(--space-4) 0;
-  padding: var(--space-4);
-  background: var(--bg-elev);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-3);
-  border-left: 2px solid var(--state-canon);
-}
-
-.wb-capital-field {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-2);
-}
-
-.wb-capital-label {
-  font-family: var(--mono);
-  font-size: var(--step--2);
-  color: var(--muted);
-}
-
-.wb-capital-value {
-  font-family: var(--mono);
-  font-size: var(--step-1);
-  font-weight: 600;
-  color: var(--fg);
+  font: 600 10px var(--mono);
+  letter-spacing: 0.05em;
   white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.12s ease, border-color 0.12s ease;
+}
+.wb-gate-filter-tab:hover { color: var(--fg); }
+.wb-gate-filter-tab.is-current { border-bottom-color: var(--state-canon); color: var(--fg); }
+.wb-gate-filter-tab.is-current.wb-gate-filter-tab--canon   { border-bottom-color: var(--state-canon); }
+.wb-gate-filter-tab.is-current.wb-gate-filter-tab--proposed { border-bottom-color: var(--state-proposed); }
+.wb-gate-filter-tab.is-current.wb-gate-filter-tab--risk     { border-bottom-color: var(--state-risk); }
+.wb-gate-filter-tab.is-current.wb-gate-filter-tab--caution  { border-bottom-color: var(--state-caution); }
+.wb-gate-filter-count {
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--dim);
 }
 
-.wb-capital-value--deployed { color: var(--state-canon); }
-.wb-capital-value--pending { color: var(--state-caution); }
-
-/* ---------- Work item row (editorial, not card) ---------- */
+/* ---------- Undertaking row (editorial, scannable) ---------- */
 .wb-item-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto auto auto;
@@ -364,12 +257,21 @@
   border-color: var(--line-strong);
 }
 
+.wb-item-row--expanded {
+  border-color: var(--line-strong);
+  background: var(--bg-subtle);
+}
+
+.wb-item-main {
+  min-width: 0;
+}
+
 .wb-item-title {
   font-family: var(--serif);
   font-size: var(--step-1);
   font-weight: 600;
   color: var(--fg);
-  margin: 0;
+  margin: 0 0 var(--space-1) 0;
   line-height: 1.2;
 }
 
@@ -378,7 +280,13 @@
   font-size: var(--step--2);
   color: var(--muted);
   white-space: nowrap;
-  text-align: right;
+}
+
+.wb-call-sheet-brief {
+  font-family: var(--sans);
+  font-size: var(--step--1);
+  color: var(--muted);
+  margin: var(--space-1) 0 0 0;
 }
 
 .wb-item-value {
@@ -389,14 +297,220 @@
   white-space: nowrap;
   text-align: right;
 }
-
 .wb-item-value--published { color: var(--state-canon); }
+
+.wb-escrow-state {
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  font-weight: 600;
+  color: var(--state-canon);
+}
+
+.wb-verification-state {
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  color: var(--state-canon);
+}
+
+/* ---------- Gate chip ---------- */
+.wb-gate-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+.wb-gate {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  font-weight: 600;
+  padding: 2px var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--bg-subtle);
+  color: var(--fg);
+}
+.wb-gate--canon { color: var(--state-canon); }
+.wb-gate--proposed { color: var(--state-proposed); }
+.wb-gate--risk { color: var(--state-risk); }
+.wb-gate--caution { color: var(--state-caution); }
+
+/* ---------- Call sheet / credential tags ---------- */
+.wb-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  font-weight: 600;
+  padding: 1px var(--space-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  color: var(--muted);
+  background: transparent;
+}
+.wb-tag--call-sheet { color: var(--state-proposed); border-color: var(--state-proposed); }
+.wb-tag--credential { color: var(--state-canon); border-color: var(--state-canon); }
+
+/* ---------- Evidence rings ---------- */
+.wb-evidence-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+.wb-evidence {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  color: var(--muted);
+}
+.wb-evidence-ring {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--bg-elev);
+}
+.wb-evidence-ring--public { border-color: var(--state-canon); }
+.wb-evidence-ring--participant { border-color: var(--state-proposed); }
+.wb-evidence-ring--restricted { border-color: var(--state-risk); }
+
+/* ---------- Crew tags ---------- */
+.wb-crew-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+.wb-crew-tag {
+  font: 600 9px var(--mono);
+  color: var(--dim);
+  padding: 1px 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+.wb-crew-tag--builder    { color: var(--state-proposed); border-color: var(--state-proposed); }
+.wb-crew-tag--apprentice { color: var(--state-canon);    border-color: var(--state-canon); }
+
+/* ---------- Expand toggle ---------- */
+.wb-item-expand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  font: 600 14px var(--mono);
+  color: var(--dim);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-3);
+  background: var(--bg-elev);
+  flex-shrink: 0;
+}
+.wb-item-row--expanded .wb-item-expand {
+  color: var(--state-canon);
+  border-color: var(--state-canon);
+}
+
+/* ---------- Detail panel — four-column grid ---------- */
+.wb-item-detail {
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-subtle);
+  border: 1px solid var(--line);
+  border-top: none;
+  border-radius: 0 0 var(--radius-3) var(--radius-3);
+}
+.wb-item-detail-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: var(--space-4);
+}
+.wb-detail-section {
+  min-width: 0;
+}
+.wb-detail-heading {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin: 0 0 var(--space-2) 0;
+  text-transform: none;
+}
+.wb-detail-note {
+  font-size: var(--step--1);
+  color: var(--muted);
+  margin: 0 0 var(--space-2) 0;
+  line-height: 1.5;
+}
+.wb-detail-note--done { color: var(--state-canon); }
+.wb-detail-sub {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--dim);
+  display: block;
+  margin-bottom: var(--space-1);
+  text-transform: none;
+}
+.wb-detail-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-2) 0;
+  display: grid;
+  gap: var(--space-1);
+}
+.wb-detail-list li {
+  font-size: var(--step--2);
+  color: var(--fg);
+  padding-left: var(--space-3);
+  position: relative;
+}
+.wb-detail-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 6px;
+  height: 1px;
+  background: var(--line-strong);
+}
+
+/* ---------- Capital as covenant ---------- */
+.wb-capital-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+.wb-capital-label {
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  color: var(--muted);
+}
+.wb-capital-value {
+  font-family: var(--mono);
+  font-size: var(--step-1);
+  font-weight: 600;
+  color: var(--fg);
+  white-space: nowrap;
+}
+.wb-capital-value--deployed { color: var(--state-canon); }
+.wb-capital-value--pending { color: var(--state-caution); }
 
 /* ---------- Actions ---------- */
 .wb-actions {
   display: flex;
   gap: var(--space-2);
-  margin-top: var(--space-2);
+  flex-wrap: wrap;
 }
 
 .wb-button {
@@ -446,6 +560,29 @@
   border-color: #d4f8a8;
 }
 
+/* ---------- Gate advance ---------- */
+.wb-gate-advance {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--state-proposed);
+  border-radius: var(--radius-3);
+  background: var(--terrain-pale);
+  color: var(--state-proposed);
+  font: 600 10px var(--mono);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+.wb-gate-advance:hover { background: rgba(201, 242, 146, 0.25); }
+.wb-gate-advance-note {
+  font: 400 9px var(--mono);
+  color: var(--state-caution);
+  margin: var(--space-1) 0 0 0;
+}
+
+/* ---------- Empty / section title ---------- */
 .wb-empty {
   grid-column: 1 / -1;
   padding: var(--space-6);
@@ -474,250 +611,18 @@
   font-family: var(--sans);
 }
 
-.wb-focus-ring:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(127, 197, 188, 0.2);
-}
-
-/* ---------- Step badge (diagram-design: editorial, 4px grid, 1px hairlines) ---------- */
-.wb-step {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-3);
+/* ---------- Records link ---------- */
+.wb-records-link {
   font-family: var(--mono);
   font-size: 10px;
   font-weight: 600;
-  color: var(--muted);
-  background: var(--bg-elev);
-}
-
-/* ---------- Call sheet tag (caveman: lean, no padding, answer first) ---------- */
-.wb-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-family: var(--mono);
-  font-size: var(--step--2);
-  font-weight: 600;
-  padding: 1px var(--space-2);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
-  color: var(--muted);
-  background: transparent;
-}
-
-.wb-tag--call-sheet { color: var(--state-proposed); border-color: var(--state-proposed); }
-.wb-tag--credential { color: var(--state-canon); border-color: var(--state-canon); }
-
-/* ---------- Call sheet brief (caveman: one idea per sentence, exact numbers) ---------- */
-.wb-call-sheet-brief {
-  font-family: var(--sans);
-  font-size: var(--step--1);
-  color: var(--muted);
-  margin: var(--space-1) 0 0 0;
-}
-
-/* ---------- Escrow state (impeccable: deterministic, shared vocabulary) ---------- */
-.wb-escrow-state {
-  font-family: var(--mono);
-  font-size: var(--step--2);
-  font-weight: 600;
-  color: var(--state-canon);
-}
-
-/* ---------- Verification state (ponytail: lightweight following) ---------- */
-.wb-verification-state {
-  font-family: var(--mono);
-  font-size: var(--step--2);
-  color: var(--state-canon);
-}
-
-/* ---------- Gate filter tabs (salvaged: .workbench-sim-stage-nav) ---------- */
-.wb-gate-filter {
-  display: flex;
-  overflow-x: auto;
-  border-bottom: 1px solid var(--line);
-  scrollbar-width: thin;
-  margin-bottom: var(--space-4);
-}
-.wb-gate-filter-tab {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: 48px;
-  padding: 0 var(--space-3);
-  border: none;
-  border-bottom: 2px solid transparent;
-  background: transparent;
-  color: var(--muted);
-  font: 600 10px var(--mono);
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: color 0.12s ease, border-color 0.12s ease;
-}
-.wb-gate-filter-tab:hover { color: var(--fg); }
-.wb-gate-filter-tab.is-current { border-bottom-color: var(--state-caution); color: var(--fg); }
-.wb-gate-filter-tab.is-current.wb-gate-filter-tab--canon   { border-bottom-color: var(--state-canon); }
-.wb-gate-filter-tab.is-current.wb-gate-filter-tab--proposed { border-bottom-color: var(--state-proposed); }
-.wb-gate-filter-tab.is-current.wb-gate-filter-tab--risk     { border-bottom-color: var(--state-risk); }
-.wb-gate-filter-tab.is-current.wb-gate-filter-tab--caution  { border-bottom-color: var(--state-caution); }
-.wb-gate-filter-count {
-  font-size: 9px;
-  font-weight: 400;
-  color: var(--dim);
-}
-
-/* ---------- Item group wrapper ---------- */
-.wb-item-group {
-  margin-bottom: var(--space-2);
-}
-
-/* ---------- Item row expanded state ---------- */
-.wb-item-row--expanded {
-  border-color: var(--line-strong);
-  background: var(--bg-subtle);
-}
-
-/* ---------- Item main content column ---------- */
-.wb-item-main {
-  min-width: 0;
-}
-
-/* ---------- Crew compact tags (salvaged: .workbench-pipeline-index pattern) ---------- */
-.wb-crew-inline {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-  margin-top: var(--space-1);
-}
-.wb-crew-tag {
-  font: 600 9px var(--mono);
-  color: var(--dim);
-  padding: 1px 6px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
-  white-space: nowrap;
-}
-.wb-crew-tag--builder    { color: var(--state-proposed); border-color: var(--state-proposed); }
-.wb-crew-tag--apprentice { color: var(--state-canon);    border-color: var(--state-canon); }
-
-/* ---------- Expand toggle ---------- */
-.wb-item-expand {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  font: 600 14px var(--mono);
-  color: var(--dim);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-3);
-  background: var(--bg-elev);
-  flex-shrink: 0;
-}
-.wb-item-row--expanded .wb-item-expand {
-  color: var(--state-canon);
-  border-color: var(--state-canon);
-}
-
-/* ---------- Detail panel (salvaged: .capacity-inspector sticky side pattern) ---------- */
-.wb-item-detail {
-  padding: var(--space-3) var(--space-4);
-  background: var(--bg-subtle);
-  border: 1px solid var(--line);
-  border-top: none;
-  border-radius: 0 0 var(--radius-3) var(--radius-3);
-}
-.wb-item-detail-grid {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr;
-  gap: var(--space-4);
-}
-.wb-detail-section {
-  min-width: 0;
-}
-.wb-detail-heading {
-  font: 600 10px var(--mono);
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin: 0 0 var(--space-2) 0;
-}
-.wb-detail-note {
-  font-size: var(--step--1);
-  color: var(--muted);
-  margin: 0 0 var(--space-2) 0;
-  line-height: 1.5;
-}
-.wb-detail-note--done { color: var(--state-canon); }
-.wb-detail-sub {
-  font: 600 9px var(--mono);
-  color: var(--dim);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  display: block;
-  margin-bottom: var(--space-1);
-}
-.wb-detail-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 var(--space-2) 0;
-  display: grid;
-  gap: var(--space-1);
-}
-.wb-detail-list li {
-  font-size: var(--step--2);
-  color: var(--fg);
-  padding-left: var(--space-3);
-  position: relative;
-}
-.wb-detail-list li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 6px;
-  height: 1px;
-  background: var(--line-strong);
-}
-
-/* ---------- Records link ---------- */
-.wb-records-link {
-  font: 600 10px var(--mono);
   color: var(--state-canon);
   text-decoration: none;
   display: inline-block;
   margin-top: var(--space-2);
+  text-transform: none;
 }
 .wb-records-link:hover { text-decoration: underline; }
-
-/* ---------- Gate advance button (salvaged: .workbench-gate-run) ---------- */
-.wb-gate-advance {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--state-proposed);
-  border-radius: var(--radius-3);
-  background: var(--terrain-pale);
-  color: var(--state-proposed);
-  font: 600 10px var(--mono);
-  letter-spacing: 0.05em;
-  cursor: pointer;
-  transition: background 0.12s ease;
-}
-.wb-gate-advance:hover { background: rgba(201, 242, 146, 0.25); }
-.wb-gate-advance-note {
-  font: 400 9px var(--mono);
-  color: var(--state-caution);
-  margin: var(--space-1) 0 0 0;
-}
 
 /* ---------- Section filter label ---------- */
 .wb-section-filter {
@@ -736,7 +641,7 @@
   gap: var(--space-1);
 }
 
-/* ---------- Light variant override (applied when [data-skin="light"] is set on .wb-root) ---------- */
+/* ---------- Light variant override ---------- */
 [data-skin="light"].wb-root {
   --bg: #F8F9F7;
   --fg: #1a2a1f;
@@ -789,13 +694,6 @@
   .wb-item-value {
     text-align: left;
   }
-  .wb-value-group {
-    align-items: flex-start;
-  }
-  .wb-evidence-group,
-  .wb-item-expand {
-    display: none;
-  }
   .wb-item-detail-grid {
     grid-template-columns: 1fr;
   }
@@ -810,5 +708,8 @@
   }
   .wb-gate-filter {
     flex-wrap: wrap;
+  }
+  .wb-gate-group {
+    gap: var(--space-2);
   }
 }

@@ -1,4 +1,5 @@
 import { Button } from './Button';
+import '../styles/page-head.css';
 
 export interface PageHeadMetric {
   label: string;
@@ -90,6 +91,7 @@ export function PageHead({
             <div
               key={index}
               className="page-head-metric"
+              data-state={metric.state}
             >
               <span className="page-head-metric-value">
                 {metric.value}

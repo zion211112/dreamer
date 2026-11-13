@@ -299,8 +299,8 @@ export function NetworkMap({
               const label = ENTITY_TYPES.find((item) => item.id === type)?.plural ?? type;
               return (
                 <g key={type}>
-                  <text x={COLUMN_X[type]} y="54" textAnchor="middle">{label.toUpperCase()}</text>
-                  <text x={COLUMN_X[type]} y="72" textAnchor="middle">{count.toString().padStart(2, '0')} RECORDS</text>
+                  <text x={COLUMN_X[type]} y="54" textAnchor="middle">{label}</text>
+                  <text x={COLUMN_X[type]} y="72" textAnchor="middle">{count.toString().padStart(2, '0')} records</text>
                 </g>
               );
             })}
@@ -676,7 +676,7 @@ export function NetworkMap({
               </div>
             )}
             <div className="network-inspector-relationships">
-              <div className="network-inspector-relationships-label">RELATIONSHIPS</div>
+              <div className="network-inspector-relationships-label">Relationships</div>
               <button
                 onClick={() => onRelationshipFilter?.('all')}
                 className="network-inspector-show-all-btn"

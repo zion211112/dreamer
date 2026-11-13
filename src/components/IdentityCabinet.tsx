@@ -178,7 +178,7 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
               </section>
 
               <section className="identity-section">
-                <SectionHeading detail={localEvidence.length ? `${localEvidence.length.toString().padStart(2, '0')} PROFILE RECORDS` : ''}>
+                <SectionHeading detail={localEvidence.length ? `${localEvidence.length.toString().padStart(2, '0')} profile records` : ''}>
                   Credentials & claims
                 </SectionHeading>
                 {localEvidence.length ? (

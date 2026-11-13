@@ -158,11 +158,11 @@ export function Network() {
 
         <div className="network-main">
           {!selectedEntity && (
-            <aside className="network-sidebar">
+            <aside className="network-sidebar" aria-label="Entity types">
               <section className="network-sidebar-section">
-                <header className="network-section-header">
-                  <strong className="network-section-title">Entity types</strong>
-                </header>
+                <div className="network-section-header">
+                  <span className="network-section-title">Entity types</span>
+                </div>
                 <ul className="network-entity-list">
                   {ENTITY_TYPES.map(type => {
                     const count = entities.filter(e => e.type === type.id).length;

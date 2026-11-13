@@ -120,8 +120,7 @@ export function Coordinator() {
 
         {message && (
           <p
-            className="k1-notice"
-            style={{ color: message.kind === 'ok' ? 'var(--ok)' : 'var(--danger)' }}
+            className={`k1-notice k1-notice--${message.kind}`}
             role="alert"
           >
             {message.text}
@@ -135,10 +134,10 @@ export function Coordinator() {
             <span className="k1-mode">{essence.summary.includes('heuristic') ? 'local-heuristic mode' : 'llm mode'}</span>
           </div>
           <div className="k1-essence-meta">
-            <span><b>{essence.signalCount}</b> signals</span>
-            <span><b>{essence.activeSignalCount}</b> active</span>
-            <span><b>{essence.workItemCount}</b> work items</span>
-            <span><b>{essence.openWorkItemCount}</b> open</span>
+            <span><b>{essence.signalCount}</b><i>signals</i></span>
+            <span><b>{essence.activeSignalCount}</b><i>active</i></span>
+            <span><b>{essence.workItemCount}</b><i>work items</i></span>
+            <span><b>{essence.openWorkItemCount}</b><i>open</i></span>
           </div>
           <p className="k1-summary">{essence.summary}</p>
           <h3 className="k1-section-title">Next steps</h3>
@@ -152,7 +151,7 @@ export function Coordinator() {
         {/* Simple user verification */}
         <section className="k1-section">
           <h2 className="k1-section-title">Verify user</h2>
-          <div className="k1-actions">
+          <div className="k1-verify-strip">
             <Input
               type="email"
               value={email}
@@ -163,7 +162,7 @@ export function Coordinator() {
               Verify steward
             </Button>
             {verifying && (
-              <span className="k1-mode">
+              <span className={`k1-verify-result ${verifying.ok ? 'k1-verify-result--ok' : 'k1-verify-result--fail'}`}>
                 {verifying.email} — {verifying.ok ? 'Verified steward' : 'Not a steward'}
               </span>
             )}
@@ -180,7 +179,7 @@ export function Coordinator() {
               {items.map((item) => {
                 const expanded = proposal?.targetId === item.id;
                 return (
-                  <div key={item.id} className="k1-item">
+                  <div key={item.id} className={`k1-item ${expanded ? 'k1-item--active' : ''}`}>
                     <div className="k1-item-main">
                       <h3>{item.title}</h3>
                       <p className="k1-item-meta">{item.discipline} · {item.location}</p>

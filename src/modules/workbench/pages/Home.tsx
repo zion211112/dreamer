@@ -50,7 +50,7 @@ export function Workbench() {
                   <p className="wb-path-character">{pilot.character}</p>
                 </div>
                 <span className="wb-path-meta">{pilot.location}</span>
-                <span className={`wb-path-status ${pilot.status === 'published' ? 'wb-path-status--authorized' : 'wb-path-status--caution'}`}>
+                <span className={`wb-path-status ${pilot.status === 'published' ? 'wb-path-status--published' : 'wb-path-status--illustrative'}`}>
                   {pilot.status === 'published' ? 'Published' : 'Illustrative'}
                 </span>
                 <span className="wb-path-action">

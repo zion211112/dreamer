@@ -4,6 +4,7 @@ import { WorkspaceLayout } from './WorkspaceLayout';
 import type { RollEntry } from '../../lib/db/roll';
 import { verifyRollEntry } from '../../lib/db/roll';
 import { isDemoMode } from '../../lib/supabase/client';
+import { Breadcrumb } from './Records';
 
 function VerificationDialog({
   entry,
@@ -86,11 +87,11 @@ function VerificationDialog({
         aria-labelledby="roll-verify-title"
         tabIndex={-1}
       >
-        <header className="roll-modal-header">
-          <div>
-            <p className="roll-modal-eyebrow">ROLL / INTEGRITY CHECK</p>
-            <h2 id="roll-verify-title">{entry.title}</h2>
-          </div>
+          <header className="roll-modal-header">
+            <div>
+              <Breadcrumb segments={['roll', 'integrity-check']} />
+              <h2 id="roll-verify-title">{entry.title}</h2>
+            </div>
           <button
             ref={closeButtonRef}
             className="roll-modal-close"
@@ -182,7 +183,7 @@ export function Roll() {
           </aside>
         )}
         <header className="roll-page-header">
-          <p className="roll-page-eyebrow">APT-LABS <span aria-hidden="true">/</span> ROLL</p>
+          <Breadcrumb segments={['apt-labs', 'records', 'roll']} />
           <h1 id="roll-page-title">Evidence ledger</h1>
           <p className="roll-page-intro">
             Review records and compare their canonical fields with the stored SHA-256 anchor.
