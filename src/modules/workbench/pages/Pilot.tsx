@@ -14,7 +14,6 @@ import {
   ALL_GATE_STATES,
   NEXT_GATE,
 } from '../data';
-import '../styles/workbench.css';
 
 function CrewInline({ crew }: { crew: WorkItem['crew'] }) {
   const tags: [string, string, string][] = [

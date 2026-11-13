@@ -13,6 +13,29 @@ import { IdentityCabinet } from './IdentityCabinet';
 import { WorkspaceQuickSearch } from './WorkspaceQuickSearch';
 import { WORKSPACE_SEARCH_DESTINATIONS } from '../lib/workspace-search';
 
+import {
+  Home,
+  LayoutDashboard,
+  Users,
+  Archive,
+  Activity,
+  Briefcase,
+  Menu,
+  Sun,
+  Moon,
+  ChevronRight,
+  RotateCcw,
+} from 'lucide-preact';
+
+const MODULE_ICONS: Record<StudioModuleId | 'home', any> = {
+  home: Home,
+  commons: LayoutDashboard,
+  network: Users,
+  records: Archive,
+  intelligence: Activity,
+  workbench: Briefcase,
+};
+
 interface StudioNavigationProps {
   currentContext: StudioContext;
   sidebarCollapsed: boolean;
@@ -27,22 +50,8 @@ interface StudioNavigationProps {
 }
 
 function ContextIcon({ id }: { id: StudioModuleId }) {
-  if (id === 'home') {
-    return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m2.5 9 7.5-6 7.5 6" /><path d="M4.5 8v9h11V8M8 17v-5h4v5" /></svg>;
-  }
-  if (id === 'commons') {
-    return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" /><circle cx="10" cy="10" r="3" /><path d="m10 10 5-5M10 2v2m8 6h-2" /></svg>;
-  }
-  if (id === 'network') {
-    return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="7" cy="6.5" r="2.5" /><path d="M2.5 16v-1.2a4.5 4.5 0 0 1 9 0V16zM13 4.5a2.3 2.3 0 0 1 0 4.5m1.5 2a3.8 3.8 0 0 1 3 3.7V16h-3" /></svg>;
-  }
-  if (id === 'records') {
-    return <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 16.5V3.5a1.5 1.5 0 0 1 1.5-1.5h11a1.5 1.5 0 0 1 1.5 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-11a1.5 1.5 0 0 1-1.5-1.5z" /><path d="M5.5 9h9M5.5 13h6" /></svg>;
-  }
-  if (id === 'intelligence') {
-    return <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="10" cy="10" r="2" /><circle cx="4" cy="5" r="1.5" /><circle cx="16" cy="5" r="1.5" /><circle cx="4" cy="15" r="1.5" /><circle cx="16" cy="15" r="1.5" /><path d="m8.5 8.5-3.4-2.4m6.4 2.4 3.4-2.4m-6.4 3.9-3.4 2.4m6.4-2.4 3.4 2.4" /></svg>;
-  }
-  return <svg aria-hidden="true" viewBox="0 0 20 20"><rect x="2.5" y="6.5" width="15" height="10" rx="1" /><path d="M7 6.5V4h6v2.5M2.5 10h15m-9 0v2h3v-2" /></svg>;
+  const Icon = MODULE_ICONS[id];
+  return <Icon aria-hidden="true" />;
 }
 
 interface ContextDestination {
@@ -179,7 +188,7 @@ function ProfileEntry({ name, onOpen, open }: { name: string; onOpen: () => void
     >
       <span aria-hidden="true" className="studio-profile-avatar">{initials}</span>
       <span className="studio-profile-copy"><strong>{displayName}</strong><small>Local browser profile</small></span>
-      <svg aria-hidden="true" className="studio-profile-arrow" viewBox="0 0 16 16"><path d="m4.5 6.5 3.5 3 3.5-3" /></svg>
+      <ChevronRight aria-hidden="true" className="studio-profile-arrow" />
     </button>
   );
 }
@@ -257,11 +266,10 @@ export function StudioNavigation({
           ref={menuButtonRef}
           type="button"
         >
-          <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M3 5.5h14M3 10h14M3 14.5h14" /></svg>
+          <Menu aria-hidden="true" />
         </button>
         <BrandMark className="studio-topbar-brand" href="/workspace" size="sm" />
-        <span className="studio-topbar-divider" aria-hidden="true" />
-        <span className="studio-topbar-context">{getStudioContextLabel(currentContext)}</span>
+            <span className="studio-topbar-divider" aria-hidden="true" />
         <span aria-label={`Environment: ${environmentLabel}`} className="studio-environment-indicator">
           {environmentLabel}
         </span>
@@ -274,11 +282,7 @@ export function StudioNavigation({
             title={skin === 'light' ? 'Switch to observatory skin' : 'Switch to light skin'}
             type="button"
           >
-            <svg aria-hidden="true" viewBox="0 0 20 20">
-              {skin === 'light'
-                ? <><circle cx="10" cy="10" r="3.5" /><path d="M10 3.5v1.5m0 10v1.5M16.5 10H15M5 10H3.5m4.5-4.5L6.5 6.5m7 7l1.5 1.5m0-10-1.5 1.5m-7 7-1.5 1.5" /></>
-                : <><path d="M6 10.5a4.5 4.5 0 1 0 5-5.5A4.5 4.5 0 0 1 6 10.5z" /></>}
-            </svg>
+            {skin === 'light' ? <Sun /> : <Moon />}
             {skin === 'light' ? 'Observe' : 'Light'}
           </button>
         )}
@@ -306,7 +310,7 @@ export function StudioNavigation({
           title={sidebarCollapsed ? 'Show context navigation' : 'Hide context navigation'}
           type="button"
         >
-          <svg aria-hidden="true" viewBox="0 0 20 20"><rect x="2.5" y="3" width="15" height="14"/><path d="M7.5 3v14"/></svg>
+          <Menu aria-hidden="true" />
         </button>
         <button
           aria-label="Reset workspace layout"
@@ -315,7 +319,7 @@ export function StudioNavigation({
           title="Reset workspace layout"
           type="button"
         >
-          <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4.5 7.5A6 6 0 1 1 4 11"/><path d="M4.5 3.5v4h4" /></svg>
+          <RotateCcw aria-hidden="true" />
         </button>
         {showIdentity && <ProfileEntry name={profileName} onOpen={() => setIdentityOpen(true)} open={identityOpen} />}
       </header>

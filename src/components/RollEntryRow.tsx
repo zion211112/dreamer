@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import type { RollEntry } from '../lib/db/roll';
 import { isDemoMode } from '../lib/supabase/client';
 
@@ -19,7 +20,7 @@ function getLayerColor(layer: RollEntry['evidence'][0]['layer']): string {
 }
 
 function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return format(new Date(dateStr), 'MMM d, yyyy');
 }
 
 function formatHash(hash: string): string {

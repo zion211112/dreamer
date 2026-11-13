@@ -1,7 +1,6 @@
 import { Link } from 'wouter';
 import { PageHead } from '@/components/PageHead';
 import { PILOTS, homeMetrics } from '../data';
-import '../styles/workbench.css';
 
 export function Workbench() {
   const metrics = homeMetrics();

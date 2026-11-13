@@ -1,5 +1,4 @@
 import { Button } from './Button';
-import '../styles/page-head.css';
 
 export interface PageHeadMetric {
   label: string;

@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { useState, useEffect, useMemo } from 'preact/hooks';
 import { Link, useLocation } from 'wouter';
 import { WorkspaceLayout } from './WorkspaceLayout';
@@ -22,11 +23,11 @@ const PILOTS = [
 ];
 
 function formatDateShort(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  return format(new Date(dateStr), 'dd MMM yyyy');
 }
 
 function formatDateTime(dateStr: string): string {
-  return new Date(dateStr).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  return format(new Date(dateStr), 'dd MMM yyyy HH:mm');
 }
 
 function hashShort(hash: string): string {

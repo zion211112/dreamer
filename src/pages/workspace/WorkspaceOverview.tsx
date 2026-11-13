@@ -1,8 +1,14 @@
 ﻿import { Link } from 'wouter';
-import type { ComponentChildren } from 'preact';
 import { useAuth } from '../../lib/auth/hooks';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import { getWorkspaceHomePersona } from '../../lib/workspace-overview';
+import {
+  LayoutDashboard,
+  Users,
+  Briefcase,
+  Archive,
+  Activity,
+} from 'lucide-preact';
 
 interface ModuleCard {
   id: string;
@@ -12,22 +18,12 @@ interface ModuleCard {
   featured?: boolean;
 }
 
-const MODULE_ICONS: Record<string, ComponentChildren> = {
-  commons: (
-    <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" /><circle cx="10" cy="10" r="3" /><path d="m10 10 5-5M10 2v2m8 6h-2" /></svg>
-  ),
-  network: (
-    <svg viewBox="0 0 20 20"><circle cx="7" cy="6.5" r="2.5" /><path d="M2.5 16v-1.2a4.5 4.5 0 0 1 9 0V16zM13 4.5a2.3 2.3 0 0 1 0 4.5m1.5 2a3.8 3.8 0 0 1 3 3.7V16h-3" /></svg>
-  ),
-  workbench: (
-    <svg viewBox="0 0 20 20"><rect x="2.5" y="6.5" width="15" height="10" rx="1" /><path d="M7 6.5V4h6v2.5M2.5 10h15m-9 0v2h3v-2" /></svg>
-  ),
-  records: (
-    <svg viewBox="0 0 20 20"><path d="M4 16.5V3.5a1.5 1.5 0 0 1 1.5-1.5h11a1.5 1.5 0 0 1 1.5 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-11a1.5 1.5 0 0 1-1.5-1.5z" /><path d="M5.5 9h9M5.5 13h6" /></svg>
-  ),
-  intelligence: (
-    <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="2" /><circle cx="4" cy="5" r="1.5" /><circle cx="16" cy="5" r="1.5" /><circle cx="4" cy="15" r="1.5" /><circle cx="16" cy="15" r="1.5" /><path d="m8.5 8.5-3.4-2.4m6.4 2.4 3.4-2.4m-6.4 3.9-3.4 2.4m6.4-2.4 3.4 2.4" /></svg>
-  ),
+const MODULE_ICONS: Record<string, any> = {
+  commons: LayoutDashboard,
+  network: Users,
+  workbench: Briefcase,
+  records: Archive,
+  intelligence: Activity,
 };
 
 const MODULE_CARDS: ModuleCard[] = [
@@ -94,21 +90,24 @@ export function WorkspaceOverview() {
         </header>
 
         <section aria-label="Workspace modules" className="workspace-overview-modules">
-          {MODULE_CARDS.map(card => (
-            <Link
-              key={card.id}
-              className={`workspace-overview-module-card${card.featured ? ' workspace-overview-module-card--featured' : ''}`}
-              href={card.href}
-            >
-              <span className="workspace-overview-module-icon" aria-hidden="true">
-                {MODULE_ICONS[card.id]}
-              </span>
+          {MODULE_CARDS.map(card => {
+            const Icon = MODULE_ICONS[card.id];
+            return (
+              <Link
+                key={card.id}
+                className={`workspace-overview-module-card${card.featured ? ' workspace-overview-module-card--featured' : ''}`}
+                href={card.href}
+              >
+                <span className="workspace-overview-module-icon" aria-hidden="true">
+                  <Icon />
+                </span>
               <span className="workspace-overview-module-copy">
                 <span className="workspace-overview-module-name">{card.name}</span>
                 <span className="workspace-overview-module-job">{card.job}</span>
-              </span>
-            </Link>
-          ))}
+                </span>
+              </Link>
+            );
+          })}
         </section>
 
         <div className="workspace-overview-path-strip">
@@ -136,7 +135,7 @@ export function WorkspaceOverview() {
           </div>
           <div className="workspace-overview-desk-empty">
             <span className="workspace-overview-desk-empty-mark" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="2.5" /></svg>
+              <Activity />
             </span>
             <div className="workspace-overview-desk-empty-copy">
               <h3>No linked updates yet</h3>

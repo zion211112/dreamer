@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import type { DirectoryEntry, Capability, Evidence, ServiceOffer } from '../lib/db/network';
 
 interface DirectoryEntryRowProps {
@@ -250,7 +251,7 @@ export function DirectoryEntryRow({
                             <div className="item-meta">
                               Status: {evd.verification_status.replace('_', ' ')}
                               {evd.verified_by && ` · Verified by ${evd.verified_by}`}
-                              {evd.verified_at && ` · ${new Date(evd.verified_at).toLocaleDateString()}`}
+                              {evd.verified_at && ` · ${format(new Date(evd.verified_at), 'PPp')}`}
                             </div>
                           </div>
                         </div>
