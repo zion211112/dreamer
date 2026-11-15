@@ -5,6 +5,7 @@ import type { UserRole } from '../lib/auth/types';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { BrandMark } from '../components/BrandMark';
+import { ProviderIcon } from '../components/ProviderIcon';
 
 const workspacePaths = {
   annals: '/workspace',
@@ -170,6 +171,40 @@ export function Auth() {
 
           <form onSubmit={handleSubmit} className="auth-form">
             {(error || authError) && <p className="auth-error" role="alert">{error || authError}</p>}
+
+            <div className="auth-providers" role="group" aria-label="Sign in with">
+              <button
+                type="button"
+                className="auth-provider-btn"
+                onClick={() => { /* TODO: wire GitHub OAuth */ }}
+                aria-label="Sign in with GitHub"
+              >
+                <ProviderIcon provider="github" />
+                <span>GitHub</span>
+              </button>
+              <button
+                type="button"
+                className="auth-provider-btn"
+                onClick={() => { /* TODO: wire Google OAuth */ }}
+                aria-label="Sign in with Google"
+              >
+                <ProviderIcon provider="google" />
+                <span>Google</span>
+              </button>
+              <button
+                type="button"
+                className="auth-provider-btn"
+                onClick={() => { /* TODO: wire phone OTP */ }}
+                aria-label="Sign in with phone"
+              >
+                <ProviderIcon provider="phone" />
+                <span>Phone</span>
+              </button>
+            </div>
+
+            <div className="auth-divider" role="separator" aria-label="or">
+              <span>or</span>
+            </div>
 
             {isSignUp && (
               <div className="auth-field">

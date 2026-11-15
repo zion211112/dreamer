@@ -2756,10 +2756,27 @@
     width: 100%;
     max-width: 420px;
     padding: var(--space-6) var(--space-5);
-    background: var(--bg-elev);
+    background: rgba(253, 252, 248, 0.82);
+    backdrop-filter: blur(20px) saturate(1.05);
+    -webkit-backdrop-filter: blur(20px) saturate(1.05);
     border: 1px solid var(--hairline);
     border-radius: var(--radius-4);
-    box-shadow: 0 8px 32px rgba(41, 43, 37, 0.06);
+    box-shadow:
+      0 1px 0 0 rgba(41, 43, 37, 0.08),
+      0 8px 32px rgba(41, 43, 37, 0.06);
+    position: relative;
+    overflow: hidden;
+  }
+  /* Neobrutalist accent stripe on left edge */
+  .auth-form-panel::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--olive, #5a8a6a);
+    border-radius: var(--radius-4) 0 0 var(--radius-4);
   }
   .auth-heading {
     margin-bottom: var(--space-4);
@@ -2817,6 +2834,34 @@
     flex-direction: column;
     gap: var(--space-1);
   }
+  .auth-field input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1.5px solid var(--hairline);
+    border-radius: var(--radius-2);
+    background: var(--bg-elev);
+    color: var(--fg);
+    font: 400 var(--step-0) var(--sans);
+    outline: none;
+    transition:
+      border-color var(--fast),
+      box-shadow var(--fast),
+      background var(--fast);
+  }
+  .auth-field input::placeholder {
+    color: var(--dim);
+    font-size: var(--step--1);
+  }
+  .auth-field input:hover {
+    border-color: var(--line-strong, rgba(41, 43, 37, 0.18));
+  }
+  .auth-field input:focus {
+    border-color: var(--state-canon);
+    box-shadow: 0 0 0 3px var(--state-canon-wash, rgba(90, 138, 106, 0.15));
+  }
+  .auth-field input[aria-invalid="true"] {
+    border-color: var(--state-risk, var(--clay));
+  }
   .auth-field label {
     font: 500 var(--step--2) var(--mono);
     letter-spacing: 0.06em;
@@ -2866,6 +2911,88 @@
   .auth-submit {
     width: 100%;
     margin-top: var(--space-1);
+  }
+
+  /* ── Provider buttons: glass neobrutalist fusion ─────────────
+     Frosted-glass surface (backdrop-filter) with a 2px solid
+     offset shadow (neobrutalist accent). No rounded-corner
+     radius beyond var(--radius-2). */
+  .auth-providers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+  .auth-provider-btn {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 10px var(--space-1) 8px;
+    border: 1.5px solid var(--hairline);
+    border-radius: var(--radius-2);
+    background: var(--bg-elev);
+    backdrop-filter: blur(12px) saturate(1.1);
+    -webkit-backdrop-filter: blur(12px) saturate(1.1);
+    box-shadow:
+      0 2px 0 0 var(--fg),
+      0 4px 12px rgba(41, 43, 37, 0.08);
+    cursor: pointer;
+    transition:
+      transform var(--fast),
+      box-shadow var(--fast),
+      border-color var(--fast);
+    outline: none;
+  }
+  .auth-provider-btn:hover {
+    transform: translateY(-1px);
+    border-color: var(--line-strong, rgba(41, 43, 37, 0.18));
+    box-shadow:
+      0 3px 0 0 var(--fg),
+      0 8px 20px rgba(41, 43, 37, 0.1);
+  }
+  .auth-provider-btn:active {
+    transform: translateY(0);
+    box-shadow:
+      0 1px 0 0 var(--fg),
+      0 2px 6px rgba(41, 43, 37, 0.08);
+  }
+  .auth-provider-btn:focus-visible {
+    outline: 2px solid var(--state-canon, var(--olive, #5a8a6a));
+    outline-offset: 2px;
+  }
+  .auth-provider-btn span {
+    font: 500 var(--step--2, 0.6875rem) / 1 var(--mono, monospace);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .auth-provider-svg {
+    color: var(--fg);
+    flex-shrink: 0;
+  }
+
+  .auth-divider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: var(--space-2) 0;
+  }
+  .auth-divider::before,
+  .auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--hairline);
+  }
+  .auth-divider span {
+    font: 500 var(--step--2, 0.6875rem) / 1 var(--mono, monospace);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 var(--space-1);
   }
 
   @media (max-width: 480px) {
