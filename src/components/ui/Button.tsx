@@ -9,9 +9,6 @@ const button = cva(
       variant: {
         primary: 'bg-state-canon border-state-canon text-fg-strong hover:bg-state-canon-wash',
         ghost: 'bg-transparent border-border text-muted hover:bg-bg-subtle',
-        steel: 'bg-water border-water text-fg hover:bg-water-pale',
-        brass: 'bg-warn border-warn text-fg-strong hover:bg-warn-bg',
-        oxide: 'bg-danger border-danger text-fg hover:bg-danger-pale',
       },
       size: {
         sm: 'px-space-1 py-space-1 text-step--2',

@@ -15,7 +15,6 @@ import {
   type GateState,
   GATE_LABELS,
 } from '@/modules/workbench/data';
-import '../styles/kemetos1.css';
 
 function GateChip({ gate }: { gate: GateState }) {
   const label = GATE_LABELS[gate];

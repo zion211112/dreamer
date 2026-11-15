@@ -4,40 +4,24 @@ import { Input } from '@/components/ui/Input';
 
 type Provenance = 'verified' | 'firsthand' | 'community' | 'expert' | 'proposal';
 
-const PROVENANCE: Record<Provenance, { label: string; accent: string; textClass: string }> = {
-  verified: { label: 'Verified evidence', accent: 'state-canon', textClass: 'text-state-canon' },
-  firsthand: { label: 'First-hand experience', accent: 'sage', textClass: 'text-sage' },
-  community: { label: 'Community contribution', accent: 'lilac', textClass: 'text-lilac' },
-  expert: { label: 'Expert interpretation', accent: 'forest', textClass: 'text-forest' },
-  proposal: { label: 'Proposal', accent: 'peach', textClass: 'text-peach' },
+const PROVENANCE: Record<Provenance, { label: string; color: string }> = {
+  verified:   { label: 'Verified',    color: 'var(--state-canon)' },
+  firsthand:  { label: 'First-hand',  color: 'var(--sage)' },
+  community:  { label: 'Community',   color: 'var(--lilac)' },
+  expert:     { label: 'Expert',      color: 'var(--forest)' },
+  proposal:   { label: 'Proposal',    color: 'var(--peach)' },
 };
 
-interface PathCard {
+interface PathLink {
   id: string;
-  title: string;
-  provenance: Provenance;
-  icon: string;
+  label: string;
 }
 
-const PATHS: PathCard[] = [
-  { id: 'discover', title: 'Discover', provenance: 'verified', icon: '*' },
-  { id: 'guides', title: 'Find guides', provenance: 'firsthand', icon: '>' },
-  { id: 'community', title: 'Explore contributions', provenance: 'community', icon: 'x' },
-  { id: 'undertakings', title: 'Learn from others', provenance: 'expert', icon: '=' },
-  { id: 'share', title: 'Share', provenance: 'proposal', icon: '>' },
-];
-
-interface OutcomeCard {
-  icon: string;
-  title: string;
-}
-
-const OUTCOMES: OutcomeCard[] = [
-  { icon: '⌘', title: 'Save' },
-  { icon: '>', title: 'Create Brief' },
-  { icon: 'x', title: 'Collect' },
-  { icon: '*', title: 'Connect with contributor' },
-  { icon: '=', title: 'Carry into Workbench' },
+const PATHS: PathLink[] = [
+  { id: 'discover',  label: 'Discover' },
+  { id: 'guides',    label: 'Find guides' },
+  { id: 'community', label: 'Explore contributions' },
+  { id: 'share',     label: 'Share' },
 ];
 
 interface CommonsArrivalProps {
@@ -57,20 +41,23 @@ export function CommonsArrival({ onExplore, onOpenPath }: CommonsArrivalProps) {
     <section className="commons-arrival" data-module="commons">
       <header className="commons-arrival-head">
         <div className="commons-arrival-eyebrow">Commons</div>
-        <h1 className="commons-arrival-title">What are you trying to understand or make possible?</h1>
+        <h1 className="commons-arrival-title">
+          What are you trying to make possible?
+        </h1>
+        <p className="commons-arrival-sub">
+          The commons holds observations, offers, resources, and decisions.
+          Search it, or pick a path.
+        </p>
       </header>
 
       <form className="commons-arrival-invitation" onSubmit={handleExplore} noValidate>
-        <label className="commons-arrival-label" htmlFor="commons-intention">
-          What are you trying to figure out?
-        </label>
         <div className="commons-arrival-input-group">
           <Input
             id="commons-intention"
             type="text"
             value={query}
-            onInput={event => setQuery((event.target as HTMLInputElement).value)}
-            placeholder="e.g. How do small cooperatives organise produce collection and payments?"
+            onInput={(event) => setQuery((event.target as HTMLInputElement).value)}
+            placeholder="e.g. How do small cooperatives organise produce collection?"
             className="commons-arrival-input"
           />
           <Button variant="primary" size="lg" type="submit">
@@ -79,75 +66,32 @@ export function CommonsArrival({ onExplore, onOpenPath }: CommonsArrivalProps) {
         </div>
       </form>
 
-      <section className="commons-arrival-paths">
-        <div className="commons-arrival-paths-grid">
-          {PATHS.map(path => (
-            <CommonsPathCard key={path.id} path={path} onClick={() => onOpenPath(path.id)} />
-          ))}
-        </div>
-      </section>
+      <nav className="commons-arrival-paths" aria-label="Commons paths">
+        {PATHS.map((p) => (
+          <button
+            key={p.id}
+            type="button"
+            className="commons-arrival-path-link"
+            onClick={() => onOpenPath(p.id)}
+          >
+            {p.label}
+            <span className="commons-arrival-path-arrow" aria-hidden="true">→</span>
+          </button>
+        ))}
+      </nav>
 
-      <section className="commons-arrival-provenance">
-        <div className="commons-arrival-provenance-grid">
-          {Object.entries(PROVENANCE).map(([key, item]) => (
-            <CommonsProvenanceBadge
-              key={key}
-              label={item.label}
-              accent={item.accent}
-              textClass={item.textClass}
-            />
-          ))}
-        </div>
-      </section>
-
-      <section className="commons-arrival-outcomes">
-        <div className="commons-arrival-outcomes-grid">
-          {OUTCOMES.map((outcome) => (
-            <CommonsOutcomeCard key={outcome.title} outcome={outcome} />
-          ))}
-        </div>
-      </section>
+      <div className="commons-arrival-provenance" aria-label="Provenance types">
+        {(Object.keys(PROVENANCE) as Provenance[]).map((key) => (
+          <span
+            key={key}
+            className="commons-arrival-prov"
+            style={{ color: PROVENANCE[key].color }}
+          >
+            <span className="commons-arrival-prov-dot" style={{ background: PROVENANCE[key].color }} />
+            {PROVENANCE[key].label}
+          </span>
+        ))}
+      </div>
     </section>
-  );
-}
-
-function CommonsPathCard({ path, onClick }: { path: PathCard; onClick: () => void }) {
-  return (
-    <article
-      className="commons-arrival-path-card"
-      onClick={onClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={event => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          onClick();
-        }
-      }}
-    >
-      <div className="commons-arrival-path-icon">{path.icon}</div>
-      <div className="commons-arrival-path-copy">
-        <h3 className="commons-arrival-path-title">{path.title}</h3>
-      </div>
-    </article>
-  );
-}
-
-function CommonsProvenanceBadge({ label, accent, textClass }: { label: string; accent: string; textClass: string }) {
-  return (
-    <span className={`commons-arrival-provenance-badge ${textClass}`} style={{ color: `var(--color-${accent})` }}>
-      {label}
-    </span>
-  );
-}
-
-function CommonsOutcomeCard({ outcome }: { outcome: OutcomeCard }) {
-  return (
-    <article className="commons-arrival-outcome-card">
-      <div className="commons-arrival-outcome-icon">{outcome.icon}</div>
-      <div className="commons-arrival-outcome-copy">
-        <h3 className="commons-arrival-outcome-title">{outcome.title}</h3>
-      </div>
-    </article>
   );
 }

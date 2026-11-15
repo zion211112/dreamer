@@ -74,6 +74,10 @@ export function WorkspaceShell({
   const [dockCollapsed, setDockCollapsed] = useState(false);
   const [skin, setSkin] = useState<SkinMode>(readSkinPreference);
   const moduleLabel = getStudioContextLabel(currentContext);
+  const subView = currentContext.includes(':')
+    ? currentContext.split(':')[1]
+    : null;
+  const subViewLabel = subView ? subView.replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase()) : null;
   const environmentLabel = isDemoMode ? 'Local demo' : 'Configured';
 
   useEffect(() => {
@@ -156,6 +160,7 @@ export function WorkspaceShell({
       <footer className="field-studio-statusbar" aria-label="Workspace status">
         <span className="field-studio-statusbar-module">
           <strong>{moduleLabel}</strong>
+          {subViewLabel && <span className="field-studio-statusbar-subview">{subViewLabel}</span>}
           <span className="field-studio-statusbar-module-context">APT-LABS</span>
         </span>
         <span className="field-studio-statusbar-notice">

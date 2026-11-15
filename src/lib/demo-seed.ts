@@ -219,11 +219,15 @@ export async function seedOperationalData(): Promise<{ pilots: number; rollEntri
     attestations += sbts.length;
   }
 
-  if (typeof window !== 'undefined') {
-    (window as unknown as { seedAPTLabsDemo?: typeof seedOperationalData }).seedAPTLabsDemo = seedOperationalData;
-  }
-
   return { pilots: OPERATIONAL_PILOTS.length, rollEntries, attestations };
 }
 
 export { OPERATIONAL_PILOTS };
+
+// Expose the seeder on window so it can be run from the browser console
+// (documented in README / PRODUCT / AGENTS / architecture / APT-LABS-SYSTEM).
+// This is a module-load side effect: importing demo-seed from main.tsx makes
+// `window.seedAPTLabsDemo()` available without bundling the call itself.
+if (typeof window !== 'undefined') {
+  (window as unknown as { seedAPTLabsDemo?: typeof seedOperationalData }).seedAPTLabsDemo = seedOperationalData;
+}

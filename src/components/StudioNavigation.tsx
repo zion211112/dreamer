@@ -275,15 +275,14 @@ export function StudioNavigation({
         </span>
         {onToggleSkin && (
           <button
-            aria-label={skin === 'light' ? 'Switch to observatory skin' : 'Switch to light skin'}
+            aria-label={skin === 'light' ? 'Switch to observatory (dark) skin' : 'Switch to light skin'}
             aria-pressed={skin === 'observatory'}
             className="studio-skin-toggle"
             onClick={onToggleSkin}
-            title={skin === 'light' ? 'Switch to observatory skin' : 'Switch to light skin'}
+            title={skin === 'light' ? 'Switch to observatory (dark) skin' : 'Switch to light skin'}
             type="button"
           >
             {skin === 'light' ? <Sun /> : <Moon />}
-            {skin === 'light' ? 'Observe' : 'Light'}
           </button>
         )}
         <span className="studio-topbar-spacer" />

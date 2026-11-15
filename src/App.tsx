@@ -14,7 +14,6 @@ import { BenbenOS } from './modules/benben-os';
 import { WorkbenchApp } from './modules/workbench';
 import { Kemetos1App } from './modules/kemetos1';
 import { DesignLab } from './pages/DesignLab';
-import './modules/benben-os/styles/benben.css';
 
 export function App() {
   return (

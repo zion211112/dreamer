@@ -33,7 +33,7 @@ export function Intelligence() {
         </section>
 
         <section className="intelligence-panels" aria-label="Intelligence capabilities">
-          <article className="intelligence-panel">
+          <article className="intelligence-panel intelligence-panel--matching">
             <header className="intelligence-card-head">
               <span className="intelligence-card-index">02</span>
               <h2 className="intelligence-card-title">Matching</h2>
@@ -44,7 +44,7 @@ export function Intelligence() {
               not an assignment.
             </p>
           </article>
-          <article className="intelligence-panel">
+          <article className="intelligence-panel intelligence-panel--forecasting">
             <header className="intelligence-card-head">
               <span className="intelligence-card-index">03</span>
               <h2 className="intelligence-card-title">Forecasting</h2>
@@ -54,14 +54,15 @@ export function Intelligence() {
               and attested outcomes. A forecast is a planning input, not a commitment.
             </p>
           </article>
-          <article className="intelligence-panel">
+          <article className="intelligence-panel intelligence-panel--analytics">
             <header className="intelligence-card-head">
               <span className="intelligence-card-index">04</span>
-              <h2 className="intelligence-card-title">Analytics</h2>
+              <h2 className="intelligence-card-title">Analytics · research</h2>
             </header>
             <p className="intelligence-card-body">
-              Reads attestation, contribution, and instrument state across undertakings. Surfaces
-              gaps and patterns without reducing a participant to a single score.
+              Research notes on reading attestation, contribution, and instrument state
+              across undertakings — surfacing gaps and patterns without reducing a
+              participant to a single score. No live charts are rendered yet.
             </p>
           </article>
         </section>

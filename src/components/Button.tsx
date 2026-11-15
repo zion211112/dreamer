@@ -3,7 +3,7 @@ import { Button as BaseButton } from '@/components/ui/Button';
 
 interface ButtonProps {
   children: ComponentChildren;
-  variant?: 'primary' | 'ghost' | 'steel' | 'brass' | 'oxide';
+  variant?: 'primary' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   onClick?: () => void;

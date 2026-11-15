@@ -1,71 +1,80 @@
 import { Link } from 'wouter';
 import { PageHead } from '@/components/PageHead';
-import { PILOTS, homeMetrics } from '../data';
+import { PILOTS, homeMetrics, workItemsForPilot } from '../data';
 
 export function Workbench() {
-  const metrics = homeMetrics();
+  const m = homeMetrics();
   return (
     <div className="wb-root">
       <div className="wb-page">
         <PageHead
           eyebrow="APT-LABS / Workbench"
           title="Workbench"
-          subtitle="Five pilot lanes. Published rates in KES; local stewardship, work stays in the community."
+          subtitle="Five lanes. Real rates, real stewards, real work. The bench coordinates — never extracts."
         />
 
         <div className="wb-metrics">
           <div className="wb-metric">
-            <span className="wb-metric-label">Published Lanes</span>
-            <span className="wb-metric-value wb-metric-value--canon">
-              {metrics.publishedLanes}
-            </span>
+            <span className="wb-metric-label">Lanes live</span>
+            <span className="wb-metric-value wb-metric-value--canon">{m.publishedLanes}</span>
           </div>
-          <div className="wb-metric">
-            <span className="wb-metric-label">Total Capital Committed</span>
+          <div className="wb-metric wb-metric--hero">
+            <span className="wb-metric-label">Capital on the bench</span>
             <span className="wb-metric-value wb-metric-value--proposed">
-              KES {metrics.totalCapital.toLocaleString('en-KE')}
+              KES&nbsp;{m.totalCapital.toLocaleString('en-KE')}
             </span>
           </div>
           <div className="wb-metric">
-            <span className="wb-metric-label">Active Undertakings</span>
-            <span className="wb-metric-value wb-metric-value--caution">
-              {metrics.activeCount}
-            </span>
+            <span className="wb-metric-label">Undertakings open</span>
+            <span className="wb-metric-value wb-metric-value--caution">{m.activeCount}</span>
           </div>
         </div>
 
         <section>
-          <h2 className="wb-section-title">Pilot lanes</h2>
+          <h2 className="wb-section-title">Lanes</h2>
           <div className="wb-paths">
-            {PILOTS.map((pilot) => (
-              <Link
-                key={pilot.key}
-                href={pilot.href}
-                className="wb-path-row"
-                aria-label={pilot.label}
-              >
-                <div>
-                  <h3 className="wb-path-label">{pilot.label}</h3>
-                  <p className="wb-path-character">{pilot.character}</p>
-                </div>
-                <span className="wb-path-meta">{pilot.location}</span>
-                <span className={`wb-path-status ${pilot.status === 'published' ? 'wb-path-status--published' : 'wb-path-status--illustrative'}`}>
-                  {pilot.status === 'published' ? 'Published' : 'Illustrative'}
-                </span>
-                <span className="wb-path-action">
-                  {pilot.status === 'published' ? 'Open lane' : 'Register pilot'}
-                </span>
-              </Link>
-            ))}
+            {PILOTS.map((pilot) => {
+              const items = workItemsForPilot(pilot.key);
+              const open = items.filter((w) => w.gate !== 'accepted');
+              const totalCap = open.reduce((s, w) => s + w.capital.financial, 0);
+              const hasLive = open.length > 0;
+              const isIllustrative = pilot.status === 'illustrative';
+
+              return (
+                <Link
+                  key={pilot.key}
+                  href={pilot.href}
+                  className={`wb-path-row ${isIllustrative ? 'wb-path-row--open' : ''}`}
+                  aria-label={pilot.label}
+                >
+                  <div className="wb-path-main">
+                    <h3 className="wb-path-label">{pilot.label}</h3>
+                    <p className="wb-path-character">
+                      {pilot.character} · {pilot.location}
+                      {hasLive && (
+                        <span className="wb-path-live">
+                          {' '}· {open.length} open{totalCap > 0 && ` · KES ${totalCap.toLocaleString('en-KE')}`}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                  <span
+                    className={`wb-path-status ${isIllustrative ? 'wb-path-status--illustrative' : 'wb-path-status--published'}`}
+                  >
+                    {isIllustrative ? 'Register' : 'Live'}
+                  </span>
+                  <span className="wb-path-action">
+                    {isIllustrative ? 'Open slot →' : 'Enter →'}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </section>
 
-        <section className="wb-terms">
-          <p className="wb-terms-line">
-            Published rates in KES before work is claimed. Stewards set their own terms;
-            the workbench coordinates delivery, never extracts.
-          </p>
-        </section>
+        <p className="wb-terms-line">
+          Rates published before work is claimed. Stewards set terms; the bench keeps the record, never the surplus.
+        </p>
       </div>
     </div>
   );

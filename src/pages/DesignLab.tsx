@@ -44,9 +44,6 @@ export function DesignLab() {
         <div className="flex flex-wrap gap-space-3">
           <Button variant="primary">Primary</Button>
           <Button variant="ghost">Ghost</Button>
-          <Button variant="steel">Steel</Button>
-          <Button variant="brass">Brass</Button>
-          <Button variant="oxide">Oxide</Button>
         </div>
         <div className="flex flex-wrap gap-space-3 mt-space-3">
           <Button variant="primary" size="sm">
