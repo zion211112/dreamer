@@ -12,14 +12,14 @@ interface WorkspaceQuickSearchProps {
 export function WorkspaceQuickSearch({ destinations }: WorkspaceQuickSearchProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [highlighted, setHighlighted] = useState(0);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const dialogRef = useRef<HTMLDialogElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const results = filterWorkspaceDestinations(query, destinations);
 
   useEffect(() => {
-    const dialog = dialogRef.current;
+    const dialog = document.getElementById('workspace-quick-search') as HTMLDialogElement | null;
     if (!dialog) return;
 
     if (open && !dialog.open) {
@@ -35,6 +35,7 @@ export function WorkspaceQuickSearch({ destinations }: WorkspaceQuickSearchProps
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
         setQuery('');
+        setHighlighted(0);
         setOpen(true);
       }
     }
@@ -42,6 +43,34 @@ export function WorkspaceQuickSearch({ destinations }: WorkspaceQuickSearchProps
     window.addEventListener('keydown', handleShortcut);
     return () => window.removeEventListener('keydown', handleShortcut);
   }, []);
+
+  useEffect(() => {
+    function handleKeyboard(event: KeyboardEvent) {
+      if (!open) return;
+
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setOpen(false);
+      } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        setHighlighted(prev => (prev + 1) % Math.max(results.length, 1));
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        setHighlighted(prev => (prev - 1 + Math.max(results.length, 1)) % Math.max(results.length, 1));
+      } else if (event.key === 'Enter') {
+        event.preventDefault();
+        const active = results[highlighted];
+        if (active) {
+          setOpen(false);
+          const link = document.querySelector(`a[href="${active.href}"]`) as HTMLAnchorElement | null;
+          link?.click();
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyboard);
+    return () => window.removeEventListener('keydown', handleKeyboard);
+  }, [open, results, highlighted]);
 
   function close() {
     setOpen(false);
@@ -58,6 +87,7 @@ export function WorkspaceQuickSearch({ destinations }: WorkspaceQuickSearchProps
         className="studio-search-trigger"
         onClick={() => {
           setQuery('');
+          setHighlighted(0);
           setOpen(true);
         }}
         ref={triggerRef}
@@ -88,28 +118,27 @@ export function WorkspaceQuickSearch({ destinations }: WorkspaceQuickSearchProps
             close();
           }
         }}
-        ref={dialogRef}
       >
         <div className="workspace-quick-search-panel">
           <header className="workspace-quick-search-heading">
             <div>
-              <span className="workspace-quick-search-eyebrow">WORKSPACE NAVIGATION</span>
-              <h2 id="workspace-quick-search-title">Find a module or task</h2>
+              <span className="workspace-quick-search-eyebrow">Workspace navigation</span>
+              <h2 id="workspace-quick-search-title">Find a module</h2>
             </div>
             <button aria-label="Close search" className="workspace-quick-search-close" onClick={close} type="button">
               <span aria-hidden="true">×</span>
             </button>
           </header>
           <label className="workspace-quick-search-field">
-            <span className="visually-hidden">Search implemented modules and tasks</span>
+            <span className="visually-hidden">Search implemented modules</span>
             <svg aria-hidden="true" viewBox="0 0 20 20">
               <circle cx="8.5" cy="8.5" r="5.5" />
               <path d="m12.5 12.5 4 4" />
             </svg>
             <input
               autoComplete="off"
-              onInput={event => setQuery(event.currentTarget.value)}
-              placeholder="Search modules and tasks"
+              onInput={event => { setQuery(event.currentTarget.value); setHighlighted(0); }}
+              placeholder="Search modules"
               ref={inputRef}
               type="search"
               value={query}
@@ -119,10 +148,15 @@ export function WorkspaceQuickSearch({ destinations }: WorkspaceQuickSearchProps
           <nav aria-label="Search destinations" className="workspace-quick-search-results">
             {results.length ? (
               <ul>
-                {results.map(destination => (
+                {results.map((destination, index) => (
                   <li key={destination.id}>
-                    <Link href={destination.href} onClick={close}>
-                      <span>
+                    <Link
+                      aria-current={index === highlighted ? 'page' : undefined}
+                      className={`workspace-quick-search-result${index === highlighted ? ' is-active' : ''}`}
+                      href={destination.href}
+                      onClick={close}
+                    >
+                      <span className="workspace-quick-search-result-label">
                         <strong>{destination.label}</strong>
                         <small>{destination.module}</small>
                       </span>
@@ -132,7 +166,7 @@ export function WorkspaceQuickSearch({ destinations }: WorkspaceQuickSearchProps
                 ))}
               </ul>
             ) : (
-              <p role="status">No modules or tasks match “{query.trim()}”.</p>
+              <p role="status">No modules match “{query.trim()}”.</p>
             )}
           </nav>
           <p className="workspace-quick-search-note">Search opens implemented views; records stay within their module.</p>

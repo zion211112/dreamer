@@ -18,43 +18,43 @@ function getInitials(name: string): string {
   return name.trim().split(/\s+/).slice(0, 2).map(part => part[0] ?? '').join('').toUpperCase() || '??';
 }
 
-function SectionHeading({ children, detail }: { children: string; detail?: string }) {
-  return (
-    <header className="identity-section-heading">
-      <h3>{children}</h3>
-      {detail && <span>{detail}</span>}
-    </header>
-  );
-}
-
 export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabinetProps) {
   const { profile, user, signOut: supabaseSignOut } = useAuth();
   const [, navigate] = useLocation();
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const [network, setNetwork] = useState<PeopleNetworkRecord | null>(null);
   const [loadError, setLoadError] = useState('');
   const [actionStatus, setActionStatus] = useState('');
 
   useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
+    const panel = panelRef.current;
+    if (!panel) return;
 
-    if (open && !dialog.open) {
+    if (open) {
       try {
         setLoadError('');
         setActionStatus('');
         const nextNetwork = readPeopleNetworkRecord();
         setNetwork(nextNetwork);
-        dialog.showModal();
+        panel.scrollTop = 0;
       } catch (error) {
         setLoadError(error instanceof Error ? error.message : 'Local identity records could not be read.');
         setNetwork(null);
-        dialog.showModal();
       }
-    } else if (!open && dialog.open) {
-      dialog.close();
     }
   }, [open]);
+
+  useEffect(() => {
+    function handleKey(event: KeyboardEvent) {
+      if (open && event.key === 'Escape') {
+        event.preventDefault();
+        onClose();
+      }
+    }
+
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, [open, onClose]);
 
   const profileName = profile?.display_name?.trim() || '';
   const networkProfile = profileName ? network?.entities.find(entity => entity.type === 'person' && entity.name === profileName) ?? null : null;
@@ -104,61 +104,52 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
   }
 
   return (
-    <dialog
+    <aside
+      ref={panelRef}
       aria-labelledby="identity-cabinet-title"
-      className="identity-cabinet"
-      id="identity-cabinet"
-      onKeyDown={event => {
-        if (event.key === 'Escape') {
-          event.preventDefault();
-          onClose();
-        }
-      }}
-      onCancel={event => {
-        event.preventDefault();
-        onClose();
-      }}
-      onClose={onClose}
+      aria-modal="true"
+      className={`identity-panel${open ? ' is-open' : ''}`}
+      id="identity-panel"
       onClick={event => {
         if (event.target === event.currentTarget) onClose();
       }}
-      ref={dialogRef}
     >
-      <div className="identity-cabinet-panel">
-        <header className="identity-cabinet-header">
+      <div className="identity-overlay" onClick={onClose} />
+      <div className="identity-panel-wrap">
+        <header className="identity-panel-header">
           <div>
-            <span className="identity-eyebrow">PERSON · PROOF · AUTHORITY</span>
+            <span className="identity-eyebrow">Person · proof · authority</span>
             <h2 id="identity-cabinet-title">Identity</h2>
-            <p className="identity-cabinet-description">A local browser profile and its records.</p>
+            <p className="identity-panel-description">A local browser profile and its records.</p>
           </div>
-          <button aria-label="Close identity cabinet" className="identity-close-button" onClick={onClose} type="button">×</button>
+          <button aria-label="Close identity panel" className="identity-close-button" onClick={onClose} type="button">×</button>
         </header>
 
         {loadError ? (
-          <div className="identity-cabinet-body">
+          <div className="identity-panel-body">
             <p className="identity-error" role="alert">{loadError}</p>
           </div>
         ) : (
-          <div className="identity-cabinet-body">
+          <div className="identity-panel-body">
             <section className="identity-profile-card">
               <div className="identity-profile-summary">
                 <span aria-hidden="true" className="identity-avatar">{getInitials(profileName || '?')}</span>
                 <div>
                   <h3>{profileName || 'Unnamed profile'}</h3>
-                  <span className="identity-source-label">LOCAL BROWSER PROFILE</span>
+                  <span className="identity-source-label">Local browser profile</span>
                 </div>
               </div>
               <div className="identity-session-grid">
-                <div>
+                <div className="identity-session-item">
                   <span>Session</span>
                   <strong>{profile ? 'Signed in' : 'Not signed in'}</strong>
                 </div>
-                <div>
+                <div className="identity-session-item">
                   <span>Studio context</span>
                   <strong>{contextLabel}</strong>
                 </div>
                 {user?.email && (
-                  <div className="identity-session-email">
+                  <div className="identity-session-item identity-session-email">
                     <span>Email</span>
                     <strong>{user.email}</strong>
                   </div>
@@ -166,21 +157,25 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
               </div>
             </section>
 
-            <div className="identity-cabinet-content">
+            <div className="identity-panel-content">
               <section className="identity-section">
-                <SectionHeading detail="SELF-DESCRIBED">Capabilities</SectionHeading>
+                <header className="identity-section-head">
+                  <span className="identity-section-kicker">Self-described</span>
+                  <h4 className="identity-section-title">Capabilities</h4>
+                </header>
                 {networkProfile?.capabilities.length ? (
                   <div className="identity-capability-list">
-                    {networkProfile.capabilities.map(capability => <span key={capability}>{capability}</span>)}
+                    {networkProfile.capabilities.map(capability => <span key={capability} className="identity-chip">{capability}</span>)}
                   </div>
                 ) : <p className="identity-muted">No capabilities are recorded for this local profile.</p>}
                 {networkProfile?.role && <p className="identity-provenance">Profile role: {networkProfile.role}</p>}
               </section>
 
               <section className="identity-section">
-                <SectionHeading detail={localEvidence.length ? `${localEvidence.length.toString().padStart(2, '0')} profile records` : ''}>
-                  Credentials & claims
-                </SectionHeading>
+                <header className="identity-section-head">
+                  <span className="identity-section-kicker">{localEvidence.length.toString().padStart(2, '0')} profile records</span>
+                  <h4 className="identity-section-title">Credentials & claims</h4>
+                </header>
                 {localEvidence.length ? (
                   <div className="identity-evidence-list">
                     {localEvidence.map(evidence => (
@@ -191,7 +186,7 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
                           <p>{evidence.summary}</p>
                           <span>{evidence.context ?? 'Profile record'}</span>
                         </div>
-                        <span className="identity-reported-tag">REPORTED</span>
+                        <span className="identity-reported-tag">Reported</span>
                       </article>
                     ))}
                   </div>
@@ -201,7 +196,10 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
               </section>
 
               <section className="identity-section">
-                <SectionHeading>Memberships & authority</SectionHeading>
+                <header className="identity-section-head">
+                  <span className="identity-section-kicker">Local people record</span>
+                  <h4 className="identity-section-title">Memberships & authority</h4>
+                </header>
                 {networkLinks.length ? (
                   <ul className="identity-network-links">
                     {networkLinks.map(({ relationship, entity }) => (
@@ -215,18 +213,25 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
               </section>
 
               <section className="identity-section identity-portability">
-                <SectionHeading>Portability & session</SectionHeading>
+                <header className="identity-section-head">
+                  <span className="identity-section-kicker">Portability & session</span>
+                  <h4 className="identity-section-title">Actions</h4>
+                </header>
                 <div className="identity-action-grid">
-                  <button onClick={() => { onClose(); navigate('/workspace/network/people'); }} type="button">View People profile</button>
-                  <button onClick={exportRecord} type="button">Export People record</button>
+                  <button onClick={() => { onClose(); navigate('/workspace/network/people'); }} type="button" className="identity-btn identity-btn--ghost">
+                    View People profile
+                  </button>
+                  <button onClick={exportRecord} type="button" className="identity-btn identity-btn--ghost">
+                    Export People record
+                  </button>
                 </div>
                 {actionStatus && <p className="identity-action-status" role="status">{actionStatus}</p>}
-                <button className="identity-sign-out" onClick={signOut} type="button">End session</button>
+                <button className="identity-btn identity-btn--danger" onClick={signOut} type="button">End session</button>
               </section>
             </div>
           </div>
         )}
       </div>
-    </dialog>
+    </aside>
   );
 }
