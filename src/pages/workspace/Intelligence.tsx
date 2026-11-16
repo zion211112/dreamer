@@ -1,7 +1,48 @@
+import { useEffect, useState } from 'preact/hooks';
 import { PageHead } from '../../components/PageHead';
 import { WorkspaceLayout } from './WorkspaceLayout';
+import { Button } from '@/components/ui/Button';
+import { buildRecommendations, matchParticipants, type Recommendation, type MatchCandidate } from '@/lib/intelligence';
 
 export function Intelligence() {
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [matches, setMatches] = useState<MatchCandidate[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const recs = await buildRecommendations();
+        setRecommendations(recs);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Recommendations could not be loaded.');
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  async function handleMatch() {
+    setLoading(true);
+    setError('');
+    try {
+      const result = await matchParticipants({
+        undertakingId: 'undertaking-match-demo',
+        undertakingTitle: 'Sample undertaking',
+        requiredCapability: 'Fabrication',
+        pilot: 'minihydro' as const,
+        actor: 'steward',
+      });
+      setMatches(result);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Matching could not be run.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <WorkspaceLayout currentContext="intelligence">
       <div className="intelligence-page">
@@ -12,6 +53,8 @@ export function Intelligence() {
             subtitle="Agents, matching, forecasting, analytics. The engine assesses and recommends; the authorized party decides. No universal reputation score."
           />
         </div>
+
+        {error && <p className="intelligence-error" role="alert">{error}</p>}
 
         <section className="intelligence-role" aria-labelledby="int-role-title">
           <article className="intelligence-role-card">
@@ -43,7 +86,35 @@ export function Intelligence() {
               claims, scoped credentials, and demonstrated capability. A match is a suggestion,
               not an assignment.
             </p>
+            <div className="intelligence-matching-actions">
+              <Button
+                onClick={handleMatch}
+                disabled={loading}
+                size="sm"
+              >
+                {loading ? 'Matching…' : 'Run participant match'}
+              </Button>
+              {matches.length > 0 && (
+                <div className="intelligence-match-list">
+                  <h4 className="intelligence-match-title">Matched participants (suggestions only)</h4>
+                  <ul className="intelligence-match-items">
+                    {matches.map((m) => (
+                      <li key={m.entityId} className="intelligence-match-item">
+                        <span className="intelligence-match-name">{m.name}</span>
+                        <span className="intelligence-match-role">{m.role}</span>
+                        <span className="intelligence-match-score">{m.score}</span>
+                        <span className="intelligence-match-reason">{m.reason}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="intelligence-match-note">
+                    A match is a suggestion, not an assignment. The authorized party decides.
+                  </p>
+                </div>
+              )}
+            </div>
           </article>
+
           <article className="intelligence-panel intelligence-panel--forecasting">
             <header className="intelligence-card-head">
               <span className="intelligence-card-index">03</span>
@@ -54,6 +125,7 @@ export function Intelligence() {
               and attested outcomes. A forecast is a planning input, not a commitment.
             </p>
           </article>
+
           <article className="intelligence-panel intelligence-panel--analytics">
             <header className="intelligence-card-head">
               <span className="intelligence-card-index">04</span>
@@ -65,6 +137,33 @@ export function Intelligence() {
               participant to a single score. No live charts are rendered yet.
             </p>
           </article>
+        </section>
+
+        <section className="intelligence-recommendations" aria-label="Recommendations">
+          <h2 className="intelligence-section-title">Recommendations</h2>
+          {loading && <p className="intelligence-loading">Computing recommendations…</p>}
+          {recommendations.length === 0 && !loading && (
+            <p className="intelligence-empty">No active recommendations at this time.</p>
+          )}
+          {recommendations.map((rec) => (
+            <article key={rec.id} className="intelligence-recommendation">
+              <h3 className="intelligence-rec-title">{rec.title}</h3>
+              <p className="intelligence-rec-what"><strong>What:</strong> {rec.what}</p>
+              <p className="intelligence-rec-why"><strong>Why:</strong> {rec.why}</p>
+              <p className="intelligence-rec-based"><strong>Based on:</strong> {rec.basedOn.join(', ')}</p>
+              <p className="intelligence-rec-certainty"><strong>Certainty:</strong> {rec.certainty}</p>
+              <p className="intelligence-rec-decides"><strong>Who decides:</strong> {rec.whoDecides}</p>
+              {rec.alternatives.length > 0 && (
+                <p className="intelligence-rec-alternatives"><strong>Alternatives:</strong> {rec.alternatives.join('; ')}</p>
+              )}
+              {rec.counterEvidence.length > 0 && (
+                <p className="intelligence-rec-counter"><strong>Counter-evidence:</strong> {rec.counterEvidence.join('; ')}</p>
+              )}
+              <p className="intelligence-rec-note">
+                The engine recommends; the authorized party decides. No universal score, no coin behavior, no custody.
+              </p>
+            </article>
+          ))}
         </section>
 
         <section className="intelligence-boundaries" aria-labelledby="int-bound-title">

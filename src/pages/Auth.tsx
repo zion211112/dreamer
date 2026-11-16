@@ -32,8 +32,17 @@ function isWorkspaceId(value: string): value is WorkspaceId {
   return workspaces.some((workspace) => workspace.id === value);
 }
 
-function defaultWorkspaceForRole(_role: UserRole): WorkspaceId {
-  return 'annals';
+function defaultWorkspaceForRole(role: UserRole): WorkspaceId {
+  switch (role) {
+    case 'coordinator':
+      return 'workbench';
+    case 'institution':
+      return 'commons';
+    case 'founder':
+      return 'commons';
+    default:
+      return 'annals';
+  }
 }
 
 function getWorkspacePath(workspaceId: WorkspaceId): string {

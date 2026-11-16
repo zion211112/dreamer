@@ -29,6 +29,7 @@ function applySkin(skin: SkinMode) {
 interface WorkspaceShellProps {
   children: ComponentChildren;
   currentContext: StudioContext;
+  moduleTheme?: string;
   recordSelection?: RecordSelection | null;
   inspectorData?: {
     relationships?: Array<{ label: string; target: string; type: string }>;
@@ -65,6 +66,7 @@ function readSidebarPreference(): boolean {
 export function WorkspaceShell({
   children,
   currentContext,
+  moduleTheme,
   recordSelection = null,
   inspectorData = {},
   changeSetData = {},
@@ -127,7 +129,7 @@ export function WorkspaceShell({
   );
 
   return (
-    <div className={`field-studio-shell${currentContext === 'overview' ? ' is-home' : ''}${sidebarCollapsed ? ' has-collapsed-sidebar' : ''}${hasInspectorContent ? ' has-record-inspector' : ''}${hasChangeSetContent ? ' has-change-set-dock' : ''}${hasChangeSetContent && dockCollapsed ? ' has-collapsed-dock' : ''}`}>
+    <div className={`field-studio-shell${currentContext === 'overview' ? ' is-home' : ''}${sidebarCollapsed ? ' has-collapsed-sidebar' : ''}${hasInspectorContent ? ' has-record-inspector' : ''}${hasChangeSetContent ? ' has-change-set-dock' : ''}${hasChangeSetContent && dockCollapsed ? ' has-collapsed-dock' : ''}${moduleTheme ? ` ${moduleTheme}` : ''}`}>
       <StudioNavigation
         currentContext={currentContext}
         environmentLabel={environmentLabel}

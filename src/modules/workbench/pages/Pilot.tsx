@@ -17,7 +17,11 @@ import {
   CALL_SHEET_STEP,
   ALL_GATE_STATES,
   NEXT_GATE,
+  assignCrewMember,
+  advanceGate,
+  recordSettlementEvent,
 } from '../data';
+import { EngineCommandDock } from '@/components/EngineCommandDock';
 
 type ParticipantInput = {
   role: 'anchor' | 'builder' | 'apprentice' | 'coordinator';
@@ -36,13 +40,22 @@ const PILOT_INSTITUTIONS: Record<string, { id: string; name: string; coordinator
   open: { id: 'inst-open-pilot', name: 'Open Pilot', coordinatorId: 'coord-open-01' },
 };
 
+const CREW_ROLES: Array<'anchor' | 'builder' | 'apprentice' | 'coordinator'> = ['anchor', 'builder', 'apprentice', 'coordinator'];
+
+const CREW_ROLE_LABELS: Record<'anchor' | 'builder' | 'apprentice' | 'coordinator', string> = {
+  anchor: 'Anchor',
+  builder: 'Builder',
+  apprentice: 'Apprentice',
+  coordinator: 'Coordinator',
+};
+
 function crewToParticipants(crew: WorkItem['crew'], itemId: string): ParticipantInput[] {
   const participants: ParticipantInput[] = [];
   const add = (role: 'anchor' | 'builder' | 'apprentice' | 'coordinator', name?: string) => {
     if (!name || name === '—') return;
     participants.push({
       role,
-      personId: `person-${itemId}-${role}`,
+      personId: crew[`${role}PersonId` as keyof WorkItem['crew']] ?? `person-${itemId}-${role}`,
       personName: name,
       profileId: null,
       capabilityClaims: [],
@@ -52,22 +65,26 @@ function crewToParticipants(crew: WorkItem['crew'], itemId: string): Participant
   add('anchor', crew.anchor);
   add('builder', crew.builder);
   add('apprentice', crew.apprentice);
+  add('coordinator', crew.coordinator);
   return participants;
 }
 
 function CrewInline({ crew }: { crew: WorkItem['crew'] }) {
-  const tags: [string, string, string][] = [
-    ['anchor', crew.anchor ?? '—', ''],
-    ['builder', crew.builder ?? '—', 'wb-crew-tag--builder'],
-    ['apprentice', crew.apprentice ?? '—', 'wb-crew-tag--apprentice'],
-  ];
+  const roles: Array<'anchor' | 'builder' | 'apprentice' | 'coordinator'> = ['anchor', 'builder', 'apprentice', 'coordinator'];
   return (
     <div className="wb-crew-inline">
-      {tags.map(([role, name, extra]) => (
-        <span key={role} className={`wb-crew-tag ${extra}`}>
-          {name}
-        </span>
-      ))}
+      {roles.map(role => {
+        const name = crew[role as keyof WorkItem['crew']];
+        const personId = crew[`${role}PersonId` as keyof WorkItem['crew']];
+        const label = CREW_ROLE_LABELS[role];
+        return (
+          <span key={role} className={`wb-crew-tag wb-crew-tag--${role}`}>
+            <span className="wb-crew-tag-role">{label}</span>
+            <span className="wb-crew-tag-name">{name ?? '—'}</span>
+            {personId && <span className="wb-crew-tag-id" title={personId}>{String(personId).slice(-6)}</span>}
+          </span>
+        );
+      })}
     </div>
   );
 }
@@ -184,9 +201,53 @@ function DetailPanel({
           )}
         </div>
 
-        {/* Next step / acceptance gate */}
+        {/* Learning */}
         <div className="wb-detail-section">
-          <h4 className="wb-detail-heading">Next Step</h4>
+          <h4 className="wb-detail-heading">Learning</h4>
+          {item.learning && item.learning.length > 0 ? (
+            <ul className="wb-detail-list">
+              {item.learning.map((l) => (
+                <li key={l.id} className="wb-detail-note">
+                  <strong>{l.title}</strong> — {l.description}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="wb-detail-note">No learning captured yet.</p>
+          )}
+        </div>
+
+        {/* Crew assignment */}
+        <div className="wb-detail-section">
+          <h4 className="wb-detail-heading">Crew assignment</h4>
+          <p className="wb-detail-note">
+            Assign Network people to crew roles. Person IDs link to the Network capability directory.
+          </p>
+          <div className="wb-crew-assign">
+            {CREW_ROLES.map(role => (
+              <div key={role} className="wb-crew-assign-row">
+                <label className="wb-crew-assign-label">{CREW_ROLE_LABELS[role]}</label>
+                <span className="wb-crew-assign-value">
+                  {item.crew[role as keyof WorkItem['crew']] ?? '—'}
+                </span>
+                <button
+                  className="wb-crew-assign-btn"
+                  onClick={() => assignCrewMember(item.id, role, '', '')}
+                >
+                  Assign from Network
+                </button>
+              </div>
+            ))}
+          </div>
+          <p className="wb-detail-note" style={{ marginTop: 'var(--space-2)', fontSize: 'var(--step--2)', color: 'var(--dim)' }}>
+            Crew assignment opens the Network capability directory to select a person.
+            Placeholder '—' means unassigned.
+          </p>
+        </div>
+
+        {/* Next step / gate transitions */}
+        <div className="wb-detail-section">
+          <h4 className="wb-detail-heading">Gate transitions</h4>
           {nextGate === 'accepted' ? (
             <>
               <p className="wb-detail-note">
@@ -221,7 +282,10 @@ function DetailPanel({
               </p>
               <button
                 className="wb-gate-advance"
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  advanceGate(item.id, 'steward', `Advanced to ${GATE_LABELS[nextGate]}.`);
+                }}
               >
                 Advance to {GATE_LABELS[nextGate]}
               </button>
@@ -235,6 +299,55 @@ function DetailPanel({
             <p className="wb-detail-note wb-detail-note--done">
               Settled. No further gate transitions.
             </p>
+          )}
+        </div>
+
+        {/* Settlement */}
+        <div className="wb-detail-section">
+          <h4 className="wb-detail-heading">Settlement</h4>
+          {item.settlement && item.settlement.length > 0 ? (
+            <ul className="wb-detail-list">
+              {item.settlement.map((s) => (
+                <li key={s.id} className="wb-detail-note">
+                  <span className="wb-settlement-type">{s.type}</span>
+                  <span className="wb-settlement-note">{s.note}</span>
+                  {s.amount && <span className="wb-settlement-amount">{s.amount.toLocaleString('en-KE')} {s.currency ?? 'KES'}</span>}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="wb-detail-note">No settlement recorded yet.</p>
+          )}
+          <button
+            className="wb-gate-advance wb-gate-advance--secondary"
+            onClick={() => {
+              const amount = window.prompt('Settlement amount (KES)?', '');
+              if (!amount) return;
+              const note = window.prompt('Settlement note?', '');
+              if (!note) return;
+              recordSettlementEvent(item.id, { type: 'payment', amount: Number(amount), currency: 'KES', actor: 'steward', note, createdAt: new Date().toISOString() });
+            }}
+          >
+            Record settlement event
+          </button>
+        </div>
+
+        {/* Lifecycle events */}
+        <div className="wb-detail-section">
+          <h4 className="wb-detail-heading">Lifecycle events</h4>
+          {item.events && item.events.length > 0 ? (
+            <ul className="wb-detail-list wb-event-list">
+              {item.events.map((e) => (
+                <li key={e.id} className="wb-event-item">
+                  <span className="wb-event-type">{e.type.replace(/_/g, ' ')}</span>
+                  <span className="wb-event-note">{e.note}</span>
+                  <span className="wb-event-actor">{e.actor}</span>
+                  <span className="wb-event-time">{new Date(e.createdAt).toLocaleString()}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="wb-detail-note">No lifecycle events yet.</p>
           )}
         </div>
       </div>
@@ -270,6 +383,13 @@ export function Pilot() {
           eyebrow={`Pilot ${pilot.location}`}
           title={pilot.label}
           subtitle={pilot.terms}
+        />
+
+        <EngineCommandDock
+          undertakingId={pilot.key}
+          undertakingTitle={pilot.label}
+          actor="steward"
+          actorRole="coordinator"
         />
 
         {/* Gate filter */}

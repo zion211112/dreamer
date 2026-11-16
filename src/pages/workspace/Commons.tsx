@@ -10,6 +10,11 @@ import { CommonsOpportunities } from './commons/OpportunitiesPanel';
 import { useCommons } from './commons/useCommons';
 import { CommonsArrival } from './commons/CommonsArrival';
 import { RadarSpatialPanel } from '../../components/RadarSpatialPanel';
+import {
+  createUndertakingFromProposal,
+  registerUndertaking,
+} from '@/modules/workbench';
+import type { CommonsProposal } from '../../lib/local-workflows';
 
 export function Commons() {
   const {
@@ -37,6 +42,7 @@ export function Commons() {
     reportDetails,
     setReportDetails,
     error,
+    setError,
     loaded,
     actorEmail,
     governance,
@@ -69,6 +75,17 @@ export function Commons() {
     note,
     setNote,
   } = useCommons();
+
+  function handleCreateUndertaking(proposal: CommonsProposal | null): void {
+    if (!proposal || proposal.status !== 'approved') return;
+    const result = createUndertakingFromProposal(proposal, 'benbenos', actorEmail || 'steward', activeInstitutionName || 'Site', 6000);
+    if (result) {
+      registerUndertaking(result.workItem);
+      navigate('/workspace/workbench/benbenos');
+    } else {
+      setError('Only an approved proposal can become an undertaking.');
+    }
+  }
 
    return (
      <WorkspaceLayout currentContext="commons">
@@ -240,18 +257,19 @@ export function Commons() {
                setSignalPage={setSignalPage}
              />
              <RadarSpatialPanel signals={visibleSignals} />
-             <CommonsSignalDetail
-               selected={selected}
-               isSteward={isSteward}
-               approvedProposal={approvedProposal}
-               onChangeStatus={changeStatus}
-               onOpenWorkbench={() => navigate('/workspace/workbench')}
-               onOpenWorkBrief={proposalId => navigate(`/workspace/workbench?proposal=${encodeURIComponent(proposalId)}`)}
-               onSetCommonsView={setCommonsView}
-               onAddNote={addNote}
-               note={note}
-               setNote={setNote}
-             />
+              <CommonsSignalDetail
+                selected={selected}
+                isSteward={isSteward}
+                approvedProposal={approvedProposal}
+                onChangeStatus={changeStatus}
+                onOpenWorkbench={() => navigate('/workspace/workbench')}
+                onOpenWorkBrief={proposalId => navigate(`/workspace/workbench?proposal=${encodeURIComponent(proposalId)}`)}
+                onCreateUndertaking={handleCreateUndertaking}
+                onSetCommonsView={setCommonsView}
+                onAddNote={addNote}
+                note={note}
+                setNote={setNote}
+              />
            </section>
          )}
          </div>

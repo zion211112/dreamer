@@ -14,12 +14,55 @@
  * Browser-local, illustrative data — one source per pilot.
  */
 
+import { createLocalId, type CommonsProposal } from '@/lib/local-workflows';
+import { signal } from '@preact/signals';
+
 export type PilotKey =
   | 'benbenos'
   | 'kemetos'
   | 'minihydro'
   | 'mwea-animation-box'
   | 'open';
+
+const WORK_ITEMS_STORAGE_KEY = 'aptlabs:workbench-items:v1';
+
+function loadWorkItems(): WorkItem[] {
+  try {
+    const raw = localStorage.getItem(WORK_ITEMS_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((v: unknown): v is WorkItem => isWorkItem(v));
+  } catch {
+    return [];
+  }
+}
+
+function saveWorkItems(items: WorkItem[]): void {
+  try {
+    localStorage.setItem(WORK_ITEMS_STORAGE_KEY, JSON.stringify(items));
+  } catch {
+    throw new Error('Workbench items could not be saved to local storage.');
+  }
+}
+
+function isWorkItem(value: unknown): value is WorkItem {
+  return (
+    typeof value === 'object' && value !== null
+    && typeof (value as WorkItem).id === 'string'
+    && typeof (value as WorkItem).pilot === 'string'
+    && typeof (value as WorkItem).title === 'string'
+    && typeof (value as WorkItem).discipline === 'string'
+    && typeof (value as WorkItem).location === 'string'
+    && typeof (value as WorkItem).gate === 'string'
+    && Array.isArray((value as WorkItem).evidence)
+    && typeof (value as WorkItem).capital === 'object'
+  );
+}
+
+export const WORK_ITEMS = signal<WorkItem[]>(loadWorkItems());
+
+saveWorkItems(WORK_ITEMS.value);
 
 /**
  * Tender gate state machine. Each work item sits at exactly one gate. Gates
@@ -54,10 +97,20 @@ export interface Capital {
 export interface Crew {
   /** Anchor: holds authority, signs off, accepts delivery. */
   anchor?: string;
+  /** Network person id linked to the anchor. */
+  anchorPersonId?: string;
   /** Builder: accepts obligations, executes the work. */
   builder?: string;
+  /** Network person id linked to the builder. */
+  builderPersonId?: string;
   /** Apprentice: learns under supervision, optional. */
   apprentice?: string;
+  /** Network person id linked to the apprentice. */
+  apprenticePersonId?: string;
+  /** Coordinator: stewards the undertaking across modules. */
+  coordinator?: string;
+  /** Network person id linked to the coordinator. */
+  coordinatorPersonId?: string;
 }
 
 export interface Pilot {
@@ -161,9 +214,114 @@ export interface WorkItem {
   credential?: string;
   /** Step 4 (ponytail): telemetry verification state. */
   verification?: { telemetrySource?: string; verifiedAt?: string; attestationId?: string };
+  /** Traceable lifecycle events across all gate transitions, settlement, and learning. */
+  events?: LifecycleEvent[];
+  /** Settlement events: payment, materials reconciliation, cost adjustment, expense settlement. Separate from acceptance. */
+  settlement?: SettlementEvent[];
+  /** Learning events: lessons, reusable designs, updated acceptance criteria. Feeds Commons and Workbench scoping. */
+  learning?: LearningEvent[];
+
+  /** Traceability back to the Commons proposal/signal that originated this undertaking. */
+  sourceProposalId?: string;
+  sourceSignalId?: string;
 }
 
-export const WORK_ITEMS: readonly WorkItem[] = [
+export type LifecycleEvent = {
+  id: string;
+  type: 'gate_advance' | 'settlement' | 'learning' | 'evidence_added' | 'correction';
+  fromGate?: GateState;
+  toGate?: GateState;
+  actor: string;
+  note: string;
+  createdAt: string;
+}
+
+/** Settlement event — resolving obligations after acceptance. Acceptance is not settlement. */
+export interface SettlementEvent {
+  id: string;
+  type: 'payment' | 'materials_reconciliation' | 'cost_adjustment' | 'expense_settlement';
+  amount?: number;
+  currency?: string;
+  actor: string;
+  note: string;
+  createdAt: string;
+}
+
+/** Learning event — carrying capability into the next undertaking. Settlement is not learning. */
+export interface LearningEvent {
+  id: string;
+  type: 'lesson' | 'reusable_design' | 'updated_criteria' | 'dispute_resolution';
+  title: string;
+  description: string;
+  reusableDesignId?: string;
+  actor: string;
+  createdAt: string;
+}
+
+/** Result of creating a Workbench undertaking from a Commons proposal. */
+export interface UndertakingFromProposal {
+  workItem: WorkItem;
+  actor: string;
+}
+
+/** Create a Workbench undertaking from an approved Commons proposal.
+ *  Bidirectional traceability: the WorkItem carries sourceProposalId/sourceSignalId,
+ *  and a lifecycle event records the proposal→undertaking transition. */
+export function createUndertakingFromProposal(
+  proposal: CommonsProposal,
+  pilot: PilotKey,
+  actor: string,
+  location: string,
+  financialKES: number,
+): UndertakingFromProposal | undefined {
+  if (proposal.status !== 'approved') return undefined;
+
+  const id = createLocalId('undertaking');
+  const workItem: WorkItem = {
+    id,
+    pilot,
+    title: proposal.title,
+    discipline: 'General',
+    location,
+    gate: 'proposed',
+    evidence: ['public'],
+    capital: {
+      financial: financialKES,
+      materials: [],
+      conditions: ['Steward sign-off'],
+      deployed: false,
+      escrowed: false,
+    },
+    crew: { anchor: '', builder: '', apprentice: '' },
+    callSheet: {
+      scope: proposal.rationale,
+      bom: [],
+      acceptance: [],
+    },
+    sourceProposalId: proposal.id,
+    sourceSignalId: proposal.sourceSignalId ?? undefined,
+    events: [{
+      id: createLocalId('lifecycle-event'),
+      type: 'gate_advance',
+      fromGate: undefined,
+      toGate: 'proposed',
+      actor,
+      note: `Created from Commons proposal ${proposal.id} (signal ${proposal.sourceSignalId ?? '—'}).`,
+      createdAt: new Date().toISOString(),
+    }],
+  };
+
+  return { workItem, actor };
+}
+
+/** Add an undertaking created from Commons to the work item registry. */
+export function registerUndertaking(workItem: WorkItem): void {
+  WORK_ITEMS.value = [...WORK_ITEMS.value, workItem];
+  saveWorkItems(WORK_ITEMS.value);
+}
+
+/** Seed undertakings for each published pilot lane. */
+const SEED_WORK_ITEMS: WorkItem[] = [
   // Benbenos — published
   {
     id: 'wi-01',
@@ -360,8 +518,40 @@ export const WORK_ITEMS: readonly WorkItem[] = [
   },
 ];
 
+if (WORK_ITEMS.value.length === 0) {
+  WORK_ITEMS.value = SEED_WORK_ITEMS;
+  saveWorkItems(WORK_ITEMS.value);
+}
+
 export function workItemsForPilot(pilot: PilotKey): readonly WorkItem[] {
-  return WORK_ITEMS.filter((w) => w.pilot === pilot);
+  return WORK_ITEMS.value.filter((w) => w.pilot === pilot);
+}
+
+/** Assign a Network person/crew entity to a crew role on a work item.
+ *  Returns the updated work item, or undefined when the item does not exist
+ *  or the role is unknown. personId resolves to a Network entity id. */
+export function assignCrewMember(
+  workItemId: string,
+  role: 'anchor' | 'builder' | 'apprentice' | 'coordinator',
+  personName: string,
+  personId: string,
+): WorkItem | undefined {
+  const item = WORK_ITEMS.value.find((w) => w.id === workItemId);
+  if (!item) return undefined;
+  item.crew = {
+    ...item.crew,
+    [role]: personName,
+    [`${role}PersonId`]: personId,
+  };
+  recordLifecycleEvent(workItemId, {
+    type: 'gate_advance',
+    fromGate: item.gate,
+    toGate: item.gate,
+    actor: personId,
+    note: `Crew assigned: ${role} = ${personName} (${personId}).`,
+    createdAt: new Date().toISOString(),
+  });
+  return item;
 }
 
 /** Human-readable label for each gate state. */
@@ -443,7 +633,91 @@ export interface HomeMetrics {
 
 export function homeMetrics(): HomeMetrics {
   const publishedLanes = PILOTS.filter((p) => p.status === 'published').length;
-  const totalCapital = WORK_ITEMS.reduce((sum, i) => sum + i.capital.financial, 0);
-  const activeCount = WORK_ITEMS.filter((i) => i.gate !== 'accepted').length;
+    const totalCapital = WORK_ITEMS.value.reduce((sum, i) => sum + i.capital.financial, 0);
+  const activeCount = WORK_ITEMS.value.filter((i) => i.gate !== 'accepted').length;
   return { publishedLanes, totalCapital, activeCount };
+}
+
+/* ------------------------------------------------------------------ */
+/* Lifecycle event recording — single source of truth                 */
+/* ------------------------------------------------------------------ */
+
+export function recordLifecycleEvent(
+  workItemId: string,
+  event: Omit<LifecycleEvent, 'id'>,
+): WorkItem | undefined {
+  const item = WORK_ITEMS.value.find((w) => w.id === workItemId);
+  if (!item) return undefined;
+  const next: LifecycleEvent = { ...event, id: createLocalId('lifecycle-event') };
+  item.events = item.events ? [...item.events, next] : [next];
+  return item;
+}
+
+export function recordSettlementEvent(
+  workItemId: string,
+  settlement: Omit<SettlementEvent, 'id'>,
+): WorkItem | undefined {
+  const item = WORK_ITEMS.value.find((w) => w.id === workItemId);
+  if (!item) return undefined;
+  const next: SettlementEvent = { ...settlement, id: createLocalId('settlement-event') };
+  item.settlement = item.settlement ? [...item.settlement, next] : [next];
+  return item;
+}
+
+export function recordLearningEvent(
+  workItemId: string,
+  learning: Omit<LearningEvent, 'id'>,
+): WorkItem | undefined {
+  const item = WORK_ITEMS.value.find((w) => w.id === workItemId);
+  if (!item) return undefined;
+  const next: LearningEvent = { ...learning, id: createLocalId('learning-event') };
+  item.learning = item.learning ? [...item.learning, next] : [next];
+  return item;
+}
+
+/** Advance a work item's gate and record the transition as a traceable lifecycle event. */
+export function advanceGate(
+  workItemId: string,
+  actor: string,
+  note: string,
+): WorkItem | undefined {
+  const item = WORK_ITEMS.value.find((w) => w.id === workItemId);
+  if (!item) return undefined;
+  const nextGate = NEXT_GATE[item.gate];
+  if (!nextGate) return undefined;
+  const previous = item.gate;
+  item.gate = nextGate;
+  recordLifecycleEvent(workItemId, {
+    type: 'gate_advance',
+    fromGate: previous,
+    toGate: nextGate,
+    actor,
+    note,
+    createdAt: new Date().toISOString(),
+  });
+  return item;
+}
+
+/** Get all lifecycle events for a work item, newest first. */
+export function lifecycleEventsFor(workItemId: string): LifecycleEvent[] {
+  const item = WORK_ITEMS.value.find((w) => w.id === workItemId);
+  return item?.events?.slice().sort((a, b) =>
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  ) ?? [];
+}
+
+/** Get all settlement events for a work item, newest first. */
+export function settlementEventsFor(workItemId: string): SettlementEvent[] {
+  const item = WORK_ITEMS.value.find((w) => w.id === workItemId);
+  return item?.settlement?.slice().sort((a, b) =>
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  ) ?? [];
+}
+
+/** Get all learning events for a work item, newest first. */
+export function learningEventsFor(workItemId: string): LearningEvent[] {
+  const item = WORK_ITEMS.value.find((w) => w.id === workItemId);
+  return item?.learning?.slice().sort((a, b) =>
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  ) ?? [];
 }

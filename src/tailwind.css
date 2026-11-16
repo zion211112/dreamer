@@ -2091,6 +2091,31 @@
   }
   .wb-crew-tag--builder    { color: var(--state-proposed); border-color: var(--state-proposed); }
   .wb-crew-tag--apprentice { color: var(--state-canon);    border-color: var(--state-canon); }
+  .wb-crew-tag--coordinator { color: var(--state-risk); border-color: var(--state-risk); }
+  .wb-crew-tag-role { color: var(--muted); font-size: var(--step--2); }
+  .wb-crew-tag-name { font-weight: 600; color: var(--fg); }
+  .wb-crew-tag-id { font-size: var(--step--2); color: var(--dim); margin-left: 4px; }
+  .wb-crew-assign {
+    display: flex; flex-direction: column; gap: var(--space-1); margin-top: var(--space-1);
+  }
+  .wb-crew-assign-row {
+    display: flex; align-items: baseline; gap: var(--space-2);
+    padding: 4px 8px; border: 1px solid var(--hairline); border-radius: var(--radius-2);
+    background: var(--bg); flex-wrap: wrap;
+  }
+  .wb-crew-assign-label {
+    font-family: var(--mono); font-size: var(--step--2); font-weight: 600; color: var(--dim);
+    white-space: nowrap; min-width: 70px;
+  }
+  .wb-crew-assign-value {
+    font-weight: 600; color: var(--fg); min-width: 90px;
+  }
+  .wb-crew-assign-btn {
+    font-family: var(--sans); font-size: var(--step-0); padding: 2px 8px;
+    border: 1px solid var(--line); border-radius: var(--radius-1); background: transparent;
+    color: var(--fg); cursor: pointer; transition: border-color var(--fast);
+  }
+  .wb-crew-assign-btn:hover { border-color: var(--fg); background: var(--bg-subtle); }
   .wb-item-expand {
     display: flex; align-items: center; justify-content: center;
     width: 24px; height: 24px; font: 600 14px var(--mono);
@@ -3763,4 +3788,112 @@
 .benben-tone-can .benben-stat-value { color: var(--state-canon); }
 .benben-tone-risk .benben-stat-value { color: var(--state-risk); }
 
+}
+
+/* ============================================================================
+   EngineCommandDock — governed agent execution surface
+   ============================================================================ */
+@layer components {
+  .engine-command-dock {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 600;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 480px;
+    border-top: 1px solid var(--line-strong);
+    border-left: 1px solid var(--line);
+    background: var(--bg-elev);
+    box-shadow: 0 -8px 24px rgba(41,43,37,.06);
+    transition: transform var(--base);
+  }
+  .engine-command-dock-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line);
+  }
+  .engine-command-dock-title {
+    margin: 0; font: 600 11px/1 var(--mono); letter-spacing: 0.06em; color: var(--fg-strong);
+  }
+  .engine-command-dock-mode {
+    font: 500 10px/1 var(--mono); letter-spacing: 0.04em; color: var(--muted);
+  }
+  .engine-command-dock-error {
+    margin: 0; padding: 8px 14px; font: 400 11px/1.4 var(--sans); color: var(--state-risk); background: var(--clay-pale); border-left: 2px solid var(--state-risk);
+  }
+  .engine-command-dock-context {
+    padding: 10px 14px; border-bottom: 1px solid var(--hairline);
+  }
+  .engine-command-dock-note {
+    margin: 0; font: 400 12px/1.45 var(--sans); color: var(--muted);
+  }
+  .engine-command-dock-plan {
+    padding: 12px 14px; border-bottom: 1px solid var(--hairline);
+  }
+  .engine-command-dock-plan-title {
+    margin: 0 0 8px; font: 600 10px/1 var(--mono); letter-spacing: 0.06em; color: var(--dim);
+    text-transform: uppercase;
+  }
+  .engine-command-dock-plan-steps {
+    margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px;
+  }
+  .engine-command-dock-plan-step {
+    display: flex; align-items: baseline; gap: 8px; font: 400 12px/1.4 var(--sans); color: var(--fg);
+    border-bottom: 1px solid var(--hairline); padding-bottom: 4px;
+  }
+  .engine-command-dock-plan-tool {
+    font: 500 10px/1 var(--mono); letter-spacing: 0.04em; color: var(--accent); flex: none; white-space: nowrap;
+  }
+  .engine-command-dock-plan-action { flex: 1; min-width: 0; }
+  .engine-command-dock-plan-rationale {
+    font-size: var(--step--2); color: var(--text-muted); flex: none; max-width: 40%;
+  }
+  .engine-command-dock-plan-requires {
+    font: 500 9px/1 var(--mono); letter-spacing: 0.05em; color: var(--state-caution); flex: none; white-space: nowrap;
+  }
+  .engine-command-dock-plan-actions {
+    display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;
+  }
+  .engine-command-dock-plan-note {
+    margin: 8px 14px 0; font: 400 11px/1.4 var(--sans); color: var(--text-muted);
+  }
+  .engine-command-dock-result {
+    padding: 10px 14px; border-bottom: 1px solid var(--hairline);
+  }
+  .engine-command-dock-result-note {
+    margin: 0; font: 400 12px/1.45 var(--sans); color: var(--state-canon);
+  }
+  .engine-command-dock-trace {
+    padding: 12px 14px;
+  }
+  .engine-command-dock-trace-title {
+    margin: 0 0 8px; font: 600 10px/1 var(--mono); letter-spacing: 0.06em; color: var(--dim);
+    text-transform: uppercase;
+  }
+  .engine-command-dock-trace-list {
+    margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px;
+  }
+  .engine-command-dock-trace-item {
+    display: flex; align-items: baseline; gap: 8px; font: 400 11px/1.4 var(--sans); color: var(--fg);
+    border-bottom: 1px solid var(--hairline); padding-bottom: 4px;
+  }
+  .engine-command-dock-trace-actor {
+    font: 500 10px/1 var(--mono); letter-spacing: 0.04em; color: var(--accent); flex: none; white-space: nowrap;
+  }
+  .engine-command-dock-trace-action { flex: 1; min-width: 0; }
+  .engine-command-dock-trace-result {
+    font: 500 10px/1 var(--mono); letter-spacing: 0.04em; color: var(--state-canon); flex: none; white-space: nowrap;
+  }
+  .engine-command-dock-trace-note { font-size: var(--step--2); color: var(--text-muted); }
+
+  .engine-command-dock-trigger {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border: 1px solid var(--line); border-radius: var(--radius-2);
+    background: transparent; color: var(--muted); cursor: pointer;
+    transition: color var(--fast), background-color var(--fast), border-color var(--fast);
+    flex: 0 0 auto;
+  }
+  .engine-command-dock-trigger:hover { color: var(--fg-strong); background: var(--bg-subtle); border-color: var(--line-strong); }
+  .engine-command-dock-trigger svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.4px; stroke-linecap: round; stroke-linejoin: round; }
+  .engine-command-dock-trigger.is-active { color: var(--state-canon); border-color: var(--state-canon); }
 }

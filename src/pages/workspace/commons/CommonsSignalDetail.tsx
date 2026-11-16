@@ -1,4 +1,4 @@
-import type { FieldSignal, SignalStatus } from '../../../lib/local-workflows';
+import type { FieldSignal, SignalStatus, CommonsProposal } from '../../../lib/local-workflows';
 
 function formatSignalDate(value: string): string {
   return new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(value));
@@ -30,10 +30,11 @@ const statusLabels: Record<SignalStatus, string> = {
 interface CommonsSignalDetailProps {
   selected: FieldSignal | null;
   isSteward: boolean;
-  approvedProposal: { id: string } | null;
+  approvedProposal: CommonsProposal | null;
   onChangeStatus: (status: SignalStatus) => void;
   onOpenWorkbench: () => void;
   onOpenWorkBrief: (proposalId: string) => void;
+  onCreateUndertaking: (proposal: CommonsProposal) => void;
   onSetCommonsView: (view: 'signals' | 'opportunities' | 'decisions') => void;
   onAddNote: (event: Event) => void;
   note: string;
@@ -47,6 +48,7 @@ export function CommonsSignalDetail({
   onChangeStatus,
   onOpenWorkbench,
   onOpenWorkBrief,
+  onCreateUndertaking,
   onSetCommonsView,
   onAddNote,
   note,
@@ -112,6 +114,7 @@ export function CommonsSignalDetail({
         {!selected.scenario && selected.status === 'new' && <button className="signal-secondary-action" onClick={() => onChangeStatus('triaged')} type="button">Move to triage</button>}
         {!selected.scenario && selected.status === 'triaged' && <button className="signal-primary-action" onClick={() => onSetCommonsView('decisions')} type="button">Open decision register</button>}
         {!selected.scenario && selected.status === 'brief' && approvedProposal && <button className="signal-primary-action" onClick={() => onOpenWorkBrief(approvedProposal.id)} type="button">Open approved work brief</button>}
+        {!selected.scenario && selected.status === 'brief' && approvedProposal && <button className="signal-primary-action" onClick={() => onCreateUndertaking(approvedProposal)} type="button">Create undertaking</button>}
         {!selected.scenario && selected.status !== 'resolved' && isSteward && <button className="signal-quiet-action" onClick={() => onChangeStatus('resolved')} type="button">Close observation</button>}
         {!selected.scenario && selected.status === 'resolved' && <button className="signal-secondary-action" onClick={() => onChangeStatus('new')} type="button">Reopen</button>}
       </section>

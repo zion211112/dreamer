@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import { PageHead, type PageHeadMetric } from '../../components/PageHead';
 import { NetworkMap } from '../../components/NetworkMap';
@@ -10,6 +10,7 @@ import {
 import {
   readPeopleNetworkRecord, createPortablePeopleRecord, importPortablePeopleRecord,
 } from '../../lib/people-network';
+import { buildPassport, type PassportView } from '../../lib/passport';
 
 const ENTITY_TYPES = [
   { id: 'person' as const, label: 'People' },
@@ -43,12 +44,24 @@ export function Network() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<RelationshipKind | 'all'>('all');
   const [selectedEntity, setSelectedEntity] = useState<NetworkEntity | null>(null);
+  const [passport, setPassport] = useState<PassportView | null>(null);
   const mapWrapperRef = useRef<HTMLDivElement>(null);
   const [mapWidth, setMapWidth] = useState(320);
 
   const entities = record.entities;
   const relationships = record.relationships;
   const entityById = new Map(entities.map(entity => [entity.id, entity]));
+
+  useEffect(() => {
+    if (!selectedEntity) {
+      setPassport(null);
+      return;
+    }
+    (async () => {
+      const view = await buildPassport(selectedEntity.id);
+      setPassport(view ?? null);
+    })();
+  }, [selectedEntity]);
 
   useLayoutEffect(() => {
     const wrapper = mapWrapperRef.current;
@@ -227,6 +240,43 @@ export function Network() {
                     {selectedEntity.capabilities.length === 0 && <span className="network-capability-empty">No capabilities recorded.</span>}
                   </div>
                 </section>
+
+                {passport && (
+                  <section className="network-profile-section">
+                    <div className="network-section-title">Passport</div>
+                    <p className="network-profile-summary">
+                      Evidence-backed capability. A claim is not evidence; evidence is not acceptance; acceptance is not universal competence.
+                    </p>
+                    <div className="network-capability-list">
+                      {passport.capabilities.map(cap => (
+                        <span key={cap.capability} className="network-capability-chip">
+                          {cap.capability} ({cap.level})
+                        </span>
+                      ))}
+                      {passport.capabilities.length === 0 && <span className="network-capability-empty">No capability claims.</span>}
+                    </div>
+                    {passport.attestations.length > 0 && (
+                      <div className="network-capability-list">
+                        <div className="network-section-title" style={{ marginTop: 'space-4' }}>Attestations</div>
+                        {passport.attestations.map(a => (
+                          <span key={a.id} className="network-capability-chip">
+                            {a.role} · {a.undertakingTitle}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    {passport.undertakings.length > 0 && (
+                      <div className="network-capability-list">
+                        <div className="network-section-title" style={{ marginTop: 'space-4' }}>Accepted undertakings</div>
+                        {passport.undertakings.map(u => (
+                          <span key={u.undertakingId} className="network-capability-chip">
+                            {u.title} — {u.acceptedBy}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </section>
+                )}
 
                 <section className="network-profile-section">
                   <div className="network-section-title">Relationships</div>

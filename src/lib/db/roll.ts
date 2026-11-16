@@ -80,6 +80,8 @@ export interface RollQueryFilters {
 }
 
 const DEMO_ROLL_STORAGE_KEY = 'demo_roll_entries';
+const DEMO_ROLL_EVIDENCE_STORAGE_KEY = 'demo_roll_evidence_files';
+const DEMO_ROLL_REVISION_STORAGE_KEY = 'demo_roll_revisions';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -420,7 +422,8 @@ export async function queryRollEntries(
 // Participant export - returns only participant-layer data
 export async function getParticipantRollEntries(personId: string): Promise<RollEntry[]> {
   if (isDemoMode) {
-    return [];
+    const entries = await queryRollEntries();
+    return entries.filter((e) => e.participants.some((p) => p.person_id === personId));
   }
   const supabase = getSupabase();
   const { data, error } = await supabase
@@ -438,13 +441,28 @@ export async function addRollRevision(
   data: Omit<RollRevision, 'id' | 'revised_at'>,
   userId: string
 ): Promise<RollRevision> {
+  const now = new Date().toISOString();
+  const revision: RollRevision = {
+    ...data,
+    id: crypto.randomUUID(),
+    revised_by: userId,
+    revised_at: now,
+  };
   if (isDemoMode) {
-    throw new Error('Demo mode: Supabase not configured');
+    try {
+      const raw = localStorage.getItem(DEMO_ROLL_REVISION_STORAGE_KEY);
+      const existing = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(existing)) throw new Error();
+      existing.push(revision);
+      localStorage.setItem(DEMO_ROLL_REVISION_STORAGE_KEY, JSON.stringify(existing));
+    } catch {
+      throw new Error('This browser could not save the roll revision.');
+    }
+    return revision;
   }
   const supabase = getSupabase();
-  const now = new Date().toISOString();
 
-  const { data: revision, error } = await supabase
+  const { data: saved, error } = await supabase
     .from('roll_revisions')
     .insert({
       ...data,
@@ -455,12 +473,22 @@ export async function addRollRevision(
     .single();
 
   if (error) throw new Error(error.message);
-  return revision as RollRevision;
+  return saved as RollRevision;
 }
 
 export async function getRollRevisions(entryId: string): Promise<RollRevision[]> {
   if (isDemoMode) {
-    return [];
+    try {
+      const raw = localStorage.getItem(DEMO_ROLL_REVISION_STORAGE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
+      return parsed
+        .filter((r: RollRevision) => r.entry_id === entryId)
+        .sort((a, b) => new Date(b.revised_at).getTime() - new Date(a.revised_at).getTime());
+    } catch {
+      return [];
+    }
   }
   const supabase = getSupabase();
   const { data, error } = await supabase
@@ -479,7 +507,23 @@ export async function addRollEvidenceFile(
   userId: string
 ): Promise<RollEvidenceFile> {
   if (isDemoMode) {
-    throw new Error('Demo mode: Supabase not configured');
+    const now = new Date().toISOString();
+    const file: RollEvidenceFile = {
+      ...data,
+      id: crypto.randomUUID(),
+      uploaded_at: now,
+      uploaded_by: userId,
+    };
+    try {
+      const raw = localStorage.getItem(DEMO_ROLL_EVIDENCE_STORAGE_KEY);
+      const existing = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(existing)) throw new Error();
+      existing.push(file);
+      localStorage.setItem(DEMO_ROLL_EVIDENCE_STORAGE_KEY, JSON.stringify(existing));
+    } catch {
+      throw new Error('This browser could not save the roll evidence file.');
+    }
+    return file;
   }
   const supabase = getSupabase();
   const now = new Date().toISOString();
@@ -500,7 +544,17 @@ export async function addRollEvidenceFile(
 
 export async function getRollEvidenceFiles(entryId: string, layer?: RollLayer): Promise<RollEvidenceFile[]> {
   if (isDemoMode) {
-    return [];
+    try {
+      const raw = localStorage.getItem(DEMO_ROLL_EVIDENCE_STORAGE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
+      let result = parsed.filter((f: RollEvidenceFile) => f.entry_id === entryId);
+      if (layer) result = result.filter((f: RollEvidenceFile) => f.layer === layer);
+      return result.sort((a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime());
+    } catch {
+      return [];
+    }
   }
   const supabase = getSupabase();
   let query = supabase

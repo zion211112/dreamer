@@ -1,16 +1,72 @@
-import { WORK_OPPORTUNITIES } from '../../../lib/local-workbench';
-
 interface CommonsOpportunitiesProps {
   selectedOpportunityId: string;
   setSelectedOpportunityId: (id: string) => void;
 }
 
+type WorkDiscipline = 'Animation' | 'Software' | 'Fabrication';
+
+interface CommonsOpportunity {
+  id: string;
+  title: string;
+  context: string;
+  discipline: WorkDiscipline;
+  summary: string;
+  scope: string;
+  deliverables: string[];
+  capability: string[];
+  terms: string;
+  payment: string;
+  acceptance: string;
+}
+
+const COMMONS_OPPORTUNITIES: CommonsOpportunity[] = [
+  {
+    id: 'school-learning-animation',
+    title: 'School learning animations',
+    context: 'School Console · learning',
+    discipline: 'Animation',
+    summary: 'Turn a challenging classroom concept into a concise visual explanation educators can use.',
+    scope: 'Develop a storyboard and short animation for a learning objective selected with educators. The publishing institution sets scope, rights, and engagement terms in its brief.',
+    deliverables: ['Storyboard', 'Short animation', 'Source files and attribution note'],
+    capability: ['Storyboarding', '2D or motion design', 'Learning-focused communication'],
+    terms: 'The institution must disclose paid or unpaid status, fee, payment trigger, expenses, and rights before a real application is opened.',
+    payment: 'Not specified in this local workflow',
+    acceptance: 'The selected learning objective is addressed; the institution reviews the agreed format, accessibility, and attribution.',
+  },
+  {
+    id: 'kemetos-agi1-software',
+    title: 'Kemetos AGI1',
+    context: 'Kemetos AGI1 · software',
+    discipline: 'Software',
+    summary: 'Contribute a bounded engineering or research task to the AGI1 workstream.',
+    scope: 'The institution defines a specific issue, repository or research boundary, review method, and contribution rights before the work is authorized.',
+    deliverables: ['Implementation or research note', 'Test or verification evidence', 'Contribution summary'],
+    capability: ['Software development', 'Technical documentation', 'Research'],
+    terms: 'The institution must disclose paid or unpaid status, fee, payment trigger, expenses, and rights before a real application is opened.',
+    payment: 'Not specified in this local workflow',
+    acceptance: 'The agreed change or research result is reviewed against the brief and its stated verification criteria.',
+  },
+  {
+    id: 'thiba-hydro-fabrication',
+    title: 'Thiba Hydro',
+    context: 'Thiba Hydro · fabrication',
+    discipline: 'Fabrication',
+    summary: 'Prepare and deliver a fabrication task against a defined site, safety, and inspection scope.',
+    scope: 'The institution defines the fabrication requirement, site access, safety controls, materials, inspection method, and engagement terms before authorization.',
+    deliverables: ['Fabrication plan', 'Completed work evidence', 'Inspection and safety record'],
+    capability: ['Fabrication', 'Site coordination', 'Safety and quality control'],
+    terms: 'The institution must disclose paid or unpaid status, fee, payment trigger, expenses, and rights before a real application is opened.',
+    payment: 'Not specified in this local workflow',
+    acceptance: 'The institution inspects the delivery against the agreed dimensions, material requirements, safety controls, and evidence.',
+  },
+];
+
 export function CommonsOpportunities({
   selectedOpportunityId,
   setSelectedOpportunityId,
 }: CommonsOpportunitiesProps) {
-  const selectedOpportunity = WORK_OPPORTUNITIES.find(opportunity => opportunity.id === selectedOpportunityId)
-    ?? WORK_OPPORTUNITIES[0];
+  const selectedOpportunity = COMMONS_OPPORTUNITIES.find((opportunity) => opportunity.id === selectedOpportunityId)
+    ?? COMMONS_OPPORTUNITIES[0];
 
   return (
     <section aria-labelledby="commons-opportunities-title" className="commons-opportunities">
@@ -23,7 +79,7 @@ export function CommonsOpportunities({
       </header>
       <div className="commons-opportunity-workspace">
         <nav aria-label="Example work contexts" className="commons-opportunity-list">
-          {WORK_OPPORTUNITIES.map(opportunity => (
+          {COMMONS_OPPORTUNITIES.map((opportunity) => (
             <button
               aria-pressed={selectedOpportunity.id === opportunity.id}
               className={selectedOpportunity.id === opportunity.id ? 'is-selected' : ''}
