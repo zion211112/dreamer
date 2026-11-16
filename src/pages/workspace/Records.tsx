@@ -4,7 +4,9 @@ import { Link, useLocation } from 'wouter';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import { PageHead } from '../../components/PageHead';
 import { RingedEvidenceMarker } from '../../components/RingedEvidenceMarker';
-import { RollEntry, queryRollEntries } from '../../lib/db/roll';
+import { queryRollEntries } from '../../lib/db/roll';
+import type { RollEntry } from '../../lib/db/roll';
+import { getRollOutcome, type RollOutcomeKind } from '../../lib/records-view';
 
 type Lens = 'canon' | 'annals' | 'roll';
 
@@ -34,8 +36,6 @@ function hashShort(hash: string): string {
   return `${hash.slice(0, 6)}…${hash.slice(-4)}`;
 }
 
-type OutcomeKind = 'accepted' | 'partial' | 'disputed' | 'cancelled' | 'unresolved' | 'proposed' | 'not-recorded';
-
 interface RollCloseOutRow {
   id: string;
   title: string;
@@ -43,7 +43,7 @@ interface RollCloseOutRow {
   undertakingType: string;
   undertakingPlace: string;
   outcome: string;
-  outcomeKind: OutcomeKind;
+  outcomeKind: RollOutcomeKind;
   acceptedAt: string | null;
   acceptedBy: string | null;
   hashAnchor: string;
@@ -52,14 +52,6 @@ interface RollCloseOutRow {
   pilotId: string | null;
   disclosure: 'public' | 'participant' | 'restricted';
 }
-
-const OUTCOME_BY_ID: Record<string, { label: string; kind: OutcomeKind }> = {
-  'roll-2026-10-17-03': { label: 'accepted', kind: 'accepted' },
-  'roll-2026-10-20-01': { label: 'proposed', kind: 'proposed' },
-  'roll-2026-11-01-07': { label: 'partial', kind: 'partial' },
-  'roll-2026-11-05-02': { label: 'disputed', kind: 'disputed' },
-  'roll-2026-11-07-09': { label: 'cancelled', kind: 'cancelled' },
-};
 
 const DISCLOSURE_LABELS: Record<string, string> = {
   public: 'Public',
@@ -87,7 +79,7 @@ function buildRollCloseOutRows(entries: RollEntry[], timeIndex: number): RollClo
   return entries
     .filter((entry) => entry.recorded_at >= monthStart)
     .map((entry) => {
-      const outcome = OUTCOME_BY_ID[entry.id] ?? { label: 'Not recorded', kind: 'not-recorded' };
+      const outcome = getRollOutcome(entry);
       const publicEv = entry.evidence.filter((e) => e.layer === 'public').length;
       const participantEv = entry.evidence.filter((e) => e.layer === 'participant').length;
       const restrictedEv = entry.evidence.filter((e) => e.layer === 'restricted').length;
@@ -121,7 +113,7 @@ function buildRollCloseOutRows(entries: RollEntry[], timeIndex: number): RollClo
     });
 }
 
-function OutcomeChip({ kind, label }: { kind: OutcomeKind; label: string }) {
+function OutcomeChip({ kind, label }: { kind: RollOutcomeKind; label: string }) {
   return (
     <span className={`outcome-chip outcome-${kind}`} title={label}>
       {label}
