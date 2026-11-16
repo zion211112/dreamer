@@ -128,6 +128,86 @@ export function WorkspaceOverview() {
           </ol>
         </div>
 
+        <section aria-label="Six structures of productive work" className="workspace-overview-structures">
+          <h2 className="workspace-overview-structures-title">The six structures</h2>
+          <p className="workspace-overview-structures-desc">
+            Every undertaking in APT-LABS is made legible through these six structures. They are not departments — they are the things that exist whether or not anyone names them.
+          </p>
+          <div className="workspace-overview-structures-grid">
+            <div className="workspace-structure">
+              <span className="workspace-structure-mark" aria-hidden="true">◉</span>
+              <h4 className="workspace-structure-name">Actors</h4>
+              <p className="workspace-structure-desc">People, crews, institutions — who can act and under what authority.</p>
+            </div>
+            <div className="workspace-structure">
+              <span className="workspace-structure-mark" aria-hidden="true">◎</span>
+              <h4 className="workspace-structure-name">Resources</h4>
+              <p className="workspace-structure-desc">Materials, equipment, capital — what is contributed and consumed.</p>
+            </div>
+            <div className="workspace-structure">
+              <span className="workspace-structure-mark" aria-hidden="true">●</span>
+              <h4 className="workspace-structure-name">Intentions</h4>
+              <p className="workspace-structure-desc">Needs, signals, proposals — what is wanted and why.</p>
+            </div>
+            <div className="workspace-structure">
+              <span className="workspace-structure-mark" aria-hidden="true">◐</span>
+              <h4 className="workspace-structure-name">Commitments</h4>
+              <p className="workspace-structure-desc">Obligations accepted, rates agreed, escrow locked.</p>
+            </div>
+            <div className="workspace-structure">
+              <span className="workspace-structure-mark" aria-hidden="true">◑</span>
+              <h4 className="workspace-structure-name">Activity</h4>
+              <p className="workspace-structure-desc">Work in motion — gate by gate, execution to acceptance.</p>
+            </div>
+            <div className="workspace-structure">
+              <span className="workspace-structure-mark" aria-hidden="true">○</span>
+              <h4 className="workspace-structure-name">Knowledge</h4>
+              <p className="workspace-structure-desc">Lessons, designs, criteria carried into the next undertaking.</p>
+            </div>
+          </div>
+        </section>
+
+        <section aria-label="Production grammar" className="workspace-overview-grammar">
+          <h2 className="workspace-overview-grammar-title">Production grammar</h2>
+          <p className="workspace-overview-grammar-desc">
+            An undertaking moves through eight stages. Acceptance is not settlement; settlement is not learning.
+          </p>
+          <ol className="workspace-overview-grammar-steps">
+            <li className="workspace-grammar-step is-current">
+              <span className="workspace-grammar-step-number">01</span>
+              <span className="workspace-grammar-step-label">Intake</span>
+            </li>
+            <li className="workspace-grammar-step">
+              <span className="workspace-grammar-step-number">02</span>
+              <span className="workspace-grammar-step-label">Diagnose</span>
+            </li>
+            <li className="workspace-grammar-step">
+              <span className="workspace-grammar-step-number">03</span>
+              <span className="workspace-grammar-step-label">Compose</span>
+            </li>
+            <li className="workspace-grammar-step">
+              <span className="workspace-grammar-step-number">04</span>
+              <span className="workspace-grammar-step-label">Authorise</span>
+            </li>
+            <li className="workspace-grammar-step">
+              <span className="workspace-grammar-step-number">05</span>
+              <span className="workspace-grammar-step-label">Produce</span>
+            </li>
+            <li className="workspace-grammar-step">
+              <span className="workspace-grammar-step-number">06</span>
+              <span className="workspace-grammar-step-label">Inspect</span>
+            </li>
+            <li className="workspace-grammar-step">
+              <span className="workspace-grammar-step-number">07</span>
+              <span className="workspace-grammar-step-label">Settle</span>
+            </li>
+            <li className="workspace-grammar-step">
+              <span className="workspace-grammar-step-number">08</span>
+              <span className="workspace-grammar-step-label">Learn</span>
+            </li>
+          </ol>
+        </section>
+
         <div className="workspace-overview-desk">
           <div className="workspace-overview-desk-header">
             <h3 className="workspace-overview-desk-title">On your desk</h3>

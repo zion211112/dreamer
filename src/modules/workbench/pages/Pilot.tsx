@@ -22,6 +22,7 @@ import {
   recordSettlementEvent,
 } from '../data';
 import { EngineCommandDock } from '@/components/EngineCommandDock';
+import { readPeopleNetworkRecord, type NetworkEntity } from '@/lib/people-network';
 
 type ParticipantInput = {
   role: 'anchor' | 'builder' | 'apprentice' | 'coordinator';
@@ -100,6 +101,28 @@ function DetailPanel({
   const [finalizing, setFinalizing] = useState(false);
   const [finalized, setFinalized] = useState(false);
   const [finalizeError, setFinalizeError] = useState<string | null>(null);
+  const [crewPickerOpen, setCrewPickerOpen] = useState(false);
+  const [crewPickerRole, setCrewPickerRole] = useState<'anchor' | 'builder' | 'apprentice' | 'coordinator' | null>(null);
+  const [settlementOpen, setSettlementOpen] = useState(false);
+  const [settlementAmount, setSettlementAmount] = useState('');
+  const [settlementNote, setSettlementNote] = useState('');
+
+  const entities = readPeopleNetworkRecord().entities.filter((e) => e.type === 'person' || e.type === 'crew');
+
+  function handleAssignCrew(role: 'anchor' | 'builder' | 'apprentice' | 'coordinator', entity: NetworkEntity): void {
+    assignCrewMember(item.id, role, entity.name, entity.id);
+    setCrewPickerOpen(false);
+    setCrewPickerRole(null);
+  }
+
+  function handleRecordSettlement(): void {
+    const amount = Number(settlementAmount);
+    if (!settlementAmount || !amount || !settlementNote) return;
+    recordSettlementEvent(item.id, { type: 'payment', amount, currency: 'KES', actor: 'steward', note: settlementNote, createdAt: new Date().toISOString() });
+    setSettlementOpen(false);
+    setSettlementAmount('');
+    setSettlementNote('');
+  }
 
   const handleFinalize = useCallback(async () => {
     if (!onFinalizeAccepted) return;
@@ -232,18 +255,38 @@ function DetailPanel({
                 </span>
                 <button
                   className="wb-crew-assign-btn"
-                  onClick={() => assignCrewMember(item.id, role, '', '')}
+                  onClick={() => { setCrewPickerRole(role); setCrewPickerOpen(true); }}
                 >
-                  Assign from Network
+                  Pick from Network
                 </button>
               </div>
             ))}
           </div>
           <p className="wb-detail-note" style={{ marginTop: 'var(--space-2)', fontSize: 'var(--step--2)', color: 'var(--dim)' }}>
-            Crew assignment opens the Network capability directory to select a person.
-            Placeholder '—' means unassigned.
+            Pick a Network person/crew for each role. Their entity id flows through to Roll participants and SBT attestations.
           </p>
         </div>
+
+        {crewPickerOpen && crewPickerRole && (
+          <div className="wb-crew-picker">
+            <h4 className="wb-detail-heading">Select {CREW_ROLE_LABELS[crewPickerRole]}</h4>
+            <div className="wb-crew-picker-list">
+              {entities.map((e) => (
+                <button
+                  key={e.id}
+                  className="wb-crew-picker-item"
+                  type="button"
+                  onClick={() => handleAssignCrew(crewPickerRole, e)}
+                >
+                  <span className="wb-crew-picker-name">{e.name}</span>
+                  <span className="wb-crew-picker-id">{e.type} · {e.id}</span>
+                </button>
+              ))}
+              {entities.length === 0 && <p className="wb-detail-note">No people or crews in Network.</p>}
+            </div>
+            <button className="wb-crew-picker-close" type="button" onClick={() => setCrewPickerOpen(false)}>Close</button>
+          </div>
+        )}
 
         {/* Next step / gate transitions */}
         <div className="wb-detail-section">
@@ -318,18 +361,37 @@ function DetailPanel({
           ) : (
             <p className="wb-detail-note">No settlement recorded yet.</p>
           )}
-          <button
-            className="wb-gate-advance wb-gate-advance--secondary"
-            onClick={() => {
-              const amount = window.prompt('Settlement amount (KES)?', '');
-              if (!amount) return;
-              const note = window.prompt('Settlement note?', '');
-              if (!note) return;
-              recordSettlementEvent(item.id, { type: 'payment', amount: Number(amount), currency: 'KES', actor: 'steward', note, createdAt: new Date().toISOString() });
-            }}
-          >
-            Record settlement event
-          </button>
+          {settlementOpen ? (
+            <div className="wb-settlement-form">
+              <label className="wb-settlement-label">Amount (KES)</label>
+              <input
+                className="wb-settlement-input"
+                type="number"
+                value={settlementAmount}
+                onChange={(e) => setSettlementAmount((e.target as HTMLInputElement).value)}
+                placeholder="0"
+              />
+              <label className="wb-settlement-label">Note</label>
+              <input
+                className="wb-settlement-input"
+                type="text"
+                value={settlementNote}
+                onChange={(e) => setSettlementNote((e.target as HTMLInputElement).value)}
+                placeholder="e.g. first milestone payment"
+              />
+              <div className="wb-settlement-actions">
+                <button className="wb-settlement-cancel" type="button" onClick={() => { setSettlementOpen(false); setSettlementAmount(''); setSettlementNote(''); }}>Cancel</button>
+                <button className="wb-settlement-submit" type="button" onClick={handleRecordSettlement}>Record</button>
+              </div>
+            </div>
+          ) : (
+            <button
+              className="wb-gate-advance wb-gate-advance--secondary"
+              onClick={() => setSettlementOpen(true)}
+            >
+              Record settlement event
+            </button>
+          )}
         </div>
 
         {/* Lifecycle events */}
