@@ -16,7 +16,7 @@ Verified current technical architecture. Describes what exists; does not define 
 ## Build & test
 
 - `npm run build` → `tsc && vite build` → `dist/`
-- `npm run test:unit -- --run` → 12 test files, 74 tests
+- `npm run test:unit -- --run` → 13 test files, 78 tests
 - `npx tsc --noEmit` → type check
 
 ## Architecture
@@ -30,8 +30,8 @@ src/
   main.tsx             — entry point
 
   lib/
-    demo-seed.ts               — seedDemoData(), 3 demo scenarios (school workshop, Kemetos AGI1, Thiba Hydro)
-    roll-sbt-bridge.ts         — createRollFromSimulation(), mintSBTForAcceptedLocalWork()
+    demo-seed.ts               — browser-console seeder, 5 synthetic local scenarios (Kibera workshop, Kemetos AGI1, Thiba Hydro, Nyeri repair/apprenticeship, Embu solar drying)
+    roll-sbt-bridge.ts         — accepted Workbench handoff to Roll entries and SBT attestations
     sbt-attestations.ts        — mint/list/verify/export SBT attestations (localStorage)
     agent-host.ts              — AgentHost class, proposes-never-executes
     people-network.ts          — 31 entities, 34 relationships
@@ -47,7 +47,7 @@ src/
     auth/hooks.ts
     auth/index.ts
     auth/permissions.ts
-    db/roll.ts                 — RollEntry, hash_anchor, evidence layers
+    db/roll.ts                 — RollEntry, hash_anchor, evidence layers, and 3 synthetic pitch fixtures
     db/roll-hash.ts
     db/network.ts
     db/work.ts
@@ -156,6 +156,6 @@ Demo mode (localStorage) when Supabase env vars unset. Roles: `institution` | `f
 
 Browser storage: localStorage keys `aptlabs:sbt-attestations:v1`, `aptlabs:agent-proposals:v1`, `aptlabs:workbench-local-flow:v1`, `demo_roll_entries`; IndexedDB for school-console-storage.
 
-## Test files (verified, 12 files / 74 tests)
+## Test files (verified, 13 files / 78 tests)
 
-`src/lib/db/roll.test.ts`, `src/lib/institutions-register.test.ts`, `src/lib/intelligence/registry.test.ts`, `src/lib/mock-radar-map-provider.test.ts`, `src/lib/people-discovery.test.ts`, `src/lib/people-profiles.test.ts`, `src/lib/radar-view.test.ts`, `src/lib/records-view.test.ts`, `src/lib/studio-navigation.test.ts`, `src/lib/workspace-activity.test.ts`, `src/lib/workspace-overview.test.ts`, `src/lib/workspace-search.test.ts`
+`src/lib/db/roll.test.ts`, `src/lib/institutions-register.test.ts`, `src/lib/intelligence.test.ts`, `src/lib/intelligence/registry.test.ts`, `src/lib/mock-radar-map-provider.test.ts`, `src/lib/people-discovery.test.ts`, `src/lib/people-profiles.test.ts`, `src/lib/radar-view.test.ts`, `src/lib/records-view.test.ts`, `src/lib/studio-navigation.test.ts`, `src/lib/workspace-activity.test.ts`, `src/lib/workspace-overview.test.ts`, `src/lib/workspace-search.test.ts`

@@ -96,8 +96,12 @@ export function Intelligence() {
                     <span className="intelligence-forecast-label">Accepted</span>
                   </div>
                   <div className="intelligence-forecast-metric">
-                    <span className="intelligence-forecast-value">KES {f.totalCapital.toLocaleString()}</span>
-                    <span className="intelligence-forecast-label">Committed</span>
+                    <span className="intelligence-forecast-value">
+                      {f.totalCapital === null ? 'Not priced' : `KES ${f.totalCapital.toLocaleString()}`}
+                    </span>
+                    <span className="intelligence-forecast-label">
+                      {f.totalCapital === null ? 'Capital' : 'Priced capital'}
+                    </span>
                   </div>
                 </div>
                 <p className="intelligence-forecast-note">

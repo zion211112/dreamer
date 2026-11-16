@@ -21,17 +21,9 @@ import {
   advanceGate,
   recordSettlementEvent,
 } from '../data';
+import { crewToRollParticipants } from '../roll-participants';
 import { EngineCommandDock } from '@/components/EngineCommandDock';
 import { readPeopleNetworkRecord, type NetworkEntity } from '@/lib/people-network';
-
-type ParticipantInput = {
-  role: 'anchor' | 'builder' | 'apprentice' | 'coordinator';
-  personId: string;
-  personName: string;
-  profileId: string | null;
-  capabilityClaims: string[];
-  evidenceIds: string[];
-};
 
 const PILOT_INSTITUTIONS: Record<string, { id: string; name: string; coordinatorId: string }> = {
   benbenos: { id: 'inst-school-console', name: 'School Console', coordinatorId: 'coord-school-01' },
@@ -49,26 +41,6 @@ const CREW_ROLE_LABELS: Record<'anchor' | 'builder' | 'apprentice' | 'coordinato
   apprentice: 'Apprentice',
   coordinator: 'Coordinator',
 };
-
-function crewToParticipants(crew: WorkItem['crew'], itemId: string): ParticipantInput[] {
-  const participants: ParticipantInput[] = [];
-  const add = (role: 'anchor' | 'builder' | 'apprentice' | 'coordinator', name?: string) => {
-    if (!name || name === '—') return;
-    participants.push({
-      role,
-      personId: crew[`${role}PersonId` as keyof WorkItem['crew']] ?? `person-${itemId}-${role}`,
-      personName: name,
-      profileId: null,
-      capabilityClaims: [],
-      evidenceIds: [],
-    });
-  };
-  add('anchor', crew.anchor);
-  add('builder', crew.builder);
-  add('apprentice', crew.apprentice);
-  add('coordinator', crew.coordinator);
-  return participants;
-}
 
 function CrewInline({ crew }: { crew: WorkItem['crew'] }) {
   const roles: Array<'anchor' | 'builder' | 'apprentice' | 'coordinator'> = ['anchor', 'builder', 'apprentice', 'coordinator'];
@@ -169,9 +141,9 @@ function DetailPanel({
         <div className="wb-detail-section">
           <h4 className="wb-detail-heading">Capital</h4>
           <div className="wb-capital-field">
-            <span className="wb-capital-label">KES</span>
+            <span className="wb-capital-label">{item.capital.financial === null ? 'Amount' : 'KES'}</span>
             <span className="wb-capital-value">
-              {item.capital.financial.toLocaleString('en-KE')}
+              {item.capital.financial === null ? 'Not priced' : item.capital.financial.toLocaleString('en-KE')}
             </span>
           </div>
           {item.capital.materials.length > 0 && (
@@ -583,10 +555,7 @@ export function Pilot() {
                               const institution =
                                 PILOT_INSTITUTIONS[item.pilot];
                               if (!institution) throw new Error('No institution configured for this pilot lane.');
-                              const participants = crewToParticipants(
-                                item.crew,
-                                item.id
-                              );
+                              const participants = crewToRollParticipants(item.crew);
                               if (participants.length === 0) {
                                 throw new Error(
                                   'No crew participants recorded for this undertaking.'

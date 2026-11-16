@@ -11,7 +11,7 @@
  */
 
 import type { GateState, PilotKey } from '@/modules/workbench/data';
-import { workItemsForPilot, PILOTS } from '@/modules/workbench/data';
+import { workItemsForPilot, PILOTS, totalCommittedCapital } from '@/modules/workbench/data';
 import { readPeopleNetworkRecord } from '@/lib/people-network';
 import { queryRollEntries } from '@/lib/db/roll';
 
@@ -100,7 +100,7 @@ export interface Forecast {
   pilot: string;
   openCount: number;
   acceptedCount: number;
-  totalCapital: number;
+  totalCapital: number | null;
   estimatedNextGate: GateState | null;
   assumption: string;
   uncertainty: 'low' | 'medium' | 'high';
@@ -111,7 +111,9 @@ export async function forecastPilot(pilotKey: PilotKey): Promise<Forecast> {
   const pilot = PILOTS.find((p) => p.key === pilotKey);
   const openCount = items.filter((i) => i.gate !== 'accepted').length;
   const acceptedCount = items.filter((i) => i.gate === 'accepted').length;
-  const totalCapital = items.reduce((sum, i) => sum + i.capital.financial, 0);
+  const totalCapital = items.length > 0 && items.every((item) => item.capital.financial === null)
+    ? null
+    : totalCommittedCapital(items);
   const nextGate = openCount > 0 ? 'in_review' : null;
   return {
     pilot: pilot?.label ?? pilotKey,

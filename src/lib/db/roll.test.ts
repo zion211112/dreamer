@@ -61,12 +61,17 @@ describe('Roll canonical data and demo fixtures', () => {
     expect(changedExcludedFields.canonicalJson).not.toContain('different-recorder');
   });
 
-  it('loads physical, digital, and creative synthetic examples with every visibility layer', async () => {
+  it('loads the three synthetic pitch examples with every visibility layer', async () => {
     const entries = await queryRollEntries();
 
     expect(new Set(entries.map(entry => entry.undertaking_type))).toEqual(
-      new Set(['physical', 'digital', 'creative'])
+      new Set(['physical', 'hybrid', 'digital'])
     );
+    expect(entries.map(entry => entry.title)).toEqual([
+      'DEMO · Workshop fabrication',
+      'DEMO · Repair and apprenticeship',
+      'DEMO · Digital engineering',
+    ]);
     for (const entry of entries) {
       expect(entry.commissioned_by.name).toMatch(/demo|example/i);
       expect(entry.participants.every(person => /demo|example/i.test(person.name))).toBe(true);
@@ -113,9 +118,9 @@ describe('Roll canonical data and demo fixtures', () => {
     firstRead.evidence[0].title = 'Changed in caller';
     const [secondRead] = await queryRollEntries({ undertaking_type: 'physical' });
 
-    expect(secondRead.title).toBe('DEMO · Community Workshop Build-out');
+    expect(secondRead.title).toBe('DEMO · Workshop fabrication');
     expect(secondRead.deliverables).not.toContain('Changed in caller');
-    expect(secondRead.evidence[0].title).toBe('Example handover checklist');
+    expect(secondRead.evidence[0].title).toBe('Example fabrication plan');
     expect((await verifyRollEntry(secondRead)).valid).toBe(true);
   });
 

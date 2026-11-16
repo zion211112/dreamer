@@ -1,5 +1,5 @@
 import { hasLocalStewardRole } from '../../../lib/local-workflows';
-import type { CommonsGovernanceRecord, ProposalStatus } from '../../../lib/local-workflows';
+import type { CommonsGovernanceRecord, CommonsProposal, ProposalStatus } from '../../../lib/local-workflows';
 
 interface CommonsGovernanceProps {
   governance: CommonsGovernanceRecord;
@@ -15,6 +15,7 @@ interface CommonsGovernanceProps {
   setNewStewardEmail: (value: string) => void;
   registerInitialSteward: () => void;
   addSteward: (event: Event) => void;
+  onCreateUndertaking: (proposal: CommonsProposal) => void;
   submitProposal: (event: Event) => void;
   recordDecision: (proposalId: string, status: Exclude<ProposalStatus, 'proposed'>) => void;
   decisionNotes: Record<string, string>;
@@ -35,6 +36,7 @@ export function CommonsGovernance({
   setNewStewardEmail,
   registerInitialSteward,
   addSteward,
+  onCreateUndertaking,
   submitProposal,
   recordDecision,
   decisionNotes,
@@ -151,7 +153,7 @@ export function CommonsGovernance({
               </div>
             )}
             {proposal.status === 'approved' && (
-              <button className="signal-primary-action" type="button">
+              <button className="signal-primary-action" onClick={() => onCreateUndertaking(proposal)} type="button">
                 Open approved work brief
               </button>
             )}
