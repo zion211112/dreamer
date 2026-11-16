@@ -6,6 +6,7 @@ export {
   pilotByKey,
   pilotByHref,
   workItemsForPilot,
+  totalCommittedCapital,
   advanceGate,
   recordLifecycleEvent,
   recordSettlementEvent,
@@ -21,5 +22,4 @@ export {
   type LifecycleEvent,
   type SettlementEvent,
   type LearningEvent,
-  type UndertakingFromProposal,
 } from './data';

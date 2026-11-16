@@ -78,10 +78,10 @@ export function Commons() {
 
   function handleCreateUndertaking(proposal: CommonsProposal | null): void {
     if (!proposal || proposal.status !== 'approved') return;
-    const result = createUndertakingFromProposal(proposal, 'benbenos', actorEmail || 'steward', activeInstitutionName || 'Site', 6000);
-    if (result) {
-      registerUndertaking(result.workItem);
-      navigate('/workspace/workbench/benbenos');
+    const workItem = createUndertakingFromProposal(proposal, actorEmail || 'steward', activeInstitutionName || 'Site');
+    if (workItem) {
+      registerUndertaking(workItem);
+      navigate('/workspace/workbench/open');
     } else {
       setError('Only an approved proposal can become an undertaking.');
     }

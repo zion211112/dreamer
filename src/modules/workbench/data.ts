@@ -47,16 +47,21 @@ function saveWorkItems(items: WorkItem[]): void {
 }
 
 function isWorkItem(value: unknown): value is WorkItem {
+  if (typeof value !== 'object' || value === null) return false;
+  const item = value as Partial<WorkItem>;
+  const capital = item.capital;
+
   return (
-    typeof value === 'object' && value !== null
-    && typeof (value as WorkItem).id === 'string'
-    && typeof (value as WorkItem).pilot === 'string'
-    && typeof (value as WorkItem).title === 'string'
-    && typeof (value as WorkItem).discipline === 'string'
-    && typeof (value as WorkItem).location === 'string'
-    && typeof (value as WorkItem).gate === 'string'
-    && Array.isArray((value as WorkItem).evidence)
-    && typeof (value as WorkItem).capital === 'object'
+    typeof item.id === 'string'
+    && typeof item.pilot === 'string'
+    && typeof item.title === 'string'
+    && typeof item.discipline === 'string'
+    && typeof item.location === 'string'
+    && typeof item.gate === 'string'
+    && Array.isArray(item.evidence)
+    && typeof capital === 'object' && capital !== null
+    && (capital.financial === null
+      || (typeof capital.financial === 'number' && Number.isFinite(capital.financial)))
   );
 }
 
@@ -82,8 +87,8 @@ export type GateState =
 export type EvidenceLayer = 'public' | 'participant' | 'restricted';
 
 export interface Capital {
-  /** KES committed to the undertaking. */
-  financial: number;
+  /** KES committed to the undertaking, or null when no amount is set. */
+  financial: number | null;
   /** Materials and equipment provided. */
   materials: string[];
   /** Conditions that must be met before release. */
@@ -258,35 +263,27 @@ export interface LearningEvent {
   createdAt: string;
 }
 
-/** Result of creating a Workbench undertaking from a Commons proposal. */
-export interface UndertakingFromProposal {
-  workItem: WorkItem;
-  actor: string;
-}
-
 /** Create a Workbench undertaking from an approved Commons proposal.
  *  Bidirectional traceability: the WorkItem carries sourceProposalId/sourceSignalId,
  *  and a lifecycle event records the proposal→undertaking transition. */
 export function createUndertakingFromProposal(
   proposal: CommonsProposal,
-  pilot: PilotKey,
   actor: string,
   location: string,
-  financialKES: number,
-): UndertakingFromProposal | undefined {
+): WorkItem | undefined {
   if (proposal.status !== 'approved') return undefined;
 
   const id = createLocalId('undertaking');
   const workItem: WorkItem = {
     id,
-    pilot,
+    pilot: 'open',
     title: proposal.title,
     discipline: 'General',
     location,
     gate: 'proposed',
     evidence: ['public'],
     capital: {
-      financial: financialKES,
+      financial: null,
       materials: [],
       conditions: ['Steward sign-off'],
       deployed: false,
@@ -311,7 +308,7 @@ export function createUndertakingFromProposal(
     }],
   };
 
-  return { workItem, actor };
+  return workItem;
 }
 
 /** Add an undertaking created from Commons to the work item registry. */
@@ -631,9 +628,13 @@ export interface HomeMetrics {
   activeCount: number;
 }
 
+export function totalCommittedCapital(items: readonly WorkItem[]): number {
+  return items.reduce((total, item) => total + (item.capital.financial ?? 0), 0);
+}
+
 export function homeMetrics(): HomeMetrics {
   const publishedLanes = PILOTS.filter((p) => p.status === 'published').length;
-    const totalCapital = WORK_ITEMS.value.reduce((sum, i) => sum + i.capital.financial, 0);
+  const totalCapital = totalCommittedCapital(WORK_ITEMS.value);
   const activeCount = WORK_ITEMS.value.filter((i) => i.gate !== 'accepted').length;
   return { publishedLanes, totalCapital, activeCount };
 }

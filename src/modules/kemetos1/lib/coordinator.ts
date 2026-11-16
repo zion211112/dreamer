@@ -335,7 +335,10 @@ export class Kemetos1Coordinator {
 
   async proposeNextStep(workItem: WorkItem): Promise<CoordinationProposal> {
     const nextGate = NEXT_GATE[workItem.gate];
-    const context = `WORK ITEM\n- id: ${workItem.id}\n- pilot: ${workItem.pilot}\n- title: ${workItem.title}\n- discipline: ${workItem.discipline}\n- location: ${workItem.location}\n- current gate: ${workItem.gate} (${GATE_LABELS[workItem.gate]})\n- call sheet: ${workItem.callSheet ? workItem.callSheet.scope : 'none'}\n- capital: KES ${workItem.capital.financial.toLocaleString('en-KE')}, escrowed=${workItem.capital.escrowed}, deployed=${workItem.capital.deployed}`;
+    const capital = workItem.capital.financial === null
+      ? 'Not priced'
+      : `KES ${workItem.capital.financial.toLocaleString('en-KE')}`;
+    const context = `WORK ITEM\n- id: ${workItem.id}\n- pilot: ${workItem.pilot}\n- title: ${workItem.title}\n- discipline: ${workItem.discipline}\n- location: ${workItem.location}\n- current gate: ${workItem.gate} (${GATE_LABELS[workItem.gate]})\n- call sheet: ${workItem.callSheet ? workItem.callSheet.scope : 'none'}\n- capital: ${capital}, escrowed=${workItem.capital.escrowed}, deployed=${workItem.capital.deployed}`;
 
     let proposedGate: GateState | undefined;
     let rationale: string;

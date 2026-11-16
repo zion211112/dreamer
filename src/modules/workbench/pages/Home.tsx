@@ -1,6 +1,6 @@
 import { Link } from 'wouter';
 import { PageHead } from '@/components/PageHead';
-import { PILOTS, homeMetrics, workItemsForPilot } from '../data';
+import { PILOTS, homeMetrics, totalCommittedCapital, workItemsForPilot } from '../data';
 
 export function Workbench() {
   const m = homeMetrics();
@@ -36,7 +36,7 @@ export function Workbench() {
             {PILOTS.map((pilot) => {
               const items = workItemsForPilot(pilot.key);
               const open = items.filter((w) => w.gate !== 'accepted');
-              const totalCap = open.reduce((s, w) => s + w.capital.financial, 0);
+              const totalCap = totalCommittedCapital(open);
               const hasLive = open.length > 0;
               const isIllustrative = pilot.status === 'illustrative';
 

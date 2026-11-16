@@ -169,9 +169,9 @@ function DetailPanel({
         <div className="wb-detail-section">
           <h4 className="wb-detail-heading">Capital</h4>
           <div className="wb-capital-field">
-            <span className="wb-capital-label">KES</span>
+            <span className="wb-capital-label">{item.capital.financial === null ? 'Amount' : 'KES'}</span>
             <span className="wb-capital-value">
-              {item.capital.financial.toLocaleString('en-KE')}
+              {item.capital.financial === null ? 'Not priced' : item.capital.financial.toLocaleString('en-KE')}
             </span>
           </div>
           {item.capital.materials.length > 0 && (
