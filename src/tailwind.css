@@ -766,11 +766,8 @@
     padding: 16px 20px 12px;
     border-bottom: 1px solid var(--line);
   }
-  .identity-eyebrow {
-    font: 500 9px/1 var(--mono); letter-spacing: 0.1em; color: var(--sage); text-transform: uppercase;
-  }
   .identity-panel-header h2 {
-    margin: 4px 0 0; font: 500 18px/1.2 var(--serif); color: var(--fg-strong);
+    margin: 0; font: 500 18px/1.2 var(--serif); color: var(--fg-strong);
   }
   .identity-panel-description {
     margin: 0; font: 400 12px/1.4 var(--sans); color: var(--muted);
@@ -786,7 +783,7 @@
   .identity-panel-body { padding: 20px 20px 0; overflow-y: auto; flex: 1; }
   .identity-error {
     margin: 0; padding: var(--space-1); color: var(--state-risk); background: var(--state-risk-wash);
-    border-left: 2px solid var(--state-risk); border-radius: var(--radius-1);
+    border-top: 1px solid var(--line); border-radius: var(--radius-1);
     font: 400 12px/1.4 var(--sans);
   }
   .identity-profile-card { margin-bottom: var(--space-3); }
@@ -822,10 +819,6 @@
   .identity-section-head {
     display: flex; align-items: baseline; justify-content: space-between;
     gap: var(--space-1); margin-bottom: var(--space-1);
-  }
-  .identity-section-kicker {
-    font: 500 9px/1 var(--mono); letter-spacing: 0.08em; color: var(--sage); text-transform: uppercase;
-    flex: 0 0 auto;
   }
   .identity-section-title {
     margin: 0; font: 500 14px/1.2 var(--serif); color: var(--fg-strong);
@@ -913,11 +906,8 @@
     padding: 16px 20px 12px;
     border-bottom: 1px solid var(--line);
   }
-  .workspace-quick-search-eyebrow {
-    font: 500 9px/1 var(--mono); letter-spacing: 0.1em; color: var(--sage); text-transform: uppercase;
-  }
   .workspace-quick-search-heading h2 {
-    margin: 4px 0 0; font: 500 18px/1.2 var(--serif); color: var(--fg-strong);
+    margin: 0; font: 500 18px/1.2 var(--serif); color: var(--fg-strong);
   }
   .workspace-quick-search-close {
     display: inline-flex; align-items: center; justify-content: center;

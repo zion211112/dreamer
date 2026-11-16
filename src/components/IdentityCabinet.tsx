@@ -106,7 +106,7 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
   return (
     <aside
       ref={panelRef}
-      aria-labelledby="identity-cabinet-title"
+      aria-labelledby="identity-panel-title"
       aria-modal="true"
       className={`identity-panel${open ? ' is-open' : ''}`}
       id="identity-panel"
@@ -118,9 +118,8 @@ export function IdentityCabinet({ open, onClose, currentContext }: IdentityCabin
       <div className="identity-panel-wrap">
         <header className="identity-panel-header">
           <div>
-            <span className="identity-eyebrow">Person · proof · authority</span>
-            <h2 id="identity-cabinet-title">Identity</h2>
-            <p className="identity-panel-description">A local browser profile and its records.</p>
+            <h2 id="identity-panel-title">Identity</h2>
+            <p className="identity-panel-description">Local browser profile and its records.</p>
           </div>
           <button aria-label="Close identity panel" className="identity-close-button" onClick={onClose} type="button">×</button>
         </header>
