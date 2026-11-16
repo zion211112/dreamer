@@ -88,4 +88,16 @@ describe('Workbench proposal conversion and capital', () => {
 
     expect(workbenchData.totalCommittedCapital(items)).toBe(2000);
   });
+
+  it('persists assigned Network entity IDs with the Workbench item', () => {
+    const previousItems = workbenchData.WORK_ITEMS.value;
+    workbenchData.assignCrewMember('work-item', 'anchor', 'Mtaa Repair Circle', 'crew-repair-circle');
+
+    const saved = JSON.parse(storage.get('aptlabs:workbench-items:v1') ?? '[]') as WorkItem[];
+    expect(workbenchData.WORK_ITEMS.value).not.toBe(previousItems);
+    expect(saved.find((item) => item.id === 'work-item')?.crew).toMatchObject({
+      anchor: 'Mtaa Repair Circle',
+      anchorPersonId: 'crew-repair-circle',
+    });
+  });
 });

@@ -7,29 +7,28 @@ const TERM_FEE = 12000;
 
 type FeeRow = { learner: string; grade: number; assessed: number; paid: number; status: 'paid' | 'partial' | 'unpaid' };
 
-const FEE_ROWS: FeeRow[] = useMemo(() => LEARNERS.map((l) => {
-  const assessed = TERM_FEE;
-  const paid = l.id.endsWith('01') || l.id.endsWith('04') || l.id.endsWith('07') || l.id.endsWith('10')
-    ? assessed
-    : l.id.endsWith('02') || l.id.endsWith('05') || l.id.endsWith('08')
-      ? Math.round(assessed * 0.5)
-      : 0;
-  return {
-    learner: l.name,
-    grade: l.grade,
-    assessed,
-    paid,
-    status: paid === assessed ? 'paid' : paid > 0 ? 'partial' : 'unpaid',
-  };
-}), [LEARNERS]);
-
-const totals = useMemo(() => {
-  const total = FEE_ROWS.reduce((acc, f) => acc + f.assessed, 0);
-  const paid = FEE_ROWS.reduce((acc, f) => acc + f.paid, 0);
-  return { total, paid, outstanding: total - paid };
-}, [FEE_ROWS]);
-
 export function Fees() {
+  const feeRows = useMemo<FeeRow[]>(() => LEARNERS.map((l) => {
+    const assessed = TERM_FEE;
+    const paid = l.id.endsWith('01') || l.id.endsWith('04') || l.id.endsWith('07') || l.id.endsWith('10')
+      ? assessed
+      : l.id.endsWith('02') || l.id.endsWith('05') || l.id.endsWith('08')
+        ? Math.round(assessed * 0.5)
+        : 0;
+    return {
+      learner: l.name,
+      grade: l.grade,
+      assessed,
+      paid,
+      status: paid === assessed ? 'paid' : paid > 0 ? 'partial' : 'unpaid',
+    };
+  }), []);
+  const totals = useMemo(() => {
+    const total = feeRows.reduce((acc, f) => acc + f.assessed, 0);
+    const paid = feeRows.reduce((acc, f) => acc + f.paid, 0);
+    return { total, paid, outstanding: total - paid };
+  }, [feeRows]);
+
   return (
     <div className="benben-page">
       <div className="benben-page-head">
@@ -82,7 +81,7 @@ export function Fees() {
               </tr>
             </thead>
             <tbody>
-              {FEE_ROWS.map((f) => {
+              {feeRows.map((f) => {
                 const balance = f.assessed - f.paid;
                 return (
                   <tr key={f.learner} className="benben-row">

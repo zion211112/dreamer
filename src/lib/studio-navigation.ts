@@ -53,7 +53,7 @@ export const STUDIO_FLOW_MODULES: readonly StudioNavigationModule[] = [
   },
   {
     id: 'records',
-    label: 'The Roll',
+    label: 'Records',
     href: '/workspace/records/roll',
     contexts: ['records:canon', 'records:annals', 'records:roll'],
   },

@@ -221,6 +221,7 @@ export function Commons() {
              governance={governance}
              isSteward={isSteward}
              newStewardEmail={newStewardEmail}
+             onCreateUndertaking={handleCreateUndertaking}
              recordDecision={recordDecision}
              registerInitialSteward={registerInitialSteward}
              selected={selected}

@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'preact/compat';
 import { Switch, Route } from 'wouter';
 import { Landing } from './pages/Landing';
 import { Auth } from './pages/Auth';
@@ -10,10 +11,11 @@ import { Records } from './pages/workspace/Records';
 import { AptCoinLab } from './pages/workspace/AptCoinLab';
 import { Intelligence } from './pages/workspace/Intelligence';
 import { WorkspaceOverview } from './pages/workspace/WorkspaceOverview';
-import { BenbenOS } from './modules/benben-os';
 import { WorkbenchApp } from './modules/workbench';
 import { Kemetos1App } from './modules/kemetos1';
 import { DesignLab } from './pages/DesignLab';
+
+const BenbenOS = lazy(() => import('./modules/benben-os').then(module => ({ default: module.BenbenOS })));
 
 export function App() {
   return (
@@ -28,7 +30,7 @@ export function App() {
       <Route path="/workspace/kemetos1"><Kemetos1App /></Route>
       <Route path="/workspace"><WorkspaceOverview /></Route>
 
-      {/* New 5-module routes */}
+      {/* Core workspace routes */}
       <Route path="/workspace/commons"><Commons /></Route>
       <Route path="/workspace/network"><Network /></Route>
       <Route path="/workspace/network/people"><People /></Route>
@@ -40,7 +42,11 @@ export function App() {
       <Route path="/workspace/records/roll"><Records /></Route>
       <Route path="/workspace/intelligence"><Intelligence /></Route>
       <Route path="/workspace/intelligence/coin-lab"><AptCoinLab /></Route>
-      <Route path="/benben-os"><BenbenOS /></Route>
+      <Route path="/benben-os">
+        <Suspense fallback={<p>Loading Benben OS…</p>}>
+          <BenbenOS />
+        </Suspense>
+      </Route>
 
       <Route path="/design-lab"><DesignLab /></Route>
     </Switch>

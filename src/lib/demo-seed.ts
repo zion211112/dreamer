@@ -1,9 +1,8 @@
 /**
- * APT-LABS operational seed — 5 pilot paths across modules.
+ * APT-LABS demo seed — 5 synthetic local pilot examples across modules.
  *
- * Position: every pilot is a live undertaking in the transformation chain,
- * ending in a Roll entry and SBT attestations. The site is the system;
- * these are real operational records, not simulations or illustrative data.
+ * These examples create browser-local Roll entries and SBT attestations.
+ * They are synthetic demonstration data, not verified operational records.
  * Callable from the browser console as window.seedAPTLabsDemo().
  */
 
@@ -207,7 +206,7 @@ async function seedPilotSbts(rollEntry: RollEntry, issuedBy: string) {
   );
 }
 
-/** Seed all 5 operational pilots as Roll entries + SBT attestations in localStorage. Idempotent per pilot id. */
+/** Seed 5 synthetic demo pilots as Roll entries and SBT attestations in localStorage. */
 export async function seedOperationalData(): Promise<{ pilots: number; rollEntries: number; attestations: number }> {
   let rollEntries = 0;
   let attestations = 0;

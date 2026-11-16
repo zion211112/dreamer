@@ -1,15 +1,13 @@
 /**
  * Workbench — APT-LABS
  *
- * Five pilot lanes that stewards can work through today, plus an open slot
+ * Five pilot lanes shown as local demo examples, plus an open slot
  * for the next pilot. The registry is intentionally open: register a pilot
  * here and it appears across the workbench without touching any page or the
  * router.
  *
- * Position: sovereign work coordination. Published, fair rates in KES; work
- * that stays in the community; local stewardship, not extractive labor. Built
- * to out-remotask Remotasks and the closed city workbenches by keeping terms
- * transparent, local, and owned by the people doing the work.
+ * Position: sovereign work coordination. Demo records use illustrative rates
+ * and terms to show local stewardship and non-extractive coordination.
  *
  * Browser-local, illustrative data — one source per pilot.
  */
@@ -125,16 +123,14 @@ export interface Pilot {
   character: string;
   location: string;
   terms: string;
-  /** 'illustrative' = not yet live; 'published' = rates and terms are real. */
+  /** 'published' reflects the displayed demo state, not independent verification. */
   status: 'illustrative' | 'published';
   steward: string;
 }
 
 /**
- * The five pilot lanes that ship inside the Workbench module. The registry is
- * intentionally open: additional pilots can be registered here without
- * changing any page or the router. No lane is a simulation — each is an
- * action surface where a steward can work through real undertakings.
+ * The five pilot lanes shown inside the Workbench module. These are browser-local
+ * demo examples, not evidence that the depicted work or terms are live.
  */
 export const PILOTS: readonly Pilot[] = [
   {
@@ -143,7 +139,7 @@ export const PILOTS: readonly Pilot[] = [
     href: '/workspace/workbench/benbenos',
     character: 'Learning operations',
     location: 'Nairobi',
-    terms: 'Published rates in KES. Steward-owned; work stays with the local school.',
+    terms: 'Example terms: steward-owned rates in KES; work stays with the local school.',
     status: 'published',
     steward: 'School Console steward',
   },
@@ -153,7 +149,7 @@ export const PILOTS: readonly Pilot[] = [
     href: '/workspace/workbench/kemetos',
     character: 'Electrical and solar',
     location: 'Nairobi',
-    terms: 'Published rates in KES. Certified electricians set their own day rate.',
+    terms: 'Example terms: participating electricians set a day rate before work is claimed.',
     status: 'published',
     steward: 'Kemetos steward',
   },
@@ -163,7 +159,7 @@ export const PILOTS: readonly Pilot[] = [
     href: '/workspace/workbench/minihydro',
     character: 'Micro-hydro power',
     location: 'Thiba',
-    terms: 'Published rates in KES. Community-owned power; crews are paid per trip and per task.',
+    terms: 'Example terms: community-owned power; crews are paid per trip and per task.',
     status: 'published',
     steward: 'Thiba community steward',
   },
@@ -173,7 +169,7 @@ export const PILOTS: readonly Pilot[] = [
     href: '/workspace/workbench/mwea-animation-box',
     character: 'Irrigation and animation',
     location: 'Mwea',
-    terms: 'Published rates in KES. Local operators run the box; animation value stays in Mwea.',
+    terms: 'Example terms: local operators run the box; animation value stays in Mwea.',
     status: 'published',
     steward: 'Mwea operators steward',
   },
@@ -183,7 +179,7 @@ export const PILOTS: readonly Pilot[] = [
     href: '/workspace/workbench/open',
     character: 'Open',
     location: '—',
-    terms: 'Terms set when the pilot is registered.',
+    terms: 'Example setup slot. Terms require local steward agreement.',
     status: 'illustrative',
     steward: '—',
   },
@@ -651,6 +647,8 @@ export function recordLifecycleEvent(
   if (!item) return undefined;
   const next: LifecycleEvent = { ...event, id: createLocalId('lifecycle-event') };
   item.events = item.events ? [...item.events, next] : [next];
+  WORK_ITEMS.value = [...WORK_ITEMS.value];
+  saveWorkItems(WORK_ITEMS.value);
   return item;
 }
 
