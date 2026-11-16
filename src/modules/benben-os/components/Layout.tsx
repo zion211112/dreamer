@@ -7,12 +7,14 @@ interface LayoutProps {
 
 const NAV = [
   { label: 'Dashboard', path: '/benben-os', icon: '●' },
-  { label: 'Students', path: '/benben-os/students', icon: '◆' },
+  { label: 'Learners', path: '/benben-os/students', icon: '◆' },
   { label: 'Teachers', path: '/benben-os/teachers', icon: '◆' },
   { label: 'Courses', path: '/benben-os/courses', icon: '◆' },
   { label: 'Attendance', path: '/benben-os/attendance', icon: '◆' },
   { label: 'Fees', path: '/benben-os/fees', icon: '◆' },
   { label: 'Library', path: '/benben-os/library', icon: '◆' },
+  { label: 'Marking', path: '/benben-os/marking', icon: '◆' },
+  { label: 'Principal', path: '/benben-os/principal', icon: '◆' },
 ];
 
 export function Layout({ children }: LayoutProps) {

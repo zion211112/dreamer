@@ -34,7 +34,7 @@ export function Teachers() {
                   <td className="benben-mono">{t.subject}</td>
                   <td className="benben-mono">{t.classes}</td>
                   <td>
-                    <span className={`benben-badge benben-badge--${t.status === 'active' ? 'paid' : 'unpaid'}`}>
+                    <span className={`benben-badge benben-badge--${t.status === 'active' ? 'canon' : 'unpaid'}`}>
                       {t.status}
                     </span>
                   </td>

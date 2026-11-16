@@ -7,8 +7,10 @@ import { Courses } from './pages/Courses';
 import { Attendance } from './pages/Attendance';
 import { Fees } from './pages/Fees';
 import { Library } from './pages/Library';
+import { Marking } from './pages/Marking';
+import { Principal } from './pages/Principal';
 
-export type BenbenOSPage = 'dashboard' | 'students' | 'teachers' | 'courses' | 'attendance' | 'fees' | 'library';
+export type BenbenOSPage = 'dashboard' | 'students' | 'teachers' | 'courses' | 'attendance' | 'fees' | 'library' | 'marking' | 'principal';
 
 export function BenbenOS() {
   return (
@@ -21,6 +23,8 @@ export function BenbenOS() {
         <Route path="/benben-os/attendance"><Attendance /></Route>
         <Route path="/benben-os/fees"><Fees /></Route>
         <Route path="/benben-os/library"><Library /></Route>
+        <Route path="/benben-os/marking"><Marking /></Route>
+        <Route path="/benben-os/principal"><Principal /></Route>
       </Switch>
     </Layout>
   );

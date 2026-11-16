@@ -1,43 +1,44 @@
-import { useMemo } from 'preact/hooks';
 import { Link } from 'wouter';
 import { Card, CardHead, CardBody } from '@/components/Card';
 import { Button } from '@/components/Button';
-import {
-  STUDENTS, TEACHERS, COURSES, FEES,
-  ATTENDANCE_RATE, FEES_COLLECTED,
-  BENBEN_SCHOOL,
-} from '../lib/data';
+import { GRADE_SUMMARIES, CBC_DEMO_SCHOOL } from '../lib/cbc-seed';
+import { LEARNERS, TEACHERS } from '../lib/data';
 
-const ACTIVE_STUDENTS = STUDENTS.filter(s => s.status === 'active').length;
-const ACTIVE_TEACHERS = TEACHERS.filter(t => t.status === 'active').length;
-const PAID_FEES = FEES.filter(f => f.status === 'paid').length;
+const TOTAL_LEARNERS = LEARNERS.length;
+const TOTAL_TEACHERS = TEACHERS.filter((t) => t.status === 'active').length;
+const TOTAL_PAPERS = GRADE_SUMMARIES.reduce((acc, g) => acc + g.papersMarked, 0);
+const AVG = GRADE_SUMMARIES.reduce((acc, g) => acc + g.average, 0) / GRADE_SUMMARIES.length;
 
-type Stat = { label: string; value: string; delta?: string; tone?: 'canon' | 'proposed' | 'risk' | 'caution' };
+type Stat = { label: string; value: string; delta?: string };
 
 const STATS: Stat[] = [
-  { label: 'Students', value: String(STUDENTS.length), delta: `${ACTIVE_STUDENTS} active`, tone: 'canon' },
-  { label: 'Teachers', value: String(TEACHERS.length), delta: `${ACTIVE_TEACHERS} active`, tone: 'canon' },
-  { label: 'Courses', value: String(COURSES.length), delta: 'In session', tone: 'proposed' },
-  { label: 'Attendance', value: `${ATTENDANCE_RATE}%`, delta: 'Weekly average', tone: 'caution' },
-  { label: 'Fees collected', value: `KES ${FEES_COLLECTED.toLocaleString()}`, delta: `${PAID_FEES} paid`, tone: 'risk' },
+  { label: 'Learners (Gr 4–9)', value: String(TOTAL_LEARNERS), delta: 'CBC active roll' },
+  { label: 'Teachers', value: String(TOTAL_TEACHERS), delta: 'Active faculty' },
+  { label: 'Papers marked', value: String(TOTAL_PAPERS), delta: 'This term' },
+  { label: 'Class average', value: `${Math.round(AVG)}%`, delta: 'All grades' },
 ];
 
 export function Dashboard() {
-  const recent = useMemo(() => FEES.slice(0, 4), [FEES]);
-
   return (
     <div className="benben-page">
       <div className="benben-page-head">
-        <h1 className="benben-page-title">{BENBEN_SCHOOL.name}</h1>
-        <p className="benben-page-sub">{BENBEN_SCHOOL.tagline}</p>
+        <div className="benben-page-head-inner">
+          <h1 className="benben-page-title">{CBC_DEMO_SCHOOL.name}</h1>
+          <p className="benben-page-sub">{CBC_DEMO_SCHOOL.county} · CBC Auto-Marking OS</p>
+        </div>
+        <div className="benben-page-head-actions">
+          <Link href="/benben-os/marking" className="benben-head-btn">
+            Mark a paper
+          </Link>
+        </div>
       </div>
 
       <section className="benben-stats">
         {STATS.map((s) => (
-          <Card className={`benben-stat-card benben-tone-${s.tone}`} key={s.label}>
+          <Card key={s.label} className="benben-stat-card">
             <CardHead>
               <span className="benben-stat-label">{s.label}</span>
-              <span className="benben-stat-delta">{s.delta}</span>
+              {s.delta && <span className="benben-stat-delta">{s.delta}</span>}
             </CardHead>
             <CardBody>
               <span className="benben-stat-value">{s.value}</span>
@@ -47,6 +48,42 @@ export function Dashboard() {
       </section>
 
       <section className="benben-grid">
+        <Card className="benben-grade-table">
+          <CardHead>
+            <h2 className="benben-card-title">Grade coverage — Grades 4 to 9</h2>
+          </CardHead>
+          <CardBody>
+            <table className="benben-table">
+              <thead>
+                <tr>
+                  <th>Grade</th>
+                  <th>Learners</th>
+                  <th>Papers marked</th>
+                  <th>Average</th>
+                  <th>EE</th>
+                  <th>ME</th>
+                  <th>AE</th>
+                  <th>BE</th>
+                </tr>
+              </thead>
+              <tbody>
+                {GRADE_SUMMARIES.map((g) => (
+                  <tr key={g.grade} className="benben-row">
+                    <td className="benben-mono">Grade {g.grade}</td>
+                    <td className="benben-mono">{g.learners}</td>
+                    <td className="benben-mono">{g.papersMarked}</td>
+                    <td className="benben-mono">{g.average}%</td>
+                    <td className="benben-mono">{g.ee}</td>
+                    <td className="benben-mono">{g.me}</td>
+                    <td className="benben-mono">{g.ae}</td>
+                    <td className="benben-mono">{g.be}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CardBody>
+        </Card>
+
         <Card className="benben-quick-actions">
           <CardHead>
             <h2 className="benben-card-title">Quick actions</h2>
@@ -54,51 +91,54 @@ export function Dashboard() {
           <CardBody>
             <div className="benben-action-grid">
               <Button variant="primary" className="benben-action-btn" onClick={() => {}}>
-                Mark attendance
+                Mark a paper
               </Button>
               <Button variant="ghost" className="benben-action-btn" onClick={() => {}}>
-                Record fees
+                View mark schemes
               </Button>
               <Button variant="ghost" className="benben-action-btn" onClick={() => {}}>
-                Add student
+                Principal inbox
               </Button>
               <Button variant="ghost" className="benben-action-btn" onClick={() => {}}>
-                Schedule class
+                Add learner
               </Button>
             </div>
           </CardBody>
         </Card>
 
-        <Card className="benben-recent-fees">
+        <Card className="benben-recent">
           <CardHead>
-            <h2 className="benben-card-title">Recent fees</h2>
-            <div className="benben-card-actions">
-              <Link href="/benben-os/fees" className="benben-view-all">View all</Link>
-            </div>
+            <h2 className="benben-card-title">Marked this week</h2>
           </CardHead>
           <CardBody>
             <table className="benben-table">
               <thead>
                 <tr>
-                  <th>Student</th>
-                  <th>Amount</th>
-                  <th>Paid</th>
-                  <th>Status</th>
+                  <th>Paper</th>
+                  <th>Learner</th>
+                  <th>Score</th>
+                  <th>Level</th>
                 </tr>
               </thead>
               <tbody>
-                {recent.map((f) => (
-                  <tr key={f.id}>
-                    <td>{f.student}</td>
-                    <td>KES {f.amount.toLocaleString()}</td>
-                    <td>KES {f.paid.toLocaleString()}</td>
-                    <td>
-                      <span className={`benben-badge benben-badge--${f.status}`}>
-                        {f.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                <tr className="benben-row">
+                  <td>Mathematics Gr 5 T1</td>
+                  <td>Amani Juma</td>
+                  <td className="benben-mono">42/50</td>
+                  <td>EE</td>
+                </tr>
+                <tr className="benben-row">
+                  <td>Integrated Science Gr 6 T1</td>
+                  <td>Kato Njeri</td>
+                  <td className="benben-mono">38/50</td>
+                  <td>EE</td>
+                </tr>
+                <tr className="benben-row">
+                  <td>English Gr 9 T1</td>
+                  <td>Omar Said</td>
+                  <td className="benben-mono">44/50</td>
+                  <td>EE</td>
+                </tr>
               </tbody>
             </table>
           </CardBody>

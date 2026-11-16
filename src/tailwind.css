@@ -3763,7 +3763,303 @@
 .benben-tone-can .benben-stat-value { color: var(--state-canon); }
 .benben-tone-risk .benben-stat-value { color: var(--state-risk); }
 
+/* ---------- Marking styles ---------- */
+.benben-marking-wrap {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: var(--space-6);
 }
+
+.benben-paper-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
+}
+
+.benben-paper-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-3);
+  background: var(--bg-elev);
+  cursor: pointer;
+  transition: all var(--fast);
+}
+
+.benben-paper-card:hover {
+  border-color: var(--state-canon);
+  background: var(--bg-subtle);
+}
+
+.benben-paper-card--selected {
+  border-color: var(--state-canon);
+  background: var(--state-canon-wash);
+}
+
+.benben-paper-title {
+  font-family: var(--serif);
+  font-size: var(--step-0);
+  font-weight: 600;
+}
+
+.benben-paper-meta {
+  font-size: var(--step--2);
+  color: var(--muted);
+  font-family: var(--mono);
+}
+
+.benben-paper-questions {
+  font-size: var(--step--2);
+  color: var(--dim);
+  margin-top: auto;
+}
+
+.benben-marking-form {
+  min-width: 0;
+}
+
+.benben-marking-grid {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: var(--space-6);
+}
+
+.benben-marking-form-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.benben-marking-answers-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  overflow-y: auto;
+}
+
+.benben-field-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.benben-field-label {
+  font-size: var(--step--2);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-weight: 500;
+}
+
+.benben-question-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-3);
+  background: var(--bg-elev);
+}
+
+.benben-question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.benben-question-id {
+  font-size: var(--step--2);
+  color: var(--dim);
+}
+
+.benben-question-marks {
+  font-size: var(--step--2);
+  color: var(--state-canon);
+  font-family: var(--mono);
+}
+
+.benben-question-stem {
+  font-size: var(--step-0);
+  color: var(--fg);
+  font-family: var(--serif);
+}
+
+.benben-mcq-options {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-1);
+}
+
+.benben-option-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  background: var(--bg-elev);
+  color: var(--fg);
+  font-size: var(--step-0);
+  cursor: pointer;
+  transition: all var(--fast);
+}
+
+.benben-option-btn:hover {
+  border-color: var(--state-canon);
+  background: var(--bg-subtle);
+}
+
+.benben-option-btn--selected {
+  border-color: var(--state-canon);
+  background: var(--state-canon-wash);
+  color: var(--state-canon);
+}
+
+.benben-short-answer {
+  margin-top: var(--space-1);
+}
+
+.benben-short-answer-input {
+  width: 100%;
+  padding: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2);
+  background: var(--bg-elev);
+  color: var(--fg);
+  font: inherit;
+  resize: vertical;
+}
+
+.benben-marking-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  justify-content: flex-start;
+}
+
+.benben-marking-result {
+  min-width: 0;
+}
+
+.benben-result-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.benben-result-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.benben-result-label {
+  font-size: var(--step--2);
+  color: var(--muted);
+  font-family: var(--mono);
+}
+
+.benben-result-value {
+  font-family: var(--serif);
+  font-size: var(--step-1);
+  font-weight: 600;
+  color: var(--fg-strong);
+}
+
+.benben-result-table {
+  margin-top: var(--space-4);
+}
+
+.benben-result-level {
+  font-family: var(--mono);
+  font-size: var(--step-0);
+  font-weight: 600;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+}
+
+.benben-level-EE { background: var(--ok-bg); color: var(--ok); }
+.benben-level-ME { background: var(--warn-bg); color: var(--warn); }
+.benben-level-AE { background: var(--warn-bg); color: var(--warn); }
+.benben-level-BE { background: var(--danger-pale); color: var(--danger); }
+
+/* ---------- Principal styles ---------- */
+.benben-principal-wrap {
+  max-width: none;
+}
+
+.benben-chip-group {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.benben-chip {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--bg-elev);
+  color: var(--muted);
+  font-size: var(--step--2);
+  font-family: var(--mono);
+  cursor: pointer;
+  transition: all var(--fast);
+}
+
+.benben-chip:hover {
+  background: var(--bg-subtle);
+  color: var(--fg);
+}
+
+.benben-chip--active {
+  background: var(--state-canon);
+  color: var(--fg);
+  border-color: var(--state-canon);
+}
+
+.benben-papers-list {
+  min-width: 0;
+}
+
+.benben-action-cell {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.benben-small {
+  font-size: var(--step--2);
+  color: var(--dim);
+  font-family: var(--mono);
+}
+
+.benben-empty {
+  text-align: center;
+  padding: var(--space-6);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--step--1);
+}
+
+.benben-approve-dialog {
+  position: fixed;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  width: min(420px, 90vw);
+  z-index: var(--z-modal);
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-3);
+  box-shadow: var(--shadow-3);
+}
+
+.benben-field-row textarea.benben-form-input {
+  width: 100%;
+}
+
+} /* end @layer components */
 
 /* ============================================================================
    EngineCommandDock — governed agent execution surface
