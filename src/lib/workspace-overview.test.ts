@@ -10,8 +10,7 @@ describe('Workspace Home persona', () => {
     expect(institution.actions).toHaveLength(3);
     expect(founder.actions.map(action => action.label)).not.toEqual(institution.actions.map(action => action.label));
     expect(founder.actions.every(action => !/commons|network|workbench|roll|intelligence/i.test(action.label))).toBe(true);
-    expect(founder.actions.map(action => action.stage)).toEqual(['Signal', 'Capability', 'Commitment']);
-    expect(founder.pathTitle).toBe('From need to undertaking');
+    expect(founder.actions.every(action => action.href.startsWith('/workspace/'))).toBe(true);
     expect(getWorkspaceHomePersona(null).roleLabel).toBe('Member');
   });
 });

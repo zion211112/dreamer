@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { Link } from 'wouter';
 import { useAuth } from '../lib/auth/hooks';
 import {
@@ -10,8 +10,6 @@ import {
 } from '../lib/studio-navigation';
 import { BrandMark } from './BrandMark';
 import { IdentityCabinet } from './IdentityCabinet';
-import { WorkspaceQuickSearch } from './WorkspaceQuickSearch';
-import { WORKSPACE_SEARCH_DESTINATIONS } from '../lib/workspace-search';
 
 import {
   Home,
@@ -23,7 +21,7 @@ import {
   Menu,
   Sun,
   Moon,
-  ChevronRight,
+  ChevronDown,
   RotateCcw,
 } from 'lucide-preact';
 
@@ -172,23 +170,33 @@ function StudioLinks({ currentContext, onNavigate }: { currentContext: StudioCon
   );
 }
 
-function ProfileEntry({ name, onOpen, open }: { name: string; onOpen: () => void; open: boolean }) {
+function ProfileEntry({
+  name,
+  onToggle,
+  open,
+  buttonRef,
+}: {
+  name: string;
+  onToggle: () => void;
+  open: boolean;
+  buttonRef: { current: HTMLButtonElement | null };
+}) {
   const displayName = name || 'Unnamed profile';
   const initials = name ? name.trim().split(/\s+/).slice(0, 2).map(part => part[0] ?? '').join('').toUpperCase() : '?';
   return (
     <button
-      aria-label={`Open identity cabinet for ${displayName}`}
+      aria-label={`Account menu for ${displayName}`}
       aria-controls="identity-cabinet"
       aria-expanded={open}
-      aria-haspopup="dialog"
+      aria-haspopup="menu"
       className={`studio-profile-entry${open ? ' is-open' : ''}`}
-      onClick={onOpen}
+      onClick={onToggle}
+      ref={buttonRef}
       type="button"
-      title={`Open identity cabinet for ${displayName}`}
+      title="Open account menu"
     >
       <span aria-hidden="true" className="studio-profile-avatar">{initials}</span>
-      <span className="studio-profile-copy"><strong>{displayName}</strong><small>Local browser profile</small></span>
-      <ChevronRight aria-hidden="true" className="studio-profile-arrow" />
+      <ChevronDown aria-hidden="true" className="studio-profile-chevron" />
     </button>
   );
 }
@@ -210,6 +218,7 @@ export function StudioNavigation({
   const [identityOpen, setIdentityOpen] = useState(false);
   const drawerRef = useRef<HTMLDialogElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const profileButtonRef = useRef<HTMLButtonElement>(null);
   const inspectorToggleRef = useRef<HTMLButtonElement>(null);
   const showIdentity = !!profile;
   const profileName = showIdentity ? profile?.display_name || '' : '';
@@ -221,14 +230,12 @@ export function StudioNavigation({
     else if (!mobileOpen && drawer.open) drawer.close();
   }, [mobileOpen]);
 
-  function openIdentity() {
-    if (mobileOpen) {
-      setMobileOpen(false);
-      window.setTimeout(() => setIdentityOpen(true), 0);
-    } else {
-      setIdentityOpen(true);
+  const closeIdentity = useCallback((restoreFocus = true) => {
+    setIdentityOpen(false);
+    if (restoreFocus) {
+      window.requestAnimationFrame(() => profileButtonRef.current?.focus());
     }
-  }
+  }, []);
 
   function restoreMenuFocus() {
     window.requestAnimationFrame(() => menuButtonRef.current?.focus());
@@ -286,7 +293,6 @@ export function StudioNavigation({
           </button>
         )}
         <span className="studio-topbar-spacer" />
-        <WorkspaceQuickSearch destinations={WORKSPACE_SEARCH_DESTINATIONS} />
         {recordSelected && (
           <button
             aria-controls="record-inspector"
@@ -320,7 +326,25 @@ export function StudioNavigation({
         >
           <RotateCcw aria-hidden="true" />
         </button>
-        {showIdentity && <ProfileEntry name={profileName} onOpen={() => setIdentityOpen(true)} open={identityOpen} />}
+        {showIdentity && (
+          <>
+            <ProfileEntry
+              buttonRef={profileButtonRef}
+              name={profileName}
+              onToggle={() => setIdentityOpen(current => !current)}
+              open={identityOpen}
+            />
+            {identityOpen && (
+              <div className="studio-account-menu-row">
+                <IdentityCabinet
+                  open={identityOpen}
+                  onClose={closeIdentity}
+                  triggerRef={profileButtonRef}
+                />
+              </div>
+            )}
+          </>
+        )}
       </header>
 
       <nav aria-label="Primary workspace modules" className="studio-module-rail">
@@ -373,12 +397,9 @@ export function StudioNavigation({
             currentContext={currentContext}
             onNavigate={() => setMobileOpen(false)}
           />
-          {showIdentity && <ProfileEntry name={profileName} onOpen={openIdentity} open={identityOpen} />}
           <div className="studio-session-indicator"><span>Data context</span><small>Local, sample, and imported records remain distinct.</small></div>
         </div>
       </dialog>
-
-      {showIdentity && <IdentityCabinet currentContext={currentContext} onClose={() => setIdentityOpen(false)} open={identityOpen} />}
     </>
   );
 }
