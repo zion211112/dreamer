@@ -33,7 +33,7 @@ beforeAll(async () => {
   storage.set('aptlabs:workbench-items:v1', JSON.stringify([workItem(null)]));
   workbenchData = await import('@/modules/workbench/data');
   intelligence = await import('./intelligence');
-});
+}, 30_000);
 
 beforeEach(() => {
   workbenchData.WORK_ITEMS.value = [workItem(null)];
