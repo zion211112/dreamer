@@ -2,7 +2,11 @@
   "name": "zeptepi",
   "version": "0.0.1",
   "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
   "scripts": {
+    "postinstall": "npm install --prefix investor-deck --no-audit --no-fund",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",

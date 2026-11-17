@@ -1,0 +1,11 @@
+{
+  "name": "aptlabs-deck-workspace",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "open-slide"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=aptlabs-investor-deck"
+  }
+}
