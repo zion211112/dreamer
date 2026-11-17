@@ -4,6 +4,10 @@
   "framework": "vite",
   "rewrites": [
     {
+      "source": "/investor-memo/:path*",
+      "destination": "/investor-memo/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

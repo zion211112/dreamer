@@ -2,7 +2,6 @@ import { lazy, Suspense } from 'preact/compat';
 import { Switch, Route } from 'wouter';
 import { Landing } from './pages/Landing';
 import { Auth } from './pages/Auth';
-import { InvestorMemo } from './pages/InvestorMemo';
 import { People } from './pages/workspace/People';
 import { Institutions } from './pages/workspace/Institutions';
 import { Network } from './pages/workspace/Network';
@@ -21,7 +20,6 @@ export function App() {
   return (
     <Switch>
       <Route path="/"><Landing /></Route>
-      <Route path="/investor-memo"><InvestorMemo /></Route>
       <Route path="/sign-in"><Auth /></Route>
       <Route path="/sign-up"><Auth /></Route>
 

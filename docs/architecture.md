@@ -107,7 +107,6 @@ src/
   pages/
     Auth.tsx
     Landing.tsx
-    InvestorMemo.tsx
     workspace/
       WorkspaceLayout.tsx
       WorkspaceOverview.tsx
@@ -135,6 +134,8 @@ src/
 
   vite-env.d.ts
 ```
+
+The investor deck is authored in `investor-deck/open-slide/` and served as static output at `/investor-memo/`.
 
 ## Domain modules
 

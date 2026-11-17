@@ -40,7 +40,7 @@ export function Landing() {
             </p>
             <div className="landing-hero-actions">
               <Link className="landing-hero-primary" href="/sign-in?next=%2Fworkspace">Explore the local demo</Link>
-              <Link className="landing-hero-quiet" href="/investor-memo">Read the investor memo</Link>
+              <Link className="landing-hero-quiet" href="/investor-memo/s/aptlabs-investor-deck">Explore the investor deck</Link>
             </div>
           </div>
 

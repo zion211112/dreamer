@@ -7,7 +7,7 @@ retain the 2026-11-05 snapshot and should be rechecked before use.
 
 ```
 /                           Landing
-/investor-memo              InvestorMemo
+/investor-memo/             Static Open Slide investor deck (served by Vercel)
 /sign-in /sign-up           Auth
 /workspace                  Workspace overview
 /workspace/commons          Commons
