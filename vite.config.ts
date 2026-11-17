@@ -4,31 +4,26 @@ import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
 import tailwindcss from '@tailwindcss/vite';
 
-// SPA fallback so client-side routes under /investor-memo/ (Open Slide's
-// /s/:slideId router) resolve to the deck's index.html on static hosts.
+// Vite 6 preview server: SPA fallback for Open Slide /investor-memo/ routes
+// AND rewrite of the deck's absolute /assets/* references to
+// /investor-memo/assets/* (the deck build uses base "/investor-memo/").
 function spaFallback() {
   return {
     name: 'spa-fallback',
-    configureServer(server) {
-      addFallbackMiddleware(server.middlewares, server.config.root);
-    },
     configurePreviewServer(server) {
-      addFallbackMiddleware(server.middlewares, server.config.root);
+      const { config } = server;
+      const distDir = config.build?.outDir ? path.resolve(config.root, config.build.outDir) : path.resolve(config.root, 'dist');
+      server.middlewares.use((req, res, next) => {
+        const url = req.url ?? '';
+        if (url.startsWith('/investor-memo/') && !url.includes('.')) {
+          req.url = '/investor-memo/index.html';
+        } else if (url.startsWith('/assets/') && fs.existsSync(path.join(distDir, 'investor-memo', url))) {
+          req.url = `/investor-memo${url}`;
+        }
+        next();
+      });
     },
   };
-}
-
-function addFallbackMiddleware(middlewares, root) {
-  middlewares.use((req, res, next) => {
-    const url = req.url!;
-    if (url.startsWith('/investor-memo/') && !url.includes('.')) {
-      const filePath = path.resolve(root, 'dist', url.slice(1));
-      if (!fs.existsSync(filePath)) {
-        req.url = '/investor-memo/index.html';
-      }
-    }
-    next();
-  });
 }
 
 export default defineConfig({
