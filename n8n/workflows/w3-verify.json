@@ -1,0 +1,111 @@
+{
+  "name": "W3 - Verify",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "verify",
+        "responseMode": "onReceived",
+        "responseData": "result"
+      },
+      "id": "webhook-verify",
+      "name": "Verify Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [250, 300],
+      "webhookId": "w3-verify-trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "validate-action",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "verify",
+              "operator": "equals"
+            },
+            {
+              "id": "validate-payload",
+              "leftValue": "={{ $json.payload }}",
+              "rightValue": "",
+              "operator": "exists"
+            }
+          ],
+          "combinator": "and"
+        },
+        "errorMessage": "Invalid verify payload: missing action or payload field",
+        "options": {}
+      },
+      "id": "validate-verify",
+      "name": "Validate Verify",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [500, 300],
+      "versionPin": []
+    },
+    {
+      "parameters": {
+        "url": "={{ $node['APT-LABS API'].apiBase }}/api/verify",
+        "method": "POST",
+        "jsonParameters": true,
+        "options": {}
+      },
+      "id": "call-verify-api",
+      "name": "Call Verify API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [750, 200],
+      "credentials": {
+        "httpHeaderAuth": "aptlabs-api"
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $node['APT-LABS API'].apiBase }}/api/events",
+        "method": "POST",
+        "jsonParameters": true,
+        "options": {}
+      },
+      "id": "record-verify-event",
+      "name": "Record Verify Event",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [750, 400],
+      "credentials": {
+        "httpHeaderAuth": "aptlabs-api"
+      }
+    }
+  ],
+  "connections": {
+    "Verify Trigger": {
+      "main": [[{ "node": "Validate Verify", "type": "main", "index": 0 }]]
+    },
+    "Validate Verify": {
+      "main": [
+        [
+          { "node": "Call Verify API", "type": "main", "index": 0 }
+        ],
+        []
+      ]
+    },
+    "Call Verify API": {
+      "main": [[{ "node": "Record Verify Event", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "timezone": "Africa/Nairobi"
+  },
+  "id": "w3-verify-workflow",
+  "tags": ["aptlabs", "quality-orchestration", "verify"]
+}

@@ -1,0 +1,15 @@
+/* shadcn/ui Theme — extracted from https://onretool.com/app-gallery/logistics-dispatch-monitor */
+/* Paste into your globals.css */
+
+@layer base {
+  :root {
+    --background: 0 0% 8%;
+    --foreground: 70 23% 90%;
+    --primary: 70 23% 90%;
+    --primary-foreground: 0 0% 0%;
+    --muted: 0 0% 0%;
+    --muted-foreground: 0 0% 100%;
+    --border: 0 0% 14%;
+    --radius: 8px;
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "$schema": "https://designlang.app/schemas/gradients.json",
+  "source": "https://designsystems.one/design-systems/vercel-geist",
+  "generated": "2026-11-19T16:45:13.155Z",
+  "count": 6,
+  "gradients": [
+    {
+      "raw": "linear-gradient(135deg, oklab(0.916198 -0.0186325 0.0145608) 0%, oklab(0.965398 -0.00488419 0.00717835) 55%, lab(98.833 0.667602 1.32728) 100%)",
+      "type": "linear",
+      "direction": "135deg",
+      "stops": [
+        {
+          "color": "oklab(0.916198 -0.0186325 0.0145608)",
+          "position": "0%"
+        },
+        {
+          "color": "oklab(0.965398 -0.00488419 0.00717835)",
+          "position": "55%"
+        },
+        {
+          "color": "lab(98.833 0.667602 1.32728)",
+          "position": "100%"
+        }
+      ],
+      "classification": "bold"
+    },
+    {
+      "raw": "linear-gradient(135deg, oklab(0.923399 0.0102491 0.0265405) 0%, oklab(0.967798 0.00474301 0.0111716) 55%, lab(98.833 0.667602 1.32728) 100%)",
+      "type": "linear",
+      "direction": "135deg",
+      "stops": [
+        {
+          "color": "oklab(0.923399 0.0102491 0.0265405)",
+          "position": "0%"
+        },
+        {
+          "color": "oklab(0.967798 0.00474301 0.0111716)",
+          "position": "55%"
+        },
+        {
+          "color": "lab(98.833 0.667602 1.32728)",
+          "position": "100%"
+        }
+      ],
+      "classification": "bold"
+    },
+    {
+      "raw": "linear-gradient(135deg, oklab(0.910797 0.00815206 -0.0214785) 0%, oklab(0.963598 0.00404399 -0.00483477) 55%, lab(98.833 0.667602 1.32728) 100%)",
+      "type": "linear",
+      "direction": "135deg",
+      "stops": [
+        {
+          "color": "oklab(0.910797 0.00815206 -0.0214785)",
+          "position": "0%"
+        },
+        {
+          "color": "oklab(0.963598 0.00404399 -0.00483477)",
+          "position": "55%"
+        },
+        {
+          "color": "lab(98.833 0.667602 1.32728)",
+          "position": "100%"
+        }
+      ],
+      "classification": "bold"
+    },
+    {
+      "raw": "linear-gradient(135deg, oklab(0.951834 0.0194831 0.0200415) 0%, oklab(0.977276 0.007821 0.00900525) 55%, lab(98.833 0.667602 1.32728) 100%)",
+      "type": "linear",
+      "direction": "135deg",
+      "stops": [
+        {
+          "color": "oklab(0.951834 0.0194831 0.0200415)",
+          "position": "0%"
+        },
+        {
+          "color": "oklab(0.977276 0.007821 0.00900525)",
+          "position": "55%"
+        },
+        {
+          "color": "lab(98.833 0.667602 1.32728)",
+          "position": "100%"
+        }
+      ],
+      "classification": "bold"
+    },
+    {
+      "raw": "linear-gradient(135deg, oklab(0.919797 -0.0174934 -0.00226269) 0%, oklab(0.966598 -0.00450449 0.00157051) 55%, lab(98.833 0.667602 1.32728) 100%)",
+      "type": "linear",
+      "direction": "135deg",
+      "stops": [
+        {
+          "color": "oklab(0.919797 -0.0174934 -0.00226269)",
+          "position": "0%"
+        },
+        {
+          "color": "oklab(0.966598 -0.00450449 0.00157051)",
+          "position": "55%"
+        },
+        {
+          "color": "lab(98.833 0.667602 1.32728)",
+          "position": "100%"
+        }
+      ],
+      "classification": "bold"
+    },
+    {
+      "raw": "linear-gradient(135deg, oklab(0.9267 0.0313728 0.0114449) 0%, oklab(0.968899 0.0117842 0.00613971) 55%, lab(98.833 0.667602 1.32728) 100%)",
+      "type": "linear",
+      "direction": "135deg",
+      "stops": [
+        {
+          "color": "oklab(0.9267 0.0313728 0.0114449)",
+          "position": "0%"
+        },
+        {
+          "color": "oklab(0.968899 0.0117842 0.00613971)",
+          "position": "55%"
+        },
+        {
+          "color": "lab(98.833 0.667602 1.32728)",
+          "position": "100%"
+        }
+      ],
+      "classification": "bold"
+    }
+  ]
+}

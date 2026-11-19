@@ -1,0 +1,44 @@
+# APT-LABS — Self-Hosted n8n Quality Orchestration
+#
+# Security constraints (mandate §3):
+# - n8n must not directly execute unreviewed arbitrary model-generated shell commands.
+# - All n8n action calls must validate authorization before writing to the event ledger.
+# - Production deployment requires an explicit human approval gate.
+#
+# Usage:
+#   docker compose up -d
+#
+# Then import workflows from n8n/workflows/ into the n8n UI and activate them
+# after human review (per ADR B10 step 5).
+
+services:
+  n8n:
+    image: n8nio/n8n:1.95.0
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=aptlabs
+      # N8N_BASIC_AUTH_PASSWORD must be set via .env file — never commit it
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_SECURE_COOKIE=false
+      - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
+      # APT-LABS API base URL — n8n calls back into the APT-LABS API
+      - APTLABS_API_BASE=http://host.docker.internal:3000
+    volumes:
+      - n8n_data:/home/node/.n8n
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5678/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    # Security: no shell command execution node allowed by default; n8n runs
+    # only HTTP-request and validation nodes per the workflow definitions.
+    # The "execute command" node is not used in any APT-LABS workflow.
+
+volumes:
+  n8n_data:

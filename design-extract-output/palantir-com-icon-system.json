@@ -1,0 +1,203 @@
+{
+  "library": "unknown",
+  "confidence": 0,
+  "alternates": [],
+  "stats": {
+    "count": 88,
+    "strokeOnly": 69,
+    "fillOnly": 13,
+    "mixed": 0,
+    "avgStrokeWidth": 1.5,
+    "gridDistribution": {
+      "16": 3,
+      "20": 75,
+      "24": 1
+    },
+    "roundedCapsFraction": 0
+  },
+  "signals": [
+    "strokeDominant"
+  ],
+  "icons": [
+    {
+      "class": "ptcom-design__logo__dvbsn2",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "ptcom-design__pageGroupTitleIcon__1m512fx",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "mixed"
+    },
+    {
+      "class": "",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "mixed"
+    },
+    {
+      "class": "ptcom-design__quickSearchRightSideButton__q5xn8a",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "ptcom-design__colorThemeIcon__qblrya",
+      "grid": 16,
+      "strokeWidth": 1.5,
+      "style": "mixed"
+    },
+    {
+      "class": "ptcom-design__pageGroupTitleIcon__1m512fx",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "mixed"
+    },
+    {
+      "class": "ptcom-design__pageGroupTitleIcon__1m512fx",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "mixed"
+    },
+    {
+      "class": "",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "mixed"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    },
+    {
+      "class": "ptcom-design__panelIcon__p055ko ptcom-design__panelIconDefault__p055ko",
+      "grid": 20,
+      "strokeWidth": null,
+      "style": "stroke"
+    }
+  ]
+}

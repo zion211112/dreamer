@@ -1,0 +1,11 @@
+import { chromium } from "playwright";
+const b = await chromium.launch();
+const p = await b.newPage();
+await p.setViewportSize({ width: 1440, height: 900 });
+await p.goto("http://localhost:5199/landing", { waitUntil: "networkidle", timeout: 40000 });
+await p.waitForSelector(".hero", { timeout: 15000 });
+await p.evaluate(() => document.fonts.ready);
+await p.waitForTimeout(500);
+await p.screenshot({ path: ".claude/landing-after.png", fullPage: true });
+await b.close();
+console.log("saved .claude/landing-after.png (full page)");

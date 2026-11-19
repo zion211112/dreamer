@@ -1,0 +1,13 @@
+Clone the design language of this unknown page and build a fresh equivalent.
+Visual feel: flat. Tone: neutral · Headings: unknown
+Primary palette: #cbced5, #0a0a0a, #000000, #ffffff, #646875.
+Typography: system-ui.
+Corner radius vocabulary: (none).
+Shadow vocabulary: (none).
+Use: Use plain Tailwind CSS without a component library.
+Page structure:
+- hero
+- features
+- social proof
+- cta
+- footer

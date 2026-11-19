@@ -1,0 +1,45 @@
+{
+  "tone": "formal",
+  "pronoun": "third-person",
+  "headingStyle": "Title Case",
+  "headingLengthClass": "balanced",
+  "ctaVerbs": [
+    {
+      "value": "available",
+      "count": 2
+    },
+    {
+      "value": "release",
+      "count": 2
+    },
+    {
+      "value": "gallery",
+      "count": 2
+    }
+  ],
+  "buttonPatterns": [
+    {
+      "value": "available on\navailable on",
+      "count": 2
+    },
+    {
+      "value": "release month\nrelease month",
+      "count": 2
+    },
+    {
+      "value": "gallery",
+      "count": 2
+    }
+  ],
+  "sampleHeadings": [
+    "Airtable\n-\nWhat's new",
+    "Airtable Canvas",
+    "Create Linked Records in Forms",
+    "Full-page custom interfaces on iOS and Android",
+    "Core Product Update: Nov '26"
+  ],
+  "stats": {
+    "buttons": 6,
+    "headings": 5
+  }
+}

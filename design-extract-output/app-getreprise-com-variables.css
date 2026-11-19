@@ -1,0 +1,254 @@
+:root {
+  /* Colors — Primary */
+
+  /* Ramp — neutral (base is 200) */
+  --color-neutral-50: #f3f5fa;
+  --color-neutral-100: #e8eaee;
+  --color-neutral-200: #cbced5;
+  --color-neutral-300: #bec0c6;
+  --color-neutral-400: #9da0a6;
+  --color-neutral-500: #7f8288;
+  --color-neutral-600: #696c72;
+  --color-neutral-700: #54575c;
+  --color-neutral-800: #45474b;
+  --color-neutral-900: #37393d;
+  --color-neutral-950: #1e1f21;
+
+  /* Colors — Neutrals */
+  --color-neutral-50: #cbced5;
+  --color-neutral-100: #0a0a0a;
+  --color-neutral-200: #000000;
+  --color-neutral-300: #ffffff;
+  --color-neutral-400: #646875;
+
+  /* Colors — Backgrounds */
+  --color-bg: #ffffff;
+
+  /* Colors — Text */
+  --color-text: #000000;
+  --color-text-1: #0a0a0a;
+  --color-text-2: #646875;
+
+  /* Semantic pairs */
+  --surface-page-bg: #ffffff;
+  --surface-page-fg: #000000; /* 21:1 AAA */
+
+  /* Typography — Named scale */
+  --font-size-body-sm: 16px;
+  --font-size-micro: 14px;
+
+  /* Spacing */
+  --spacing-16: 16px;
+
+  /* Original Site Variables */
+  /* — colors — */
+  --border: hsl(0 0% 89.8%);
+  --tw-ring-shadow: 0 0 #0000;
+  --border-transparent: #ffffff00;
+  --card: hsl(0 0% 100%);
+  --primary-foreground: #ffffff;
+  --secondary-hover: #ebeef4;
+  --card-foreground: hsl(0 0% 3.9%);
+  --tw-border-spacing-x: 0;
+  --muted: hsl(0 0% 96.1%);
+  --icon-selected-color: #4c49f3;
+  --accent-foreground: hsl(0 0% 9%);
+  --tw-ring-color: rgb(66 153 225 / .5);
+  --rguide-btn-secondary-hover-border-color: #9ca0ad;
+  --popover: hsl(0 0% 100%);
+  --ring: #4c49f3;
+  --rguide-btn-primary-bg: #ffe000;
+  --tw-ring-offset-color: #fff;
+  --rguide-btn-primary-hover-bg: #d1b800;
+  --rguide-border-color: transparent;
+  --primary-accent: #4c49f3;
+  --primary-hover: #2421ee;
+  --popover-foreground: hsl(0 0% 3.9%);
+  --rguide-btn-primary-border-color: #ffe000;
+  --tw-ring-offset-width: 0px;
+  --border-bold: #27292e99;
+  --rguide-btn-secondary-border-color: #4a4d57;
+  --tw-shadow-colored: 0 0 #0000;
+  --context-menu-bg-color: #cbced5;
+  --destructive-border: #e53e3e;
+  --destructive-foreground: #ffffff;
+  --secondary-border: #9ca0ad70;
+  --rguide-btn-secondary-color: #cbced5;
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --icon-base-color: #9ca0ad;
+  --text-secondary: #646875;
+  --accent: hsl(0 0% 96.1%);
+  --primary-accent-muted: #f0f0ff;
+  --destructive-hover: #c53030;
+  --rguide-container-color: #cbced5;
+  --tw-ring-inset: ;
+  --rguide-bg-color: #27292e;
+  --border-subtle: #9ca0ad4d;
+  --secondary-foreground: #27292e;
+  --context-menu-color: #27292e;
+  --border-translucent: #1f232829;
+  --rguide-color: #cbced5;
+  --q-primary: #7370FF;
+  --q-secondary: #F2F4F9;
+  --primary-border: #1f232829;
+  --q-accent: #9C27B0;
+  --muted-foreground: hsl(0 0% 45.1%);
+  --icon-darkened-color: #646875;
+  --disabled-foreground: #9ca0ad;
+  --text-primary: #27292e;
+  --destructive: #e53e3e;
+  --rguide-btn-secondary-bg: transparent;
+  --tw-border-spacing-y: 0;
+  --rguide-btn-border-width: 2px;
+  --primary: #4c49f3;
+  --rguide-btn-primary-color: #000000;
+  --foreground: hsl(0 0% 3.9%);
+  --context-menu-border-color: transparent;
+  --rpulse-color: #7370ff;
+  --secondary: #f2f4f9;
+  --border-base: #9ca0ad70;
+  /* — spacing — */
+  --q-size-md: 1024px;
+  --rguide-btn-margin: 0rem 0rem 0rem 0.5rem;
+  --q-size-xl: 1920px;
+  --tw-numeric-spacing: ;
+  --q-size-xs: 0;
+  --tw-contain-size: ;
+  --q-size-sm: 600px;
+  --rguide-btn-font-size: 11px;
+  --rguide-font-size: 16px;
+  --q-size-lg: 1440px;
+  --rguide-container-padding: 1.25rem;
+  --rguide-btn-padding: 0.25rem 0.75rem 0.25rem 0.75rem;
+  /* — typography — */
+  --fa-font-duotone-thin: normal 100 1em/1 "Font Awesome 6 Duotone";
+  --fa-font-sharp-light: normal 300 1em/1 "Font Awesome 6 Sharp";
+  --fa-font-brands: normal 400 1em/1 "Font Awesome 6 Brands";
+  --fa-font-sharp-duotone-regular: normal 400 1em/1 "Font Awesome 6 Sharp Duotone";
+  --fa-font-sharp-duotone-light: normal 300 1em/1 "Font Awesome 6 Sharp Duotone";
+  --fa-font-light: normal 300 1em/1 "Font Awesome 6 Pro";
+  --fa-font-sharp-duotone-solid: normal 900 1em/1 "Font Awesome 6 Sharp Duotone";
+  --fa-font-sharp-solid: normal 900 1em/1 "Font Awesome 6 Sharp";
+  --rguide-font-family-url: ;
+  --control-text-placeholder: #27292e99;
+  --fa-font-solid: normal 900 1em/1 "Font Awesome 6 Pro";
+  --rguide-btn-font-weight: 700;
+  --fa-font-sharp-duotone-thin: normal 100 1em/1 "Font Awesome 6 Sharp Duotone";
+  --text-tertiary: #9ca0ad;
+  --fa-font-regular: normal 400 1em/1 "Font Awesome 6 Pro";
+  --rguide-btn-text-transform: uppercase;
+  --rguide-line-height: 1.5;
+  --rguide-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
+  --text-white: #ffffff;
+  --fa-font-duotone-light: normal 300 1em/1 "Font Awesome 6 Duotone";
+  --fa-font-duotone: normal 900 1em/1 "Font Awesome 6 Duotone";
+  --fa-font-thin: normal 100 1em/1 "Font Awesome 6 Pro";
+  --fa-font-duotone-regular: normal 400 1em/1 "Font Awesome 6 Duotone";
+  --rguide-h-line-height: 1.2;
+  --text-subtle: #16161a66;
+  --fa-font-sharp-thin: normal 100 1em/1 "Font Awesome 6 Sharp";
+  --fa-font-sharp-regular: normal 400 1em/1 "Font Awesome 6 Sharp";
+  --rguide-btn-line-height: 1.5;
+  /* — shadows — */
+  --rguide-container-shadow: 0 1px 2px rgb(8 5 62 / 45%),
+    0 5px 10px rgba(0, 0, 0, 0.5);
+  --tw-drop-shadow: ;
+  --tw-shadow: 0 0 #0000;
+  /* — radii — */
+  --rguide-container-radius: 12px;
+  --radius: .5rem;
+  --rguide-btn-radius: 0.25rem;
+  /* — other — */
+  --fa-style-family-classic: "Font Awesome 6 Pro";
+  --tw-backdrop-sepia: ;
+  --tw-sepia: ;
+  --tw-ordinal: ;
+  --tw-contain-style: ;
+  --tw-backdrop-invert: ;
+  --rguide-width: 50px;
+  --tw-backdrop-grayscale: ;
+  --tw-hue-rotate: ;
+  --tw-pan-y: ;
+  --surface-default: #ffffff;
+  --gray-600: #3c3f47;
+  --gray-700: #33363d;
+  --tw-rotate: 0;
+  --fa-style-family-sharp: "Font Awesome 6 Sharp";
+  --input-hover: #27292e99;
+  --fa-style-family-duotone: "Font Awesome 6 Duotone";
+  --q-dark-page: #121212;
+  --q-dark: #1d1d1d;
+  --gray-100: #f2f4f9;
+  --tw-gradient-via-position: ;
+  --tw-saturate: ;
+  --tw-scroll-snap-strictness: proximity;
+  --red-100: #fff5f5;
+  --red-400: #fc8181;
+  --tw-backdrop-hue-rotate: ;
+  --gray-50: #f9f9fa;
+  --tw-gradient-to-position: ;
+  --tw-grayscale: ;
+  --tw-numeric-fraction: ;
+  --q-transition-duration: .3s;
+  --surface-overlay: #ffffff;
+  --tw-skew-y: 0;
+  --tw-slashed-zero: ;
+  --tw-backdrop-opacity: ;
+  --tw-gradient-from-position: ;
+  --tw-pinch-zoom: ;
+  --tw-contain-paint: ;
+  --gray-900: #16161a;
+  --menuRow-hover: #f2f4f9;
+  --q-negative: #E53E3E;
+  --tw-backdrop-saturate: ;
+  --white: #ffffff;
+  --red-800: #5b1111;
+  --animate-delay: .3s;
+  --background: hsl(0 0% 100%);
+  --tw-brightness: ;
+  --fa-style-family-sharp-duotone: "Font Awesome 6 Sharp Duotone";
+  --q-warning: #F2C037;
+  --animate-duration: .3s;
+  --rguide-headline: #cbced5;
+  --tw-scale-y: 1;
+  --tw-backdrop-contrast: ;
+  --tw-backdrop-brightness: ;
+  --red-900: #360909;
+  --red-500: #f56565;
+  --tw-pan-x: ;
+  --tw-translate-y: 0;
+  --gray-300: #9ca0ad;
+  --gray-500: #4a4d57;
+  --tw-contrast: ;
+  --tw-skew-x: 0;
+  --red-300: #feb2b2;
+  --red-600: #e53e3e;
+  --tw-backdrop-blur: ;
+  --tw-translate-x: 0;
+  --input: #9ca0ad70;
+  --gray-400: #646875;
+  --surface-sunken: #f2f4f9;
+  --red-700: #881919;
+  --disabled: #e3e5e9;
+  --gray-200: #e3e5e9;
+  --gray-800: #27292e;
+  --tw-scale-x: 1;
+  --surface-raised: #f2f4f9;
+  --q-positive: #21BA45;
+  --q-info: #31CCEC;
+  --tw-blur: ;
+  --tw-invert: ;
+  --red-200: #fed7d7;
+  --fa-style-family-brands: "Font Awesome 6 Brands";
+  --tw-numeric-figure: ;
+  --animate-repeat: 1;
+  --tw-contain-layout: ;
+  /* — semantic — */
+  success: [object Object];
+  warning: [object Object];
+  error: [object Object];
+  info: [object Object];
+
+}

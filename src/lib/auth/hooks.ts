@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'preact/hooks';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { supabase, isDemoMode } from '../supabase/client';
 import type { AuthState, Profile, SignUpData, SignInData } from './types';
 
@@ -27,74 +27,88 @@ function clearDemoAuth() {
   localStorage.removeItem(DEMO_AUTH_KEY);
 }
 
+/**
+ * Vue composable (formerly Preact hooks — migrated for the Vue 3 single stack).
+ * Must be called inside a Vue component's setup.
+ */
 export function useAuth() {
-  const [state, setState] = useState<AuthState>({
-    user: null,
-    profile: null,
-    loading: true,
-    error: null,
-  });
+  const user = ref<AuthState['user']>(null);
+  const profile = ref<Profile | null>(null);
+  const loading = ref(true);
+  const error = ref<string | null>(null);
 
-  const refreshProfile = useCallback(async (userId: string): Promise<Profile | null> => {
+  let authSubscription: { unsubscribe: () => void } | null = null;
+
+  const refreshProfile = async (userId: string): Promise<Profile | null> => {
     if (isDemoMode) {
       const demo = getDemoAuth();
-      const profile = demo?.profile || null;
-      setState(s => ({ ...s, profile, loading: false }));
-      return profile;
+      profile.value = demo?.profile || null;
+      loading.value = false;
+      return profile.value;
     }
 
     try {
-      const { data, error } = await supabase!.from('profiles').select('*').eq('id', userId).single();
-      if (error) throw error;
-      const profile = data as Profile;
-      setState(s => ({ ...s, profile, loading: false }));
-      return profile;
+      const { data, error: queryError } = await supabase!.from('profiles').select('*').eq('id', userId).single();
+      if (queryError) throw queryError;
+      profile.value = data as Profile;
+      loading.value = false;
+      return profile.value;
     } catch {
-      setState(s => ({ ...s, profile: null, loading: false, error: 'Failed to load profile' }));
+      profile.value = null;
+      loading.value = false;
+      error.value = 'Failed to load profile';
       return null;
     }
-  }, []);
+  };
 
-  useEffect(() => {
+  onMounted(() => {
     if (isDemoMode) {
       const demo = getDemoAuth();
-      setState({
-        user: demo?.user || null,
-        profile: demo?.profile || null,
-        loading: false,
-        error: null,
-      });
+      user.value = demo?.user || null;
+      profile.value = demo?.profile || null;
+      loading.value = false;
+      error.value = null;
       return;
     }
 
     // Initial session
     supabase!.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
-        setState(s => ({ ...s, user: session.user as AuthState['user'], loading: true }));
-        refreshProfile(session.user.id);
+        user.value = session.user as AuthState['user'];
+        loading.value = true;
+        void refreshProfile(session.user.id);
       } else {
-        setState(s => ({ ...s, loading: false }));
+        loading.value = false;
       }
     });
 
     // Auth state changes
     const { data: { subscription } } = supabase!.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        setState(s => ({ ...s, user: session.user as AuthState['user'], loading: true }));
-        refreshProfile(session.user.id);
+        user.value = session.user as AuthState['user'];
+        loading.value = true;
+        void refreshProfile(session.user.id);
       } else {
-        setState({ user: null, profile: null, loading: false, error: null });
+        user.value = null;
+        profile.value = null;
+        loading.value = false;
+        error.value = null;
       }
     });
+    authSubscription = subscription;
+  });
 
-    return () => subscription.unsubscribe();
-  }, [refreshProfile]);
+  onUnmounted(() => {
+    authSubscription?.unsubscribe();
+    authSubscription = null;
+  });
 
   const signUp = async (data: SignUpData) => {
-    setState(s => ({ ...s, loading: true, error: null }));
+    loading.value = true;
+    error.value = null;
 
     if (isDemoMode) {
-      const profile: Profile = {
+      const newProfile: Profile = {
         id: 'demo-user',
         role: data.role,
         display_name: data.displayName,
@@ -108,10 +122,13 @@ export function useAuth() {
         created_by: 'demo-user',
         updated_by: 'demo-user',
       };
-      const user = { id: 'demo-user', email: data.email, role: 'authenticated' } as AuthState['user'];
-      setDemoAuth(user, profile);
-      setState({ user, profile, loading: false, error: null });
-      return { user, profile, error: null };
+      const newUser = { id: 'demo-user', email: data.email, role: 'authenticated' } as AuthState['user'];
+      setDemoAuth(newUser, newProfile);
+      user.value = newUser;
+      profile.value = newProfile;
+      loading.value = false;
+      error.value = null;
+      return { user: newUser, profile: newProfile, error: null };
     }
 
     const { data: authData, error: authError } = await supabase!.auth.signUp({
@@ -121,12 +138,13 @@ export function useAuth() {
     });
 
     if (authError) {
-      setState(s => ({ ...s, loading: false, error: authError.message }));
+      loading.value = false;
+      error.value = authError.message;
       return { user: null, profile: null, error: authError.message };
     }
 
     if (authData.user) {
-      const { data: profile, error: profileError } = await supabase!
+      const { data: createdProfile, error: profileError } = await supabase!
         .from('profiles')
         .insert({
           id: authData.user.id,
@@ -138,43 +156,52 @@ export function useAuth() {
         .single();
 
       if (profileError) {
-        setState(s => ({ ...s, loading: false, error: profileError.message }));
+        loading.value = false;
+        error.value = profileError.message;
         return { user: authData.user, profile: null, error: profileError.message };
       }
 
-      setState({ user: authData.user, profile: profile as Profile, loading: false, error: null });
-      return { user: authData.user, profile: profile as Profile, error: null };
+      user.value = authData.user;
+      profile.value = createdProfile as Profile;
+      loading.value = false;
+      error.value = null;
+      return { user: authData.user, profile: createdProfile as Profile, error: null };
     }
 
-    setState(s => ({ ...s, loading: false, error: 'Sign up failed' }));
+    loading.value = false;
+    error.value = 'Sign up failed';
     return { user: null, profile: null, error: 'Sign up failed' };
   };
 
   const signIn = async (data: SignInData) => {
-    setState(s => ({ ...s, loading: true, error: null }));
+    loading.value = true;
+    error.value = null;
 
     if (isDemoMode) {
       const existing = getDemoAuth();
-      const profile: Profile = existing?.user?.email === data.email && existing.profile
+      const newProfile: Profile = existing?.user?.email === data.email && existing.profile
         ? existing.profile
         : {
-          id: 'demo-user',
-          role: 'founder',
-          display_name: data.email.split('@')[0],
-          avatar_url: null,
-          organization_name: null,
-          location: null,
-          service_area: [],
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          version: 1,
-          created_by: 'demo-user',
-          updated_by: 'demo-user',
-        };
-      const user = { id: 'demo-user', email: data.email, role: 'authenticated' } as AuthState['user'];
-      setDemoAuth(user, profile);
-      setState({ user, profile, loading: false, error: null });
-      return { user, profile, error: null };
+            id: 'demo-user',
+            role: 'founder',
+            display_name: data.email.split('@')[0],
+            avatar_url: null,
+            organization_name: null,
+            location: null,
+            service_area: [],
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            version: 1,
+            created_by: 'demo-user',
+            updated_by: 'demo-user',
+          };
+      const newUser = { id: 'demo-user', email: data.email, role: 'authenticated' } as AuthState['user'];
+      setDemoAuth(newUser, newProfile);
+      user.value = newUser;
+      profile.value = newProfile;
+      loading.value = false;
+      error.value = null;
+      return { user: newUser, profile: newProfile, error: null };
     }
 
     const { data: authData, error: authError } = await supabase!.auth.signInWithPassword({
@@ -183,54 +210,63 @@ export function useAuth() {
     });
 
     if (authError) {
-      setState(s => ({ ...s, loading: false, error: authError.message }));
+      loading.value = false;
+      error.value = authError.message;
       return { user: null, profile: null, error: authError.message };
     }
 
     if (authData.user) {
-      const profile = await refreshProfile(authData.user.id);
-      if (!profile) return { user: authData.user, profile: null, error: 'Failed to load profile' };
-      return { user: authData.user, profile, error: null };
+      user.value = authData.user;
+      const loadedProfile = await refreshProfile(authData.user.id);
+      if (!loadedProfile) return { user: authData.user, profile: null, error: 'Failed to load profile' };
+      return { user: authData.user, profile: loadedProfile, error: null };
     }
 
-    setState(s => ({ ...s, loading: false, error: 'Sign in failed' }));
+    loading.value = false;
+    error.value = 'Sign in failed';
     return { user: null, profile: null, error: 'Sign in failed' };
   };
 
   const signOut = async () => {
     if (isDemoMode) {
       clearDemoAuth();
-      setState({ user: null, profile: null, loading: false, error: null });
+      user.value = null;
+      profile.value = null;
+      loading.value = false;
+      error.value = null;
       return;
     }
 
     await supabase!.auth.signOut();
-    setState({ user: null, profile: null, loading: false, error: null });
+    user.value = null;
+    profile.value = null;
+    loading.value = false;
+    error.value = null;
   };
 
   const updateProfile = async (updates: Partial<Profile>) => {
-    if (!state.user) return { error: 'Not authenticated' };
+    if (!user.value) return { error: 'Not authenticated' };
 
     if (isDemoMode) {
-      const newProfile = { ...state.profile!, ...updates, updated_at: new Date().toISOString(), version: state.profile!.version + 1 };
-      setDemoAuth(state.user, newProfile);
-      setState(s => ({ ...s, profile: newProfile }));
+      const newProfile = { ...profile.value!, ...updates, updated_at: new Date().toISOString(), version: profile.value!.version + 1 };
+      setDemoAuth(user.value, newProfile);
+      profile.value = newProfile;
       return { error: null };
     }
 
-    const { data, error } = await supabase!
+    const { data, error: queryError } = await supabase!
       .from('profiles')
-      .update({ ...updates, updated_at: new Date().toISOString(), version: state.profile!.version + 1 })
-      .eq('id', state.user.id)
+      .update({ ...updates, updated_at: new Date().toISOString(), version: profile.value!.version + 1 })
+      .eq('id', user.value!.id)
       .select()
       .single();
 
-    if (error) return { error: error.message };
-    setState(s => ({ ...s, profile: data as Profile }));
+    if (queryError) return { error: queryError.message };
+    profile.value = data as Profile;
     return { error: null };
   };
 
-  return { ...state, signUp, signIn, signOut, updateProfile, refreshProfile };
+  return { user, profile, loading, error, signUp, signIn, signOut, updateProfile, refreshProfile };
 }
 
 // Type augmentation for Supabase user

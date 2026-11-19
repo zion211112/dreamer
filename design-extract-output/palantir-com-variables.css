@@ -1,0 +1,206 @@
+:root {
+  /* Colors — Primary */
+  --color-primary: #2b5945;
+  --color-secondary: #3860be;
+
+  /* Ramp — primary (base is 800) */
+  --color-primary-50: #e0feef;
+  --color-primary-100: #d2f3e2;
+  --color-primary-200: #bfe3d1;
+  --color-primary-300: #a2cbb7;
+  --color-primary-400: #7eac96;
+  --color-primary-500: #5f8e78;
+  --color-primary-600: #4b7763;
+  --color-primary-700: #39604e;
+  --color-primary-800: #2b5945;
+  --color-primary-900: #214032;
+  --color-primary-950: #0e241a;
+
+  /* Ramp — secondary (base is 600) */
+  --color-secondary-50: #d6f6ff;
+  --color-secondary-100: #c8eaff;
+  --color-secondary-200: #b3d8ff;
+  --color-secondary-300: #95bfff;
+  --color-secondary-400: #709cfc;
+  --color-secondary-500: #527ddd;
+  --color-secondary-600: #3860be;
+  --color-secondary-700: #2f51a1;
+  --color-secondary-800: #234188;
+  --color-secondary-900: #1a3472;
+  --color-secondary-950: #0a1b46;
+
+  /* Ramp — neutral (base is 950) */
+  --color-neutral-50: #f3f6f8;
+  --color-neutral-100: #e7eaed;
+  --color-neutral-200: #d6d9dc;
+  --color-neutral-300: #bdc1c4;
+  --color-neutral-400: #9ca0a4;
+  --color-neutral-500: #7f8286;
+  --color-neutral-600: #696c70;
+  --color-neutral-700: #54575a;
+  --color-neutral-800: #44474a;
+  --color-neutral-900: #37393b;
+  --color-neutral-950: #1e2124;
+
+  /* Colors — Neutrals */
+  --color-neutral-50: #1e2124;
+  --color-neutral-100: #636363;
+  --color-neutral-200: #767676;
+  --color-neutral-300: #ffffff;
+  --color-neutral-400: #555555;
+  --color-neutral-500: #000000;
+  --color-neutral-600: #f4f7f6;
+  --color-neutral-700: #bbbbbb;
+  --color-neutral-800: #d8d8d8;
+
+  /* Colors — Backgrounds */
+  --color-bg: #ffffff;
+  --color-bg-1: #2b5945;
+  --color-bg-2: #ccaa11;
+
+  /* Colors — Text */
+  --color-text: #636363;
+  --color-text-1: #1e2124;
+  --color-text-2: #2b5945;
+  --color-text-3: #767676;
+  --color-text-4: #ffffff;
+
+  /* Semantic pairs */
+  --surface-page-bg: #ffffff;
+  --surface-page-fg: #1e2124; /* 16.18:1 AAA */
+  --surface-raised-bg: #2b5945;
+  --surface-raised-fg: #ffffff; /* 8.02:1 AAA */
+  --action-primary-bg: #2b5945;
+  --action-primary-fg: #ffffff; /* 8.02:1 AAA */
+  --action-secondary-bg: #3860be;
+  --action-secondary-fg: #ffffff; /* 5.86:1 AA */
+
+  /* Typography — Families */
+  --font-sans: 'Alliance No.1', sans-serif;
+  --font-heading: 'Alliance No.2', sans-serif;
+
+  /* Typography — Named scale */
+  --font-size-h1: 40px;
+  --font-size-h2: 28px;
+  --font-size-title-1: 27px;
+  --font-size-title-2: 24.66px;
+  --font-size-h3: 24px;
+  --font-size-title-3: 20px;
+  --font-size-title-4: 18px;
+  --font-size-title-5: 16.2px;
+  --font-size-body: 16px;
+  --font-size-body-sm: 15.75px;
+  --font-size-micro: 15.3px;
+  --font-size-sm-3: 14.634px;
+  --font-size-sm-4: 14.4px;
+  --font-size-sm-5: 14px;
+
+  /* Layout */
+  --container-width: 1280px;
+  --container-gutter: 15px;
+  --grid-columns: 3;
+
+  /* Spacing */
+  --spacing-5: 5px;
+  --spacing-10: 10px;
+  --spacing-15: 15px;
+  --spacing-20: 20px;
+  --spacing-25: 25px;
+  --spacing-30: 30px;
+  --spacing-40: 40px;
+
+  /* Border Radius */
+  --radius-xs: 2px;
+  --radius-xl: 17px;
+  --radius-xl: 20px;
+  --radius-full: 50px;
+
+  /* Box Shadows */
+  --shadow-xs: rgb(199, 197, 199) -3px -3px 5px -2px;
+  --shadow-sm: rgba(0, 0, 0, 0) 0px 2px 4px 0px, rgba(50, 50, 93, 0.1) 0px 7px 14px 0px;
+
+  /* Original Site Variables */
+  /* — colors — */
+  --border-color: currentColor;
+  --input-border-color: var(--text-color-medium);
+  --error-color: #ff4136;
+  --accent-color: #2b5945;
+  --accent10-color: rgba(43,89,69,.1);
+  --accent05-color: rgba(43,89,69,.05);
+  --accent05-opaque-color: #f4f7f6;
+  --body-color: #fff;
+  --body-color-medium: #f3f3f3;
+  --body-color-light: #f9f9f9;
+  --text-color: #1e2124;
+  --text-color-medium: #636363;
+  --text-color-light: #767676;
+  --hover-color: rgba(30,33,36,var(--hover-opacity));
+  /* — spacing — */
+  --headline-100-size: 1.8888888889rem;
+  --headline-200-size: 1.8888888889rem;
+  --headline-300-size: 1.8888888889rem;
+  --body-100-size: 0.8888888889rem;
+  --body-200-size: 1rem;
+  --body-300-size: 1rem;
+  --body-400-size: 1.1111111111rem;
+  --details-captions-size: 0.5555555556rem;
+  --form-placeholder-size: 0.7777777778rem;
+  --h-spacing: 1.1111111111rem;
+  --section-v-spacing: 3.3333333333rem;
+  --spacing-tiny: 0.1666666667rem;
+  --spacing-xs: 0.5555555556rem;
+  --spacing-s: 1.1111111111rem;
+  --spacing-m: calc(var(--gutter) * 2);
+  --spacing-l: calc(var(--gutter) * 4);
+  /* — typography — */
+  --headline-100-letter: normal;
+  --headline-200-letter: normal;
+  --headline-300-letter: normal;
+  --details-captions-letter: 0.05em;
+  /* — other — */
+  --hover-opacity: 0.33;
+  --qualitative-default: #a7b6c2;
+  --qualitative-0: #147eb3;
+  --qualitative-1: #29a634;
+  --qualitative-2: #d1980b;
+  --qualitative-3: #d13913;
+  --qualitative-4: #634dbf;
+  --qualitative-5: #d17e09;
+  --qualitative-6: #9f1239;
+  --qualitative-7: #00a396;
+  --qualitative-8: #5642a6;
+  --qualitative-9: #728c23;
+  --headline-100-line: 1;
+  --headline-100-family: "Alliance No.1",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --headline-200-line: 1.1765;
+  --headline-200-family: "Alliance No.1",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --headline-300-line: 1.1765;
+  --headline-300-family: "Alliance No.1",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --body-100-line: 1.4286;
+  --body-200-line: 1.3889;
+  --body-300-line: 1.3;
+  --body-400-line: 1.3;
+  --details-captions-line: 1.6;
+  --details-captions-family: "Alliance No.2","Alliance No.1",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --details-earmark-family: "Alliance No.2","Alliance No.1",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --zero: 0 * 1rem;
+  --max-width: 80rem;
+  --grid: repeat(12,minmax(10px,1fr));
+  --gutter: 0.5555555556rem;
+  --v-gutter: 1.1111111111rem;
+  --h-contain: max(calc((100% - var(--max-width)) / 2),var(--h-spacing));
+  --h-contain-no-bleed: max(calc((100% - var(--max-width)) / 2),var(--zero));
+  /* — dependencies — */
+  --input-border-color: --text-color-medium;
+  --hover-color: --hover-opacity;
+  --spacing-m: --gutter;
+  --spacing-l: --gutter;
+  --h-contain: --max-width,--h-spacing;
+  --h-contain-no-bleed: --max-width,--zero;
+  /* — semantic — */
+  success: [object Object];
+  warning: [object Object];
+  error: [object Object];
+  info: [object Object];
+
+}

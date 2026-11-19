@@ -1,0 +1,28 @@
+Build a unknown page with this exact visual language.
+COLORS:
+  #ebebeb
+  #171717
+  #4d4d4d
+  #8f8f8f
+  #ffffff
+  #000000
+  #0072f5
+  #ff0000
+  #7d7d7d
+  #0062d1
+  #8e4ec6
+  #df2670
+  #da2f35
+  #ff990a
+FONTS: [object Object], [object Object], [object Object], [object Object]
+SPACING: 2, 4, 6, 8, 10, 12, 16, 24
+RADIUS: 4, 30, 50
+SHADOWS: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px | rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgb(235, 235, 235) 0px 0px 0px 1px | rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px, rgb(250, 250, 250) 0px 0px 0px 1px
+MATERIAL LANGUAGE: flat
+VOICE: Tone: technical · Headings: Title Case · CTA verbs: [object Object], [object Object], [object Object], [object Object], [object Object], [object Object]
+LIBRARY: Use shadcn/ui components (Button, Card, Dialog, Input, Sheet, Tabs). Pair with Tailwind.
+SECTIONS (in order):
+- hero — heading: "Geist Design System"
+- feature-grid
+- sidebar
+Use Tailwind. Match these tokens exactly. Keep the material language consistent.

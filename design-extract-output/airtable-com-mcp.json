@@ -1,0 +1,562 @@
+{
+  "colors": {
+    "all": [
+      {
+        "hex": "#1d1f25",
+        "rgb": {
+          "r": 29,
+          "g": 31,
+          "b": 37,
+          "a": 1
+        },
+        "hsl": {
+          "h": 225,
+          "s": 12,
+          "l": 13
+        },
+        "count": 2753,
+        "areaShare": 0,
+        "contexts": [
+          "text",
+          "border",
+          "background"
+        ]
+      },
+      {
+        "hex": "#ffffff",
+        "rgb": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 100
+        },
+        "count": 434,
+        "areaShare": 0.732,
+        "contexts": [
+          "background",
+          "text",
+          "border"
+        ]
+      },
+      {
+        "hex": "#616670",
+        "rgb": {
+          "r": 97,
+          "g": 102,
+          "b": 112,
+          "a": 1
+        },
+        "hsl": {
+          "h": 220,
+          "s": 7,
+          "l": 41
+        },
+        "count": 42,
+        "areaShare": 0.003,
+        "contexts": [
+          "text",
+          "border",
+          "background"
+        ]
+      },
+      {
+        "hex": "#000000",
+        "rgb": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "a": 0.1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 0
+        },
+        "count": 39,
+        "areaShare": 0,
+        "contexts": [
+          "border",
+          "background"
+        ]
+      },
+      {
+        "hex": "#c4c7cd",
+        "rgb": {
+          "r": 196,
+          "g": 199,
+          "b": 205,
+          "a": 1
+        },
+        "hsl": {
+          "h": 220,
+          "s": 8,
+          "l": 79
+        },
+        "count": 31,
+        "areaShare": 0.002,
+        "contexts": [
+          "text",
+          "border",
+          "background"
+        ]
+      },
+      {
+        "hex": "#f2f4f8",
+        "rgb": {
+          "r": 242,
+          "g": 244,
+          "b": 248,
+          "a": 1
+        },
+        "hsl": {
+          "h": 220,
+          "s": 30,
+          "l": 96
+        },
+        "count": 27,
+        "areaShare": 0.251,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#41454d",
+        "rgb": {
+          "r": 65,
+          "g": 69,
+          "b": 77,
+          "a": 1
+        },
+        "hsl": {
+          "h": 220,
+          "s": 8,
+          "l": 28
+        },
+        "count": 24,
+        "areaShare": 0.004,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#e5e9f0",
+        "rgb": {
+          "r": 229,
+          "g": 233,
+          "b": 240,
+          "a": 1
+        },
+        "hsl": {
+          "h": 218,
+          "s": 27,
+          "l": 92
+        },
+        "count": 21,
+        "areaShare": 0.001,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#cff5d1",
+        "rgb": {
+          "r": 207,
+          "g": 245,
+          "b": 209,
+          "a": 1
+        },
+        "hsl": {
+          "h": 123,
+          "s": 66,
+          "l": 89
+        },
+        "count": 11,
+        "areaShare": 0.002,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#bfaefc",
+        "rgb": {
+          "r": 191,
+          "g": 174,
+          "b": 252,
+          "a": 1
+        },
+        "hsl": {
+          "h": 253,
+          "s": 93,
+          "l": 84
+        },
+        "count": 7,
+        "areaShare": 0.001,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#9ae095",
+        "rgb": {
+          "r": 154,
+          "g": 224,
+          "b": 149,
+          "a": 1
+        },
+        "hsl": {
+          "h": 116,
+          "s": 55,
+          "l": 73
+        },
+        "count": 4,
+        "areaShare": 0.001,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#a0c6ff",
+        "rgb": {
+          "r": 160,
+          "g": 198,
+          "b": 255,
+          "a": 1
+        },
+        "hsl": {
+          "h": 216,
+          "s": 100,
+          "l": 81
+        },
+        "count": 4,
+        "areaShare": 0,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#88dbff",
+        "rgb": {
+          "r": 136,
+          "g": 219,
+          "b": 255,
+          "a": 1
+        },
+        "hsl": {
+          "h": 198,
+          "s": 100,
+          "l": 77
+        },
+        "count": 3,
+        "areaShare": 0,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#f797ef",
+        "rgb": {
+          "r": 247,
+          "g": 151,
+          "b": 239,
+          "a": 1
+        },
+        "hsl": {
+          "h": 305,
+          "s": 86,
+          "l": 78
+        },
+        "count": 3,
+        "areaShare": 0,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#d1e2ff",
+        "rgb": {
+          "r": 209,
+          "g": 226,
+          "b": 255,
+          "a": 1
+        },
+        "hsl": {
+          "h": 218,
+          "s": 100,
+          "l": 91
+        },
+        "count": 2,
+        "areaShare": 0,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#ffeab6",
+        "rgb": {
+          "r": 255,
+          "g": 234,
+          "b": 182,
+          "a": 1
+        },
+        "hsl": {
+          "h": 43,
+          "s": 100,
+          "l": 86
+        },
+        "count": 2,
+        "areaShare": 0,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#166ee1",
+        "rgb": {
+          "r": 22,
+          "g": 110,
+          "b": 225,
+          "a": 1
+        },
+        "hsl": {
+          "h": 214,
+          "s": 82,
+          "l": 48
+        },
+        "count": 2,
+        "areaShare": 0,
+        "contexts": [
+          "background",
+          "border"
+        ]
+      },
+      {
+        "hex": "#808080",
+        "rgb": {
+          "r": 128,
+          "g": 128,
+          "b": 128,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 50
+        },
+        "count": 2,
+        "areaShare": 0,
+        "contexts": [
+          "text",
+          "border"
+        ]
+      },
+      {
+        "hex": "#74ebe1",
+        "rgb": {
+          "r": 116,
+          "g": 235,
+          "b": 225,
+          "a": 1
+        },
+        "hsl": {
+          "h": 175,
+          "s": 75,
+          "l": 69
+        },
+        "count": 1,
+        "areaShare": 0,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#aaaaaa",
+        "rgb": {
+          "r": 170,
+          "g": 170,
+          "b": 170,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 67
+        },
+        "count": 1,
+        "areaShare": 0,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#dde1e3",
+        "rgb": {
+          "r": 221,
+          "g": 225,
+          "b": 227,
+          "a": 1
+        },
+        "hsl": {
+          "h": 200,
+          "s": 10,
+          "l": 88
+        },
+        "count": 1,
+        "areaShare": 0,
+        "contexts": [
+          "border"
+        ]
+      }
+    ]
+  },
+  "regions": [
+    {
+      "role": "pricing",
+      "tag": "main",
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "w": 1280,
+        "h": 776
+      },
+      "heading": "Airtable\n-\nWhat's new",
+      "buttonCount": 6,
+      "cardCount": 224,
+      "className": "relative all-0 flex flex-auto flex-column grow-1 z2 shadow-elevation-medium"
+    }
+  ],
+  "componentClusters": [
+    {
+      "kind": "button",
+      "structuralHash": "button>span",
+      "instanceCount": 2,
+      "variants": [
+        {
+          "css": {
+            "background": "rgb(255, 255, 255)",
+            "color": "rgb(29, 31, 37)",
+            "padding": "0px 0px 0px 8px",
+            "borderRadius": "6px",
+            "border": "0px none rgb(29, 31, 37)",
+            "fontSize": "13px",
+            "fontWeight": "400"
+          },
+          "instanceCount": 2
+        }
+      ]
+    },
+    {
+      "kind": "button",
+      "structuralHash": "span>span>span",
+      "instanceCount": 2,
+      "variants": [
+        {
+          "css": {
+            "background": "rgba(0, 0, 0, 0)",
+            "color": "rgb(29, 31, 37)",
+            "padding": "0px 0px 0px 0px",
+            "borderRadius": "0px",
+            "border": "0px none rgb(29, 31, 37)",
+            "fontSize": "13px",
+            "fontWeight": "400"
+          },
+          "instanceCount": 2
+        }
+      ]
+    },
+    {
+      "kind": "button",
+      "structuralHash": "button>div>span>svg",
+      "instanceCount": 1,
+      "variants": [
+        {
+          "css": {
+            "background": "rgba(0, 0, 0, 0)",
+            "color": "rgb(29, 31, 37)",
+            "padding": "0px 8px 0px 8px",
+            "borderRadius": "6px",
+            "border": "0px none rgb(29, 31, 37)",
+            "fontSize": "13px",
+            "fontWeight": "400"
+          },
+          "instanceCount": 1
+        }
+      ]
+    },
+    {
+      "kind": "button",
+      "structuralHash": "span>span",
+      "instanceCount": 1,
+      "variants": [
+        {
+          "css": {
+            "background": "rgba(0, 0, 0, 0)",
+            "color": "rgb(29, 31, 37)",
+            "padding": "0px 0px 0px 0px",
+            "borderRadius": "0px",
+            "border": "0px none rgb(29, 31, 37)",
+            "fontSize": "13px",
+            "fontWeight": "400"
+          },
+          "instanceCount": 1
+        }
+      ]
+    }
+  ],
+  "accessibility": {
+    "remediation": []
+  },
+  "cssHealth": {
+    "sheets": [
+      {
+        "url": "https://static.airtable.com/css/compiled/v2/all.b5c07f2ddcf70f0190dbe96f4b6f5405cb98350e.css",
+        "totalBytes": 1436223,
+        "usedBytes": 30454,
+        "unusedBytes": 1405769,
+        "unusedPercent": 98
+      },
+      {
+        "url": "https://airtable.com/embed/appL2oaKxSWg9qz8y/shrQ0LMjBK4Sq8JHC",
+        "totalBytes": 0,
+        "usedBytes": 0,
+        "unusedBytes": 0,
+        "unusedPercent": 0
+      }
+    ],
+    "totalBytes": 1436223,
+    "usedBytes": 30454,
+    "unusedBytes": 1405769,
+    "unusedPercent": 98,
+    "importantCount": 526,
+    "duplicates": 14892,
+    "vendorPrefixes": {
+      "webkit": 1122,
+      "moz": 430,
+      "ms": 417,
+      "o": 25
+    },
+    "keyframes": [],
+    "specificity": {
+      "max": [
+        3,
+        13,
+        13
+      ],
+      "average": [
+        0.02,
+        2.69,
+        0.3
+      ],
+      "count": 20074
+    },
+    "issues": [
+      "526 !important rules",
+      "14892 duplicate declarations",
+      "98% unused CSS"
+    ]
+  }
+}

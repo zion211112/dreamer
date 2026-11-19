@@ -1,0 +1,47 @@
+@layer base {
+  :root {
+    /* Brand */
+    --brand-1: #0072f5;
+    --brand-2: #ff0000;
+    --brand-3: #ff990a;
+
+    /* Neutrals */
+    --gray-0: #ebebeb;
+    --gray-1: #171717;
+    --gray-2: #4d4d4d;
+    --gray-3: #8f8f8f;
+    --gray-4: #ffffff;
+    --gray-5: #000000;
+    --gray-6: #7d7d7d;
+
+    /* Typography */
+    --font-sans: GeistSans, system-ui, sans-serif;
+    --font-serif: GeistSerif, serif;
+    --font-mono: 'Geist Mono', ui-monospace, monospace;
+
+    /* Spacing */
+    --size-1: 2px;
+    --size-2: 4px;
+    --size-3: 6px;
+    --size-4: 8px;
+    --size-5: 10px;
+    --size-6: 12px;
+    --size-7: 16px;
+    --size-8: 24px;
+    --size-9: 32px;
+    --size-10: 48px;
+
+    /* Radius */
+    --radius-1: 4px;
+    --radius-2: 30px;
+    --radius-3: 50px;
+
+    /* Shadows */
+    --shadow-1: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    --shadow-2: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgb(235, 235, 235) 0px 0px 0px 1px;
+    --shadow-3: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px, rgb(250, 250, 250) 0px 0px 0px 1px;
+    --shadow-4: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px;
+    --shadow-5: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    --shadow-6: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 2px 2px 0px, rgb(250, 250, 250) 0px 0px 0px 1px;
+  }
+}

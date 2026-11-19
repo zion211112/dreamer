@@ -1,0 +1,12 @@
+Clone the design language of this about page and build a fresh equivalent.
+Visual feel: flat. Tone: neutral · Headings: unknown
+Primary palette: #000000, #b0b5c0, #efeff0, #f9f9fa, #e2e2e2.
+Typography: [object Object].
+Corner radius vocabulary: 12.
+Shadow vocabulary: (none).
+Page structure:
+- hero
+- features
+- social proof
+- cta
+- footer

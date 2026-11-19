@@ -1,0 +1,123 @@
+{
+  "tone": "neutral",
+  "pronoun": "third-person",
+  "headingStyle": "Title Case",
+  "headingLengthClass": "tight",
+  "ctaVerbs": [
+    {
+      "value": "object",
+      "count": 8
+    },
+    {
+      "value": "ab",
+      "count": 6
+    },
+    {
+      "value": "function",
+      "count": 3
+    },
+    {
+      "value": "en",
+      "count": 2
+    },
+    {
+      "value": "functions",
+      "count": 2
+    },
+    {
+      "value": "typescript",
+      "count": 2
+    },
+    {
+      "value": "core",
+      "count": 2
+    },
+    {
+      "value": "legacy",
+      "count": 2
+    },
+    {
+      "value": "configuration",
+      "count": 2
+    },
+    {
+      "value": "time",
+      "count": 2
+    }
+  ],
+  "buttonPatterns": [
+    {
+      "value": "ab\nxy",
+      "count": 6
+    },
+    {
+      "value": "en",
+      "count": 2
+    },
+    {
+      "value": "core concepts",
+      "count": 2
+    },
+    {
+      "value": "configuration",
+      "count": 2
+    },
+    {
+      "value": "send feedback",
+      "count": 1
+    },
+    {
+      "value": "jp",
+      "count": 1
+    },
+    {
+      "value": "kr",
+      "count": 1
+    },
+    {
+      "value": "zh",
+      "count": 1
+    },
+    {
+      "value": "system",
+      "count": 1
+    },
+    {
+      "value": "hide sidebar",
+      "count": 1
+    },
+    {
+      "value": "ontologies",
+      "count": 1
+    },
+    {
+      "value": "branching the ontology",
+      "count": 1
+    },
+    {
+      "value": "usage",
+      "count": 1
+    },
+    {
+      "value": "object and link types",
+      "count": 1
+    },
+    {
+      "value": "object types",
+      "count": 1
+    }
+  ],
+  "sampleHeadings": [
+    "ONTOLOGY BUILDING",
+    "CONTENTS",
+    "Privacy Preference Center",
+    "Your Privacy",
+    "Strictly Necessary Cookies",
+    "Targeting Cookies",
+    "Cookie List"
+  ],
+  "stats": {
+    "buttons": 86,
+    "headings": 7
+  }
+}

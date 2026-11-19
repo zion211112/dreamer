@@ -1,0 +1,20 @@
+Build a unknown page with this exact visual language.
+COLORS:
+  #cbced5
+  #0a0a0a
+  #000000
+  #ffffff
+  #646875
+FONTS: system-ui
+SPACING: 16
+RADIUS: (none)
+SHADOWS: (none)
+MATERIAL LANGUAGE: flat
+VOICE: Tone: neutral · Headings: unknown
+LIBRARY: Use plain Tailwind CSS without a component library.
+SECTIONS (in order):
+- hero
+- features
+- cta
+- footer
+Use Tailwind. Match these tokens exactly. Keep the material language consistent.

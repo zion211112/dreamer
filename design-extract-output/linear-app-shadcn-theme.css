@@ -1,0 +1,13 @@
+/* shadcn/ui Theme — extracted from https://linear.app/demo/team/ENG/active */
+/* Paste into your globals.css */
+
+@layer base {
+  :root {
+    --background: 240 3% 94%;
+    --foreground: 221 11% 72%;
+    --muted: 0 0% 89%;
+    --muted-foreground: 0 0% 0%;
+    --border: 0 0% 89%;
+    --radius: 12px;
+  }
+}

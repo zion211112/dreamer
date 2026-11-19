@@ -1,0 +1,193 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "color": {
+      "palette": [
+        {
+          "slug": "primary",
+          "color": "#0969da",
+          "name": "Primary"
+        },
+        {
+          "slug": "secondary",
+          "color": "#9a6700",
+          "name": "Secondary"
+        },
+        {
+          "slug": "neutral-1",
+          "color": "#1f2328",
+          "name": "Neutral 1"
+        },
+        {
+          "slug": "neutral-2",
+          "color": "#59636e",
+          "name": "Neutral 2"
+        },
+        {
+          "slug": "neutral-3",
+          "color": "#ffffff",
+          "name": "Neutral 3"
+        },
+        {
+          "slug": "neutral-4",
+          "color": "#a4aea6",
+          "name": "Neutral 4"
+        },
+        {
+          "slug": "neutral-5",
+          "color": "#818b98",
+          "name": "Neutral 5"
+        },
+        {
+          "slug": "bg-ffffff",
+          "color": "#ffffff",
+          "name": "Background #ffffff"
+        },
+        {
+          "slug": "bg-0d1117",
+          "color": "#0d1117",
+          "name": "Background #0d1117"
+        },
+        {
+          "slug": "bg-000000",
+          "color": "#000000",
+          "name": "Background #000000"
+        }
+      ],
+      "gradients": [
+        {
+          "slug": "gradient-1",
+          "gradient": "linear-gradient(rgb(255, 248, 197), rgb(255, 248, 197))",
+          "name": "Gradient 1"
+        },
+        {
+          "slug": "gradient-2",
+          "gradient": "linear-gradient(rgb(255, 235, 233), rgb(255, 235, 233))",
+          "name": "Gradient 2"
+        }
+      ]
+    },
+    "typography": {
+      "fontFamilies": [
+        {
+          "fontFamily": "Mona Sans VF",
+          "slug": "mona-sans-vf",
+          "name": "Mona Sans VF"
+        },
+        {
+          "fontFamily": "Mona Sans",
+          "slug": "mona-sans",
+          "name": "Mona Sans"
+        },
+        {
+          "fontFamily": "Mona Sans Mono",
+          "slug": "mona-sans-mono",
+          "name": "Mona Sans Mono"
+        }
+      ],
+      "fontSizes": [
+        {
+          "size": "32px",
+          "slug": "size-32",
+          "name": "32px"
+        },
+        {
+          "size": "24px",
+          "slug": "size-24",
+          "name": "24px"
+        },
+        {
+          "size": "20px",
+          "slug": "size-20",
+          "name": "20px"
+        },
+        {
+          "size": "16px",
+          "slug": "size-16",
+          "name": "16px"
+        },
+        {
+          "size": "14px",
+          "slug": "size-14",
+          "name": "14px"
+        },
+        {
+          "size": "13.6px",
+          "slug": "size-13.6",
+          "name": "13.6px"
+        },
+        {
+          "size": "12px",
+          "slug": "size-12",
+          "name": "12px"
+        },
+        {
+          "size": "11px",
+          "slug": "size-11",
+          "name": "11px"
+        }
+      ]
+    },
+    "spacing": {
+      "spacingSizes": [
+        {
+          "size": "2px",
+          "slug": "spacing-2",
+          "name": "2px"
+        },
+        {
+          "size": "3px",
+          "slug": "spacing-3",
+          "name": "3px"
+        },
+        {
+          "size": "4px",
+          "slug": "spacing-4",
+          "name": "4px"
+        },
+        {
+          "size": "5px",
+          "slug": "spacing-5",
+          "name": "5px"
+        },
+        {
+          "size": "6px",
+          "slug": "spacing-6",
+          "name": "6px"
+        },
+        {
+          "size": "7px",
+          "slug": "spacing-7",
+          "name": "7px"
+        },
+        {
+          "size": "8px",
+          "slug": "spacing-8",
+          "name": "8px"
+        },
+        {
+          "size": "10px",
+          "slug": "spacing-10",
+          "name": "10px"
+        }
+      ]
+    },
+    "layout": {
+      "contentSize": "100%",
+      "wideSize": "1400px"
+    }
+  },
+  "styles": {
+    "color": {
+      "background": "#ffffff",
+      "text": "#1f2328"
+    },
+    "typography": {
+      "fontSize": "14px",
+      "lineHeight": "21px",
+      "fontFamily": "Mona Sans VF"
+    },
+    "spacing": {}
+  }
+}

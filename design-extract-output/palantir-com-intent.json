@@ -1,0 +1,204 @@
+{
+  "pageIntent": {
+    "type": "docs",
+    "confidence": 1,
+    "path": "/docs/foundry/object-explorer/getting-started",
+    "title": "Object Explorer • Getting started • Palantir",
+    "description": "The home page below is shown when opening Object Explorer. It is an orientation hub where one can start exploring objects, either with a specific...",
+    "signals": [
+      {
+        "kind": "url",
+        "type": "docs",
+        "weight": 0.9
+      },
+      {
+        "kind": "dom",
+        "type": "docs",
+        "weight": 0.55,
+        "detail": "sidebar=true article=157"
+      },
+      {
+        "kind": "dom",
+        "type": "legal",
+        "weight": 0.4
+      }
+    ],
+    "alternates": [
+      {
+        "type": "legal",
+        "score": 0.4
+      }
+    ],
+    "needsSmart": false
+  },
+  "sectionRoles": {
+    "sections": [
+      {
+        "index": 0,
+        "tag": "nav",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.9,
+        "heading": "ONTOLOGY BUILDING",
+        "bounds": {
+          "x": 16,
+          "y": 145,
+          "w": 298,
+          "h": 655
+        },
+        "buttonCount": 70,
+        "cardCount": 884,
+        "slots": {
+          "heading": "ONTOLOGY BUILDING",
+          "ctaCount": 70
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 1,
+        "tag": "footer",
+        "role": "footer",
+        "subrole": null,
+        "confidence": 0.95,
+        "heading": null,
+        "bounds": {
+          "x": 345,
+          "y": 6496.1875,
+          "w": 660,
+          "h": 252.21875
+        },
+        "buttonCount": 1,
+        "cardCount": 0,
+        "slots": {
+          "ctaCount": 1,
+          "lede": "© 2026 Palantir Technologies Inc. All rights reserved."
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 2,
+        "tag": "nav",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.9,
+        "heading": "CONTENTS",
+        "bounds": {
+          "x": 1035,
+          "y": 145,
+          "w": 230,
+          "h": 575
+        },
+        "buttonCount": 0,
+        "cardCount": 4,
+        "slots": {
+          "heading": "CONTENTS",
+          "lede": "CONTENTS\nGetting started\nGlobal search bar (A)\nGroup exploration (B, C, D)\nPreview object types (E)"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 3,
+        "tag": "div",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": "Privacy Preference Center",
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        },
+        "buttonCount": 0,
+        "cardCount": 3,
+        "slots": {
+          "heading": "Privacy Preference Center",
+          "subheadings": [
+            "Your Privacy",
+            "Strictly Necessary Cookies",
+            "Targeting Cookies"
+          ],
+          "lede": "Privacy Preference CenterYour PrivacyStrictly Necessary CookiesTargeting Cookies"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 4,
+        "tag": "section",
+        "role": "content",
+        "subrole": null,
+        "confidence": 0.3,
+        "heading": "Cookie List",
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        },
+        "buttonCount": 5,
+        "cardCount": 1,
+        "slots": {
+          "heading": "Cookie List",
+          "ctaCount": 5,
+          "lede": "Back ButtonCookie List Filter ButtonConsent Leg.Interest checkbox label label checkbox label label checkbox label labelClear checkbox label labelApply Cancel"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 5,
+        "tag": "section",
+        "role": "content",
+        "subrole": null,
+        "confidence": 0.3,
+        "heading": null,
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        },
+        "buttonCount": 0,
+        "cardCount": 0,
+        "slots": {
+          "lede": "Consent Leg.Interest checkbox label label checkbox label label checkbox label label"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 6,
+        "tag": "section",
+        "role": "content",
+        "subrole": null,
+        "confidence": 0.3,
+        "heading": null,
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        },
+        "buttonCount": 3,
+        "cardCount": 1,
+        "slots": {
+          "ctaCount": 3,
+          "lede": "Clear checkbox label labelApply Cancel"
+        },
+        "needsSmart": true
+      }
+    ],
+    "counts": {
+      "nav": 3,
+      "footer": 1,
+      "content": 3
+    },
+    "readingOrder": [
+      "nav",
+      "content",
+      "content",
+      "content",
+      "nav",
+      "nav",
+      "footer"
+    ]
+  }
+}

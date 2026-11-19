@@ -1,0 +1,155 @@
+{
+  "pageIntent": {
+    "type": "unknown",
+    "confidence": 0,
+    "path": "/geist",
+    "title": "Geist",
+    "description": "Vercel's design system called Geist. Made for building consistent and delightful web experiences.",
+    "signals": [],
+    "alternates": [],
+    "needsSmart": true
+  },
+  "sectionRoles": {
+    "sections": [
+      {
+        "index": 0,
+        "tag": "header",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": null,
+        "bounds": {
+          "x": 22.5,
+          "y": 0,
+          "w": 1220,
+          "h": 65
+        },
+        "buttonCount": 2,
+        "cardCount": 10,
+        "slots": {
+          "ctaCount": 2,
+          "lede": "Geist Design System"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 1,
+        "tag": "main",
+        "role": "hero",
+        "subrole": null,
+        "confidence": 0.85,
+        "heading": "Geist Design System",
+        "bounds": {
+          "x": 22.5,
+          "y": 65,
+          "w": 1220,
+          "h": 901
+        },
+        "buttonCount": 14,
+        "cardCount": 240,
+        "slots": {
+          "heading": "Geist Design System",
+          "ctaCount": 14
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 2,
+        "tag": "section",
+        "role": "content",
+        "subrole": null,
+        "confidence": 0.3,
+        "heading": "Geist Design System",
+        "bounds": {
+          "x": 282.5,
+          "y": 64,
+          "w": 959,
+          "h": 187
+        },
+        "buttonCount": 0,
+        "cardCount": 0,
+        "slots": {
+          "heading": "Geist Design System"
+        },
+        "needsSmart": true
+      },
+      {
+        "index": 3,
+        "tag": "section",
+        "role": "feature-grid",
+        "subrole": null,
+        "confidence": 0.8,
+        "heading": null,
+        "bounds": {
+          "x": 282.5,
+          "y": 251,
+          "w": 959,
+          "h": 595
+        },
+        "buttonCount": 4,
+        "cardCount": 32,
+        "slots": {
+          "ctaCount": 4,
+          "lede": "Brand Assets"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 4,
+        "tag": "nav",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.9,
+        "heading": null,
+        "bounds": {
+          "x": 330.5,
+          "y": 878,
+          "w": 862,
+          "h": 56
+        },
+        "buttonCount": 5,
+        "cardCount": 8,
+        "slots": {
+          "ctaCount": 5,
+          "lede": "Give feedback"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 5,
+        "tag": "aside",
+        "role": "sidebar",
+        "subrole": null,
+        "confidence": 0.4,
+        "heading": null,
+        "bounds": {
+          "x": 22.5,
+          "y": 65,
+          "w": 260,
+          "h": 735
+        },
+        "buttonCount": 0,
+        "cardCount": 191,
+        "slots": {
+          "lede": "Foundations"
+        },
+        "needsSmart": true
+      }
+    ],
+    "counts": {
+      "nav": 2,
+      "hero": 1,
+      "content": 1,
+      "feature-grid": 1,
+      "sidebar": 1
+    },
+    "readingOrder": [
+      "nav",
+      "content",
+      "hero",
+      "sidebar",
+      "feature-grid",
+      "nav"
+    ]
+  }
+}

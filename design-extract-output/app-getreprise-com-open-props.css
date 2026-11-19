@@ -1,0 +1,13 @@
+@layer base {
+  :root {
+    /* Neutrals */
+    --gray-0: #cbced5;
+    --gray-1: #0a0a0a;
+    --gray-2: #000000;
+    --gray-3: #ffffff;
+    --gray-4: #646875;
+
+    /* Spacing */
+    --size-1: 16px;
+  }
+}

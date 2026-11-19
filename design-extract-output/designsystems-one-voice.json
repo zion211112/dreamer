@@ -1,0 +1,82 @@
+{
+  "tone": "neutral",
+  "pronoun": "you-only",
+  "headingStyle": "Sentence case",
+  "headingLengthClass": "tight",
+  "ctaVerbs": [
+    {
+      "value": "toggle",
+      "count": 1
+    },
+    {
+      "value": "design",
+      "count": 1
+    },
+    {
+      "value": "tokens",
+      "count": 1
+    },
+    {
+      "value": "copy",
+      "count": 1
+    },
+    {
+      "value": "download",
+      "count": 1
+    },
+    {
+      "value": "decline",
+      "count": 1
+    },
+    {
+      "value": "accept",
+      "count": 1
+    }
+  ],
+  "buttonPatterns": [
+    {
+      "value": "toggle theme",
+      "count": 1
+    },
+    {
+      "value": "design.md",
+      "count": 1
+    },
+    {
+      "value": "tokens.css",
+      "count": 1
+    },
+    {
+      "value": "copy",
+      "count": 1
+    },
+    {
+      "value": "download design.md",
+      "count": 1
+    },
+    {
+      "value": "decline",
+      "count": 1
+    },
+    {
+      "value": "accept",
+      "count": 1
+    }
+  ],
+  "sampleHeadings": [
+    "Vercel Geist Design System",
+    "origin",
+    "governance",
+    "what it’s known for, what’s underrated, what to watch out for.",
+    "KNOWN FOR",
+    "UNDERRATED",
+    "WATCH OUT FOR",
+    "token snapshot",
+    "token structure",
+    "PALETTE"
+  ],
+  "stats": {
+    "buttons": 7,
+    "headings": 16
+  }
+}

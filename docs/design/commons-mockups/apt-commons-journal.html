@@ -1,0 +1,199 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commons — APT-LABS · The Commons Journal</title>
+<style>
+:root {
+  --bg: #F4F1E9; --bg-elev: #FBF9F2; --bg-subtle: #ECE8DF;
+  --fg: #292B25; --fg-strong: #1a1c16; --muted: #6B6558; --dim: #9E9889;
+  --line: rgba(41,43,37,.12); --line-strong: rgba(41,43,37,.24); --hairline: rgba(41,43,37,.06);
+  --olive: #344438; --olive-pale: #dde3d4; --brass: #AD8B55; --brass-pale: #f0e8d8;
+  --clay: #A66F55; --clay-pale: #f0e0d4; --sage: #A8B0A0; --sage-pale: #e4e8de;
+  --serif: "Iowan Old Style","Palatino Linotype","Book Antiqua",Georgia,"Times New Roman",serif;
+  --sans: ui-sans-serif,system-ui,-apple-system,"Segoe UI Variable","Segoe UI",sans-serif;
+  --mono: ui-monospace,"JetBrains Mono",SFMono-Regular,Consolas,monospace;
+  --s1: 11px; --s2: 13px; --s3: 15px; --s4: 18px;
+  --display: clamp(40px, 5.4vw, 72px); --h1: 34px; --h2: 20px; --h3: 17px;
+}
+* { box-sizing: border-box; } html { scroll-behavior: smooth; }
+body { margin:0; min-height:100vh; background:var(--bg); color:var(--fg); font:var(--s3)/1.55 var(--sans); -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+h1,h2,h3,h4,p { margin:0; } button { font:inherit; color:inherit; cursor:pointer; border:none; background:none; } a { color:inherit; text-decoration:none; }
+::selection { background:var(--olive-pale); color:var(--olive); }
+.masthead { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 40px; background:var(--bg-elev); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:20; }
+.mast-left { display:flex; align-items:baseline; gap:14px; }
+.wordmark { font:700 13px/1 var(--mono); letter-spacing:.12em; color:var(--fg-strong); }
+.wordmark b { color:var(--olive); }
+.mast-sep { width:1px; height:16px; background:var(--line-strong); }
+.mast-loc { font:500 10px/1 var(--mono); letter-spacing:.14em; color:var(--muted); text-transform:uppercase; }
+.mast-loc em { color:var(--brass); font-style:normal; }
+.mast-actions { display:flex; align-items:center; gap:8px; }
+.pill { font:500 11px/1 var(--sans); color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:7px 14px; background:var(--bg); }
+.pill.hot { background:var(--olive); color:var(--bg-elev); border-color:var(--olive); }
+.wrap { max-width:1180px; margin:0 auto; padding:0 40px; }
+.hero { display:grid; grid-template-columns:1.05fr .95fr; gap:56px; padding:64px 0 44px; align-items:center; }
+.hero-eyebrow { font:500 11px/1 var(--mono); letter-spacing:.2em; text-transform:uppercase; color:var(--brass); margin-bottom:22px; display:flex; align-items:center; gap:10px; }
+.hero-eyebrow::before { content:""; width:26px; height:1px; background:var(--brass); }
+.hero h1 { font:500 var(--display)/1.02 var(--serif); color:var(--fg-strong); letter-spacing:-.015em; }
+.hero h1 .accent { color:var(--olive); font-style:italic; }
+.hero-sub { margin-top:22px; max-width:36ch; color:var(--muted); font:400 var(--s4)/1.55 var(--sans); }
+.hero-sub b { color:var(--fg-strong); font-weight:600; }
+.searchbar { margin-top:30px; display:flex; align-items:center; gap:10px; border:1px solid var(--line-strong); border-radius:999px; padding:6px 8px 6px 20px; background:var(--bg-elev); box-shadow:0 1px 0 var(--hairline); transition:border-color .18s; }
+.searchbar:focus-within { border-color:var(--olive); }
+.searchbar .ico { width:17px; height:17px; stroke:var(--muted); fill:none; stroke-width:1.7; }
+.searchbar input { flex:1; border:none; background:none; outline:none; font:400 var(--s3)/1.4 var(--sans); color:var(--fg-strong); padding:8px 0; }
+.searchbar input::placeholder { color:var(--dim); }
+.searchbar button { font:600 12px/1 var(--sans); color:var(--bg-elev); background:var(--olive); border-radius:999px; padding:11px 20px; }
+.stack { position:relative; height:420px; }
+.kcard { position:absolute; background:var(--bg-elev); border:1px solid var(--line); border-radius:12px; padding:20px 22px; box-shadow:0 1px 2px rgba(41,43,37,.05),0 10px 30px -12px rgba(41,43,37,.16); transition:transform .3s cubic-bezier(.2,.7,.2,1), box-shadow .3s; }
+.kcard:hover { transform:translateY(-3px); box-shadow:0 1px 2px rgba(41,43,37,.05),0 18px 40px -14px rgba(41,43,37,.22); }
+.kcard .tag { position:absolute; top:-9px; left:16px; font:600 9px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase; background:var(--bg-subtle); color:var(--muted); border:1px solid var(--line); border-radius:4px; padding:4px 8px; }
+.kcard .tag.live { background:var(--olive-pale); color:var(--olive); border-color:var(--olive-pale); }
+.kcard h4 { font:600 var(--h3)/1.1 var(--serif); color:var(--fg-strong); margin:14px 0 8px; letter-spacing:-.01em; }
+.kcard p { font:400 var(--s2)/1.5 var(--sans); color:var(--muted); }
+.kfoot { display:flex; align-items:center; gap:14px; margin-top:16px; padding-top:12px; border-top:1px solid var(--hairline); }
+.kfoot .n { font:600 16px/1 var(--serif); color:var(--fg-strong); }
+.kfoot .l { font:500 9px/1.3 var(--mono); letter-spacing:.08em; color:var(--dim); text-transform:uppercase; }
+.kfoot .act { margin-left:auto; width:30px; height:30px; border-radius:8px; display:grid; place-items:center; background:var(--bg-subtle); color:var(--muted); border:1px solid var(--line); font-size:15px; }
+.kcard.c1 { left:0; top:0; width:248px; z-index:1; opacity:.55; }
+.kcard.c2 { left:84px; top:70px; width:268px; z-index:2; }
+.kcard.c3 { left:168px; top:150px; width:244px; z-index:3; }
+.kcard.c3 .act { background:var(--brass); color:#fff; border-color:var(--brass); }
+.weave { display:flex; align-items:center; gap:14px; color:var(--dim); }
+.weave .cap { font:500 10px/1 var(--mono); letter-spacing:.18em; text-transform:uppercase; color:var(--muted); white-space:nowrap; }
+.weave .band { flex:1; height:14px; position:relative; overflow:hidden; }
+.weave .band svg { position:absolute; inset:0; width:100%; height:100%; }
+section.block { padding:30px 0; }
+.sec-head { display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:18px; }
+.sec-head .k { font:500 10px/1 var(--mono); letter-spacing:.16em; text-transform:uppercase; color:var(--brass); }
+.sec-head .t { font:600 var(--h2)/1 var(--serif); color:var(--fg-strong); letter-spacing:-.01em; margin-top:6px; }
+.sec-head .more { font:500 12px/1 var(--sans); color:var(--olive); }
+.sec-head .more:hover { text-decoration:underline; }
+.inq { display:grid; grid-template-columns:92px 1fr auto; gap:22px; align-items:center; padding:18px 4px; border-top:1px solid var(--line); cursor:pointer; transition:background .15s, padding .15s; }
+.inq:last-child { border-bottom:1px solid var(--line); }
+.inq:hover { background:var(--bg-subtle); padding-left:14px; border-left:2px solid var(--brass); }
+.inq .type { font:600 10px/1.2 var(--mono); letter-spacing:.1em; text-transform:uppercase; color:var(--olive); background:var(--olive-pale); border-radius:4px; padding:6px 8px; text-align:center; height:fit-content; }
+.inq .type.need { color:var(--clay); background:var(--clay-pale); }
+.inq .type.opp { color:var(--brass); background:var(--brass-pale); }
+.inq .title { font:600 17px/1.25 var(--serif); color:var(--fg-strong); letter-spacing:-.005em; }
+.inq .meta { display:flex; gap:16px; margin-top:6px; flex-wrap:wrap; }
+.inq .meta span { font:500 10.5px/1 var(--mono); letter-spacing:.04em; color:var(--muted); display:flex; align-items:center; gap:6px; }
+.inq .meta .dot { width:3px; height:3px; border-radius:50%; background:var(--dim); }
+.inq .side { display:flex; align-items:center; gap:18px; }
+.inq .count { text-align:right; }
+.inq .count .n { font:600 15px/1 var(--serif); color:var(--fg-strong); }
+.inq .count .l { font:500 9px/1.3 var(--mono); letter-spacing:.08em; text-transform:uppercase; color:var(--dim); }
+.chip { font:600 9.5px/1 var(--mono); letter-spacing:.06em; text-transform:uppercase; padding:5px 9px; border-radius:4px; border:1px solid; white-space:nowrap; }
+.chip.verified { color:var(--olive); background:var(--olive-pale); border-color:var(--olive-pale); }
+.chip.supported { color:var(--sage); background:var(--sage-pale); border-color:var(--sage-pale); }
+.chip.examining { color:var(--brass); background:var(--brass-pale); border-color:var(--brass-pale); }
+.chip.proposition { color:var(--clay); background:var(--clay-pale); border-color:var(--clay-pale); }
+.twocol { display:grid; grid-template-columns:1fr 1fr; gap:48px; }
+.kitem { display:grid; grid-template-columns:1fr auto; gap:16px; align-items:start; padding:16px 4px; border-top:1px solid var(--line); cursor:pointer; }
+.kitem:last-child { border-bottom:1px solid var(--line); }
+.kitem:hover .kt { color:var(--olive); }
+.kitem .kt { font:600 15px/1.3 var(--serif); color:var(--fg-strong); letter-spacing:-.005em; transition:color .15s; }
+.kitem .ks { font:400 12px/1.5 var(--sans); color:var(--muted); margin-top:4px; max-width:44ch; }
+.kitem .kstatus { font:600 9px/1 var(--mono); letter-spacing:.08em; text-transform:uppercase; color:var(--dim); white-space:nowrap; padding-top:2px; }
+.kcol-h { font:500 10px/1 var(--mono); letter-spacing:.16em; text-transform:uppercase; color:var(--brass); margin-bottom:12px; }
+.brief { display:grid; grid-template-columns:1fr auto; gap:20px; align-items:center; padding:22px 26px; background:var(--bg-elev); border:1px solid var(--line); border-left:3px solid var(--olive); border-radius:10px; box-shadow:0 1px 0 var(--hairline); }
+.brief + .brief { margin-top:14px; }
+.brief .bt { font:600 17px/1.2 var(--serif); color:var(--fg-strong); letter-spacing:-.005em; }
+.brief .bm { font:500 10.5px/1.5 var(--mono); letter-spacing:.04em; color:var(--muted); margin-top:6px; display:flex; gap:14px; flex-wrap:wrap; }
+.brief .cta { font:600 12px/1 var(--sans); color:var(--bg-elev); background:var(--olive); border-radius:999px; padding:12px 20px; display:flex; align-items:center; gap:8px; white-space:nowrap; }
+.brief .cta.ghost { background:transparent; color:var(--olive); border:1px solid var(--olive); }
+.contrib { margin-top:40px; padding:30px 34px; background:linear-gradient(120deg, var(--olive-pale), var(--bg-elev)); border:1px solid var(--line); border-radius:12px; display:flex; align-items:center; justify-content:space-between; gap:24px; }
+.contrib h3 { font:500 22px/1.2 var(--serif); color:var(--fg-strong); }
+.contrib p { font:400 13px/1.5 var(--sans); color:var(--muted); margin-top:6px; }
+.contrib .cta { background:var(--olive); color:var(--bg-elev); border-radius:999px; padding:13px 24px; font:600 13px/1 var(--sans); }
+footer.colophon { margin-top:56px; padding:28px 0; border-top:1px solid var(--line); text-align:center; }
+footer.colophon .poem { font:italic 500 17px/1.5 var(--serif); color:var(--muted); }
+footer.colophon .poem em { color:var(--brass); }
+footer.colophon .fine { margin-top:12px; font:400 10px/1 var(--mono); letter-spacing:.1em; color:var(--dim); text-transform:uppercase; }
+@media (max-width:900px){ .hero{grid-template-columns:1fr;gap:40px;} .stack{height:340px;} .twocol{grid-template-columns:1fr;gap:32px;} .inq{grid-template-columns:72px 1fr;} .inq .side{grid-column:2;} .wrap,.masthead{padding-left:20px;padding-right:20px;} }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="mast-left">
+    <span class="wordmark"><b>APT</b>·LABS</span>
+    <span class="mast-sep"></span>
+    <span class="mast-loc">Kenya · <em>Shared Knowledge</em></span>
+  </div>
+  <nav class="mast-actions" aria-label="Commons destinations">
+    <a class="pill" href="#">Explore</a><a class="pill" href="#">Knowledge</a><a class="pill" href="#">Inquiries</a><a class="pill hot" href="#">Contribute</a>
+  </nav>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <div>
+      <div class="hero-eyebrow">A place for shared intelligence</div>
+      <h1>What are we trying to <span class="accent">understand,</span> improve or make&nbsp;possible?</h1>
+      <p class="hero-sub">Not a feed, not a forum. The <b>living civic knowledge commons</b> — bring a real question, meet what others already know, and leave with something more useful.</p>
+      <form class="searchbar" onsubmit="return false">
+        <svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="text" placeholder="Search needs, knowledge, practices, opportunities…">
+        <button type="submit">Explore</button>
+      </form>
+    </div>
+    <div class="stack" aria-label="Active inquiry, layered">
+      <div class="kcard c1"><span class="tag">Parent</span><h4>Post-harvest loss</h4><p>How Mwea smallholders lose paddy to moisture, handling and timing.</p><div class="kfoot"><span><span class="n">14</span> <span class="l">Entries</span></span><span><span class="n">6</span> <span class="l">Cases</span></span></div></div>
+      <div class="kcard c2"><span class="tag live">Current</span><h4>Drying &amp; storage</h4><p>The practice under examination: raised drying beds vs. tarp spreading, by season.</p><div class="kfoot"><span><span class="n">9</span> <span class="l">Methods</span></span><span><span class="n">3</span> <span class="l">Evidence</span></span><span class="act">→</span></div></div>
+      <div class="kcard c3"><span class="tag">Question</span><h4>Cold, wet season</h4><p>Which drying approach survives the short wet window without spoilage?</p><div class="kfoot"><span><span class="n">4</span> <span class="l">Open</span></span><span class="act">→</span></div></div>
+    </div>
+  </section>
+
+  <div class="weave" aria-hidden="true">
+    <span class="band"><svg preserveAspectRatio="none" viewBox="0 0 400 14"><defs><pattern id="pl" width="20" height="14" patternUnits="userSpaceOnUse"><path d="M0 7 H20" stroke="var(--olive)" stroke-width="2"/><path d="M0 7 C4 1 8 1 12 7 S16 13 20 7" stroke="var(--brass)" stroke-width="2" fill="none"/></pattern></defs><rect width="400" height="14" fill="url(#pl)" opacity=".55"/></svg></span>
+    <span class="cap">Inquiry&nbsp;↔&nbsp;Knowledge</span>
+    <span class="band"><svg preserveAspectRatio="none" viewBox="0 0 400 14"><rect width="400" height="14" fill="url(#pl)" opacity=".55"/></svg></span>
+  </div>
+
+  <section class="block" id="inquiries">
+    <div class="sec-head"><div><div class="k">Questions worth examining</div><div class="t">Current inquiries</div></div><a class="more" href="#">View all →</a></div>
+    <div class="inq"><span class="type">Question</span><div><div class="title">How can small producers share processing capacity without losing control of their produce?</div><div class="meta"><span><span class="dot"></span>Agriculture · Kirinyaga</span><span><span class="dot"></span>7 contributors</span><span><span class="dot"></span>3 evidence</span></div></div><div class="side"><span class="chip examining">Examining</span><div class="count"><div class="n">7</div><div class="l">Contributions</div></div></div></div>
+    <div class="inq"><span class="type need">Need</span><div><div class="title">Reducing post-harvest rice losses in the short Mwea wet window</div><div class="meta"><span><span class="dot"></span>Agriculture · Mwea</span><span><span class="dot"></span>Mwea Water Coop</span><span><span class="dot"></span>2 previous attempts</span></div></div><div class="side"><span class="chip supported">Supported</span><div class="count"><div class="n">11</div><div class="l">Contributions</div></div></div></div>
+    <div class="inq"><span class="type opp">Opportunity</span><div><div class="title">A practical method for managing shared laboratory equipment across schools</div><div class="meta"><span><span class="dot"></span>Education · Nyeri</span><span><span class="dot"></span>3 schools</span><span><span class="dot"></span>Source &amp; context available</span></div></div><div class="side"><span class="chip verified">Verified</span><div class="count"><div class="n">15</div><div class="l">Contributions</div></div></div></div>
+    <div class="inq"><span class="type">Need</span><div><div class="title">What would help describe local making &amp; repair capacity?</div><div class="meta"><span><span class="dot"></span>Making · Kibera</span><span><span class="dot"></span>Kibera Makerspace</span><span><span class="dot"></span>Open</span></div></div><div class="side"><span class="chip proposition">Proposition</span><div class="count"><div class="n">4</div><div class="l">Contributions</div></div></div></div>
+  </section>
+
+  <section class="block" id="knowledge">
+    <div class="sec-head"><div><div class="k">What has already been learned</div><div class="t">From the knowledge commons</div></div><a class="more" href="#">Open Knowledge House →</a></div>
+    <div class="twocol">
+      <div>
+        <div class="kcol-h">Field knowledge</div>
+        <div class="kitem"><div><div class="kt">Inverter load-test record — microgrid commissioning</div><div class="ks">Measured output, test conditions and review trail for shared grid handover.</div></div><div class="kstatus">Verified</div></div>
+        <div class="kitem"><div><div class="kt">Tool circulation log — shared equipment stewardship</div><div class="ks">A register of shared tool use, maintenance notes and access history.</div></div><div class="kstatus">Supported</div></div>
+        <div class="kitem"><div><div class="kt">Water resilience audit — field research method</div><div class="ks">Practical assessment of shared water infrastructure and maintenance needs.</div></div><div class="kstatus">Supported</div></div>
+        <div class="kitem"><div><div class="kt">Repair guide &amp; community workshop</div><div class="ks">An open, locally tested guide paired with a neighborhood repair workshop.</div></div><div class="kstatus">Verified</div></div>
+      </div>
+      <div>
+        <div class="kcol-h">Emerging possibilities</div>
+        <div class="kitem"><div><div class="kt">Shared lab access — three Nyeri schools</div><div class="ks">Scheduled practicals, mobile instruction, maintenance rota. Ready to examine.</div></div><div class="kstatus">Brief ready</div></div>
+        <div class="kitem"><div><div class="kt">Processing cooperative — Kirinyaga rice growers</div><div class="ks">A shared facility governed so every farmer keeps ownership through the process.</div></div><div class="kstatus">Synthesis</div></div>
+        <div class="kitem"><div><div class="kt">Cold-chain pilot for vaccine transport</div><div class="ks">A plausible next step; needs temperature evidence before a brief.</div></div><div class="kstatus">Proposition</div></div>
+        <div class="kitem"><div><div class="kt">Seasonal judgement for solar-drying capacity</div><div class="ks">A farmer's accumulated judgement, not yet independently verified.</div></div><div class="kstatus">Reported</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="briefs">
+    <div class="sec-head"><div><div class="k">Developed · ready for consideration</div><div class="t">Opportunity briefs</div></div><a class="more" href="#">Not an approval →</a></div>
+    <div class="brief"><div><div class="bt">Shared laboratory access for three Nyeri schools</div><div class="bm"><span>Problem</span>·<span>Context</span>·<span>3 evidence</span>·<span>2 unknowns</span>·<span>Next: define a testable undertaking</span></div></div><button class="cta">Develop brief →</button></div>
+    <div class="brief"><div><div class="bt">Processing cooperative for Kirinyaga rice growers</div><div class="bm"><span>Problem</span>·<span>4 actors</span>·<span>2 previous attempts</span>·<span>Next: governance model</span></div></div><button class="cta ghost">Examine →</button></div>
+  </section>
+
+  <section class="contrib">
+    <div><h3>Have something to contribute?</h3><p>A practice, a case, a question, or an opportunity worth examining. Every contribution carries its provenance.</p></div>
+    <button class="cta">Contribute knowledge ↗</button>
+  </section>
+
+  <footer class="colophon">
+    <div class="poem">Bring what you know. Examine what we know. <em>Build what we can.</em> Leave knowledge that outlasts the undertaking.</div>
+    <div class="fine">APT-LABS · Commons · Illustrative content · Not live data</div>
+  </footer>
+</div>
+</body>
+</html>

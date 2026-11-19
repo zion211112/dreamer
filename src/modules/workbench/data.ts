@@ -13,7 +13,6 @@
  */
 
 import { createLocalId, type CommonsProposal } from '@/lib/local-workflows';
-import { signal } from '@preact/signals';
 
 export type PilotKey =
   | 'benbenos'
@@ -63,7 +62,9 @@ function isWorkItem(value: unknown): value is WorkItem {
   );
 }
 
-export const WORK_ITEMS = signal<WorkItem[]>(loadWorkItems());
+// Module-level mutable store (Preact signals removed — Vue single stack).
+// No code subscribed to the Preact signal; all consumers read/write `.value`.
+export const WORK_ITEMS: { value: WorkItem[] } = { value: loadWorkItems() };
 
 saveWorkItems(WORK_ITEMS.value);
 

@@ -1,0 +1,17 @@
+/* shadcn/ui Theme — extracted from https://www.palantir.com/docs/foundry/object-explorer/getting-started/ */
+/* Paste into your globals.css */
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 39%;
+    --primary: 154 35% 26%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 222 54% 48%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 85%;
+    --muted-foreground: 210 9% 13%;
+    --border: 0 0% 33%;
+    --radius: 2px;
+  }
+}

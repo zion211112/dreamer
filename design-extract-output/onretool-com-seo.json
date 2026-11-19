@@ -1,0 +1,56 @@
+{
+  "openGraph": {
+    "title": "Explore a Logistics Dispatch Monitor | Retool",
+    "description": "Explore a logistics dispatch monitor built in Retool. See active routes, stops, on-time rate, and per-route progress by driver.",
+    "url": "https://retool.com/app-gallery/logistics-dispatch-monitor",
+    "image": "https://cdn.sanity.io/images/bclf52sw/production/d2ac14c1aae0e2d5b486e609af9998eb690b967b-1280x800.png",
+    "image:width": "1200",
+    "image:height": "630",
+    "image:alt": "Retool"
+  },
+  "twitter": {
+    "card": "summary_large_image",
+    "site": "@retool",
+    "title": "Explore a Logistics Dispatch Monitor | Retool",
+    "description": "Explore a logistics dispatch monitor built in Retool. See active routes, stops, on-time rate, and per-route progress by driver.",
+    "image": "https://cdn.sanity.io/images/bclf52sw/production/d2ac14c1aae0e2d5b486e609af9998eb690b967b-1280x800.png",
+    "image:alt": "Retool",
+    "image:width": "1200",
+    "image:height": "630"
+  },
+  "description": "Explore a logistics dispatch monitor built in Retool. See active routes, stops, on-time rate, and per-route progress by driver.",
+  "canonical": null,
+  "themeColor": "#151515",
+  "viewport": "width=device-width, initial-scale=1",
+  "favicons": [
+    {
+      "rel": "icon",
+      "href": "https://dqpcjghenxt8u.cloudfront.net/images/sanity/retool-favicon-light-128x128.svg",
+      "sizes": "",
+      "type": ""
+    },
+    {
+      "rel": "icon",
+      "href": "https://dqpcjghenxt8u.cloudfront.net/images/sanity/retool-favicon-dark-128x128.svg",
+      "sizes": "",
+      "type": ""
+    }
+  ],
+  "manifest": "https://onretool.com/manifest.webmanifest",
+  "structuredData": [
+    {
+      "type": "Organization",
+      "name": "Retool",
+      "sample": "{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"Retool\",\"url\":\"https://retool.com\",\"logo\":\"https://retool.com/logo.png\",\"foundingDate\":\"2017\",\"address\":{\"@type\":\"PostalAddress\",\"streetAddress\":\"1550 Bryant Street\",\"addressLocality\":\"San Francisco\",\"addressRegion\":\"CA\",\"postalCode\":\"94103\",\"addressCountry\":\"USA\"},\"contactPoint\":{\"@type\":\"ContactPoint\",\"contactType\":\"Customer Support"
+    }
+  ],
+  "score": {
+    "hasOg": true,
+    "hasTwitter": true,
+    "hasDescription": true,
+    "hasCanonical": false,
+    "hasStructuredData": true,
+    "hasFavicon": true,
+    "hasThemeColor": true
+  }
+}

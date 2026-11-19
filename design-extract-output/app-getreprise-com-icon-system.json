@@ -1,0 +1,25 @@
+{
+  "library": "unknown",
+  "confidence": 0,
+  "alternates": [],
+  "stats": {
+    "count": 1,
+    "strokeOnly": 0,
+    "fillOnly": 0,
+    "mixed": 0,
+    "avgStrokeWidth": 3,
+    "gridDistribution": {},
+    "roundedCapsFraction": 1
+  },
+  "signals": [
+    "roundedCaps"
+  ],
+  "icons": [
+    {
+      "class": "",
+      "grid": null,
+      "strokeWidth": 3,
+      "style": "mixed"
+    }
+  ]
+}

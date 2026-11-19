@@ -1,0 +1,12 @@
+/* shadcn/ui Theme — extracted from https://app.getreprise.com/launch/BXZjxEX/?itm_category=home */
+/* Paste into your globals.css */
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --muted: 226 8% 43%;
+    --muted-foreground: 222 11% 82%;
+    --border: 226 8% 43%;
+  }
+}

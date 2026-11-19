@@ -1,0 +1,19 @@
+/* shadcn/ui Theme — extracted from https://airtable.com/embed/appL2oaKxSWg9qz8y/shrQ0LMjBK4Sq8JHC */
+/* Paste into your globals.css */
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 225 12% 13%;
+    --primary: 214 82% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 198 100% 77%;
+    --secondary-foreground: 0 0% 0%;
+    --accent: 216 100% 81%;
+    --accent-foreground: 0 0% 0%;
+    --muted: 200 10% 88%;
+    --muted-foreground: 0 0% 100%;
+    --border: 220 8% 28%;
+    --radius: 6px;
+  }
+}

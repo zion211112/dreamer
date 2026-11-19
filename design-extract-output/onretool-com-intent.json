@@ -1,0 +1,275 @@
+{
+  "pageIntent": {
+    "type": "legal",
+    "confidence": 0.26,
+    "path": "/app-gallery/logistics-dispatch-monitor",
+    "title": "Explore a Logistics Dispatch Monitor | Retool",
+    "description": "Explore a logistics dispatch monitor built in Retool. See active routes, stops, on-time rate, and per-route progress by driver.",
+    "signals": [
+      {
+        "kind": "dom",
+        "type": "blog-post",
+        "weight": 0.35,
+        "detail": "byline|min-read"
+      },
+      {
+        "kind": "dom",
+        "type": "legal",
+        "weight": 0.4
+      }
+    ],
+    "alternates": [
+      {
+        "type": "blog-post",
+        "score": 0.35
+      }
+    ],
+    "needsSmart": true
+  },
+  "sectionRoles": {
+    "sections": [
+      {
+        "index": 0,
+        "tag": "header",
+        "role": "cta",
+        "subrole": null,
+        "confidence": 0.75,
+        "heading": null,
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "w": 1265,
+          "h": 120
+        },
+        "buttonCount": 6,
+        "cardCount": 31,
+        "slots": {
+          "ctaCount": 6,
+          "lede": "A unified harness to run and govern AI Agents\nGet early access ↗\nBACK\nSolution\nAudience\nResources\nUse cases\nPricing\nAsk AI\n⌘K\nSign in\nBook a demo\nStart for free"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 1,
+        "tag": "nav",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.9,
+        "heading": null,
+        "bounds": {
+          "x": 160.328125,
+          "y": 60,
+          "w": 522.90625,
+          "h": 40
+        },
+        "buttonCount": 4,
+        "cardCount": 9,
+        "slots": {
+          "ctaCount": 4,
+          "lede": "Solution\nAudience\nResources\nUse cases\nPricing\nAsk AI\n⌘K"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 2,
+        "tag": "main",
+        "role": "steps",
+        "subrole": null,
+        "confidence": 0.75,
+        "heading": "Logistics dispatch monitor",
+        "bounds": {
+          "x": 0,
+          "y": 40,
+          "w": 1265,
+          "h": 2872.34375
+        },
+        "buttonCount": 6,
+        "cardCount": 63,
+        "slots": {
+          "heading": "Logistics dispatch monitor",
+          "subheadings": [
+            "App details",
+            "Popular integrations",
+            "Libraries",
+            "Start from this app in your terminal"
+          ],
+          "ctaCount": 6,
+          "lede": "App gallery\n/\nLogistics dispatch monitor\nLogistics dispatch monitor\nCustomize this app in Retool\nApp path:\n/\nClick to interact\nApp details"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 3,
+        "tag": "section",
+        "role": "hero",
+        "subrole": null,
+        "confidence": 0.85,
+        "heading": "Logistics dispatch monitor",
+        "bounds": {
+          "x": 0,
+          "y": 40,
+          "w": 1265,
+          "h": 995.703125
+        },
+        "buttonCount": 3,
+        "cardCount": 18,
+        "slots": {
+          "heading": "Logistics dispatch monitor",
+          "ctaCount": 3,
+          "lede": "App gallery\n/\nLogistics dispatch monitor\nLogistics dispatch monitor\nCustomize this app in Retool\nApp path:\n/\nClick to interact"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 4,
+        "tag": "nav",
+        "role": "nav",
+        "subrole": null,
+        "confidence": 0.9,
+        "heading": null,
+        "bounds": {
+          "x": 28.203125,
+          "y": 136,
+          "w": 246.359375,
+          "h": 32
+        },
+        "buttonCount": 0,
+        "cardCount": 0,
+        "slots": {
+          "lede": "App gallery\n/\nLogistics dispatch monitor"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 5,
+        "tag": "section",
+        "role": "testimonial",
+        "subrole": null,
+        "confidence": 0.8,
+        "heading": "App details",
+        "bounds": {
+          "x": 0,
+          "y": 1035.703125,
+          "w": 1265,
+          "h": 313.796875
+        },
+        "buttonCount": 0,
+        "cardCount": 11,
+        "slots": {
+          "heading": "App details",
+          "subheadings": [
+            "Popular integrations",
+            "Libraries"
+          ]
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 6,
+        "tag": "section",
+        "role": "steps",
+        "subrole": null,
+        "confidence": 0.75,
+        "heading": "Start from this app in your terminal",
+        "bounds": {
+          "x": 0,
+          "y": 1349.5,
+          "w": 1265,
+          "h": 379.3125
+        },
+        "buttonCount": 3,
+        "cardCount": 13,
+        "slots": {
+          "heading": "Start from this app in your terminal",
+          "ctaCount": 3,
+          "lede": "Retool CLI"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 7,
+        "tag": "section",
+        "role": "feature-grid",
+        "subrole": null,
+        "confidence": 0.8,
+        "heading": "Rapidly develop with pre-made apps",
+        "bounds": {
+          "x": 0,
+          "y": 1728.8125,
+          "w": 1265,
+          "h": 640.375
+        },
+        "buttonCount": 0,
+        "cardCount": 14,
+        "slots": {
+          "heading": "Rapidly develop with pre-made apps",
+          "subheadings": [
+            "FinOps application",
+            "Security operations console"
+          ],
+          "lede": "Rapidly develop with pre-made apps\nFinOps application"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 8,
+        "tag": "section",
+        "role": "feature-grid",
+        "subrole": null,
+        "confidence": 0.8,
+        "heading": "Build and secure your vibe‑coded apps",
+        "bounds": {
+          "x": 0,
+          "y": 2369.1875,
+          "w": 1265,
+          "h": 543.15625
+        },
+        "buttonCount": 0,
+        "cardCount": 7,
+        "slots": {
+          "heading": "Build and secure your vibe‑coded apps"
+        },
+        "needsSmart": false
+      },
+      {
+        "index": 9,
+        "tag": "footer",
+        "role": "footer",
+        "subrole": null,
+        "confidence": 0.95,
+        "heading": null,
+        "bounds": {
+          "x": 0,
+          "y": 2912.34375,
+          "w": 1265,
+          "h": 897.296875
+        },
+        "buttonCount": 0,
+        "cardCount": 47,
+        "slots": {},
+        "needsSmart": false
+      }
+    ],
+    "counts": {
+      "cta": 1,
+      "nav": 2,
+      "steps": 2,
+      "hero": 1,
+      "testimonial": 1,
+      "feature-grid": 2,
+      "footer": 1
+    },
+    "readingOrder": [
+      "cta",
+      "steps",
+      "hero",
+      "nav",
+      "nav",
+      "testimonial",
+      "steps",
+      "feature-grid",
+      "feature-grid",
+      "footer"
+    ]
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "tone": "technical",
+  "pronoun": "third-person",
+  "headingStyle": "Title Case",
+  "headingLengthClass": "tight",
+  "ctaVerbs": [
+    {
+      "value": "search",
+      "count": 1
+    },
+    {
+      "value": "download",
+      "count": 1
+    },
+    {
+      "value": "create",
+      "count": 1
+    },
+    {
+      "value": "collaborate",
+      "count": 1
+    },
+    {
+      "value": "colors",
+      "count": 1
+    },
+    {
+      "value": "geist",
+      "count": 1
+    },
+    {
+      "value": "send",
+      "count": 1
+    }
+  ],
+  "buttonPatterns": [
+    {
+      "value": "search geist\nctrl\nk",
+      "count": 1
+    },
+    {
+      "value": "brand assets\n\ndownload official vercel logos and brand assets.",
+      "count": 1
+    },
+    {
+      "value": "npx create-next-app\ncollaborate\nlabel\n\ncomponents\n\nbuilding blocks for react applications.",
+      "count": 1
+    },
+    {
+      "value": "collaborate",
+      "count": 1
+    },
+    {
+      "value": "colors\n\na high contrast, accessible color system.",
+      "count": 1
+    },
+    {
+      "value": "geist sans\n\ngeist mono\n\ngeist serif\n\ngeist pixel\n\ntypeface\n\nspecifically designed for developers and designers.",
+      "count": 1
+    },
+    {
+      "value": "send",
+      "count": 1
+    }
+  ],
+  "sampleHeadings": [
+    "Geist Design System",
+    "Geist Design System"
+  ],
+  "stats": {
+    "buttons": 7,
+    "headings": 2
+  }
+}

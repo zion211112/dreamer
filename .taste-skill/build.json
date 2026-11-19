@@ -1,0 +1,11 @@
+{
+ "page": null,
+ "url": "http://localhost:5173/index-vue.html",
+ "root": null,
+ "kind": "software",
+ "category": "work coordination software",
+ "primary": "Coordinate productive work",
+ "rounds": 3,
+ "start": "2026-11-19T19:19:40.478Z",
+ "by": "gate.mjs --start"
+}

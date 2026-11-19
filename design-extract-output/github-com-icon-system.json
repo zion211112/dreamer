@@ -1,0 +1,202 @@
+{
+  "library": "unknown",
+  "confidence": 0,
+  "alternates": [],
+  "stats": {
+    "count": 286,
+    "strokeOnly": 0,
+    "fillOnly": 286,
+    "mixed": 0,
+    "avgStrokeWidth": 0,
+    "gridDistribution": {
+      "16": 233,
+      "24": 1
+    },
+    "roundedCapsFraction": 0
+  },
+  "signals": [
+    "fillDominant"
+  ],
+  "icons": [
+    {
+      "class": "octicon octicon-mark-github",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-triangle-right ButtonIcon__jioMke",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-workflow",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-codescan",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-codespaces",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-code-square",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-shield-lock",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-chevron-right Arrow__Um9le0",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-triangle-right ButtonIcon__jioMke",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-arrow-up-right",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-arrow-up-right",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-arrow-up-right",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-arrow-up-right",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-arrow-up-right",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-triangle-right ButtonIcon__jioMke",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-chevron-right Arrow__Um9le0",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-shield-check",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-copilot",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-comment-discussion",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-triangle-right ButtonIcon__jioMke",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-arrow-up-right",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-arrow-up-right",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-arrow-up-right",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-arrow-up-right",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-arrow-up-right",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-arrow-up-right",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-arrow-up-right",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-sliders Primer_Brand__Button-module__Button__icon-visual____qybb",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-code",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "octicon octicon-issue-opened",
+      "grid": 16,
+      "strokeWidth": null,
+      "style": "fill"
+    }
+  ]
+}

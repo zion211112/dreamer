@@ -1,0 +1,119 @@
+{
+  "openGraph": {
+    "title": "Vercel Geist Design System",
+    "description": "The dev-tooling design system that helped redefine premium developer surfaces.",
+    "url": "https://www.designsystems.one/design-systems/vercel-geist",
+    "image": "https://www.designsystems.one/api/og?title=Geist&eyebrow=Vercel%20%C2%B7%20Design%20system%20breakdown&subtitle=The%20dev-tooling%20design%20system%20that%20helped%20redefine%20premium%20developer%20surfaces.",
+    "image:width": "1200",
+    "image:height": "630",
+    "image:alt": "Vercel Geist Design System",
+    "type": "article"
+  },
+  "twitter": {
+    "card": "summary_large_image",
+    "title": "Vercel Geist Design System",
+    "description": "The dev-tooling design system that helped redefine premium developer surfaces.",
+    "image": "https://www.designsystems.one/api/og?title=Geist&eyebrow=Vercel%20%C2%B7%20Design%20system%20breakdown&subtitle=The%20dev-tooling%20design%20system%20that%20helped%20redefine%20premium%20developer%20surfaces."
+  },
+  "description": "The dev-tooling design system that helped redefine premium developer surfaces.",
+  "canonical": null,
+  "themeColor": null,
+  "viewport": "width=device-width, initial-scale=1",
+  "favicons": [
+    {
+      "rel": "icon",
+      "href": "https://www.designsystems.one/logo.svg",
+      "sizes": "",
+      "type": "image/svg+xml"
+    },
+    {
+      "rel": "apple-touch-icon",
+      "href": "https://www.designsystems.one/apple-icon.png",
+      "sizes": "",
+      "type": ""
+    },
+    {
+      "rel": "shortcut icon",
+      "href": "https://www.designsystems.one/favicon.ico",
+      "sizes": "",
+      "type": ""
+    },
+    {
+      "rel": "icon",
+      "href": "https://www.designsystems.one/favicon.ico",
+      "sizes": "48x48",
+      "type": ""
+    },
+    {
+      "rel": "icon",
+      "href": "https://www.designsystems.one/icon-48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "rel": "icon",
+      "href": "https://www.designsystems.one/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "rel": "icon",
+      "href": "https://www.designsystems.one/logo.svg",
+      "sizes": "",
+      "type": "image/svg+xml"
+    },
+    {
+      "rel": "apple-touch-icon",
+      "href": "https://www.designsystems.one/apple-icon.png",
+      "sizes": "",
+      "type": ""
+    }
+  ],
+  "manifest": "https://www.designsystems.one/manifest.json",
+  "structuredData": [
+    {
+      "type": "WebSite",
+      "name": "DesignSystems.one",
+      "sample": "{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"DesignSystems.one\",\"url\":\"https://www.designsystems.one\",\"description\":\"An independent index of design systems, scored on how well AI agents can read them, plus free tools for tokens, contrast and agent files.\",\"potentialAction\":{\"@type\":\"SearchAction\",\"target\":{\"@type\":\"EntryPoint\",\"urlTemplate\":\"https://www.designsystems.one/search?q={se"
+    },
+    {
+      "type": "Organization",
+      "name": "DesignSystems.one",
+      "sample": "{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"DesignSystems.one\",\"url\":\"https://www.designsystems.one\",\"logo\":\"https://www.designsystems.one/logo.svg\",\"founder\":{\"@type\":\"Person\",\"name\":\"Kiryl Zhukouski\",\"url\":\"https://linkedin.com/in/kzhukovsky\"},\"sameAs\":[\"https://www.linkedin.com/company/designsystems-one/\",\"https://linkedin.com/in/kzhukovsky\",\"https://github.com/KirylZhukousk"
+    },
+    {
+      "type": "ItemList",
+      "name": "Design System Tools",
+      "sample": "{\"@context\":\"https://schema.org\",\"@type\":\"ItemList\",\"name\":\"Design System Tools\",\"description\":\"Free design system tools for creating tokens, color palettes, and more\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"item\":{\"@type\":\"SoftwareApplication\",\"name\":\"Design Token Generator\",\"url\":\"https://www.designsystems.one/tools/token-generator\",\"applicationCategory\":\"DesignApplication\",\"operati"
+    },
+    {
+      "type": "Article",
+      "name": "Vercel Geist Design System",
+      "sample": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Vercel Geist Design System\",\"description\":\"The dev-tooling design system that helped redefine premium developer surfaces.\",\"keywords\":\"The Geist Sans + Geist Mono typefaces — released open-source and now used widely beyond Vercel as the de-facto type stack for dev tools., Restraint as a feature — the system rarely uses color outside ne"
+    },
+    {
+      "type": "BreadcrumbList",
+      "name": null,
+      "sample": "{\"@context\":\"https://schema.org\",\"@type\":\"BreadcrumbList\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"https://www.designsystems.one/\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"Design Systems\",\"item\":\"https://www.designsystems.one/design-systems\"},{\"@type\":\"ListItem\",\"position\":3,\"name\":\"Vercel Geist Design System\",\"item\":\"https://www.designsystems.one/design-systems/v"
+    },
+    {
+      "type": "Article",
+      "name": "Geist — design system breakdown",
+      "sample": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Geist — design system breakdown\",\"description\":\"The dev-tooling design system that helped redefine premium developer surfaces.\",\"url\":\"https://www.designsystems.one/design-systems/vercel-geist\",\"author\":{\"@type\":\"Person\",\"name\":\"Kiryl Zhukouski\",\"url\":\"https://www.designsystems.one/about\"},\"publisher\":{\"@type\":\"Organization\",\"name\":\"De"
+    },
+    {
+      "type": "FAQPage",
+      "name": null,
+      "sample": "{\"@context\":\"https://schema.org\",\"@type\":\"FAQPage\",\"mainEntity\":[{\"@type\":\"Question\",\"name\":\"What is Geist known for?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"The Geist Sans + Geist Mono typefaces — released open-source and now used widely beyond Vercel as the de-facto type stack for dev tools. Restraint as a feature — the system rarely uses color outside neutrals, treats accent like punctuatio"
+    }
+  ],
+  "score": {
+    "hasOg": true,
+    "hasTwitter": true,
+    "hasDescription": true,
+    "hasCanonical": false,
+    "hasStructuredData": true,
+    "hasFavicon": true,
+    "hasThemeColor": false
+  }
+}

@@ -1,0 +1,208 @@
+{
+  "library": "heroicons-solid",
+  "confidence": 0.55,
+  "alternates": [
+    {
+      "id": "material",
+      "score": 0.4
+    }
+  ],
+  "stats": {
+    "count": 73,
+    "strokeOnly": 1,
+    "fillOnly": 65,
+    "mixed": 0,
+    "avgStrokeWidth": 1.63,
+    "gridDistribution": {
+      "20": 6,
+      "24": 60
+    },
+    "roundedCapsFraction": 0
+  },
+  "signals": [
+    "fillDominant",
+    "grid24"
+  ],
+  "icons": [
+    {
+      "class": "cTIK-G_logo",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "YMxq0G_iconCaretBack inline-block relative mr-1 rotate-90",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "absolute inset-0",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "absolute inset-0",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "absolute inset-0",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "flex-shrink-0 w-4 h-4 text-surface-text-primary",
+      "grid": 24,
+      "strokeWidth": 2,
+      "style": "stroke"
+    },
+    {
+      "class": "absolute w-full h-full",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "absolute w-full h-full",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "absolute w-full h-full",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "size-4",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "absolute w-full h-full",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "size-4",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "size-3.5",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "size-3.5",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "size-3.5",
+      "grid": null,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "size-4",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "absolute w-full h-full",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "size-4",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "absolute w-full h-full",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "size-3 shrink-0",
+      "grid": null,
+      "strokeWidth": 1.5,
+      "style": "mixed"
+    },
+    {
+      "class": "size-3 shrink-0",
+      "grid": null,
+      "strokeWidth": 1.5,
+      "style": "mixed"
+    },
+    {
+      "class": "size-3 shrink-0",
+      "grid": null,
+      "strokeWidth": 1.5,
+      "style": "mixed"
+    },
+    {
+      "class": "size-9 text-surface-text-primary motion-safe:[&>polygon:where(:first-child)]:tra",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "size-9 text-surface-text-primary motion-safe:[&>polygon:where(:first-child)]:tra",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "absolute w-full h-full",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "absolute w-full h-full",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "LlPYFa_icon inline-block relative align-middle w-6 h-6 ml-1 transition-transform",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "LlPYFa_icon inline-block relative align-middle w-6 h-6 ml-1 transition-transform",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "LlPYFa_icon inline-block relative align-middle w-6 h-6 ml-1 transition-transform",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    },
+    {
+      "class": "LlPYFa_icon inline-block relative align-middle w-6 h-6 ml-1 transition-transform",
+      "grid": 24,
+      "strokeWidth": null,
+      "style": "fill"
+    }
+  ]
+}

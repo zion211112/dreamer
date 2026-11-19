@@ -1,0 +1,111 @@
+{
+  "name": "W2 - Assign",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "assign",
+        "responseMode": "onReceived",
+        "responseData": "result"
+      },
+      "id": "webhook-assign",
+      "name": "Assign Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [250, 300],
+      "webhookId": "w2-assign-trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "validate-action",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "assign",
+              "operator": "equals"
+            },
+            {
+              "id": "validate-payload",
+              "leftValue": "={{ $json.payload }}",
+              "rightValue": "",
+              "operator": "exists"
+            }
+          ],
+          "combinator": "and"
+        },
+        "errorMessage": "Invalid assign payload: missing action or payload field",
+        "options": {}
+      },
+      "id": "validate-assign",
+      "name": "Validate Assign",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [500, 300],
+      "versionPin": []
+    },
+    {
+      "parameters": {
+        "url": "={{ $node['APT-LABS API'].apiBase }}/api/assign",
+        "method": "POST",
+        "jsonParameters": true,
+        "options": {}
+      },
+      "id": "call-assign-api",
+      "name": "Call Assign API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [750, 200],
+      "credentials": {
+        "httpHeaderAuth": "aptlabs-api"
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $node['APT-LABS API'].apiBase }}/api/events",
+        "method": "POST",
+        "jsonParameters": true,
+        "options": {}
+      },
+      "id": "record-assign-event",
+      "name": "Record Assign Event",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [750, 400],
+      "credentials": {
+        "httpHeaderAuth": "aptlabs-api"
+      }
+    }
+  ],
+  "connections": {
+    "Assign Trigger": {
+      "main": [[{ "node": "Validate Assign", "type": "main", "index": 0 }]]
+    },
+    "Validate Assign": {
+      "main": [
+        [
+          { "node": "Call Assign API", "type": "main", "index": 0 }
+        ],
+        []
+      ]
+    },
+    "Call Assign API": {
+      "main": [[{ "node": "Record Assign Event", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "timezone": "Africa/Nairobi"
+  },
+  "id": "w2-assign-workflow",
+  "tags": ["aptlabs", "quality-orchestration", "assign"]
+}

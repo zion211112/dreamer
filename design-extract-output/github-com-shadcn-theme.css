@@ -1,0 +1,17 @@
+/* shadcn/ui Theme — extracted from https://github.com/PostHog/posthog/tree/master/packages/quill */
+/* Paste into your globals.css */
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 213 13% 14%;
+    --primary: 212 92% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 100% 30%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 138 5% 51%;
+    --muted-foreground: 213 13% 14%;
+    --border: 214 10% 55%;
+    --radius: 6px;
+  }
+}

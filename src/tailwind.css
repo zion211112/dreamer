@@ -64,6 +64,44 @@
   --color-forest: #344638;
   --forest-pale: #e4e8de;
   --color-forest-pale: #e4e8de;
+
+  /* Fused pillar colors — 10-source design system */
+  --pillar-knowledge: #166ee1;
+  --color-pillar-knowledge: #166ee1;
+  --pillar-knowledge-pale: #d6f6ff;
+  --color-pillar-knowledge-pale: #d6f6ff;
+  --pillar-capacity: #818378;
+  --color-pillar-capacity: #818378;
+  --pillar-capacity-pale: #f5f6ef;
+  --color-pillar-capacity-pale: #f5f6ef;
+  --pillar-production: #549543;
+  --color-pillar-production: #549543;
+  --pillar-production-pale: #daffd0;
+  --color-pillar-production-pale: #daffd0;
+  --pillar-exchange: #2dced6;
+  --color-pillar-exchange: #2dced6;
+  --pillar-exchange-pale: #b3d8ff;
+  --color-pillar-exchange-pale: #b3d8ff;
+  --pillar-stewardship: #2b5945;
+  --color-pillar-stewardship: #2b5945;
+  --pillar-stewardship-pale: #e0feef;
+  --color-pillar-stewardship-pale: #e0feef;
+
+  /* Geist brand colors */
+  --geist-blue: #0072f5;
+  --color-geist-blue: #0072f5;
+  --geist-red: #ff0000;
+  --color-geist-red: #ff0000;
+  --geist-dark-red: #82182e;
+  --color-geist-dark-red: #82182e;
+
+  /* Geist ramp */
+  --geist-blue-50: #bff8ff;
+  --geist-blue-500: #0072f5;
+  --geist-blue-950: #001854;
+  --geist-red-50: #ffccb8;
+  --geist-red-500: #ff0000;
+  --geist-red-950: #4e0000;
   --lilac: #8A89A6;
   --color-lilac: #8A89A6;
   --lilac-pale: #e9e8ef;
@@ -120,6 +158,10 @@
   --color-state-caution: var(--brass);
   --state-caution-wash: var(--brass-pale);
   --color-state-caution-wash: var(--brass-pale);
+  --state-alert: var(--geist-red);
+  --color-state-alert: var(--geist-red);
+  --state-alert-wash: var(--geist-red-50);
+  --color-state-alert-wash: var(--geist-red-50);
 
   /* Water */
   --water: var(--olive);
@@ -207,20 +249,28 @@
   --fib-1: 8px; --fib-2: 13px; --fib-3: 21px;
   --fib-4: 34px; --fib-5: 55px; --fib-6: 89px; --fib-7: 144px;
 
-  /* Border Radius */
-  --radius-1: 3px; --radius-2: 6px; --radius-3: 8px;
-  --radius-4: 12px; --radius-pill: 999px;
+  /* Border Radius — fused system (11 levels) */
+  --radius-0: 2px; --radius-1: 3px; --radius-2: 6px; --radius-3: 8px;
+  --radius-4: 12px; --radius-5: 16px; --radius-6: 20px; --radius-7: 30px;
+  --radius-8: 36px; --radius-9: 50px; --radius-pill: 999px;
 
-  /* Shadows */
+  /* Shadows — fused system (9 levels from all sources) */
+  --shadow-0: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px;
   --shadow-1: 0 1px 2px rgba(41,43,37,.06), 0 1px 4px rgba(41,43,37,.04);
   --shadow-2: 0 4px 8px rgba(41,43,37,.08), 0 2px 4px rgba(41,43,37,.05);
   --shadow-3: 0 8px 24px rgba(41,43,37,.10), 0 4px 12px rgba(41,43,37,.06);
+  --shadow-4: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+  --shadow-5: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.1) 0px 4px 6px -4px;
+  --shadow-6: rgba(209, 217, 224, 0.25) 0px 0px 0px 1px, rgba(37, 41, 46, 0.04) 0px 6px 12px -3px, rgba(37, 41, 46, 0.12) 0px 6px 18px 0px;
+  --shadow-7: rgba(0, 0, 0, 0.35) 0 1px 2px, rgba(0, 0, 0, 0.25) 0 1px 4px;
+  --shadow-8: rgba(0, 0, 0, 0.12) 0px 8px 30px 0px;
 
-  /* Transitions */
+  /* Transitions — fused motion tiers (Twenty UI 4-tier system) */
+  --motion-instant: 0.075s ease; --motion-fast: 0.15s ease; --motion-normal: 0.3s ease; --motion-slow: 1.5s ease;
   --fast: 120ms ease; --base: 180ms ease; --slow: 280ms ease;
 
-  /* Z-Index */
-  --z-base: 0; --z-modal: 100; --z-tooltip: 300;
+  /* Z-Index — fused system */
+  --z-base: 0; --z-dropdown: 100; --z-modal: 300; --z-tooltip: 500; --z-toast: 700;
 
   /* Shell Grid */
   --shell-topbar: 54px; --shell-rail: 72px;
@@ -274,6 +324,8 @@
   --state-risk-wash: var(--clay-pale); --color-state-risk-wash: var(--clay-pale);
   --state-caution: var(--brass); --color-state-caution: var(--brass);
   --state-caution-wash: var(--brass-pale); --color-state-caution-wash: var(--brass-pale);
+  --state-alert: var(--geist-red); --color-state-alert: var(--geist-red);
+  --state-alert-wash: var(--geist-red-50); --color-state-alert-wash: var(--geist-red-50);
   --text: var(--fg); --color-text: var(--fg);
   --text-muted: var(--muted); --color-text-muted: var(--muted);
   --text-faint: var(--dim); --color-text-faint: var(--dim);
@@ -294,13 +346,13 @@
 }
 
 /* ────────────────────────────────────────────────────────────────
-   Module accent themes
+   Module accent themes — fused pillar colors (11-source design system)
    ──────────────────────────────────────────────────────────────── */
-[data-module="commons"] { --accent: var(--sage); --color-accent: var(--sage); --accent-wash: var(--sage-pale); --color-accent-wash: var(--sage-pale); }
-[data-module="network"] { --accent: var(--forest); --color-accent: var(--forest); --accent-wash: var(--forest-pale); --color-accent-wash: var(--forest-pale); }
-[data-module="workbench"] { --accent: var(--lilac); --color-accent: var(--lilac); --accent-wash: var(--lilac-pale); --color-accent-wash: var(--lilac-pale); }
-[data-module="records"] { --accent: var(--peach); --color-accent: var(--peach); --accent-wash: var(--peach-pale); --color-accent-wash: var(--peach-pale); }
-[data-module="intelligence"] { --accent: var(--ink); --color-accent: var(--ink); --accent-wash: var(--bg-subtle); --color-accent-wash: var(--bg-subtle); }
+[data-module="commons"]   { --accent: var(--pillar-knowledge); --color-accent: var(--pillar-knowledge); --accent-wash: var(--pillar-knowledge-pale); --color-accent-wash: var(--pillar-knowledge-pale); }
+[data-module="network"]   { --accent: var(--pillar-exchange); --color-accent: var(--pillar-exchange); --accent-wash: var(--pillar-exchange-pale); --color-accent-wash: var(--pillar-exchange-pale); }
+[data-module="workbench"] { --accent: var(--pillar-production); --color-accent: var(--pillar-production); --accent-wash: var(--pillar-production-pale); --color-accent-wash: var(--pillar-production-pale); }
+[data-module="records"]   { --accent: var(--pillar-stewardship); --color-accent: var(--pillar-stewardship); --accent-wash: var(--pillar-stewardship-pale); --color-accent-wash: var(--pillar-stewardship-pale); }
+[data-module="intelligence"] { --accent: var(--geist-dark-red); --color-accent: var(--geist-dark-red); --accent-wash: var(--geist-dark-red); --color-accent-wash: var(--geist-dark-red); }
 
 /* ────────────────────────────────────────────────────────────────
    Base resets (from src/styles.css)

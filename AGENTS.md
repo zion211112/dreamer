@@ -4,7 +4,13 @@ Single source of truth for agents working in this repository. Replaces duplicate
 
 ## Stack
 
-Preact 10.24 + Vite 6.4.5 + TypeScript 5.6 strict + Wouter routing + Vitest 5.0.5. Browser-local demo with Supabase fallback when env vars are unset.
+Preact 10.24 + Vue 3 (Composition API) + Vite 6.4.5 + TypeScript 5.6 strict + Pinia + Vue Router + Wouter routing + Vitest 5.0.5. Browser-local demo with Supabase fallback when env vars are unset.
+
+Dual-entry (isolated runtimes — Preact and Vue are NOT run simultaneously):
+- `index.html` → `src/main.tsx` (Preact)
+- `index-vue.html` → `src/main-vue.ts` (Vue 3, mounted at `#app-vue`)
+
+Vue migration is incremental per ADR B9: one route at a time, Preact entry untouched.
 
 ## Key commands
 

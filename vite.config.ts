@@ -1,8 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { defineConfig } from 'vite';
-import preact from '@preact/preset-vite';
 import tailwindcss from '@tailwindcss/vite';
+import vue from '@vitejs/plugin-vue';
+
+const htmlEntries = ['index.html', 'index-vue.html'].map((f) => path.resolve(__dirname, f));
 
 // Vite 6 preview server: SPA fallback for Open Slide /investor-memo/ routes
 // AND rewrite of the deck's absolute /assets/* references to
@@ -27,7 +29,7 @@ function spaFallback() {
 }
 
 export default defineConfig({
-  plugins: [preact(), tailwindcss(), spaFallback()],
+  plugins: [tailwindcss(), vue(), spaFallback()],
   root: '.',
   base: process.env.VITE_BASE_PATH || '/',
   resolve: {
@@ -38,6 +40,9 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    rollupOptions: {
+      input: htmlEntries,
+    },
   },
   server: {
     port: 3000,

@@ -1,0 +1,9 @@
+Clone the design language of this unknown page and build a fresh equivalent.
+Visual feel: flat. Tone: technical · Headings: Sentence case · CTA verbs: [object Object], [object Object], [object Object], [object Object], [object Object], [object Object]
+Primary palette: #1f2328, #59636e, #ffffff, #54aeff, #a4aea6.
+Typography: [object Object], [object Object], [object Object].
+Corner radius vocabulary: 3, 6, 20, 24, 50.
+Shadow vocabulary: rgba(31, 35, 40, 0.15) 0px 0px 0px 1px | rgb(25, 31, 27) 0px -1px 0px 0px inset | rgb(209, 217, 224) 0px -1px 0px 0px inset.
+Page structure:
+- cta — heading: "Navigation Menu"
+- footer — heading: "Footer"

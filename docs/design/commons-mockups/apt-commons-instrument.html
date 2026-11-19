@@ -1,0 +1,278 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commons — APT-LABS · The Commons Instrument</title>
+<style>
+:root {
+  --bg: #F4F1E9; --bg-elev: #FBF9F2; --bg-subtle: #ECE8DF; --panel: #F8F5EC;
+  --fg: #292B25; --fg-strong: #1a1c16; --muted: #6B6558; --dim: #9E9889;
+  --line: rgba(41,43,37,.12); --line-strong: rgba(41,43,37,.24); --hairline: rgba(41,43,37,.06);
+  --olive: #344438; --olive-pale: #dde3d4; --brass: #AD8B55; --brass-pale: #f0e8d8;
+  --clay: #A66F55; --clay-pale: #f0e0d4; --sage: #A8B0A0; --sage-pale: #e4e8de;
+  --serif: "Iowan Old Style","Palatino Linotype","Book Antiqua",Georgia,serif;
+  --sans: ui-sans-serif,system-ui,-apple-system,"Segoe UI Variable","Segoe UI",sans-serif;
+  --mono: ui-monospace,"JetBrains Mono",SFMono-Regular,Consolas,monospace;
+  --s1:11px; --s2:13px; --s3:15px;
+}
+*{box-sizing:border-box} html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:var(--s3)/1.55 var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow:hidden}
+h1,h2,h3,p{margin:0} button{font:inherit;color:inherit;cursor:pointer;border:none;background:none} a{color:inherit;text-decoration:none}
+::selection{background:var(--olive-pale);color:var(--olive)}
+
+/* ── Top bar ── */
+.topbar{display:flex;align-items:center;gap:14px;height:54px;padding:0 18px;background:var(--bg-elev);border-bottom:1px solid var(--line);position:relative;z-index:5}
+.brand{font:700 13px/1 var(--mono);letter-spacing:.12em;color:var(--fg-strong)}
+.brand b{color:var(--olive)}
+.crumb{font:500 11px/1 var(--mono);letter-spacing:.06em;color:var(--muted);display:flex;align-items:center;gap:8px}
+.crumb .mod{color:var(--brass)}
+.top-search{flex:1;max-width:420px;display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:var(--bg);transition:border-color .15s}
+.top-search:focus-within{border-color:var(--olive)}
+.top-search .ico{width:15px;height:15px;stroke:var(--dim);fill:none;stroke-width:1.7}
+.top-search input{flex:1;border:none;background:none;outline:none;font:var(--s2)/1 var(--sans);color:var(--fg-strong)}
+.top-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
+.btn{font:600 12px/1 var(--sans);padding:9px 15px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg)}
+.btn.hot{background:var(--olive);color:var(--bg-elev);border-color:var(--olive)}
+
+/* ── App grid ── */
+.app{display:grid;grid-template-columns:64px 232px minmax(0,1fr) 360px;height:calc(100vh - 54px);overflow:hidden}
+
+/* module rail */
+.rail{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 0;background:var(--bg-elev);border-right:1px solid var(--line)}
+.rail .r{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;color:var(--muted);border:1px solid transparent}
+.rail .r svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5}
+.rail .r:hover{background:var(--bg-subtle);color:var(--fg-strong)}
+.rail .r.on{background:var(--olive-pale);color:var(--olive);border-color:var(--olive-pale)}
+.rail .lbl{font:600 8px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin-top:3px}
+.rail .grp{width:26px;height:1px;background:var(--line);margin:10px 0}
+
+/* context pane */
+.ctx{background:var(--bg-elev);border-right:1px solid var(--line);overflow-y:auto;padding:18px 0}
+.ctx-sec{padding:0 16px;margin-bottom:20px}
+.ctx-sec .h{font:600 9.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;font:var(--s2)/1.2 var(--sans);color:var(--muted);cursor:pointer;border:1px solid transparent}
+.nav-item:hover{background:var(--bg-subtle);color:var(--fg-strong)}
+.nav-item.on{background:var(--olive-pale);color:var(--olive);border-color:var(--olive-pale);font-weight:600}
+.nav-item .mk{width:7px;height:7px;border-radius:50%;background:var(--olive);opacity:0}
+.nav-item.on .mk{opacity:1}
+.nav-item .ct{margin-left:auto;font:500 10px/1 var(--mono);color:var(--dim)}
+.fltr{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px;margin-bottom:20px}
+.fltr .c{font:500 10px/1 var(--mono);letter-spacing:.04em;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 10px;background:var(--bg)}
+.fltr .c.on{background:var(--brass-pale);color:var(--brass);border-color:var(--brass-pale)}
+
+/* register */
+.reg{display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.reg-head{padding:22px 26px 14px;border-bottom:1px solid var(--line)}
+.reg-head .row{display:flex;align-items:baseline;justify-content:space-between;gap:14px}
+.reg-head h1{font:500 24px/1.1 var(--serif);color:var(--fg-strong);letter-spacing:-.01em}
+.reg-head .k{font:500 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--brass)}
+.metrics{display:flex;gap:0;margin-top:18px}
+.metric{flex:1;padding:0 18px;border-left:2px solid var(--olive)}
+.metric:first-child{border-left:none;padding-left:0}
+.metric .v{font:600 20px/1 var(--serif);color:var(--fg-strong)}
+.metric .l{font:500 9.5px/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+.tabs{display:flex;gap:4px;padding:10px 26px 0;border-bottom:1px solid var(--line)}
+.tab{font:600 12px/1 var(--sans);color:var(--muted);padding:9px 14px;border-radius:8px 8px 0 0;position:relative}
+.tab.on{color:var(--fg-strong);background:var(--bg-elev)}
+.tab.on::after{content:"";position:absolute;left:14px;right:14px;bottom:-1px;height:2px;background:var(--olive)}
+.rows{overflow-y:auto;flex:1;padding:6px 0}
+.rrow{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;padding:14px 26px;border-bottom:1px solid var(--hairline);cursor:pointer;transition:background .12s}
+.rrow:hover{background:var(--panel)}
+.rrow.sel{background:var(--olive-pale);box-shadow:inset 3px 0 0 var(--olive)}
+.rrow .tt{font:600 15px/1.3 var(--serif);color:var(--fg-strong);letter-spacing:-.005em}
+.rrow .mm{display:flex;gap:12px;margin-top:5px;flex-wrap:wrap}
+.rrow .mm span{font:500 10px/1 var(--mono);letter-spacing:.03em;color:var(--muted)}
+.rrow .mm .d{width:3px;height:3px;border-radius:50%;background:var(--dim)}
+.stk{display:flex;align-items:center;gap:10px}
+.chip{font:600 9.5px/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;padding:5px 9px;border-radius:4px;border:1px solid}
+.chip.v{color:var(--olive);background:var(--olive-pale);border-color:var(--olive-pale)}
+.chip.s{color:var(--sage);background:var(--sage-pale);border-color:var(--sage-pale)}
+.chip.e{color:var(--brass);background:var(--brass-pale);border-color:var(--brass-pale)}
+.chip.p{color:var(--clay);background:var(--clay-pale);border-color:var(--clay-pale)}
+.chip.n{color:var(--dim);background:var(--bg-subtle);border-color:var(--line)}
+.rrow .ar{font:600 14px/1 var(--sans);color:var(--dim)}
+
+/* inspector */
+.insp{background:var(--bg-elev);border-left:1px solid var(--line);overflow-y:auto;padding:22px}
+.insp .tag{font:600 9px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--brass)}
+.insp h2{font:500 21px/1.2 var(--serif);color:var(--fg-strong);letter-spacing:-.01em;margin:8px 0 14px}
+.insp .lead{font:400 var(--s2)/1.55 var(--sans);color:var(--muted)}
+.insp .rule{height:1px;background:var(--line);margin:18px 0}
+.insp .blk .bh{font:600 9.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:10px;display:flex;justify-content:space-between}
+.insp .blk .bh a{font:500 10px/1 var(--sans);color:var(--olive);letter-spacing:0;text-transform:none}
+.pairs{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;font:var(--s2)/1.35 var(--sans)}
+.pairs .pl{font:500 10px/1.4 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--dim);text-align:right}
+.pairs .pv{color:var(--fg)}
+.contribs{display:flex;flex-direction:column;gap:8px}
+.crow{display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.crow .k{font:600 9px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;width:78px;flex:0 0 auto;padding:4px 6px;text-align:center;border-radius:4px}
+.k.ev{background:var(--olive-pale);color:var(--olive)} .k.ex{background:var(--sage-pale);color:var(--sage)}
+.k.qn{background:var(--brass-pale);color:var(--brass)} .k.cp{background:var(--clay-pale);color:var(--clay)}
+.crow .who{font:600 12px/1 var(--sans);color:var(--fg-strong)}
+.crow .sn{font:400 11px/1.3 var(--sans);color:var(--muted);margin-top:2px}
+.actors{display:flex;flex-direction:column;gap:6px}
+.actors .a{display:flex;align-items:center;gap:9px;font:var(--s2)/1.2 var(--sans);color:var(--fg)}
+.actors .a .av{width:24px;height:24px;border-radius:50%;background:var(--bg-subtle);border:1px solid var(--line);display:grid;place-items:center;font:600 9px/1 var(--mono);color:var(--muted)}
+.actors .a .rl{margin-left:auto;font:500 9.5px/1 var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.04em}
+.nextstep{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;background:var(--olive-pale);border:1px solid var(--olive-pale);border-radius:10px}
+.nextstep .t{font:600 13px/1.2 var(--sans);color:var(--olive)}
+.nextstep .d{font:400 11px/1.3 var(--sans);color:var(--muted);margin-top:3px}
+.nextstep button{font:600 12px/1 var(--sans);background:var(--olive);color:var(--bg-elev);border-radius:999px;padding:11px 18px;white-space:nowrap}
+.insp .fine{margin-top:18px;font:500 9px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim);text-align:center}
+
+@media (max-width:1180px){ .app{grid-template-columns:64px 232px minmax(0,1fr)} .insp{display:none} }
+@media (max-width:820px){ .app{grid-template-columns:64px minmax(0,1fr)} .ctx{display:none} }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="brand"><b>APT</b>·LABS</span>
+  <span class="crumb">Workspace <span class="mod">/ Commons</span></span>
+  <div class="top-search">
+    <svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input placeholder="Search the commons — knowledge, inquiries, briefs…">
+  </div>
+  <div class="top-actions">
+    <button class="btn">Export</button>
+    <button class="btn hot">+ New inquiry</button>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- Module rail -->
+  <nav class="rail" aria-label="Modules">
+    <div style="display:flex;flex-direction:column;align-items:center"><div class="r on"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></div><span class="lbl">Commons</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center"><div class="r"><svg viewBox="0 0 24 24"><circle cx="5" cy="6" r="2.4"/><circle cx="19" cy="6" r="2.4"/><circle cx="12" cy="18" r="2.4"/><path d="M6.5 7.5 11 16M17.5 7.5 13 16M7.4 6h9.2"/></svg></div><span class="lbl">Network</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center"><div class="r"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 9h16M8 13h8M8 16h5"/></svg></div><span class="lbl">Work</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center"><div class="r"><svg viewBox="0 0 24 24"><path d="M4 4h16v4H4zM4 12h10v8H4zM18 12h2v8h-2z"/></svg></div><span class="lbl">Records</span></div>
+    <div style="display:flex;flex-direction:column;align-items:center"><div class="r"><svg viewBox="0 0 24 24"><path d="M12 3 5 8v8l7 5 7-5V8zM12 8v8M8.5 10l7 4M15.5 10l-7 4"/></svg></div><span class="lbl">Intel</span></div>
+    <div class="grp"></div>
+    <div style="display:flex;flex-direction:column;align-items:center"><div class="r"><svg viewBox="0 0 24 24"><path d="M12 12v9M12 12 6 18M12 12l6 6M12 12l-6-2M12 12l6-2"/></svg></div><span class="lbl">Graph</span></div>
+  </nav>
+
+  <!-- Context pane -->
+  <aside class="ctx">
+    <div class="ctx-sec">
+      <div class="h">Commons</div>
+      <div class="nav-item on"><span class="mk"></span>Explore</div>
+      <div class="nav-item"><span class="mk"></span>Inquiries<span class="ct">38</span></div>
+      <div class="nav-item"><span class="mk"></span>Knowledge<span class="ct">142</span></div>
+      <div class="nav-item"><span class="mk"></span>Briefs<span class="ct">12</span></div>
+      <div class="nav-item"><span class="mk"></span>Contribute</div>
+    </div>
+    <div class="ctx-sec"><div class="h">Filter</div></div>
+    <div class="fltr">
+      <span class="c on">All</span><span class="c">Need</span><span class="c">Question</span><span class="c">Practice</span><span class="c">Case</span><span class="c">Opportunity</span>
+    </div>
+    <div class="ctx-sec">
+      <div class="h">Evidence status</div>
+      <div class="nav-item"><span class="mk" style="background:var(--olive)"></span>Verifiable</div>
+      <div class="nav-item"><span class="mk" style="background:var(--sage)"></span>Reported experience</div>
+      <div class="nav-item"><span class="mk" style="background:var(--brass)"></span>Interpretation</div>
+      <div class="nav-item"><span class="mk" style="background:var(--clay)"></span>Proposition</div>
+    </div>
+    <div class="ctx-sec">
+      <div class="h">Institutions</div>
+      <div class="nav-item"><span class="mk"></span>All institutions<span class="ct">31</span></div>
+      <div class="nav-item"><span class="mk"></span>Kibera Makerspace</div>
+      <div class="nav-item"><span class="mk"></span>Mwea Water Coop</div>
+      <div class="nav-item"><span class="mk"></span>Nyeri Education</div>
+    </div>
+  </aside>
+
+  <!-- Register -->
+  <section class="reg">
+    <div class="reg-head">
+      <div class="row"><h1>Inquiries</h1><span class="k">Question → Opportunity</span></div>
+      <div class="metrics">
+        <div class="metric"><div class="v">38</div><div class="l">Open inquiries</div></div>
+        <div class="metric"><div class="v">142</div><div class="l">Knowledge items</div></div>
+        <div class="metric"><div class="v">12</div><div class="l">Briefs ready</div></div>
+        <div class="metric"><div class="v">4</div><div class="l">Handed off</div></div>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab on">All</div><div class="tab">Needs investigation</div><div class="tab">Examining</div><div class="tab">Brief ready</div><div class="tab">Handed off</div>
+    </div>
+    <div class="rows">
+      <div class="rrow sel">
+        <div><div class="tt">How can small producers share processing capacity without losing control of their produce?</div><div class="mm"><span>Agriculture · Kirinyaga</span><span class="d"></span><span>7 contributors</span><span class="d"></span><span>3 evidence</span></div></div>
+        <div class="stk"><span class="chip e">Examining</span><span class="ar">→</span></div>
+      </div>
+      <div class="rrow">
+        <div><div class="tt">Reducing post-harvest rice losses in the short Mwea wet window</div><div class="mm"><span>Agriculture · Mwea</span><span class="d"></span><span>Mwea Water Coop</span><span class="d"></span><span>2 attempts</span></div></div>
+        <div class="stk"><span class="chip s">Supported</span><span class="ar">→</span></div>
+      </div>
+      <div class="rrow">
+        <div><div class="tt">A practical method for managing shared laboratory equipment across schools</div><div class="mm"><span>Education · Nyeri</span><span class="d"></span><span>3 schools</span><span class="d"></span><span>context available</span></div></div>
+        <div class="stk"><span class="chip v">Verified</span><span class="ar">→</span></div>
+      </div>
+      <div class="rrow">
+        <div><div class="tt">What would help describe local making &amp; repair capacity?</div><div class="mm"><span>Making · Kibera</span><span class="d"></span><span>Kibera Makerspace</span><span class="d"></span><span>Open</span></div></div>
+        <div class="stk"><span class="chip p">Proposition</span><span class="ar">→</span></div>
+      </div>
+      <div class="rrow">
+        <div><div class="tt">Cold-chain pilot for vaccine transport in Nyeri</div><div class="mm"><span>Health · Nyeri</span><span class="d"></span><span>4 actors</span><span class="d"></span><span>needs evidence</span></div></div>
+        <div class="stk"><span class="chip n">Unknown</span><span class="ar">→</span></div>
+      </div>
+      <div class="rrow">
+        <div><div class="tt">Shared milling facility governance for the Kirinyaga cooperative</div><div class="mm"><span>Agriculture · Kirinyaga</span><span class="d"></span><span>Synthesis</span><span class="d"></span><span>brief ready</span></div></div>
+        <div class="stk"><span class="chip s">Synthesis</span><span class="ar">→</span></div>
+      </div>
+      <div class="rrow">
+        <div><div class="tt">Seasonal judgement for solar-drying capacity in Embu</div><div class="mm"><span>Agriculture · Embu</span><span class="d"></span><span>Reported</span><span class="d"></span><span>1 source</span></div></div>
+        <div class="stk"><span class="chip n">Reported</span><span class="ar">→</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Inspector / context panel -->
+  <aside class="insp">
+    <span class="tag">Inquiry · Needs investigation</span>
+    <h2>Small producers sharing processing capacity</h2>
+    <p class="lead">A cooperative in Kirinyaga asks whether a shared milling facility can be governed so every farmer retains ownership of their harvest through the process.</p>
+    <div class="rule"></div>
+
+    <div class="blk">
+      <div class="bh">Context <a href="#">View in Network →</a></div>
+      <div class="pairs">
+        <span class="pl">Location</span><span class="pv">Kirinyaga County</span>
+        <span class="pl">Knowledge status</span><span class="pv">Under examination</span>
+        <span class="pl">Affected</span><span class="pv">12 smallholder farmers</span>
+        <span class="pl">Conditions</span><span class="pv">Peak harvest, wet season</span>
+      </div>
+    </div>
+
+    <div class="blk" style="margin-top:16px">
+      <div class="bh">Structured contributions <a href="#">6 total</a></div>
+      <div class="contribs">
+        <div class="crow"><span class="k ev">Evidence</span><div><div class="who">Milling capacity log</div><div class="sn">Source document, scope attached</div></div></div>
+        <div class="crow"><span class="k ex">Experience</span><div><div class="who">Lucia Santos · Facilitator</div><div class="sn">Ran a similar model in Oaxaca</div></div></div>
+        <div class="crow"><span class="k qn">Question</span><div><div class="who">Kwame Mensah</div><div class="sn">Who sets the pricing rule?</div></div></div>
+        <div class="crow"><span class="k cp">Counterpoint</span><div><div class="who">Grower rep.</div><div class="sn">Shared use raised spoilage last year</div></div></div>
+      </div>
+    </div>
+
+    <div class="blk" style="margin-top:16px">
+      <div class="bh">Relevant actors</div>
+      <div class="actors">
+        <div class="a"><span class="av">L</span>Lucia Santos<span class="rl">Facilitator</span></div>
+        <div class="a"><span class="av">K</span>Kwame Mensah<span class="rl">Researcher</span></div>
+        <div class="a"><span class="av">M</span>Mtaa Repair Circle<span class="rl">Crew</span></div>
+      </div>
+    </div>
+
+    <div class="nextstep" style="margin-top:18px">
+      <div><div class="t">Next: develop a brief</div><div class="d">A defined, testable undertaking</div></div>
+      <button>Develop →</button>
+    </div>
+
+    <div class="fine">Illustrative · not live data · provenance preserved</div>
+  </aside>
+
+</div>
+</body>
+</html>

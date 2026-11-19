@@ -1,0 +1,38 @@
+{
+  "openGraph": {
+    "title": "Palantir",
+    "type": "website",
+    "url": "https://palantir.com/docs/foundry/object-explorer/getting-started/",
+    "site_name": "Palantir",
+    "description": "The home page below is shown when opening Object Explorer. It is an orientation hub where one can start exploring objects, either with a specific..."
+  },
+  "twitter": {
+    "image": "https://palantir.com/docs/resources/homepage/iso-grid.png",
+    "image:alt": "Documentation | Palantir",
+    "card": "summary_large_image",
+    "site": "@palantirtech"
+  },
+  "description": "The home page below is shown when opening Object Explorer. It is an orientation hub where one can start exploring objects, either with a specific...",
+  "canonical": null,
+  "themeColor": null,
+  "viewport": "width=device-width, initial-scale=1",
+  "favicons": [
+    {
+      "rel": "shortcut icon",
+      "href": "https://www.palantir.com/docs/favicon.ico",
+      "sizes": "",
+      "type": ""
+    }
+  ],
+  "manifest": null,
+  "structuredData": [],
+  "score": {
+    "hasOg": true,
+    "hasTwitter": true,
+    "hasDescription": true,
+    "hasCanonical": false,
+    "hasStructuredData": false,
+    "hasFavicon": true,
+    "hasThemeColor": false
+  }
+}

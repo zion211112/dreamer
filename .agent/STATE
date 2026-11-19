@@ -1,0 +1,10 @@
+Card: Intelligence module only — scope complete.
+Oracle: tsc --noEmit passes (exit 0), vitest blocked (sandbox esbuild), vite build not attempted.
+New user request: migrate all site, all modules, best stack — outside card scope.
+
+--- LEARNED ---
+- CARD.md scope: Intelligence module only; status complete.
+- tsc --noEmit: PASSES (verified this session, exit code 0).
+- vitest run: BLOCKED (sandbox esbuild limitation, pre-existing).
+- vite build: not attempted.
+- User directive: migrate all site, all modules, no redundancy, deep integration — requires new plan beyond card scope.

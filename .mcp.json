@@ -7,6 +7,18 @@
         "Authorization": "Bearer bd_live_zGdvccIJn8gs905PreCaSzIyux7aVuH7",
         "X-Better-Design-Client": "claude-code"
       }
+    },
+    "sakaniui": {
+      "command": "npx",
+      "args": ["-y", "@sakaniui/mcp"]
+    },
+    "systembridge-mcp": {
+      "command": "npx",
+      "args": ["systembridge-mcp"]
+    },
+    "designlang": {
+      "command": "npx",
+      "args": ["-y", "designlang", "mcp"]
     }
   }
 }

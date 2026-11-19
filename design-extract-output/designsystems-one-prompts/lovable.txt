@@ -1,0 +1,17 @@
+Clone the design language of this blog-post page and build a fresh equivalent.
+Visual feel: material-you. Tone: neutral · Headings: Sentence case · CTA verbs: [object Object], [object Object], [object Object], [object Object], [object Object], [object Object]
+Primary palette: #ccc8c3, #0f0f14, #62626e, #000000, #020817.
+Typography: [object Object], [object Object].
+Corner radius vocabulary: 6, 12, 16, 20, 24, 999.
+Shadow vocabulary: rgba(0, 0, 0, 0.1) 0px 2px 4px 0px | rgba(0, 0, 0, 0.12) 0px 8px 30px 0px | rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.1) 0px 8px 10px -6px.
+Use: Use shadcn/ui components (Button, Card, Dialog, Input, Sheet, Tabs). Pair with Tailwind.
+Page structure:
+- testimonial — heading: "Vercel Geist Design System"
+- testimonial
+- testimonial
+- testimonial — heading: "origin"
+- testimonial — heading: "what it’s known for, what’s underrated, what to watch out for."
+- testimonial — heading: "token snapshot"
+- testimonial — heading: "the file, before you download it"
+- testimonial — heading: "components worth studying"
+- footer

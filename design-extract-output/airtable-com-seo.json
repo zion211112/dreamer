@@ -1,0 +1,54 @@
+{
+  "openGraph": {
+    "site_name": "Airtable",
+    "title": "Airtable | Everyone's app platform",
+    "type": "website",
+    "description": "Airtable is a low-code platform for building collaborative apps. Customize your workflow, collaborate, and achieve ambitious outcomes. Get started for free.",
+    "image": "https://static.airtable.com/images/oembed/airtable_brand.png"
+  },
+  "twitter": {
+    "card": "summary_large_image",
+    "site": "@airtable"
+  },
+  "description": "Airtable is a low-code platform for building collaborative apps. Customize your workflow, collaborate, and achieve ambitious outcomes. Get started for free.",
+  "canonical": null,
+  "themeColor": "#ffffff",
+  "viewport": "width=device-width, initial-scale=1.0",
+  "favicons": [
+    {
+      "rel": "apple-touch-icon",
+      "href": "https://airtable.com/images/favicon/baymax/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": ""
+    },
+    {
+      "rel": "icon",
+      "href": "https://airtable.com/images/favicon/baymax/favicon.svg?v=3",
+      "sizes": "",
+      "type": "image/svg+xml"
+    },
+    {
+      "rel": "icon",
+      "href": "https://airtable.com/images/favicon/baymax/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "rel": "icon",
+      "href": "https://airtable.com/images/favicon/baymax/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    }
+  ],
+  "manifest": "https://airtable.com/images/favicon/baymax/manifest.json",
+  "structuredData": [],
+  "score": {
+    "hasOg": true,
+    "hasTwitter": true,
+    "hasDescription": true,
+    "hasCanonical": false,
+    "hasStructuredData": false,
+    "hasFavicon": true,
+    "hasThemeColor": true
+  }
+}

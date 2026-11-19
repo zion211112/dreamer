@@ -1,0 +1,181 @@
+{
+  "$metadata": {
+    "generator": "designlang",
+    "version": "7.0.0",
+    "spec": "https://design-tokens.github.io/community-group/format/",
+    "source": "https://app.getreprise.com/launch/BXZjxEX/?itm_category=home",
+    "generatedAt": "2026-11-19T16:32:50.612Z"
+  },
+  "primitive": {
+    "color": {
+      "brand": {
+        "primary": {
+          "$value": "#cbced5",
+          "$type": "color"
+        }
+      },
+      "neutral": {
+        "n100": {
+          "$value": "#cbced5",
+          "$type": "color"
+        },
+        "n200": {
+          "$value": "#0a0a0a",
+          "$type": "color"
+        },
+        "n300": {
+          "$value": "#000000",
+          "$type": "color"
+        },
+        "n400": {
+          "$value": "#ffffff",
+          "$type": "color"
+        },
+        "n500": {
+          "$value": "#646875",
+          "$type": "color"
+        }
+      },
+      "background": {
+        "bg0": {
+          "$value": "#ffffff",
+          "$type": "color"
+        }
+      },
+      "text": {
+        "text0": {
+          "$value": "#000000",
+          "$type": "color"
+        },
+        "text1": {
+          "$value": "#0a0a0a",
+          "$type": "color"
+        },
+        "text2": {
+          "$value": "#646875",
+          "$type": "color"
+        }
+      },
+      "ramp": {
+        "neutral": {
+          "50": {
+            "$value": "#f3f5fa",
+            "$type": "color"
+          },
+          "100": {
+            "$value": "#e8eaee",
+            "$type": "color"
+          },
+          "200": {
+            "$value": "#cbced5",
+            "$type": "color"
+          },
+          "300": {
+            "$value": "#bec0c6",
+            "$type": "color"
+          },
+          "400": {
+            "$value": "#9da0a6",
+            "$type": "color"
+          },
+          "500": {
+            "$value": "#7f8288",
+            "$type": "color"
+          },
+          "600": {
+            "$value": "#696c72",
+            "$type": "color"
+          },
+          "700": {
+            "$value": "#54575c",
+            "$type": "color"
+          },
+          "800": {
+            "$value": "#45474b",
+            "$type": "color"
+          },
+          "900": {
+            "$value": "#37393d",
+            "$type": "color"
+          },
+          "950": {
+            "$value": "#1e1f21",
+            "$type": "color"
+          }
+        }
+      }
+    },
+    "spacing": {
+      "s0": {
+        "$value": "16px",
+        "$type": "dimension"
+      }
+    },
+    "radius": {},
+    "shadow": {},
+    "fontFamily": {},
+    "fontSize": {
+      "body-sm": {
+        "$value": "16px",
+        "$type": "dimension"
+      },
+      "micro": {
+        "$value": "14px",
+        "$type": "dimension"
+      }
+    }
+  },
+  "semantic": {
+    "color": {
+      "action": {
+        "primary": {
+          "$value": "{primitive.color.brand.primary}",
+          "$type": "color"
+        }
+      },
+      "surface": {
+        "default": {
+          "$value": "{primitive.color.background.bg0}",
+          "$type": "color"
+        },
+        "page": {
+          "$value": "#ffffff",
+          "$type": "color"
+        },
+        "onPage": {
+          "$value": "#000000",
+          "$type": "color"
+        }
+      },
+      "text": {
+        "body": {
+          "$value": "{primitive.color.text.text0}",
+          "$type": "color"
+        }
+      }
+    },
+    "typography": {
+      "body": {
+        "$value": {
+          "fontFamily": "system-ui",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "24px"
+        },
+        "$type": "typography"
+      }
+    },
+    "radius": {
+      "control": {
+        "$value": "{primitive.radius.r0}",
+        "$type": "dimension"
+      }
+    },
+    "shadow": {
+      "elevated": {
+        "$value": "{primitive.shadow.sh0}",
+        "$type": "shadow"
+      }
+    }
+  }
+}

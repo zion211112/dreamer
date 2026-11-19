@@ -1,0 +1,179 @@
+{
+  "colors": {
+    "all": [
+      {
+        "hex": "#000000",
+        "rgb": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 0
+        },
+        "count": 2472,
+        "areaShare": 0,
+        "contexts": [
+          "text",
+          "border"
+        ]
+      },
+      {
+        "hex": "#b0b5c0",
+        "rgb": {
+          "r": 176,
+          "g": 181,
+          "b": 192,
+          "a": 1
+        },
+        "hsl": {
+          "h": 221,
+          "s": 11,
+          "l": 72
+        },
+        "count": 21,
+        "areaShare": 0,
+        "contexts": [
+          "text",
+          "border"
+        ]
+      },
+      {
+        "hex": "#efeff0",
+        "rgb": {
+          "r": 239,
+          "g": 239,
+          "b": 240,
+          "a": 1
+        },
+        "hsl": {
+          "h": 240,
+          "s": 3,
+          "l": 94
+        },
+        "count": 1,
+        "areaShare": 0.499,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#f9f9fa",
+        "rgb": {
+          "r": 249,
+          "g": 249,
+          "b": 250,
+          "a": 1
+        },
+        "hsl": {
+          "h": 240,
+          "s": 9,
+          "l": 98
+        },
+        "count": 1,
+        "areaShare": 0.501,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#e2e2e2",
+        "rgb": {
+          "r": 226,
+          "g": 226,
+          "b": 226,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 89
+        },
+        "count": 1,
+        "areaShare": 0,
+        "contexts": [
+          "border"
+        ]
+      }
+    ]
+  },
+  "regions": [
+    {
+      "role": "content",
+      "tag": "section",
+      "bounds": {
+        "x": 0,
+        "y": 800,
+        "w": 1280,
+        "h": 0
+      },
+      "heading": null,
+      "buttonCount": 0,
+      "cardCount": 0,
+      "className": null
+    }
+  ],
+  "componentClusters": [],
+  "accessibility": {
+    "remediation": []
+  },
+  "cssHealth": {
+    "sheets": [
+      {
+        "url": "https://linear.app/demo/team/ENG/active",
+        "totalBytes": 0,
+        "usedBytes": 0,
+        "unusedBytes": 0,
+        "unusedPercent": 0
+      },
+      {
+        "url": "https://linear.app/demo/team/ENG/active",
+        "totalBytes": 10268,
+        "usedBytes": 3922,
+        "unusedBytes": 6346,
+        "unusedPercent": 62
+      },
+      {
+        "url": "https://static.linear.app/client/assets/style-PSLekvpy.css",
+        "totalBytes": 730723,
+        "usedBytes": 22592,
+        "unusedBytes": 708131,
+        "unusedPercent": 97
+      }
+    ],
+    "totalBytes": 740991,
+    "usedBytes": 26514,
+    "unusedBytes": 714477,
+    "unusedPercent": 96,
+    "importantCount": 278,
+    "duplicates": 6984,
+    "vendorPrefixes": {
+      "webkit": 342,
+      "moz": 20,
+      "ms": 2,
+      "o": 1
+    },
+    "keyframes": [],
+    "specificity": {
+      "max": [
+        2,
+        9,
+        6
+      ],
+      "average": [
+        0,
+        1.64,
+        0.12
+      ],
+      "count": 10897
+    },
+    "issues": [
+      "278 !important rules",
+      "6984 duplicate declarations",
+      "96% unused CSS"
+    ]
+  }
+}

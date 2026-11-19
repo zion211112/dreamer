@@ -1,0 +1,42 @@
+@layer base {
+  :root {
+    /* Brand */
+    --brand-1: #166ee1;
+    --brand-2: #88dbff;
+    --brand-3: #a0c6ff;
+
+    /* Neutrals */
+    --gray-0: #ffffff;
+    --gray-1: #616670;
+    --gray-2: #000000;
+    --gray-3: #c4c7cd;
+    --gray-4: #41454d;
+    --gray-5: #808080;
+    --gray-6: #aaaaaa;
+    --gray-7: #dde1e3;
+
+    /* Typography */
+    --font-sans: 'Inter Display', system-ui, sans-serif;
+
+    /* Spacing */
+    --size-1: 4px;
+    --size-2: 8px;
+    --size-3: 12px;
+    --size-4: 16px;
+    --size-5: 24px;
+
+    /* Radius */
+    --radius-1: 2px;
+    --radius-2: 6px;
+    --radius-3: 10px;
+    --radius-4: 9999px;
+
+    /* Shadows */
+    --shadow-1: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px;
+    --shadow-2: rgba(0, 0, 0, 0.1) 0px 1px 0px 0px;
+    --shadow-3: rgba(0, 0, 0, 0.32) 0px 0px 1px 0px, rgba(0, 0, 0, 0.08) 0px 0px 2px 0px, rgba(0, 0, 0, 0.08) 0px 1px 3px 0px;
+    --shadow-4: rgba(0, 0, 0, 0) 4px 0px 0px 0px;
+    --shadow-5: rgba(0, 0, 0, 0) 4px 0px 0px 0px inset;
+    --shadow-6: rgba(0, 0, 0, 0.24) 0px 0px 1px 0px, rgba(0, 0, 0, 0.08) 0px 0px 2px 0px, rgba(0, 0, 0, 0.08) 0px 2px 4px 0px;
+  }
+}

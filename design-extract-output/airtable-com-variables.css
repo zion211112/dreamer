@@ -1,0 +1,373 @@
+:root {
+  /* Colors — Primary */
+  --color-primary: #166ee1;
+  --color-secondary: #88dbff;
+  --color-accent: #a0c6ff;
+
+  /* Ramp — primary (base is 600) */
+  --color-primary-50: #c5f8ff;
+  --color-primary-100: #b4ecff;
+  --color-primary-200: #9ddbff;
+  --color-primary-300: #7bc1ff;
+  --color-primary-400: #4f9eff;
+  --color-primary-500: #2a7ef2;
+  --color-primary-600: #166ee1;
+  --color-primary-700: #0051b2;
+  --color-primary-800: #004197;
+  --color-primary-900: #00337f;
+  --color-primary-950: #001a4e;
+
+  /* Ramp — secondary (base is 200) */
+  --color-secondary-50: #cefeff;
+  --color-secondary-100: #bef3ff;
+  --color-secondary-200: #88dbff;
+  --color-secondary-300: #87cbe9;
+  --color-secondary-400: #5cabcc;
+  --color-secondary-500: #388dae;
+  --color-secondary-600: #227695;
+  --color-secondary-700: #0e5f7b;
+  --color-secondary-800: #014e67;
+  --color-secondary-900: #003f54;
+  --color-secondary-950: #002332;
+
+  /* Ramp — accent (base is 300) */
+  --color-accent-50: #e0f7ff;
+  --color-accent-100: #d2ecff;
+  --color-accent-200: #bedbff;
+  --color-accent-300: #a0c6ff;
+  --color-accent-400: #7ea1d6;
+  --color-accent-500: #6083b8;
+  --color-accent-600: #4c6d9e;
+  --color-accent-700: #3a5783;
+  --color-accent-800: #2d476d;
+  --color-accent-900: #23395a;
+  --color-accent-950: #101f36;
+
+  /* Ramp — neutral (base is 600) */
+  --color-neutral-50: #f2f6fd;
+  --color-neutral-100: #e6eaf2;
+  --color-neutral-200: #d5d9e2;
+  --color-neutral-300: #bcc0ca;
+  --color-neutral-400: #9ba0aa;
+  --color-neutral-500: #7d828d;
+  --color-neutral-600: #616670;
+  --color-neutral-700: #52575f;
+  --color-neutral-800: #43474e;
+  --color-neutral-900: #35393f;
+  --color-neutral-950: #1d1f23;
+
+  /* Colors — Neutrals */
+  --color-neutral-50: #ffffff;
+  --color-neutral-100: #616670;
+  --color-neutral-200: #000000;
+  --color-neutral-300: #c4c7cd;
+  --color-neutral-400: #41454d;
+  --color-neutral-500: #808080;
+  --color-neutral-600: #aaaaaa;
+  --color-neutral-700: #dde1e3;
+
+  /* Colors — Backgrounds */
+  --color-bg: #ffffff;
+  --color-bg-1: #f2f4f8;
+
+  /* Colors — Text */
+  --color-text: #1d1f25;
+  --color-text-1: #ffffff;
+  --color-text-2: #616670;
+  --color-text-3: #c4c7cd;
+  --color-text-4: #808080;
+
+  /* Semantic pairs */
+  --surface-page-bg: #ffffff;
+  --surface-page-fg: #1d1f25; /* 16.47:1 AAA */
+  --surface-raised-bg: #f2f4f8;
+  --surface-raised-fg: #1d1f25; /* 14.96:1 AAA */
+  --action-primary-bg: #166ee1;
+  --action-primary-fg: #ffffff; /* 4.83:1 AA */
+  --action-secondary-bg: #88dbff;
+  --action-secondary-fg: #1d1f25; /* 10.69:1 AAA */
+  --action-accent-bg: #a0c6ff;
+  --action-accent-fg: #1d1f25; /* 9.42:1 AAA */
+
+  /* Typography — Families */
+  --font-heading: 'Inter Display', sans-serif;
+
+  /* Typography — Named scale */
+  --font-size-h2: 24px;
+  --font-size-h3: 17px;
+  --font-size-title-1: 16px;
+  --font-size-title-2: 15px;
+  --font-size-title-3: 14px;
+  --font-size-body: 13px;
+  --font-size-body-sm: 12.8px;
+  --font-size-micro: 11px;
+
+  /* Layout */
+  --container-width: 1236px;
+  --section-rhythm: 16px;
+
+  /* Spacing */
+  --spacing-4: 4px;
+  --spacing-8: 8px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-24: 24px;
+
+  /* Border Radius */
+  --radius-xs: 2px;
+  --radius-md: 6px;
+  --radius-md: 10px;
+  --radius-full: 9999px;
+
+  /* Box Shadows */
+  --shadow-xs: rgba(0, 0, 0, 0.1) 0px 1px 0px 0px;
+  --shadow-sm: rgba(0, 0, 0, 0.24) 0px 0px 1px 0px, rgba(0, 0, 0, 0.08) 0px 0px 2px 0px, rgba(0, 0, 0, 0.08) 0px 2px 4px 0px;
+
+  /* Original Site Variables */
+  /* — colors — */
+  --colors-hyperlink-default: rgb(29, 31, 37);
+  --colors-background-raised-surface-hover: rgb(255, 255, 255);
+  --colors-foreground-accent-success: rgb(0, 100, 0);
+  --colors-background-switch-track: rgb(145, 149, 156);
+  --colors-background-notice: rgb(255, 246, 221);
+  --colors-background-default: rgb(255, 255, 255);
+  --colors-background-selected: rgba(0, 0, 0, 0.05);
+  --colors-background-informational: rgb(241, 245, 255);
+  --colors-foreground-subtler: rgb(145, 149, 156);
+  --colors-background-raised-control: rgb(255, 255, 255);
+  --colors-border-success: rgb(0, 100, 0);
+  --colors-border-focus: rgb(22, 110, 225);
+  --colors-hyperlink-primary-hover: rgb(13, 82, 172);
+  --colors-background-checked-control: rgb(22, 110, 225);
+  --colors-background-workflow-find-records: rgb(255, 236, 227);
+  --colors-hyperlink-primary: rgb(22, 110, 225);
+  --colors-foreground-subtle: rgb(97, 102, 112);
+  --colors-foreground-subtlest: rgb(196, 199, 205);
+  --colors-border-emphasis: rgb(145, 149, 156);
+  --colors-background-switch-handle: rgb(255, 255, 255);
+  --colors-foreground-accent-informational: rgb(13, 82, 172);
+  --colors-foreground-accent-notice: rgb(175, 96, 2);
+  --cell-borderColor: hsl(202, 10%, 88%);
+  --pane-borderColor-separator: #cccccc;
+  --colors-background-raised-popover: rgb(255, 255, 255);
+  --colors-background-subtler: rgb(246, 248, 252);
+  --colors-background-success: rgb(230, 252, 232);
+  --colors-border-subtle: rgba(0, 0, 0, 0.05);
+  --colors-foreground-default: rgb(29, 31, 37);
+  --colors-foreground-accent-negative: rgb(177, 15, 65);
+  --colors-background-raised-surface: rgb(255, 255, 255);
+  --colors-background-inset-surface: rgb(255, 255, 255);
+  --colors-background-translucent: rgba(255, 255, 255, 0.1);
+  --colors-background-raised-control-hover: rgb(229, 233, 240);
+  --colors-background-selected-blue: rgba(22, 110, 225, 0.05);
+  --cell-borderColor-header: hsl(0, 0%, 82%);
+  --colors-background-primary-control: rgb(22, 110, 225);
+  --colors-border-subtler: rgb(145, 149, 156);
+  --colors-border-negative: rgb(177, 15, 65);
+  --colors-foreground-accent-ai: rgb(171, 10, 131);
+  --cell-borderColor-cursor: rgb(22, 110, 225);
+  --colors-background-inset-control-hover: rgb(229, 233, 240);
+  --colors-background-inset-control: rgb(242, 244, 248);
+  --colors-background-selected-blue-hover: rgba(22, 110, 225, 0.1);
+  --colors-foreground-accent-workflow-custom-script: rgb(98, 49, 174);
+  --colors-background-negative: rgb(255, 242, 250);
+  --colors-background-subtle: rgb(242, 244, 248);
+  --colors-background-modal-backdrop: rgba(0, 0, 0, 0.25);
+  --colors-border-focus-emphasis: rgb(13, 82, 172);
+  --colors-hyperlink-subtle: rgb(97, 102, 112);
+  --colors-border-default: rgba(0, 0, 0, 0.1);
+  --colors-foreground-accent-workflow-find-records: rgb(170, 45, 0);
+  --colors-background-primary-control-emphasis: rgb(13, 82, 172);
+  --colors-background-workflow-custom-script: rgb(252, 243, 255);
+  /* — spacing — */
+  --font-size-heading-xxsmall: 13px;
+  --font-size-heading-xxxlarge: 35px;
+  --font-size-heading-small: 17px;
+  --spacing-2-and-half: 1.5rem;
+  --spacing-3: 2rem;
+  --spacing-1-and-three-quarters: 0.875rem;
+  --font-size-heading-default: 21px;
+  --spacing-1-and-half: 0.75rem;
+  --spacing-quarter: 0.125rem;
+  --spacing-3-and-quarter: 2.5rem;
+  --spacing-2-and-three-quarters: 1.75rem;
+  --spacing-5: 8rem;
+  --font-size-body-xsmall: 9px;
+  --spacing-3-and-half: 3rem;
+  --spacing-4: 4rem;
+  --spacing-1: 0.5rem;
+  --spacing-three-quarters: 0.375rem;
+  --spacing-0: 0;
+  --font-size-body-small: 11px;
+  --spacing-1-and-quarter: 0.625rem;
+  --spacing-2: 1rem;
+  --font-size-body-default: 13px;
+  --font-size-heading-large: 23px;
+  --spacing-2-and-quarter: 1.25rem;
+  --font-size-heading-xlarge: 27px;
+  --font-size-heading-xxlarge: 31px;
+  --font-size-body-large: 15px;
+  --font-size-heading-xsmall: 15px;
+  --spacing-half: 0.25rem;
+  /* — typography — */
+  --font-family-body: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol';
+  --font-family-heading-legacy: 'GT Eesti Display', -apple-system, system-ui, BlinkMacSystemFont,
+        'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  --font-family-mono: 'IBM Plex Mono', Menlo, Courier, monospace;
+  --font-family-heading: 'Inter Display', -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI',
+        Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol';
+  --strongFontWeightWithGeckoFallback: 500;
+  /* — radii — */
+  --radius-round-big: 6px;
+  --radius-round-huge: 12px;
+  --radius-round-default: 3px;
+  /* — other — */
+  --cell-background-header: #f4f4f4;
+  --cell-background-fillCandidate-foundCursor: #f0c965;
+  --mainNavHeight: 79px;
+  --palette-red-redDusty: rgb(153, 69, 90);
+  --palette-opacity-darken3: rgba(0, 0, 0, 0.25);
+  --elevation-medium-right: 0px 0px 1px 0px rgba(0, 0, 0, 0.24),
+        0px 0px 2px 0px rgba(0, 0, 0, 0.08), 2px 0px 4px 0px rgba(0, 0, 0, 0.08);
+  --palette-gray-gray700: rgb(49, 53, 62);
+  --palette-opacity-lighten1: rgba(255, 255, 255, 0.05);
+  --palette-green-greenLight2: rgb(207, 245, 209);
+  --palette-blue-blueDusty: rgb(59, 102, 163);
+  --palette-cyan-cyan: rgb(57, 202, 255);
+  --motion-decelerate-default: cubic-bezier(0, 0, 0, 1) 250ms;
+  --motion-accelerate-fast: cubic-bezier(0.4, 0, 1, 1) 100ms;
+  --palette-purple-purpleLight1: rgb(191, 174, 252);
+  --motion-decelerate-slow: cubic-bezier(0, 0, 0, 1) 800ms;
+  --palette-cyan-cyanLight1: rgb(136, 219, 255);
+  --palette-pink-pinkDark1: rgb(171, 10, 131);
+  --palette-gray-gray300: rgb(196, 199, 205);
+  --cell-background-selected: #f1f6ff;
+  --palette-green-greenLight1: rgb(154, 224, 149);
+  --palette-purple-purple: rgb(124, 55, 239);
+  --palette-yellow-yellowLight3: rgb(255, 246, 221);
+  --elevation-low: 0px 0px 1px rgba(0, 0, 0, 0.32), 0px 0px 2px rgba(0, 0, 0, 0.08),
+        0px 1px 3px rgba(0, 0, 0, 0.08);
+  --palette-neutral-quiet: rgb(97, 102, 112);
+  --palette-gray-grayDusty: rgb(83, 89, 101);
+  --palette-purple-purpleDusty: rgb(99, 73, 141);
+  --palette-yellow-yellowLight1: rgb(255, 214, 107);
+  --palette-red-redLight1: rgb(255, 166, 193);
+  --palette-neutral-lightGray2: rgb(242, 244, 248);
+  --palette-gray-gray100: rgb(229, 233, 240);
+  --palette-neutral-quietest: rgb(196, 199, 205);
+  --palette-neutral-quieter: rgb(145, 149, 156);
+  --cell-background-foundCursor-selected: #f1cf6b;
+  --palette-purple-purpleLight3: rgb(252, 243, 255);
+  --palette-green-greenDusty: rgb(64, 124, 74);
+  --palette-opacity-darken5: rgba(0, 0, 0, 0.6);
+  --cell-background-searchMatch: #ffd66b;
+  --palette-green-greenLight3: rgb(230, 252, 232);
+  --palette-teal-teal: rgb(1, 221, 213);
+  --palette-opacity-lighten2-tinted: rgba(195, 212, 249, 0.18);
+  --palette-neutral-trueBlack: rgb(0, 0, 0);
+  --motion-standard-slow: cubic-bezier(0.2, 0.1, 0.2, 1) 1000ms;
+  --palette-red-red: rgb(220, 4, 59);
+  --palette-gray-gray500: rgb(97, 102, 112);
+  --palette-neutral-lightGray1: rgb(246, 248, 252);
+  --palette-neutral-dark: rgb(49, 53, 62);
+  --palette-blue-blueLight3: rgb(241, 245, 255);
+  --cell-background-ghost-row-number-hover: hsl(200, 18%, 95%);
+  --palette-orange-orangeLight1: rgb(255, 182, 142);
+  --cell-background-rightPane-header: hsla(0, 0%, 100%, 0.5);
+  --palette-pink-pink: rgb(221, 4, 168);
+  --palette-blue-blueLight1: rgb(160, 198, 255);
+  --elevation-low-subtle: 0px 0px 2px rgba(0, 0, 0, 0.08), 0px 1px 3px rgba(0, 0, 0, 0.08);
+  --palette-neutral-lightGray3: rgb(229, 233, 240);
+  --motion-standard-default: cubic-bezier(0.2, 0.1, 0.2, 1) 300ms;
+  --palette-gray-gray50: rgb(246, 248, 252);
+  --motion-accelerate-slow: cubic-bezier(0.4, 0, 1, 1) 700ms;
+  --palette-gray-gray75: rgb(242, 244, 248);
+  --elevation-low-hover: 0px 0px 1px rgba(0, 0, 0, 0.32), 0px 0px 3px rgba(0, 0, 0, 0.11),
+        0px 1px 4px rgba(0, 0, 0, 0.12);
+  --palette-cyan-cyanLight2: rgb(196, 236, 255);
+  --palette-blue-blue: rgb(22, 110, 225);
+  --cell-background-leftPane-header: #f2f2f2;
+  --palette-red-redLight2: rgb(255, 212, 224);
+  --palette-orange-orangeDusty: rgb(148, 77, 55);
+  --palette-yellow-yellow: rgb(255, 186, 5);
+  --mainNavWidth: 702px;
+  --palette-opacity-lighten2: rgba(255, 255, 255, 0.1);
+  --cell-background-header-selected: #e7edf6;
+  --palette-neutral-lightGray4: rgb(218, 222, 230);
+  --motion-decelerate-fast: cubic-bezier(0, 0, 0, 1) 100ms;
+  --palette-gray-gray25: rgb(249, 250, 251);
+  --row-background-cursor: #f8f8f8;
+  --palette-opacity-darken2: rgba(0, 0, 0, 0.1);
+  --palette-gray-gray600: rgb(65, 69, 77);
+  --palette-cyan-cyanDark1: rgb(15, 104, 162);
+  --motion-standard-fast: cubic-bezier(0.2, 0.1, 0.2, 1) 150ms;
+  --palette-purple-purpleLight2: rgb(224, 218, 253);
+  --palette-pink-pinkDusty: rgb(140, 63, 120);
+  --palette-orange-orange: rgb(213, 68, 1);
+  --palette-orange-orangeDark1: rgb(170, 45, 0);
+  --palette-orange-orangeLight2: rgb(255, 224, 204);
+  --palette-gray-gray200: rgb(218, 222, 230);
+  --cell-background-foundCursor: #ffd66b;
+  --palette-opacity-lighten4: rgba(255, 255, 255, 0.5);
+  --cell-background-found: #fff3d3;
+  --palette-teal-tealLight3: rgb(228, 251, 251);
+  --palette-teal-tealDark1: rgb(23, 114, 110);
+  --palette-yellow-yellowDark1: rgb(175, 96, 2);
+  --palette-pink-pinkLight3: rgb(255, 241, 255);
+  --cell-background-found-selected: #f1ebd3;
+  --cell-background-fillCandidate: #f0f0f0;
+  --palette-green-green: rgb(4, 138, 14);
+  --motion-linear-default: cubic-bezier(0, 0, 1, 1) 1000ms;
+  --motion-accelerate-medium: cubic-bezier(0.4, 0, 1, 1) 300ms;
+  --palette-teal-tealLight2: rgb(193, 245, 240);
+  --palette-gray-gray900: rgb(17, 18, 21);
+  --palette-teal-tealLight1: rgb(116, 235, 225);
+  --elevation-medium: 0px 0px 1px 0px rgba(0, 0, 0, 0.24), 0px 0px 2px 0px rgba(0, 0, 0, 0.08),
+        0px 2px 4px 0px rgba(0, 0, 0, 0.08);
+  --palette-pink-pinkLight2: rgb(250, 210, 252);
+  --palette-cyan-cyanDusty: rgb(16, 125, 163);
+  --cell-background-row-number-hover: hsl(200, 18%, 95%);
+  --palette-cyan-cyanLight3: rgb(227, 250, 253);
+  --motion-linear-slow: cubic-bezier(0, 0, 1, 1) 5000ms;
+  --palette-neutral-white: rgb(255, 255, 255);
+  --palette-teal-tealDusty: rgb(13, 127, 120);
+  --cell-background-base: rgb(255, 255, 255);
+  --palette-neutral-black: rgb(29, 31, 37);
+  --palette-gray-gray400: rgb(145, 149, 156);
+  --palette-red-redDark1: rgb(177, 15, 65);
+  --palette-gray-gray800: rgb(29, 31, 37);
+  --palette-opacity-lighten3-tinted: rgba(221, 230, 252, 0.26);
+  --palette-red-redLight3: rgb(255, 242, 250);
+  --palette-yellow-yellowDusty: rgb(162, 104, 17);
+  --cell-background-fillCandidate-found: #f0e4c6;
+  --palette-opacity-darken4: rgba(0, 0, 0, 0.5);
+  --palette-opacity-lighten3: rgba(255, 255, 255, 0.25);
+  --elevation-medium-hover: 0px 0px 1px 0px rgba(0, 0, 0, 0.48),
+        0px 0px 2px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.12),
+        0px 2px 8px 0px rgba(0, 0, 0, 0.08);
+  --palette-yellow-yellowLight2: rgb(255, 234, 182);
+  --palette-blue-blueDark1: rgb(13, 82, 172);
+  --motion-accelerate-default: cubic-bezier(0.4, 0, 1, 1) 200ms;
+  --motion-standard-medium: cubic-bezier(0.2, 0.1, 0.2, 1) 500ms;
+  --palette-pink-pinkLight1: rgb(247, 151, 239);
+  --palette-opacity-darken1: rgba(0, 0, 0, 0.05);
+  --palette-green-greenDark1: rgb(0, 100, 0);
+  --palette-orange-orangeLight3: rgb(255, 236, 227);
+  --palette-blue-blueLight2: rgb(209, 226, 255);
+  --motion-linear-medium: cubic-bezier(0, 0, 1, 1) 2000ms;
+  --motion-decelerate-medium: cubic-bezier(0, 0, 0, 1) 400ms;
+  --palette-purple-purpleDark1: rgb(98, 49, 174);
+  --elevation-high: 0px 0px 1px rgba(0, 0, 0, 0.24), 0px 0px 2px rgba(0, 0, 0, 0.16),
+        0px 3px 4px rgba(0, 0, 0, 0.06), 0px 6px 8px rgba(0, 0, 0, 0.06),
+        0px 12px 16px rgba(0, 0, 0, 0.08), 0px 18px 32px rgba(0, 0, 0, 0.06);
+  /* — semantic — */
+  success: [object Object];
+  warning: [object Object];
+  error: [object Object];
+  info: [object Object];
+
+}

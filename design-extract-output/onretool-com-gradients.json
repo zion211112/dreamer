@@ -1,0 +1,28 @@
+{
+  "$schema": "https://designlang.app/schemas/gradients.json",
+  "source": "https://onretool.com/app-gallery/logistics-dispatch-monitor",
+  "generated": "2026-11-19T16:32:56.479Z",
+  "count": 1,
+  "gradients": [
+    {
+      "raw": "linear-gradient(90deg, rgb(121, 51, 37) 0%, rgb(45, 76, 113) 20%, rgb(61, 22, 61) 100%)",
+      "type": "linear",
+      "direction": "90deg",
+      "stops": [
+        {
+          "color": "rgb(121, 51, 37)",
+          "position": "0%"
+        },
+        {
+          "color": "rgb(45, 76, 113)",
+          "position": "20%"
+        },
+        {
+          "color": "rgb(61, 22, 61)",
+          "position": "100%"
+        }
+      ],
+      "classification": "bold"
+    }
+  ]
+}

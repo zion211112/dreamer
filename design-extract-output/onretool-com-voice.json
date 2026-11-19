@@ -1,0 +1,90 @@
+{
+  "tone": "neutral",
+  "pronoun": "you-only",
+  "headingStyle": "Sentence case",
+  "headingLengthClass": "tight",
+  "ctaVerbs": [
+    {
+      "value": "back",
+      "count": 1
+    },
+    {
+      "value": "solution",
+      "count": 1
+    },
+    {
+      "value": "audience",
+      "count": 1
+    },
+    {
+      "value": "resources",
+      "count": 1
+    },
+    {
+      "value": "ask",
+      "count": 1
+    },
+    {
+      "value": "click",
+      "count": 1
+    },
+    {
+      "value": "finops",
+      "count": 1
+    },
+    {
+      "value": "security",
+      "count": 1
+    }
+  ],
+  "buttonPatterns": [
+    {
+      "value": "back",
+      "count": 1
+    },
+    {
+      "value": "solution",
+      "count": 1
+    },
+    {
+      "value": "audience",
+      "count": 1
+    },
+    {
+      "value": "resources",
+      "count": 1
+    },
+    {
+      "value": "ask ai\n⌘k",
+      "count": 1
+    },
+    {
+      "value": "click to interact",
+      "count": 1
+    },
+    {
+      "value": "finops application",
+      "count": 1
+    },
+    {
+      "value": "security operations console",
+      "count": 1
+    }
+  ],
+  "sampleHeadings": [
+    "Logistics dispatch monitor",
+    "App details",
+    "Popular integrations",
+    "Libraries",
+    "Start from this app in your terminal",
+    "Logistics dispatch monitor",
+    "App details",
+    "Popular integrations",
+    "Libraries",
+    "Start from this app in your terminal"
+  ],
+  "stats": {
+    "buttons": 8,
+    "headings": 14
+  }
+}

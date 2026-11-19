@@ -1,0 +1,178 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "color": {
+      "palette": [
+        {
+          "slug": "primary",
+          "color": "#e9ebdf",
+          "name": "Primary"
+        },
+        {
+          "slug": "neutral-1",
+          "color": "#ffffff",
+          "name": "Neutral 1"
+        },
+        {
+          "slug": "neutral-2",
+          "color": "#cbccc4",
+          "name": "Neutral 2"
+        },
+        {
+          "slug": "neutral-3",
+          "color": "#151515",
+          "name": "Neutral 3"
+        },
+        {
+          "slug": "neutral-4",
+          "color": "#433e38",
+          "name": "Neutral 4"
+        },
+        {
+          "slug": "neutral-5",
+          "color": "#242424",
+          "name": "Neutral 5"
+        },
+        {
+          "slug": "bg-151515",
+          "color": "#151515",
+          "name": "Background #151515"
+        },
+        {
+          "slug": "bg-0e0e0e",
+          "color": "#0e0e0e",
+          "name": "Background #0e0e0e"
+        },
+        {
+          "slug": "bg-433e38",
+          "color": "#433e38",
+          "name": "Background #433e38"
+        }
+      ],
+      "gradients": [
+        {
+          "slug": "gradient-1",
+          "gradient": "linear-gradient(90deg, rgb(121, 51, 37) 0%, rgb(45, 76, 113) 20%, rgb(61, 22, 61) 100%)",
+          "name": "Gradient 1"
+        }
+      ]
+    },
+    "typography": {
+      "fontFamilies": [
+        {
+          "fontFamily": "saansFont",
+          "slug": "saansfont",
+          "name": "saansFont"
+        },
+        {
+          "fontFamily": "pxGroteskFont",
+          "slug": "pxgroteskfont",
+          "name": "pxGroteskFont"
+        }
+      ],
+      "fontSizes": [
+        {
+          "size": "44.9231px",
+          "slug": "size-44.9231",
+          "name": "44.9231px"
+        },
+        {
+          "size": "32.9231px",
+          "slug": "size-32.9231",
+          "name": "32.9231px"
+        },
+        {
+          "size": "28.9231px",
+          "slug": "size-28.9231",
+          "name": "28.9231px"
+        },
+        {
+          "size": "22.4615px",
+          "slug": "size-22.4615",
+          "name": "22.4615px"
+        },
+        {
+          "size": "18px",
+          "slug": "size-18",
+          "name": "18px"
+        },
+        {
+          "size": "16px",
+          "slug": "size-16",
+          "name": "16px"
+        },
+        {
+          "size": "14px",
+          "slug": "size-14",
+          "name": "14px"
+        },
+        {
+          "size": "13.2308px",
+          "slug": "size-13.2308",
+          "name": "13.2308px"
+        }
+      ]
+    },
+    "spacing": {
+      "spacingSizes": [
+        {
+          "size": "4px",
+          "slug": "spacing-4",
+          "name": "4px"
+        },
+        {
+          "size": "8px",
+          "slug": "spacing-8",
+          "name": "8px"
+        },
+        {
+          "size": "12px",
+          "slug": "spacing-12",
+          "name": "12px"
+        },
+        {
+          "size": "16px",
+          "slug": "spacing-16",
+          "name": "16px"
+        },
+        {
+          "size": "20px",
+          "slug": "spacing-20",
+          "name": "20px"
+        },
+        {
+          "size": "24px",
+          "slug": "spacing-24",
+          "name": "24px"
+        },
+        {
+          "size": "32px",
+          "slug": "spacing-32",
+          "name": "32px"
+        },
+        {
+          "size": "36px",
+          "slug": "spacing-36",
+          "name": "36px"
+        }
+      ]
+    },
+    "layout": {
+      "contentSize": "2240px",
+      "wideSize": "1400px"
+    }
+  },
+  "styles": {
+    "color": {
+      "background": "#151515",
+      "text": "#e9ebdf"
+    },
+    "typography": {
+      "fontSize": "13.2308px",
+      "lineHeight": "13.2308px",
+      "fontFamily": "saansFont"
+    },
+    "spacing": {}
+  }
+}

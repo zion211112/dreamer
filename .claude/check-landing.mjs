@@ -1,0 +1,17 @@
+import { chromium } from "playwright";
+const b = await chromium.launch();
+const p = await b.newPage();
+await p.setViewportSize({ width: 1440, height: 900 });
+await p.goto("http://localhost:5199/landing", { waitUntil: "networkidle", timeout: 40000 });
+await p.waitForTimeout(700);
+const html = await p.content();
+const hasHero = html.includes("hero-title");
+const hasLanding = html.includes("class=\"landing\"");
+const hasHeroImg = html.includes("landing-desktop-final");
+console.log("hero-title in DOM:", hasHero);
+console.log('.landing div in DOM:', hasLanding);
+console.log("hero image in DOM:", hasHeroImg);
+const bodyText = (await p.evaluate(() => document.body.innerText)).slice(0, 200);
+console.log("body innerText head:", JSON.stringify(bodyText));
+await p.screenshot({ path: ".claude/landing-shot.png", fullPage: false });
+await b.close();

@@ -1,0 +1,743 @@
+{
+  "colors": {
+    "all": [
+      {
+        "hex": "#ccc8c3",
+        "rgb": {
+          "r": 204,
+          "g": 200,
+          "b": 195,
+          "a": 1
+        },
+        "hsl": {
+          "h": 33,
+          "s": 8,
+          "l": 78
+        },
+        "count": 657,
+        "areaShare": 0,
+        "contexts": [
+          "border"
+        ]
+      },
+      {
+        "hex": "#0f0f14",
+        "rgb": {
+          "r": 15,
+          "g": 15,
+          "b": 20,
+          "a": 1
+        },
+        "hsl": {
+          "h": 240,
+          "s": 14,
+          "l": 7
+        },
+        "count": 489,
+        "areaShare": 0.031,
+        "contexts": [
+          "text",
+          "border",
+          "background"
+        ]
+      },
+      {
+        "hex": "#62626e",
+        "rgb": {
+          "r": 98,
+          "g": 98,
+          "b": 110,
+          "a": 1
+        },
+        "hsl": {
+          "h": 240,
+          "s": 6,
+          "l": 41
+        },
+        "count": 188,
+        "areaShare": 0.034,
+        "contexts": [
+          "text",
+          "background"
+        ]
+      },
+      {
+        "hex": "#000000",
+        "rgb": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 0
+        },
+        "count": 71,
+        "areaShare": 0.074,
+        "contexts": [
+          "text",
+          "background"
+        ]
+      },
+      {
+        "hex": "#020817",
+        "rgb": {
+          "r": 2,
+          "g": 8,
+          "b": 23,
+          "a": 1
+        },
+        "hsl": {
+          "h": 223,
+          "s": 84,
+          "l": 5
+        },
+        "count": 67,
+        "areaShare": 0.014,
+        "contexts": [
+          "text",
+          "border",
+          "background"
+        ]
+      },
+      {
+        "hex": "#f6f1ea",
+        "rgb": {
+          "r": 246,
+          "g": 241,
+          "b": 234,
+          "a": 1
+        },
+        "hsl": {
+          "h": 35,
+          "s": 40,
+          "l": 94
+        },
+        "count": 14,
+        "areaShare": 0.426,
+        "contexts": [
+          "text",
+          "background"
+        ]
+      },
+      {
+        "hex": "#009494",
+        "rgb": {
+          "r": 0,
+          "g": 148,
+          "b": 148,
+          "a": 0.42
+        },
+        "hsl": {
+          "h": 180,
+          "s": 100,
+          "l": 29
+        },
+        "count": 6,
+        "areaShare": 0,
+        "contexts": [
+          "border"
+        ]
+      },
+      {
+        "hex": "#bb7400",
+        "rgb": {
+          "r": 187,
+          "g": 116,
+          "b": 0,
+          "a": 0.42
+        },
+        "hsl": {
+          "h": 37,
+          "s": 100,
+          "l": 37
+        },
+        "count": 5,
+        "areaShare": 0,
+        "contexts": [
+          "border"
+        ]
+      },
+      {
+        "hex": "#ffffff",
+        "rgb": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 100
+        },
+        "count": 5,
+        "areaShare": 0.069,
+        "contexts": [
+          "text",
+          "background"
+        ]
+      },
+      {
+        "hex": "#e7f0ee",
+        "rgb": {
+          "r": 231,
+          "g": 240,
+          "b": 238,
+          "a": 1
+        },
+        "hsl": {
+          "h": 167,
+          "s": 23,
+          "l": 92
+        },
+        "count": 5,
+        "areaShare": 0.126,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#e05667",
+        "rgb": {
+          "r": 224,
+          "g": 86,
+          "b": 103,
+          "a": 0.42
+        },
+        "hsl": {
+          "h": 353,
+          "s": 69,
+          "l": 61
+        },
+        "count": 5,
+        "areaShare": 0,
+        "contexts": [
+          "border",
+          "background"
+        ]
+      },
+      {
+        "hex": "#6b62bf",
+        "rgb": {
+          "r": 107,
+          "g": 98,
+          "b": 191,
+          "a": 0.42
+        },
+        "hsl": {
+          "h": 246,
+          "s": 42,
+          "l": 57
+        },
+        "count": 4,
+        "areaShare": 0,
+        "contexts": [
+          "border"
+        ]
+      },
+      {
+        "hex": "#348f4f",
+        "rgb": {
+          "r": 52,
+          "g": 143,
+          "b": 79,
+          "a": 0.42
+        },
+        "hsl": {
+          "h": 138,
+          "s": 47,
+          "l": 38
+        },
+        "count": 3,
+        "areaShare": 0,
+        "contexts": [
+          "border"
+        ]
+      },
+      {
+        "hex": "#ff986b",
+        "rgb": {
+          "r": 255,
+          "g": 152,
+          "b": 107,
+          "a": 0.42
+        },
+        "hsl": {
+          "h": 18,
+          "s": 100,
+          "l": 71
+        },
+        "count": 2,
+        "areaShare": 0,
+        "contexts": [
+          "border"
+        ]
+      },
+      {
+        "hex": "#0070f3",
+        "rgb": {
+          "r": 0,
+          "g": 112,
+          "b": 243,
+          "a": 1
+        },
+        "hsl": {
+          "h": 212,
+          "s": 100,
+          "l": 48
+        },
+        "count": 2,
+        "areaShare": 0.074,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#82182e",
+        "rgb": {
+          "r": 130,
+          "g": 24,
+          "b": 46,
+          "a": 1
+        },
+        "hsl": {
+          "h": 348,
+          "s": 69,
+          "l": 30
+        },
+        "count": 1,
+        "areaShare": 0.008,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#333333",
+        "rgb": {
+          "r": 51,
+          "g": 51,
+          "b": 51,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 20
+        },
+        "count": 1,
+        "areaShare": 0.04,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#ee0000",
+        "rgb": {
+          "r": 238,
+          "g": 0,
+          "b": 0,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 100,
+          "l": 47
+        },
+        "count": 1,
+        "areaShare": 0.034,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#f5a623",
+        "rgb": {
+          "r": 245,
+          "g": 166,
+          "b": 35,
+          "a": 1
+        },
+        "hsl": {
+          "h": 37,
+          "s": 91,
+          "l": 55
+        },
+        "count": 1,
+        "areaShare": 0.034,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#7928ca",
+        "rgb": {
+          "r": 121,
+          "g": 40,
+          "b": 202,
+          "a": 1
+        },
+        "hsl": {
+          "h": 270,
+          "s": 67,
+          "l": 47
+        },
+        "count": 1,
+        "areaShare": 0.034,
+        "contexts": [
+          "background"
+        ]
+      },
+      {
+        "hex": "#737373",
+        "rgb": {
+          "r": 115,
+          "g": 115,
+          "b": 115,
+          "a": 1
+        },
+        "hsl": {
+          "h": 0,
+          "s": 0,
+          "l": 45
+        },
+        "count": 1,
+        "areaShare": 0,
+        "contexts": [
+          "text"
+        ]
+      }
+    ]
+  },
+  "regions": [
+    {
+      "role": "nav",
+      "tag": "header",
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "w": 1280,
+        "h": 80
+      },
+      "heading": null,
+      "buttonCount": 5,
+      "cardCount": 11,
+      "className": "sticky top-0 z-50 w-full transition-all duration-200 bg-background"
+    },
+    {
+      "role": "nav",
+      "tag": "nav",
+      "bounds": {
+        "x": 430.890625,
+        "y": 26,
+        "w": 418.203125,
+        "h": 28
+      },
+      "heading": null,
+      "buttonCount": 0,
+      "cardCount": 0,
+      "className": "hidden md:flex items-center gap-10"
+    },
+    {
+      "role": "hero",
+      "tag": "section",
+      "bounds": {
+        "x": 0,
+        "y": 80,
+        "w": 1280,
+        "h": 536.640625
+      },
+      "heading": "Vercel Geist Design System",
+      "buttonCount": 0,
+      "cardCount": 4,
+      "className": "swiss-hero  container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+    },
+    {
+      "role": "content",
+      "tag": "section",
+      "bounds": {
+        "x": 0,
+        "y": 616.640625,
+        "w": 1280,
+        "h": 352.140625
+      },
+      "heading": null,
+      "buttonCount": 0,
+      "cardCount": 3,
+      "className": null
+    },
+    {
+      "role": "content",
+      "tag": "section",
+      "bounds": {
+        "x": 48,
+        "y": 680.640625,
+        "w": 1184,
+        "h": 224.140625
+      },
+      "heading": null,
+      "buttonCount": 0,
+      "cardCount": 3,
+      "className": "space-y-5"
+    },
+    {
+      "role": "content",
+      "tag": "section",
+      "bounds": {
+        "x": 0,
+        "y": 968.78125,
+        "w": 1280,
+        "h": 318
+      },
+      "heading": "origin",
+      "buttonCount": 0,
+      "cardCount": 0,
+      "className": "scroll-mt-24"
+    },
+    {
+      "role": "features",
+      "tag": "section",
+      "bounds": {
+        "x": 0,
+        "y": 1286.78125,
+        "w": 1280,
+        "h": 654.984375
+      },
+      "heading": "what it’s known for, what’s underrated, what to watch out for.",
+      "buttonCount": 0,
+      "cardCount": 11,
+      "className": "scroll-mt-24"
+    },
+    {
+      "role": "content",
+      "tag": "section",
+      "bounds": {
+        "x": 0,
+        "y": 1941.765625,
+        "w": 1280,
+        "h": 651.796875
+      },
+      "heading": "token snapshot",
+      "buttonCount": 0,
+      "cardCount": 7,
+      "className": "scroll-mt-24"
+    },
+    {
+      "role": "content",
+      "tag": "section",
+      "bounds": {
+        "x": 0,
+        "y": 2593.5625,
+        "w": 1280,
+        "h": 1772.5625
+      },
+      "heading": "token structure",
+      "buttonCount": 0,
+      "cardCount": 39,
+      "className": "scroll-mt-24"
+    },
+    {
+      "role": "testimonials",
+      "tag": "section",
+      "bounds": {
+        "x": 0,
+        "y": 4366.125,
+        "w": 1280,
+        "h": 856.796875
+      },
+      "heading": "the file, before you download it",
+      "buttonCount": 4,
+      "cardCount": 6,
+      "className": "scroll-mt-24"
+    },
+    {
+      "role": "content",
+      "tag": "section",
+      "bounds": {
+        "x": 0,
+        "y": 5222.921875,
+        "w": 1280,
+        "h": 415.796875
+      },
+      "heading": "components worth studying",
+      "buttonCount": 0,
+      "cardCount": 7,
+      "className": "scroll-mt-24"
+    },
+    {
+      "role": "content",
+      "tag": "section",
+      "bounds": {
+        "x": 0,
+        "y": 5638.71875,
+        "w": 1280,
+        "h": 489.171875
+      },
+      "heading": null,
+      "buttonCount": 0,
+      "cardCount": 7,
+      "className": null
+    },
+    {
+      "role": "content",
+      "tag": "section",
+      "bounds": {
+        "x": 0,
+        "y": 6127.890625,
+        "w": 1280,
+        "h": 598.28125
+      },
+      "heading": "more design systems.",
+      "buttonCount": 0,
+      "cardCount": 13,
+      "className": null
+    },
+    {
+      "role": "footer",
+      "tag": "footer",
+      "bounds": {
+        "x": 0,
+        "y": 6726.171875,
+        "w": 1280,
+        "h": 802.78125
+      },
+      "heading": null,
+      "buttonCount": 0,
+      "cardCount": 47,
+      "className": null
+    },
+    {
+      "role": "nav",
+      "tag": "nav",
+      "bounds": {
+        "x": 485.328125,
+        "y": 6782.171875,
+        "w": 746.671875,
+        "h": 590.78125
+      },
+      "heading": null,
+      "buttonCount": 0,
+      "cardCount": 44,
+      "className": "grid grid-cols-2 gap-x-8 gap-y-10 text-sm lg:grid-cols-3"
+    }
+  ],
+  "componentClusters": [
+    {
+      "kind": "button",
+      "structuralHash": "button>svg",
+      "instanceCount": 3,
+      "variants": [
+        {
+          "css": {
+            "background": "lab(98.833 0.667602 1.32728)",
+            "color": "rgb(98, 98, 110)",
+            "padding": "0px 0px 0px 0px",
+            "borderRadius": "3.35544e+07px",
+            "border": "1px solid oklab(0.833802 0.0025683 0.00721433)",
+            "fontSize": "16px",
+            "fontWeight": "400"
+          },
+          "instanceCount": 3
+        }
+      ]
+    },
+    {
+      "kind": "button",
+      "structuralHash": "button>svg>svg>span",
+      "instanceCount": 1,
+      "variants": [
+        {
+          "css": {
+            "background": "rgba(0, 0, 0, 0)",
+            "color": "rgb(15, 15, 20)",
+            "padding": "0px 0px 0px 0px",
+            "borderRadius": "3.35544e+07px",
+            "border": "0px solid oklab(0.833802 0.0025683 0.00721433)",
+            "fontSize": "14px",
+            "fontWeight": "500"
+          },
+          "instanceCount": 1
+        }
+      ]
+    },
+    {
+      "kind": "button",
+      "structuralHash": "button",
+      "instanceCount": 4,
+      "variants": [
+        {
+          "css": {
+            "background": "rgb(15, 15, 20)",
+            "color": "lab(98.833 0.667602 1.32728)",
+            "padding": "4px 12px 4px 12px",
+            "borderRadius": "3.35544e+07px",
+            "border": "0px solid oklab(0.833802 0.0025683 0.00721433)",
+            "fontSize": "12px",
+            "fontWeight": "500"
+          },
+          "instanceCount": 4
+        }
+      ]
+    }
+  ],
+  "accessibility": {
+    "remediation": []
+  },
+  "cssHealth": {
+    "sheets": [
+      {
+        "url": "https://www.designsystems.one/_next/static/chunks/3-q164tkmpril.css",
+        "totalBytes": 223180,
+        "usedBytes": 205127,
+        "unusedBytes": 18053,
+        "unusedPercent": 8
+      },
+      {
+        "url": "https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&display=swap",
+        "totalBytes": 3541,
+        "usedBytes": 0,
+        "unusedBytes": 3541,
+        "unusedPercent": 100
+      },
+      {
+        "url": "https://www.designsystems.one/_next/static/chunks/07x5gu-3mo786.css",
+        "totalBytes": 63043,
+        "usedBytes": 397,
+        "unusedBytes": 62646,
+        "unusedPercent": 99
+      }
+    ],
+    "totalBytes": 289764,
+    "usedBytes": 205524,
+    "unusedBytes": 84240,
+    "unusedPercent": 29,
+    "importantCount": 7,
+    "duplicates": 2697,
+    "vendorPrefixes": {
+      "webkit": 97,
+      "moz": 7,
+      "ms": 0,
+      "o": 0
+    },
+    "keyframes": [],
+    "specificity": {
+      "max": [
+        2,
+        11,
+        4
+      ],
+      "average": [
+        0,
+        1.42,
+        0.18
+      ],
+      "count": 3134
+    },
+    "issues": [
+      "7 !important rules",
+      "2697 duplicate declarations"
+    ]
+  }
+}

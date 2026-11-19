@@ -1,0 +1,172 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "color": {
+      "palette": [
+        {
+          "slug": "primary",
+          "color": "#2b5945",
+          "name": "Primary"
+        },
+        {
+          "slug": "secondary",
+          "color": "#3860be",
+          "name": "Secondary"
+        },
+        {
+          "slug": "neutral-1",
+          "color": "#1e2124",
+          "name": "Neutral 1"
+        },
+        {
+          "slug": "neutral-2",
+          "color": "#636363",
+          "name": "Neutral 2"
+        },
+        {
+          "slug": "neutral-3",
+          "color": "#767676",
+          "name": "Neutral 3"
+        },
+        {
+          "slug": "neutral-4",
+          "color": "#ffffff",
+          "name": "Neutral 4"
+        },
+        {
+          "slug": "neutral-5",
+          "color": "#555555",
+          "name": "Neutral 5"
+        },
+        {
+          "slug": "bg-ffffff",
+          "color": "#ffffff",
+          "name": "Background #ffffff"
+        },
+        {
+          "slug": "bg-2b5945",
+          "color": "#2b5945",
+          "name": "Background #2b5945"
+        },
+        {
+          "slug": "bg-ccaa11",
+          "color": "#ccaa11",
+          "name": "Background #ccaa11"
+        }
+      ],
+      "gradients": []
+    },
+    "typography": {
+      "fontFamilies": [
+        {
+          "fontFamily": "Alliance No.1",
+          "slug": "alliance-no.1",
+          "name": "Alliance No.1"
+        },
+        {
+          "fontFamily": "Alliance No.2",
+          "slug": "alliance-no.2",
+          "name": "Alliance No.2"
+        }
+      ],
+      "fontSizes": [
+        {
+          "size": "40px",
+          "slug": "size-40",
+          "name": "40px"
+        },
+        {
+          "size": "28px",
+          "slug": "size-28",
+          "name": "28px"
+        },
+        {
+          "size": "27px",
+          "slug": "size-27",
+          "name": "27px"
+        },
+        {
+          "size": "24.66px",
+          "slug": "size-24.66",
+          "name": "24.66px"
+        },
+        {
+          "size": "24px",
+          "slug": "size-24",
+          "name": "24px"
+        },
+        {
+          "size": "20px",
+          "slug": "size-20",
+          "name": "20px"
+        },
+        {
+          "size": "18px",
+          "slug": "size-18",
+          "name": "18px"
+        },
+        {
+          "size": "16.2px",
+          "slug": "size-16.2",
+          "name": "16.2px"
+        }
+      ]
+    },
+    "spacing": {
+      "spacingSizes": [
+        {
+          "size": "5px",
+          "slug": "spacing-5",
+          "name": "5px"
+        },
+        {
+          "size": "10px",
+          "slug": "spacing-10",
+          "name": "10px"
+        },
+        {
+          "size": "15px",
+          "slug": "spacing-15",
+          "name": "15px"
+        },
+        {
+          "size": "20px",
+          "slug": "spacing-20",
+          "name": "20px"
+        },
+        {
+          "size": "25px",
+          "slug": "spacing-25",
+          "name": "25px"
+        },
+        {
+          "size": "30px",
+          "slug": "spacing-30",
+          "name": "30px"
+        },
+        {
+          "size": "40px",
+          "slug": "spacing-40",
+          "name": "40px"
+        }
+      ]
+    },
+    "layout": {
+      "contentSize": "1440px",
+      "wideSize": "1400px"
+    }
+  },
+  "styles": {
+    "color": {
+      "background": "#ffffff",
+      "text": "#636363"
+    },
+    "typography": {
+      "fontSize": "16px",
+      "lineHeight": "14px",
+      "fontFamily": "Alliance No.1"
+    },
+    "spacing": {}
+  }
+}

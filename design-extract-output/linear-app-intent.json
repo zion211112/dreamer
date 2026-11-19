@@ -1,0 +1,46 @@
+{
+  "pageIntent": {
+    "type": "about",
+    "confidence": 0.85,
+    "path": "/demo/team/ENG/active",
+    "title": "Linear",
+    "description": "",
+    "signals": [
+      {
+        "kind": "url",
+        "type": "about",
+        "weight": 0.85
+      }
+    ],
+    "alternates": [],
+    "needsSmart": false
+  },
+  "sectionRoles": {
+    "sections": [
+      {
+        "index": 0,
+        "tag": "section",
+        "role": "content",
+        "subrole": null,
+        "confidence": 0.3,
+        "heading": null,
+        "bounds": {
+          "x": 0,
+          "y": 800,
+          "w": 1280,
+          "h": 0
+        },
+        "buttonCount": 0,
+        "cardCount": 0,
+        "slots": {},
+        "needsSmart": true
+      }
+    ],
+    "counts": {
+      "content": 1
+    },
+    "readingOrder": [
+      "content"
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+@layer base {
+  :root {
+    /* Brand */
+    --brand-1: #82182e;
+    --brand-2: #0070f3;
+    --brand-3: #ee0000;
+
+    /* Neutrals */
+    --gray-0: #ccc8c3;
+    --gray-1: #62626e;
+    --gray-2: #000000;
+    --gray-3: #ffffff;
+    --gray-4: #e7f0ee;
+    --gray-5: #333333;
+    --gray-6: #737373;
+
+    /* Typography */
+    --font-sans: Figtree, system-ui, sans-serif;
+
+    /* Spacing */
+    --size-1: 4px;
+    --size-2: 8px;
+    --size-3: 12px;
+    --size-4: 16px;
+    --size-5: 20px;
+    --size-6: 24px;
+    --size-7: 28px;
+    --size-8: 32px;
+    --size-9: 40px;
+    --size-10: 48px;
+    --size-11: 56px;
+    --size-12: 64px;
+
+    /* Radius */
+    --radius-1: 6px;
+    --radius-2: 12px;
+    --radius-3: 16px;
+    --radius-4: 20px;
+    --radius-5: 24px;
+    --radius-6: 999px;
+
+    /* Shadows */
+    --shadow-1: rgba(0, 0, 0, 0.1) 0px 2px 4px 0px;
+    --shadow-2: rgba(0, 0, 0, 0.12) 0px 8px 30px 0px;
+    --shadow-3: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.1) 0px 8px 10px -6px;
+  }
+}

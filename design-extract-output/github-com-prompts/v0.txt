@@ -1,0 +1,26 @@
+Build a unknown page with this exact visual language.
+COLORS:
+  #1f2328
+  #59636e
+  #ffffff
+  #54aeff
+  #a4aea6
+  #d1d9e0
+  #0969da
+  #818b98
+  #cf222e
+  #000000
+  #23ea57
+  #9a6700
+  #1a7f37
+  #953800
+FONTS: [object Object], [object Object], [object Object]
+SPACING: 4, 8, 12, 16, 20, 24, 32, 40
+RADIUS: 3, 6, 20, 24, 50
+SHADOWS: rgba(31, 35, 40, 0.15) 0px 0px 0px 1px | rgb(25, 31, 27) 0px -1px 0px 0px inset | rgb(209, 217, 224) 0px -1px 0px 0px inset
+MATERIAL LANGUAGE: flat
+VOICE: Tone: technical · Headings: Sentence case · CTA verbs: [object Object], [object Object], [object Object], [object Object], [object Object], [object Object]
+SECTIONS (in order):
+- cta — heading: "Navigation Menu"
+- footer — heading: "Footer"
+Use Tailwind. Match these tokens exactly. Keep the material language consistent.y. Keep the material language consistent.

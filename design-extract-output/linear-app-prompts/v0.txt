@@ -1,0 +1,19 @@
+Build a about page with this exact visual language.
+COLORS:
+  #000000
+  #b0b5c0
+  #efeff0
+  #f9f9fa
+  #e2e2e2
+FONTS: [object Object]
+SPACING: (not detected)
+RADIUS: 12
+SHADOWS: (none)
+MATERIAL LANGUAGE: flat
+VOICE: Tone: neutral · Headings: unknown
+SECTIONS (in order):
+- hero
+- features
+- cta
+- footer
+Use Tailwind. Match these tokens exactly. Keep the material language consistent.

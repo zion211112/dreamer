@@ -1,0 +1,16 @@
+@layer base {
+  :root {
+    /* Neutrals */
+    --gray-0: #000000;
+    --gray-1: #b0b5c0;
+    --gray-2: #efeff0;
+    --gray-3: #f9f9fa;
+    --gray-4: #e2e2e2;
+
+    /* Typography */
+    --font-sans: 'Inter Variable', system-ui, sans-serif;
+
+    /* Radius */
+    --radius-1: 12px;
+  }
+}

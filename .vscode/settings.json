@@ -1,3 +1,7 @@
 {
-    "workbench.colorTheme": "Dark 2026"
+    "workbench.colorTheme": "Dark 2026",
+    "workbench.editorAssociations": {
+        "*.html": "workbench.editor.browser"
+    },
+    "python.terminal.useEnvFile": true
 }

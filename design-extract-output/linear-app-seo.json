@@ -1,0 +1,39 @@
+{
+  "openGraph": {},
+  "twitter": {},
+  "description": null,
+  "canonical": null,
+  "themeColor": "#EFEFF0",
+  "viewport": "width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,shrink-to-fit=no,viewport-fit=cover",
+  "favicons": [
+    {
+      "rel": "icon",
+      "href": "https://static.linear.app/client/assets/favicon-Dri1lbbK.ico",
+      "sizes": "any",
+      "type": ""
+    },
+    {
+      "rel": "icon",
+      "href": "https://static.linear.app/client/assets/favicon-D8hcELd9.svg",
+      "sizes": "",
+      "type": "image/svg+xml"
+    },
+    {
+      "rel": "apple-touch-icon",
+      "href": "https://static.linear.app/client/assets/apple-touch-icon-Ca-Mp0P3.png",
+      "sizes": "180x180",
+      "type": ""
+    }
+  ],
+  "manifest": "https://static.linear.app/client/pwa.webmanifest?v=2bFbP16Trobnnxqe/UA/fqp5khM=",
+  "structuredData": [],
+  "score": {
+    "hasOg": false,
+    "hasTwitter": false,
+    "hasDescription": false,
+    "hasCanonical": false,
+    "hasStructuredData": false,
+    "hasFavicon": true,
+    "hasThemeColor": true
+  }
+}

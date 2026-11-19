@@ -1,0 +1,32 @@
+{
+  "openGraph": {
+    "title": "Geist",
+    "description": "Vercel's design system called Geist. Made for building consistent and delightful web experiences.",
+    "site_name": "Vercel",
+    "locale": "en_US",
+    "image": "https://k2mkucxia43oc7fa.public.blob.vercel-storage.com/front/design/geist-og.jpg",
+    "type": "website"
+  },
+  "twitter": {
+    "card": "summary_large_image",
+    "title": "Geist",
+    "description": "Vercel's design system called Geist. Made for building consistent and delightful web experiences.",
+    "image": "https://k2mkucxia43oc7fa.public.blob.vercel-storage.com/front/design/geist-og.jpg"
+  },
+  "description": "Vercel's design system called Geist. Made for building consistent and delightful web experiences.",
+  "canonical": null,
+  "themeColor": null,
+  "viewport": "width=device-width, initial-scale=1, maximum-scale=1",
+  "favicons": [],
+  "manifest": null,
+  "structuredData": [],
+  "score": {
+    "hasOg": true,
+    "hasTwitter": true,
+    "hasDescription": true,
+    "hasCanonical": false,
+    "hasStructuredData": false,
+    "hasFavicon": false,
+    "hasThemeColor": false
+  }
+}

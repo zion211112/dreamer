@@ -1,0 +1,16 @@
+import { chromium } from "playwright";
+const b = await chromium.launch();
+const p = await b.newPage();
+const errors = [];
+p.on("pageerror", (e) => errors.push(e.message.slice(0, 160)));
+await p.setViewportSize({ width: 1440, height: 900 });
+await p.goto("http://localhost:5199/sign-in", { waitUntil: "networkidle", timeout: 40000 });
+await p.fill('#auth-email', 'demo@aptlabs.example');
+await p.fill('#auth-password', 'demo-password');
+await p.click('button.auth-submit');
+await p.waitForTimeout(1500);
+console.log("final URL:", p.url());
+console.log("body text head:", JSON.stringify((await p.evaluate(() => document.body.innerText)).slice(0, 200).replace(/\n/g, " | ")));
+console.log("errors:", JSON.stringify(errors));
+await p.screenshot({ path: ".claude/after-signin.png", fullPage: false });
+await b.close();

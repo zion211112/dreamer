@@ -1,0 +1,318 @@
+(() => { const __name = (target) => target; return (function captureSpacingSnapshot(scope) {
+  const maxElements = 1500;
+  const root5 = scope ? document.querySelector(scope) : null;
+  if (scope && !root5) throw new Error(`No element matches the selector ${scope}.`);
+  const candidates3 = root5 ? [root5, ...Array.from(root5.querySelectorAll("*"))] : Array.from(document.querySelectorAll("body *"));
+  const hiddenByAncestor = /* @__PURE__ */ __name((element) => {
+    const visible2 = element.checkVisibility?.({
+      opacityProperty: true,
+      visibilityProperty: true,
+      contentVisibilityAuto: true
+    });
+    if (visible2 !== void 0) return !visible2;
+    for (let node4 = element; node4; node4 = node4.parentElement) {
+      if (Number(getComputedStyle(node4).opacity) === 0) return true;
+    }
+    return false;
+  }, "hiddenByAncestor");
+  const visible = candidates3.filter((element) => {
+    const style = getComputedStyle(element);
+    if (style.display === "none" || style.visibility === "hidden" || Number(style.opacity) === 0) return false;
+    if (hiddenByAncestor(element)) return false;
+    if (element.parentElement?.closest("[inert]")) return false;
+    const rect = element.getBoundingClientRect();
+    return rect.width > 0 || rect.height > 0;
+  }).slice(0, maxElements);
+  const ids = /* @__PURE__ */ new Map();
+  const selectorFor = /* @__PURE__ */ __name((element, index3) => {
+    const explicit = element.getAttribute("data-bd-inspect-id");
+    if (explicit) return explicit;
+    if (element.id) return `#${element.id}`;
+    return `${element.tagName.toLowerCase()}@${index3 + 1}`;
+  }, "selectorFor");
+  visible.forEach((element, index3) => ids.set(element, selectorFor(element, index3)));
+  const number4 = /* @__PURE__ */ __name((value) => {
+    const parsed = Number.parseFloat(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }, "number");
+  const round6 = /* @__PURE__ */ __name((value) => Math.round(value * 10) / 10, "round");
+  const roundRect = /* @__PURE__ */ __name((box) => ({
+    x: round6(box.x),
+    y: round6(box.y),
+    width: round6(box.width),
+    height: round6(box.height)
+  }), "roundRect");
+  const edges = /* @__PURE__ */ __name((style, prefix) => ({
+    top: round6(number4(style[`${prefix}Top`])),
+    right: round6(number4(style[`${prefix}Right`])),
+    bottom: round6(number4(style[`${prefix}Bottom`])),
+    left: round6(number4(style[`${prefix}Left`]))
+  }), "edges");
+  const autoMargins = /* @__PURE__ */ __name((element) => {
+    if (!("computedStyleMap" in element)) return void 0;
+    const map3 = element.computedStyleMap();
+    const sides = ["top", "right", "bottom", "left"].filter((side) => String(map3.get(`margin-${side}`)) === "auto");
+    return sides.length ? sides : void 0;
+  }, "autoMargins");
+  const resolvedLength = /* @__PURE__ */ __name((value, size) => {
+    const trimmed = value.trim();
+    if (!trimmed.startsWith("calc(") || !trimmed.endsWith(")")) {
+      return trimmed.endsWith("%") ? number4(trimmed) * size / 100 : number4(trimmed);
+    }
+    const expression = trimmed.slice(5, -1).trim();
+    const term = /\s*([+-]?)\s*((?:\d+(?:\.\d*)?|\.\d+))(px|%)/gy;
+    let total = 0;
+    let cursor = 0;
+    while (cursor < expression.length) {
+      term.lastIndex = cursor;
+      const match3 = term.exec(expression);
+      if (!match3) return 0;
+      const sign5 = match3[1] === "-" ? -1 : 1;
+      const amount = Number(match3[2]);
+      total += sign5 * (match3[3] === "%" ? amount * size / 100 : amount);
+      cursor = term.lastIndex;
+    }
+    return total;
+  }, "resolvedLength");
+  const radiusComponents = /* @__PURE__ */ __name((value) => {
+    const parts = [];
+    let depth2 = 0;
+    let current3 = "";
+    for (const character of value.trim()) {
+      if (/\s/.test(character) && depth2 === 0) {
+        if (current3) parts.push(current3);
+        current3 = "";
+        continue;
+      }
+      if (character === "(") depth2 += 1;
+      if (character === ")") depth2 -= 1;
+      current3 += character;
+    }
+    if (current3) parts.push(current3);
+    return parts;
+  }, "radiusComponents");
+  const cornerRadius = /* @__PURE__ */ __name((value, rect) => {
+    const [horizontal = "0", vertical = horizontal] = radiusComponents(value);
+    return {
+      horizontal: round6(resolvedLength(horizontal, rect.width)),
+      vertical: round6(resolvedLength(vertical, rect.height))
+    };
+  }, "cornerRadius");
+  const attribute2 = /* @__PURE__ */ __name((element, name18) => element.getAttribute(name18) || void 0, "attribute");
+  const alignmentEdge = /* @__PURE__ */ __name((value) => value === "left" || value === "right" || value === "top" || value === "bottom" || value === "center-x" || value === "center-y" ? value : void 0, "alignmentEdge");
+  const symmetry = /* @__PURE__ */ __name((value) => value === "horizontal" || value === "vertical" || value === "both" ? value : void 0, "symmetry");
+  const compareSize = /* @__PURE__ */ __name((value) => value === "width" || value === "height" || value === "both" ? value : void 0, "compareSize");
+  const interactiveRoles = /* @__PURE__ */ new Set(["button", "checkbox", "combobox", "link", "menuitem", "radio", "slider", "switch", "tab"]);
+  const interactiveTags = /* @__PURE__ */ new Set(["a", "button", "input", "select", "summary", "textarea"]);
+  const lineBoxes = /* @__PURE__ */ __name((element) => {
+    const tops = [];
+    const boxes = [];
+    let sawText = false;
+    const walk2 = /* @__PURE__ */ __name((node4) => {
+      for (const child of Array.from(node4.childNodes)) {
+        if (child.nodeType === 3) {
+          if (!(child.textContent || "").trim()) continue;
+          sawText = true;
+          const range2 = document.createRange();
+          range2.selectNodeContents(child);
+          for (const box of Array.from(range2.getClientRects())) {
+            if (box.width <= 0 || box.height <= 0) continue;
+            boxes.push(box);
+            if (!tops.some((top) => Math.abs(top - box.top) <= 1)) tops.push(box.top);
+          }
+          continue;
+        }
+        if (child.nodeType !== 1) continue;
+        const childElement = child;
+        const childStyle = getComputedStyle(childElement);
+        if (childStyle.position === "absolute" || childStyle.position === "fixed") continue;
+        if (childStyle.display === "none" || childStyle.visibility === "hidden") continue;
+        if (childStyle.display !== "inline" && childStyle.display !== "contents") continue;
+        walk2(childElement);
+      }
+    }, "walk");
+    walk2(element);
+    if (!sawText || !tops.length) return void 0;
+    const firstTop = Math.min(...tops);
+    const firstLine = boxes.filter((box) => Math.abs(box.top - firstTop) <= 1);
+    const first2 = {
+      top: firstTop,
+      height: Math.max(...firstLine.map((box) => box.height)),
+      left: Math.min(...firstLine.map((box) => box.left)),
+      right: Math.max(...firstLine.map((box) => box.right))
+    };
+    return { count: tops.length, first: first2 };
+  }, "lineBoxes");
+  const context5 = document.createElement("canvas").getContext?.("2d");
+  const fontMetrics = /* @__PURE__ */ new Map();
+  const measureFont = /* @__PURE__ */ __name((style) => {
+    const font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+    if (!fontMetrics.has(font)) {
+      let measured;
+      if (context5) {
+        context5.font = font;
+        const capital = context5.measureText("H");
+        const { fontBoundingBoxAscent: ascent, fontBoundingBoxDescent: descent, actualBoundingBoxAscent: capHeight } = capital;
+        if ([ascent, descent, capHeight].every((value) => Number.isFinite(value) && value > 0)) measured = { ascent, descent, capHeight };
+      }
+      fontMetrics.set(font, measured);
+    }
+    return fontMetrics.get(font);
+  }, "measureFont");
+  const textMetrics = /* @__PURE__ */ __name((style, first2) => {
+    const metrics = measureFont(style);
+    if (!metrics) return void 0;
+    const baseline = first2.top + (first2.height - metrics.ascent - metrics.descent) / 2 + metrics.ascent;
+    return { baseline, capHeight: metrics.capHeight, fontSize: number4(style.fontSize), left: first2.left, right: first2.right };
+  }, "textMetrics");
+  const glyphBounds = /* @__PURE__ */ __name((element) => {
+    if (element.tagName.toLowerCase() !== "svg") return void 0;
+    const marks = Array.from(element.querySelectorAll("path, circle, ellipse, rect, line, polyline, polygon, use, text")).filter((mark) => !mark.closest("defs, clipPath, mask, symbol, pattern"));
+    let left = Infinity;
+    let top = Infinity;
+    let right = -Infinity;
+    let bottom = -Infinity;
+    for (const mark of marks) {
+      const box = mark.getBoundingClientRect();
+      if (box.width <= 0 && box.height <= 0) continue;
+      left = Math.min(left, box.left);
+      top = Math.min(top, box.top);
+      right = Math.max(right, box.right);
+      bottom = Math.max(bottom, box.bottom);
+    }
+    return Number.isFinite(left) ? { x: left, y: top, width: right - left, height: bottom - top } : void 0;
+  }, "glyphBounds");
+  const controlType = /* @__PURE__ */ __name((element) => {
+    if (element instanceof HTMLSelectElement) return element.multiple || element.size > 1 ? "select-multiple" : "select-one";
+    if (element instanceof HTMLInputElement) return element.type;
+    return void 0;
+  }, "controlType");
+  const elements2 = visible.map((element) => {
+    const html3 = element;
+    const rect = element.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    const tag3 = element.tagName.toLowerCase();
+    const role = attribute2(element, "role");
+    const parentId = element.parentElement ? ids.get(element.parentElement) : void 0;
+    const tabIndex = html3.tabIndex;
+    const interactive = interactiveTags.has(tag3) || interactiveRoles.has(role || "") || tabIndex >= 0;
+    const explicitLabel = attribute2(element, "data-bd-inspect-label") || attribute2(element, "aria-label");
+    const shownText = tag3 === "img" ? attribute2(element, "alt") : interactive || /^h[1-6]$/.test(tag3) || role === "heading" ? element.textContent : void 0;
+    const text10 = (explicitLabel || shownText || "").replace(/\s+/g, " ").trim().slice(0, 80);
+    const id = ids.get(element);
+    const lines2 = lineBoxes(element);
+    const reach = /* @__PURE__ */ __name((edge, start, inner) => Math.max(
+      inner,
+      ...Array.from(element.querySelectorAll("*")).filter((node4) => !node4.closest("[inert]")).map((node4) => node4.getBoundingClientRect()[edge] - start)
+    ), "reach");
+    const inertCrop = Array.from(element.children).some((child) => child.hasAttribute("inert")) ? {
+      width: reach("right", rect.left + html3.clientLeft, html3.clientWidth),
+      height: reach("bottom", rect.top + html3.clientTop, html3.clientHeight)
+    } : void 0;
+    const box = {};
+    const keep = /* @__PURE__ */ __name((key, value, fallback2) => {
+      if (value !== void 0 && value !== fallback2) box[key] = value;
+    }, "keep");
+    const sides = /* @__PURE__ */ __name((values) => values.top || values.right || values.bottom || values.left ? values : void 0, "sides");
+    const flexOrGrid = /flex|grid/.test(style.display);
+    keep("display", style.display, "block");
+    keep("position", style.position, "static");
+    if (flexOrGrid) {
+      keep("flexDirection", style.flexDirection, "row");
+      keep("flexWrap", style.flexWrap, "nowrap");
+      keep("alignItems", style.alignItems, "normal");
+      keep("justifyContent", style.justifyContent, "normal");
+      keep("rowGap", round6(number4(style.rowGap)), 0);
+      keep("columnGap", round6(number4(style.columnGap)), 0);
+    }
+    keep("alignSelf", style.alignSelf, "auto");
+    keep("textAlign", style.textAlign, "start");
+    keep("padding", sides(edges(style, "padding")));
+    keep("margin", sides(edges(style, "margin")));
+    keep("borderWidth", sides({
+      top: round6(number4(style.borderTopWidth)),
+      right: round6(number4(style.borderRightWidth)),
+      bottom: round6(number4(style.borderBottomWidth)),
+      left: round6(number4(style.borderLeftWidth))
+    }));
+    keep("autoMargins", autoMargins(element));
+    keep("overflowX", style.overflowX, "visible");
+    keep("overflowY", style.overflowY, "visible");
+    keep("textOverflow", style.textOverflow, "clip");
+    const corners = {
+      topLeft: cornerRadius(style.borderTopLeftRadius, rect),
+      topRight: cornerRadius(style.borderTopRightRadius, rect),
+      bottomRight: cornerRadius(style.borderBottomRightRadius, rect),
+      bottomLeft: cornerRadius(style.borderBottomLeftRadius, rect)
+    };
+    if (Object.values(corners).some((corner) => corner.horizontal || corner.vertical)) box.borderRadius = corners;
+    keep("backgroundColor", style.backgroundColor, "rgba(0, 0, 0, 0)");
+    keep("backgroundImage", style.backgroundImage, "none");
+    keep("boxShadow", style.boxShadow, "none");
+    const parentDisplay = element.parentElement ? getComputedStyle(element.parentElement).display : "";
+    if (style.zIndex !== "auto" && (style.position !== "static" || /flex|grid/.test(parentDisplay))) keep("zIndex", number4(style.zIndex));
+    keep("opacity", round6(Number(style.opacity)), 1);
+    keep("backdropFilter", style.backdropFilter || void 0, "none");
+    const overflows2 = html3.scrollWidth > html3.clientWidth + 1 || html3.scrollHeight > html3.clientHeight + 1 || Boolean(inertCrop);
+    const metrics = lines2 && textMetrics(style, lines2.first);
+    const glyph = glyphBounds(element);
+    const snapshot = { id, tag: tag3, rect: roundRect(rect) };
+    const optional2 = {
+      role,
+      label: text10 || void 0,
+      parentId,
+      groupId: attribute2(element, "data-bd-group"),
+      alignmentGroup: attribute2(element, "data-bd-align-group"),
+      alignmentEdge: alignmentEdge(attribute2(element, "data-bd-align-edge")),
+      expectedSymmetry: symmetry(attribute2(element, "data-bd-symmetry")),
+      compareSize: compareSize(attribute2(element, "data-bd-compare-size")),
+      interactive: interactive || void 0,
+      style: Object.keys(box).length ? box : void 0,
+      lineCount: lines2?.count,
+      textMetrics: metrics && {
+        baseline: round6(metrics.baseline),
+        capHeight: round6(metrics.capHeight),
+        fontSize: round6(metrics.fontSize),
+        left: round6(metrics.left),
+        right: round6(metrics.right)
+      },
+      glyphBounds: glyph && roundRect(glyph),
+      inputType: controlType(element),
+      clientWidth: overflows2 ? html3.clientWidth : void 0,
+      clientHeight: overflows2 ? html3.clientHeight : void 0,
+      scrollWidth: overflows2 ? html3.scrollWidth : void 0,
+      scrollHeight: overflows2 ? html3.scrollHeight : void 0,
+      inertCrop: inertCrop && { width: round6(inertCrop.width), height: round6(inertCrop.height) }
+    };
+    for (const [key, value] of Object.entries(optional2)) {
+      if (value !== void 0) Object.assign(snapshot, { [key]: value });
+    }
+    return snapshot;
+  });
+  const variable = /* @__PURE__ */ __name((node4, name18) => getComputedStyle(node4).getPropertyValue?.(name18)?.trim() ?? "", "variable");
+  const densityScope = [document.documentElement, document.body, document.querySelector(".ds")].find((node4) => Boolean(node4 && variable(node4, "--layout-density")));
+  const density = (() => {
+    if (!densityScope) return void 0;
+    const spacing2 = variable(densityScope, "--spacing");
+    const rootSize = number4(getComputedStyle(document.documentElement).fontSize) || 16;
+    const amount = Number.parseFloat(spacing2);
+    const unit = !Number.isFinite(amount) ? void 0 : /^[\d.]+rem$/.test(spacing2) ? amount * rootSize : /^[\d.]+px$/.test(spacing2) ? amount : void 0;
+    return {
+      mode: variable(densityScope, "--layout-density").slice(0, 20),
+      source: variable(densityScope, "--layout-density-source").slice(0, 20) || void 0,
+      unit
+    };
+  })();
+  return {
+    name: scope ? `viewport-${window.innerWidth} ${scope}`.slice(0, 100) : `viewport-${window.innerWidth}`,
+    title: document.title.trim().slice(0, 160) || void 0,
+    scope: scope ? scope.slice(0, 200) : void 0,
+    density,
+    viewport: {
+      width: window.innerWidth,
+      height: window.innerHeight,
+      devicePixelRatio: window.devicePixelRatio
+    },
+    elements: elements2
+  };
+})(); })()

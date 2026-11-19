@@ -1,0 +1,489 @@
+/*
+ * APT-LABS — Superior Fusion Design System v1.0
+ * Four-layer token architecture: primitive → semantic → component → block
+ * File: src/lib/aptlabs-fused-design-tokens.json (DTCG v1, v2.0.0)
+ * Pillar: Stewardship. Usable from now to 2099.
+ */
+
+/* ============================================================================
+   LAYER 1 — PRIMITIVE (raw values)
+   ============================================================================ */
+
+/* --- Color primitives --- */
+:root {
+  /* Brand anchors */
+  --apt-color-brand-primary: #2b5945;
+  --apt-color-brand-secondary: #2dced6;
+  --apt-color-brand-accent: #000000;
+  --apt-color-brand-exchange: #166ee1;
+  --apt-color-brand-geist: #0072f5;
+  --apt-color-brand-geist-alert: #ff0000;
+
+  /* Neutral ramp (13 levels) */
+  --apt-color-neutral-n0: #ffffff;
+  --apt-color-neutral-n25: #f7f5f2;
+  --apt-color-neutral-n50: #f2f6fd;
+  --apt-color-neutral-n100: #e6eaf2;
+  --apt-color-neutral-n200: #d5d9e2;
+  --apt-color-neutral-n300: #bcc0ca;
+  --apt-color-neutral-n400: #9ba0aa;
+  --apt-color-neutral-n500: #7d828d;
+  --apt-color-neutral-n600: #616670;
+  --apt-color-neutral-n700: #52575f;
+  --apt-color-neutral-n800: #43474e;
+  --apt-color-neutral-n900: #35393f;
+  --apt-color-neutral-n950: #1d1f23;
+  --apt-color-neutral-n1000: #000000;
+
+  /* Backgrounds */
+  --apt-color-bg-light: #F4F1E9;
+  --apt-color-bg-dark: #151515;
+  --apt-color-bg-elevated: #FDFCF8;
+  --apt-color-bg-elevated-dark: #0e0e0e;
+  --apt-color-bg-geist-light: #ffffff;
+  --apt-color-bg-geist-dark: #fafafa;
+
+  /* Text (light mode) */
+  --apt-color-text-light: #1e2124;
+  --apt-color-text-dark: #e9ebdf;
+  --apt-color-text-muted: #6B6558;
+  --apt-color-text-dim: #9E9889;
+  --apt-color-text-geist: #4d4d4d;
+  --apt-color-text-geist-dark: #171717;
+
+  /* Pillar ramps — Stewardship */
+  --apt-color-ramp-stewardship-50: #e0feef;
+  --apt-color-ramp-stewardship-100: #d2f3e2;
+  --apt-color-ramp-stewardship-200: #bfe3d1;
+  --apt-color-ramp-stewardship-300: #a2cbb7;
+  --apt-color-ramp-stewardship-400: #7eac96;
+  --apt-color-ramp-stewardship-500: #5f8e78;
+  --apt-color-ramp-stewardship-600: #4b7763;
+  --apt-color-ramp-stewardship-700: #39604e;
+  --apt-color-ramp-stewardship-800: #2b5945;
+  --apt-color-ramp-stewardship-900: #214032;
+  --apt-color-ramp-stewardship-950: #0e241a;
+
+  /* Pillar ramps — Exchange */
+  --apt-color-ramp-exchange-50: #d6f6ff;
+  --apt-color-ramp-exchange-100: #c8eaff;
+  --apt-color-ramp-exchange-200: #b3d8ff;
+  --apt-color-ramp-exchange-300: #95bfff;
+  --apt-color-ramp-exchange-400: #709cfc;
+  --apt-color-ramp-exchange-500: #527ddd;
+  --apt-color-ramp-exchange-600: #3860be;
+  --apt-color-ramp-exchange-700: #2f51a1;
+  --apt-color-ramp-exchange-800: #234188;
+  --apt-color-ramp-exchange-900: #1a3472;
+  --apt-color-ramp-exchange-950: #0a1b46;
+
+  /* Pillar ramps — Production */
+  --apt-color-ramp-production-50: #daffd0;
+  --apt-color-ramp-production-100: #ccf9c1;
+  --apt-color-ramp-production-200: #b7eaab;
+  --apt-color-ramp-production-300: #99dd88;
+  --apt-color-ramp-production-400: #74b364;
+  --apt-color-ramp-production-500: #549543;
+  --apt-color-ramp-production-600: #407d30;
+  --apt-color-ramp-production-700: #2f661f;
+  --apt-color-ramp-production-800: #235414;
+  --apt-color-ramp-production-900: #19440c;
+  --apt-color-ramp-production-950: #082602;
+
+  /* Pillar ramps — Knowledge */
+  --apt-color-ramp-knowledge-50: #c5f8ff;
+  --apt-color-ramp-knowledge-100: #b4ecff;
+  --apt-color-ramp-knowledge-200: #9ddbff;
+  --apt-color-ramp-knowledge-300: #7bc1ff;
+  --apt-color-ramp-knowledge-400: #4f9eff;
+  --apt-color-ramp-knowledge-500: #2a7ef2;
+  --apt-color-ramp-knowledge-600: #166ee1;
+  --apt-color-ramp-knowledge-700: #0051b2;
+  --apt-color-ramp-knowledge-800: #004197;
+  --apt-color-ramp-knowledge-900: #00337f;
+  --apt-color-ramp-knowledge-950: #001a4e;
+
+  /* Pillar ramps — Capacity */
+  --apt-color-ramp-capacity-50: #f5f6ef;
+  --apt-color-ramp-capacity-100: #e9ebdf;
+  --apt-color-ramp-capacity-200: #d9dad1;
+  --apt-color-ramp-capacity-300: #c0c1b8;
+  --apt-color-ramp-capacity-400: #9fa196;
+  --apt-color-ramp-capacity-500: #818378;
+  --apt-color-ramp-capacity-600: #6c6d63;
+  --apt-color-ramp-capacity-700: #56584f;
+  --apt-color-ramp-capacity-800: #464740;
+  --apt-color-ramp-capacity-900: #383933;
+  --apt-color-ramp-capacity-950: #1f1f1b;
+
+  /* Pillar ramps — Geist */
+  --apt-color-ramp-geist-50: #bff8ff;
+  --apt-color-ramp-geist-100: #aeecff;
+  --apt-color-ramp-geist-200: #95daff;
+  --apt-color-ramp-geist-300: #71c0ff;
+  --apt-color-ramp-geist-400: #429cff;
+  --apt-color-ramp-geist-500: #0072f5;
+  --apt-color-ramp-geist-600: #0064df;
+  --apt-color-ramp-geist-700: #004ebc;
+  --apt-color-ramp-geist-800: #003ea0;
+  --apt-color-ramp-geist-900: #003087;
+  --apt-color-ramp-geist-950: #001854;
+
+  /* Pillar ramps — Geist alert */
+  --apt-color-ramp-geist-alert-50: #ffccb8;
+  --apt-color-ramp-geist-alert-100: #ffbba6;
+  --apt-color-ramp-geist-alert-200: #ffa28d;
+  --apt-color-ramp-geist-alert-300: #ff7c67;
+  --apt-color-ramp-geist-alert-400: #ff4535;
+  --apt-color-ramp-geist-alert-500: #ff0000;
+  --apt-color-ramp-geist-alert-600: #d60000;
+  --apt-color-ramp-geist-alert-700: #b40000;
+  --apt-color-ramp-geist-alert-800: #980000;
+  --apt-color-ramp-geist-alert-900: #7f0000;
+  --apt-color-ramp-geist-alert-950: #4e0000;
+
+  /* State colors */
+  --apt-color-state-canon: #2b5945;
+  --apt-color-state-canon-wash: #e0feef;
+  --apt-color-state-proposed: #A8B0A0;
+  --apt-color-state-proposed-wash: #e4e8de;
+  --apt-color-state-risk: #A66F55;
+  --apt-color-state-risk-wash: #f0e0d4;
+  --apt-color-state-caution: #AD8B55;
+  --apt-color-state-caution-wash: #f0e8d8;
+  --apt-color-state-alert: #ff0000;
+  --apt-color-state-alert-wash: #ffccb8;
+}
+
+/* --- Global reset for the Vue entry (main-vue.ts imports this file only) ---
+   The Preact entry used to pull tailwind.css (which carried the box-sizing
+   reset). Vue pages now define no global reset, so width:100% form controls
+   with padding measured content-box and overflowed their panels. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* --- Spacing primitives --- */
+:root {
+  --apt-spacing-s0: 0px;
+  --apt-spacing-s1: 2px;
+  --apt-spacing-s2: 4px;
+  --apt-spacing-s3: 6px;
+  --apt-spacing-s4: 8px;
+  --apt-spacing-s5: 10px;
+  --apt-spacing-s6: 12px;
+  --apt-spacing-s7: 14px;
+  --apt-spacing-s8: 16px;
+  --apt-spacing-s9: 20px;
+  --apt-spacing-s10: 24px;
+  --apt-spacing-s11: 28px;
+  --apt-spacing-s12: 32px;
+  --apt-spacing-s13: 36px;
+  --apt-spacing-s14: 40px;
+  --apt-spacing-s15: 44px;
+  --apt-spacing-s16: 48px;
+  --apt-spacing-s17: 48px;
+  --apt-spacing-s18: 56px;
+  --apt-spacing-s19: 64px;
+  --apt-spacing-s20: 72px;
+  --apt-spacing-s21: 80px;
+  --apt-spacing-s22: 96px;
+}
+
+/* --- Animation primitives --- */
+:root {
+  --apt-animation-instant: 0.075s;
+  --apt-animation-fast: 0.15s;
+  --apt-animation-normal: 0.3s;
+  --apt-animation-slow: 1.5s;
+  --apt-animation-ease-fast: 120ms ease;
+  --apt-animation-ease-base: 180ms ease;
+  --apt-animation-ease-slow: 280ms ease;
+}
+
+/* --- Radius primitives --- */
+:root {
+  --apt-radius-r0: 2px;
+  --apt-radius-r1: 4px;
+  --apt-radius-r2: 6px;
+  --apt-radius-r3: 8px;
+  --apt-radius-r4: 12px;
+  --apt-radius-r5: 16px;
+  --apt-radius-r6: 20px;
+  --apt-radius-r7: 30px;
+  --apt-radius-r8: 36px;
+  --apt-radius-r9: 50px;
+  --apt-radius-r10: 9999px;
+}
+
+/* --- Shadow primitives --- */
+:root {
+  --apt-shadow-sh0: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px;
+  --apt-shadow-sh1: 0 1px 2px rgba(41,43,37,.06), 0 1px 4px rgba(41,43,37,.04);
+  --apt-shadow-sh2: 0 4px 8px rgba(41,43,37,.08), 0 2px 4px rgba(41,43,37,.05);
+  --apt-shadow-sh3: 0 8px 24px rgba(41,43,37,.10), 0 4px 12px rgba(41,43,37,.06);
+  --apt-shadow-sh4: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+  --apt-shadow-sh5: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.1) 0px 4px 6px -4px;
+  --apt-shadow-sh6: rgba(209, 217, 224, 0.25) 0px 0px 0px 1px, rgba(37, 41, 46, 0.04) 0px 6px 12px -3px, rgba(37, 41, 46, 0.12) 0px 6px 18px 0px;
+  --apt-shadow-sh7: rgba(0, 0, 0, 0.35) 0 1px 2px, rgba(0, 0, 0, 0.25) 0 1px 4px;
+  --apt-shadow-sh8: rgba(0, 0, 0, 0.12) 0px 8px 30px 0px;
+}
+
+/* --- Font family primitives --- */
+:root {
+  --apt-font-sans: GeistSans, Inter Variable, -apple-system, BlinkMacSystemFont, 'Segoe UI Variable', sans-serif;
+  --apt-font-serif: GeistSerif, Alliance No.1, Georgia, 'Times New Roman', serif;
+  --apt-font-mono: 'Geist Mono', Mona Sans Mono, 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+  --apt-font-display: GeistSerif, Alliance No.1, GeistSans, Inter Variable, Georgia, serif;
+  --apt-font-pixel: GeistPixelSquare, monospace;
+}
+
+/* --- Font size primitives --- */
+:root {
+  --apt-font-size-micro: 10px;
+  --apt-font-size-sm-3: 11px;
+  --apt-font-size-body-sm: 12px;
+  --apt-font-size-body: 13px;
+  --apt-font-size-body-md: 14px;
+  --apt-font-size-title-3: 15px;
+  --apt-font-size-title-2: 16px;
+  --apt-font-size-title-1: 18px;
+  --apt-font-size-h3: 20px;
+  --apt-font-size-h2: 24px;
+  --apt-font-size-h1: 28px;
+  --apt-font-size-display: 40px;
+  --apt-font-size-display-xl: 44px;
+}
+
+/* --- Line height primitives --- */
+:root {
+  --apt-line-height-tight: 1.1;
+  --apt-line-height-normal: 1.43;
+  --apt-line-height-relaxed: 1.5;
+  --apt-line-height-loose: 1.75;
+}
+
+/* --- Font weight primitives --- */
+:root {
+  --apt-font-weight-regular: 400;
+  --apt-font-weight-medium: 500;
+  --apt-font-weight-semibold: 600;
+  --apt-font-weight-bold: 700;
+}
+
+/* --- Z-index primitives --- */
+:root {
+  --apt-z-index-base: 0;
+  --apt-z-index-dropdown: 100;
+  --apt-z-index-modal: 300;
+  --apt-z-index-tooltip: 500;
+  --apt-z-index-toast: 700;
+}
+
+/* ============================================================================
+   THEMATIC MODES
+   ============================================================================ */
+
+/* Light mode — Parchment (default) */
+[data-theme="light"],
+:root {
+  --apt-surface-default: var(--apt-color-bg-light);
+  --apt-surface-page: var(--apt-color-neutral-n0);
+  --apt-surface-raised: var(--apt-color-bg-elevated);
+  --apt-surface-dark: var(--apt-color-bg-dark);
+  --apt-text-body: var(--apt-color-text-light);
+  --apt-text-muted: var(--apt-color-text-muted);
+  --apt-text-dim: var(--apt-color-text-dim);
+  --apt-text-strong: var(--apt-color-brand-accent);
+  --apt-border: var(--apt-color-neutral-n200);
+  --apt-border-faint: rgba(41, 43, 37, 0.12);
+}
+
+/* Dark mode — Obsidian */
+[data-theme="dark"] {
+  --apt-surface-default: var(--apt-color-bg-dark);
+  --apt-surface-page: var(--apt-color-neutral-n1000);
+  --apt-surface-raised: var(--apt-color-bg-elevated-dark);
+  --apt-surface-dark: var(--apt-color-bg-dark);
+  --apt-text-body: var(--apt-color-text-dark);
+  --apt-text-muted: var(--apt-color-text-dim);
+  --apt-text-dim: #9E9889;
+  --apt-text-strong: var(--apt-color-neutral-n0);
+  --apt-border: var(--apt-color-neutral-n900);
+  --apt-border-faint: rgba(255, 255, 255, 0.08);
+}
+
+/* Observatory mode — deep analytics */
+[data-theme="observatory"] {
+  --apt-surface-default: var(--apt-color-bg-elevated-dark);
+  --apt-surface-page: var(--apt-color-bg-dark);
+  --apt-surface-raised: #1a1a1a;
+  --apt-surface-dark: var(--apt-color-bg-dark);
+  --apt-text-body: var(--apt-color-text-dark);
+  --apt-text-muted: var(--apt-color-text-dim);
+  --apt-text-dim: #9E9889;
+  --apt-text-strong: var(--apt-color-brand-geist);
+  --apt-border: var(--apt-color-neutral-n900);
+  --apt-border-faint: rgba(255, 255, 255, 0.06);
+}
+
+/* ============================================================================
+   LAYER 2 — SEMANTIC (role-bound values)
+   ============================================================================ */
+
+/* --- Action colors --- */
+:root {
+  --apt-action-primary: var(--apt-color-brand-primary);
+  --apt-action-on-primary: #ffffff;
+  --apt-action-secondary: var(--apt-color-brand-secondary);
+  --apt-action-on-secondary: #ffffff;
+  --apt-action-geist: var(--apt-color-brand-geist);
+  --apt-action-on-geist: #ffffff;
+  --apt-action-alert: var(--apt-color-brand-geist-alert);
+  --apt-action-on-alert: #000000;
+  --apt-action-exchange: var(--apt-color-brand-exchange);
+  --apt-action-on-exchange: #ffffff;
+}
+
+/* --- Surface colors --- */
+:root {
+  --apt-surface-default: var(--apt-color-bg-light);
+  --apt-surface-page: var(--apt-color-neutral-n0);
+  --apt-surface-raised: var(--apt-color-bg-elevated);
+  --apt-surface-on-raised: var(--apt-color-text-light);
+  --apt-surface-dark: var(--apt-color-bg-dark);
+  --apt-surface-on-dark: var(--apt-color-text-dark);
+}
+
+/* --- Text colors --- */
+:root {
+  --apt-text-body: var(--apt-color-text-light);
+  --apt-text-muted: var(--apt-color-text-muted);
+  --apt-text-dim: var(--apt-color-text-dim);
+  --apt-text-strong: var(--apt-color-brand-accent);
+}
+
+/* --- Pillar colors (module accents) --- */
+:root {
+  --apt-pillar-knowledge: var(--apt-color-ramp-knowledge-500);
+  --apt-pillar-capacity: var(--apt-color-ramp-capacity-500);
+  --apt-pillar-production: var(--apt-color-ramp-production-500);
+  --apt-pillar-exchange: var(--apt-color-ramp-exchange-500);
+  --apt-pillar-stewardship: var(--apt-color-ramp-stewardship-500);
+}
+
+/* --- State colors --- */
+:root {
+  --apt-state-canon: var(--apt-color-state-canon);
+  --apt-state-canon-wash: var(--apt-color-state-canon-wash);
+  --apt-state-proposed: var(--apt-color-state-proposed);
+  --apt-state-proposed-wash: var(--apt-color-state-proposed-wash);
+  --apt-state-risk: var(--apt-color-state-risk);
+  --apt-state-risk-wash: var(--apt-color-state-risk-wash);
+  --apt-state-caution: var(--apt-color-state-caution);
+  --apt-state-caution-wash: var(--apt-color-state-caution-wash);
+  --apt-state-alert: var(--apt-color-state-alert);
+  --apt-state-alert-wash: var(--apt-color-state-alert-wash);
+}
+
+/* ============================================================================
+   LAYER 3 — COMPONENT (component-specific values)
+   ============================================================================ */
+
+/* --- Button --- */
+:root {
+  --apt-button-padding-sm: var(--apt-spacing-s3) var(--apt-spacing-s6);
+  --apt-button-padding-md: var(--apt-spacing-s5) var(--apt-spacing-s8);
+  --apt-button-padding-lg: var(--apt-spacing-s6) var(--apt-spacing-s10);
+  --apt-button-radius: var(--apt-radius-r1);
+  --apt-button-font-size-sm: var(--apt-font-size-sm-3);
+  --apt-button-font-size-md: var(--apt-font-size-title-2);
+  --apt-button-font-size-lg: var(--apt-font-size-body-md);
+  --apt-button-font-weight: var(--apt-font-weight-medium);
+  --apt-button-transition: var(--apt-animation-fast);
+
+  --apt-button-primary-bg: var(--apt-color-brand-accent);
+  --apt-button-primary-border: var(--apt-color-brand-accent);
+  --apt-button-primary-text: #ffffff;
+  --apt-button-primary-hover-bg: var(--apt-color-neutral-n950);
+
+  --apt-button-ghost-bg: transparent;
+  --apt-button-ghost-border: transparent;
+  --apt-button-ghost-text: var(--apt-color-neutral-n600);
+  --apt-button-ghost-hover-bg: var(--apt-color-neutral-n50);
+  --apt-button-ghost-hover-text: var(--apt-color-brand-primary);
+
+  --apt-button-border-width: 1px;
+  --apt-button-border-style: solid;
+}
+
+/* --- Input --- */
+:root {
+  --apt-input-height: var(--apt-spacing-s10);
+  --apt-input-padding: var(--apt-spacing-s5) var(--apt-spacing-s8);
+  --apt-input-radius: var(--apt-radius-r1);
+  --apt-input-font-size: var(--apt-font-size-body-md);
+  --apt-input-border-width: 1px;
+  --apt-input-border-style: solid;
+  --apt-input-transition: var(--apt-animation-fast);
+
+  --apt-input-bg: var(--apt-color-neutral-n0);
+  --apt-input-text: var(--apt-color-text-light);
+  --apt-input-border: var(--apt-color-neutral-n200);
+  --apt-input-placeholder: var(--apt-color-neutral-n400);
+  --apt-input-focus-border: var(--apt-color-brand-primary);
+  --apt-input-disabled-bg: var(--apt-color-neutral-n50);
+}
+
+/* --- Card --- */
+:root {
+  --apt-card-radius: var(--apt-radius-r3);
+  --apt-card-border-width: 1px;
+  --apt-card-border-style: solid;
+  --apt-card-shadow: var(--apt-shadow-sh1);
+  --apt-card-transition: var(--apt-animation-fast);
+
+  --apt-card-bg: var(--apt-color-neutral-n0);
+  --apt-card-border: var(--apt-color-neutral-n200);
+  --apt-card-hover-bg: var(--apt-color-bg-elevated);
+}
+
+/* --- Badge / pill --- */
+:root {
+  --apt-badge-radius: var(--apt-radius-r10);
+  --apt-badge-font-size: var(--apt-font-size-micro);
+  --apt-badge-font-weight: var(--apt-font-weight-semibold);
+  --apt-badge-padding: 2px 8px;
+}
+
+/* ============================================================================
+   LAYER 4 — BLOCK (layout-specific values)
+   ============================================================================ */
+
+/* --- Landing page blocks --- */
+:root {
+  --apt-block-landing-header-height: auto;
+  --apt-block-landing-header-padding: var(--apt-spacing-s8) var(--apt-spacing-s16);
+  --apt-block-landing-section-padding: var(--apt-spacing-s18) var(--apt-spacing-s16);
+  --apt-block-landing-max-width: 1280px;
+  --apt-block-landing-content-max-width: 640px;
+  --apt-block-landing-grid-gap: var(--apt-spacing-s16);
+  --apt-block-landing-radius-lg: var(--apt-radius-r4);
+}
+
+/* --- Workspace blocks --- */
+:root {
+  --apt-block-workspace-rail-width: 260px;
+  --apt-block-workspace-header-padding: var(--apt-spacing-s6) var(--apt-spacing-s12);
+  --apt-block-workspace-main-padding: var(--apt-spacing-s12) var(--apt-spacing-s16);
+  --apt-block-workspace-footer-padding: var(--apt-spacing-s6) var(--apt-spacing-s16);
+}
+
+/* --- Module pillar accent overrides via data-module --- */
+[data-module="commons"]   { --apt-module-accent: var(--apt-pillar-knowledge); }
+[data-module="network"]   { --apt-module-accent: var(--apt-pillar-exchange); }
+[data-module="workbench"] { --apt-module-accent: var(--apt-pillar-production); }
+[data-module="records"]   { --apt-module-accent: var(--apt-pillar-stewardship); }
+[data-module="intelligence"] { --apt-module-accent: var(--apt-color-brand-accent); }

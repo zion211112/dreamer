@@ -1,0 +1,82 @@
+{
+  "tone": "technical",
+  "pronoun": "third-person",
+  "headingStyle": "Sentence case",
+  "headingLengthClass": "tight",
+  "ctaVerbs": [
+    {
+      "value": "master",
+      "count": 2
+    },
+    {
+      "value": "products",
+      "count": 1
+    },
+    {
+      "value": "developers",
+      "count": 1
+    },
+    {
+      "value": "businesses",
+      "count": 1
+    },
+    {
+      "value": "resources",
+      "count": 1
+    },
+    {
+      "value": "search",
+      "count": 1
+    },
+    {
+      "value": "people",
+      "count": 1
+    }
+  ],
+  "buttonPatterns": [
+    {
+      "value": "master",
+      "count": 2
+    },
+    {
+      "value": "products",
+      "count": 1
+    },
+    {
+      "value": "developers",
+      "count": 1
+    },
+    {
+      "value": "businesses",
+      "count": 1
+    },
+    {
+      "value": "resources",
+      "count": 1
+    },
+    {
+      "value": "search\n/",
+      "count": 1
+    },
+    {
+      "value": "3 people",
+      "count": 1
+    }
+  ],
+  "sampleHeadings": [
+    "Navigation Menu",
+    "Repository navigation",
+    "Files",
+    "Breadcrumbs",
+    "quill",
+    "Repository navigation",
+    "Breadcrumbs",
+    "Breadcrumbs",
+    "Footer",
+    "Footer navigation"
+  ],
+  "stats": {
+    "buttons": 8,
+    "headings": 11
+  }
+}

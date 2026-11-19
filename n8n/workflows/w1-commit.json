@@ -1,0 +1,111 @@
+{
+  "name": "W1 - Commit",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "commit",
+        "responseMode": "onReceived",
+        "responseData": "result"
+      },
+      "id": "webhook-commit",
+      "name": "Commit Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [250, 300],
+      "webhookId": "w1-commit-trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "validate-action",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "commit",
+              "operator": "equals"
+            },
+            {
+              "id": "validate-payload",
+              "leftValue": "={{ $json.payload }}",
+              "rightValue": "",
+              "operator": "exists"
+            }
+          ],
+          "combinator": "and"
+        },
+        "errorMessage": "Invalid commit payload: missing action or payload field",
+        "options": {}
+      },
+      "id": "validate-commit",
+      "name": "Validate Commit",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [500, 300],
+      "versionPin": []
+    },
+    {
+      "parameters": {
+        "url": "={{ $node['APT-LABS API'].apiBase }}/api/commit",
+        "method": "POST",
+        "jsonParameters": true,
+        "options": {}
+      },
+      "id": "call-commit-api",
+      "name": "Call Commit API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [750, 200],
+      "credentials": {
+        "httpHeaderAuth": "aptlabs-api"
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $node['APT-LABS API'].apiBase }}/api/events",
+        "method": "POST",
+        "jsonParameters": true,
+        "options": {}
+      },
+      "id": "record-commit-event",
+      "name": "Record Commit Event",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [750, 400],
+      "credentials": {
+        "httpHeaderAuth": "aptlabs-api"
+      }
+    }
+  ],
+  "connections": {
+    "Commit Trigger": {
+      "main": [[{ "node": "Validate Commit", "type": "main", "index": 0 }]]
+    },
+    "Validate Commit": {
+      "main": [
+        [
+          { "node": "Call Commit API", "type": "main", "index": 0 }
+        ],
+        []
+      ]
+    },
+    "Call Commit API": {
+      "main": [[{ "node": "Record Commit Event", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "timezone": "Africa/Nairobi"
+  },
+  "id": "w1-commit-workflow",
+  "tags": ["aptlabs", "quality-orchestration", "commit"]
+}
