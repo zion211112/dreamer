@@ -482,6 +482,42 @@
 }
 
 /* --- Module pillar accent overrides via data-module --- */
+/* ============================================================================
+   LAYER 1 EXTENSION — ONTOLOGY FAMILY CATEGORICAL RAMP
+   13 families (src/lib/ontology/types.ts FAMILY). Categorical only: colour
+   never carries meaning alone; every use is paired with the family label.
+   Derived from the existing earth ramps rather than introducing new hues.
+   ============================================================================ */
+:root {
+  --apt-family-actor: #2b5945;          /* deep forest — who acts */
+  --apt-family-capability: #3860be;     /* exchange blue — what they can do */
+  --apt-family-resource: #514337;       /* umber — what is held */
+  --apt-family-place: #A8B0A0;          /* sage — where it is situated */
+  --apt-family-intention: #AD8B55;      /* brass — what is wanted */
+  --apt-family-commitment: #8a6a3c;     /* deep brass — what is promised */
+  --apt-family-work: #549543;           /* production green — what is done */
+  --apt-family-activity: #407d30;       /* deeper production — how it is done */
+  --apt-family-output: #A66F55;         /* clay — what results */
+  --apt-family-exchange: #166ee1;       /* knowledge blue — what circulates */
+  --apt-family-evidence: #2d7f8a;       /* teal ink — what can be shown */
+  --apt-family-knowledge: #6b5ea8;      /* restrained lilac — what is learned */
+  --apt-family-governance: #344438;     /* olive ink — who authorises */
+
+  /* Group accents — OPERATIONAL_CORE / CONTINUITY_LEARNING / VALUE_LEGITIMACY */
+  --apt-group-core: #2b5945;
+  --apt-group-continuity: #2d7f8a;
+  --apt-group-value: #8a6a3c;
+
+  /* Evidence standing (src/lib/ontology/evidence.ts EVIDENCE_STANDING) */
+  --apt-standing-unassessed: #9ba0aa;
+  --apt-standing-reported: #AD8B55;
+  --apt-standing-supported: #3860be;
+  --apt-standing-verified: #2b5945;
+  --apt-standing-disputed: #A66F55;
+  --apt-standing-rejected: #82182e;
+  --apt-standing-expired: #616670;
+}
+
 [data-module="commons"]   { --apt-module-accent: var(--apt-pillar-knowledge); }
 [data-module="network"]   { --apt-module-accent: var(--apt-pillar-exchange); }
 [data-module="workbench"] { --apt-module-accent: var(--apt-pillar-production); }
