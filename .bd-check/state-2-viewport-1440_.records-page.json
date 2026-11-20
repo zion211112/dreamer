@@ -1,0 +1,769 @@
+{
+ "name": "viewport-1440 .records-page",
+ "title": "APT-LABS — Vue Foundation",
+ "scope": ".records-page",
+ "viewport": {
+  "width": 1440,
+  "height": 900,
+  "devicePixelRatio": 1
+ },
+ "elements": [
+  {
+   "id": "div@1",
+   "tag": "div",
+   "rect": {
+    "x": 316,
+    "y": -79,
+    "width": 1068,
+    "height": 900
+   },
+   "style": {
+    "padding": {
+     "top": 36,
+     "right": 36,
+     "bottom": 36,
+     "left": 36
+    }
+   }
+  },
+  {
+   "id": "header@2",
+   "tag": "header",
+   "rect": {
+    "x": 352,
+    "y": -43,
+    "width": 996,
+    "height": 58
+   },
+   "parentId": "div@1",
+   "style": {
+    "margin": {
+     "top": 0,
+     "right": 0,
+     "bottom": 36,
+     "left": 0
+    }
+   }
+  },
+  {
+   "id": "h1@3",
+   "tag": "h1",
+   "rect": {
+    "x": 352,
+    "y": -43,
+    "width": 996,
+    "height": 34
+   },
+   "parentId": "header@2",
+   "label": "Records",
+   "lineCount": 1,
+   "style": {
+    "margin": {
+     "top": 0,
+     "right": 0,
+     "bottom": 6,
+     "left": 0
+    }
+   }
+  },
+  {
+   "id": "p@4",
+   "tag": "p",
+   "rect": {
+    "x": 352,
+    "y": -3,
+    "width": 996,
+    "height": 18
+   },
+   "parentId": "header@2",
+   "lineCount": 1
+  },
+  {
+   "id": "nav@5",
+   "tag": "nav",
+   "rect": {
+    "x": 352,
+    "y": 51,
+    "width": 996,
+    "height": 44
+   },
+   "parentId": "div@1",
+   "label": "Record lens",
+   "style": {
+    "display": "flex",
+    "flexWrap": "wrap",
+    "rowGap": 6,
+    "columnGap": 6,
+    "margin": {
+     "top": 0,
+     "right": 0,
+     "bottom": 36,
+     "left": 0
+    }
+   }
+  },
+  {
+   "id": "a@6",
+   "tag": "a",
+   "rect": {
+    "x": 352,
+    "y": 51,
+    "width": 73,
+    "height": 44
+   },
+   "parentId": "nav@5",
+   "label": "Records",
+   "interactive": true,
+   "lineCount": 1,
+   "style": {
+    "display": "flex",
+    "alignItems": "center",
+    "padding": {
+     "top": 6,
+     "right": 12,
+     "bottom": 6,
+     "left": 12
+    },
+    "borderWidth": {
+     "top": 1,
+     "right": 1,
+     "bottom": 1,
+     "left": 1
+    },
+    "borderRadius": {
+     "topLeft": {
+      "horizontal": 6,
+      "vertical": 6
+     },
+     "topRight": {
+      "horizontal": 6,
+      "vertical": 6
+     },
+     "bottomRight": {
+      "horizontal": 6,
+      "vertical": 6
+     },
+     "bottomLeft": {
+      "horizontal": 6,
+      "vertical": 6
+     }
+    }
+   }
+  },
+  {
+   "id": "a@7",
+   "tag": "a",
+   "rect": {
+    "x": 431,
+    "y": 51,
+    "width": 64,
+    "height": 44
+   },
+   "parentId": "nav@5",
+   "label": "Annals",
+   "interactive": true,
+   "lineCount": 1,
+   "style": {
+    "display": "flex",
+    "alignItems": "center",
+    "padding": {
+     "top": 6,
+     "right": 12,
+     "bottom": 6,
+     "left": 12
+    },
+    "borderWidth": {
+     "top": 1,
+     "right": 1,
+     "bottom": 1,
+     "left": 1
+    },
+    "borderRadius": {
+     "topLeft": {
+      "horizontal": 6,
+      "vertical": 6
+     },
+     "topRight": {
+      "horizontal": 6,
+      "vertical": 6
+     },
+     "bottomRight": {
+      "horizontal": 6,
+      "vertical": 6
+     },
+     "bottomLeft": {
+      "horizontal": 6,
+      "vertical": 6
+     }
+    }
+   }
+  },
+  {
+   "id": "a@8",
+   "tag": "a",
+   "rect": {
+    "x": 501,
+    "y": 51,
+    "width": 76,
+    "height": 44
+   },
+   "parentId": "nav@5",
+   "label": "Evidence",
+   "interactive": true,
+   "lineCount": 1,
+   "style": {
+    "display": "flex",
+    "alignItems": "center",
+    "padding": {
+     "top": 6,
+     "right": 12,
+     "bottom": 6,
+     "left": 12
+    },
+    "borderWidth": {
+     "top": 1,
+     "right": 1,
+     "bottom": 1,
+     "left": 1
+    },
+    "borderRadius": {
+     "topLeft": {
+      "horizontal": 6,
+      "vertical": 6
+     },
+     "topRight": {
+      "horizontal": 6,
+      "vertical": 6
+     },
+     "bottomRight": {
+      "horizontal": 6,
+      "vertical": 6
+     },
+     "bottomLeft": {
+      "horizontal": 6,
+      "vertical": 6
+     }
+    }
+   }
+  },
+  {
+   "id": "div@9",
+   "tag": "div",
+   "rect": {
+    "x": 352,
+    "y": 131,
+    "width": 996,
+    "height": 64
+   },
+   "parentId": "div@1",
+   "style": {
+    "margin": {
+     "top": 0,
+     "right": 0,
+     "bottom": 16,
+     "left": 0
+    }
+   }
+  },
+  {
+   "id": "div@10",
+   "tag": "div",
+   "rect": {
+    "x": 352,
+    "y": 131,
+    "width": 480,
+    "height": 44
+   },
+   "parentId": "div@9",
+   "style": {
+    "position": "relative"
+   }
+  },
+  {
+   "id": "input@11",
+   "tag": "input",
+   "rect": {
+    "x": 352,
+    "y": 131,
+    "width": 480,
+    "height": 44
+   },
+   "parentId": "div@10",
+   "label": "Search the record canon",
+   "interactive": true,
+   "inputType": "search",
+   "style": {
+    "display": "inline-block",
+    "padding": {
+     "top": 6,
+     "right": 44,
+     "bottom": 6,
+     "left": 12
+    },
+    "borderWidth": {
+     "top": 1,
+     "right": 1,
+     "bottom": 1,
+     "left": 1
+    },
+    "overflowX": "clip",
+    "overflowY": "clip",
+    "borderRadius": {
+     "topLeft": {
+      "horizontal": 6,
+      "vertical": 6
+     },
+     "topRight": {
+      "horizontal": 6,
+      "vertical": 6
+     },
+     "bottomRight": {
+      "horizontal": 6,
+      "vertical": 6
+     },
+     "bottomLeft": {
+      "horizontal": 6,
+      "vertical": 6
+     }
+    }
+   }
+  },
+  {
+   "id": "button@12",
+   "tag": "button",
+   "rect": {
+    "x": 788,
+    "y": 131,
+    "width": 44,
+    "height": 44
+   },
+   "parentId": "div@10",
+   "label": "Clear search",
+   "interactive": true,
+   "lineCount": 1,
+   "style": {
+    "position": "absolute",
+    "textAlign": "center",
+    "padding": {
+     "top": 1,
+     "right": 6,
+     "bottom": 1,
+     "left": 6
+    }
+   }
+  },
+  {
+   "id": "p@13",
+   "tag": "p",
+   "rect": {
+    "x": 352,
+    "y": 181,
+    "width": 996,
+    "height": 14
+   },
+   "parentId": "div@9",
+   "lineCount": 1,
+   "style": {
+    "margin": {
+     "top": 6,
+     "right": 0,
+     "bottom": 0,
+     "left": 0
+    }
+   }
+  },
+  {
+   "id": "section@14",
+   "tag": "section",
+   "rect": {
+    "x": 352,
+    "y": 211,
+    "width": 996,
+    "height": 110
+   },
+   "parentId": "div@1",
+   "style": {
+    "overflowX": "auto",
+    "overflowY": "auto"
+   }
+  },
+  {
+   "id": "h2@15",
+   "tag": "h2",
+   "rect": {
+    "x": 352,
+    "y": 211,
+    "width": 996,
+    "height": 22
+   },
+   "parentId": "section@14",
+   "label": "Record canon",
+   "lineCount": 1,
+   "style": {
+    "margin": {
+     "top": 0,
+     "right": 0,
+     "bottom": 12,
+     "left": 0
+    }
+   }
+  },
+  {
+   "id": "table@16",
+   "tag": "table",
+   "rect": {
+    "x": 352,
+    "y": 245,
+    "width": 996,
+    "height": 76
+   },
+   "parentId": "section@14",
+   "style": {
+    "display": "table",
+    "borderWidth": {
+     "top": 1,
+     "right": 1,
+     "bottom": 1,
+     "left": 1
+    },
+    "overflowX": "hidden",
+    "overflowY": "hidden",
+    "borderRadius": {
+     "topLeft": {
+      "horizontal": 8,
+      "vertical": 8
+     },
+     "topRight": {
+      "horizontal": 8,
+      "vertical": 8
+     },
+     "bottomRight": {
+      "horizontal": 8,
+      "vertical": 8
+     },
+     "bottomLeft": {
+      "horizontal": 8,
+      "vertical": 8
+     }
+    }
+   }
+  },
+  {
+   "id": "thead@17",
+   "tag": "thead",
+   "rect": {
+    "x": 352.5,
+    "y": 245.5,
+    "width": 995,
+    "height": 29
+   },
+   "parentId": "table@16",
+   "style": {
+    "display": "table-header-group"
+   }
+  },
+  {
+   "id": "tr@18",
+   "tag": "tr",
+   "rect": {
+    "x": 352.5,
+    "y": 245.5,
+    "width": 995,
+    "height": 29
+   },
+   "parentId": "thead@17",
+   "style": {
+    "display": "table-row"
+   }
+  },
+  {
+   "id": "th@19",
+   "tag": "th",
+   "rect": {
+    "x": 352.5,
+    "y": 245.5,
+    "width": 446.7,
+    "height": 29
+   },
+   "parentId": "tr@18",
+   "lineCount": 1,
+   "style": {
+    "display": "table-cell",
+    "textAlign": "left",
+    "padding": {
+     "top": 8,
+     "right": 12,
+     "bottom": 8,
+     "left": 12
+    },
+    "borderWidth": {
+     "top": 0,
+     "right": 0,
+     "bottom": 1,
+     "left": 0
+    }
+   }
+  },
+  {
+   "id": "th@20",
+   "tag": "th",
+   "rect": {
+    "x": 799.2,
+    "y": 245.5,
+    "width": 175.5,
+    "height": 29
+   },
+   "parentId": "tr@18",
+   "lineCount": 1,
+   "style": {
+    "display": "table-cell",
+    "textAlign": "left",
+    "padding": {
+     "top": 8,
+     "right": 12,
+     "bottom": 8,
+     "left": 12
+    },
+    "borderWidth": {
+     "top": 0,
+     "right": 0,
+     "bottom": 1,
+     "left": 0
+    }
+   }
+  },
+  {
+   "id": "th@21",
+   "tag": "th",
+   "rect": {
+    "x": 974.8,
+    "y": 245.5,
+    "width": 172.8,
+    "height": 29
+   },
+   "parentId": "tr@18",
+   "lineCount": 1,
+   "style": {
+    "display": "table-cell",
+    "textAlign": "left",
+    "padding": {
+     "top": 8,
+     "right": 12,
+     "bottom": 8,
+     "left": 12
+    },
+    "borderWidth": {
+     "top": 0,
+     "right": 0,
+     "bottom": 1,
+     "left": 0
+    }
+   }
+  },
+  {
+   "id": "th@22",
+   "tag": "th",
+   "rect": {
+    "x": 1147.5,
+    "y": 245.5,
+    "width": 200,
+    "height": 29
+   },
+   "parentId": "tr@18",
+   "lineCount": 1,
+   "style": {
+    "display": "table-cell",
+    "textAlign": "left",
+    "padding": {
+     "top": 8,
+     "right": 12,
+     "bottom": 8,
+     "left": 12
+    },
+    "borderWidth": {
+     "top": 0,
+     "right": 0,
+     "bottom": 1,
+     "left": 0
+    }
+   }
+  },
+  {
+   "id": "tbody@23",
+   "tag": "tbody",
+   "rect": {
+    "x": 352.5,
+    "y": 274.5,
+    "width": 995,
+    "height": 46
+   },
+   "parentId": "table@16",
+   "style": {
+    "display": "table-row-group"
+   }
+  },
+  {
+   "id": "tr@24",
+   "tag": "tr",
+   "rect": {
+    "x": 352.5,
+    "y": 274.5,
+    "width": 995,
+    "height": 46
+   },
+   "parentId": "tbody@23",
+   "style": {
+    "display": "table-row"
+   }
+  },
+  {
+   "id": "td@25",
+   "tag": "td",
+   "rect": {
+    "x": 353,
+    "y": 275,
+    "width": 446.2,
+    "height": 45
+   },
+   "parentId": "tr@24",
+   "style": {
+    "display": "flex",
+    "flexDirection": "column",
+    "rowGap": 2,
+    "columnGap": 2,
+    "padding": {
+     "top": 8,
+     "right": 12,
+     "bottom": 8,
+     "left": 12
+    }
+   }
+  },
+  {
+   "id": "span@26",
+   "tag": "span",
+   "rect": {
+    "x": 365,
+    "y": 283,
+    "width": 422.2,
+    "height": 12
+   },
+   "parentId": "td@25",
+   "lineCount": 1
+  },
+  {
+   "id": "span@27",
+   "tag": "span",
+   "rect": {
+    "x": 365,
+    "y": 297,
+    "width": 422.2,
+    "height": 15
+   },
+   "parentId": "td@25",
+   "lineCount": 1
+  },
+  {
+   "id": "td@28",
+   "tag": "td",
+   "rect": {
+    "x": 799.2,
+    "y": 274.5,
+    "width": 175.5,
+    "height": 46
+   },
+   "parentId": "tr@24",
+   "lineCount": 1,
+   "style": {
+    "display": "table-cell",
+    "padding": {
+     "top": 8,
+     "right": 12,
+     "bottom": 8,
+     "left": 12
+    }
+   }
+  },
+  {
+   "id": "span@29",
+   "tag": "span",
+   "rect": {
+    "x": 811.2,
+    "y": 290,
+    "width": 52.8,
+    "height": 16
+   },
+   "parentId": "td@28",
+   "lineCount": 1,
+   "style": {
+    "display": "inline",
+    "padding": {
+     "top": 2,
+     "right": 6,
+     "bottom": 2,
+     "left": 6
+    },
+    "borderRadius": {
+     "topLeft": {
+      "horizontal": 4,
+      "vertical": 4
+     },
+     "topRight": {
+      "horizontal": 4,
+      "vertical": 4
+     },
+     "bottomRight": {
+      "horizontal": 4,
+      "vertical": 4
+     },
+     "bottomLeft": {
+      "horizontal": 4,
+      "vertical": 4
+     }
+    }
+   }
+  },
+  {
+   "id": "td@30",
+   "tag": "td",
+   "rect": {
+    "x": 974.8,
+    "y": 274.5,
+    "width": 172.8,
+    "height": 46
+   },
+   "parentId": "tr@24",
+   "lineCount": 1,
+   "style": {
+    "display": "table-cell",
+    "padding": {
+     "top": 8,
+     "right": 12,
+     "bottom": 8,
+     "left": 12
+    }
+   }
+  },
+  {
+   "id": "td@31",
+   "tag": "td",
+   "rect": {
+    "x": 1147.5,
+    "y": 274.5,
+    "width": 200,
+    "height": 46
+   },
+   "parentId": "tr@24",
+   "lineCount": 1,
+   "style": {
+    "display": "table-cell",
+    "padding": {
+     "top": 8,
+     "right": 12,
+     "bottom": 8,
+     "left": 12
+    }
+   }
+  }
+ ]
+}

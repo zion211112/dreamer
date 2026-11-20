@@ -1,12 +1,33 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
+import { computed, onMounted } from 'vue';
+import { useCoordinationStore } from '@/stores/coordination';
 
-const signals = [
-  { id: 's-01', title: 'Irrigation pump repair needed', institution: 'Thiba cooperative', context: 'Pump failed during dry season', type: 'need', created: '2026-10-15' },
-  { id: 's-02', title: 'Excess maize harvest', institution: 'Mwea farmers group', context: '150 bags surplus, seeking buyers', type: 'offer', created: '2026-10-14' },
-  { id: 's-03', title: 'Carpentry tools donation', institution: 'Kirinyaga youth centre', context: 'Saw, plane, chisels available', type: 'offer', created: '2026-10-12' },
-  { id: 's-04', title: 'Solar lantern maintenance', institution: 'Thiba community', context: '20 lanterns need battery replacement', type: 'need', created: '2026-10-10' },
-];
+const store = useCoordinationStore();
+
+// Re-read the system of record on entry, so the signals reflect what the
+// Workbench has posted, committed, or delivered since this store was created.
+onMounted(() => store.refresh());
+
+const openNeeds = computed(() => store.openNeeds);
+const inFlight = computed(() => store.inFlight);
+const nothing = computed(() => !openNeeds.value.length && !inFlight.value.length);
+
+function matchLine(need: (typeof openNeeds.value)[number]): string {
+  if (need.isMissing) return 'No registered provider matches this need yet.';
+  const names = need.matches
+    .slice(0, 2)
+    .map((m) => m.providerName)
+    .join(', ');
+  const extra = need.matches.length > 2 ? ` +${need.matches.length - 2} more` : '';
+  return `${need.matches.length} provider${need.matches.length === 1 ? '' : 's'} can answer: ${names}${extra}.`;
+}
+
+function requiresLine(need: (typeof openNeeds.value)[number]): string {
+  return need.requires.length
+    ? `Asks for: ${need.requires.join(', ')}.`
+    : 'No capability category declared, so providers cannot match it yet.';
+}
 </script>
 
 <template>
@@ -15,35 +36,76 @@ const signals = [
       <div class="commons-header-copy">
         <h1 class="commons-title">Commons</h1>
         <p class="commons-subtitle">
-          Record needs, offers, and opportunities. Stewards review and hand approved items to the Workbench.
+          Open needs matched against registered providers, and the commitments in flight.
+          Everything here is a live record from the coordination loop.
         </p>
       </div>
     </header>
 
-    <section class="commons-signals">
-      <h2 class="commons-section-title">Field signals</h2>
-      <div class="commons-signal-list">
-        <article
-          v-for="signal in signals"
-          :key="signal.id"
-          class="commons-signal-card"
-          :class="`commons-signal--${signal.type}`"
-        >
-          <div class="commons-signal-copy">
-            <h3 class="commons-signal-title">{{ signal.title }}</h3>
-            <p class="commons-signal-context">{{ signal.context }}</p>
-            <div class="commons-signal-meta">
-              <span class="commons-signal-institution">{{ signal.institution }}</span>
-              <span class="commons-signal-date">{{ signal.created }}</span>
-              <span class="commons-signal-type">{{ signal.type }}</span>
-            </div>
-          </div>
-          <RouterLink :to="`/workspace/workbench`" class="commons-signal-action">
-            Route to Workbench
-          </RouterLink>
-        </article>
-      </div>
+    <!-- First-use: the loop has not produced anything yet. -->
+    <section v-if="nothing" class="commons-empty">
+      <h2 class="commons-empty-title">No open needs yet</h2>
+      <p class="commons-empty-body">
+        Post a need, or onboard a provider with its capability, in the Coordination Workbench.
+        What you record there appears here as a live signal.
+      </p>
+      <RouterLink to="/workspace/coordination" class="commons-empty-cta">
+        Open the Coordination Workbench
+      </RouterLink>
     </section>
+
+    <template v-else>
+      <section v-if="openNeeds.length" class="commons-signals">
+        <h2 class="commons-section-title">Open needs</h2>
+        <div class="commons-signal-list">
+          <article
+            v-for="need in openNeeds"
+            :key="need.needId"
+            class="commons-signal-card"
+            :class="need.isMissing ? 'commons-signal--need' : 'commons-signal--offer'"
+          >
+            <div class="commons-signal-copy">
+              <h3 class="commons-signal-title">{{ need.need }}</h3>
+              <p class="commons-signal-context">{{ requiresLine(need) }}</p>
+              <p class="commons-signal-context">{{ matchLine(need) }}</p>
+              <div class="commons-signal-meta">
+                <span class="commons-signal-type">
+                  {{ need.isMissing ? 'Missing' : 'Matched' }}
+                </span>
+              </div>
+            </div>
+            <RouterLink :to="`/workspace/coordination`" class="commons-signal-action">
+              Manage in Workbench
+            </RouterLink>
+          </article>
+        </div>
+      </section>
+
+      <section v-if="inFlight.length" class="commons-signals">
+        <h2 class="commons-section-title">In flight</h2>
+        <div class="commons-signal-list">
+          <article
+            v-for="row in inFlight"
+            :key="row.id"
+            class="commons-signal-card commons-signal--offer"
+          >
+            <div class="commons-signal-copy">
+              <h3 class="commons-signal-title">{{ row.need }}</h3>
+              <p class="commons-signal-context">
+                {{ row.providerName }} accepted this commitment and is delivering.
+              </p>
+              <div class="commons-signal-meta">
+                <span class="commons-signal-institution">{{ row.providerName }}</span>
+                <span class="commons-signal-type">In flight</span>
+              </div>
+            </div>
+            <RouterLink :to="`/workspace/coordination`" class="commons-signal-action">
+              Manage in Workbench
+            </RouterLink>
+          </article>
+        </div>
+      </section>
+    </template>
   </div>
 </template>
 
@@ -85,6 +147,10 @@ const signals = [
   color: var(--apt-text-body);
 }
 
+.commons-signals + .commons-signals {
+  margin-top: var(--apt-spacing-s13);
+}
+
 .commons-signal-list {
   display: flex;
   flex-direction: column;
@@ -95,6 +161,7 @@ const signals = [
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--apt-spacing-s6);
   padding: var(--apt-spacing-s6) var(--apt-spacing-s8);
   border-radius: var(--apt-radius-r3);
   border: 1px solid var(--apt-border);
@@ -128,6 +195,10 @@ const signals = [
   line-height: var(--apt-line-height-relaxed);
 }
 
+.commons-signal-context:last-of-type {
+  margin-bottom: 0;
+}
+
 .commons-signal-meta {
   display: flex;
   gap: var(--apt-spacing-s4);
@@ -138,11 +209,6 @@ const signals = [
   font-size: var(--apt-font-size-micro);
   font-weight: var(--apt-font-weight-medium);
   color: var(--apt-pillar-stewardship);
-}
-
-.commons-signal-date {
-  font-size: var(--apt-font-size-micro);
-  color: var(--apt-text-dim);
 }
 
 .commons-signal-type {
@@ -167,6 +233,9 @@ const signals = [
 }
 
 .commons-signal-action {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font-size: var(--apt-font-size-body-sm);
   font-weight: var(--apt-font-weight-medium);
   color: var(--apt-pillar-stewardship);
@@ -178,5 +247,56 @@ const signals = [
 .commons-signal-action:hover {
   text-decoration: underline;
 }
-</style>
 
+/* First-use empty state */
+
+.commons-empty {
+  padding: var(--apt-spacing-s13);
+  border: 1px dashed var(--apt-border);
+  border-radius: var(--apt-radius-r3);
+  background: var(--apt-color-neutral-n0);
+  text-align: center;
+}
+
+.commons-empty-title {
+  font-family: var(--apt-font-serif);
+  font-size: var(--apt-font-size-title-1);
+  font-weight: var(--apt-font-weight-semibold);
+  margin: 0 0 var(--apt-spacing-s3) 0;
+  color: var(--apt-text-body);
+}
+
+.commons-empty-body {
+  font-size: var(--apt-font-size-body-sm);
+  color: var(--apt-text-muted);
+  margin: 0 auto;
+  max-width: 44ch;
+  line-height: var(--apt-line-height-relaxed);
+}
+
+.commons-empty-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: var(--apt-spacing-s6);
+  padding: 0 var(--apt-spacing-s8);
+  border-radius: var(--apt-radius-r2);
+  background: var(--apt-module-accent, var(--apt-color-brand-primary));
+  color: var(--apt-color-neutral-n0);
+  font-size: var(--apt-font-size-body-sm);
+  font-weight: var(--apt-font-weight-medium);
+  text-decoration: none;
+}
+
+@media (max-width: 640px) {
+  .commons-signal-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .commons-signal-action {
+    margin-top: var(--apt-spacing-s4);
+  }
+}
+</style>

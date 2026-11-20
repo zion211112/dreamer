@@ -1,9 +1,9 @@
 {
  "start": "2026-11-19T19:19:40.478Z",
- "round": 2,
- "idle": 1,
- "errors": 2,
- "status": "fail",
+ "round": 3,
+ "idle": 0,
+ "errors": 3,
+ "status": "open",
  "history": [
   {
    "at": "2026-11-19T19:23:44.981Z",
@@ -64,6 +64,50 @@
    "stopHookActive": true,
    "decision": "allow",
    "reason": "nothing changed since the last block; this stop is allowed once without a round (a question to the user)"
+  },
+  {
+   "at": "2026-11-19T23:24:56.974Z",
+   "mode": "hook",
+   "host": "claude",
+   "status": "open",
+   "fails": 1,
+   "round": 3,
+   "reused": false,
+   "stopHookActive": false,
+   "decision": "block",
+   "reason": "rounds used up (3 of 3), 1 FAIL open (not checked: the copy (the page showed no <main>, <section> or <h1> to lint); consistency.mjs could not walk 1440, 390):"
+  },
+  {
+   "at": "2026-11-19T23:25:38.394Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": true
+  },
+  {
+   "at": "2026-11-20T00:13:08.030Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-20T00:15:56.446Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-20T00:32:08.539Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
   }
  ],
  "max": 3,
@@ -79,190 +123,14 @@
   "by": "gate.mjs --start"
  },
  "manual": true,
- "roundKey": "5aa3b50a78fb4de9:da39a3ee",
+ "roundKey": "05afc3dfb994f479:da39a3ee",
  "roundFree": false,
- "idleFree": true,
- "blockKey": "5aa3b50a78fb4de9:da39a3ee",
- "fp": "5aa3b50a78fb4de9",
+ "idleFree": false,
+ "blockKey": null,
+ "fp": "05afc3dfb994f479",
  "page": "http://localhost:5173/index-vue.html",
  "found": {
   "fails": [
-   {
-    "check": "copy-headline",
-    "where": "(the page)",
-    "msg": "the page has no visible h1",
-    "fix": "put the category noun in the h1 (and who it is for, or where), in 2 to 8 words",
-    "widths": [
-     1440
-    ],
-    "from": "consistency",
-    "ids": [
-     "copy-headline"
-    ],
-    "wheres": [
-     "(the page)"
-    ]
-   },
-   {
-    "check": "copy-fact",
-    "where": "(the page)",
-    "msg": "the first screen holds no number, price, date, place, platform or genre",
-    "fix": "put one hard fact from the brief on the first screen: a number, a price, a date, the place, the platforms it runs on or a game's genre; take it from the brief or remove the claim",
-    "widths": [
-     1440
-    ],
-    "from": "consistency",
-    "ids": [
-     "copy-fact"
-    ],
-    "wheres": [
-     "(the page)"
-    ]
-   },
-   {
-    "check": "moment-none",
-    "where": "(the page)",
-    "msg": "a software page (--type) deals no moment: every kind carries one, two on a long page (moments.md)",
-    "fix": "deal one (moments.mjs pick --page software) and mount it in its own section",
-    "widths": [
-     1440
-    ],
-    "from": "consistency",
-    "ids": [
-     "moment-none"
-    ],
-    "wheres": [
-     "(the page)"
-    ]
-   },
-   {
-    "check": "hero-screen",
-    "where": "body",
-    "msg": "no sections found: nothing in <main>, or at the top of the page, to measure (SR-1)",
-    "fix": "make the hero exactly one screen (height: 100svh) with its content between the nav and 24px above the fold",
-    "widths": [
-     1440
-    ],
-    "from": "consistency",
-    "ids": [
-     "hero-screen"
-    ],
-    "wheres": [
-     "body"
-    ]
-   },
-   {
-    "check": "section-height",
-    "where": "body",
-    "msg": "no sections found: nothing in <main>, or at the top of the page, to measure (SR-2)",
-    "fix": "set every section after the hero to one screen or two (height: calc(var(--h,1) * 100vh)) and fit its content above --padb",
-    "widths": [
-     1440
-    ],
-    "from": "consistency",
-    "ids": [
-     "section-height"
-    ],
-    "wheres": [
-     "body"
-    ]
-   },
-   {
-    "check": "section-air",
-    "where": "body",
-    "msg": "no sections found: nothing in <main>, or at the top of the page, to measure (SR-3)",
-    "fix": "keep 128-480px of air between sections (--padt, --padb), fill each section to 55% or merge it into the one above, and drop divider rules",
-    "widths": [
-     1440
-    ],
-    "from": "consistency",
-    "ids": [
-     "section-air"
-    ],
-    "wheres": [
-     "body"
-    ]
-   },
-   {
-    "check": "one-section",
-    "where": "body",
-    "msg": "no sections found: nothing in <main>, or at the top of the page, to measure (SR-4)",
-    "fix": "make each section exactly one or two screens so a screen shows one section; every block of <main> a <section>, no bands inside one",
-    "widths": [
-     1440
-    ],
-    "from": "consistency",
-    "ids": [
-     "one-section"
-    ],
-    "wheres": [
-     "body"
-    ]
-   },
-   {
-    "check": "one-heading",
-    "where": "body",
-    "msg": "no sections found: nothing in <main>, or at the top of the page, to measure (SR-5)",
-    "fix": "give each section one h2, first in its .wrap, and the hero only its h1, so headings sit a screen apart",
-    "widths": [
-     1440
-    ],
-    "from": "consistency",
-    "ids": [
-     "one-heading"
-    ],
-    "wheres": [
-     "body"
-    ]
-   },
-   {
-    "check": "container-edges",
-    "where": "body",
-    "msg": "no sections found: nothing in <main>, or at the top of the page, to measure (SR-6)",
-    "fix": "put everything on one .wrap: the same margin left and right (64-120px, 16-24px on a phone), text on its left line or the one split line",
-    "widths": [
-     1440
-    ],
-    "from": "consistency",
-    "ids": [
-     "container-edges"
-    ],
-    "wheres": [
-     "body"
-    ]
-   },
-   {
-    "check": "row-lines",
-    "where": "body",
-    "msg": "no sections found: nothing in <main>, or at the top of the page, to measure (SR-7)",
-    "fix": "start a row's first item on the container's left line and end its last on the right line, all one height, nothing scrolling sideways",
-    "widths": [
-     1440
-    ],
-    "from": "consistency",
-    "ids": [
-     "row-lines"
-    ],
-    "wheres": [
-     "body"
-    ]
-   },
-   {
-    "check": "split-pair",
-    "where": "body",
-    "msg": "no sections found: nothing in <main>, or at the top of the page, to measure (SR-8)",
-    "fix": "top-align every split, text left and visual right, the right column on one shared line, edge to edge on the container",
-    "widths": [
-     1440
-    ],
-    "from": "consistency",
-    "ids": [
-     "split-pair"
-    ],
-    "wheres": [
-     "body"
-    ]
-   },
    {
     "check": "container",
     "where": "page",
@@ -283,212 +151,86 @@
   ],
   "warns": [
    {
-    "check": "heading-scale",
+    "check": "hero-fill",
     "where": "(the page)",
-    "msg": "the page has no visible h1",
-    "fix": "size headings by level: the h1 largest, one size per level, each level below the one above",
+    "msg": "partly measured: the first screen (navigate: net::ERR_CONNECTION_REFUSED)",
+    "fix": "run the check again on a quieter machine; if it keeps failing, the probe error line says what stopped it",
     "widths": [
-     1440,
-     390
+     1280,
+     1152,
+     1024,
+     896,
+     768
     ],
     "from": "consistency"
    },
    {
-    "check": "share-meta",
-    "where": "head",
-    "msg": "the head lacks og:title, og:description, og:image, twitter:card, theme-color: a shared link shows no picture or title of its own",
-    "fix": "copy the head block of starter.html: og tags, twitter:card, the icon and theme-color (references/system.md, Head)",
+    "check": "nav",
+    "where": "(the page)",
+    "msg": "partly measured: the first screen (navigate: net::ERR_CONNECTION_REFUSED)",
+    "fix": "run the check again on a quieter machine; if it keeps failing, the probe error line says what stopped it",
     "widths": [
-     1440
+     1280,
+     1152,
+     1024,
+     896,
+     768
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "spill",
+    "where": "(the page)",
+    "msg": "partly measured: the first screen (navigate: net::ERR_CONNECTION_REFUSED)",
+    "fix": "run the check again on a quieter machine; if it keeps failing, the probe error line says what stopped it",
+    "widths": [
+     1280,
+     1152,
+     1024,
+     896,
+     768
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "off-viewport",
+    "where": "(the page)",
+    "msg": "partly measured: the first screen (navigate: net::ERR_CONNECTION_REFUSED)",
+    "fix": "run the check again on a quieter machine; if it keeps failing, the probe error line says what stopped it",
+    "widths": [
+     1280,
+     1152,
+     1024,
+     896,
+     768
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "cut-text",
+    "where": "(the page)",
+    "msg": "partly measured: the first screen (navigate: net::ERR_CONNECTION_REFUSED)",
+    "fix": "run the check again on a quieter machine; if it keeps failing, the probe error line says what stopped it",
+    "widths": [
+     1280,
+     1152,
+     1024,
+     896,
+     768
     ],
     "from": "consistency"
    }
   ],
   "crashed": [
-   "the copy (the page showed no <main>, <section> or <h1> to lint)"
+   "the copy (the page showed no <main>, <section> or <h1> to lint)",
+   "consistency.mjs could not walk 1440, 390"
   ],
   "seconds": {
-   "consistency": 83,
-   "layout": 39
+   "consistency": 125,
+   "layout": 58
   }
  },
  "open": [
-  {
-   "check": "copy-headline",
-   "where": "(the page)",
-   "msg": "the page has no visible h1",
-   "fix": "put the category noun in the h1 (and who it is for, or where), in 2 to 8 words",
-   "widths": [
-    1440
-   ],
-   "from": "consistency",
-   "ids": [
-    "copy-headline"
-   ],
-   "wheres": [
-    "(the page)"
-   ]
-  },
-  {
-   "check": "copy-fact",
-   "where": "(the page)",
-   "msg": "the first screen holds no number, price, date, place, platform or genre",
-   "fix": "put one hard fact from the brief on the first screen: a number, a price, a date, the place, the platforms it runs on or a game's genre; take it from the brief or remove the claim",
-   "widths": [
-    1440
-   ],
-   "from": "consistency",
-   "ids": [
-    "copy-fact"
-   ],
-   "wheres": [
-    "(the page)"
-   ]
-  },
-  {
-   "check": "moment-none",
-   "where": "(the page)",
-   "msg": "a software page (--type) deals no moment: every kind carries one, two on a long page (moments.md)",
-   "fix": "deal one (moments.mjs pick --page software) and mount it in its own section",
-   "widths": [
-    1440
-   ],
-   "from": "consistency",
-   "ids": [
-    "moment-none"
-   ],
-   "wheres": [
-    "(the page)"
-   ]
-  },
-  {
-   "check": "hero-screen",
-   "where": "body",
-   "msg": "no sections found: nothing in <main>, or at the top of the page, to measure (SR-1)",
-   "fix": "make the hero exactly one screen (height: 100svh) with its content between the nav and 24px above the fold",
-   "widths": [
-    1440
-   ],
-   "from": "consistency",
-   "ids": [
-    "hero-screen"
-   ],
-   "wheres": [
-    "body"
-   ]
-  },
-  {
-   "check": "section-height",
-   "where": "body",
-   "msg": "no sections found: nothing in <main>, or at the top of the page, to measure (SR-2)",
-   "fix": "set every section after the hero to one screen or two (height: calc(var(--h,1) * 100vh)) and fit its content above --padb",
-   "widths": [
-    1440
-   ],
-   "from": "consistency",
-   "ids": [
-    "section-height"
-   ],
-   "wheres": [
-    "body"
-   ]
-  },
-  {
-   "check": "section-air",
-   "where": "body",
-   "msg": "no sections found: nothing in <main>, or at the top of the page, to measure (SR-3)",
-   "fix": "keep 128-480px of air between sections (--padt, --padb), fill each section to 55% or merge it into the one above, and drop divider rules",
-   "widths": [
-    1440
-   ],
-   "from": "consistency",
-   "ids": [
-    "section-air"
-   ],
-   "wheres": [
-    "body"
-   ]
-  },
-  {
-   "check": "one-section",
-   "where": "body",
-   "msg": "no sections found: nothing in <main>, or at the top of the page, to measure (SR-4)",
-   "fix": "make each section exactly one or two screens so a screen shows one section; every block of <main> a <section>, no bands inside one",
-   "widths": [
-    1440
-   ],
-   "from": "consistency",
-   "ids": [
-    "one-section"
-   ],
-   "wheres": [
-    "body"
-   ]
-  },
-  {
-   "check": "one-heading",
-   "where": "body",
-   "msg": "no sections found: nothing in <main>, or at the top of the page, to measure (SR-5)",
-   "fix": "give each section one h2, first in its .wrap, and the hero only its h1, so headings sit a screen apart",
-   "widths": [
-    1440
-   ],
-   "from": "consistency",
-   "ids": [
-    "one-heading"
-   ],
-   "wheres": [
-    "body"
-   ]
-  },
-  {
-   "check": "container-edges",
-   "where": "body",
-   "msg": "no sections found: nothing in <main>, or at the top of the page, to measure (SR-6)",
-   "fix": "put everything on one .wrap: the same margin left and right (64-120px, 16-24px on a phone), text on its left line or the one split line",
-   "widths": [
-    1440
-   ],
-   "from": "consistency",
-   "ids": [
-    "container-edges"
-   ],
-   "wheres": [
-    "body"
-   ]
-  },
-  {
-   "check": "row-lines",
-   "where": "body",
-   "msg": "no sections found: nothing in <main>, or at the top of the page, to measure (SR-7)",
-   "fix": "start a row's first item on the container's left line and end its last on the right line, all one height, nothing scrolling sideways",
-   "widths": [
-    1440
-   ],
-   "from": "consistency",
-   "ids": [
-    "row-lines"
-   ],
-   "wheres": [
-    "body"
-   ]
-  },
-  {
-   "check": "split-pair",
-   "where": "body",
-   "msg": "no sections found: nothing in <main>, or at the top of the page, to measure (SR-8)",
-   "fix": "top-align every split, text left and visual right, the right column on one shared line, edge to edge on the container",
-   "widths": [
-    1440
-   ],
-   "from": "consistency",
-   "ids": [
-    "split-pair"
-   ],
-   "wheres": [
-    "body"
-   ]
-  },
   {
    "check": "container",
    "where": "page",
@@ -508,7 +250,8 @@
   }
  ],
  "waived": [],
- "warnCount": 2,
- "at": "2026-11-19T19:35:04.539Z",
- "session": "9ed11361-de90-48d8-9eca-12fdb7714dfe"
+ "warnCount": 5,
+ "at": "2026-11-19T23:24:57.002Z",
+ "session": "9ed11361-de90-48d8-9eca-12fdb7714dfe",
+ "openTold": true
 }

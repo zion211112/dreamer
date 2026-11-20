@@ -1,13 +1,55 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { PILOTS, workItemsForPilot, GATE_LABELS, type Pilot, type PilotKey } from '@/modules/workbench/data';
 import {
-  buildRecommendations,
   detectPatterns,
   forecastPilot,
   generateLearningOutputs,
-  matchParticipants,
+  buildRecommendations,
+  type Forecast,
+  type Pattern,
+  type LearningOutput,
+  type Recommendation,
 } from '../lib/intelligence';
-import { workItemsForPilot, PILOTS } from '@/modules/workbench/data';
-import { ref, onMounted } from 'vue';
+
+interface LaneForecast {
+  pilot: Pilot;
+  forecast: Forecast;
+}
+
+const lanes = ref<LaneForecast[]>([]);
+const patterns = ref<Pattern[]>([]);
+const learning = ref<LearningOutput[]>([]);
+const recommendations = ref<Recommendation[]>([]);
+const openItems = ref<{ title: string; gate: string; lane: string }[]>([]);
+const loaded = ref(false);
+
+onMounted(async () => {
+  const forecasts = await Promise.all(
+    PILOTS.map(async (p) => ({ pilot: p, forecast: await forecastPilot(p.key) })),
+  );
+  lanes.value = forecasts;
+  patterns.value = await detectPatterns();
+  learning.value = await generateLearningOutputs();
+  recommendations.value = await buildRecommendations();
+  openItems.value = PILOTS.flatMap((p) =>
+    workItemsForPilot(p.key)
+      .filter((i) => i.gate !== 'accepted')
+      .map((i) => ({ title: i.title, gate: GATE_LABELS[i.gate], lane: p.label })),
+  ).slice(0, 5);
+  loaded.value = true;
+});
+
+function capitalLabel(f: Forecast): string {
+  return f.totalCapital === null
+    ? 'Not priced'
+    : `${f.totalCapital.toLocaleString('en-KE')} KES`;
+}
+
+function laneIsLive(key: PilotKey): boolean {
+  const p = PILOTS.find((x) => x.key === key);
+  return p?.status === 'published';
+}
 </script>
 
 <template>
@@ -24,28 +66,36 @@ import { ref, onMounted } from 'vue';
       <h2 class="intelligence-section-title">Capacity by pilot lane</h2>
       <div class="intelligence-forecast-grid">
         <article
-          v-for="pilot in PILOTS"
-          :key="pilot.key"
+          v-for="lane in lanes"
+          :key="lane.pilot.key"
           class="intelligence-forecast-card"
         >
-          <h3 class="intelligence-forecast-title">{{ pilot.label }}</h3>
-          <div class="intelligence-forecast-metrics">
-            <div class="intelligence-forecast-metric">
-              <span class="intelligence-forecast-value">—</span>
-              <span class="intelligence-forecast-label">Open</span>
+          <h3 class="intelligence-forecast-title">{{ lane.pilot.label }}</h3>
+          <template v-if="laneIsLive(lane.pilot.key)">
+            <div class="intelligence-forecast-metrics">
+              <div class="intelligence-forecast-metric">
+                <span class="intelligence-forecast-value">{{ lane.forecast.openCount }}</span>
+                <span class="intelligence-forecast-label">Open</span>
+              </div>
+              <div class="intelligence-forecast-metric">
+                <span class="intelligence-forecast-value">{{ lane.forecast.acceptedCount }}</span>
+                <span class="intelligence-forecast-label">Accepted</span>
+              </div>
+              <div class="intelligence-forecast-metric">
+                <span class="intelligence-forecast-value">{{ capitalLabel(lane.forecast) }}</span>
+                <span class="intelligence-forecast-label">Capital</span>
+              </div>
             </div>
-            <div class="intelligence-forecast-metric">
-              <span class="intelligence-forecast-value">—</span>
-              <span class="intelligence-forecast-label">Accepted</span>
-            </div>
-            <div class="intelligence-forecast-metric">
-              <span class="intelligence-forecast-value">Not priced</span>
-              <span class="intelligence-forecast-label">Capital</span>
-            </div>
-          </div>
-          <p class="intelligence-forecast-note">
-            Forecast computed from workbench data.
-          </p>
+            <p class="intelligence-forecast-note">
+              Uncertainty: {{ lane.forecast.uncertainty }}. {{ lane.forecast.assumption }}
+            </p>
+          </template>
+          <template v-else>
+            <p class="intelligence-forecast-note">
+              Illustrative lane — a browser-local demo example, not live work. No numbers are
+              shown as if they were real.
+            </p>
+          </template>
         </article>
       </div>
     </section>
@@ -53,7 +103,6 @@ import { ref, onMounted } from 'vue';
     <section class="intelligence-panels">
       <article class="intelligence-panel">
         <header class="intelligence-card-head">
-          <span class="intelligence-card-index">01</span>
           <h2 class="intelligence-card-title">Matching</h2>
         </header>
         <p class="intelligence-card-body">
@@ -61,40 +110,80 @@ import { ref, onMounted } from 'vue';
           scoped credentials, and demonstrated capability. A match is a suggestion,
           not an assignment.
         </p>
-        <p class="intelligence-empty">No open undertakings awaiting crew at this time.</p>
+        <template v-if="loaded">
+          <ul v-if="openItems.length" class="intelligence-open-list">
+            <li v-for="item in openItems" :key="`${item.lane}-${item.title}`" class="intelligence-open-item">
+              <span class="intelligence-open-title">{{ item.title }}</span>
+              <span class="intelligence-open-meta">{{ item.lane }}, {{ item.gate }}</span>
+            </li>
+          </ul>
+          <p v-else class="intelligence-empty">
+            No open undertakings awaiting crew at this time.
+          </p>
+        </template>
       </article>
 
       <article class="intelligence-panel">
         <header class="intelligence-card-head">
-          <span class="intelligence-card-index">02</span>
           <h2 class="intelligence-card-title">Patterns</h2>
         </header>
         <p class="intelligence-card-body">
           Evidence-backed observations from recorded outcomes.
         </p>
-        <p class="intelligence-empty">No significant patterns detected yet.</p>
+        <template v-if="loaded">
+          <ul v-if="patterns.length" class="intelligence-open-list">
+            <li v-for="pattern in patterns" :key="pattern.id" class="intelligence-open-item">
+              <span class="intelligence-open-title">
+                {{ pattern.title }}
+                <span class="intelligence-open-meta">severity: {{ pattern.severity }}</span>
+              </span>
+              <span class="intelligence-open-meta">{{ pattern.description }}</span>
+            </li>
+          </ul>
+          <p v-else class="intelligence-empty">No significant patterns detected yet.</p>
+        </template>
       </article>
 
       <article class="intelligence-panel">
         <header class="intelligence-card-head">
-          <span class="intelligence-card-index">03</span>
           <h2 class="intelligence-card-title">Learning</h2>
         </header>
         <p class="intelligence-card-body">
           Accepted outcomes converted into reusable knowledge.
         </p>
-        <p class="intelligence-empty">No learning captured yet.</p>
+        <template v-if="loaded">
+          <ul v-if="learning.length" class="intelligence-open-list">
+            <li v-for="item in learning" :key="item.id" class="intelligence-open-item">
+              <span class="intelligence-open-title">{{ item.title }}</span>
+              <span class="intelligence-open-meta">{{ item.lesson }}</span>
+            </li>
+          </ul>
+          <p v-else class="intelligence-empty">No learning captured yet.</p>
+        </template>
       </article>
     </section>
 
     <section class="intelligence-recommendations">
       <h2 class="intelligence-section-title">Decision support</h2>
-      <p class="intelligence-empty">No active recommendations at this time.</p>
+      <template v-if="loaded">
+        <ul v-if="recommendations.length" class="intelligence-rec-list">
+          <li v-for="rec in recommendations" :key="rec.id" class="intelligence-rec-item">
+            <div class="intelligence-rec-head">
+              <span class="intelligence-open-title">{{ rec.title }}</span>
+              <span class="intelligence-open-meta">
+                certainty: {{ rec.certainty }}, decided by {{ rec.whoDecides }}
+              </span>
+            </div>
+            <p class="intelligence-rec-what">{{ rec.what }}</p>
+            <p class="intelligence-rec-why">{{ rec.why }}</p>
+          </li>
+        </ul>
+        <p v-else class="intelligence-empty">No active recommendations at this time.</p>
+      </template>
     </section>
 
     <section class="intelligence-boundaries">
       <header class="intelligence-card-head">
-        <span class="intelligence-card-index">04</span>
         <h2 class="intelligence-card-title">Boundaries</h2>
       </header>
       <ul class="intelligence-boundary-list">
@@ -182,6 +271,7 @@ import { ref, onMounted } from 'vue';
   display: flex;
   gap: var(--apt-spacing-s6);
   margin-bottom: var(--apt-spacing-s4);
+  flex-wrap: wrap;
 }
 
 .intelligence-forecast-metric {
@@ -206,6 +296,7 @@ import { ref, onMounted } from 'vue';
   font-size: var(--apt-font-size-sm-3);
   color: var(--apt-text-dim);
   margin: 0;
+  line-height: var(--apt-line-height-relaxed);
 }
 
 .intelligence-panels {
@@ -231,12 +322,6 @@ import { ref, onMounted } from 'vue';
   gap: var(--apt-spacing-s2);
 }
 
-.intelligence-card-index {
-  font-family: var(--apt-font-mono);
-  font-size: var(--apt-font-size-body-md);
-  color: var(--apt-text-dim);
-}
-
 .intelligence-card-title {
   font-size: var(--apt-font-size-title-1);
   font-weight: var(--apt-font-weight-semibold);
@@ -249,18 +334,75 @@ import { ref, onMounted } from 'vue';
   color: var(--apt-text-muted);
   line-height: var(--apt-line-height-relaxed);
   margin: 0;
-  flex: 1;
+  /* Uniform floor at the tallest intro (4 lines at desktop widths) so all
+     three panel intros end on the same row line. */
+  min-height: 72px;
 }
+
+/* Keep all three panel lists starting on the same row line. Height
+   differences between cards are absorbed by the grid row stretch below
+   each card's last child, so sibling gaps stay a uniform 8px. */
 
 .intelligence-empty {
   font-size: var(--apt-font-size-body-sm);
   color: var(--apt-text-dim);
   margin: 0;
-  font-style: italic;
+}
+
+.intelligence-open-list,
+.intelligence-rec-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--apt-spacing-s4);
+}
+
+.intelligence-open-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.intelligence-open-title {
+  font-size: var(--apt-font-size-body-sm);
+  font-weight: var(--apt-font-weight-medium);
+  color: var(--apt-text-body);
+}
+
+.intelligence-open-meta {
+  font-size: var(--apt-font-size-sm-3);
+  color: var(--apt-text-dim);
 }
 
 .intelligence-recommendations {
   margin-bottom: var(--apt-spacing-s13);
+}
+
+.intelligence-rec-item {
+  padding: var(--apt-spacing-s6);
+  border: 1px solid var(--apt-border);
+  border-radius: var(--apt-radius-r2);
+  background: var(--apt-color-neutral-n0);
+  display: flex;
+  flex-direction: column;
+  gap: var(--apt-spacing-s2);
+}
+
+.intelligence-rec-head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--apt-spacing-s4);
+  flex-wrap: wrap;
+}
+
+.intelligence-rec-what,
+.intelligence-rec-why {
+  margin: 0;
+  font-size: var(--apt-font-size-body-sm);
+  color: var(--apt-text-muted);
+  line-height: var(--apt-line-height-relaxed);
 }
 
 .intelligence-boundary-list {
@@ -294,4 +436,3 @@ import { ref, onMounted } from 'vue';
   line-height: var(--apt-line-height-relaxed);
 }
 </style>
-

@@ -1,0 +1,1394 @@
+{
+  "title": "APT-LABS per-module surfaces",
+  "states": [
+    {
+      "name": "viewport-1440 .network-page",
+      "title": "APT-LABS — Vue Foundation",
+      "scope": ".network-page",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "devicePixelRatio": 1
+      },
+      "elements": [
+        {
+          "id": "div@1",
+          "tag": "div",
+          "rect": {
+            "x": 316,
+            "y": -79,
+            "width": 1068,
+            "height": 900
+          },
+          "style": {
+            "padding": {
+              "top": 36,
+              "right": 36,
+              "bottom": 36,
+              "left": 36
+            }
+          }
+        },
+        {
+          "id": "header@2",
+          "tag": "header",
+          "rect": {
+            "x": 352,
+            "y": -43,
+            "width": 996,
+            "height": 58
+          },
+          "parentId": "div@1",
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 36,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "h1@3",
+          "tag": "h1",
+          "rect": {
+            "x": 352,
+            "y": -43,
+            "width": 996,
+            "height": 34
+          },
+          "parentId": "header@2",
+          "label": "Network",
+          "lineCount": 1,
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 6,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "p@4",
+          "tag": "p",
+          "rect": {
+            "x": 352,
+            "y": -3,
+            "width": 996,
+            "height": 18
+          },
+          "parentId": "header@2",
+          "lineCount": 1
+        },
+        {
+          "id": "section@5",
+          "tag": "section",
+          "rect": {
+            "x": 352,
+            "y": 51,
+            "width": 996,
+            "height": 44
+          },
+          "parentId": "div@1",
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 36,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "div@6",
+          "tag": "div",
+          "rect": {
+            "x": 352,
+            "y": 51,
+            "width": 996,
+            "height": 44
+          },
+          "parentId": "section@5",
+          "style": {
+            "display": "flex",
+            "flexWrap": "wrap",
+            "alignItems": "center",
+            "rowGap": 8,
+            "columnGap": 8
+          }
+        },
+        {
+          "id": "span@7",
+          "tag": "span",
+          "rect": {
+            "x": 352,
+            "y": 67,
+            "width": 41,
+            "height": 12
+          },
+          "parentId": "div@6",
+          "lineCount": 1
+        },
+        {
+          "id": "div@8",
+          "tag": "div",
+          "rect": {
+            "x": 401,
+            "y": 51,
+            "width": 393,
+            "height": 44
+          },
+          "parentId": "div@6",
+          "style": {
+            "display": "flex",
+            "flexWrap": "wrap",
+            "rowGap": 6,
+            "columnGap": 6
+          }
+        },
+        {
+          "id": "button@9",
+          "tag": "button",
+          "rect": {
+            "x": 401,
+            "y": 51,
+            "width": 49,
+            "height": 44
+          },
+          "parentId": "div@8",
+          "label": "All 1",
+          "interactive": true,
+          "lineCount": 1,
+          "style": {
+            "display": "flex",
+            "alignItems": "center",
+            "rowGap": 4,
+            "columnGap": 4,
+            "textAlign": "center",
+            "padding": {
+              "top": 4,
+              "right": 12,
+              "bottom": 4,
+              "left": 12
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "topRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              }
+            }
+          }
+        },
+        {
+          "id": "span@10",
+          "tag": "span",
+          "rect": {
+            "x": 431,
+            "y": 66.5,
+            "width": 6,
+            "height": 13
+          },
+          "parentId": "button@9",
+          "lineCount": 1,
+          "style": {
+            "textAlign": "center",
+            "opacity": 0.8
+          }
+        },
+        {
+          "id": "button@11",
+          "tag": "button",
+          "rect": {
+            "x": 456,
+            "y": 51,
+            "width": 70,
+            "height": 44
+          },
+          "parentId": "div@8",
+          "label": "People 1",
+          "interactive": true,
+          "lineCount": 1,
+          "style": {
+            "display": "flex",
+            "alignItems": "center",
+            "rowGap": 4,
+            "columnGap": 4,
+            "textAlign": "center",
+            "padding": {
+              "top": 4,
+              "right": 12,
+              "bottom": 4,
+              "left": 12
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "topRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              }
+            }
+          }
+        },
+        {
+          "id": "span@12",
+          "tag": "span",
+          "rect": {
+            "x": 507,
+            "y": 66.5,
+            "width": 6,
+            "height": 13
+          },
+          "parentId": "button@11",
+          "lineCount": 1,
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "button@13",
+          "tag": "button",
+          "rect": {
+            "x": 532,
+            "y": 51,
+            "width": 63,
+            "height": 44
+          },
+          "parentId": "div@8",
+          "label": "Crews 0",
+          "interactive": true,
+          "lineCount": 1,
+          "style": {
+            "display": "flex",
+            "alignItems": "center",
+            "rowGap": 4,
+            "columnGap": 4,
+            "textAlign": "center",
+            "padding": {
+              "top": 4,
+              "right": 12,
+              "bottom": 4,
+              "left": 12
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "topRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              }
+            }
+          }
+        },
+        {
+          "id": "span@14",
+          "tag": "span",
+          "rect": {
+            "x": 576,
+            "y": 66.5,
+            "width": 6,
+            "height": 13
+          },
+          "parentId": "button@13",
+          "lineCount": 1,
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "button@15",
+          "tag": "button",
+          "rect": {
+            "x": 601,
+            "y": 51,
+            "width": 86,
+            "height": 44
+          },
+          "parentId": "div@8",
+          "label": "Institutions 0",
+          "interactive": true,
+          "lineCount": 1,
+          "style": {
+            "display": "flex",
+            "alignItems": "center",
+            "rowGap": 4,
+            "columnGap": 4,
+            "textAlign": "center",
+            "padding": {
+              "top": 4,
+              "right": 12,
+              "bottom": 4,
+              "left": 12
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "topRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              }
+            }
+          }
+        },
+        {
+          "id": "span@16",
+          "tag": "span",
+          "rect": {
+            "x": 668,
+            "y": 66.5,
+            "width": 6,
+            "height": 13
+          },
+          "parentId": "button@15",
+          "lineCount": 1,
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "button@17",
+          "tag": "button",
+          "rect": {
+            "x": 693,
+            "y": 51,
+            "width": 101,
+            "height": 44
+          },
+          "parentId": "div@8",
+          "label": "Organizations 0",
+          "interactive": true,
+          "lineCount": 1,
+          "style": {
+            "display": "flex",
+            "alignItems": "center",
+            "rowGap": 4,
+            "columnGap": 4,
+            "textAlign": "center",
+            "padding": {
+              "top": 4,
+              "right": 12,
+              "bottom": 4,
+              "left": 12
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "topRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              }
+            }
+          }
+        },
+        {
+          "id": "span@18",
+          "tag": "span",
+          "rect": {
+            "x": 775,
+            "y": 66.5,
+            "width": 6,
+            "height": 13
+          },
+          "parentId": "button@17",
+          "lineCount": 1,
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "section@19",
+          "tag": "section",
+          "rect": {
+            "x": 352,
+            "y": 131,
+            "width": 996,
+            "height": 125
+          },
+          "parentId": "div@1"
+        },
+        {
+          "id": "h2@20",
+          "tag": "h2",
+          "rect": {
+            "x": 352,
+            "y": 131,
+            "width": 996,
+            "height": 22
+          },
+          "parentId": "section@19",
+          "label": "Directory",
+          "lineCount": 1,
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 12,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "div@21",
+          "tag": "div",
+          "rect": {
+            "x": 352,
+            "y": 165,
+            "width": 996,
+            "height": 91
+          },
+          "parentId": "section@19",
+          "style": {
+            "display": "grid",
+            "rowGap": 12,
+            "columnGap": 12
+          }
+        },
+        {
+          "id": "article@22",
+          "tag": "article",
+          "rect": {
+            "x": 352,
+            "y": 165,
+            "width": 324,
+            "height": 91
+          },
+          "parentId": "div@21",
+          "style": {
+            "display": "flex",
+            "flexDirection": "column",
+            "rowGap": 8,
+            "columnGap": 8,
+            "padding": {
+              "top": 16,
+              "right": 16,
+              "bottom": 16,
+              "left": 16
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 8,
+                "vertical": 8
+              },
+              "topRight": {
+                "horizontal": 8,
+                "vertical": 8
+              },
+              "bottomRight": {
+                "horizontal": 8,
+                "vertical": 8
+              },
+              "bottomLeft": {
+                "horizontal": 8,
+                "vertical": 8
+              }
+            }
+          }
+        },
+        {
+          "id": "div@23",
+          "tag": "div",
+          "rect": {
+            "x": 369,
+            "y": 182,
+            "width": 290,
+            "height": 30
+          },
+          "parentId": "article@22",
+          "style": {
+            "display": "flex",
+            "flexDirection": "column",
+            "rowGap": 2,
+            "columnGap": 2
+          }
+        },
+        {
+          "id": "h3@24",
+          "tag": "h3",
+          "rect": {
+            "x": 369,
+            "y": 182,
+            "width": 290,
+            "height": 16
+          },
+          "parentId": "div@23",
+          "label": "Kibera Welding Co-op",
+          "lineCount": 1
+        },
+        {
+          "id": "p@25",
+          "tag": "p",
+          "rect": {
+            "x": 369,
+            "y": 200,
+            "width": 290,
+            "height": 12
+          },
+          "parentId": "div@23",
+          "lineCount": 1
+        },
+        {
+          "id": "div@26",
+          "tag": "div",
+          "rect": {
+            "x": 369,
+            "y": 220,
+            "width": 290,
+            "height": 19
+          },
+          "parentId": "article@22",
+          "style": {
+            "display": "flex",
+            "flexWrap": "wrap",
+            "alignItems": "center",
+            "rowGap": 4,
+            "columnGap": 4
+          }
+        },
+        {
+          "id": "span@27",
+          "tag": "span",
+          "rect": {
+            "x": 369,
+            "y": 223.5,
+            "width": 43.8,
+            "height": 12
+          },
+          "parentId": "div@26",
+          "lineCount": 1
+        },
+        {
+          "id": "span@28",
+          "tag": "span",
+          "rect": {
+            "x": 416.8,
+            "y": 220,
+            "width": 53,
+            "height": 19
+          },
+          "parentId": "div@26",
+          "lineCount": 1,
+          "style": {
+            "padding": {
+              "top": 2,
+              "right": 6,
+              "bottom": 2,
+              "left": 6
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 4,
+                "vertical": 4
+              },
+              "topRight": {
+                "horizontal": 4,
+                "vertical": 4
+              },
+              "bottomRight": {
+                "horizontal": 4,
+                "vertical": 4
+              },
+              "bottomLeft": {
+                "horizontal": 4,
+                "vertical": 4
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "viewport-390 .network-page",
+      "title": "APT-LABS — Vue Foundation",
+      "scope": ".network-page",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "devicePixelRatio": 1
+      },
+      "elements": [
+        {
+          "id": "div@1",
+          "tag": "div",
+          "rect": {
+            "x": 24,
+            "y": -69,
+            "width": 342,
+            "height": 844
+          },
+          "style": {
+            "padding": {
+              "top": 36,
+              "right": 36,
+              "bottom": 36,
+              "left": 36
+            }
+          }
+        },
+        {
+          "id": "header@2",
+          "tag": "header",
+          "rect": {
+            "x": 60,
+            "y": -33,
+            "width": 270,
+            "height": 76
+          },
+          "parentId": "div@1",
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 36,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "h1@3",
+          "tag": "h1",
+          "rect": {
+            "x": 60,
+            "y": -33,
+            "width": 270,
+            "height": 34
+          },
+          "parentId": "header@2",
+          "label": "Network",
+          "lineCount": 1,
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 6,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "p@4",
+          "tag": "p",
+          "rect": {
+            "x": 60,
+            "y": 7,
+            "width": 270,
+            "height": 36
+          },
+          "parentId": "header@2",
+          "lineCount": 2
+        },
+        {
+          "id": "section@5",
+          "tag": "section",
+          "rect": {
+            "x": 60,
+            "y": 79,
+            "width": 270,
+            "height": 114
+          },
+          "parentId": "div@1",
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 36,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "div@6",
+          "tag": "div",
+          "rect": {
+            "x": 60,
+            "y": 79,
+            "width": 270,
+            "height": 114
+          },
+          "parentId": "section@5",
+          "style": {
+            "display": "flex",
+            "flexDirection": "column",
+            "flexWrap": "wrap",
+            "alignItems": "flow-start",
+            "rowGap": 8,
+            "columnGap": 8
+          }
+        },
+        {
+          "id": "span@7",
+          "tag": "span",
+          "rect": {
+            "x": 60,
+            "y": 79,
+            "width": 41,
+            "height": 12
+          },
+          "parentId": "div@6",
+          "lineCount": 1
+        },
+        {
+          "id": "div@8",
+          "tag": "div",
+          "rect": {
+            "x": 60,
+            "y": 99,
+            "width": 270,
+            "height": 94
+          },
+          "parentId": "div@6",
+          "style": {
+            "display": "flex",
+            "flexWrap": "wrap",
+            "rowGap": 6,
+            "columnGap": 6
+          }
+        },
+        {
+          "id": "button@9",
+          "tag": "button",
+          "rect": {
+            "x": 60,
+            "y": 99,
+            "width": 49,
+            "height": 44
+          },
+          "parentId": "div@8",
+          "label": "All 1",
+          "interactive": true,
+          "lineCount": 1,
+          "style": {
+            "display": "flex",
+            "alignItems": "center",
+            "rowGap": 4,
+            "columnGap": 4,
+            "textAlign": "center",
+            "padding": {
+              "top": 4,
+              "right": 12,
+              "bottom": 4,
+              "left": 12
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "topRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              }
+            }
+          }
+        },
+        {
+          "id": "span@10",
+          "tag": "span",
+          "rect": {
+            "x": 90,
+            "y": 114.5,
+            "width": 6,
+            "height": 13
+          },
+          "parentId": "button@9",
+          "lineCount": 1,
+          "style": {
+            "textAlign": "center",
+            "opacity": 0.8
+          }
+        },
+        {
+          "id": "button@11",
+          "tag": "button",
+          "rect": {
+            "x": 115,
+            "y": 99,
+            "width": 70,
+            "height": 44
+          },
+          "parentId": "div@8",
+          "label": "People 1",
+          "interactive": true,
+          "lineCount": 1,
+          "style": {
+            "display": "flex",
+            "alignItems": "center",
+            "rowGap": 4,
+            "columnGap": 4,
+            "textAlign": "center",
+            "padding": {
+              "top": 4,
+              "right": 12,
+              "bottom": 4,
+              "left": 12
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "topRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              }
+            }
+          }
+        },
+        {
+          "id": "span@12",
+          "tag": "span",
+          "rect": {
+            "x": 166,
+            "y": 114.5,
+            "width": 6,
+            "height": 13
+          },
+          "parentId": "button@11",
+          "lineCount": 1,
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "button@13",
+          "tag": "button",
+          "rect": {
+            "x": 191,
+            "y": 99,
+            "width": 63,
+            "height": 44
+          },
+          "parentId": "div@8",
+          "label": "Crews 0",
+          "interactive": true,
+          "lineCount": 1,
+          "style": {
+            "display": "flex",
+            "alignItems": "center",
+            "rowGap": 4,
+            "columnGap": 4,
+            "textAlign": "center",
+            "padding": {
+              "top": 4,
+              "right": 12,
+              "bottom": 4,
+              "left": 12
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "topRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              }
+            }
+          }
+        },
+        {
+          "id": "span@14",
+          "tag": "span",
+          "rect": {
+            "x": 235,
+            "y": 114.5,
+            "width": 6,
+            "height": 13
+          },
+          "parentId": "button@13",
+          "lineCount": 1,
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "button@15",
+          "tag": "button",
+          "rect": {
+            "x": 60,
+            "y": 149,
+            "width": 86,
+            "height": 44
+          },
+          "parentId": "div@8",
+          "label": "Institutions 0",
+          "interactive": true,
+          "lineCount": 1,
+          "style": {
+            "display": "flex",
+            "alignItems": "center",
+            "rowGap": 4,
+            "columnGap": 4,
+            "textAlign": "center",
+            "padding": {
+              "top": 4,
+              "right": 12,
+              "bottom": 4,
+              "left": 12
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "topRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              }
+            }
+          }
+        },
+        {
+          "id": "span@16",
+          "tag": "span",
+          "rect": {
+            "x": 127,
+            "y": 164.5,
+            "width": 6,
+            "height": 13
+          },
+          "parentId": "button@15",
+          "lineCount": 1,
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "button@17",
+          "tag": "button",
+          "rect": {
+            "x": 152,
+            "y": 149,
+            "width": 101,
+            "height": 44
+          },
+          "parentId": "div@8",
+          "label": "Organizations 0",
+          "interactive": true,
+          "lineCount": 1,
+          "style": {
+            "display": "flex",
+            "alignItems": "center",
+            "rowGap": 4,
+            "columnGap": 4,
+            "textAlign": "center",
+            "padding": {
+              "top": 4,
+              "right": 12,
+              "bottom": 4,
+              "left": 12
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "topRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomRight": {
+                "horizontal": 50,
+                "vertical": 50
+              },
+              "bottomLeft": {
+                "horizontal": 50,
+                "vertical": 50
+              }
+            }
+          }
+        },
+        {
+          "id": "span@18",
+          "tag": "span",
+          "rect": {
+            "x": 234,
+            "y": 164.5,
+            "width": 6,
+            "height": 13
+          },
+          "parentId": "button@17",
+          "lineCount": 1,
+          "style": {
+            "textAlign": "center"
+          }
+        },
+        {
+          "id": "section@19",
+          "tag": "section",
+          "rect": {
+            "x": 60,
+            "y": 229,
+            "width": 270,
+            "height": 125
+          },
+          "parentId": "div@1",
+          "clientWidth": 270,
+          "clientHeight": 125,
+          "scrollWidth": 280,
+          "scrollHeight": 125
+        },
+        {
+          "id": "h2@20",
+          "tag": "h2",
+          "rect": {
+            "x": 60,
+            "y": 229,
+            "width": 270,
+            "height": 22
+          },
+          "parentId": "section@19",
+          "label": "Directory",
+          "lineCount": 1,
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 12,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "div@21",
+          "tag": "div",
+          "rect": {
+            "x": 60,
+            "y": 263,
+            "width": 270,
+            "height": 91
+          },
+          "parentId": "section@19",
+          "clientWidth": 270,
+          "clientHeight": 91,
+          "scrollWidth": 280,
+          "scrollHeight": 91,
+          "style": {
+            "display": "grid",
+            "rowGap": 12,
+            "columnGap": 12
+          }
+        },
+        {
+          "id": "article@22",
+          "tag": "article",
+          "rect": {
+            "x": 60,
+            "y": 263,
+            "width": 280,
+            "height": 91
+          },
+          "parentId": "div@21",
+          "style": {
+            "display": "flex",
+            "flexDirection": "column",
+            "rowGap": 8,
+            "columnGap": 8,
+            "padding": {
+              "top": 16,
+              "right": 16,
+              "bottom": 16,
+              "left": 16
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 8,
+                "vertical": 8
+              },
+              "topRight": {
+                "horizontal": 8,
+                "vertical": 8
+              },
+              "bottomRight": {
+                "horizontal": 8,
+                "vertical": 8
+              },
+              "bottomLeft": {
+                "horizontal": 8,
+                "vertical": 8
+              }
+            }
+          }
+        },
+        {
+          "id": "div@23",
+          "tag": "div",
+          "rect": {
+            "x": 77,
+            "y": 280,
+            "width": 246,
+            "height": 30
+          },
+          "parentId": "article@22",
+          "style": {
+            "display": "flex",
+            "flexDirection": "column",
+            "rowGap": 2,
+            "columnGap": 2
+          }
+        },
+        {
+          "id": "h3@24",
+          "tag": "h3",
+          "rect": {
+            "x": 77,
+            "y": 280,
+            "width": 246,
+            "height": 16
+          },
+          "parentId": "div@23",
+          "label": "Kibera Welding Co-op",
+          "lineCount": 1
+        },
+        {
+          "id": "p@25",
+          "tag": "p",
+          "rect": {
+            "x": 77,
+            "y": 298,
+            "width": 246,
+            "height": 12
+          },
+          "parentId": "div@23",
+          "lineCount": 1
+        },
+        {
+          "id": "div@26",
+          "tag": "div",
+          "rect": {
+            "x": 77,
+            "y": 318,
+            "width": 246,
+            "height": 19
+          },
+          "parentId": "article@22",
+          "style": {
+            "display": "flex",
+            "flexWrap": "wrap",
+            "alignItems": "center",
+            "rowGap": 4,
+            "columnGap": 4
+          }
+        },
+        {
+          "id": "span@27",
+          "tag": "span",
+          "rect": {
+            "x": 77,
+            "y": 321.5,
+            "width": 43.8,
+            "height": 12
+          },
+          "parentId": "div@26",
+          "lineCount": 1
+        },
+        {
+          "id": "span@28",
+          "tag": "span",
+          "rect": {
+            "x": 124.8,
+            "y": 318,
+            "width": 53,
+            "height": 19
+          },
+          "parentId": "div@26",
+          "lineCount": 1,
+          "style": {
+            "padding": {
+              "top": 2,
+              "right": 6,
+              "bottom": 2,
+              "left": 6
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 4,
+                "vertical": 4
+              },
+              "topRight": {
+                "horizontal": 4,
+                "vertical": 4
+              },
+              "bottomRight": {
+                "horizontal": 4,
+                "vertical": 4
+              },
+              "bottomLeft": {
+                "horizontal": 4,
+                "vertical": 4
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

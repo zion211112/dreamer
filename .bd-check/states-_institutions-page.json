@@ -1,0 +1,541 @@
+{
+  "title": "APT-LABS per-module surfaces",
+  "states": [
+    {
+      "name": "viewport-1440 .institutions-page",
+      "title": "APT-LABS — Vue Foundation",
+      "scope": ".institutions-page",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "devicePixelRatio": 1
+      },
+      "elements": [
+        {
+          "id": "div@1",
+          "tag": "div",
+          "rect": {
+            "x": 316,
+            "y": -79,
+            "width": 1068,
+            "height": 900
+          },
+          "style": {
+            "padding": {
+              "top": 36,
+              "right": 36,
+              "bottom": 36,
+              "left": 36
+            }
+          }
+        },
+        {
+          "id": "header@2",
+          "tag": "header",
+          "rect": {
+            "x": 352,
+            "y": -43,
+            "width": 996,
+            "height": 58
+          },
+          "parentId": "div@1",
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 16,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "h1@3",
+          "tag": "h1",
+          "rect": {
+            "x": 352,
+            "y": -43,
+            "width": 996,
+            "height": 34
+          },
+          "parentId": "header@2",
+          "label": "Institutions & organizations",
+          "lineCount": 1,
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 6,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "p@4",
+          "tag": "p",
+          "rect": {
+            "x": 352,
+            "y": -3,
+            "width": 996,
+            "height": 18
+          },
+          "parentId": "header@2",
+          "lineCount": 1
+        },
+        {
+          "id": "nav@5",
+          "tag": "nav",
+          "rect": {
+            "x": 352,
+            "y": 31,
+            "width": 996,
+            "height": 44
+          },
+          "parentId": "div@1",
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 16,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "a@6",
+          "tag": "a",
+          "rect": {
+            "x": 352,
+            "y": 31,
+            "width": 109,
+            "height": 44
+          },
+          "parentId": "nav@5",
+          "label": "← Network directory",
+          "interactive": true,
+          "lineCount": 1,
+          "style": {
+            "display": "inline-flex",
+            "alignItems": "center"
+          }
+        },
+        {
+          "id": "section@7",
+          "tag": "section",
+          "rect": {
+            "x": 352,
+            "y": 91,
+            "width": 996,
+            "height": 194
+          },
+          "parentId": "div@1"
+        },
+        {
+          "id": "div@8",
+          "tag": "div",
+          "rect": {
+            "x": 352,
+            "y": 91,
+            "width": 996,
+            "height": 194
+          },
+          "parentId": "section@7",
+          "style": {
+            "textAlign": "center",
+            "padding": {
+              "top": 36,
+              "right": 36,
+              "bottom": 36,
+              "left": 36
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 8,
+                "vertical": 8
+              },
+              "topRight": {
+                "horizontal": 8,
+                "vertical": 8
+              },
+              "bottomRight": {
+                "horizontal": 8,
+                "vertical": 8
+              },
+              "bottomLeft": {
+                "horizontal": 8,
+                "vertical": 8
+              }
+            }
+          }
+        },
+        {
+          "id": "h2@9",
+          "tag": "h2",
+          "rect": {
+            "x": 389,
+            "y": 128,
+            "width": 922,
+            "height": 22
+          },
+          "parentId": "div@8",
+          "label": "No institutions or organizations registered",
+          "lineCount": 1,
+          "style": {
+            "textAlign": "center",
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 6,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "p@10",
+          "tag": "p",
+          "rect": {
+            "x": 696,
+            "y": 156,
+            "width": 308,
+            "height": 36
+          },
+          "parentId": "div@8",
+          "lineCount": 2,
+          "style": {
+            "textAlign": "center",
+            "margin": {
+              "top": 0,
+              "right": 307,
+              "bottom": 0,
+              "left": 307
+            },
+            "autoMargins": [
+              "right",
+              "left"
+            ]
+          }
+        },
+        {
+          "id": "a@11",
+          "tag": "a",
+          "rect": {
+            "x": 739.5,
+            "y": 204,
+            "width": 221,
+            "height": 44
+          },
+          "parentId": "div@8",
+          "label": "Open the Coordination Workbench",
+          "interactive": true,
+          "lineCount": 1,
+          "style": {
+            "display": "inline-flex",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "textAlign": "center",
+            "padding": {
+              "top": 0,
+              "right": 16,
+              "bottom": 0,
+              "left": 16
+            },
+            "margin": {
+              "top": 12,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 6,
+                "vertical": 6
+              },
+              "topRight": {
+                "horizontal": 6,
+                "vertical": 6
+              },
+              "bottomRight": {
+                "horizontal": 6,
+                "vertical": 6
+              },
+              "bottomLeft": {
+                "horizontal": 6,
+                "vertical": 6
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "viewport-390 .institutions-page",
+      "title": "APT-LABS — Vue Foundation",
+      "scope": ".institutions-page",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "devicePixelRatio": 1
+      },
+      "elements": [
+        {
+          "id": "div@1",
+          "tag": "div",
+          "rect": {
+            "x": 24,
+            "y": -69,
+            "width": 342,
+            "height": 844
+          },
+          "style": {
+            "padding": {
+              "top": 36,
+              "right": 36,
+              "bottom": 36,
+              "left": 36
+            }
+          }
+        },
+        {
+          "id": "header@2",
+          "tag": "header",
+          "rect": {
+            "x": 60,
+            "y": -33,
+            "width": 270,
+            "height": 128
+          },
+          "parentId": "div@1",
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 16,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "h1@3",
+          "tag": "h1",
+          "rect": {
+            "x": 60,
+            "y": -33,
+            "width": 270,
+            "height": 68
+          },
+          "parentId": "header@2",
+          "label": "Institutions & organizations",
+          "lineCount": 2,
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 6,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "p@4",
+          "tag": "p",
+          "rect": {
+            "x": 60,
+            "y": 41,
+            "width": 270,
+            "height": 54
+          },
+          "parentId": "header@2",
+          "lineCount": 3
+        },
+        {
+          "id": "nav@5",
+          "tag": "nav",
+          "rect": {
+            "x": 60,
+            "y": 111,
+            "width": 270,
+            "height": 44
+          },
+          "parentId": "div@1",
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 16,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "a@6",
+          "tag": "a",
+          "rect": {
+            "x": 60,
+            "y": 111,
+            "width": 109,
+            "height": 44
+          },
+          "parentId": "nav@5",
+          "label": "← Network directory",
+          "interactive": true,
+          "lineCount": 1,
+          "style": {
+            "display": "inline-flex",
+            "alignItems": "center"
+          }
+        },
+        {
+          "id": "section@7",
+          "tag": "section",
+          "rect": {
+            "x": 60,
+            "y": 171,
+            "width": 270,
+            "height": 274
+          },
+          "parentId": "div@1"
+        },
+        {
+          "id": "div@8",
+          "tag": "div",
+          "rect": {
+            "x": 60,
+            "y": 171,
+            "width": 270,
+            "height": 274
+          },
+          "parentId": "section@7",
+          "style": {
+            "textAlign": "center",
+            "padding": {
+              "top": 36,
+              "right": 36,
+              "bottom": 36,
+              "left": 36
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 8,
+                "vertical": 8
+              },
+              "topRight": {
+                "horizontal": 8,
+                "vertical": 8
+              },
+              "bottomRight": {
+                "horizontal": 8,
+                "vertical": 8
+              },
+              "bottomLeft": {
+                "horizontal": 8,
+                "vertical": 8
+              }
+            }
+          }
+        },
+        {
+          "id": "h2@9",
+          "tag": "h2",
+          "rect": {
+            "x": 97,
+            "y": 208,
+            "width": 196,
+            "height": 66
+          },
+          "parentId": "div@8",
+          "label": "No institutions or organizations registered",
+          "lineCount": 3,
+          "style": {
+            "textAlign": "center",
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 6,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "p@10",
+          "tag": "p",
+          "rect": {
+            "x": 97,
+            "y": 280,
+            "width": 196,
+            "height": 72
+          },
+          "parentId": "div@8",
+          "lineCount": 4,
+          "style": {
+            "textAlign": "center",
+            "autoMargins": [
+              "right",
+              "left"
+            ]
+          }
+        },
+        {
+          "id": "a@11",
+          "tag": "a",
+          "rect": {
+            "x": 97,
+            "y": 364,
+            "width": 196,
+            "height": 44
+          },
+          "parentId": "div@8",
+          "label": "Open the Coordination Workbench",
+          "interactive": true,
+          "lineCount": 2,
+          "style": {
+            "display": "inline-flex",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "textAlign": "center",
+            "padding": {
+              "top": 0,
+              "right": 16,
+              "bottom": 0,
+              "left": 16
+            },
+            "margin": {
+              "top": 12,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 6,
+                "vertical": 6
+              },
+              "topRight": {
+                "horizontal": 6,
+                "vertical": 6
+              },
+              "bottomRight": {
+                "horizontal": 6,
+                "vertical": 6
+              },
+              "bottomLeft": {
+                "horizontal": 6,
+                "vertical": 6
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

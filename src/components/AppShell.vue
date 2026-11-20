@@ -10,6 +10,7 @@ const isWorkspace = computed(() => {
 });
 
 const railItems = [
+  { label: 'Coordination', to: '/workspace/coordination', module: 'coordination' },
   { label: 'Workbench', to: '/workspace/workbench', module: 'workbench' },
   { label: 'Commons', to: '/workspace/commons', module: 'commons' },
   { label: 'Network', to: '/workspace/network', module: 'network' },

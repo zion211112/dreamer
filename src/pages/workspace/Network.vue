@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
+import { computed, onMounted } from 'vue';
+import { useNetworkStore, GROUP_LABELS, type NetworkGroup } from '@/stores/network';
 
-const entityTypes = [
-  { id: 'person', label: 'People' },
-  { id: 'crew', label: 'Crews' },
-  { id: 'asset', label: 'Assets' },
-  { id: 'institution', label: 'Institutions' },
-];
+const network = useNetworkStore();
 
-const entities = [
-  { id: 'e-01', name: 'Wanjiku Muthoni', type: 'person', role: 'Mason', location: 'Thiba', capabilities: ['Masonry', 'Canal lining'] },
-  { id: 'e-02', name: 'Kimetu Crew', type: 'crew', role: 'Construction crew', location: 'Mwea', capabilities: ['Solar installation', 'Electrical'] },
-  { id: 'e-03', name: 'Thiba Pump House', type: 'asset', role: 'Irrigation infrastructure', location: 'Thiba', capabilities: ['Water pumping'] },
-  { id: 'e-04', name: 'Kirinyaga Youth Centre', type: 'institution', role: 'Community centre', location: 'Kirinyaga', capabilities: ['Training', 'Events'] },
-];
+// Re-read on entry so the directory reflects what the Workbench has done.
+onMounted(() => network.load());
+
+const groups = computed(() =>
+  (Object.keys(GROUP_LABELS) as NetworkGroup[]).map((id) => ({ id, label: GROUP_LABELS[id] })),
+);
+
+const activeGroupLabel = computed(() => GROUP_LABELS[network.filter]);
 </script>
 
 <template>
@@ -21,52 +20,91 @@ const entities = [
     <header class="network-header">
       <h1 class="network-title">Network</h1>
       <p class="network-subtitle">
-        Connect people, crews, institutions, assets, and capabilities across the APT-LABS network.
+        The directory of registered actors — who they are, what they have, and what they can do.
       </p>
     </header>
 
-    <section class="network-filters">
-      <div class="network-filter-group">
-        <span class="network-filter-label">Entity type</span>
-        <div class="network-filter-pills">
-          <button
-            v-for="type in entityTypes"
-            :key="type.id"
-            class="network-filter-pill"
-            :class="{ 'network-filter-pill--active': true }"
-          >
-            {{ type.label }}
-          </button>
-        </div>
-      </div>
+    <!-- First-use: no actors yet — hide the filter chrome, name the next step. -->
+    <section v-if="!network.rows.length" class="network-empty">
+      <h2 class="network-empty-title">No actors in the directory yet</h2>
+      <p class="network-empty-body">
+        Register an actor with its assets and capabilities in the Coordination Workbench,
+        and it will appear here as a discoverable profile.
+      </p>
+      <RouterLink to="/workspace/coordination" class="network-empty-cta">
+        Open the Coordination Workbench
+      </RouterLink>
     </section>
 
-    <section class="network-entities">
-      <h2 class="network-section-title">Directory</h2>
-      <div class="network-entity-grid">
-        <article
-          v-for="entity in entities"
-          :key="entity.id"
-          class="network-entity-card"
-        >
-          <div class="network-entity-copy">
-            <h3 class="network-entity-name">{{ entity.name }}</h3>
-            <p class="network-entity-type">{{ entity.type }}</p>
-            <p class="network-entity-role">{{ entity.role }}</p>
-            <p class="network-entity-location">{{ entity.location }}</p>
-          </div>
-          <div class="network-entity-caps">
-            <span
-              v-for="cap in entity.capabilities"
-              :key="cap"
-              class="network-entity-cap"
+    <template v-else>
+      <section class="network-filters">
+        <div class="network-filter-group">
+          <span class="network-filter-label">Group</span>
+          <div class="network-filter-pills">
+            <button
+              v-for="group in groups"
+              :key="group.id"
+              class="network-filter-pill"
+              :class="{ 'network-filter-pill--active': network.filter === group.id }"
+              :aria-pressed="network.filter === group.id"
+              @click="network.filter = group.id"
             >
-              {{ cap }}
-            </span>
+              {{ group.label }}
+              <span class="network-filter-count">{{ network.counts[group.id] }}</span>
+            </button>
           </div>
-        </article>
-      </div>
-    </section>
+        </div>
+      </section>
+
+      <section class="network-entities">
+        <!-- Filtered-out: data exists, the active group emptied the view. -->
+        <div v-if="!network.visible.length" class="network-empty network-empty--filtered">
+          <h2 class="network-empty-title">No {{ activeGroupLabel.toLowerCase() }} registered</h2>
+          <p class="network-empty-body">
+            {{ network.rows.length }} actor{{ network.rows.length === 1 ? '' : 's' }} are in the
+            directory, none in this group.
+          </p>
+          <button class="network-empty-cta network-empty-cta--button" @click="network.filter = 'all'">
+            Show all groups
+          </button>
+        </div>
+
+        <template v-else>
+          <h2 class="network-section-title">Directory</h2>
+          <div class="network-entity-grid">
+            <article
+              v-for="row in network.visible"
+              :key="row.actor.id"
+              class="network-entity-card"
+            >
+              <div class="network-entity-copy">
+                <h3 class="network-entity-name">{{ row.actor.name }}</h3>
+                <p class="network-entity-type">{{ row.typeLabel }}</p>
+                <p v-if="row.actor.description" class="network-entity-role">
+                  {{ row.actor.description }}
+                </p>
+              </div>
+              <div v-if="row.capabilities.length" class="network-cap-row">
+                <span class="network-cap-label">Can do</span>
+                <span v-for="cap in row.capabilities" :key="`c-${cap}`" class="network-entity-cap">
+                  {{ cap }}
+                </span>
+              </div>
+              <div v-if="row.assets.length" class="network-cap-row">
+                <span class="network-cap-label">Has</span>
+                <span
+                  v-for="asset in row.assets"
+                  :key="`a-${asset}`"
+                  class="network-entity-cap network-entity-cap--asset"
+                >
+                  {{ asset }}
+                </span>
+              </div>
+            </article>
+          </div>
+        </template>
+      </section>
+    </template>
   </div>
 </template>
 
@@ -108,6 +146,7 @@ const entities = [
   display: flex;
   align-items: center;
   gap: var(--apt-spacing-s4);
+  flex-wrap: wrap;
 }
 
 .network-filter-label {
@@ -121,14 +160,20 @@ const entities = [
 .network-filter-pills {
   display: flex;
   gap: var(--apt-spacing-s3);
+  flex-wrap: wrap;
 }
 
 .network-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--apt-spacing-s2);
+  min-height: 44px;
   padding: var(--apt-spacing-s2) var(--apt-spacing-s6);
   border: 1px solid var(--apt-border);
   border-radius: var(--apt-radius-r9);
   background: var(--apt-color-neutral-n0);
   color: var(--apt-text-body);
+  font-family: inherit;
   font-size: var(--apt-font-size-micro);
   font-weight: var(--apt-font-weight-medium);
   cursor: pointer;
@@ -139,6 +184,17 @@ const entities = [
   border-color: var(--apt-module-accent, var(--apt-color-brand-primary));
   background: var(--apt-color-ramp-production-50);
   color: var(--apt-module-accent, var(--apt-color-brand-primary));
+}
+
+.network-filter-count {
+  font-size: var(--apt-font-size-micro);
+  color: var(--apt-text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.network-filter-pill--active .network-filter-count {
+  color: inherit;
+  opacity: 0.8;
 }
 
 .network-section-title {
@@ -160,6 +216,9 @@ const entities = [
   border-radius: var(--apt-radius-r3);
   border: 1px solid var(--apt-border);
   background: var(--apt-color-neutral-n0);
+  display: flex;
+  flex-direction: column;
+  gap: var(--apt-spacing-s4);
 }
 
 .network-entity-copy {
@@ -188,19 +247,22 @@ const entities = [
   font-size: var(--apt-font-size-body-sm);
   color: var(--apt-text-muted);
   margin: 0;
+  line-height: var(--apt-line-height-relaxed);
 }
 
-.network-entity-location {
-  font-size: var(--apt-font-size-sm-3);
-  color: var(--apt-text-dim);
-  margin: 0;
-}
-
-.network-entity-caps {
+.network-cap-row {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--apt-spacing-s2);
-  margin-top: var(--apt-spacing-s4);
+}
+
+.network-cap-label {
+  font-size: var(--apt-font-size-micro);
+  font-weight: var(--apt-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--apt-text-dim);
 }
 
 .network-entity-cap {
@@ -211,5 +273,66 @@ const entities = [
   background: var(--apt-surface-default);
   color: var(--apt-text-body);
 }
-</style>
 
+.network-entity-cap--asset {
+  background: var(--apt-color-ramp-stewardship-50);
+  color: var(--apt-pillar-stewardship);
+}
+
+/* Empty states (first-use and filtered-out) */
+
+.network-empty {
+  padding: var(--apt-spacing-s13);
+  border: 1px dashed var(--apt-border);
+  border-radius: var(--apt-radius-r3);
+  background: var(--apt-color-neutral-n0);
+  text-align: center;
+}
+
+.network-empty-title {
+  font-family: var(--apt-font-serif);
+  font-size: var(--apt-font-size-title-1);
+  font-weight: var(--apt-font-weight-semibold);
+  margin: 0 0 var(--apt-spacing-s3) 0;
+  color: var(--apt-text-body);
+}
+
+.network-empty-body {
+  font-size: var(--apt-font-size-body-sm);
+  color: var(--apt-text-muted);
+  margin: 0 auto;
+  max-width: 44ch;
+  line-height: var(--apt-line-height-relaxed);
+}
+
+.network-empty-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: var(--apt-spacing-s6);
+  padding: 0 var(--apt-spacing-s8);
+  border-radius: var(--apt-radius-r2);
+  background: var(--apt-module-accent, var(--apt-color-brand-primary));
+  color: var(--apt-color-neutral-n0);
+  font-size: var(--apt-font-size-body-sm);
+  font-weight: var(--apt-font-weight-medium);
+  text-decoration: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.network-empty-cta--button {
+  background: var(--apt-color-neutral-n0);
+  color: var(--apt-text-body);
+  border: 1px solid var(--apt-border);
+}
+
+@media (max-width: 640px) {
+  .network-filter-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+</style>

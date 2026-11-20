@@ -1,0 +1,767 @@
+{
+  "title": "APT-LABS per-module surfaces",
+  "states": [
+    {
+      "name": "viewport-1440 .people-page",
+      "title": "APT-LABS — Vue Foundation",
+      "scope": ".people-page",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "devicePixelRatio": 1
+      },
+      "elements": [
+        {
+          "id": "div@1",
+          "tag": "div",
+          "rect": {
+            "x": 316,
+            "y": -79,
+            "width": 1068,
+            "height": 900
+          },
+          "style": {
+            "padding": {
+              "top": 36,
+              "right": 36,
+              "bottom": 36,
+              "left": 36
+            }
+          }
+        },
+        {
+          "id": "header@2",
+          "tag": "header",
+          "rect": {
+            "x": 352,
+            "y": -43,
+            "width": 996,
+            "height": 58
+          },
+          "parentId": "div@1",
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 16,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "h1@3",
+          "tag": "h1",
+          "rect": {
+            "x": 352,
+            "y": -43,
+            "width": 996,
+            "height": 34
+          },
+          "parentId": "header@2",
+          "label": "People & crews",
+          "lineCount": 1,
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 6,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "p@4",
+          "tag": "p",
+          "rect": {
+            "x": 352,
+            "y": -3,
+            "width": 996,
+            "height": 18
+          },
+          "parentId": "header@2",
+          "lineCount": 1
+        },
+        {
+          "id": "nav@5",
+          "tag": "nav",
+          "rect": {
+            "x": 352,
+            "y": 31,
+            "width": 996,
+            "height": 44
+          },
+          "parentId": "div@1",
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 16,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "a@6",
+          "tag": "a",
+          "rect": {
+            "x": 352,
+            "y": 31,
+            "width": 109,
+            "height": 44
+          },
+          "parentId": "nav@5",
+          "label": "← Network directory",
+          "interactive": true,
+          "lineCount": 1,
+          "style": {
+            "display": "inline-flex",
+            "alignItems": "center"
+          }
+        },
+        {
+          "id": "section@7",
+          "tag": "section",
+          "rect": {
+            "x": 352,
+            "y": 91,
+            "width": 996,
+            "height": 151
+          },
+          "parentId": "div@1"
+        },
+        {
+          "id": "div@8",
+          "tag": "div",
+          "rect": {
+            "x": 352,
+            "y": 91,
+            "width": 996,
+            "height": 151
+          },
+          "parentId": "section@7"
+        },
+        {
+          "id": "div@9",
+          "tag": "div",
+          "rect": {
+            "x": 352,
+            "y": 91,
+            "width": 996,
+            "height": 44
+          },
+          "parentId": "div@8",
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 16,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "input@10",
+          "tag": "input",
+          "rect": {
+            "x": 352,
+            "y": 91,
+            "width": 400,
+            "height": 44
+          },
+          "parentId": "div@9",
+          "label": "Filter people and crews",
+          "interactive": true,
+          "inputType": "text",
+          "style": {
+            "display": "inline-block",
+            "padding": {
+              "top": 8,
+              "right": 12,
+              "bottom": 8,
+              "left": 12
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 6,
+                "vertical": 6
+              },
+              "topRight": {
+                "horizontal": 6,
+                "vertical": 6
+              },
+              "bottomRight": {
+                "horizontal": 6,
+                "vertical": 6
+              },
+              "bottomLeft": {
+                "horizontal": 6,
+                "vertical": 6
+              }
+            }
+          }
+        },
+        {
+          "id": "div@11",
+          "tag": "div",
+          "rect": {
+            "x": 352,
+            "y": 151,
+            "width": 996,
+            "height": 91
+          },
+          "parentId": "div@8",
+          "style": {
+            "display": "grid",
+            "rowGap": 12,
+            "columnGap": 12
+          }
+        },
+        {
+          "id": "article@12",
+          "tag": "article",
+          "rect": {
+            "x": 352,
+            "y": 151,
+            "width": 324,
+            "height": 91
+          },
+          "parentId": "div@11",
+          "style": {
+            "display": "flex",
+            "flexDirection": "column",
+            "rowGap": 8,
+            "columnGap": 8,
+            "padding": {
+              "top": 16,
+              "right": 16,
+              "bottom": 16,
+              "left": 16
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 8,
+                "vertical": 8
+              },
+              "topRight": {
+                "horizontal": 8,
+                "vertical": 8
+              },
+              "bottomRight": {
+                "horizontal": 8,
+                "vertical": 8
+              },
+              "bottomLeft": {
+                "horizontal": 8,
+                "vertical": 8
+              }
+            }
+          }
+        },
+        {
+          "id": "div@13",
+          "tag": "div",
+          "rect": {
+            "x": 369,
+            "y": 168,
+            "width": 290,
+            "height": 30
+          },
+          "parentId": "article@12",
+          "style": {
+            "display": "flex",
+            "flexDirection": "column",
+            "rowGap": 2,
+            "columnGap": 2
+          }
+        },
+        {
+          "id": "h3@14",
+          "tag": "h3",
+          "rect": {
+            "x": 369,
+            "y": 168,
+            "width": 290,
+            "height": 16
+          },
+          "parentId": "div@13",
+          "label": "Kibera Welding Co-op",
+          "lineCount": 1
+        },
+        {
+          "id": "p@15",
+          "tag": "p",
+          "rect": {
+            "x": 369,
+            "y": 186,
+            "width": 290,
+            "height": 12
+          },
+          "parentId": "div@13",
+          "lineCount": 1
+        },
+        {
+          "id": "div@16",
+          "tag": "div",
+          "rect": {
+            "x": 369,
+            "y": 206,
+            "width": 290,
+            "height": 19
+          },
+          "parentId": "article@12",
+          "style": {
+            "display": "flex",
+            "flexWrap": "wrap",
+            "rowGap": 4,
+            "columnGap": 4
+          }
+        },
+        {
+          "id": "span@17",
+          "tag": "span",
+          "rect": {
+            "x": 369,
+            "y": 206,
+            "width": 53,
+            "height": 19
+          },
+          "parentId": "div@16",
+          "lineCount": 1,
+          "style": {
+            "padding": {
+              "top": 2,
+              "right": 6,
+              "bottom": 2,
+              "left": 6
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 4,
+                "vertical": 4
+              },
+              "topRight": {
+                "horizontal": 4,
+                "vertical": 4
+              },
+              "bottomRight": {
+                "horizontal": 4,
+                "vertical": 4
+              },
+              "bottomLeft": {
+                "horizontal": 4,
+                "vertical": 4
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "viewport-390 .people-page",
+      "title": "APT-LABS — Vue Foundation",
+      "scope": ".people-page",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "devicePixelRatio": 1
+      },
+      "elements": [
+        {
+          "id": "div@1",
+          "tag": "div",
+          "rect": {
+            "x": 24,
+            "y": -69,
+            "width": 342,
+            "height": 844
+          },
+          "style": {
+            "padding": {
+              "top": 36,
+              "right": 36,
+              "bottom": 36,
+              "left": 36
+            }
+          }
+        },
+        {
+          "id": "header@2",
+          "tag": "header",
+          "rect": {
+            "x": 60,
+            "y": -33,
+            "width": 270,
+            "height": 76
+          },
+          "parentId": "div@1",
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 16,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "h1@3",
+          "tag": "h1",
+          "rect": {
+            "x": 60,
+            "y": -33,
+            "width": 270,
+            "height": 34
+          },
+          "parentId": "header@2",
+          "label": "People & crews",
+          "lineCount": 1,
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 6,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "p@4",
+          "tag": "p",
+          "rect": {
+            "x": 60,
+            "y": 7,
+            "width": 270,
+            "height": 36
+          },
+          "parentId": "header@2",
+          "lineCount": 2
+        },
+        {
+          "id": "nav@5",
+          "tag": "nav",
+          "rect": {
+            "x": 60,
+            "y": 59,
+            "width": 270,
+            "height": 44
+          },
+          "parentId": "div@1",
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 16,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "a@6",
+          "tag": "a",
+          "rect": {
+            "x": 60,
+            "y": 59,
+            "width": 109,
+            "height": 44
+          },
+          "parentId": "nav@5",
+          "label": "← Network directory",
+          "interactive": true,
+          "lineCount": 1,
+          "style": {
+            "display": "inline-flex",
+            "alignItems": "center"
+          }
+        },
+        {
+          "id": "section@7",
+          "tag": "section",
+          "rect": {
+            "x": 60,
+            "y": 119,
+            "width": 270,
+            "height": 151
+          },
+          "parentId": "div@1",
+          "clientWidth": 270,
+          "clientHeight": 151,
+          "scrollWidth": 300,
+          "scrollHeight": 151
+        },
+        {
+          "id": "div@8",
+          "tag": "div",
+          "rect": {
+            "x": 60,
+            "y": 119,
+            "width": 270,
+            "height": 151
+          },
+          "parentId": "section@7",
+          "clientWidth": 270,
+          "clientHeight": 151,
+          "scrollWidth": 300,
+          "scrollHeight": 151
+        },
+        {
+          "id": "div@9",
+          "tag": "div",
+          "rect": {
+            "x": 60,
+            "y": 119,
+            "width": 270,
+            "height": 44
+          },
+          "parentId": "div@8",
+          "style": {
+            "margin": {
+              "top": 0,
+              "right": 0,
+              "bottom": 16,
+              "left": 0
+            }
+          }
+        },
+        {
+          "id": "input@10",
+          "tag": "input",
+          "rect": {
+            "x": 60,
+            "y": 119,
+            "width": 270,
+            "height": 44
+          },
+          "parentId": "div@9",
+          "label": "Filter people and crews",
+          "interactive": true,
+          "inputType": "text",
+          "style": {
+            "display": "inline-block",
+            "padding": {
+              "top": 8,
+              "right": 12,
+              "bottom": 8,
+              "left": 12
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 6,
+                "vertical": 6
+              },
+              "topRight": {
+                "horizontal": 6,
+                "vertical": 6
+              },
+              "bottomRight": {
+                "horizontal": 6,
+                "vertical": 6
+              },
+              "bottomLeft": {
+                "horizontal": 6,
+                "vertical": 6
+              }
+            }
+          }
+        },
+        {
+          "id": "div@11",
+          "tag": "div",
+          "rect": {
+            "x": 60,
+            "y": 179,
+            "width": 270,
+            "height": 91
+          },
+          "parentId": "div@8",
+          "clientWidth": 270,
+          "clientHeight": 91,
+          "scrollWidth": 300,
+          "scrollHeight": 91,
+          "style": {
+            "display": "grid",
+            "rowGap": 12,
+            "columnGap": 12
+          }
+        },
+        {
+          "id": "article@12",
+          "tag": "article",
+          "rect": {
+            "x": 60,
+            "y": 179,
+            "width": 300,
+            "height": 91
+          },
+          "parentId": "div@11",
+          "style": {
+            "display": "flex",
+            "flexDirection": "column",
+            "rowGap": 8,
+            "columnGap": 8,
+            "padding": {
+              "top": 16,
+              "right": 16,
+              "bottom": 16,
+              "left": 16
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 8,
+                "vertical": 8
+              },
+              "topRight": {
+                "horizontal": 8,
+                "vertical": 8
+              },
+              "bottomRight": {
+                "horizontal": 8,
+                "vertical": 8
+              },
+              "bottomLeft": {
+                "horizontal": 8,
+                "vertical": 8
+              }
+            }
+          }
+        },
+        {
+          "id": "div@13",
+          "tag": "div",
+          "rect": {
+            "x": 77,
+            "y": 196,
+            "width": 266,
+            "height": 30
+          },
+          "parentId": "article@12",
+          "style": {
+            "display": "flex",
+            "flexDirection": "column",
+            "rowGap": 2,
+            "columnGap": 2
+          }
+        },
+        {
+          "id": "h3@14",
+          "tag": "h3",
+          "rect": {
+            "x": 77,
+            "y": 196,
+            "width": 266,
+            "height": 16
+          },
+          "parentId": "div@13",
+          "label": "Kibera Welding Co-op",
+          "lineCount": 1
+        },
+        {
+          "id": "p@15",
+          "tag": "p",
+          "rect": {
+            "x": 77,
+            "y": 214,
+            "width": 266,
+            "height": 12
+          },
+          "parentId": "div@13",
+          "lineCount": 1
+        },
+        {
+          "id": "div@16",
+          "tag": "div",
+          "rect": {
+            "x": 77,
+            "y": 234,
+            "width": 266,
+            "height": 19
+          },
+          "parentId": "article@12",
+          "style": {
+            "display": "flex",
+            "flexWrap": "wrap",
+            "rowGap": 4,
+            "columnGap": 4
+          }
+        },
+        {
+          "id": "span@17",
+          "tag": "span",
+          "rect": {
+            "x": 77,
+            "y": 234,
+            "width": 53,
+            "height": 19
+          },
+          "parentId": "div@16",
+          "lineCount": 1,
+          "style": {
+            "padding": {
+              "top": 2,
+              "right": 6,
+              "bottom": 2,
+              "left": 6
+            },
+            "borderWidth": {
+              "top": 1,
+              "right": 1,
+              "bottom": 1,
+              "left": 1
+            },
+            "borderRadius": {
+              "topLeft": {
+                "horizontal": 4,
+                "vertical": 4
+              },
+              "topRight": {
+                "horizontal": 4,
+                "vertical": 4
+              },
+              "bottomRight": {
+                "horizontal": 4,
+                "vertical": 4
+              },
+              "bottomLeft": {
+                "horizontal": 4,
+                "vertical": 4
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -12,6 +12,7 @@ import WorkbenchHome from '@/modules/workbench/pages-vue/Home.vue';
 import PilotPage from '@/modules/workbench/pages-vue/Pilot.vue';
 import Kemetos1App from '@/modules/kemetos1/pages/Coordinator.vue';
 import Commons from '@/pages/workspace/Commons.vue';
+import Coordination from '@/pages/workspace/Coordination.vue';
 import Network from '@/pages/workspace/Network.vue';
 import People from '@/pages/workspace/People.vue';
 import Institutions from '@/pages/workspace/Institutions.vue';
@@ -31,6 +32,7 @@ const routes = [
   { path: '/workspace/workbench', component: WorkbenchHome },
   { path: '/workspace/workbench/:pilot', component: PilotPage },
   { path: '/workspace/kemetos1', component: Kemetos1App },
+  { path: '/workspace/coordination', component: Coordination },
   { path: '/workspace/commons', component: Commons },
   { path: '/workspace/network', component: Network },
   { path: '/workspace/network/people', component: People },

@@ -1,0 +1,174 @@
+{
+ "name": "records-search-1440 .records-page",
+ "title": "APT-LABS — Vue Foundation",
+ "scope": ".records-page",
+ "viewport": {
+  "width": 1440,
+  "height": 900,
+  "devicePixelRatio": 1
+ },
+ "elements": [
+  {
+   "id": "div@1",
+   "tag": "div",
+   "rect": {
+    "x": 316,
+    "y": -79,
+    "width": 1068,
+    "height": 900
+   },
+   "style": {
+    "padding": {
+     "top": 36,
+     "right": 36,
+     "bottom": 36,
+     "left": 36
+    }
+   }
+  },
+  {
+   "id": "div@9",
+   "tag": "div",
+   "rect": {
+    "x": 352,
+    "y": 131,
+    "width": 996,
+    "height": 64
+   },
+   "parentId": "div@1",
+   "style": {
+    "margin": {
+     "top": 0,
+     "right": 0,
+     "bottom": 16,
+     "left": 0
+    }
+   }
+  },
+  {
+   "id": "div@10",
+   "tag": "div",
+   "rect": {
+    "x": 352,
+    "y": 131,
+    "width": 480,
+    "height": 44
+   },
+   "parentId": "div@9",
+   "style": {
+    "position": "relative"
+   }
+  },
+  {
+   "id": "input@11",
+   "tag": "input",
+   "rect": {
+    "x": 352,
+    "y": 131,
+    "width": 480,
+    "height": 44
+   },
+   "parentId": "div@10",
+   "label": "Search the record canon",
+   "interactive": true,
+   "inputType": "search",
+   "style": {
+    "display": "inline-block",
+    "padding": {
+     "top": 6,
+     "right": 12,
+     "bottom": 6,
+     "left": 12
+    },
+    "borderWidth": {
+     "top": 1,
+     "right": 1,
+     "bottom": 1,
+     "left": 1
+    },
+    "overflowX": "clip",
+    "overflowY": "clip",
+    "borderRadius": {
+     "topLeft": {
+      "horizontal": 6,
+      "vertical": 6
+     },
+     "topRight": {
+      "horizontal": 6,
+      "vertical": 6
+     },
+     "bottomRight": {
+      "horizontal": 6,
+      "vertical": 6
+     },
+     "bottomLeft": {
+      "horizontal": 6,
+      "vertical": 6
+     }
+    }
+   }
+  },
+  {
+   "id": "button@12",
+   "tag": "button",
+   "rect": {
+    "x": 788,
+    "y": 131,
+    "width": 44,
+    "height": 44
+   },
+   "parentId": "div@10",
+   "label": "Clear search",
+   "interactive": true,
+   "lineCount": 1,
+   "style": {
+    "position": "absolute",
+    "textAlign": "center",
+    "padding": {
+     "top": 1,
+     "right": 6,
+     "bottom": 1,
+     "left": 6
+    },
+    "borderRadius": {
+     "topLeft": {
+      "horizontal": 0,
+      "vertical": 0
+     },
+     "topRight": {
+      "horizontal": 6,
+      "vertical": 6
+     },
+     "bottomRight": {
+      "horizontal": 6,
+      "vertical": 6
+     },
+     "bottomLeft": {
+      "horizontal": 0,
+      "vertical": 0
+     }
+    }
+   }
+  },
+  {
+   "id": "p@13",
+   "tag": "p",
+   "rect": {
+    "x": 352,
+    "y": 181,
+    "width": 996,
+    "height": 14
+   },
+   "parentId": "div@9",
+   "lineCount": 1,
+   "style": {
+    "margin": {
+     "top": 6,
+     "right": 0,
+     "bottom": 0,
+     "left": 0
+    }
+   }
+  }
+ ]
+}

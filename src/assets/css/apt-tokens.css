@@ -487,3 +487,4 @@
 [data-module="workbench"] { --apt-module-accent: var(--apt-pillar-production); }
 [data-module="records"]   { --apt-module-accent: var(--apt-pillar-stewardship); }
 [data-module="intelligence"] { --apt-module-accent: var(--apt-color-brand-accent); }
+[data-module="coordination"] { --apt-module-accent: var(--apt-pillar-stewardship); }

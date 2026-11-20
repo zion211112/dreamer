@@ -1,62 +1,101 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
+import { computed, onMounted, ref } from 'vue';
+import { useNetworkStore, groupOf } from '@/stores/network';
 
-const people = [
-  { id: 'p-01', name: 'Wanjiku Muthoni', role: 'Mason', location: 'Thiba', capabilities: ['Masonry', 'Canal lining', 'Stone work'], offers: ['Canal repair', 'Foundation work'] },
-  { id: 'p-02', name: 'Kimetu Waweru', role: 'Electrician', location: 'Mwea', capabilities: ['Solar installation', 'Electrical wiring', 'Inverter setup'], offers: ['Solar basic installation', 'Electrical inspection'] },
-  { id: 'p-03', name: 'Atieno Ochieng', role: 'Irrigation technician', location: 'Mwea', capabilities: ['Irrigation box operation', 'Pump maintenance'], offers: ['Irrigation box operation', 'Pump servicing'] },
-  { id: 'p-04', name: 'Njeri Kamau', role: 'Community steward', location: 'Kirinyaga', capabilities: ['Community coordination', 'Record keeping'], offers: ['Community sign-off', 'Steward coordination'] },
-  { id: 'p-05', name: 'Otieno Mwangi', role: 'Learner', location: 'Thiba', capabilities: ['Masonry (apprentice)', 'Carpentry (apprentice)'], offers: ['General labour', 'Tool maintenance'] },
-];
+const network = useNetworkStore();
+onMounted(() => network.load());
+
+// People & crews: the individual and crew/collective actor types.
+const rows = computed(() =>
+  network.rows.filter((r) => groupOf(r.actor.type) === 'people' || groupOf(r.actor.type) === 'crews'),
+);
+
+const query = ref('');
+const visible = computed(() => {
+  const q = query.value.trim().toLowerCase();
+  if (!q) return rows.value;
+  return rows.value.filter(
+    (r) =>
+      r.actor.name.toLowerCase().includes(q) ||
+      (r.actor.description ?? '').toLowerCase().includes(q) ||
+      r.capabilities.some((c) => c.toLowerCase().includes(q)),
+  );
+});
 </script>
 
 <template>
   <div class="people-page" data-module="network">
     <header class="people-header">
-      <h1 class="people-title">People & crews</h1>
+      <h1 class="people-title">People &amp; crews</h1>
       <p class="people-subtitle">
-        Understand who is in the network, what they offer, and how they connect.
+        Individuals and crews registered in the network, with what they can do and what they have.
       </p>
     </header>
+
+    <nav class="people-back">
+      <RouterLink to="/workspace/network">← Network directory</RouterLink>
+    </nav>
 
     <section class="people-directory">
       <div class="people-directory-inner">
         <div class="people-search">
-          <input type="text" placeholder="Search people, roles, capabilities…" class="people-search-input" />
+          <input
+            v-model="query"
+            type="text"
+            placeholder="Filter by name, role, or capability…"
+            class="people-search-input"
+            aria-label="Filter people and crews"
+          />
         </div>
 
-        <div class="people-grid">
-          <article
-            v-for="person in people"
-            :key="person.id"
-            class="people-card"
-          >
+        <!-- First-use: nobody registered yet. -->
+        <div v-if="!rows.length" class="people-empty">
+          <h2 class="people-empty-title">No people or crews registered</h2>
+          <p class="people-empty-body">
+            Register an individual or a crew in the Coordination Workbench, and their profile
+            will appear here.
+          </p>
+          <RouterLink to="/workspace/coordination" class="people-empty-cta">
+            Open the Coordination Workbench
+          </RouterLink>
+        </div>
+
+        <!-- Filtered-out: people exist, the filter emptied the view. -->
+        <div v-else-if="!visible.length" class="people-empty">
+          <h2 class="people-empty-title">No matches for “{{ query }}”</h2>
+          <p class="people-empty-body">
+            {{ rows.length }} person{{ rows.length === 1 ? '' : 's' }} and crew{{ rows.length === 1 ? '' : 's' }}
+            are registered; none match this filter.
+          </p>
+          <button class="people-empty-cta people-empty-cta--button" @click="query = ''">
+            Clear the filter
+          </button>
+        </div>
+
+        <div v-else class="people-grid">
+          <article v-for="row in visible" :key="row.actor.id" class="people-card">
             <div class="people-card-copy">
-              <h3 class="people-card-name">{{ person.name }}</h3>
-              <p class="people-card-role">{{ person.role }}</p>
-              <p class="people-card-location">{{ person.location }}</p>
+              <h3 class="people-card-name">{{ row.actor.name }}</h3>
+              <p class="people-card-role">{{ row.typeLabel }}</p>
+              <p v-if="row.actor.description" class="people-card-location">
+                {{ row.actor.description }}
+              </p>
             </div>
-            <div class="people-card-caps">
-              <span
-                v-for="cap in person.capabilities"
-                :key="cap"
-                class="people-card-cap"
-              >
+            <div v-if="row.capabilities.length" class="people-card-caps">
+              <span v-for="cap in row.capabilities" :key="`c-${cap}`" class="people-card-cap">
                 {{ cap }}
               </span>
             </div>
-            <div class="people-card-offers">
+            <div v-if="row.assets.length" class="people-card-offers">
               <span
-                v-for="offer in person.offers"
-                :key="offer"
+                v-for="asset in row.assets"
+                :key="`a-${asset}`"
                 class="people-card-offer"
               >
-                {{ offer }}
+                {{ asset }}
               </span>
             </div>
-            <RouterLink :to="`/workspace/network/people/${person.id}`" class="people-card-inspect">
-              Inspect →
-            </RouterLink>
           </article>
         </div>
       </div>
@@ -76,7 +115,7 @@ const people = [
 }
 
 .people-header {
-  margin-bottom: var(--apt-spacing-s13);
+  margin-bottom: var(--apt-spacing-s8);
 }
 
 .people-title {
@@ -94,6 +133,23 @@ const people = [
   line-height: var(--apt-line-height-relaxed);
 }
 
+.people-back {
+  margin-bottom: var(--apt-spacing-s8);
+}
+
+.people-back a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: var(--apt-font-size-body-sm);
+  color: var(--apt-text-muted);
+  text-decoration: none;
+}
+
+.people-back a:hover {
+  text-decoration: underline;
+}
+
 .people-directory-inner {
   max-width: 1000px;
 }
@@ -105,6 +161,7 @@ const people = [
 .people-search-input {
   width: 100%;
   max-width: 400px;
+  min-height: 44px;
   padding: var(--apt-spacing-s4) var(--apt-spacing-s6);
   border: 1px solid var(--apt-border);
   border-radius: var(--apt-radius-r2);
@@ -156,6 +213,7 @@ const people = [
   font-size: var(--apt-font-size-sm-3);
   color: var(--apt-text-dim);
   margin: 0;
+  line-height: var(--apt-line-height-relaxed);
 }
 
 .people-card-caps {
@@ -177,7 +235,6 @@ const people = [
   display: flex;
   flex-wrap: wrap;
   gap: var(--apt-spacing-s2);
-  margin-top: var(--apt-spacing-s1);
 }
 
 .people-card-offer {
@@ -185,22 +242,57 @@ const people = [
   padding: var(--apt-spacing-s1) var(--apt-spacing-s3);
   border: 1px solid var(--apt-border);
   border-radius: var(--apt-radius-r1);
-  background: var(--apt-color-neutral-n0);
+  background: var(--apt-color-ramp-stewardship-50);
   color: var(--apt-text-muted);
 }
 
-.people-card-inspect {
-  align-self: flex-start;
+/* Empty states (first-use and filtered-out) */
+
+.people-empty {
+  padding: var(--apt-spacing-s13);
+  border: 1px dashed var(--apt-border);
+  border-radius: var(--apt-radius-r3);
+  background: var(--apt-color-neutral-n0);
+  text-align: center;
+}
+
+.people-empty-title {
+  font-family: var(--apt-font-serif);
+  font-size: var(--apt-font-size-title-1);
+  font-weight: var(--apt-font-weight-semibold);
+  margin: 0 0 var(--apt-spacing-s3) 0;
+  color: var(--apt-text-body);
+}
+
+.people-empty-body {
+  font-size: var(--apt-font-size-body-sm);
+  color: var(--apt-text-muted);
+  margin: 0 auto;
+  max-width: 44ch;
+  line-height: var(--apt-line-height-relaxed);
+}
+
+.people-empty-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: var(--apt-spacing-s6);
+  padding: 0 var(--apt-spacing-s8);
+  border-radius: var(--apt-radius-r2);
+  background: var(--apt-module-accent, var(--apt-color-brand-primary));
+  color: var(--apt-color-neutral-n0);
   font-size: var(--apt-font-size-body-sm);
   font-weight: var(--apt-font-weight-medium);
-  color: var(--apt-pillar-stewardship);
   text-decoration: none;
-  margin-top: var(--apt-spacing-s3);
-  transition: text-decoration-color var(--apt-animation-fast);
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
 }
 
-.people-card-inspect:hover {
-  text-decoration: underline;
+.people-empty-cta--button {
+  background: var(--apt-color-neutral-n0);
+  color: var(--apt-text-body);
+  border: 1px solid var(--apt-border);
 }
 </style>
-
