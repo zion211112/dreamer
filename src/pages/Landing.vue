@@ -40,9 +40,6 @@ const PATH = [
         <RouterLink to="/workspace/records" class="landing-nav-link">Records</RouterLink>
       </nav>
       <div class="landing-actions">
-        <a href="/investor-memo/s/aptlabs-investor-deck" class="landing-investor">
-          Investor slides
-        </a>
         <RouterLink to="/sign-in?next=/workspace" class="landing-start">
           Start building
         </RouterLink>
@@ -238,24 +235,6 @@ main {
   display: flex;
   align-items: center;
   gap: var(--apt-spacing-s6);
-}
-
-.landing-investor {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--apt-spacing-s15);
-  font-size: var(--apt-font-size-sm-3);
-  font-family: var(--apt-font-mono);
-  color: var(--apt-text-dim);
-  text-decoration: none;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: var(--apt-spacing-s1) 0;
-  transition: color var(--apt-animation-fast);
-}
-
-.landing-investor:hover {
-  color: var(--apt-color-brand-primary);
 }
 
 .landing-start {

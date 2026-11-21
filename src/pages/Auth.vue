@@ -225,9 +225,6 @@ async function handleSubmit(event: Event) {
       <div class="auth-brand">
         <BrandMark size="sm" />
       </div>
-      <a href="/investor-memo/s/aptlabs-investor-deck" class="auth-investor">
-        Investor slides
-      </a>
     </header>
 
     <div class="auth-wrap">
@@ -450,23 +447,6 @@ async function handleSubmit(event: Event) {
   display: flex;
   align-items: center;
   gap: var(--apt-spacing-s2);
-}
-
-.auth-investor {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--apt-spacing-s15);
-  font-size: var(--apt-font-size-sm-3);
-  font-family: var(--apt-font-mono);
-  color: var(--apt-text-dim);
-  text-decoration: none;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  transition: color var(--apt-animation-fast);
-}
-
-.auth-investor:hover {
-  color: var(--apt-color-brand-primary);
 }
 
 .auth-wrap {
