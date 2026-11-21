@@ -518,9 +518,12 @@
   --apt-standing-expired: #616670;
 }
 
+[data-module="overview"]   { --apt-module-accent: var(--apt-color-brand-primary); }
 [data-module="commons"]   { --apt-module-accent: var(--apt-pillar-knowledge); }
 [data-module="network"]   { --apt-module-accent: var(--apt-pillar-exchange); }
+[data-module="coordination"] { --apt-module-accent: var(--apt-family-governance); }
 [data-module="workbench"] { --apt-module-accent: var(--apt-pillar-production); }
+[data-module="proof"]     { --apt-module-accent: var(--apt-family-evidence); }
 [data-module="records"]   { --apt-module-accent: var(--apt-pillar-stewardship); }
+[data-module="value"]     { --apt-module-accent: var(--apt-family-output); }
 [data-module="intelligence"] { --apt-module-accent: var(--apt-color-brand-accent); }
-[data-module="coordination"] { --apt-module-accent: var(--apt-pillar-stewardship); }

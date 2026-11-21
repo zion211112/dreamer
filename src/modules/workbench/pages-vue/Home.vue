@@ -103,7 +103,7 @@ const lanes = computed(() =>
   font-family: var(--apt-font-sans);
   color: var(--apt-text-body);
   background: var(--apt-surface-default);
-  min-height: 100vh;
+  min-height: 100%;
 }
 
 .wb-page {

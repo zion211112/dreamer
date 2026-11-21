@@ -42,7 +42,7 @@ import { RouterLink } from 'vue-router';
   font-family: var(--apt-font-sans);
   color: var(--apt-text-body);
   background: var(--apt-surface-default);
-  min-height: 100vh;
+  min-height: 100%;
   padding: var(--apt-spacing-s13);
 }
 
@@ -100,7 +100,7 @@ import { RouterLink } from 'vue-router';
 .kemetos1-card-link {
   font-size: var(--apt-font-size-body-sm);
   font-weight: var(--apt-font-weight-medium);
-  color: var(--apt-pillar-stewardship);
+  color: var(--apt-module-accent, var(--apt-pillar-stewardship));
   text-decoration: none;
   align-self: flex-start;
   transition: text-decoration-color var(--apt-animation-fast);

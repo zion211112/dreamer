@@ -13,11 +13,26 @@ const groups = computed(() =>
 );
 
 const activeGroupLabel = computed(() => GROUP_LABELS[network.filter]);
+
+/**
+ * Honest count beside the Directory title: the total when unfiltered,
+ * "shown of total" when a group filter is active. Every figure comes
+ * from the store — nothing is fabricated.
+ */
+const directoryCount = computed(() => {
+  const total = network.rows.length;
+  if (network.filter === 'all') {
+    return total === 1 ? '1 registered actor' : `${total} registered actors`;
+  }
+  const noun = total === 1 ? 'actor' : 'actors';
+  return `${network.visible.length} of ${total} ${noun} in ${activeGroupLabel.value.toLowerCase()}`;
+});
 </script>
 
 <template>
   <div class="network-page" data-module="network">
     <header class="network-header">
+      <p class="network-kicker">Actor · Capability · Resource</p>
       <h1 class="network-title">Network</h1>
       <p class="network-subtitle">
         The directory of registered actors — who they are, what they have, and what they can do.
@@ -26,6 +41,7 @@ const activeGroupLabel = computed(() => GROUP_LABELS[network.filter]);
 
     <!-- First-use: no actors yet — hide the filter chrome, name the next step. -->
     <section v-if="!network.rows.length" class="network-empty">
+      <p class="network-empty-kicker">First use</p>
       <h2 class="network-empty-title">No actors in the directory yet</h2>
       <p class="network-empty-body">
         Register an actor with its assets and capabilities in the Coordination Workbench,
@@ -70,7 +86,10 @@ const activeGroupLabel = computed(() => GROUP_LABELS[network.filter]);
         </div>
 
         <template v-else>
-          <h2 class="network-section-title">Directory</h2>
+          <div class="network-section-head">
+            <h2 class="network-section-title">Directory</h2>
+            <p class="network-section-count" aria-live="polite">{{ directoryCount }}</p>
+          </div>
           <div class="network-entity-grid">
             <article
               v-for="row in network.visible"
@@ -78,8 +97,8 @@ const activeGroupLabel = computed(() => GROUP_LABELS[network.filter]);
               class="network-entity-card"
             >
               <div class="network-entity-copy">
-                <h3 class="network-entity-name">{{ row.actor.name }}</h3>
                 <p class="network-entity-type">{{ row.typeLabel }}</p>
+                <h3 class="network-entity-name">{{ row.actor.name }}</h3>
                 <p v-if="row.actor.description" class="network-entity-role">
                   {{ row.actor.description }}
                 </p>
@@ -100,6 +119,9 @@ const activeGroupLabel = computed(() => GROUP_LABELS[network.filter]);
                   {{ asset }}
                 </span>
               </div>
+              <p v-if="!row.capabilities.length && !row.assets.length" class="network-entity-note">
+                No capabilities or assets registered yet — add them in the Coordination Workbench.
+              </p>
             </article>
           </div>
         </template>
@@ -112,10 +134,20 @@ const activeGroupLabel = computed(() => GROUP_LABELS[network.filter]);
 /* Tokens from aptlabs-fused-design-tokens.json — four-layer architecture applied */
 
 .network-page {
+  /* Accent routing: everything reads through the module accent so the shell's
+     [data-module="network"] override applies. `--network-ink` is the accent
+     darkened for small text (keeps AA contrast); the raw accent is kept for
+     borders, washes and focus rings where 3:1 UI contrast is the bar. */
+  --network-accent: var(--apt-module-accent, var(--apt-pillar-exchange));
+  --network-ink: color-mix(
+    in srgb,
+    var(--network-accent) 85%,
+    var(--apt-color-neutral-n950)
+  );
   font-family: var(--apt-font-sans);
   color: var(--apt-text-body);
   background: var(--apt-surface-default);
-  min-height: 100vh;
+  min-height: 100%;
   padding: var(--apt-spacing-s13);
 }
 
@@ -123,11 +155,22 @@ const activeGroupLabel = computed(() => GROUP_LABELS[network.filter]);
   margin-bottom: var(--apt-spacing-s13);
 }
 
+.network-kicker {
+  font-family: var(--apt-font-mono);
+  font-size: var(--apt-font-size-sm-3);
+  font-weight: var(--apt-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--network-ink);
+  margin: 0 0 var(--apt-spacing-s4);
+}
+
 .network-title {
   font-family: var(--apt-font-serif);
   font-size: var(--apt-font-size-h1);
   font-weight: var(--apt-font-weight-semibold);
-  margin: 0 0 var(--apt-spacing-s3) 0;
+  line-height: var(--apt-line-height-tight);
+  margin: 0 0 var(--apt-spacing-s4);
   color: var(--apt-text-body);
 }
 
@@ -180,10 +223,19 @@ const activeGroupLabel = computed(() => GROUP_LABELS[network.filter]);
   transition: all var(--apt-animation-fast);
 }
 
+.network-filter-pill:not(.network-filter-pill--active):hover {
+  border-color: color-mix(in srgb, var(--network-accent) 40%, var(--apt-border));
+}
+
+.network-filter-pill:focus-visible {
+  outline: 2px solid var(--network-accent);
+  outline-offset: 2px;
+}
+
 .network-filter-pill--active {
-  border-color: var(--apt-module-accent, var(--apt-color-brand-primary));
-  background: var(--apt-color-ramp-production-50);
-  color: var(--apt-module-accent, var(--apt-color-brand-primary));
+  border-color: var(--network-accent);
+  background: color-mix(in srgb, var(--network-accent) 10%, var(--apt-color-neutral-n0));
+  color: var(--network-ink);
 }
 
 .network-filter-count {
@@ -197,12 +249,31 @@ const activeGroupLabel = computed(() => GROUP_LABELS[network.filter]);
   opacity: 0.8;
 }
 
+.network-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--apt-spacing-s4);
+  margin-bottom: var(--apt-spacing-s6);
+}
+
 .network-section-title {
   font-family: var(--apt-font-serif);
   font-size: var(--apt-font-size-title-1);
   font-weight: var(--apt-font-weight-semibold);
-  margin: 0 0 var(--apt-spacing-s6) 0;
+  margin: 0;
   color: var(--apt-text-body);
+}
+
+.network-section-count {
+  font-family: var(--apt-font-mono);
+  font-size: var(--apt-font-size-micro);
+  font-weight: var(--apt-font-weight-medium);
+  letter-spacing: 0.08em;
+  color: var(--apt-text-dim);
+  font-variant-numeric: tabular-nums;
+  margin: 0;
 }
 
 .network-entity-grid {
@@ -219,6 +290,11 @@ const activeGroupLabel = computed(() => GROUP_LABELS[network.filter]);
   display: flex;
   flex-direction: column;
   gap: var(--apt-spacing-s4);
+  transition: border-color var(--apt-animation-fast);
+}
+
+.network-entity-card:hover {
+  border-color: color-mix(in srgb, var(--network-accent) 35%, var(--apt-border));
 }
 
 .network-entity-copy {
@@ -227,25 +303,36 @@ const activeGroupLabel = computed(() => GROUP_LABELS[network.filter]);
   gap: var(--apt-spacing-s1);
 }
 
-.network-entity-name {
-  font-size: var(--apt-font-size-body-md);
-  font-weight: var(--apt-font-weight-semibold);
-  margin: 0;
-  color: var(--apt-text-body);
-}
-
 .network-entity-type {
+  font-family: var(--apt-font-mono);
   font-size: var(--apt-font-size-micro);
   font-weight: var(--apt-font-weight-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--apt-pillar-stewardship);
+  letter-spacing: 0.12em;
+  color: var(--network-ink);
   margin: 0;
+}
+
+.network-entity-name {
+  font-family: var(--apt-font-serif);
+  font-size: var(--apt-font-size-title-2);
+  font-weight: var(--apt-font-weight-semibold);
+  line-height: var(--apt-line-height-tight);
+  margin: 0;
+  color: var(--apt-text-body);
+  overflow-wrap: break-word;
 }
 
 .network-entity-role {
   font-size: var(--apt-font-size-body-sm);
   color: var(--apt-text-muted);
+  margin: 0;
+  line-height: var(--apt-line-height-relaxed);
+}
+
+.network-entity-note {
+  font-size: var(--apt-font-size-sm-3);
+  color: var(--apt-text-dim);
   margin: 0;
   line-height: var(--apt-line-height-relaxed);
 }
@@ -275,8 +362,8 @@ const activeGroupLabel = computed(() => GROUP_LABELS[network.filter]);
 }
 
 .network-entity-cap--asset {
-  background: var(--apt-color-ramp-stewardship-50);
-  color: var(--apt-pillar-stewardship);
+  background: color-mix(in srgb, var(--network-accent) 9%, var(--apt-color-neutral-n0));
+  border-color: color-mix(in srgb, var(--network-accent) 30%, var(--apt-border));
 }
 
 /* Empty states (first-use and filtered-out) */
@@ -287,6 +374,16 @@ const activeGroupLabel = computed(() => GROUP_LABELS[network.filter]);
   border-radius: var(--apt-radius-r3);
   background: var(--apt-color-neutral-n0);
   text-align: center;
+}
+
+.network-empty-kicker {
+  font-family: var(--apt-font-mono);
+  font-size: var(--apt-font-size-micro);
+  font-weight: var(--apt-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--apt-text-dim);
+  margin: 0 0 var(--apt-spacing-s4);
 }
 
 .network-empty-title {
@@ -313,7 +410,8 @@ const activeGroupLabel = computed(() => GROUP_LABELS[network.filter]);
   margin-top: var(--apt-spacing-s6);
   padding: 0 var(--apt-spacing-s8);
   border-radius: var(--apt-radius-r2);
-  background: var(--apt-module-accent, var(--apt-color-brand-primary));
+  /* --network-ink: the accent darkened so white text keeps AA contrast. */
+  background: var(--network-ink);
   color: var(--apt-color-neutral-n0);
   font-size: var(--apt-font-size-body-sm);
   font-weight: var(--apt-font-weight-medium);
@@ -321,6 +419,11 @@ const activeGroupLabel = computed(() => GROUP_LABELS[network.filter]);
   border: none;
   font-family: inherit;
   cursor: pointer;
+}
+
+.network-empty-cta:focus-visible {
+  outline: 2px solid var(--network-accent);
+  outline-offset: 2px;
 }
 
 .network-empty-cta--button {

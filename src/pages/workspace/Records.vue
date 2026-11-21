@@ -296,7 +296,7 @@ const emptyCopy: Record<Lens, { title: string; body: string }> = {
   font-family: var(--apt-font-sans);
   color: var(--apt-text-body);
   background: var(--apt-surface-default);
-  min-height: 100vh;
+  min-height: 100%;
   padding: var(--apt-spacing-s13);
 }
 

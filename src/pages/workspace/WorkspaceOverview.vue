@@ -1,13 +1,17 @@
 <script setup lang="ts">
 /**
- * APT-LABS — Operational Overview (workspace home)
+ * APT-LABS — Operational Overview (workspace home).
  *
- * The unit of this page is the CHAIN, not the type. Palantir's Discover answers
- * "what types exist in my model"; this answers "what does the model refuse to
- * confuse, and where does reality enter it".
+ * This is the workspace's instrument panel, not a type catalogue. It reads in
+ * the order a person works: STATE (what the model can and cannot do right now),
+ * ACTION (the verbs that move work forward, each with its consequence), then the
+ * SUBSTRATE — the families, relations and standings that make the instrument
+ * work, demoted to a quiet reference strip at the foot of the page.
  *
- * Every label, group, state and distinction below is imported from
- * src/lib/ontology — nothing on this page is invented for display.
+ * Every label, group, state and distinction is sourced from src/lib/ontology —
+ * nothing on this page is invented for display. Where the workspace holds no
+ * institutional data yet, the readout says so plainly instead of fabricating
+ * numbers: an empty record is a correct state, not a gap to paper over.
  */
 import { computed, ref } from 'vue';
 import { RouterLink } from 'vue-router';
@@ -25,6 +29,38 @@ import {
   VALUE_LEGITIMACY,
   type Family,
 } from '@/lib/ontology';
+
+/**
+ * The operational verbs this page leads with — not the types. Each move names
+ * the destination module and the consequence of taking it, so the console reads
+ * as "here is what you can do" rather than "here is what we think."
+ */
+const MOVES = [
+  {
+    to: '/workspace/workbench',
+    verb: 'Open the workbench',
+    consequence: 'Pick up the next work unit and see exactly what is blocked on it.',
+    icon: 'M4 5h16M4 12h16M4 19h10',
+  },
+  {
+    to: '/workspace/records',
+    verb: 'File a record',
+    consequence: 'Put a claim into the graph, provenance intact, standing ungraded.',
+    icon: 'M7 4h7l4 4v12H7zM14 4v4h4M10 12h5M10 16h4',
+  },
+  {
+    to: '/workspace/proof',
+    verb: 'Verify evidence',
+    consequence: 'Move a claim up a standing, or dispute one that has drifted.',
+    icon: 'M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z M9 12l2 2 4-4',
+  },
+  {
+    to: '/workspace/commons',
+    verb: 'Start an inquiry',
+    consequence: 'Open a Commons thread and bind it to the proposition you are testing.',
+    icon: 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z',
+  },
+] as const;
 
 const query = ref('');
 
@@ -108,214 +144,195 @@ const noMatches = computed(
 </script>
 
 <template>
-  <div class="ov">
+  <div class="ov" data-module="overview">
     <div class="ov-body">
-      <!-- ── Rail ─────────────────────────────────────────────── -->
-      <aside class="ov-rail">
-        <nav class="ov-rail-block" aria-label="Structural groups">
-          <h2 class="ov-rail-heading">Structure</h2>
-          <ul class="ov-rail-list">
-            <li v-for="g in visibleGroups" :key="g.key">
-              <a class="ov-rail-item" :href="`#group-${g.key}`">
-                <span class="ov-rail-swatch" :style="{ background: g.accent }" aria-hidden="true" />
-                <span class="ov-rail-label">{{ g.label }}</span>
-                <span class="ov-rail-count">{{ g.families.length }}</span>
-              </a>
-            </li>
-            <li>
-              <a class="ov-rail-item" href="#context">
-                <span
-                  class="ov-rail-swatch"
-                  :style="{ background: 'var(--apt-family-place)' }"
-                  aria-hidden="true"
-                />
-                <span class="ov-rail-label">Context</span>
-                <span class="ov-rail-count">{{ CONTEXT.length }}</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-
-        <nav class="ov-rail-block" aria-label="Evidence standing">
-          <h2 class="ov-rail-heading">Standing</h2>
-          <ul class="ov-rail-list">
-            <li v-for="s in standingStates" :key="s">
-              <a class="ov-rail-item ov-rail-item--quiet" href="#standing">
-                <span
-                  class="ov-rail-dot"
-                  :style="{ background: `var(--apt-standing-${s})` }"
-                  aria-hidden="true"
-                />
-                <span class="ov-rail-label">{{ EVIDENCE_STANDING_LABELS[s] }}</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-
-        <div class="ov-rail-foot">
-          <a class="ov-rail-config" href="#distinctions">
-            <span aria-hidden="true">±</span>
-            What we refuse to collapse
-          </a>
-        </div>
-      </aside>
-
-      <!-- ── Main ─────────────────────────────────────────────── -->
       <main class="ov-main">
-        <!-- Within-module toolbar: filter + working state + primary act -->
-        <div class="ov-toolbar">
-          <div class="ov-search">
-            <svg class="ov-search-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                fill="currentColor"
-                d="M10.5 3a7.5 7.5 0 1 1-4.8 13.3L3 19.1 4.4 20.5l2.8-2.8A7.5 7.5 0 0 1 10.5 3Zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Z"
-              />
-            </svg>
-            <input
-              v-model="query"
-              type="search"
-              class="ov-search-input"
-              placeholder="Search families, relation kinds, distinctions…"
-              aria-label="Search the ontology"
-            />
-          </div>
-          <span class="ov-branch" title="No branch is proposed. The working state is the recorded state.">
-            <span class="ov-branch-dot" aria-hidden="true" />
-            Recorded
-          </span>
-          <RouterLink to="/workspace/workbench" class="ov-action-primary">Open Workbench</RouterLink>
-        </div>
-
+        <!-- Identity -->
         <div class="ov-pagehead">
-          <p class="ov-eyebrow">ONTOLOGY · OPERATIONAL OVERVIEW</p>
+          <p class="ov-eyebrow">WORKSPACE · OPERATIONAL OVERVIEW</p>
           <h1 class="ov-h1">The chain from reality to value</h1>
           <p class="ov-sub">
-            Thirteen families in one graph. No record is collapsed into a score, and no claim counts
-            as evidence until it carries standing.
+            Apt-LABS is a machine for making claims you can defend. Every claim carries standing,
+            and none counts as evidence until it does.
           </p>
-          <div class="ov-pagehead-actions">
-            <RouterLink to="/workspace/records" class="ov-quiet">Records →</RouterLink>
-            <RouterLink to="/workspace/intelligence" class="ov-quiet">Intelligence →</RouterLink>
+        </div>
+
+        <!-- STATE — what the instrument can do, and what the record holds -->
+        <div class="ov-now">
+          <div class="ov-now-block ov-now-block--model">
+            <div class="ov-now-kicker">The model</div>
+            <div class="ov-now-cal">
+              <span class="ov-now-num">{{ Object.keys(FAMILY).length }}</span>
+              <span class="ov-now-unit">families</span>
+            </div>
+            <dl class="ov-now-sub">
+              <div><dt>Relation kinds</dt><dd>{{ relationKindCount }}</dd></div>
+              <div><dt>Standings</dt><dd>{{ standingStates.length }}</dd></div>
+              <div><dt>Distinctions</dt><dd>{{ CANONICAL_DISTINCTIONS.length }}</dd></div>
+            </dl>
+            <p class="ov-now-note">
+              Calibrated and enforced in schema. A record stays a record — it is never collapsed
+              into a score.
+            </p>
+          </div>
+          <div class="ov-now-block ov-now-block--record">
+            <div class="ov-now-kicker">The record</div>
+            <div class="ov-now-cal">
+              <span class="ov-now-num ov-now-num--empty">0</span>
+              <span class="ov-now-unit">ingested</span>
+            </div>
+            <p class="ov-now-note">
+              No institutional data yet. The instrument is calibrated and the record is open — that
+              is the honest state, not a gap. File the first record or take a workbench unit to begin.
+            </p>
           </div>
         </div>
 
-        <!-- L3 metrics — max three, 2px left border, first in teal (charter B6) -->
-        <dl class="ov-metrics">
-          <div class="ov-metric ov-metric--first">
-            <dt>Families</dt>
-            <dd>{{ Object.keys(FAMILY).length }}</dd>
-          </div>
-          <div class="ov-metric">
-            <dt>Relation kinds</dt>
-            <dd>{{ relationKindCount }}</dd>
-          </div>
-          <div class="ov-metric">
-            <dt>Standing states</dt>
-            <dd>{{ standingStates.length }}</dd>
-          </div>
-        </dl>
+        <!-- ACTION — the four verbs, each with its consequence -->
+        <div class="ov-moves">
+          <RouterLink v-for="m in MOVES" :key="m.to" :to="m.to" class="ov-move">
+            <span class="ov-move-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path :d="m.icon" /></svg>
+            </span>
+            <span class="ov-move-text">
+              <span class="ov-move-verb">{{ m.verb }}</span>
+              <span class="ov-move-consequence">{{ m.consequence }}</span>
+            </span>
+            <span class="ov-move-go" aria-hidden="true">→</span>
+          </RouterLink>
+        </div>
 
-        <p v-if="noMatches" class="ov-empty">
-          Nothing in the ontology matches “{{ query }}”. Clear the field to see the full structure.
-        </p>
-
-        <!-- Group panels -->
-        <section
-          v-for="g in visibleGroups"
-          :id="`group-${g.key}`"
-          :key="g.key"
-          class="ov-group"
-          :style="{ '--group-accent': g.accent }"
-          :aria-labelledby="`group-${g.key}-title`"
-        >
-          <div class="ov-group-head">
-            <h2 :id="`group-${g.key}-title`" class="ov-group-title">{{ g.label }}</h2>
-            <span class="ov-group-count">{{ g.families.length }} families</span>
-          </div>
-          <p class="ov-group-note">{{ g.note }}</p>
-
-          <ul class="ov-cards">
-            <li
-              v-for="f in g.families"
-              :key="f"
-              class="ov-card"
-              :style="{ '--family-accent': `var(--apt-family-${f.toLowerCase().replace('_outcome', '')})` }"
-            >
-              <div class="ov-card-head">
-                <span class="ov-card-icon"><FamilyGlyph :family="f" /></span>
-                <h3 class="ov-card-name">{{ FAMILY_LABELS[f] }}</h3>
-              </div>
-              <p class="ov-card-rellead" aria-hidden="true">
-                {{ (RELATIONS[f] ?? []).length }} defined relations
-              </p>
-              <ul class="ov-chips">
-                <li v-for="r in RELATIONS[f] ?? []" :key="r" class="ov-chip">{{ r.replace(/_/g, ' ') }}</li>
-              </ul>
-            </li>
-          </ul>
-        </section>
-
-        <!-- Context sits under the chain, not beside it: everything is situated -->
-        <section id="context" class="ov-context" aria-labelledby="context-title">
-          <div class="ov-context-lead">
-            <span class="ov-context-icon" aria-hidden="true"><FamilyGlyph :family="CONTEXT[0]" /></span>
-            <div>
-              <h2 id="context-title" class="ov-context-title">Context — {{ FAMILY_LABELS[CONTEXT[0]] }}</h2>
-              <p class="ov-context-note">
-                Not a fourth column. Every actor, resource and commitment above is situated somewhere,
-                and that situation is recorded rather than assumed.
+        <!-- SUBSTRATE — demoted reference. The ontology that makes the instrument work. -->
+        <div class="ov-substrate">
+          <div class="ov-substrate-head">
+            <div class="ov-substrate-lead">
+              <h2 class="ov-substrate-title">The substrate</h2>
+              <p class="ov-substrate-note">
+                The families, relations and standings the model enforces. Read it when you need to —
+                not as the opening act.
               </p>
             </div>
+            <div class="ov-substrate-tools">
+              <div class="ov-search">
+                <svg class="ov-search-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    fill="currentColor"
+                    d="M10.5 3a7.5 7.5 0 1 1-4.8 13.3L3 19.1 4.4 20.5l2.8-2.8A7.5 7.5 0 0 1 10.5 3Zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Z"
+                  />
+                </svg>
+                <input
+                  v-model="query"
+                  type="search"
+                  class="ov-search-input"
+                  placeholder="Filter the substrate — families, relations, distinctions…"
+                  aria-label="Filter the substrate"
+                />
+              </div>
+              <RouterLink to="/workspace/intelligence" class="ov-quiet">Intelligence →</RouterLink>
+            </div>
           </div>
-          <ul class="ov-chips">
-            <li v-for="r in RELATIONS[CONTEXT[0]] ?? []" :key="r" class="ov-chip">
-              {{ r.replace(/_/g, ' ') }}
-            </li>
-          </ul>
-        </section>
 
-        <!-- The distinctions this ontology refuses to collapse -->
-        <section id="distinctions" class="ov-panel" aria-labelledby="distinctions-title">
-          <div class="ov-panel-head">
-            <h2 id="distinctions-title" class="ov-panel-title">What we refuse to collapse</h2>
-            <span class="ov-panel-count">{{ visibleDistinctions.length }}</span>
-          </div>
-          <p class="ov-panel-note">
-            Named distinctions are enforced in schema and surfaced in the interface. An interface that
-            merges any two of these has stopped representing the domain.
+          <p v-if="noMatches" class="ov-empty">
+            Nothing in the substrate matches “{{ query }}”. Clear the field to see the full structure.
           </p>
-          <ul class="ov-distinctions">
-            <li v-for="d in visibleDistinctions" :key="d" class="ov-distinction">{{ d }}</li>
-          </ul>
-        </section>
 
-        <!-- Standing legend -->
-        <section id="standing" class="ov-panel" aria-labelledby="standing-title">
-          <div class="ov-panel-head">
-            <h2 id="standing-title" class="ov-panel-title">Standing, not a score</h2>
-            <span class="ov-panel-count">{{ standingStates.length }}</span>
-          </div>
-          <p class="ov-panel-note">
-            Seven states, held apart on purpose. They are shown side by side and never averaged into a
-            single number, because a number gets quoted and the disagreement is the signal.
-          </p>
-          <ul class="ov-standing">
-            <li
-              v-for="s in standingStates"
-              :key="s"
-              class="ov-standing-item"
-              :style="{ '--standing-accent': `var(--apt-standing-${s})` }"
-            >
-              <span class="ov-standing-swatch" aria-hidden="true" />
-              <span class="ov-standing-label">{{ EVIDENCE_STANDING_LABELS[s] }}</span>
-              <span class="ov-standing-meaning">{{ STANDING_MEANING[s] }}</span>
-            </li>
-          </ul>
-          <p class="ov-standing-empty">
-            No records are ingested in this workspace yet, so no standing counts are shown. A zero
-            here would be a claim about the world, and there is nothing behind it.
-          </p>
-        </section>
+          <section
+            v-for="g in visibleGroups"
+            :id="`group-${g.key}`"
+            :key="g.key"
+            class="ov-group"
+            :style="{ '--group-accent': g.accent }"
+            :aria-labelledby="`group-${g.key}-title`"
+          >
+            <div class="ov-group-head">
+              <h3 :id="`group-${g.key}-title`" class="ov-group-title">{{ g.label }}</h3>
+              <span class="ov-group-count">{{ g.families.length }} families</span>
+            </div>
+            <p class="ov-group-note">{{ g.note }}</p>
+
+            <ul class="ov-cards">
+              <li
+                v-for="f in g.families"
+                :key="f"
+                class="ov-card"
+                :style="{ '--family-accent': `var(--apt-family-${f.toLowerCase().replace('_outcome', '')})` }"
+              >
+                <div class="ov-card-head">
+                  <span class="ov-card-icon"><FamilyGlyph :family="f" /></span>
+                  <h4 class="ov-card-name">{{ FAMILY_LABELS[f] }}</h4>
+                </div>
+                <p class="ov-card-rellead" aria-hidden="true">
+                  {{ (RELATIONS[f] ?? []).length }} defined relations
+                </p>
+                <ul class="ov-chips">
+                  <li v-for="r in RELATIONS[f] ?? []" :key="r" class="ov-chip">{{ r.replace(/_/g, ' ') }}</li>
+                </ul>
+              </li>
+            </ul>
+          </section>
+
+          <!-- Context sits under the chain, not beside it: everything is situated -->
+          <section id="context" class="ov-context" aria-labelledby="context-title">
+            <div class="ov-context-lead">
+              <span class="ov-context-icon" aria-hidden="true"><FamilyGlyph :family="CONTEXT[0]" /></span>
+              <div>
+                <h3 id="context-title" class="ov-context-title">Context — {{ FAMILY_LABELS[CONTEXT[0]] }}</h3>
+                <p class="ov-context-note">
+                  Not a fourth column. Every actor, resource and commitment above is situated
+                  somewhere, and that situation is recorded rather than assumed.
+                </p>
+              </div>
+            </div>
+            <ul class="ov-chips">
+              <li v-for="r in RELATIONS[CONTEXT[0]] ?? []" :key="r" class="ov-chip">
+                {{ r.replace(/_/g, ' ') }}
+              </li>
+            </ul>
+          </section>
+
+          <!-- The distinctions this ontology refuses to collapse -->
+          <section id="distinctions" class="ov-panel" aria-labelledby="distinctions-title">
+            <div class="ov-panel-head">
+              <h3 id="distinctions-title" class="ov-panel-title">What we refuse to collapse</h3>
+              <span class="ov-panel-count">{{ visibleDistinctions.length }}</span>
+            </div>
+            <p class="ov-panel-note">
+              Named distinctions are enforced in schema and surfaced in the interface. An interface
+              that merges any two of these has stopped representing the domain.
+            </p>
+            <ul class="ov-distinctions">
+              <li v-for="d in visibleDistinctions" :key="d" class="ov-distinction">{{ d }}</li>
+            </ul>
+          </section>
+
+          <!-- Standing legend -->
+          <section id="standing" class="ov-panel" aria-labelledby="standing-title">
+            <div class="ov-panel-head">
+              <h3 id="standing-title" class="ov-panel-title">Standing, not a score</h3>
+              <span class="ov-panel-count">{{ standingStates.length }}</span>
+            </div>
+            <p class="ov-panel-note">
+              Seven states, held apart on purpose. They are shown side by side and never averaged
+              into a single number, because a number gets quoted and the disagreement is the signal.
+            </p>
+            <ul class="ov-standing">
+              <li
+                v-for="s in standingStates"
+                :key="s"
+                class="ov-standing-item"
+                :style="{ '--standing-accent': `var(--apt-standing-${s})` }"
+              >
+                <span class="ov-standing-swatch" aria-hidden="true" />
+                <span class="ov-standing-label">{{ EVIDENCE_STANDING_LABELS[s] }}</span>
+                <span class="ov-standing-meaning">{{ STANDING_MEANING[s] }}</span>
+              </li>
+            </ul>
+            <p class="ov-standing-empty">
+              No records are ingested in this workspace yet, so no standing counts are shown. A zero
+              here would be a claim about the world, and there is nothing behind it.
+            </p>
+          </section>
+        </div>
       </main>
     </div>
   </div>
@@ -326,19 +343,9 @@ const noMatches = computed(
   font-family: var(--apt-font-sans);
   color: var(--apt-text-body);
   background: var(--apt-surface-default);
-  min-height: 100vh;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
-}
-
-/* ── Toolbar (within-module; shell owns rail + topbar per charter B3) ── */
-.ov-toolbar {
-  display: flex;
-  align-items: center;
-  gap: var(--apt-spacing-s6);
-  margin-bottom: var(--apt-spacing-s10);
-  padding-bottom: var(--apt-spacing-s4);
-  border-bottom: 1px solid var(--apt-border);
 }
 
 .ov-search {
@@ -355,7 +362,7 @@ const noMatches = computed(
 }
 
 .ov-search:focus-within {
-  border-color: var(--apt-color-brand-primary);
+  border-color: var(--apt-module-accent, var(--apt-color-brand-primary));
   box-shadow: var(--apt-shadow-sh1);
 }
 
@@ -381,148 +388,11 @@ const noMatches = computed(
   color: var(--apt-text-dim);
 }
 
-.ov-branch {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--apt-spacing-s2);
-  margin-left: auto;
-  flex: none;
-  font-family: var(--apt-font-mono);
-  font-size: var(--apt-font-size-sm-3);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--apt-text-muted);
-}
-
-.ov-branch-dot {
-  width: 6px;
-  height: 6px;
-  background: var(--apt-color-brand-primary);
-  border-radius: 50%;
-}
-
-.ov-action-primary {
-  flex: none;
-  font-size: var(--apt-font-size-body-md);
-  font-weight: var(--apt-font-weight-medium);
-  color: var(--apt-action-on-primary);
-  background: var(--apt-action-primary);
-  border: 1px solid var(--apt-action-primary);
-  border-radius: var(--apt-radius-r1);
-  padding: var(--apt-spacing-s2) var(--apt-spacing-s6);
-  text-decoration: none;
-  transition: background-color var(--apt-animation-fast);
-}
-
-.ov-action-primary:hover {
-  background: var(--apt-color-neutral-n950);
-}
-
 /* ── Shell body ─────────────────────────────────────────────── */
 .ov-body {
   display: flex;
   flex: 1;
   min-height: 0;
-}
-
-/* ── Rail ───────────────────────────────────────────────────── */
-.ov-rail {
-  width: 236px;
-  flex: none;
-  padding: var(--apt-spacing-s6) 0 var(--apt-spacing-s8);
-  border-right: 1px solid var(--apt-border);
-  background: var(--apt-surface-page);
-  display: flex;
-  flex-direction: column;
-  gap: var(--apt-spacing-s8);
-}
-
-.ov-rail-heading {
-  font-family: var(--apt-font-mono);
-  font-size: var(--apt-font-size-micro);
-  font-weight: var(--apt-font-weight-semibold);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--apt-text-dim);
-  padding: 0 var(--apt-spacing-s8) var(--apt-spacing-s2);
-  margin: 0;
-}
-
-.ov-rail-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.ov-rail-item {
-  display: flex;
-  align-items: center;
-  gap: var(--apt-spacing-s3);
-  padding: var(--apt-spacing-s2) var(--apt-spacing-s8);
-  font-size: var(--apt-font-size-body-md);
-  color: var(--apt-text-muted);
-  text-decoration: none;
-  border-left: 2px solid transparent;
-}
-
-.ov-rail-item:hover {
-  background: var(--apt-surface-raised);
-  color: var(--apt-text-body);
-  border-left-color: var(--apt-color-brand-primary);
-}
-
-.ov-rail-item--quiet {
-  font-size: var(--apt-font-size-body-sm);
-}
-
-.ov-rail-swatch {
-  width: 8px;
-  height: 8px;
-  flex: none;
-}
-
-.ov-rail-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex: none;
-}
-
-.ov-rail-label {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.ov-rail-count {
-  font-family: var(--apt-font-mono);
-  font-size: var(--apt-font-size-micro);
-  color: var(--apt-text-dim);
-  background: var(--apt-surface-raised);
-  border: 1px solid var(--apt-border);
-  border-radius: var(--apt-radius-r0);
-  padding: 0 4px;
-}
-
-.ov-rail-foot {
-  margin-top: auto;
-  padding: var(--apt-spacing-s6) var(--apt-spacing-s8) 0;
-  border-top: 1px solid var(--apt-border);
-}
-
-.ov-rail-config {
-  display: flex;
-  align-items: center;
-  gap: var(--apt-spacing-s3);
-  font-size: var(--apt-font-size-body-sm);
-  color: var(--apt-text-muted);
-  text-decoration: none;
-}
-
-.ov-rail-config:hover {
-  color: var(--apt-color-brand-primary);
 }
 
 /* ── Main ───────────────────────────────────────────────────── */
@@ -533,7 +403,7 @@ const noMatches = computed(
   max-width: 1180px;
 }
 
-/* Page head — charter B6 pattern */
+/* Page head — identity, compact so the instrument hits immediately */
 .ov-pagehead {
   margin-bottom: var(--apt-spacing-s8);
 }
@@ -564,57 +434,180 @@ const noMatches = computed(
   max-width: 62ch;
 }
 
-.ov-pagehead-actions {
-  display: flex;
-  gap: var(--apt-spacing-s6);
-  margin-top: var(--apt-spacing-s4);
+/* ── STATE readout: the instrument is calibrated, the record is open ── */
+.ov-now {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1px;
+  background: var(--apt-border);
+  border: 1px solid var(--apt-border);
+  border-radius: var(--apt-radius-r2);
+  overflow: hidden;
+  margin-bottom: var(--apt-spacing-s10);
 }
 
-.ov-quiet {
-  font-size: var(--apt-font-size-body-sm);
-  color: var(--apt-text-muted);
-  text-decoration: none;
-  border-bottom: 1px solid var(--apt-border);
-  padding-bottom: 1px;
+.ov-now-block {
+  background: var(--apt-surface-page);
+  padding: var(--apt-spacing-s7) var(--apt-spacing-s8);
 }
 
-.ov-quiet:hover {
-  color: var(--apt-color-brand-primary);
-  border-bottom-color: var(--apt-color-brand-primary);
+.ov-now-block--model {
+  border-left: 3px solid var(--apt-module-accent, var(--apt-color-brand-primary));
 }
 
-/* L3 metrics — max three, 2px left border, first in teal (B6) */
-.ov-metrics {
-  display: flex;
-  gap: var(--apt-spacing-s8);
-  margin: 0 0 var(--apt-spacing-s12);
-  padding: 0;
+.ov-now-block--record {
+  border-left: 3px dashed var(--apt-border);
 }
 
-.ov-metric {
-  padding-left: var(--apt-spacing-s3);
-  border-left: 2px solid var(--apt-border);
-}
-
-.ov-metric--first {
-  border-left-color: var(--apt-color-brand-secondary);
-}
-
-.ov-metric dt {
+.ov-now-kicker {
   font-family: var(--apt-font-mono);
   font-size: var(--apt-font-size-micro);
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
   color: var(--apt-text-dim);
+  margin-bottom: var(--apt-spacing-s4);
 }
 
-.ov-metric dd {
-  margin: var(--apt-spacing-s1) 0 0;
+.ov-now-cal {
+  display: flex;
+  align-items: baseline;
+  gap: var(--apt-spacing-s3);
+}
+
+.ov-now-num {
   font-family: var(--apt-font-serif);
-  font-size: var(--apt-font-size-h2);
+  font-size: var(--apt-font-size-display);
   font-weight: var(--apt-font-weight-semibold);
   color: var(--apt-text-strong);
   line-height: 1;
+}
+
+.ov-now-num--empty {
+  color: var(--apt-text-dim);
+}
+
+.ov-now-unit {
+  font-family: var(--apt-font-mono);
+  font-size: var(--apt-font-size-body-sm);
+  letter-spacing: 0.04em;
+  color: var(--apt-text-muted);
+}
+
+.ov-now-sub {
+  display: flex;
+  gap: var(--apt-spacing-s8);
+  margin: var(--apt-spacing-s5) 0 0;
+  padding: 0;
+}
+
+.ov-now-sub div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ov-now-sub dt {
+  font-family: var(--apt-font-mono);
+  font-size: var(--apt-font-size-micro);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--apt-text-dim);
+}
+
+.ov-now-sub dd {
+  margin: 0;
+  font-family: var(--apt-font-serif);
+  font-size: var(--apt-font-size-h2);
+  font-weight: var(--apt-font-weight-medium);
+  color: var(--apt-text-body);
+}
+
+.ov-now-note {
+  font-size: var(--apt-font-size-body-sm);
+  line-height: var(--apt-line-height-relaxed);
+  color: var(--apt-text-muted);
+  margin: var(--apt-spacing-s5) 0 0;
+  max-width: 46ch;
+}
+
+/* ── ACTION: the four operational verbs ── */
+.ov-moves {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--apt-spacing-s4);
+  margin-bottom: var(--apt-spacing-s4);
+}
+
+.ov-move {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--apt-spacing-s4);
+  padding: var(--apt-spacing-s6);
+  background: var(--apt-surface-page);
+  border: 1px solid var(--apt-border);
+  border-radius: var(--apt-radius-r2);
+  text-decoration: none;
+  color: var(--apt-text-body);
+  transition:
+    border-color var(--apt-animation-fast),
+    box-shadow var(--apt-animation-fast),
+    transform var(--apt-animation-fast);
+}
+
+.ov-move:hover {
+  border-color: color-mix(in srgb, var(--apt-module-accent, var(--apt-color-brand-primary)) 40%, var(--apt-border));
+  box-shadow: var(--apt-shadow-sh2);
+  transform: translateY(-1px);
+}
+
+.ov-move:focus-visible {
+  outline: 2px solid var(--apt-module-accent, var(--apt-color-brand-primary));
+  outline-offset: 2px;
+}
+
+.ov-move-icon {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  color: var(--apt-module-accent, var(--apt-color-brand-primary));
+}
+
+.ov-move-icon svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ov-move-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.ov-move-verb {
+  font-size: var(--apt-font-size-title-2);
+  font-weight: var(--apt-font-weight-semibold);
+  color: var(--apt-text-strong);
+  letter-spacing: -0.01em;
+}
+
+.ov-move-consequence {
+  font-size: var(--apt-font-size-body-sm);
+  line-height: var(--apt-line-height-relaxed);
+  color: var(--apt-text-muted);
+}
+
+.ov-move-go {
+  margin-left: auto;
+  align-self: center;
+  flex: none;
+  color: var(--apt-module-accent, var(--apt-color-brand-primary));
+  font-size: var(--apt-font-size-title-2);
 }
 
 .ov-empty {
@@ -623,6 +616,61 @@ const noMatches = computed(
   border: 1px dashed var(--apt-border);
   padding: var(--apt-spacing-s6);
   margin: 0 0 var(--apt-spacing-s8);
+}
+
+/* ── SUBSTRATE — demoted reference, recessed below the fold ── */
+.ov-substrate {
+  margin-top: var(--apt-spacing-s10);
+  padding-top: var(--apt-spacing-s8);
+  border-top: 1px solid var(--apt-border);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 640px;
+}
+
+.ov-substrate-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--apt-spacing-s8);
+  margin-bottom: var(--apt-spacing-s8);
+}
+
+.ov-substrate-lead {
+  min-width: 0;
+}
+
+.ov-substrate-title {
+  font-family: var(--apt-font-serif);
+  font-size: var(--apt-font-size-title-1);
+  font-weight: var(--apt-font-weight-semibold);
+  color: var(--apt-text-strong);
+  margin: 0 0 var(--apt-spacing-s1);
+}
+
+.ov-substrate-note {
+  font-size: var(--apt-font-size-body-sm);
+  color: var(--apt-text-muted);
+  margin: 0;
+  max-width: 70ch;
+}
+
+.ov-substrate-tools {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--apt-spacing-s4);
+  flex: 0 0 auto;
+  width: 320px;
+}
+
+.ov-substrate-tools .ov-search {
+  flex: none;
+  width: 100%;
+  max-width: none;
+}
+
+.ov-substrate-tools .ov-search-input {
+  font-size: var(--apt-font-size-body-sm);
 }
 
 /* ── Groups ─────────────────────────────────────────────────── */
@@ -641,7 +689,7 @@ const noMatches = computed(
 
 .ov-group-title {
   font-family: var(--apt-font-serif);
-  font-size: var(--apt-font-size-title-1);
+  font-size: var(--apt-font-size-title-2);
   font-weight: var(--apt-font-weight-semibold);
   color: var(--apt-text-strong);
   margin: 0;
@@ -729,7 +777,7 @@ const noMatches = computed(
   margin: 0;
 }
 
-/* Ubuntu inversion: the relation field is the lead fact, not an object count */
+/* The relation field is the lead fact, not an object count */
 .ov-card-rellead {
   font-family: var(--apt-font-mono);
   font-size: var(--apt-font-size-micro);
@@ -911,12 +959,22 @@ const noMatches = computed(
   margin: 0;
 }
 
+/* Quiet link (kept for the substrate Intelligence jump) */
+.ov-quiet {
+  font-size: var(--apt-font-size-body-sm);
+  color: var(--apt-text-muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--apt-border);
+  padding-bottom: 1px;
+}
+
+.ov-quiet:hover {
+  color: var(--apt-module-accent, var(--apt-color-brand-primary));
+  border-bottom-color: var(--apt-module-accent, var(--apt-color-brand-primary));
+}
+
 /* ── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 1000px) {
-  .ov-rail {
-    display: none;
-  }
-
   .ov-main {
     padding: var(--apt-spacing-s8);
   }
@@ -927,6 +985,14 @@ const noMatches = computed(
 }
 
 @media (max-width: 760px) {
+  .ov-now {
+    grid-template-columns: 1fr;
+  }
+
+  .ov-moves {
+    grid-template-columns: 1fr;
+  }
+
   .ov-cards {
     grid-template-columns: 1fr;
   }
@@ -935,13 +1001,14 @@ const noMatches = computed(
     grid-column: auto;
   }
 
-  .ov-toolbar {
-    flex-wrap: wrap;
+  .ov-substrate-head {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .ov-search {
-    max-width: none;
-    flex: 1 0 100%;
+  .ov-substrate-tools {
+    width: 100%;
+    align-items: stretch;
   }
 }
 </style>

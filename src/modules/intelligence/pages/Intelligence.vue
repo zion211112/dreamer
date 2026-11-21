@@ -215,7 +215,7 @@ function laneIsLive(key: PilotKey): boolean {
   font-family: var(--apt-font-sans);
   color: var(--apt-text-body);
   background: var(--apt-surface-default);
-  min-height: 100vh;
+  min-height: 100%;
   padding: var(--apt-spacing-s13);
 }
 
@@ -283,7 +283,7 @@ function laneIsLive(key: PilotKey): boolean {
 .intelligence-forecast-value {
   font-size: var(--apt-font-size-title-1);
   font-weight: var(--apt-font-weight-semibold);
-  color: var(--apt-pillar-stewardship);
+  color: var(--apt-module-accent, var(--apt-pillar-stewardship));
   font-variant-numeric: tabular-nums;
 }
 
@@ -426,7 +426,7 @@ function laneIsLive(key: PilotKey): boolean {
 .intelligence-boundary-term {
   font-size: var(--apt-font-size-body-sm);
   font-weight: var(--apt-font-weight-semibold);
-  color: var(--apt-pillar-stewardship);
+  color: var(--apt-module-accent, var(--apt-pillar-stewardship));
   min-width: 120px;
 }
 
