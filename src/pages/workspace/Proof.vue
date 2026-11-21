@@ -12,6 +12,7 @@ import { computed, ref } from 'vue'
 import { OPERATIONAL_PILOTS } from '@/lib/demo-seed'
 import { listSbtAttestations } from '@/lib/sbt-attestations'
 import { EVIDENCE_STANDING_LABELS } from '@/lib/ontology'
+import { listEngineAgentTraces } from '@/lib/engine-agent'
 
 type Standing = 'verified' | 'supported'
 
@@ -60,6 +61,9 @@ const attestations = computed<LiveAttestation[]>(() =>
     recordedBy: a.issuedBy,
   })),
 )
+
+/** Governed receipts filed by the dock's local engine — the durable, openable tail. */
+const engineReceipts = listEngineAgentTraces()
 
 const standingFilter = ref<'all' | Standing>('all')
 const rows = computed(() => {
@@ -122,7 +126,34 @@ function chipClass(standing: Standing): string {
       </div>
     </div>
 
-    <p class="proof-fine">Illustrative seed data · SBT attestations are live · provenance preserved</p>
+    <!-- Engine receipts: governed actions the dock's local engine filed. -->
+    <section class="proof-engine">
+      <div class="proof-engine-head">
+        <span class="proof-engine-k">Engine receipts</span>
+        <span v-if="engineReceipts.length" class="proof-engine-count">{{ engineReceipts.length }} {{ engineReceipts.length === 1 ? 'governed action' : 'governed actions' }}</span>
+        <span v-else class="proof-engine-count">awaiting a dock verb</span>
+      </div>
+      <div class="proof-engine-rows">
+        <div v-for="t in engineReceipts" :key="t.id" class="proof-engine-row">
+          <div class="proof-engine-main">
+            <div class="proof-engine-action">{{ t.action }}</div>
+            <div class="proof-engine-meta">
+              <span>{{ t.actor }}</span><span class="proof-dot" aria-hidden="true" />
+              <span class="proof-engine-note">{{ t.note }}</span>
+            </div>
+          </div>
+          <div class="proof-engine-side">
+            <span class="proof-engine-result" :class="`proof-engine-result--${t.result}`">{{ t.result }}</span>
+            <span class="proof-engine-id" :title="t.id">…{{ t.id.slice(-6) }}</span>
+          </div>
+        </div>
+        <div v-if="!engineReceipts.length" class="proof-engine-empty">
+          No governed receipts yet. Run a “Next move” in the Agent dock and its receipt lands here — propose-never-executes, provenance preserved.
+        </div>
+      </div>
+    </section>
+
+    <p class="proof-fine">Illustrative seed data · SBT attestations live · engine receipts live · provenance preserved</p>
   </div>
 </template>
 
@@ -160,4 +191,25 @@ function chipClass(standing: Standing): string {
 
 .proof-empty { padding: 40px 0; text-align: center; font: 400 var(--apt-font-size-body-sm) / 1.6 var(--apt-font-sans); color: var(--apt-text-muted); }
 .proof-fine { margin-top: var(--apt-spacing-s9); font: 500 9px / 1.4 var(--apt-font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--apt-text-dim); text-align: center; }
+
+/* Engine receipts — a recessed substrate strip: the durable tail of what the
+   dock's local engine governed, not the primary evidence register above. */
+.proof-engine { margin-top: var(--apt-spacing-s11); border-top: 1px solid var(--apt-border); padding-top: var(--apt-spacing-s9); }
+.proof-engine-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: var(--apt-spacing-s5); }
+.proof-engine-k { font: 600 var(--apt-font-size-micro) / 1 var(--apt-font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--apt-text-dim); }
+.proof-engine-count { font: 500 9.5px / 1 var(--apt-font-mono); letter-spacing: 0.05em; text-transform: uppercase; color: var(--apt-text-muted); }
+.proof-engine-rows { display: flex; flex-direction: column; }
+.proof-engine-row { display: grid; grid-template-columns: 1fr auto; gap: var(--apt-spacing-s8); align-items: center; padding: 10px 0; border-bottom: 1px solid color-mix(in srgb, var(--apt-text-strong) 8%, transparent); }
+.proof-engine-action { font: 500 13px / 1.3 var(--apt-font-serif); color: var(--apt-text-strong); }
+.proof-engine-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 4px; }
+.proof-engine-meta span { font: 500 10px / 1 var(--apt-font-mono); letter-spacing: 0.03em; color: var(--apt-text-muted); }
+.proof-engine-note { color: var(--apt-text-dim); }
+.proof-engine-side { display: flex; align-items: center; gap: 10px; }
+.proof-engine-result { font: 600 9px / 1 var(--apt-font-mono); letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 8px; border-radius: 4px; border: 1px solid; }
+.proof-engine-result--executed { color: var(--apt-standing-verified, #2b5945); background: color-mix(in srgb, var(--apt-standing-verified, #2b5945) 12%, var(--apt-surface-default)); border-color: color-mix(in srgb, var(--apt-standing-verified, #2b5945) 30%, transparent); }
+.proof-engine-result--approved { color: var(--apt-standing-supported, #3860be); background: color-mix(in srgb, var(--apt-standing-supported, #3860be) 12%, var(--apt-surface-default)); border-color: color-mix(in srgb, var(--apt-standing-supported, #3860be) 30%, transparent); }
+.proof-engine-result--rejected,
+.proof-engine-result--failed { color: var(--apt-standing-reported, #AD8B55); background: color-mix(in srgb, var(--apt-standing-reported, #AD8B55) 14%, var(--apt-surface-default)); border-color: color-mix(in srgb, var(--apt-standing-reported, #AD8B55) 34%, transparent); }
+.proof-engine-id { font: 500 9px / 1 var(--apt-font-mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--apt-text-dim); }
+.proof-engine-empty { padding: 28px 0; text-align: center; font: 400 var(--apt-font-size-body-sm) / 1.6 var(--apt-font-sans); color: var(--apt-text-muted); }
 </style>

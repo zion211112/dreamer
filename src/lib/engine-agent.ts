@@ -338,3 +338,14 @@ export function createEngineAgent(identity: EngineAgentIdentity): EngineAgent {
 export function readStoredIdentity(): EngineAgentIdentity | null {
   return readIdentity();
 }
+
+/**
+ * Every governed receipt the runtime has ever filed — the durable, inspectable
+ * tail of propose-never-executes. Proof reads this so a dock action is openable
+ * as a receipt, not just a chat line.
+ */
+export function listEngineAgentTraces(): ExecutionTrace[] {
+  return readTraces();
+}
+
+export const ENGINE_AGENT_STORAGE_KEY = STORAGE_KEY;
