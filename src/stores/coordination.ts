@@ -53,6 +53,7 @@ import {
   knowledgeForOutcome,
 } from '@/lib/knowledge-store';
 import { queryRollEntries } from '@/lib/db/roll';
+import { seedCoordinationIfEmpty } from '@/lib/coordination-seed';
 
 // A commitment as the workbench shows it: the live row a person acts on.
 export interface CommitmentRow {
@@ -114,6 +115,8 @@ export const useCoordinationStore = defineStore('coordination', () => {
   const audit = ref<AuditEvent[]>([]);
   const knowledge = ref<RecordEnvelope[]>([]);
   const outcomes = ref<KnowledgeOutcome[]>([]);
+  /** True when this session seeded the board from the operational pilots. */
+  const seeded = ref(false);
 
   const inFlight = computed(() => commitments.value.filter((c) => c.status === 'accepted'));
   const evidenceVerified = computed(() =>
@@ -256,10 +259,12 @@ export const useCoordinationStore = defineStore('coordination', () => {
     await loadKnowledge();
   }
 
+  seeded.value = seedCoordinationIfEmpty();
   refresh();
 
   return {
     accountId,
+    seeded,
     profiles,
     providers,
     openNeeds,

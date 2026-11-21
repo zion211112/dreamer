@@ -109,9 +109,18 @@ onMounted(async () => {
           and what we have kept. Drive it from here.
         </p>
       </div>
-      <span class="coord-account" :title="'Acting as ' + store.accountId">
-        {{ store.accountId }}
-      </span>
+      <div class="coord-head-meta">
+        <span class="coord-account" :title="'Acting as ' + store.accountId">
+          {{ store.accountId }}
+        </span>
+        <span
+          v-if="store.seeded"
+          class="coord-seeded"
+          title="Seeded from the five operational pilots — every record here is a real, auditable write to the coordination record."
+        >
+          seeded from pilots
+        </span>
+      </div>
     </header>
 
     <!-- The state of the loop at a glance (visualization, not a record dump) -->
@@ -486,6 +495,13 @@ onMounted(async () => {
   line-height: var(--apt-line-height-relaxed);
 }
 
+.coord-head-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--apt-spacing-s2);
+}
+
 .coord-account {
   font-family: var(--apt-font-mono);
   font-size: var(--apt-font-size-sm-3);
@@ -495,6 +511,17 @@ onMounted(async () => {
   padding: var(--apt-spacing-s2) var(--apt-spacing-s4);
   letter-spacing: 0.04em;
   white-space: nowrap;
+}
+
+.coord-seeded {
+  font-family: var(--apt-font-mono);
+  font-size: var(--apt-font-size-sm-3);
+  color: var(--apt-text-dim);
+  border-radius: var(--apt-radius-r1);
+  padding: var(--apt-spacing-s2) var(--apt-spacing-s4);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  background: var(--apt-color-neutral-n50);
 }
 
 /* Metrics band */
