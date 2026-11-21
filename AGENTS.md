@@ -4,48 +4,57 @@ Single source of truth for agents working in this repository. Replaces duplicate
 
 ## Stack
 
-Preact 10.24 + Vue 3 (Composition API) + Vite 6.4.5 + TypeScript 5.6 strict + Pinia + Vue Router + Wouter routing + Vitest 5.0.5. Browser-local demo with Supabase fallback when env vars are unset.
+Vue 3 (Composition API) + Pinia + Vue Router + Vite 6.4.x + TypeScript 5.6 strict + Vitest 5.x.
+Browser-local demo with Supabase fallback when env vars are unset.
 
-Dual-entry (isolated runtimes — Preact and Vue are NOT run simultaneously):
-- `index.html` → `src/main.tsx` (Preact)
-- `index-vue.html` → `src/main-vue.ts` (Vue 3, mounted at `#app-vue`)
-
-Vue migration is incremental per ADR B9: one route at a time, Preact entry untouched.
+Single entry (verified 2026-11-21): `index.html` → `src/main-vue.ts` (Vue 3, mounted at `#app-vue`).
+`index-vue.html` is a legacy duplicate of the same entry. There is **no** Preact entry and no
+`src/main.tsx` / `src/App.tsx` — the Vue migration permitted by ADR B9 has completed, and Preact is
+no longer a dependency. Route table: `src/modules/router.ts`.
 
 ## Key commands
 
 - `npm run dev` — dev server
 - `npm run build` — `tsc && vite build`
-- `npm run test:unit -- --run` — vitest (12 files, 74 tests)
+- `npm run test:unit -- --run` — vitest (34 files, 318 tests — verified 2026-11-21)
 - `npx tsc --noEmit` — type check
 
 ## Where things live
 
 ```
 src/
-  App.tsx              — route switch (wouter)
-  tokens.css           — design tokens (:root light luxury, [data-skin="dark"])
+  main-vue.ts          — single entry: Vue app + Pinia + router
+  modules/router.ts    — full route table (source of truth for routes)
+  assets/css/          — design tokens & global styles (NOT src/tokens.css)
+  pages/
+    Landing.vue, Auth.vue, DesignLab.vue
+    workspace/         — WorkspaceOverview, Coordination, Commons, Network,
+                         People, Institutions, Records, AptCoinLab  (all .vue)
   lib/
-    demo-seed.ts           — seedDemoData(), 3 scenarios
-    roll-sbt-bridge.ts     — Roll → SBT bridge
-    sbt-attestations.ts    — SBT attestations (localStorage)
-    agent-host.ts          — AgentHost, proposes-never-executes
-    local-workbench.ts     — applications, workStatus state machine
-    local-workflows.ts     — field signals, work opportunities
-    people-network.ts      — 31 entities, 34 relationships
+    actors.ts              — Actor + membership, ActorType (individual/crew/institution)
+    identity.ts            — IdentityRecord; separates Person from Account
+    asset-registry.ts      — RESOURCE family, registerAsset/retireAsset
+    capability-registry.ts — CAPABILITY family, what an actor can do
+    commitment-journey.ts  — postNeed → acceptCommitment → fulfilCommitment
+    matching.ts            — declarative need↔capability matching (no opaque scoring)
+    evidence-store.ts      — EVIDENCE family + unverified→verified transition
+    knowledge-store.ts     — distillKnowledge (accepted outcome → Lesson)
+    record-envelope.ts     — versioned, append-only records + supersede
+    audit.ts               — append-only audit trail
+    authz.ts               — RBAC permission families
+    ontology/              — types.ts, relationships.ts, actions.ts, evidence.ts
     db/roll.ts             — RollEntry, hash_anchor, evidence layers
-    school-console-storage.ts — tender drafts, IndexedDB
-    workbench-simulation.ts — 6-stage simulation pipeline
-  components/
-    WorkspaceShell.tsx     — app shell, agentAvailable flag
-    EngineCommandDock.tsx  — scoped request dialog ("Ask engine")
-  pages/workspace/
-    workspace routes (Commons, Network, Workbench, Records, Intelligence)
+    people-network.ts      — demo graph (illustrative, not real people)
   modules/
-    workbench/         — pilot routes under shared shell
+    workbench/         — pilot routes; live work items are localStorage JSON
+    intelligence/      — matching / intelligence surface
     kemetos1/          — Kemetos1 coordinator layer
-    benben-os/         — separate prototype (not an APT-LABS module)
+    assets/, benben-os/ — benben-os is a separate prototype, not an APT-LABS module
 ```
+
+**Not in this repo** (previously documented, deleted): `src/App.tsx`, `src/main.tsx`,
+`src/components/*.tsx`, `src/lib/local-workbench.ts`, `src/lib/workbench-simulation.ts`,
+`src/lib/agent-host.ts`, `docs/STATE_MACHINES.md` references all of them.
 
 ## Five modules
 
@@ -72,6 +81,26 @@ Demo mode (localStorage) when `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` are
 ## Build & test
 
 Run `npm run build` and `npm run test:unit -- --run` before shipping. Not a gate that blocks every edit.
+
+## Agent workforce
+
+Multi-agent work in this repo is governed by three canonical documents. Read them before
+orchestrating or delegating:
+
+- `docs/agents/OPERATING_MODEL.md` — team structure, delegation lifecycle, write-scope policy, budgets
+- `docs/agents/ROLE_CARDS.md` — six roles, each with a boundary contract (scope, protected areas, escalation)
+- `docs/agents/QUALITY_GATES.md` — evidence-gated completion, verification protocol, evidence ledger
+
+Operating invariants that override convenience:
+
+1. **Decompose by context boundary and write scope, not by role type alone.** Splitting purely by role
+   creates a telephone game where every handoff loses fidelity. A sub-agent that constantly needs
+   another's in-context state was a bad split. Give each worker fresh context, a bounded write scope,
+   and the shared task board as the only state the orchestrator mutates directly.
+2. **Never verify your own work.** A completion claim is a claim until a different agent, with fresh
+   context, confirms it against current evidence. Block without proof.
+3. **One owner per task, disjoint write scopes.** The orchestrator merges; workers do not write across scopes.
+4. **Evidence is labelled.** VERIFIED / PROTOTYPE / TARGET / PLANNED / UNKNOWN — never blur them.
 
 ## Reference docs
 
