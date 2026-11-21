@@ -1,100 +1,85 @@
 # APT-LABS — Ontology
 
-Single source of truth for what APT-LABS is, why it exists, and how it thinks.
+Single source of truth for what APT-LABS is, why it exists, how it thinks, and what it is not.
 Read this before touching domain code, designing a module, or arguing with a schema.
 
 ---
 
-## Thesis
+## Status and evidence
 
-**African behaviour → data → models → AI services → platforms.**
-
-The ambition is not to introduce AI into African markets. It is to build systems that
-understand African contexts, develop intelligence from them, and return practical value,
-agency, and capability to the people, communities, and institutions involved.
-
-In shorthand: **sell African intelligence back to Africa.**
+Evidence label: **PLANNED** — this document describes intended structure. No claim here is asserted as implemented unless independently confirmed. Demo or synthetic data is never presented as real.
 
 ---
 
-## Aetiology — Why this exists
+## 1. Thesis
 
-African communities and institutions are not empty environments waiting for intelligence
-to be introduced. They already contain it:
+Productive intelligence exists in African communities and institutions. It is fragmented, not absent.
 
-- Practical and situated knowledge.
-- Informal coordination and exchange systems.
-- Human relationships and networks.
-- Local methods of adaptation and problem-solving.
-- Institutional memory and accumulated experience.
-- Solutions that work but remain poorly documented or difficult to replicate.
+APT-LABS is infrastructure for making fragmented productive capacity visible, connectable, governable, locally retained, and cumulative. It structures relationships between people, crews, institutions, assets, skills, needs, opportunities, work, and evidence so they become legible and actionable.
 
-The problem is fragmentation, not absence.
-
-Valuable intelligence is scattered across people, conversations, organisations, documents,
-transactions, practices, and local systems. It is hard to discover, verify, connect,
-preserve, learn from, and build upon.
-
-APT-LABS transforms fragmented intelligence into shared legibility, useful memory,
-coordinated action, and compounding capability.
+In shorthand: **structure African intelligence so it can be used by Africans.**
 
 ---
 
-## The fundamental premise
+## 2. Fundamental premise
 
-**Living reality precedes its representation.**
-
-People and collectives pursue intentions. They use resources. They make commitments.
-They perform activities. They encounter consequences. They learn, adapt, and generate
-knowledge. All of this exists before a platform records or represents it.
+Living reality precedes its representation. People and collectives pursue intentions, use resources, make commitments, perform activities, encounter consequences, learn, adapt, and generate knowledge — all before a platform records or represents it.
 
 Therefore:
 
-- Data is a trace of reality, not reality itself.
-- Models are interpretations of reality, not reality itself.
-- AI services are instruments for augmenting human capability, not ends in themselves.
-- Intelligence emerges through situated activity, relationships, experience, evidence,
-  feedback, and coordination.
-- Knowledge must retain context, provenance, and the distinction between observation,
-  interpretation, and proposal.
+- **Data is a trace of reality, not reality itself.** A record of a completed borehole repair is not the repair.
+- **Models are interpretations of reality, not reality itself.** A schema that classifies a person as an "asset" misrepresents what a person is.
+- **AI services augment human capability; they do not replace institutional judgment.** The system proposes; people decide.
+- **Intelligence emerges through situated activity, relationships, experience, evidence, feedback, and coordination.** It is not extracted from data alone.
+- **Knowledge retains context, provenance, and the distinction between observation, interpretation, and proposal.**
 
-A system that records activity without understanding its context accumulates data while
-producing very little intelligence. A system that models people without respecting their
-agency produces technically impressive representations while misunderstanding the reality
-it claims to describe.
+A system that records activity without understanding its context accumulates data while producing very little intelligence. A system that models people without respecting their agency produces representations while misunderstanding the reality it claims to describe.
 
 ---
 
-## The six structures
+## 3. The six structures
 
 Every product, sector, and workflow in APT-LABS expresses the same six underlying structures.
-None is forced into a single rigid role; they overlap and interpenetrate.
 
-| Structure | What it holds | Examples |
-|-----------|--------------|----------|
-| **Actors** | People, crews, enterprises, institutions | A mason, a fabrication crew, a school, a hospital |
-| **Resources** | Skills, assets, capital, knowledge | Welding skill, a micro-hydro rig, savings, a blueprint |
-| **Intentions** | Needs, opportunities, proposals | "We need a workshop bench", "An animation asset for investment" |
-| **Commitments** | Agreements, roles, obligations, authority | A tender, a crew role, a payment term, an authorisation |
-| **Activity** | Events, work, exchange, delivery | Pouring concrete, rendering a frame, signing off a build |
+| Structure | Holds | Examples |
+|-----------|-------|----------|
+| **Actors** | People, crews, enterprises, institutions | A mason, a fabrication crew, a school, a university, a county government |
+| **Resources** | Skills, assets, capital, knowledge, data | Welding skill, a micro-hydro rig, savings, a blueprint, server capacity |
+| **Intentions** | Needs, opportunities, proposals, votes | "Fix the Embu borehole," "Animation asset for investment," "Vote for cold storage" |
+| **Commitments** | Agreements, roles, obligations, authority, funded pledges | A tender, a crew role, a payment term, an authorisation, an investment pledge |
+| **Activity** | Events, work, exchange, delivery | Pouring concrete, rendering a frame, teaching a class, auditing a failed project |
 | **Knowledge** | Evidence, credentials, outcomes, lessons | A Roll entry, an SBT attestation, a dispute record |
 
 **Canonical distinctions (never silently equated):**
 
-- **Person ≠ Asset** — a person is an individual with agency, not inventory.
-- **Person ≠ Crew** — a crew performs work; a person is a member.
-- **Institution ≠ Venture** — an institution commissions or authorises work; a venture is a bounded undertaking.
-- **Asset ≠ Capability** — an asset is a thing; a capability is the ability to use it.
-- **Claim ≠ Evidence** — an assertion is bounded by subject, predicate, and scope; evidence substantiates it.
-- **Approval ≠ Authorization ≠ Execution ≠ Acceptance ≠ Settlement** — each is a distinct, separately timed flow.
-- **AI suggestion ≠ institutional decision** — the system proposes; people decide.
+1. **Person ≠ Asset** — a person is an individual with agency, not inventory.
+2. **Person ≠ Crew** — a crew performs work; a person is a member.
+3. **Institution ≠ Venture** — an institution commissions or authorises work; a venture is a bounded undertaking.
+4. **Asset ≠ Capability** — an asset is a thing; a capability is the ability to use it.
+5. **Claim ≠ Evidence** — an assertion is bounded by subject, predicate, and scope; evidence substantiates it.
+6. **Approval ≠ Authorization ≠ Execution ≠ Acceptance ≠ Settlement** — each is a distinct, separately timed flow.
+7. **AI suggestion ≠ institutional decision** — the system proposes; people decide.
+8. **Investment ≠ Donation ≠ Payment** — an investor takes economic risk; a donor gives without return; a payer settles an obligation.
 
 ---
 
-## The transformation chain
+## 4. Three transversal dimensions
 
-The goal is not to digitise everything indiscriminately.
-The goal is to make relevant realities understandable and actionable.
+Every structure is read through three lenses:
+
+| Dimension | Question | Lives in |
+|-----------|----------|----------|
+| **Proof** | What can be substantiated? | Record envelope, evidence store, attestations, audit trail, Roll |
+| **Governance** | Who has authority to do what? | Authz roles/permissions, agent intents, policy gate, commit→execute→receipt |
+| **Value** | Who contributed, what was created, who holds economic rights? | Contribution tokens, investment pledges, outcome allocation, economic instruments |
+
+A completed activity updates all six structures **and** all three dimensions simultaneously. That single-point, multi-dimensional update is the compounding mechanism.
+
+---
+
+## 5. Transformation chain
+
+The goal is not to digitise everything indiscriminately. The goal is to make relevant realities understandable and actionable.
 
 **Fragmentation → Legibility → Connection → Memory → Learning → Coordination → Capability.**
 
@@ -107,15 +92,13 @@ Each completed cycle improves conditions for the next:
 5. **Create recognition** (attestations, institutional memory)
 6. **Improve future coordination**
 
-Steps can repeat, branch, be skipped, or terminate without success. Not a mandatory
-linear workflow.
+Steps can repeat, branch, be skipped, or terminate without success. Not a mandatory linear workflow.
 
 ---
 
-## Factory readiness (production grammar)
+## 6. Factory readiness (production grammar)
 
-The eight-stage production grammar every work cycle follows. Not every stage runs in
-every cycle; the grammar names what each stage does when it runs.
+The eight-stage production grammar every work cycle follows. Not every stage runs in every cycle; the grammar names what each stage does when it runs.
 
 | Stage | What happens |
 |-------|-------------|
@@ -130,64 +113,88 @@ every cycle; the grammar names what each stage does when it runs.
 
 ---
 
-## Modules and lenses
+## 7. Nested platforms (workspaces inside the workspace)
 
-| Module | Job | Route |
-|--------|-----|-------|
-| **Commons** | Discover and express needs, offers, resources, opportunities, knowledge, problems | `/workspace/commons` |
-| **Network** | Understand and connect people, crews, institutions, assets, capabilities, relationships | `/workspace/network/{people,institutions,capabilities}` |
-| **Workbench** | Scope, assemble, coordinate, manage productive work | `/workspace/workbench` |
-| **Records** | Inspect durable history, provenance, evidence, credentials, attestations | `/workspace/records/{canon,annals,roll}` |
-| **Intelligence** | Agents, graph analysis, matching, forecasting, analytics | `/workspace/intelligence` |
+APT-LABS is one operating surface with nested platforms. Each is a module surface, not a separate app:
 
-**School Console** — nested operational boundary under Workbench, not a primary module.
-
-**Canon / Annals / Roll** — three lenses within Records:
-
-- **Canon** — what is structurally recorded: entities, identities, typed relationships, accepted state
-- **Annals** — what happened over time: chronological events, changes, decisions, transitions
-- **Roll** — why a claim can be substantiated: evidence, provenance, attestations, verification
+| Platform | Purpose | Anchored in |
+|----------|---------|-------------|
+| **Outlier.ai for Africans** | Data labeling, annotation, human-in-the-loop AI training for African languages and contexts | Commons + Matching + Evidence |
+| **Kemetos (African AGI)** | Developers build African AGI models; match compute, data, and talent | Intelligence + Work + Assets |
+| **Tender Exchange** | Transparent government/institutional tenders; audit existing providers | Commons + Work + Government audit |
+| **Failed Project Reclamation** | Youth audit and fix abandoned public works | FailedProjects + Commitment Journey |
+| **School Animation Network** | Schools commission animators; reusable educational knowledge | SchoolOnboarding + Records |
+| **Asset Passport Exchange** | Idle machinery, halls, vehicles become discoverable, rentable, financeable | Asset Registry |
+| **Proof-to-Capital Dossier** | Verified work history → financing-ready package | Proof + Records + Value |
+| **University Research Network** | Universities post research needs; students and practitioners apply | Commons + Intelligence |
+| **High School Build Programme** | Students learn productive skills on real community projects | Commons + Workbench |
 
 ---
 
-## Design and reasoning principles
+## 8. Actor types
 
-Every agent working on APT-LABS applies these. They are not optional style preferences;
-they are the operating system for judgment.
-
-**A. Reality before representation.**
-Do not confuse a database schema, interface, dashboard, or AI-generated summary with the
-reality it represents. Ask what actually exists in the world before deciding how to model it.
-
-**B. Context before abstraction.**
-Do not impose generic assumptions on African environments. Understand the actual people,
-practices, institutions, constraints, and relationships involved. Allow local variation
-without sacrificing interoperability.
-
-**C. Intelligence before AI spectacle.**
-AI is useful only when it improves understanding, judgement, discovery, coordination,
-or execution. Do not introduce AI merely because a feature can be made AI-powered.
-
-**D. Agency before extraction.**
-People and institutions should gain meaningful value from the intelligence systems built
-around their activity. Avoid treating them merely as sources of data.
-
-**E. Provenance before certainty.**
-Distinguish verified evidence, first-hand experience, community contribution, expert
-interpretation, and proposals or hypotheses. Never present an inference as an established
-fact.
-
-**F. Capability before feature count.**
-Evaluate work by what people can understand, decide, or accomplish that they could not
-accomplish as effectively before.
-
-**G. Accumulation before reinvention.**
-Knowledge and experience should be preserved and made reusable. Systems should allow
-learning to compound rather than repeatedly rediscovering the same things.
+| Type | Role in APT-LABS | Example |
+|------|-----------------|---------|
+| **Person (individual)** | Proposes work, accepts commitments, delivers outcomes, earns recognition | A graduate in Embu |
+| **Founder** | Posts ventures, raises investment pledges, hires providers | A Nairobi startup founder |
+| **Institution** | Registers as school/hospital/cooperative/government body; posts needs | Ajira Kirinyaga, Kibera Makerspace |
+| **Developer** | Forks repo, deploys node, reviews evidence, refers organisations | A Kisumu developers' collective |
+| **Graduate** | Finds work on failed government projects, gains verified standing | An unemployed graduate in Nyeri |
+| **Sociologist** | Studies productive reality graph; exports audit trails | A university researcher |
+| **Institutional steward** | Joins as steward; sees voted needs, verified outcomes by jurisdiction | A county governor, ministry official |
+| **Student (high school)** | Learns skills via High School Build Programme | A Form 3 student in Kirinyaga |
+| **University** | Posts research needs, hosts students, issues credentials | University of Nairobi, Kenyatta University |
+| **Admin** | Platform governance; approves consequential verbs | Platform administrator |
 
 ---
 
-## What this is NOT
+## 9. Investment and funding
+
+Users can **invest or fund** projects posted by founders and innovators:
+
+- A founder posts a venture need with disclosed cost and outcome definition.
+- Other users pledge funds via an investment pledge — a COMMITMENT record of type `InvestmentPledge`.
+- Pledges release when the outcome is verified (fulfilCommitment → settlement flow).
+- Investors receive recognition and, where the founder structures it, economic rights tracked in the Value module.
+- **Not a currency, not a security, not a public marketplace.** Pledges are economic instruments within the platform, denominated in disclosed KES. Charter A9: tokens are conditional, separately governed; no assumed universal-value function.
+
+Universities participate as institutional actors: post research needs, host student projects, issue credentials, receive investment pledges for research ventures.
+
+High schools participate via the High School Build Programme: students learn carpentry, welding, fabrication, software, and repair by contributing to real community projects posted in Commons. Contributions earn verified outcomes and recognition tokens.
+
+---
+
+## 10. Government software audit
+
+Kenyans can audit existing government software systems and propose developers who can outdo current providers. Each system can be registered as a `RESOURCE` asset in APT-LABS with custody, condition, and availability. Kenyans post `INTENTION` records of type `Audit`, citing known failure modes. Developers match to those audit intentions via the declarative matching engine and propose replacement or improvement builds.
+
+**Provider attribution:** Specific vendor names are not asserted as fact. Where public reporting exists, it is labelled "reported per public sources." Where unknown, the provider field is "UNKNOWN." No claim is made about any specific contract, procurement, or vendor relationship without a verifiable source.
+
+Audit angles: processing speed, transparency, access, integrity, fraud, cost, interoperability.
+
+Developers match to audit intentions via `matchNeeds`: a provider matches when it offers a capability in one of the system's required categories. A need with no matching provider is surfaced as `isMissing` — the concrete, actionable gap.
+
+---
+
+## 11. Recognition tokens and attestations
+
+- **Recognition tokens (apt-coin):** Contribution/recognition tokens minted for verified work within the platform. Not bought, not traded externally, not a currency. Charter A9 compliant — conditional, separately governed, no assumed universal-value function.
+- **SBT-style attestations:** Verifiable credentials for outcomes, capabilities, mandates. Portable, revocable, dispute-able. Off-chain personal data. No blockchain prerequisite for participation (charter A8).
+
+---
+
+## 12. Community vote → delivery loop
+
+1. Citizens vote on what their community needs most (`community:vote`).
+2. Top-voted needs surface as public intentions in Commons.
+3. Users suggest work, apply to tenders, get commitments accepted.
+4. Delivery creates evidence → verification → recognition + attestations.
+5. One completed activity updates six structures and three dimensions simultaneously.
+6. Trust compounds; matching improves; coordination cost drops.
+
+---
+
+## 13. What this is NOT
 
 Do not reduce APT-LABS to:
 
@@ -198,32 +205,63 @@ Do not reduce APT-LABS to:
 - A database whose purpose is merely to store records.
 - A dashboard-heavy digitisation project.
 - An imported ontology imposed on diverse African realities.
+- A universal reputation score (charter A8 prohibits collapsing trust into one number).
+- A blockchain or SBT product as its core identity (attestations may use the format; blockchain is not a prerequisite).
+- An investment marketplace or securities exchange (pledges are economic instruments within the platform, not a public market).
+- A jobs board or gig platform (work is coordinated through commitments, not matched by an opaque algorithm).
 
-African identity must exist in the underlying understanding of context, knowledge,
-relationships, institutions, and value creation — not merely in branding or decorative
-patterns.
-
----
-
-## The critical distinction
-
-This ontology defines the philosophical and causal foundation of APT-LABS.
-It does NOT define its implementation architecture. The architecture
-(`docs/architecture.md`, `AGENTS.md`, `APT-LABS-SYSTEM.md`) describes how the code
-is organised; this document describes what the code is for and why the shapes it
-takes are the shapes they are. When an implementation choice conflicts with this
-ontology, the ontology wins and the implementation changes.
+African identity must exist in the underlying understanding of context, knowledge, relationships, institutions, and value creation — not merely in branding or decorative patterns.
 
 ---
 
-## Governing question
+## 14. What is deferred (not in this version)
 
-Does this make the productive network more capable of creating, coordinating, retaining,
-and multiplying real economic value? If not, why does it belong in APT-LABS?
+| Item | Reason |
+|------|--------|
+| Live Supabase backend | Demo mode (localStorage) ships first; production backend is hour 2+ |
+| Recognition tokens as tradable currency | Charter A9 — no assumed universal-value function |
+| Public investment marketplace | Would require regulated financial infrastructure |
+| Blockchain anchoring for all records | Charter A8 — no sensitive personal data on public blockchain |
+| Cross-border federation | Single workspace first; country-specific rules come after |
+| AI-generated work products | AI suggests, humans decide |
 
 ---
 
-*Last updated: 2026-11-12. Synthesized from the Foundational Agent Brief, the domain model
-(six structures), charter principles A1–A10, and `docs/design/charter.md` decisions B1–B8.
-Supersedes the ontology sections of `domain-model.md` and `APT-LABS-SYSTEM.md` §1–§3;
-those files now cross-reference here.*
+## 15. How this addresses the "Babylon" failure modes
+
+"Babylon" names the legacy condition where productive capacity is invisible, trust is monopolised by intermediaries, failed projects stay abandoned, government software is unauditable, and young people have no path to work.
+
+APT-LABS addresses each failure mode:
+
+1. **Failed projects visible and fixable** — abandoned public works registered as intentions; unemployed graduates and developers audit and reclaim them.
+2. **Government software auditable** — systems listed with provider category (not specific unverified vendors); Kenyans post audit intentions; developers propose replacements.
+3. **Trust verifiable, not asserted** — recognition tokens and attestations earned through verified delivery, not bought or assigned by a central authority.
+4. **Investment open, not gatekept** — users can fund founders and innovators directly, with pledges released on verified outcomes.
+5. **Participation meaningful for every actor type** — graduates, sociologists, institutional stewards, high school students, universities, developers — each has a defined role and path to value.
+6. **Locally owned, not extracted** — developers fork the repo, deploy their own nodes, and earn recognition by serving their communities.
+
+---
+
+## 16. Governing question
+
+Does this make the productive network more capable of creating, coordinating, retaining, and multiplying real economic value? If not, why does it belong in APT-LABS?
+
+---
+
+## 17. Evidence labeling
+
+Every claim in this document carries an evidence label:
+
+| Label | Meaning |
+|-------|---------|
+| `VERIFIED` | Independently checked against current evidence |
+| `PROTOTYPE` | Exists and runs in limited/demo scope |
+| `TARGET` | Intended future behavior; not implemented |
+| `PLANNED` | Scheduled or designed; work not started |
+| `UNKNOWN` | Not established; must not be guessed |
+
+No claim in this document is presented as `VERIFIED` unless independently confirmed. `TARGET` and `PLANNED` work is never described as delivered. Demo or synthetic data is never presented as real.
+
+---
+
+*Last updated: 2026-11-21. Supersedes the ontology sections of `docs/domain-model.md` and `APT-LABS-SYSTEM.md` §1–§3; those files now cross-reference here. Aligned with charter A1–A10 and decisions B1–B8.*
