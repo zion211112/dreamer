@@ -102,7 +102,7 @@ reasoning.
 | `systembridge-mcp` | stdio | ⏸ pending approval / CONNECT_TIMEOUT |
 | `designlang` | stdio | ⏸ pending approval / CONNECT_TIMEOUT |
 | `figma-desktop` | local `:3845` | ✘ ECONNREFUSED (desktop app not running) |
-| `codebase-memory` | global mcp | installed, **removed/unavailable this session** |
+| `codebase-memory-mcp` | stdio, user scope (`~/.claude.json`) | ✔ installed + connected (v0.12.1, exe under `%LOCALAPPDATA%\Programs\codebase-memory-mcp\`); dreamer graph indexed (1 project, current branch); **loads on a fresh session** — it was registered after this running session started, so its tools aren't in this session's catalog yet |
 | `ccd_*` (session, turn, pr, settings, view, window, directory, host, terminal, scheduled-tasks) | desktop app | built into the Claude desktop app |
 
 To activate the pending ones: `claude` → approve `sakaniui`, `systembridge-mcp`, `designlang`.
@@ -120,7 +120,8 @@ Only spin them up if the build actually needs them.
   `ralph-loop:*`, `frontend-design:*`, `dataviz`
 - **Standalone / skills-dir:** `angular-migration`, `ui-ux-pro-max`, `hallmark`,
   `caveman`, `diagram-design`, `impeccable`, `ponytail`, `max-throughput`,
-  `design-taste-frontend`, `agent-md-refactor`, `ui-workflow`, `webapp-testing`
+  `design-taste-frontend`, `agent-md-refactor`, `ui-workflow`, `webapp-testing`,
+  `codebase-memory` (CBM graph skill, installed by the CBM installer)
 
 ---
 
@@ -128,7 +129,8 @@ Only spin them up if the build actually needs them.
 
 `claude` (default) · `Explore` · `Plan` · `general-purpose` ·
 `feature-dev:{code-architect, code-explorer, code-reviewer}` ·
-`code-simplifier:code-simplifier` · `claude-code-guide` · `statusline-setup`.
+`code-simplifier:code-simplifier` · `claude-code-guide` · `statusline-setup` ·
+`codebase-memory` / `codebase-memory-auditor` / `codebase-memory-scout` (CBM graph agents).
 Back any of them with the cheap/flagship routers (fcc / bifrost).
 
 ---
