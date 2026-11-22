@@ -1,5 +1,5 @@
 /**
- * APT-LABS — Relationship Store (Gate 1 — Foundations)
+ * APT-LABS — Relationship Store (Gate 1 — Foundations).
  *
  * Relationships are first-class, versioned persisted records — never bare
  * foreign keys. They link actors to one another and to the records that
@@ -13,12 +13,14 @@
  * supplied.
  *
  * Persisted shape mirrors `AptRelationshipBase` (ontology/types).
- * Demo mode: browser-localStorage (via `storage.ts`). Production: Supabase.
+ * Persistence: browser localStorage demo mode via `storage.ts`. The Supabase
+ * production backend contract lives in `src/lib/supabase/storage.ts` and
+ * `supabase/schema.sql`.
  */
 
 import { logAuditEvent } from './audit';
 import { requirePermission, type AuthzContext } from './authz';
-import { readJson, writeJson } from './storage';
+import { readJson, writeJson, clearAllStore } from './storage';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -68,7 +70,7 @@ export interface CreateRelationshipInput {
 }
 
 // ---------------------------------------------------------------------------
-// Persistence
+// Persistence (browser localStorage demo mode)
 // ---------------------------------------------------------------------------
 
 const RELATIONSHIPS_KEY = 'aptlabs:relationships';
@@ -232,5 +234,5 @@ export function getRelationshipsForEntity(entityId: string): PersistedRelationsh
 
 /** Test-only: remove all persisted relationships. */
 export function clearRelationships(): void {
-  writeRelationships([]);
+  clearAllStore();
 }

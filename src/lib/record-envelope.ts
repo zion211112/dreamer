@@ -1,5 +1,5 @@
 /**
- * APT-LABS — Record Envelope (Gate 1 — Foundations)
+ * APT-LABS — Record Envelope (Gate 1 — Foundations).
  *
  * The canonical persisted form for any record, evidence, or outcome. A record
  * is never stored as bare data: it is an envelope carrying versioning,
@@ -13,12 +13,14 @@
  * `AuthzContext` is supplied, the mutation is gated by the permission layer
  * (`authz.ts`) — so the envelope is where "the permissions hold."
  *
- * Demo mode: browser-localStorage (via `storage.ts`). Production: Supabase.
+ * Persistence: browser localStorage demo mode via `storage.ts`. The Supabase
+ * production backend contract lives in `src/lib/supabase/storage.ts` and
+ * `supabase/schema.sql`; switching storage there requires no domain change.
  */
 
 import { logAuditEvent } from './audit';
 import { requirePermission, type AuthzContext } from './authz';
-import { readJson, writeJson } from './storage';
+import { readJson, writeJson, clearAllStore } from './storage';
 import { FAMILY, type Family } from './ontology/types';
 
 // ---------------------------------------------------------------------------
@@ -87,7 +89,7 @@ export interface SupersedeRecordInput {
 }
 
 // ---------------------------------------------------------------------------
-// Persistence
+// Persistence (browser localStorage demo mode)
 // ---------------------------------------------------------------------------
 
 const RECORDS_KEY = 'aptlabs:records';
@@ -161,7 +163,10 @@ export function createRecord(input: CreateRecordInput): RecordEnvelope {
  * Update a record in place (draft → active, field edits, status changes that
  * do not require a new version lineage). Gated by `record:write`.
  */
-export function updateRecord(id: string, input: UpdateRecordInput): RecordEnvelope | undefined {
+export function updateRecord(
+  id: string,
+  input: UpdateRecordInput,
+): RecordEnvelope | undefined {
   if (input.authz) {
     requirePermission(input.authz, 'record:write');
   }
@@ -203,7 +208,10 @@ export function updateRecord(id: string, input: UpdateRecordInput): RecordEnvelo
  * current version `superseded`, and link the two. Never rewrites the old
  * version. Gated by `record:write`.
  */
-export function supersedeRecord(id: string, input: SupersedeRecordInput): RecordEnvelope | undefined {
+export function supersedeRecord(
+  id: string,
+  input: SupersedeRecordInput,
+): RecordEnvelope | undefined {
   if (input.authz) {
     requirePermission(input.authz, 'record:write');
   }
@@ -295,9 +303,7 @@ export function retireRecord(
 // Reads
 // ---------------------------------------------------------------------------
 
-/**
- * Retrieve a single record by id.
- */
+/** Retrieve a single record by id. */
 export function getRecord(id: string): RecordEnvelope | undefined {
   return readRecords().find((r) => r.id === id);
 }
@@ -323,11 +329,9 @@ export function listRecords(filter?: {
     .sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1));
 }
 
-/**
- * Test-only: remove all persisted records.
- */
+/** Test-only: remove all persisted records. */
 export function clearRecords(): void {
-  writeRecords([]);
+  clearAllStore();
 }
 
 // Re-export the family constant so callers can reference it alongside the envelope.

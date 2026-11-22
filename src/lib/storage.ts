@@ -1,12 +1,15 @@
 /**
- * APT-LABS — Storage abstraction (Gate 1 — Foundations)
+ * APT-LABS — Storage abstraction (Gate 1 — Foundations).
  *
- * Browser: localStorage. Node / tests: in-memory fallback so the same module
- * logic runs under Vitest's node environment without a DOM.
+ * Browser / tests: localStorage (or in-memory fallback under Node/Vitest).
+ * Production backend contract: see `src/lib/supabase/storage.ts` (async
+ * Supabase adapter) and `supabase/schema.sql`. When `VITE_SUPABASE_URL` and
+ * `VITE_SUPABASE_ANON_KEY` are configured, the storage layer can be switched
+ * to the Supabase adapter without changing domain logic.
  *
- * Modules that keep records locally (actors, audit, records, …) call into
- * this instead of touching localStorage directly, so persistence swaps in
- * Supabase (production) without changing call sites.
+ * All lib modules (record-envelope, relationship-store, evidence-store,
+ * actors, …) call into this instead of touching localStorage directly, so
+ * persistence swaps to Supabase without changing domain logic.
  */
 
 const memoryStore = new Map<string, string>();
@@ -51,9 +54,9 @@ export function writeJson<T>(key: string, value: T): void {
     } catch {
       // Quota or serialization failure is non-fatal for demo mode.
     }
-  } else {
-    memoryStore.set(key, JSON.stringify(value));
+    return;
   }
+  memoryStore.set(key, JSON.stringify(value));
 }
 
 /** Read a raw string value. */
@@ -78,9 +81,9 @@ export function setItem(key: string, value: string): void {
     } catch {
       // Ignore quota failures in demo mode.
     }
-  } else {
-    memoryStore.set(key, value);
+    return;
   }
+  memoryStore.set(key, value);
 }
 
 /** Remove a key. */
@@ -92,15 +95,22 @@ export function removeItem(key: string): void {
     } catch {
       // Ignore.
     }
-  } else {
-    memoryStore.delete(key);
+    return;
   }
+  memoryStore.delete(key);
 }
 
-/**
- * Test-only: clear the in-memory fallback store. In the browser this is a no-op
- * relative to real localStorage; tests that run in node call it to reset state.
- */
+/** Test-only: clear the in-memory fallback store. */
 export function clearAllStore(): void {
   memoryStore.clear();
+}
+
+/** Returns true when the Supabase production backend is configured. */
+export function isSupabaseBackend(): boolean {
+  return (
+    typeof import.meta.env !== 'undefined'
+    && Boolean(import.meta.env.VITE_SUPABASE_URL)
+    && Boolean(import.meta.env.VITE_SUPABASE_ANON_KEY)
+    && import.meta.env.VITE_DEMO_MODE !== 'true'
+  );
 }
