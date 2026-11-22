@@ -4,6 +4,7 @@ import { onMounted, ref } from 'vue';
 import { useCoordinationStore, type CommitmentRow, type KnowledgeOutcome } from '@/stores/coordination';
 import type { RecordEnvelope } from '@/lib/record-envelope';
 import type { NeedMatching } from '@/lib/matching';
+import FlowRail from '@/components/ui/FlowRail.vue';
 
 const store = useCoordinationStore();
 const route = useRoute();
@@ -113,6 +114,9 @@ function briefLine(row: KnowledgeOutcome): string {
         Each section is a live read of the coordination loop — nothing here is a forecast.
       </p>
     </header>
+
+    <!-- Where Commons stands in the productive chain: intentions feed capability, commitment, evidence, value, knowledge -->
+    <FlowRail active="commons" title="Where the chain stands" />
 
     <!-- Open inquiries: wants and asks, matched live against registered providers. -->
     <section class="commons-section" aria-labelledby="commons-open-h">

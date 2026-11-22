@@ -5,6 +5,7 @@ import { listRecords, type RecordEnvelope } from '@/lib/record-envelope';
 import { getAuditEvents, type AuditEvent } from '@/lib/audit';
 import { listEvidence } from '@/lib/evidence-store';
 import { searchAuditEvents, searchRecords } from '@/lib/record-search';
+import FlowRail from '@/components/ui/FlowRail.vue';
 
 type Lens = 'canon' | 'annals' | 'roll';
 
@@ -142,6 +143,9 @@ const emptyCopy: Record<Lens, { title: string; body: string }> = {
         Append-only: corrections supersede, nothing is rewritten.
       </p>
     </header>
+
+    <!-- Where Records stands in the productive chain: evidence backs outcomes, which distill into knowledge -->
+    <FlowRail active="records" title="Where the chain stands" />
 
     <nav class="records-lens-tabs" aria-label="Record lens">
       <RouterLink

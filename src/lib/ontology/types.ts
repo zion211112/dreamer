@@ -25,8 +25,10 @@ export const FAMILY = {
   COMMITMENT: 'COMMITMENT',
   WORK: 'WORK',
   ACTIVITY: 'ACTIVITY',
+  EVENT: 'EVENT',
   OUTPUT_OUTCOME: 'OUTPUT_OUTCOME',
   EXCHANGE: 'EXCHANGE',
+  VALUE: 'VALUE',
   EVIDENCE: 'EVIDENCE',
   KNOWLEDGE: 'KNOWLEDGE',
   GOVERNANCE: 'GOVERNANCE',
@@ -43,8 +45,10 @@ export const FAMILY_LABELS: Record<Family, string> = {
   [FAMILY.COMMITMENT]: 'Commitment',
   [FAMILY.WORK]: 'Work',
   [FAMILY.ACTIVITY]: 'Activity',
+  [FAMILY.EVENT]: 'Event',
   [FAMILY.OUTPUT_OUTCOME]: 'Output & Outcome',
   [FAMILY.EXCHANGE]: 'Exchange',
+  [FAMILY.VALUE]: 'Value',
   [FAMILY.EVIDENCE]: 'Evidence',
   [FAMILY.KNOWLEDGE]: 'Knowledge',
   [FAMILY.GOVERNANCE]: 'Governance',
@@ -232,6 +236,171 @@ export type GovernanceType =
   | 'DataClassification';
 
 // ---------------------------------------------------------------------------
+// Event family types (distinct from Activity: atomic occurrences vs sustained processes)
+// ---------------------------------------------------------------------------
+
+export type EventType =
+  | 'Occurrence'
+  | 'Transaction'
+  | 'Incident'
+  | 'Milestone'
+  | 'Signal'
+  | 'Alert'
+  | 'StateChange';
+
+// ---------------------------------------------------------------------------
+// Value family types (aligns with EXCHANGE; value is plural and situated)
+// ---------------------------------------------------------------------------
+
+export type ValueType =
+  | 'Exchange'
+  | 'ValueStream'
+  | 'Transfer'
+  | 'Contribution'
+  | 'Allocation'
+  | 'Investment'
+  | 'Grant'
+  | 'Donation'
+  | 'Settlement';
+
+// ---------------------------------------------------------------------------
+// Commitment lifecycle (first-class infrastructure)
+//   proposed → accepted → active → fulfilled → discharged → expired
+// ---------------------------------------------------------------------------
+
+export const COMMITMENT_LIFECYCLE_STATE = {
+  PROPOSED: 'proposed',
+  ACCEPTED: 'accepted',
+  ACTIVE: 'active',
+  FULFILLED: 'fulfilled',
+  DISCHARGED: 'discharged',
+  EXPIRED: 'expired',
+} as const;
+
+export type CommitmentLifecycleState =
+  (typeof COMMITMENT_LIFECYCLE_STATE)[keyof typeof COMMITMENT_LIFECYCLE_STATE];
+
+export const COMMITMENT_LIFECYCLE_LABELS: Record<CommitmentLifecycleState, string> = {
+  [COMMITMENT_LIFECYCLE_STATE.PROPOSED]: 'Proposed',
+  [COMMITMENT_LIFECYCLE_STATE.ACCEPTED]: 'Accepted',
+  [COMMITMENT_LIFECYCLE_STATE.ACTIVE]: 'Active',
+  [COMMITMENT_LIFECYCLE_STATE.FULFILLED]: 'Fulfilled',
+  [COMMITMENT_LIFECYCLE_STATE.DISCHARGED]: 'Discharged',
+  [COMMITMENT_LIFECYCLE_STATE.EXPIRED]: 'Expired',
+};
+
+export const COMMITMENT_LIFECYCLE_TRANSITIONS: Record<CommitmentLifecycleState, readonly CommitmentLifecycleState[]> = {
+  [COMMITMENT_LIFECYCLE_STATE.PROPOSED]: [COMMITMENT_LIFECYCLE_STATE.ACCEPTED, COMMITMENT_LIFECYCLE_STATE.EXPIRED],
+  [COMMITMENT_LIFECYCLE_STATE.ACCEPTED]: [COMMITMENT_LIFECYCLE_STATE.ACTIVE, COMMITMENT_LIFECYCLE_STATE.EXPIRED],
+  [COMMITMENT_LIFECYCLE_STATE.ACTIVE]: [
+    COMMITMENT_LIFECYCLE_STATE.FULFILLED,
+    COMMITMENT_LIFECYCLE_STATE.DISCHARGED,
+    COMMITMENT_LIFECYCLE_STATE.EXPIRED,
+  ],
+  [COMMITMENT_LIFECYCLE_STATE.FULFILLED]: [],
+  [COMMITMENT_LIFECYCLE_STATE.DISCHARGED]: [],
+  [COMMITMENT_LIFECYCLE_STATE.EXPIRED]: [],
+};
+
+export function isValidCommitmentLifecycleTransition(
+  from: CommitmentLifecycleState,
+  to: CommitmentLifecycleState,
+): boolean {
+  return COMMITMENT_LIFECYCLE_TRANSITIONS[from].includes(to);
+}
+
+// ---------------------------------------------------------------------------
+// Commitment depth indicators
+// ---------------------------------------------------------------------------
+
+export const COMMITMENT_DEPTH = {
+  SHALLOW: 'shallow',
+  MODERATE: 'moderate',
+  DEEP: 'deep',
+  STRATEGIC: 'strategic',
+} as const;
+
+export type CommitmentDepth = (typeof COMMITMENT_DEPTH)[keyof typeof COMMITMENT_DEPTH];
+
+export const COMMITMENT_DEPTH_LABELS: Record<CommitmentDepth, string> = {
+  [COMMITMENT_DEPTH.SHALLOW]: 'Shallow',
+  [COMMITMENT_DEPTH.MODERATE]: 'Moderate',
+  [COMMITMENT_DEPTH.DEEP]: 'Deep',
+  [COMMITMENT_DEPTH.STRATEGIC]: 'Strategic',
+};
+
+// ---------------------------------------------------------------------------
+// Productive reality cycle
+//   Intention → Capability Assembly → Commitment → Execution → Evidence → Outcome → Value → Knowledge
+// ---------------------------------------------------------------------------
+
+export interface ProductiveRealityCycleStage {
+  key: string;
+  label: string;
+  family: Family;
+  /** Kinetic action that advances this stage (undefined = governance-gated, no kinetic action). */
+  advancesBy?: 'commit' | 'assign' | 'verify' | 'settle' | 'produce';
+  /** Whether this stage is typically gated by an authority decision before proceeding. */
+  authorityGated: boolean;
+}
+
+export const PRODUCTIVE_REALITY_CYCLE: readonly ProductiveRealityCycleStage[] = [
+  { key: 'intention', label: 'Intention', family: FAMILY.INTENTION, authorityGated: true },
+  {
+    key: 'capability-assembly',
+    label: 'Capability Assembly',
+    family: FAMILY.CAPABILITY,
+    advancesBy: 'produce',
+    authorityGated: false,
+  },
+  {
+    key: 'commitment',
+    label: 'Commitment',
+    family: FAMILY.COMMITMENT,
+    advancesBy: 'commit',
+    authorityGated: true,
+  },
+  {
+    key: 'execution',
+    label: 'Execution',
+    family: FAMILY.WORK,
+    advancesBy: 'produce',
+    authorityGated: false,
+  },
+  {
+    key: 'evidence',
+    label: 'Evidence',
+    family: FAMILY.EVIDENCE,
+    advancesBy: 'verify',
+    authorityGated: true,
+  },
+  {
+    key: 'outcome',
+    label: 'Outcome',
+    family: FAMILY.OUTPUT_OUTCOME,
+    advancesBy: 'produce',
+    authorityGated: false,
+  },
+  {
+    key: 'value',
+    label: 'Value',
+    family: FAMILY.VALUE,
+    advancesBy: 'settle',
+    authorityGated: false,
+  },
+  {
+    key: 'knowledge',
+    label: 'Knowledge',
+    family: FAMILY.KNOWLEDGE,
+    authorityGated: false,
+  },
+] as const;
+
+export function getProductiveRealityCycleStage(key: string): ProductiveRealityCycleStage | undefined {
+  return PRODUCTIVE_REALITY_CYCLE.find((s) => s.key === key);
+}
+
+// ---------------------------------------------------------------------------
 // Entity base
 // ---------------------------------------------------------------------------
 
@@ -325,8 +494,10 @@ export interface FamilyTypeMap {
   [FAMILY.COMMITMENT]: CommitmentType;
   [FAMILY.WORK]: WorkType;
   [FAMILY.ACTIVITY]: ActivityType;
+  [FAMILY.EVENT]: EventType;
   [FAMILY.OUTPUT_OUTCOME]: OutputOutcomeType;
   [FAMILY.EXCHANGE]: ExchangeType;
+  [FAMILY.VALUE]: ValueType;
   [FAMILY.EVIDENCE]: EvidenceType;
   [FAMILY.KNOWLEDGE]: KnowledgeType;
   [FAMILY.GOVERNANCE]: GovernanceType;
@@ -347,6 +518,7 @@ export const OPERATIONAL_CORE: readonly Family[] = [
 
 export const CONTINUITY_LEARNING: readonly Family[] = [
   FAMILY.ACTIVITY,
+  FAMILY.EVENT,
   FAMILY.OUTPUT_OUTCOME,
   FAMILY.EVIDENCE,
   FAMILY.KNOWLEDGE,
@@ -354,6 +526,7 @@ export const CONTINUITY_LEARNING: readonly Family[] = [
 
 export const VALUE_LEGITIMACY: readonly Family[] = [
   FAMILY.EXCHANGE,
+  FAMILY.VALUE,
   FAMILY.GOVERNANCE,
 ];
 
@@ -373,7 +546,11 @@ export const CANONICAL_DISTINCTIONS: readonly string[] = [
   'Intention ≠ Commitment',
   'Commitment ≠ Work',
   'Work ≠ Activity',
+  'Event ≠ Activity',
   'Output ≠ Outcome',
+  'Value ≠ Price',
+  'Exchange ≠ Value',
+  'Commitment ≠ Obligation',
   'Claim ≠ Evidence',
   'Evidence ≠ Verification',
   'Knowledge ≠ Document',

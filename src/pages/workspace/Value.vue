@@ -14,6 +14,7 @@ import { computed, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { OPERATIONAL_PILOTS } from '@/lib/demo-seed';
 import { listEconomicRecords } from '@/lib/economic-records';
+import FlowRail from '@/components/ui/FlowRail.vue';
 
 interface Row {
   key: string;
@@ -111,6 +112,9 @@ function fmtKes(n: number): string {
             </div>
           </div>
         </div>
+
+        <!-- Where Value stands in the productive chain: settlement completes execution into knowledge -->
+        <FlowRail active="value" title="Where the chain stands" />
 
         <section class="value-flow">
           <h2 class="value-section-title">Circulation</h2>

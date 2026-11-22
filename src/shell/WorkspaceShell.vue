@@ -19,6 +19,7 @@ import { moduleForPath, WORKSPACE_MODULES } from './registry'
 import { iconSvg } from './icons'
 import ModuleRail from './ModuleRail.vue'
 import ModuleNav from './ModuleNav.vue'
+import SessionReference from './SessionReference.vue'
 import AgentDock from './AgentDock.vue'
 
 const route = useRoute()
@@ -62,6 +63,7 @@ const searchPlaceholder = computed(() => `Search ${active.value.railLabel.toLowe
     <header class="ws-topbar">
       <RouterLink to="/workspace" class="ws-brand"><b>APT</b>·LABS</RouterLink>
       <span class="ws-crumb">Workspace<span class="ws-crumb-sep">/</span><span class="ws-crumb-mod">{{ active.title }}</span></span>
+      <SessionReference class="ws-session-ref" />
       <div class="ws-search"><svg viewBox="0 0 24 24" class="ws-search-ico"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg><input v-model="query" :placeholder="searchPlaceholder" aria-label="Search the workspace" /></div>
       <div class="ws-actions">
         <RouterLink to="/workspace/records" class="ws-btn">Export</RouterLink>
@@ -93,6 +95,17 @@ const searchPlaceholder = computed(() => `Search ${active.value.railLabel.toLowe
 .ws-crumb { font: 500 var(--apt-font-size-body-sm) / 1 var(--apt-font-mono); letter-spacing: 0.06em; color: var(--apt-text-muted); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .ws-crumb-sep { color: var(--apt-text-dim); }
 .ws-crumb-mod { color: var(--apt-module-accent, var(--apt-color-brand-primary)); }
+.ws-session-ref { flex: none; max-width: 260px; }
+.ws-session-ref :deep() .session-ref { border: none; padding: 0; background: transparent; min-width: auto; }
+.ws-session-ref :deep() .session-ref-head { gap: var(--apt-spacing-s2); padding-bottom: var(--apt-spacing-s2); border-bottom: 1px solid var(--line); margin-bottom: var(--apt-spacing-s3); }
+.ws-session-ref :deep() .session-ref-name { font-size: var(--apt-font-size-body-sm); }
+.ws-session-ref :deep() .session-ref-context { font-size: var(--apt-font-size-micro); }
+.ws-session-ref :deep() .session-ref-stats { gap: var(--apt-spacing-s1); }
+.ws-session-ref :deep() .session-ref-stat-num { font-size: var(--apt-font-size-title-2); }
+.ws-session-ref :deep() .session-ref-stat-lab { font-size: var(--apt-font-size-micro); }
+.ws-session-ref :deep() .session-ref-body { gap: var(--apt-spacing-s3); }
+.ws-session-ref :deep() .session-ref-pilot { display: none; }
+.ws-session-ref :deep() .session-ref-turn { display: none; }
 .ws-search { flex: 1; max-width: 420px; display: flex; align-items: center; gap: 9px; border: 1px solid var(--line); border-radius: var(--apt-radius-r1); padding: 8px 12px; background: var(--apt-surface-default); transition: border-color var(--apt-animation-fast); }
 .ws-search:focus-within { border-color: var(--apt-module-accent, var(--apt-color-brand-primary)); }
 .ws-search-ico { width: 15px; height: 15px; stroke: var(--apt-text-dim); fill: none; stroke-width: 1.7; flex-shrink: 0; }

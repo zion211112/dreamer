@@ -15,6 +15,7 @@
 import { computed, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import FamilyGlyph from '@/components/ontology/FamilyGlyph.vue';
+import FlowRail from '@/components/ui/FlowRail.vue';
 import { OPERATIONAL_PILOTS } from '@/lib/demo-seed';
 import {
   CANONICAL_DISTINCTIONS,
@@ -188,6 +189,9 @@ const noMatches = computed(
             people claiming capability, and the verbs that move them. Open one and start.
           </p>
         </div>
+
+        <!-- The chain: how the five productive modules support each pilot end to end -->
+        <FlowRail title="Where the chain stands" />
 
         <!-- STATE — the live operational readout -->
         <div class="ov-board">

@@ -59,6 +59,34 @@ export const RELATIONSHIP_KIND = {
   // Exchange
   SETTLES: 'SETTLES',
 
+  // Ontology relationship grammar (docs/ontology.md §94 typed relations)
+  CONCERNS: 'CONCERNS',
+  ASSOCIATED_WITH: 'ASSOCIATED_WITH',
+  PROPOSES: 'PROPOSES',
+  DECIDES: 'DECIDES',
+  UNDERTAKES: 'UNDERTAKES',
+  PERFORMED_BY: 'PERFORMED_BY',
+  INCLUDES_PACKAGE: 'INCLUDES_PACKAGE',
+  DELIVERED_UNDER: 'DELIVERED_UNDER',
+  ASSESSED_AGAINST: 'ASSESSED_AGAINST',
+  ACCEPTED_BY: 'ACCEPTED_BY',
+  DISPUTED_BY: 'DISPUTED_BY',
+  OBLIGATION_OWED_BY: 'OBLIGATION_OWED_BY',
+  PAYABLE_TO: 'PAYABLE_TO',
+  SETTLED_BY: 'SETTLED_BY',
+  OUTCOME_RECORDED_IN: 'OUTCOME_RECORDED_IN',
+  ATTESTED_BY: 'ATTESTED_BY',
+  DISCLOSED_TO: 'DISCLOSED_TO',
+
+  // Productive reality cycle value flow
+  ENABLES: 'ENABLES',
+  REALIZES_VALUE: 'REALIZES_VALUE',
+  INFORMS: 'INFORMS',
+  EVIDENCES: 'EVIDENCES',
+  EXCHANGES_VALUE: 'EXCHANGES_VALUE',
+  PART_OF_VALUE_STREAM: 'PART_OF_VALUE_STREAM',
+  HOLDS_VALUE: 'HOLDS_VALUE',
+
   // Legacy / people-network alignment
   MEMBERSHIP: 'MEMBERSHIP',
   WORK: 'WORK_RELATIONSHIP',
@@ -130,6 +158,36 @@ export const RELATIONSHIP_CARDINALITY: readonly RelationshipCardinality[] = [
   { kind: RELATIONSHIP_KIND.GOVERNED_BY, sources: ['ACTOR', 'RESOURCE', 'WORK'], targets: ['GOVERNANCE'], repeatable: true, directional: true },
   // Exchange → Exchange / Work
   { kind: RELATIONSHIP_KIND.SETTLES, sources: ['EXCHANGE'], targets: ['EXCHANGE', 'WORK'], repeatable: true, directional: true },
+  // Ontology relationship grammar — Actor ↔ Intention / Governance
+  { kind: RELATIONSHIP_KIND.CONCERNS, sources: ['ACTOR', 'WORK', 'INTENTION'], targets: ['INTENTION', 'WORK', 'RESOURCE', 'PLACE'], repeatable: true, directional: true },
+  { kind: RELATIONSHIP_KIND.ASSOCIATED_WITH, sources: ['ACTOR', 'WORK', 'RESOURCE'], targets: ['ACTOR', 'WORK', 'RESOURCE', 'PLACE', 'EVIDENCE'], repeatable: true, directional: false },
+  { kind: RELATIONSHIP_KIND.PROPOSES, sources: ['ACTOR'], targets: ['INTENTION'], repeatable: true, directional: true },
+  { kind: RELATIONSHIP_KIND.DECIDES, sources: ['ACTOR'], targets: ['GOVERNANCE', 'INTENTION'], repeatable: true, directional: true },
+  // Actor ↔ Work / Commitment
+  { kind: RELATIONSHIP_KIND.UNDERTAKES, sources: ['ACTOR'], targets: ['WORK', 'COMMITMENT'], repeatable: true, directional: true },
+  { kind: RELATIONSHIP_KIND.PERFORMED_BY, sources: ['WORK', 'ACTIVITY'], targets: ['ACTOR'], repeatable: true, directional: true },
+  { kind: RELATIONSHIP_KIND.INCLUDES_PACKAGE, sources: ['WORK'], targets: ['WORK'], repeatable: true, directional: true },
+  // Output & Outcome → Work / Commitment / Actor
+  { kind: RELATIONSHIP_KIND.DELIVERED_UNDER, sources: ['OUTPUT_OUTCOME'], targets: ['WORK', 'COMMITMENT'], repeatable: true, directional: true },
+  { kind: RELATIONSHIP_KIND.ASSESSED_AGAINST, sources: ['OUTPUT_OUTCOME'], targets: ['WORK', 'COMMITMENT', 'GOVERNANCE'], repeatable: true, directional: true },
+  { kind: RELATIONSHIP_KIND.ACCEPTED_BY, sources: ['OUTPUT_OUTCOME'], targets: ['ACTOR', 'GOVERNANCE'], repeatable: true, directional: true },
+  { kind: RELATIONSHIP_KIND.DISPUTED_BY, sources: ['OUTPUT_OUTCOME', 'EVIDENCE'], targets: ['ACTOR'], repeatable: true, directional: true },
+  // Exchange obligations & settlement
+  { kind: RELATIONSHIP_KIND.OBLIGATION_OWED_BY, sources: ['COMMITMENT', 'EXCHANGE'], targets: ['ACTOR'], repeatable: true, directional: true },
+  { kind: RELATIONSHIP_KIND.PAYABLE_TO, sources: ['COMMITMENT', 'EXCHANGE'], targets: ['ACTOR'], repeatable: true, directional: true },
+  { kind: RELATIONSHIP_KIND.SETTLED_BY, sources: ['EXCHANGE'], targets: ['ACTOR'], repeatable: true, directional: true },
+  // Outcome / Evidence recording & disclosure
+  { kind: RELATIONSHIP_KIND.OUTCOME_RECORDED_IN, sources: ['OUTPUT_OUTCOME'], targets: ['WORK', 'KNOWLEDGE'], repeatable: true, directional: true },
+  { kind: RELATIONSHIP_KIND.ATTESTED_BY, sources: ['EVIDENCE'], targets: ['ACTOR'], repeatable: true, directional: true },
+  { kind: RELATIONSHIP_KIND.DISCLOSED_TO, sources: ['EVIDENCE', 'OUTPUT_OUTCOME'], targets: ['ACTOR'], repeatable: true, directional: true },
+  // Productive reality cycle value flow
+  { kind: RELATIONSHIP_KIND.ENABLES, sources: ['CAPABILITY'], targets: ['COMMITMENT', 'WORK'], repeatable: true, directional: true },
+  { kind: RELATIONSHIP_KIND.REALIZES_VALUE, sources: ['OUTPUT_OUTCOME'], targets: ['VALUE'], repeatable: true, directional: true },
+  { kind: RELATIONSHIP_KIND.INFORMS, sources: ['VALUE', 'EVIDENCE'], targets: ['KNOWLEDGE'], repeatable: true, directional: true },
+  { kind: RELATIONSHIP_KIND.EVIDENCES, sources: ['EVIDENCE'], targets: ['EVIDENCE', 'OUTPUT_OUTCOME', 'INTENTION'], repeatable: true, directional: true },
+  { kind: RELATIONSHIP_KIND.EXCHANGES_VALUE, sources: ['EXCHANGE'], targets: ['VALUE'], repeatable: true, directional: true },
+  { kind: RELATIONSHIP_KIND.PART_OF_VALUE_STREAM, sources: ['VALUE', 'WORK'], targets: ['VALUE'], repeatable: true, directional: true },
+  { kind: RELATIONSHIP_KIND.HOLDS_VALUE, sources: ['ACTOR'], targets: ['VALUE'], repeatable: true, directional: true },
   // Legacy alignment (all ACTOR family, since Organization/Collective are Actor types)
   { kind: RELATIONSHIP_KIND.MEMBERSHIP, sources: ['ACTOR'], targets: ['ACTOR'], repeatable: true, directional: true },
   { kind: RELATIONSHIP_KIND.STEWARDSHIP, sources: ['ACTOR'], targets: ['RESOURCE', 'WORK'], repeatable: true, directional: true },

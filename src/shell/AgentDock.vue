@@ -1,19 +1,18 @@
 <script setup lang="ts">
 /**
- * AgentDock — the 360px right column. The agent operates *on* the active
- * module: it reads the module's primitive, proposes the next move, and every
- * action it takes carries a receipt (the Proof-Carrying Work Unit).
+ * APT-LABS — Agent dock (enhanced with dsh `ui-conversation` / `message-quotes`
+ * and `ui-approval` patterns).
  *
- * The concrete "Next moves" are governed verbs, not chat prompts. Each one
- * runs the local EngineAgent — a Context → Plan → Policy-gate → receipt
- * pipeline, propose-never-executes. Routine verbs clear the gate and execute,
- * filing a real trace that lands in Proof; consequential verbs are outside
- * the module agent's scope, so the gate holds them for a higher authoriser.
+ * The 360px right column. The agent operates *on* the active module: it reads
+ * the module's primitive, proposes the next move, and every action it takes
+ * carries a receipt (the Proof-Carrying Work Unit).
  *
- * Free-text is the live-LLM lane: it is queued and labelled pending, never
- * fabricated. The local engine is the part that is genuinely live today.
+ * Enhanced from dsh:
+ *   - message-quotes: transcript notes render as quoted message blocks
+ *   - ui-approval: gated intents show an approval chip with missing authority
+ *   - session-turn-outline: transcript doubles as the session turn outline
  */
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import type { WorkspaceModule } from './registry'
 import { AGENT_SPECS, type ModuleAgentSpec, type ModuleIntent } from './agent-intents'
 import { EngineAgent, type EngineAgentIdentity, type ExecutionTrace, type PlanStep, type PolicyGateResult } from '@/lib/engine-agent'
@@ -88,6 +87,10 @@ function sendFreeText() {
   })
   composer.value = ''
 }
+
+function missingAuthority(verdict: PolicyGateResult): string {
+  return verdict.missingApprovals?.[0] ?? 'authority'
+}
 </script>
 
 <template>
@@ -119,31 +122,49 @@ function sendFreeText() {
       </div>
     </div>
 
-    <!-- Transcript: governed receipts + honest live-LLM queue -->
+    <!-- Transcript: message-quotes styled message blocks + session turn outline -->
     <div v-if="transcript.length" class="agent-dock-block">
       <div class="agent-dock-block-head">Session</div>
       <div class="agent-dock-log">
         <template v-for="(n, i) in transcript" :key="i">
+          <!-- User message — quoted block -->
           <div v-if="n.role === 'user'" class="agent-note agent-note--user">
-            <span class="agent-note-role">You</span>
-            <p>{{ n.text }}</p>
-          </div>
-          <div v-else-if="n.kind === 'llm-pending'" class="agent-note agent-note--pending">
-            <span class="agent-note-role">Agent · live LLM pending</span>
-            <p>{{ n.text }}</p>
-          </div>
-          <div v-else class="agent-note agent-note--receipt">
-            <div class="receipt-top">
-              <span class="receipt-outcome" :class="`receipt-outcome--${n.receipt.outcome}`">{{ n.receipt.outcome }}</span>
-              <span class="receipt-intent">{{ n.receipt.intent.label }}</span>
+            <div class="message-quote">
+              <span class="message-quote-role">You</span>
+              <p class="message-quote-body">{{ n.text }}</p>
             </div>
-            <p class="receipt-line"><code class="receipt-tool">{{ n.receipt.intent.tool }}</code> · {{ n.receipt.intent.rationale }}</p>
-            <p v-if="n.receipt.outcome === 'executed'" class="receipt-foot">
-              receipt <code>{{ n.receipt.trace?.id ?? '—' }}</code> · filed to Proof
-            </p>
-            <p v-else class="receipt-foot receipt-foot--gated">
-              gated — needs <code>{{ n.receipt.verdict.missingApprovals[0] ?? 'authority' }}</code> · awaiting sign-off · propose-never-executes
-            </p>
+          </div>
+
+          <!-- Live-LLM pending — quoted block -->
+          <div v-else-if="n.kind === 'llm-pending'" class="agent-note agent-note--pending">
+            <div class="message-quote">
+              <span class="message-quote-role">Agent · live LLM pending</span>
+              <p class="message-quote-body">{{ n.text }}</p>
+            </div>
+          </div>
+
+          <!-- Receipt — governed action with receipt -->
+          <div v-else class="agent-note agent-note--receipt">
+            <div class="message-quote">
+              <span class="message-quote-role">Agent · receipt</span>
+              <div class="receipt-card">
+                <div class="receipt-top">
+                  <span class="receipt-outcome" :class="`receipt-outcome--${n.receipt.outcome}`">{{ n.receipt.outcome }}</span>
+                  <span class="receipt-intent">{{ n.receipt.intent.label }}</span>
+                </div>
+                <p class="receipt-line"><code class="receipt-tool">{{ n.receipt.intent.tool }}</code> · {{ n.receipt.intent.rationale }}</p>
+                <p v-if="n.receipt.outcome === 'executed'" class="receipt-foot">
+                  receipt <code>{{ n.receipt.trace?.id ?? '—' }}</code> · filed to Proof
+                </p>
+                <p v-else class="receipt-foot receipt-foot--gated">
+                  <span class="approval-chip">
+                    <span class="approval-chip-label">Awaiting sign-off</span>
+                    <span class="approval-chip-authority">{{ missingAuthority(n.receipt.verdict) }}</span>
+                  </span>
+                  · gated — needs {{ missingAuthority(n.receipt.verdict) }}, propose-never-executes
+                </p>
+              </div>
+            </div>
           </div>
         </template>
       </div>
@@ -250,6 +271,40 @@ function sendFreeText() {
 .agent-intent-flag { font: 700 10px / 1 var(--apt-font-mono); color: var(--apt-standing-reported, #AD8B55); }
 .agent-intent-arrow { color: var(--apt-module-accent, var(--apt-color-brand-primary)); font-weight: 600; }
 
+/* message-quotes — dsh message-quotes pattern */
+.message-quote {
+  padding: 10px 12px;
+  border-radius: var(--apt-radius-r2);
+  border: 1px solid var(--line);
+  position: relative;
+}
+.message-quote::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: var(--apt-radius-r2) 0 0 var(--apt-radius-r2);
+}
+.message-quote--user::before { background: var(--apt-module-accent, var(--apt-color-brand-primary)); }
+.message-quote--pending::before { background: var(--apt-text-dim); }
+.message-quote--receipt::before { background: var(--apt-standing-verified, var(--apt-color-forest-500)); }
+
+.message-quote-role {
+  font: 600 9px / 1 var(--apt-font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--apt-text-dim);
+  display: block;
+  margin-bottom: 4px;
+}
+.message-quote-body {
+  margin: 0;
+  font: var(--apt-font-size-body-sm) / 1.45 var(--apt-font-sans);
+  color: var(--apt-text-body);
+}
+
 .agent-dock-log { display: flex; flex-direction: column; gap: 8px; max-height: 320px; overflow-y: auto; }
 .agent-note { padding: 10px 12px; border-radius: var(--apt-radius-r2); border: 1px solid var(--line); }
 .agent-note--user { background: var(--apt-surface-default); }
@@ -258,7 +313,14 @@ function sendFreeText() {
 .agent-note-role { font: 600 9px / 1 var(--apt-font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--apt-text-dim); }
 .agent-note p { margin: 4px 0 0; font: var(--apt-font-size-body-sm) / 1.45 var(--apt-font-sans); color: var(--apt-text-body); }
 
-.receipt-top { display: flex; align-items: center; gap: 8px; }
+.receipt-card {
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-radius: var(--apt-radius-r2);
+  border: 1px solid color-mix(in srgb, var(--apt-module-accent, var(--apt-color-brand-primary)) 30%, transparent);
+  background: color-mix(in srgb, var(--apt-module-accent, var(--apt-color-brand-primary)) 6%, var(--apt-surface-default));
+}
+.receipt-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .receipt-outcome { font: 600 9px / 1 var(--apt-font-mono); letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 8px; border-radius: 4px; border: 1px solid; }
 .receipt-outcome--executed { color: var(--apt-standing-verified, #2b5945); background: color-mix(in srgb, var(--apt-standing-verified, #2b5945) 12%, var(--apt-surface-default)); border-color: color-mix(in srgb, var(--apt-standing-verified, #2b5945) 30%, transparent); }
 .receipt-outcome--gated { color: var(--apt-standing-reported, #AD8B55); background: color-mix(in srgb, var(--apt-standing-reported, #AD8B55) 14%, var(--apt-surface-default)); border-color: color-mix(in srgb, var(--apt-standing-reported, #AD8B55) 34%, transparent); }
@@ -269,6 +331,27 @@ function sendFreeText() {
 .receipt-foot code { font: 600 10px / 1 var(--apt-font-mono); color: var(--apt-text-body); }
 .receipt-foot--gated { color: var(--apt-standing-reported, #AD8B55); }
 .receipt-foot--gated code { color: var(--apt-standing-reported, #AD8B55); }
+
+/* ui-approval — approval chip pattern */
+.approval-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--apt-radius-r1);
+  background: var(--apt-surface-default);
+}
+.approval-chip-label {
+  font: 500 9px / 1 var(--apt-font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--apt-text-dim);
+}
+.approval-chip-authority {
+  font: 500 9px / 1 var(--apt-font-mono);
+  color: var(--apt-module-accent, var(--apt-color-brand-primary));
+}
 
 .agent-dock-composer { margin-top: auto; }
 .agent-dock-input {

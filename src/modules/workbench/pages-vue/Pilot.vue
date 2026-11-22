@@ -2,7 +2,10 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { RouterLink } from 'vue-router';
-import { PILOTS, workItemsForPilotVue, totalCommittedCapitalVue } from '../data-vue';
+import { PILOTS, workItemsForPilotVue, totalCommittedCapitalVue, workItems } from '../data-vue';
+import { advanceGate, WORK_ITEMS } from '@/modules/workbench/data';
+import JobController from '@/shell/JobController.vue';
+import FlowRail from '@/components/ui/FlowRail.vue';
 
 const route = useRoute();
 const pilotKey = route.params.pilot as string;
@@ -11,6 +14,11 @@ const pilot = computed(() => PILOTS.find((p) => p.key === pilotKey));
 
 const items = computed(() => workItemsForPilotVue(pilotKey));
 const totalCap = computed(() => totalCommittedCapitalVue(items.value));
+
+function handleGateAdvance(workItemId: string): void {
+  advanceGate(workItemId, 'Job controller', 'Advanced via job controller');
+  workItems.value = [...WORK_ITEMS.value];
+}
 </script>
 
 <template>
@@ -20,33 +28,20 @@ const totalCap = computed(() => totalCommittedCapitalVue(items.value));
         <header class="page-head">
           <div class="page-head-eyebrow">APT-LABS / Workbench</div>
           <div class="page-head-title-row">
-            <h1 class="page-head-title">{{ pilot.value?.label || 'Pilot' }}</h1>
+            <h1 class="page-head-title">{{ pilot?.label || 'Pilot' }}</h1>
             <p class="page-head-subtitle">
-              {{ pilot.value?.character || '' }} · {{ pilot.value?.location || '' }}
+              {{ pilot?.character || '' }} · {{ pilot?.location || '' }}
             </p>
           </div>
           <RouterLink to="/workspace/workbench" class="page-head-back-link">← Back to workbench</RouterLink>
         </header>
 
-        <section v-if="pilot.value">
+        <!-- Where this pilot stands in the productive chain: commitment and execution -->
+        <FlowRail active="workbench" title="Where the chain stands" />
+
+        <section v-if="pilot">
           <h2 class="wb-section-title">Undertakings</h2>
-          <div class="wb-paths">
-            <div v-for="item in items" :key="item.id" class="wb-path-row">
-              <div class="wb-path-main">
-                <h3 class="wb-path-label">{{ item.title }}</h3>
-                <p class="wb-path-character">
-                  {{ item.discipline }} · {{ item.location }}
-                </p>
-              </div>
-              <span class="wb-path-status">{{ item.gate }}</span>
-              <span class="wb-path-action">
-                KES {{ item.capital.financial?.toLocaleString('en-KE') ?? '—' }}
-              </span>
-            </div>
-            <div v-if="items.length === 0" class="wb-empty">
-              No undertakings recorded for this pilot yet.
-            </div>
-          </div>
+          <JobController :jobs="items" @gate-advance="handleGateAdvance" />
         </section>
 
         <p class="wb-terms-line">

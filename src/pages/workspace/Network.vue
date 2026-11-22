@@ -2,6 +2,7 @@
 import { RouterLink } from 'vue-router';
 import { computed, onMounted } from 'vue';
 import { useNetworkStore, GROUP_LABELS, type NetworkGroup } from '@/stores/network';
+import FlowRail from '@/components/ui/FlowRail.vue';
 
 const network = useNetworkStore();
 
@@ -38,6 +39,9 @@ const directoryCount = computed(() => {
         The directory of registered actors — who they are, what they have, and what they can do.
       </p>
     </header>
+
+    <!-- Where Network stands in the productive chain: capability assembles intention into commitment -->
+    <FlowRail active="network" title="Where the chain stands" />
 
     <!-- First-use: no actors yet — hide the filter chrome, name the next step. -->
     <section v-if="!network.rows.length" class="network-empty">

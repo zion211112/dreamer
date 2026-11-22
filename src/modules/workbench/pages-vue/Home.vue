@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { PILOTS, homeMetricsVue, workItemsForPilotVue, totalCommittedCapitalVue } from '../data-vue';
 import { RouterLink } from 'vue-router';
+import FlowRail from '@/components/ui/FlowRail.vue';
 
 const route = useRoute();
 const m = homeMetricsVue();
@@ -53,6 +54,9 @@ const lanes = computed(() =>
             </div>
           </div>
         </header>
+
+        <!-- Where the Workbench stands in the productive chain: commitment and execution -->
+        <FlowRail active="workbench" title="Where the chain stands" />
 
         <section>
           <h2 class="wb-section-title">Lanes</h2>

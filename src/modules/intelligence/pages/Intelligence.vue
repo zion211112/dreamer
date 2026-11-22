@@ -11,6 +11,7 @@ import {
   type LearningOutput,
   type Recommendation,
 } from '../lib/intelligence';
+import FlowRail from '@/components/ui/FlowRail.vue';
 
 interface LaneForecast {
   pilot: Pilot;
@@ -61,6 +62,9 @@ function laneIsLive(key: PilotKey): boolean {
         the authorized party decides. No universal reputation score.
       </p>
     </header>
+
+    <!-- Where Intelligence stands in the productive chain: knowledge loops back to intention -->
+    <FlowRail active="intelligence" title="Where the chain stands" />
 
     <section class="intelligence-forecast">
       <h2 class="intelligence-section-title">Capacity by pilot lane</h2>
