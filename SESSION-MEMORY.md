@@ -10,7 +10,7 @@
 | Workspace Shell | `/workspace` | ✅ 5 module frame (overview, commons-network, workbench, records-intelligence, value) |
 | Overview Pane | `/workspace` | ✅ Live operational board |
 | Agent Pane | `AgentDock` | ✅ Pipeline integration (⌘J/Esc) |
-| User Dashboard | — | ⬜ needs building |
+| User Dashboard | — | ✅ Personal commitments, evidence, quick actions |
 | Module Refinement | all routes | ⬜ $3B quality pass per module |
 
 ### Pipeline (REQ-2026-002) — EXCEEDED ✅
