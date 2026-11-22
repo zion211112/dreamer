@@ -1,31 +1,35 @@
 /**
  * APT-LABS — Workspace module registry (lean masterpiece).
  *
- * Five modules on the rail — the spine of the operating infrastructure.
+ * Six modules on the rail — Home plus the five productive modules:
+ * Commons, Network, Workbench, Records, Intelligence.
+ *
+ * Per charter B1: Home is the personal shell context (/workspace) where a
+ * user chooses quick acts and selects a productive module. Home is not a
+ * seventh constraint; it is the context in which the five productive modules
+ * are entered.
+ *
  * Each entry is load-bearing: removing one stops the chain. The registry is
  * the single source of truth for module identity, navigation, accent and the
  * ontology primitive a module stands for — the shell, rail, dock and per-module
  * pages all read from here so nothing is invented per-view.
- *
- * The five pillars (docs/design/superior-fusion-design-system.md) colour each
- * module via the [data-module="…"] accent overrides in apt-tokens.css.
  */
 
-export type Pillar = 'knowledge' | 'capacity' | 'production' | 'exchange' | 'stewardship'
-
 export type ModuleId =
-  | 'overview'
-  | 'commons-network'
+  | 'home'
+  | 'commons'
+  | 'network'
   | 'workbench'
-  | 'records-intelligence'
-  | 'value'
+  | 'records'
+  | 'intelligence'
 
 export type IconId =
-  | 'overview'
-  | 'commons-network'
+  | 'home'
+  | 'commons'
+  | 'network'
   | 'workbench'
-  | 'records-intelligence'
-  | 'value'
+  | 'records'
+  | 'intelligence'
 
 export interface CtxNavItem {
   label: string
@@ -48,8 +52,6 @@ export interface WorkspaceModule {
   railLabel: string
   /** Page-head title. */
   title: string
-  /** Pillar the module stands for. */
-  pillar: Pillar
   /** The ontology primitive(s) this module is the home of. */
   primitive: string
   /** One-line doctrine. Kept terse on purpose. */
@@ -62,30 +64,40 @@ export interface WorkspaceModule {
 /** Rail order = the chain: reality → legibility → agency → coordination → execution → proof → value. */
 export const WORKSPACE_MODULES: WorkspaceModule[] = [
   {
-    id: 'overview',
+    id: 'home',
     path: '/workspace',
     railLabel: 'Home',
     title: 'Operational Overview',
-    pillar: 'stewardship',
     primitive: 'the chain, not the type',
     subtitle: 'What reality enters the model, and where it is not refused.',
-    icon: 'overview',
+    icon: 'home',
     ctxNav: [
       { heading: 'Structure', items: [{ label: 'Operational core' }, { label: 'Continuity & learning' }, { label: 'Value & legitimacy' }] },
       { heading: 'Evidence standing', items: [{ label: 'Unassessed' }, { label: 'Reported' }, { label: 'Supported' }, { label: 'Verified' }, { label: 'Disputed' }] },
     ],
   },
   {
-    id: 'commons-network',
+    id: 'commons',
     path: '/workspace/commons',
     railLabel: 'Commons',
-    title: 'Commons / Network',
-    pillar: 'knowledge',
-    primitive: 'INTENTION · ACTOR · CAPABILITY · RESOURCE',
-    subtitle: 'What is wanted, asked, and examined before it becomes work. Who acts, what they can do, what they hold.',
-    icon: 'commons-network',
+    title: 'Commons',
+    primitive: 'INTENTION',
+    subtitle: 'What is wanted, asked, and examined before it becomes work.',
+    icon: 'commons',
     ctxNav: [
       { heading: 'Commons', items: [{ label: 'Explore', to: '/workspace/commons' }, { label: 'Inquiries', to: '/workspace/commons', count: 38 }, { label: 'Knowledge', to: '/workspace/commons', count: 142 }, { label: 'Briefs', to: '/workspace/commons', count: 12 }, { label: 'Contribute' }] },
+      { heading: 'Relations', items: [{ label: 'Responds to' }, { label: 'Derived from' }] },
+    ],
+  },
+  {
+    id: 'network',
+    path: '/workspace/network',
+    railLabel: 'Network',
+    title: 'Network',
+    primitive: 'ACTOR · CAPABILITY · RESOURCE',
+    subtitle: 'Who acts, what they can do, what they hold.',
+    icon: 'network',
+    ctxNav: [
       { heading: 'Actors', items: [{ label: 'People', to: '/workspace/network/people' }, { label: 'Institutions', to: '/workspace/network/institutions' }, { label: 'Capabilities', to: '/workspace/network/capabilities' }] },
       { heading: 'Relations', items: [{ label: 'Holds capability' }, { label: 'Custodies' }, { label: 'Acts on behalf of' }, { label: 'Located at' }] },
     ],
@@ -95,7 +107,6 @@ export const WORKSPACE_MODULES: WorkspaceModule[] = [
     path: '/workspace/workbench',
     railLabel: 'Work',
     title: 'Workbench',
-    pillar: 'production',
     primitive: 'WORK',
     subtitle: 'The Proof-Carrying Work Unit — a defined, testable undertaking.',
     icon: 'workbench',
@@ -105,55 +116,53 @@ export const WORKSPACE_MODULES: WorkspaceModule[] = [
     ],
   },
   {
-    id: 'records-intelligence',
+    id: 'records',
     path: '/workspace/records',
     railLabel: 'Records',
-    title: 'Records / Intelligence',
-    pillar: 'stewardship',
-    primitive: 'KNOWLEDGE · MEMORY · matching · forecasting · agents',
-    subtitle: 'Civilizational memory — canon, annals, and the immutable roll. The model working — matching, forecasting, and running agents.',
-    icon: 'records-intelligence',
+    title: 'Records',
+    primitive: 'CANON · ANNALS · ROLL',
+    subtitle: 'Civilizational memory — canon, annals, and the immutable roll.',
+    icon: 'records',
     ctxNav: [
-      { heading: 'Stores', items: [{ label: 'Canon', to: '/workspace/records/canon' }, { label: 'Annals', to: '/workspace/records/annals' }, { label: 'Roll', to: '/workspace/records/roll' }] },
+      { heading: 'Lenses', items: [{ label: 'Canon', to: '/workspace/records/canon' }, { label: 'Annals', to: '/workspace/records/annals' }, { label: 'Roll', to: '/workspace/records/roll' }] },
       { heading: 'Search', items: [{ label: 'Records' }, { label: 'Knowledge' }] },
-      { heading: 'Agents', items: [{ label: 'Matching' }, { label: 'Forecasting' }, { label: 'Agents', to: '/workspace/intelligence' }] },
-      { heading: 'Kemetos', items: [{ label: 'Coordinator', to: '/workspace/kemetos1' }] },
     ],
   },
   {
-    id: 'value',
-    path: '/workspace/value',
-    railLabel: 'Value',
-    title: 'Value',
-    pillar: 'exchange',
-    primitive: 'OUTCOME · VALUE',
-    subtitle: 'What circulates, and that it was allocated in the open.',
-    icon: 'value',
+    id: 'intelligence',
+    path: '/workspace/intelligence',
+    railLabel: 'Intelligence',
+    title: 'Intelligence',
+    primitive: 'matching · forecasting · agents',
+    subtitle: 'The model working — matching, forecasting, and running agents.',
+    icon: 'intelligence',
     ctxNav: [
-      { heading: 'Circulation', items: [{ label: 'Outcomes' }, { label: 'Allocation' }, { label: 'Settlements' }] },
-      { heading: 'Instrument', items: [{ label: 'Apt-coin', to: '/workspace/value' }] },
+      { heading: 'Agents', items: [{ label: 'Matching' }, { label: 'Forecasting' }, { label: 'Agents', to: '/workspace/intelligence' }] },
+      { heading: 'Kemetos', items: [{ label: 'Coordinator', to: '/workspace/kemetos1' }] },
     ],
   },
 ]
 
 export const MODULE_BY_ID = Object.fromEntries(WORKSPACE_MODULES.map((m) => [m.id, m])) as Record<ModuleId, WorkspaceModule>
 
-/** Match a route path to its owning module. `/workspace` itself → overview. */
+/** Match a route path to its owning module. `/workspace` itself → home. */
 export function moduleForPath(path: string): WorkspaceModule {
-  if (path === '/workspace') return MODULE_BY_ID.overview
+  if (path === '/workspace') return MODULE_BY_ID.home
   const seg = path.replace(/^\/workspace\//, '').split('/')[0]
   const known: Record<string, ModuleId> = {
-    commons: 'commons-network',
-    network: 'commons-network',
+    commons: 'commons',
+    network: 'network',
+    people: 'network',
+    institutions: 'network',
+    capabilities: 'network',
     workbench: 'workbench',
-    records: 'records-intelligence',
-    value: 'value',
-    intelligence: 'records-intelligence',
-    kemetos1: 'records-intelligence',
-    canon: 'records-intelligence',
-    annals: 'records-intelligence',
-    roll: 'records-intelligence',
+    records: 'records',
+    canon: 'records',
+    annals: 'records',
+    roll: 'records',
+    intelligence: 'intelligence',
+    kemetos1: 'intelligence',
   }
-  const id = known[seg] ?? 'overview'
+  const id = known[seg] ?? 'home'
   return MODULE_BY_ID[id]
 }

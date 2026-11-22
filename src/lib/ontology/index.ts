@@ -14,6 +14,7 @@ export type { OutputOutcomeType, ExchangeType, EvidenceType } from './types';
 export type { KnowledgeType, GovernanceType } from './types';
 export type { FamilyTypeMap } from './types';
 export { FAMILY, FAMILY_LABELS, isFamily, isAptEntity, isAptRelationship, createOntologyId } from './types';
+export { ACTOR_TYPE_LABELS } from './types';
 export { OPERATIONAL_CORE, CONTINUITY_LEARNING, VALUE_LEGITIMACY, CONTEXT } from './types';
 export { CANONICAL_DISTINCTIONS } from './types';
 

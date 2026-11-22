@@ -33,7 +33,7 @@ const GROUP_TYPES: Record<Exclude<NetworkGroup, 'all'>, ActorType[]> = {
   people: ['individual'],
   crews: ['crew'],
   institutions: [
-    'institution',
+    'Institution',
     'university',
     'school',
     'researchLab',

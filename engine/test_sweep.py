@@ -70,7 +70,6 @@ async def test_subagent_sim(n_agents: int = 6, prompts_per_agent: int = 3):
 async def test_subagent_sweep():
     """Run subagent simulation at 6, 12, 24, 48 agents to find the scaling curve."""
     pipeline = MultiModelPipeline()
-    # First, health check so we know how many models are actually usable
     await pipeline.orchestrator.health_check(max_concurrent=16)
     healthy = pipeline.registry.healthy_count()
     print(f"\n=== SUBAGENT SCALING SWEEP ({healthy} healthy models) ===")
@@ -89,11 +88,62 @@ async def test_subagent_sweep():
     await pipeline.close()
 
 
+async def test_batch_scale():
+    """Test batch mode: many prompts across models concurrently."""
+    pipeline = MultiModelPipeline()
+    prompts = [
+        "Write a Python function to fib with memoization.",
+        "Write a Python function to sort a list with quicksort.",
+        "Write a Python function to reverse a string.",
+        "Write a Python function to check if a number is prime.",
+        "Write a Python function to compute factorial recursively.",
+    ] * 10  # 50 prompts total
+
+    models = [
+        "groq/qwen/qwen3.5-flash-02-23",
+        "groq/llama-3.1-8b-instant",
+        "nvidia/nemotron-3.5-lightning",
+        "google/gemini-2.5-flash-lite",
+    ]
+
+    async def run_model_batch(model_id, model_prompts):
+        return await pipeline.orchestrator.run_batch(
+            prompts=model_prompts,
+            model_id=model_id,
+            max_tokens=512,
+            max_concurrent=10,
+        )
+
+    start = time.perf_counter()
+    tasks = []
+    for i, model_id in enumerate(models):
+        model_prompts = prompts[i::len(models)]
+        tasks.append(run_model_batch(model_id, model_prompts))
+
+    all_results = []
+    for coro in asyncio.as_completed(tasks):
+        results = await coro
+        all_results.extend(results)
+
+    wall = time.perf_counter() - start
+    total_out = sum(r.output_tokens for r in all_results if r.success)
+    agg_tps = total_out / wall if wall > 0 else 0.0
+    ok = sum(1 for r in all_results if r.success)
+    print("\n=== BATCH SCALE RESULTS ===")
+    print(f"Prompts: {len(prompts)}, Models: {len(models)}, Successful: {ok}, Wall: {wall:.2f}s")
+    print(f"Total output tokens: {total_out}, Aggregate tok/s: {agg_tps:.2f}")
+    print(f"Gap to 10k/s: {10000 / agg_tps:.1f}x" if agg_tps > 0 else "\nNo results")
+    for r in all_results[:5]:
+        print(f"  {r.model_id}: {r.tokens_per_second} tok/s, success={r.success}, error={r.error}")
+    await pipeline.close()
+
+
 async def main():
     healthy = await test_health()
     await test_sweep()
     await test_subagent_sim(n_agents=6, prompts_per_agent=3)
     await test_subagent_sweep()
+    await test_batch_scale()
 
 
 asyncio.run(main())

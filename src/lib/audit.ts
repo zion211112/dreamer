@@ -49,6 +49,8 @@ export type AuditAction =
   | 'evidence.verify'
   | 'knowledge.create'
   | 'knowledge.update'
+  | 'organization.identity.create'
+  | 'organization.identity.update'
   | 'credential.issue'
   | 'credential.suspend'
   | 'credential.revoke'

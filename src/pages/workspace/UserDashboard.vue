@@ -5,15 +5,19 @@
  * Shows what *this* actor needs to do right now: active commitments,
  * pending evidence, recent outcomes, and quick actions. Personal,
  * not system-wide — unlike WorkspaceOverview which shows the whole board.
+ *
+ * All data is real from the coordination store — no mock arrays.
  */
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { useCoordinationStore, type CommitmentRow, type KnowledgeOutcome } from '@/stores/coordination';
+import { useAuth } from '@/lib/auth/hooks';
 import type { RecordEnvelope } from '@/lib/record-envelope';
 
 const store = useCoordinationStore();
+const { user, profile, loading: authLoading } = useAuth();
 
-const activeTab = ref<'commitments' | 'evidence' | 'quick'>('commitments');
+const activeTab = ref<'commitments' | 'evidence' | 'outcomes' | 'quick'>('commitments');
 
 onMounted(() => {
   store.refresh();
@@ -51,11 +55,16 @@ const metrics = computed(() => ({
   activeCommitments: myCommitments.value.length,
   pendingEvidence: pendingEvidence.value.length,
   recentOutcomes: recentOutcomes.value.length,
+  totalValueKes: recentOutcomes.value.reduce((s, _o) => s, 0), // placeholder; value lives in Value module
 }));
+
+onMounted(() => {
+  store.refresh();
+});
 </script>
 
 <template>
-  <div class="dashboard" data-module="overview">
+  <div class="dashboard" data-module="dashboard">
     <div class="dashboard-body">
       <main class="dashboard-main">
         <!-- Page head -->
@@ -87,7 +96,7 @@ const metrics = computed(() => ({
         <!-- Tabbed views -->
         <div class="dashboard-tabs">
           <button
-            v-for="t in [['commitments','Commitments'], ['evidence','Evidence'], ['quick','Quick actions']] as [id, label]"
+            v-for="t in [['commitments','Commitments'], ['evidence','Evidence'], ['outcomes','Outcomes'], ['quick','Quick']] as [id, label]"
             :key="id"
             :class="{ 'dashboard-tab--on': activeTab === id }"
             class="dashboard-tab"
@@ -145,6 +154,35 @@ const metrics = computed(() => ({
                 <h3 class="dashboard-card-title">{{ ((e.data as { title?: string }).title ?? e.type) as string }}</h3>
                 <p class="dashboard-card-context">
                   Registered v{{ e.version }} · {{ e.updatedAt.slice(0, 10) }}
+                </p>
+              </div>
+              <RouterLink to="/workspace/records/roll" class="dashboard-card-action">
+                View on Roll
+                <span class="dashboard-card-arrow" aria-hidden="true">→</span>
+              </RouterLink>
+            </article>
+          </div>
+        </section>
+
+        <!-- Outcomes tab -->
+        <section v-else-if="activeTab === 'outcomes'" class="dashboard-section">
+          <h2 class="dashboard-section-title">Recent outcomes</h2>
+          <p class="dashboard-section-sub">Accepted and delivered — distributed through the roll.</p>
+
+          <div v-if="recentOutcomes.length === 0" class="dashboard-quiet">
+            <p class="dashboard-quiet-line">
+              No accepted outcomes yet. When an undertaking is accepted and delivered,
+              its outcome lands here as a brief.
+            </p>
+          </div>
+
+          <div v-else class="dashboard-list">
+            <article v-for="o in recentOutcomes" :key="o.id" class="dashboard-card">
+              <div class="dashboard-card-copy">
+                <h3 class="dashboard-card-title">{{ o.title }}</h3>
+                <p class="dashboard-card-context">
+                  Accepted by <span class="dashboard-card-actor">{{ o.acceptedBy }}</span>
+                  <span v-if="o.distilled" class="dashboard-card-status">· Distilled</span>
                 </p>
               </div>
               <RouterLink to="/workspace/records/roll" class="dashboard-card-action">
@@ -258,7 +296,7 @@ const metrics = computed(() => ({
 /* Metrics */
 .dashboard-metrics {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1px;
   background: var(--apt-border);
   margin-bottom: var(--apt-spacing-s10);
@@ -268,6 +306,11 @@ const metrics = computed(() => ({
   background: var(--apt-surface-page);
   padding: var(--apt-spacing-s6);
   border-left: 3px solid var(--apt-module-accent, var(--apt-color-brand-primary));
+}
+
+.dashboard-metric:first-child {
+  border-left: none;
+  padding-left: 0;
 }
 
 .dashboard-metric-value {
@@ -493,7 +536,7 @@ const metrics = computed(() => ({
 /* Responsive */
 @media (max-width: 900px) {
   .dashboard-main { padding: var(--apt-spacing-s8); }
-  .dashboard-metrics { grid-template-columns: 1fr; }
+  .dashboard-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .dashboard-grid { grid-template-columns: 1fr; }
 }
 
@@ -501,5 +544,6 @@ const metrics = computed(() => ({
   .dashboard-head { margin-bottom: var(--apt-spacing-s6); }
   .dashboard-tabs { overflow-x: auto; padding-bottom: var(--apt-spacing-s2); }
   .dashboard-section { margin-bottom: var(--apt-spacing-s10); }
+  .dashboard-metrics { grid-template-columns: 1fr; }
 }
 </style>

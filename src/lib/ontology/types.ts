@@ -50,11 +50,40 @@ export const FAMILY_LABELS: Record<Family, string> = {
   [FAMILY.GOVERNANCE]: 'Governance',
 };
 
+export const ACTOR_TYPE_LABELS = {
+  // APTO canonical types
+  Person: 'Person',
+  Organization: 'Organization',
+  Collective: 'Collective',
+  Institution: 'Institution',
+  Enterprise: 'Enterprise',
+  Cooperative: 'Cooperative',
+  GovernmentUnit: 'Government Unit',
+  SoftwareAgent: 'Software Agent',
+  // Application-level types (practical)
+  individual: 'Individual',
+  company: 'Company',
+  enterprise: 'Enterprise',
+  startup: 'Startup',
+  institution: 'Institution',
+  governmentUnit: 'Government Unit',
+  university: 'University',
+  school: 'School',
+  researchLab: 'Research Laboratory',
+  cooperative: 'Cooperative',
+  communityOrganisation: 'Community Organisation',
+  ngo: 'Non-governmental Organisation',
+  crew: 'Crew / Collective',
+  consortium: 'Project Consortium',
+  other: 'Other',
+};
+
 // ---------------------------------------------------------------------------
 // Family-specific canonical types (examples from APTO)
 // ---------------------------------------------------------------------------
 
 export type ActorType =
+  // APTO canonical types (semantic)
   | 'Person'
   | 'Organization'
   | 'Collective'
@@ -62,7 +91,23 @@ export type ActorType =
   | 'Enterprise'
   | 'Cooperative'
   | 'GovernmentUnit'
-  | 'SoftwareAgent';
+  | 'SoftwareAgent'
+  // Application-level types (practical, used in actors.ts)
+  | 'individual'
+  | 'company'
+  | 'enterprise'
+  | 'startup'
+  | 'governmentUnit'
+  | 'university'
+  | 'school'
+  | 'researchLab'
+  | 'communityOrganisation'
+  | 'ngo'
+  | 'crew'
+  | 'consortium'
+  | 'other'
+  | 'institution'
+  | 'cooperative';
 
 export type CapabilityType =
   | 'Skill'

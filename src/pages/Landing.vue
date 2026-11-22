@@ -19,9 +19,10 @@ const REGISTERS = [
 
 const MODULES = [
   { id: 'workbench', label: 'Workbench', hint: 'Scope, assemble, coordinate productive work', to: '/workspace/workbench' },
-  { id: 'commons-network', label: 'Commons / Network', hint: 'Discover needs, offers, people, crews, institutions', to: '/workspace/commons' },
-  { id: 'records-intelligence', label: 'Records / Intelligence', hint: 'Canon, annals, roll; agents, matching, forecasting', to: '/workspace/records' },
-  { id: 'value', label: 'Value', hint: 'Outcome settlement, value circulated in the open', to: '/workspace/value' },
+  { id: 'commons', label: 'Commons', hint: 'Discover needs, offers, and knowledge', to: '/workspace/commons' },
+  { id: 'network', label: 'Network', hint: 'People, crews, institutions, capabilities', to: '/workspace/network' },
+  { id: 'records', label: 'Records', hint: 'Canon, annals, and the immutable roll', to: '/workspace/records' },
+  { id: 'intelligence', label: 'Intelligence', hint: 'Matching, forecasting, and running agents', to: '/workspace/intelligence' },
 ];
 </script>
 
@@ -32,12 +33,12 @@ const MODULES = [
         <RouterLink to="/" class="landing-wordmark">aptlabs</RouterLink>
       </div>
       <nav class="landing-nav">
-        <RouterLink to="/workspace" class="landing-nav-link">Workspace</RouterLink>
+        <RouterLink to="/workspace" class="landing-nav-link">Home</RouterLink>
         <RouterLink to="/workspace/workbench" class="landing-nav-link">Workbench</RouterLink>
         <RouterLink to="/workspace/commons" class="landing-nav-link">Commons</RouterLink>
         <RouterLink to="/workspace/network" class="landing-nav-link">Network</RouterLink>
         <RouterLink to="/workspace/records" class="landing-nav-link">Records</RouterLink>
-        <RouterLink to="/workspace/value" class="landing-nav-link">Value</RouterLink>
+        <RouterLink to="/workspace/intelligence" class="landing-nav-link">Intelligence</RouterLink>
       </nav>
       <div class="landing-actions">
         <RouterLink to="/sign-in?next=/workspace" class="landing-start">Start building</RouterLink>

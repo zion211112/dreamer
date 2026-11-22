@@ -32,7 +32,7 @@ export interface ModuleAgentSpec {
 }
 
 export const AGENT_SPECS: Record<ModuleId, ModuleAgentSpec> = {
-  overview: {
+  home: {
     scope: ['chain:trace', 'model:inspect'],
     intents: [
       { label: 'Trace a distinction through the chain', tool: 'chain:trace', rationale: 'Walk the distinction from reality to the type, node by node.', consequential: false },
@@ -40,7 +40,7 @@ export const AGENT_SPECS: Record<ModuleId, ModuleAgentSpec> = {
       { label: 'Amend the ontology from here', tool: 'steward:amend-ontology', rationale: 'Mutates the type layer — held for a higher authoriser.', consequential: true },
     ],
   },
-  'commons-network': {
+  commons: {
     scope: ['inquiry:draft', 'inquiry:summarise', 'knowledge:read', 'network:map', 'capability:inspect', 'relation:query'],
     intents: [
       { label: 'Draft a brief for the top inquiry', tool: 'inquiry:draft', rationale: 'Turn the open question into a structured brief to examine.', consequential: false },
@@ -48,6 +48,14 @@ export const AGENT_SPECS: Record<ModuleId, ModuleAgentSpec> = {
       { label: 'Map who can do what in this cluster', tool: 'network:map', rationale: 'Resolve each actor to the capabilities it holds here.', consequential: false },
       { label: 'Which capability is unheld?', tool: 'capability:inspect', rationale: 'Find the capability no registered actor can supply.', consequential: false },
       { label: 'Conclude a disputed inquiry', tool: 'inquiry:conclude', rationale: 'Closes an intention with standing consequences.', consequential: true },
+    ],
+  },
+  network: {
+    scope: ['actor:search', 'capability:inspect', 'relation:query'],
+    intents: [
+      { label: 'Search actors by capability', tool: 'actor:search', rationale: 'Find who holds a given capability.', consequential: false },
+      { label: 'Map capabilities to institutions', tool: 'capability:inspect', rationale: 'Show which institutions hold each capability.', consequential: false },
+      { label: 'Register a new actor', tool: 'actor:register', rationale: 'Creates an actor record — held for a higher authoriser.', consequential: true },
     ],
   },
   workbench: {
@@ -58,7 +66,7 @@ export const AGENT_SPECS: Record<ModuleId, ModuleAgentSpec> = {
       { label: 'Sign off this work unit', tool: 'work:sign-off', rationale: 'Closes the unit with standing consequences — held for a higher authoriser.', consequential: true },
     ],
   },
-  'records-intelligence': {
+  records: {
     scope: ['canon:search', 'record:diff', 'record:provenance', 'intel:match', 'intel:forecast', 'agent:inspect'],
     intents: [
       { label: 'Search the canon', tool: 'canon:search', rationale: 'Query settled knowledge across the canon store.', consequential: false },
@@ -69,12 +77,12 @@ export const AGENT_SPECS: Record<ModuleId, ModuleAgentSpec> = {
       { label: 'Hand this to Kemetos', tool: 'agent:dispatch', rationale: 'Dispatches a live agent — needs a coordinator sign-off.', consequential: true },
     ],
   },
-  value: {
-    scope: ['value:trace', 'value:reconcile'],
+  intelligence: {
+    scope: ['intel:match', 'intel:forecast', 'agent:inspect'],
     intents: [
-      { label: 'Trace this outcome’s allocation', tool: 'value:trace', rationale: 'Follow disclosed cost from the outcome to its allocation rule.', consequential: false },
-      { label: 'Show who was paid and why', tool: 'value:reconcile', rationale: 'Reconcile the circulation against the open rule that set it.', consequential: false },
-      { label: 'Settle a circulation', tool: 'value:settle', rationale: 'Closes a value flow — held for a higher authoriser.', consequential: true },
+      { label: 'Run matching on open needs', tool: 'intel:match', rationale: 'Score providers against open inquiries.', consequential: false },
+      { label: 'Forecast pilot capacity', tool: 'intel:forecast', rationale: 'Project capacity forward from current commitments.', consequential: false },
+      { label: 'Inspect agent health', tool: 'agent:inspect', rationale: 'Show active agents and their status.', consequential: false },
     ],
   },
 }

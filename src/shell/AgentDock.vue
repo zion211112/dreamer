@@ -13,7 +13,7 @@
  * Free-text is the live-LLM lane: it is queued and labelled pending, never
  * fabricated. The local engine is the part that is genuinely live today.
  */
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import type { WorkspaceModule } from './registry'
 import { AGENT_SPECS, type ModuleAgentSpec, type ModuleIntent } from './agent-intents'
 import { EngineAgent, type EngineAgentIdentity, type ExecutionTrace, type PlanStep, type PolicyGateResult } from '@/lib/engine-agent'
@@ -24,17 +24,6 @@ const emit = defineEmits<{ close: [] }>()
 const active = computed(() => props.module)
 const spec = computed<ModuleAgentSpec>(() => AGENT_SPECS[active.value.id])
 const intents = computed<ModuleIntent[]>(() => spec.value.intents)
-
-// Pipeline telemetry — live throughput measured by the multi-model engine
-const pipelineTps = ref(0)
-const subagentCount = ref(0)
-const healthyModels = ref(0)
-
-function setPipelineTelemetry(tps: number, agents: number, models: number) {
-  pipelineTps.value = tps
-  subagentCount.value = agents
-  healthyModels.value = models
-}
 
 function stewardIdentity(s: ModuleAgentSpec, module: WorkspaceModule): EngineAgentIdentity {
   return {
@@ -114,23 +103,6 @@ function sendFreeText() {
       <button type="button" class="agent-dock-close" aria-label="Close agent" @click="emit('close')">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
       </button>
-    </div>
-
-    <!-- Pipeline telemetry — live throughput measured by the multi-model engine -->
-    <div class="agent-dock-block agent-dock-telemetry">
-      <div class="agent-dock-block-head">Pipeline</div>
-      <div class="agent-dock-telemetry-row">
-        <span class="agent-dock-telemetry-value">{{ pipelineTps }}</span>
-        <span class="agent-dock-telemetry-label">tok/s</span>
-      </div>
-      <div class="agent-dock-telemetry-row">
-        <span class="agent-dock-telemetry-value">{{ subagentCount }}</span>
-        <span class="agent-dock-telemetry-label">subagents</span>
-      </div>
-      <div class="agent-dock-telemetry-row">
-        <span class="agent-dock-telemetry-value">{{ healthyModels }}</span>
-        <span class="agent-dock-telemetry-label">healthy models</span>
-      </div>
     </div>
 
     <!-- Governed "Next moves" for this module -->
@@ -251,36 +223,6 @@ function sendFreeText() {
 }
 .agent-dock-title { font: 600 var(--apt-font-size-body-md) / 1 var(--apt-font-serif); color: var(--apt-text-strong); }
 .agent-dock-sub { font: 500 10px / 1.3 var(--apt-font-mono); letter-spacing: 0.04em; color: var(--apt-text-dim); margin-top: 3px; }
-
-/* Pipeline telemetry — live throughput numbers */
-.agent-dock-telemetry {
-  padding: var(--apt-spacing-s4) var(--apt-spacing-s5);
-  background: var(--apt-color-neutral-n0);
-  border: 1px solid var(--line);
-  border-radius: var(--apt-radius-r2);
-}
-
-.agent-dock-telemetry-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--apt-spacing-s4);
-  font-family: var(--apt-font-mono);
-}
-
-.agent-dock-telemetry-value {
-  font-size: var(--apt-font-size-title-2);
-  font-weight: var(--apt-font-weight-semibold);
-  color: var(--apt-text-strong);
-  letter-spacing: -0.01em;
-}
-
-.agent-dock-telemetry-label {
-  font-size: var(--apt-font-size-micro);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--apt-text-dim);
-}
 
 .agent-dock-block { margin-bottom: var(--apt-spacing-s7); }
 .agent-dock-block-head {

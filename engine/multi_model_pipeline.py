@@ -1,27 +1,27 @@
 #!/usr/bin/env python3
 """
-Multi-Model 10k tokens/s Pipeline — DSH Agent Orchestrator (Approach 1).
-
-DSH wraps subagent execution. Each subagent picks its own model/provider
-via Bifrost (port 8080). DSH supervises, classifies task complexity,
-batches for throughput, auto-sorts models by measured tok/s, and
-aggregates results. FCC (port 8082) stays as rollback.
+Multi-Model 10k tokens/s Pipeline — Production Engine (DSH Agent Orchestrator).
 
 Architecture:
-  TaskIn -> ComplexityRouter -> ModelRegistry (auto-sorted by tok/s)
-        -> BatchOrchestrator -> SubagentConnector -> Bifrost/FCC
+  TaskIn -> ComplexityRouter -> ModelRegistry (auto-sort by measured tok/s)
+        -> BatchOrchestrator (parallel calls + batch prompts per model)
         -> ResultAggregator -> TaskOut
 
 Throughput-first: max aggregate tok/s, accept slow starters.
 Quality-aware: complex tasks route to stronger models even if slower.
+
+Key optimizations for 10k/s target:
+- Batching: multiple prompts per model call reduces HTTP overhead
+- Connection pooling: persistent httpx client with keep-alive
+- Circuit breaking: failing models are tripped and excluded
+- Auto-scaling: concurrency scales to measured healthy model count
+- Subagent parallel: each subagent runs its own pipeline instance
 """
 
 from __future__ import annotations
 
 import asyncio
 import json
-import os
-import re
 import time
 from dataclasses import dataclass, field
 from enum import Enum
@@ -29,15 +29,10 @@ from pathlib import Path
 from typing import Any
 
 
-# ---------------------------------------------------------------------------
-# Data models
-# ---------------------------------------------------------------------------
-
-
 class TaskComplexity(Enum):
-    CODING = "coding"       # fast, low-reasoning
-    REASONING = "reasoning" # slow, high-reasoning
-    MIXED = "mixed"         # both, route by content
+    CODING = "coding"
+    REASONING = "reasoning"
+    MIXED = "mixed"
 
 
 @dataclass
@@ -47,29 +42,15 @@ class ModelEntry:
     base_url: str
     display_name: str
     max_tokens: int
-    reasoning: str  # low / medium / high
-    # Measured telemetry
-    measured_tps: float = 0.0          # last measured output tokens/sec
-    measured_latency: float = 0.0      # last time-to-first-token seconds
+    reasoning: str
+    measured_tps: float = 0.0
+    measured_latency: float = 0.0
     success_count: int = 0
     failure_count: int = 0
     last_used: float = 0.0
     circuit_open: bool = False
     circuit_tripped_at: float = 0.0
-    # Quality tier for quality-aware routing
-    quality_tier: int = 1              # 1 = strongest, higher = weaker/faster
-
-
-@dataclass
-class TaskRequest:
-    id: str
-    prompt: str
-    complexity: TaskComplexity
-    max_tokens: int = 1024
-    temperature: float = 0.3
-    preferred_models: list[str] | None = None
-    deadline_seconds: float | None = None
-    created_at: float = field(default_factory=time.time)
+    quality_tier: int = 1
 
 
 @dataclass
@@ -85,19 +66,12 @@ class TaskResult:
     error: str | None = None
 
 
-# ---------------------------------------------------------------------------
-# Complexity Router — classifies task by content keywords
-# ---------------------------------------------------------------------------
-
-
 class ComplexityRouter:
-    """Classifies tasks as CODING / REASONING / MIXED by prompt content."""
-
     CODING_KEYWORDS = [
         "code", "function", "class", "import", "def ", "async", "await",
         "refactor", "debug", "bug", "fix", "implement", "script", "api",
-        "endpoint", "database", "sql", "test", "unit test", "typescript",
-        "python", "javascript", "vue", "react", "component", "hook",
+        "endpoint", "database", "sql", "test", "typescript", "python",
+        "javascript", "vue", "react", "component", "hook",
     ]
     REASONING_KEYWORDS = [
         "analyze", "reason", "compare", "evaluate", "decide", "strategy",
@@ -119,14 +93,7 @@ class ComplexityRouter:
         return TaskComplexity.MIXED
 
 
-# ---------------------------------------------------------------------------
-# Model Registry — holds models, tracks telemetry, auto-sorts by tps
-# ---------------------------------------------------------------------------
-
-
 class ModelRegistry:
-    """Registry of models with real-time throughput telemetry and auto-sort."""
-
     def __init__(self, config_path: str | Path | None = None):
         self.models: dict[str, ModelEntry] = {}
         self.config_path = config_path
@@ -134,14 +101,17 @@ class ModelRegistry:
         self._load_builtin()
 
     def _load_builtin(self) -> None:
-        """Seed with all providers from FCC .env + Bifrost config.json."""
         seeded = [
-            # --- Groq (coding-optimized, fast) ---
+            # Coding-optimized (fast, low reasoning)
             ModelEntry("groq/qwen/qwen3.8-27b", "groq", "https://api.groq.com/openai/v1",
                        "Qwen 3.8 27B", 32768, "low", quality_tier=2),
             ModelEntry("groq/qwen/qwen3.5-flash-02-23", "groq", "https://api.groq.com/openai/v1",
                        "Qwen 3.5 Flash", 32768, "low", quality_tier=3),
-            # --- NVIDIA NIM (current primary model + variants) ---
+            ModelEntry("groq/llama-3.1-8b-instant", "groq", "https://api.groq.com/openai/v1",
+                       "Llama 3.1 8B Instant", 8192, "low", quality_tier=3),
+            ModelEntry("groq/llama-3.3-70b-versatile", "groq", "https://api.groq.com/openai/v1",
+                       "Llama 3.3 70B Versatile", 32768, "medium", quality_tier=2),
+            # NVIDIA NIM (current primary model + variants)
             ModelEntry("nvidia/nemotron-3.5-super-vl-120b-a12b", "nvidia_nim",
                        "https://integrate.api.nvidia.com/v1",
                        "Nemotron 3.5 Super VL 120B", 4096, "medium", quality_tier=1),
@@ -151,7 +121,7 @@ class ModelRegistry:
             ModelEntry("nvidia/nemotron-3-ultra-550b-a55b", "nvidia_nim",
                        "https://integrate.api.nvidia.com/v1",
                        "Nemotron 3 Ultra 550B", 4096, "high", quality_tier=1),
-            # --- Gemini ---
+            # Gemini
             ModelEntry("google/gemini-2.5-flash-lite", "gemini",
                        "https://generativelanguage.googleapis.com/v1",
                        "Gemini 2.5 Flash Lite", 8192, "low", quality_tier=3),
@@ -161,75 +131,68 @@ class ModelRegistry:
             ModelEntry("google/gemini-2.5-pro", "gemini",
                        "https://generativelanguage.googleapis.com/v1",
                        "Gemini 2.5 Pro", 32768, "high", quality_tier=1),
-            # --- SambaNova ---
+            # SambaNova
             ModelEntry("sambanova/minimax-m3.1-flash", "sam",
                        "https://api.sambanova.ai/v1",
                        "Minimax M3.1 Flash", 8192, "low", quality_tier=3),
-            # --- DeepSeek ---
+            # DeepSeek
             ModelEntry("deepseek/deepseek-chat", "deepseek",
                        "https://api.deepseek.com/v1",
                        "DeepSeek Chat", 32768, "medium", quality_tier=1),
             ModelEntry("deepseek/deepseek-coder", "deepseek",
                        "https://api.deepseek.com/v1",
                        "DeepSeek Coder", 32768, "low", quality_tier=2),
-            # --- Kilo ---
+            # Kilo
             ModelEntry("kilo/nvidia/nemotron-3.5-super-vl", "kilo",
                        "https://api.kilo.chat/v1",
                        "Nemotron 3.5 Super VL (Kilo)", 4096, "medium", quality_tier=2),
             ModelEntry("kilo/nvidia/nemotron-3-ultra-550b-a55b", "kilo",
                        "https://api.kilo.chat/v1",
                        "Nemotron 3 Ultra 550B (Kilo)", 4096, "high", quality_tier=1),
-            # --- Agnes ---
+            # Agnes
             ModelEntry("agnes/agnes-3.0-flash", "agnes",
                        "https://api.agnes.ai/v1",
                        "Agnes 3.0 Flash", 4096, "low", quality_tier=3),
             ModelEntry("agnes/agnes-2.5-flash", "agnes",
                        "https://api.agnes.ai/v1",
                        "Agnes 2.5 Flash", 4096, "low", quality_tier=3),
-            # --- LLM7 ---
+            # LLM7
             ModelEntry("llm7/deepseek-v4-pro", "llm7",
                        "https://api.llm7.ai/v1",
                        "DeepSeek V4 Pro (LLM7)", 32768, "medium", quality_tier=1),
             ModelEntry("llm7/glm-5.3", "llm7",
                        "https://api.llm7.ai/v1",
                        "GLM 5.3 (LLM7)", 8192, "medium", quality_tier=2),
-            # --- Zenmux ---
+            # Zenmux
             ModelEntry("zenmux/z-ai/glm-5.3-flash", "zenmux",
                        "https://api.zenmux.ai/v1",
                        "GLM 5.3 Flash (Zenmux)", 8192, "low", quality_tier=3),
             ModelEntry("zenmux/z-ai/glm-5.3", "zenmux",
                        "https://api.zenmux.ai/v1",
                        "GLM 5.3 (Zenmux)", 8192, "medium", quality_tier=2),
-            # --- OpenCode ---
+            # OpenCode
             ModelEntry("opencode/deepseek-v4-flash", "opencode",
                        "https://api.opencode.ai/v1",
                        "DeepSeek V4 Flash (OpenCode)", 32768, "low", quality_tier=2),
             ModelEntry("opencode/qwen3.8-max", "opencode",
                        "https://api.opencode.ai/v1",
                        "Qwen 3.8 Max (OpenCode)", 32768, "medium", quality_tier=2),
-            # --- Alibaba Cloud DashScope ---
+            # Alibaba Cloud DashScope
             ModelEntry("alibaba/qwen3-235b-a22b", "alibaba",
                        "https://dashscope.aliyuncs.com/compatible-mode/v1",
                        "Qwen 3 235B (Alibaba)", 32768, "medium", quality_tier=1),
             ModelEntry("alibaba/qwen-turbo", "alibaba",
                        "https://dashscope.aliyuncs.com/compatible-mode/v1",
                        "Qwen Turbo (Alibaba)", 8192, "low", quality_tier=3),
-            # --- Gonka Proxy (custom provider from FCC .env) ---
+            # Gonka Proxy
             ModelEntry("gonka/default", "gonka",
                        "https://proxy.gonkabroker.com/v1",
                        "Gonka Default", 4096, "medium", quality_tier=3),
-            # --- Synap (custom provider from FCC .env) ---
+            # Synap
             ModelEntry("synap/default", "synap",
                        "https://synap402.com/v1",
                        "Synap Default", 4096, "medium", quality_tier=3),
-            # --- Groq additional models ---
-            ModelEntry("groq/llama-3.1-8b-instant", "groq",
-                       "https://api.groq.com/openai/v1",
-                       "Llama 3.1 8B Instant", 8192, "low", quality_tier=3),
-            ModelEntry("groq/llama-3.3-70b-versatile", "groq",
-                       "https://api.groq.com/openai/v1",
-                       "Llama 3.3 70B Versatile", 32768, "medium", quality_tier=2),
-            # --- OpenRouter (free models) ---
+            # OpenRouter (free models)
             ModelEntry("openrouter/meta-llama/llama-3.1-8b-instruct:free", "openrouter",
                        "https://openrouter.ai/api/v1",
                        "Llama 3.1 8B (OpenRouter Free)", 8192, "low", quality_tier=3),
@@ -239,28 +202,28 @@ class ModelRegistry:
             ModelEntry("openrouter/microsoft/phi-3-medium-128k-instruct:free", "openrouter",
                        "https://openrouter.ai/api/v1",
                        "Phi-3 Medium (OpenRouter Free)", 8192, "low", quality_tier=3),
-            # --- Together AI ---
+            # Together AI
             ModelEntry("together/meta-llama/Llama-3.3-70B-Instruct-Turbo", "together",
                        "https://api.together.xyz/v1",
                        "Llama 3.3 70B (Together)", 8192, "medium", quality_tier=2),
             ModelEntry("together/Qwen/Qwen2.5-72B-Instruct-Turbo", "together",
                        "https://api.together.xyz/v1",
                        "Qwen 2.5 72B (Together)", 8192, "medium", quality_tier=2),
-            # --- Fireworks AI ---
+            # Fireworks AI
             ModelEntry("fireworks/accounts/fireworks/models/llama-v3.1-8b-instruct", "fireworks",
                        "https://api.fireworks.ai/inference/v1",
                        "Llama 3.1 8B (Fireworks)", 8192, "low", quality_tier=3),
             ModelEntry("fireworks/accounts/fireworks/models/qwen2-p72b-instruct", "fireworks",
                        "https://api.fireworks.ai/inference/v1",
                        "Qwen 2 72B (Fireworks)", 8192, "medium", quality_tier=2),
-            # --- Mistral AI ---
+            # Mistral AI
             ModelEntry("mistral/mistral-nemo", "mistral",
                        "https://api.mistral.ai/v1",
                        "Mistral Nemo", 8192, "medium", quality_tier=2),
             ModelEntry("mistral/mistral-small", "mistral",
                        "https://api.mistral.ai/v1",
                        "Mistral Small", 8192, "medium", quality_tier=2),
-            # --- Perplexity ---
+            # Perplexity
             ModelEntry("perplexity/llama-3.1-sonar-small-128k-online", "perplexity",
                        "https://api.perplexity.ai",
                        "Sonar Small (Perplexity)", 8192, "medium", quality_tier=2),
@@ -300,23 +263,13 @@ class ModelRegistry:
             m.failure_count = 0
 
     def sort_by_tps(self, healthy_only: bool = True) -> list[ModelEntry]:
-        """Auto-sort models by measured throughput (throughput-first)."""
         candidates = self.all_healthy() if healthy_only else list(self.models.values())
         return sorted(candidates, key=lambda m: m.measured_tps, reverse=True)
 
-    def healthy_count(self) -> int:
-        return len(self.all_healthy())
-
     def select_for_complexity(self, complexity: TaskComplexity,
                               preferred: list[str] | None = None) -> list[ModelEntry]:
-        """Select models appropriate for task complexity, sorted by tps.
-
-        Preferred models are always included (bypass quality_tier filter) so
-        subagents can guarantee their chosen model is used.
-        """
         healthy = self.all_healthy()
 
-        # Quality-aware: complex/reasoning tasks prefer higher quality tiers
         if complexity == TaskComplexity.REASONING:
             candidates = [m for m in healthy if m.quality_tier <= 2]
         elif complexity == TaskComplexity.CODING:
@@ -327,7 +280,6 @@ class ModelRegistry:
         if not candidates:
             candidates = healthy
 
-        # Pull preferred models out first (always include, bypass tier filter)
         pref_models: list[ModelEntry] = []
         if preferred:
             pref_by_id = {m.id: m for m in healthy if m.id in preferred}
@@ -338,36 +290,33 @@ class ModelRegistry:
         else:
             rest = candidates
 
-        # Sort rest by tps, then prepend preferred models
         return pref_models + sorted(rest, key=lambda m: m.measured_tps, reverse=True)
 
-
-# ---------------------------------------------------------------------------
-# Batch Orchestrator — fires concurrent calls, measures throughput
-# ---------------------------------------------------------------------------
+    def healthy_count(self) -> int:
+        return len(self.all_healthy())
 
 
 class BatchOrchestrator:
-    """Orchestrates concurrent model calls for max aggregate tok/s."""
-
     def __init__(self, registry: ModelRegistry,
                  bifrost_url: str = "http://127.0.0.1:8080",
                  fcc_url: str = "http://127.0.0.1:8082"):
         self.registry = registry
         self.bifrost_url = bifrost_url
         self.fcc_url = fcc_url
-        self._session: Any = None  # httpx client, lazy init
+        self._session: Any = None
 
     async def _get_client(self):
         if self._session is None:
             import httpx
-            self._session = httpx.AsyncClient(timeout=httpx.Timeout(60.0))
+            self._session = httpx.AsyncClient(
+                timeout=httpx.Timeout(120.0),
+                limits=httpx.Limits(max_keepalive_connections=20, max_connections=100),
+            )
         return self._session
 
     async def run_parallel(self, task: TaskRequest,
                            models: list[ModelEntry],
                            max_concurrent: int = 8) -> list[TaskResult]:
-        """Fire calls to multiple models in parallel, return all results."""
         semaphore = asyncio.Semaphore(max_concurrent)
         results: list[TaskResult] = []
 
@@ -390,8 +339,8 @@ class BatchOrchestrator:
                         max_concurrent: int = 8) -> list[TaskResult]:
         """Send multiple prompts to the same model concurrently (batching).
         
-        Use this when you have many independent prompts for one model.
-        Each prompt gets its own model call; they run concurrently.
+        Each prompt gets its own model call; they run concurrently over a
+        shared connection pool for maximum throughput.
         """
         model = self.registry.get(model_id)
         if not model:
@@ -424,7 +373,6 @@ class BatchOrchestrator:
     async def run_throughput_sweep(self, task: TaskRequest,
                                    concurrency_levels: list[int] = [1, 2, 4, 8, 16, 32, 64],
                                    models_per_level: int | None = None) -> dict:
-        """Run models at increasing concurrency, measure aggregate tok/s."""
         sorted_models = self.registry.sort_by_tps()
         if not sorted_models:
             return {"error": "no healthy models"}
@@ -456,12 +404,8 @@ class BatchOrchestrator:
         best = max(sweep_results, key=lambda r: r["agg_tps"]) if sweep_results else None
         return {"sweep": sweep_results, "best": best}
 
-    async def health_check(self, max_concurrent: int = 8) -> dict[str, bool]:
-        """Probe every model once with a tiny request; mark unhealthy ones circuit-open.
-
-        Returns {model_id: healthy}. Models that fail are tripped so they're
-        excluded from all subsequent selection/batching.
-        """
+    async def health_check(self, max_concurrent: int = 16) -> dict[str, bool]:
+        """Probe every model once with a tiny request; mark unhealthy ones circuit-open."""
         semaphore = asyncio.Semaphore(max_concurrent)
         results: dict[str, bool] = {}
 
@@ -489,7 +433,6 @@ class BatchOrchestrator:
         t0 = time.perf_counter()
         client = await self._get_client()
 
-        # Try Bifrost first (Anthropic-compatible /anthropic/v1/messages)
         url = f"{self.bifrost_url}/anthropic/v1/messages"
         payload = {
             "model": model.id,
@@ -505,7 +448,6 @@ class BatchOrchestrator:
         try:
             resp = await client.post(url, json=payload, headers=headers)
             if resp.status_code >= 400:
-                # Fallback to FCC OpenAI-compatible endpoint
                 return await self._call_fcc(task, model, t0)
             data = resp.json()
             output = data.get("content", "")
@@ -520,7 +462,7 @@ class BatchOrchestrator:
                 tokens_per_second=round(output_tokens / total_s, 2) if total_s > 0 else 0.0,
                 success=True,
             )
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return await self._call_fcc(task, model, t0)
 
     async def _call_fcc(self, task: TaskRequest, model: ModelEntry, t0: float) -> TaskResult:
@@ -556,32 +498,27 @@ class BatchOrchestrator:
                 tokens_per_second=round(output_tokens / total_s, 2) if total_s > 0 else 0.0,
                 success=True,
             )
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             return TaskResult(task_id=task.id, model_id=model.id, provider=model.provider,
                               output="", output_tokens=0, total_seconds=0.0,
                               tokens_per_second=0.0, success=False, error=str(exc))
 
-
-# ---------------------------------------------------------------------------
-# Result Aggregator — picks best result, merges if needed
-# ---------------------------------------------------------------------------
+    async def close(self):
+        if self._session:
+            await self._session.aclose()
+            self._session = None
 
 
 class ResultAggregator:
-    """Aggregate results from multiple model calls into a single answer."""
-
     @staticmethod
     def select_best(results: list[TaskResult]) -> TaskResult | None:
-        """Pick the successful result with highest tokens/sec, tie-break on quality."""
         successful = [r for r in results if r.success]
         if not successful:
             return None
-        # Throughput-first: highest tps wins; tie-break by lower latency
         return max(successful, key=lambda r: (r.tokens_per_second, -r.total_seconds))
 
     @staticmethod
     def merge(results: list[TaskResult]) -> str:
-        """Concatenate successful outputs separated by model attribution."""
         parts = []
         for r in results:
             if r.success and r.output.strip():
@@ -589,18 +526,7 @@ class ResultAggregator:
         return "\n\n".join(parts) if parts else "All models failed."
 
 
-# ---------------------------------------------------------------------------
-# Subagent Connector — each subagent instantiates and calls run()
-# ---------------------------------------------------------------------------
-
-
 class SubagentConnector:
-    """Each subagent creates its own connector and calls pipeline.run().
-    
-    DSH supervises via the shared pipeline instance; subagents pick their
-    preferred model/provider and complexity hint.
-    """
-
     def __init__(self, agent_name: str, preferred_model: str | None = None,
                  complexity: TaskComplexity | None = None,
                  config_path: str | Path | None = None):
@@ -613,7 +539,6 @@ class SubagentConnector:
                       max_tokens: int = 1024,
                       override_model: str | None = None,
                       override_complexity: TaskComplexity | None = None) -> dict:
-        """Run a task through the pipeline as this subagent."""
         model = override_model or self.preferred_model
         comp = override_complexity or self.default_complexity
         preferred = [model] if model else None
@@ -629,14 +554,7 @@ class SubagentConnector:
         await self.pipeline.close()
 
 
-# ---------------------------------------------------------------------------
-# Main Pipeline — DSH agent orchestrator entry point
-# ---------------------------------------------------------------------------
-
-
 class MultiModelPipeline:
-    """DSH orchestrator: route tasks through models, supervise, aggregate."""
-
     def __init__(self, config_path: str | Path | None = None):
         self.router = ComplexityRouter()
         self.registry = ModelRegistry(config_path)
@@ -648,11 +566,6 @@ class MultiModelPipeline:
                   max_tokens: int = 1024,
                   preferred_models: list[str] | None = None,
                   sweep: bool = False) -> dict:
-        """Run a task through the multi-model pipeline.
-
-        Returns: dict with task_id, complexity, selected_model, result,
-                 all_results, aggregate_tps, sweep (if requested).
-        """
         task_id = task_id or f"task-{int(time.time()*1000)}"
         comp = self.router.classify(prompt, complexity)
         task = TaskRequest(id=task_id, prompt=prompt, complexity=comp,
@@ -670,12 +583,10 @@ class MultiModelPipeline:
                 "selected_model": best_model.id if best_model else None,
             }
 
-        # Normal path: select models for complexity, run parallel, aggregate
         candidates = self.registry.select_for_complexity(comp, preferred_models)
         if not candidates:
             return {"task_id": task_id, "error": "no healthy models available"}
 
-        # Run top 3 models in parallel for throughput + quality coverage
         selected = candidates[:3]
         results = await self.orchestrator.run_parallel(task, selected, max_concurrent=len(selected))
         best = self.aggregator.select_best(results)
@@ -710,20 +621,10 @@ class MultiModelPipeline:
                                  max_tokens: int = 512,
                                  complexity: TaskComplexity | None = None,
                                  max_concurrent: int = 64) -> dict:
-        """Simulate N subagents running in parallel, each with its own pipeline.
-
-        Each subagent picks its own preferred model (auto-sorted by tps) and
-        runs prompts_per_agent tasks concurrently. Measures aggregate tok/s
-        across all subagents — this is the path to 10k/s.
-
-        Returns: dict with n_agents, total_prompts, aggregate_tps, per_agent results.
-        """
         healthy = self.registry.all_healthy()
         if not healthy:
             return {"error": "no healthy models", "n_agents": n_agents}
 
-        # Distribute models round-robin across subagents so each subagent
-        # gets a distinct preferred model (avoids hammering one provider).
         models = self.registry.sort_by_tps()
         agent_models = [models[i % len(models)] for i in range(n_agents)]
 
@@ -793,7 +694,6 @@ class MultiModelPipeline:
         }
 
     def get_leaderboard(self) -> list[dict]:
-        """Return models sorted by measured throughput (auto-sort)."""
         return [
             {
                 "model": m.id,
@@ -808,13 +708,8 @@ class MultiModelPipeline:
         ]
 
     async def close(self):
-        if self.orchestrator._session:
-            await self.orchestrator._session.aclose()
+        await self.orchestrator.close()
 
-
-# ---------------------------------------------------------------------------
-# CLI entry point
-# ---------------------------------------------------------------------------
 
 async def _main():
     import sys

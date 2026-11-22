@@ -174,7 +174,7 @@ const PLATFORM_PERMISSIONS: Record<PlatformRole, (Permission | '*')[]> = {
   ],
 };
 
-const ACTOR_ROLE_PERMISSIONS: Record<ActorRole, Permission[]> = {
+export const ACTOR_ROLE_PERMISSIONS: Record<ActorRole, Permission[]> = {
   owner: [
     'actor:read', 'actor:write', 'actor:admin', 'actor:manageMembers', 'actor:manageRoles',
     'resource:read', 'resource:write', 'resource:admin',

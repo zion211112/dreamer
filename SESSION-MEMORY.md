@@ -1,37 +1,29 @@
-## Session: 2026-11-22 part 5 continued — Site Build Parallel Execution
+## Session: 2026-11-22 part 5b — Shell Wiring Complete
 
-**Pipeline EXCEEDS target ✅** — 2,462 tok/s at 6 subagents (user approved 1,000 tok/s).
+**Workspace shell BUILT with all DSH plugins wired for max work/speed.** Committed at `e08ec1d`.
 
-### PARALLEL BUILD PHASE — 8 SUBAGENTS DISPATCHED
+### Shell frame (`src/shell/WorkspaceShell.vue`)
+- Plugin status bar: cordis, llm, session, agent, settings, authz, timer, hmr (237 plugins)
+- Work/speed HUD bottom-right: live tok/s, agents, models, work/s
+- Keyboard shortcuts: ⌘J dock, ⌘K search, ⌘1-5 modules, ⌘B records, ⌘P settings
+- Four-column grid: 64px rail | 232px nav | fluid content | 360px agent dock
+- Agent dock slides in on ⌘J/Esc, pipeline telemetry visible
 
-| Subagent | Module | Route(s) | Status |
-|----------|--------|----------|--------|
-| landing-designer | Landing Page | /landing | ⏳ In progress |
-| workspace-shell-designer | Workspace Shell | /workspace | ⏳ In progress |
-| commons-network-designer | Commons/Network | /workspace/commons, /workspace/network/... | ⏳ In progress |
-| workbench-designer | Workbench | /workspace/workbench, /workspace/workbench/:pilot | ⏳ In progress |
-| records-intelligence-designer | Records/Intelligence | /workspace/records/{canon,annals,roll}, /workspace/intelligence | ⏳ In progress |
-| value-designer | Value | /workspace/value | ⏳ In progress |
-| dashboard-designer | User Dashboard | /workspace/dashboard | ⏳ In progress |
-| auth-designer | Auth/Sign-in | /sign-in, /sign-up | ⏳ In progress |
-
-### Mission: Lean Masterpiece $3B Quality
-- Beat Palantir and Linear in UI logic and design
-- All modules rated 10/10 by human expert dev or premium GPT
-- Landing page: awe-inspiring, African identity art strip, sublime
-- Perfect coherence across workspace
-- No weak, badly placed, or badly scaled elements
-- Structural Emergence design system applied rigorously
-- No mock data, no generic SaaS patterns, no glassmorphism
-
-### Build verification — ALL GREEN (before parallel build)
+### Build verification — ALL GREEN
 - `npx tsc --noEmit` — clean
 - `npm run test:unit -- --run` — 34 files, 318 tests pass
-- `npm run build:app` — green
+- `npm run build:app` — green (194 modules)
+
+### Dashboard-designer ready to build on shell
+- Route `/workspace/dashboard` → `src/pages/workspace/UserDashboard.vue`
+- Import `moduleForPath`/`WORKSPACE_MODULES` from `./shell/registry`
+- Import `iconSvg` from `./shell/icons`
+- Use `data-module="dashboard"` for accent
+- Editorial serif for records, sans/mono for interface
 
 ### Pipeline — EXCEEDED ✅
-- 2,462 tok/s at 6 subagents (target: 1,000 tok/s — exceeded by 2.5x)
-- Bifrost (8080) + FCC (8082 rollback)
-- 29/37 models healthy, 17 providers
+2,462 tok/s at 6 agents (user approved 1000 tok/s)
 
-Working tree clean. Commit 18236a9. Waiting for all 8 subagents to complete, then integrate and do final build verification.
+### Remaining module refinements
+- Commons/Network — ⬜ $3B quality refinement
+- Workbench — ⬜ $3B quality refinement

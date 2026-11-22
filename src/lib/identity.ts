@@ -50,6 +50,61 @@ export interface IdentityRecord {
   updatedAt: string;
 }
 
+// ---------------------------------------------------------------------------
+// Organization-scoped Identity
+// ---------------------------------------------------------------------------
+
+export interface OrganizationIdentitySettings {
+  /** Display name within this organization. */
+  displayName: string;
+  /** Role-specific title (e.g., "Lead Engineer", "Project Coordinator"). */
+  title?: string;
+  /** Department or unit within the organization. */
+  department?: string;
+  /** Cost center or budget code. */
+  costCenter?: string;
+  /** Location within the organization (site, office, region). */
+  location?: string;
+  /** Skills or capabilities relevant in this org context. */
+  skills?: string[];
+  /** Preferred contact method within org. */
+  contactPreference?: 'email' | 'internal' | 'phone';
+}
+
+export interface OrganizationIdentityRecord {
+  id: string;
+  /** The platform-level identity this is scoped from. */
+  identityId: string;
+  /** The organization this identity is scoped to. */
+  organizationId: string;
+  /** The actor (person/crew) within the organization. */
+  actorId: string;
+  /** Organization-specific settings. */
+  settings: OrganizationIdentitySettings;
+  /** Whether this organization identity is active. */
+  active: boolean;
+  version: number;
+  supersedesId: string | null;
+  createdBy: string;
+  updatedBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateOrganizationIdentityInput {
+  identityId: string;
+  organizationId: string;
+  actorId: string;
+  settings: OrganizationIdentitySettings;
+  createdBy: string;
+}
+
+export interface UpdateOrganizationIdentityInput {
+  settings?: Partial<OrganizationIdentitySettings>;
+  active?: boolean;
+  updatedBy: string;
+}
+
 export interface RegisterIdentityInput {
   accountId: string;
   email: string;
@@ -73,6 +128,7 @@ export interface RecoveryToken {
 
 const IDENTITIES_KEY = 'aptlabs:identities';
 const RECOVERY_KEY = 'aptlabs:recovery-tokens';
+const ORG_IDENTITIES_KEY = 'aptlabs:org-identities';
 
 function readIdentities(): IdentityRecord[] {
   return readJson<IdentityRecord[]>(IDENTITIES_KEY, []);
@@ -86,6 +142,13 @@ function readRecovery(): RecoveryToken[] {
 }
 function writeRecovery(tokens: RecoveryToken[]): void {
   writeJson(RECOVERY_KEY, tokens);
+}
+
+function readOrgIdentities(): OrganizationIdentityRecord[] {
+  return readJson<OrganizationIdentityRecord[]>(ORG_IDENTITIES_KEY, []);
+}
+function writeOrgIdentities(records: OrganizationIdentityRecord[]): void {
+  writeJson(ORG_IDENTITIES_KEY, records);
 }
 
 function nowIso(): string {
@@ -349,4 +412,150 @@ export function listIdentities(filter?: { verified?: boolean; accountId?: string
 export function clearIdentities(): void {
   writeIdentities([]);
   writeRecovery([]);
+  writeOrgIdentities([]);
+}
+
+// ---------------------------------------------------------------------------
+// Organization Identity service
+// ---------------------------------------------------------------------------
+
+/**
+ * Create an organization-scoped identity for an actor within an organization.
+ * This extends the platform identity with org-specific context.
+ */
+export function createOrganizationIdentity(
+  input: CreateOrganizationIdentityInput,
+  authz?: AuthzContext
+): OrganizationIdentityRecord {
+  if (authz) {
+    requirePermission(authz, 'actor:write');
+  }
+
+  const orgIdentities = readOrgIdentities();
+  const now = nowIso();
+  const record: OrganizationIdentityRecord = {
+    id: createId('org-ident'),
+    identityId: input.identityId,
+    organizationId: input.organizationId,
+    actorId: input.actorId,
+    settings: { ...input.settings },
+    active: true,
+    version: 1,
+    supersedesId: null,
+    createdBy: input.createdBy,
+    updatedBy: input.createdBy,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  orgIdentities.push(record);
+  writeOrgIdentities(orgIdentities);
+
+  logAuditEvent({
+    accountId: input.createdBy,
+    actorId: input.actorId,
+    action: 'organization.identity.create',
+    resourceType: 'organizationIdentity',
+    resourceId: record.id,
+    details: { organizationId: input.organizationId, actorId: input.actorId },
+  });
+
+  return record;
+}
+
+/**
+ * Get an organization identity by ID.
+ */
+export function getOrganizationIdentity(id: string): OrganizationIdentityRecord | undefined {
+  return readOrgIdentities().find((r) => r.id === id);
+}
+
+/**
+ * Get the organization identity for a specific actor in an organization.
+ */
+export function getOrganizationIdentityByActor(organizationId: string, actorId: string): OrganizationIdentityRecord | undefined {
+  return readOrgIdentities().find(
+    (r) => r.organizationId === organizationId && r.actorId === actorId && r.active
+  );
+}
+
+/**
+ * Get all organization identities for an organization.
+ */
+export function listOrganizationIdentities(organizationId: string, activeOnly = true): OrganizationIdentityRecord[] {
+  return readOrgIdentities().filter((r) => {
+    if (r.organizationId !== organizationId) return false;
+    if (activeOnly && !r.active) return false;
+    return true;
+  });
+}
+
+/**
+ * Update an organization identity.
+ */
+export function updateOrganizationIdentity(
+  id: string,
+  input: UpdateOrganizationIdentityInput,
+  authz?: AuthzContext
+): OrganizationIdentityRecord | undefined {
+  if (authz) {
+    requirePermission(authz, 'actor:write');
+  }
+
+  const orgIdentities = readOrgIdentities();
+  const idx = orgIdentities.findIndex((r) => r.id === id);
+  if (idx === -1) return undefined;
+
+  const record = orgIdentities[idx];
+  const now = nowIso();
+
+  if (input.settings) {
+    record.settings = { ...record.settings, ...input.settings };
+  }
+  if (input.active !== undefined) {
+    record.active = input.active;
+  }
+
+  record.version += 1;
+  record.updatedBy = input.updatedBy;
+  record.updatedAt = now;
+  writeOrgIdentities(orgIdentities);
+
+  logAuditEvent({
+    accountId: input.updatedBy,
+    actorId: record.actorId,
+    action: 'organization.identity.update',
+    resourceType: 'organizationIdentity',
+    resourceId: record.id,
+    details: { version: record.version, active: record.active },
+  });
+
+  return record;
+}
+
+/**
+ * Deactivate (soft delete) an organization identity.
+ */
+export function deactivateOrganizationIdentity(
+  id: string,
+  deactivatedBy: string,
+  authz?: AuthzContext
+): OrganizationIdentityRecord | undefined {
+  return updateOrganizationIdentity(id, { active: false, updatedBy: deactivatedBy }, authz);
+}
+
+/**
+ * Get the platform identity linked to an organization identity.
+ */
+export function getPlatformIdentityForOrgIdentity(orgIdentityId: string): IdentityRecord | undefined {
+  const orgIdentity = getOrganizationIdentity(orgIdentityId);
+  if (!orgIdentity) return undefined;
+  return getIdentity(orgIdentity.identityId);
+}
+
+/**
+ * Get all organization identities linked to a platform identity.
+ */
+export function getOrganizationIdentitiesForPlatformIdentity(identityId: string): OrganizationIdentityRecord[] {
+  return readOrgIdentities().filter((r) => r.identityId === identityId && r.active);
 }
