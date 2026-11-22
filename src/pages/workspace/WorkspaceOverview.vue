@@ -74,7 +74,7 @@ const MOVES = [
     icon: 'M4 5h16M4 12h16M4 19h10',
   },
   {
-    to: '/workspace/proof',
+    to: '/workspace/records/roll',
     verb: 'Verify evidence',
     consequence: `${evidenceCount} items on the ledger — move a claim up a standing, or dispute one that has drifted.`,
     icon: 'M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z M9 12l2 2 4-4',
@@ -225,7 +225,7 @@ const noMatches = computed(
                 Open in workbench
                 <span class="ov-row-arrow" aria-hidden="true">→</span>
               </RouterLink>
-              <RouterLink to="/workspace/proof" class="ov-row-verify">Verify</RouterLink>
+              <RouterLink to="/workspace/records/roll" class="ov-row-verify">Verify</RouterLink>
             </li>
           </ul>
         </div>
