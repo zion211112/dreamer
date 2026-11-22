@@ -53,7 +53,7 @@ onBeforeUnmount(() => {
 })
 
 const dataModule = computed(() => active.value.id)
-const searchPlaceholder = computed(() => `Search ${active.railLabel.toLowerCase()} — ${active.primitive.toLowerCase()}`)
+const searchPlaceholder = computed(() => `Search ${active.value.railLabel.toLowerCase()} — ${active.value.primitive.toLowerCase()}`)
 </script>
 
 <template>
