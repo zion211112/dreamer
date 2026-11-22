@@ -56,7 +56,7 @@ src/
 `src/components/*.tsx`, `src/lib/local-workbench.ts`, `src/lib/workbench-simulation.ts`,
 `src/lib/agent-host.ts`, `docs/STATE_MACHINES.md` references all of them.
 
-## Five modules
+## Workspace modules
 
 | Module | Job | Route |
 |--------|-----|-------|
@@ -65,12 +65,19 @@ src/
 | Workbench | Scope, assemble, coordinate productive work | `/workspace/workbench`, `/workspace/workbench/:pilot` |
 | Records | Canon, Annals, Roll lenses | `/workspace/records/{canon,annals,roll}` |
 | Intelligence | Agents, matching, forecasting, analytics | `/workspace/intelligence` |
+| Tenders | Government and institutional tenders — who bids, who wins, what was delivered | `/workspace/tenders` |
+| Failed Projects | Audit and reclaim abandoned public works | `/workspace/failed-projects` |
+| Investment | Fund founders and innovators — pledges release on verified outcomes | `/workspace/investment` |
+| University | Universities post research needs, host students, issue credentials | `/workspace/university` |
+| High School | Students learn skills on real community projects | `/workspace/highschool` |
 
 School Console is nested under Workbench, not a primary module.
 
 ## Auth
 
-Demo mode (localStorage) when `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` are unset. Roles: `institution`, `founder`, `coordinator`, `admin`.
+Demo mode (localStorage) when `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` are unset. Platform roles: `public`, `authenticated`, `admin`, `moderator`, `trustAdmin`, `credentialIssuerAdmin`. Actor roles: `owner`, `administrator`, `manager`, `member`, `contributor`, `viewer`, `authorizedRepresentative`. Actor types: `individual` (includes `graduate`, `developer`, `sociologist`, `politician`, `student`), `crew`, `institution` (includes `university`, `school`, `hospital`, `cooperative`, `government body`).
+
+No universal reputation score (charter A8). No blockchain prerequisite for participation (charter A8).
 
 ## Guardrails
 

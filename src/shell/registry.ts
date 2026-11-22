@@ -1,11 +1,11 @@
 /**
- * APT-LABS — Workspace module registry.
+ * APT-LABS — Workspace module registry (lean masterpiece).
  *
- * The nine modules are the spine of the operating infrastructure. Each entry
- * is load-bearing: removing one stops the chain. The registry is the single
- * source of truth for module identity, navigation, accent and the ontology
- * primitive a module stands for — the shell, rail, dock and per-module pages
- * all read from here so nothing is invented per-view.
+ * Five modules on the rail — the spine of the operating infrastructure.
+ * Each entry is load-bearing: removing one stops the chain. The registry is
+ * the single source of truth for module identity, navigation, accent and the
+ * ontology primitive a module stands for — the shell, rail, dock and per-module
+ * pages all read from here so nothing is invented per-view.
  *
  * The five pillars (docs/design/superior-fusion-design-system.md) colour each
  * module via the [data-module="…"] accent overrides in apt-tokens.css.
@@ -15,25 +15,17 @@ export type Pillar = 'knowledge' | 'capacity' | 'production' | 'exchange' | 'ste
 
 export type ModuleId =
   | 'overview'
-  | 'commons'
-  | 'network'
-  | 'coordination'
+  | 'commons-network'
   | 'workbench'
-  | 'proof'
-  | 'records'
+  | 'records-intelligence'
   | 'value'
-  | 'intelligence'
 
 export type IconId =
   | 'overview'
-  | 'commons'
-  | 'network'
-  | 'coordination'
+  | 'commons-network'
   | 'workbench'
-  | 'proof'
-  | 'records'
+  | 'records-intelligence'
   | 'value'
-  | 'intelligence'
 
 export interface CtxNavItem {
   label: string
@@ -67,12 +59,12 @@ export interface WorkspaceModule {
   ctxNav: CtxNavSection[]
 }
 
-/** Rail order = the chain: reality → legibility → agency → coordination → execution → proof → value → memory. */
+/** Rail order = the chain: reality → legibility → agency → coordination → execution → proof → value. */
 export const WORKSPACE_MODULES: WorkspaceModule[] = [
   {
     id: 'overview',
     path: '/workspace',
-    railLabel: 'Overview',
+    railLabel: 'Home',
     title: 'Operational Overview',
     pillar: 'stewardship',
     primitive: 'the chain, not the type',
@@ -84,45 +76,18 @@ export const WORKSPACE_MODULES: WorkspaceModule[] = [
     ],
   },
   {
-    id: 'commons',
+    id: 'commons-network',
     path: '/workspace/commons',
     railLabel: 'Commons',
-    title: 'Commons',
+    title: 'Commons / Network',
     pillar: 'knowledge',
-    primitive: 'INTENTION',
-    subtitle: 'What is wanted, asked, and examined before it becomes work.',
-    icon: 'commons',
+    primitive: 'INTENTION · ACTOR · CAPABILITY · RESOURCE',
+    subtitle: 'What is wanted, asked, and examined before it becomes work. Who acts, what they can do, what they hold.',
+    icon: 'commons-network',
     ctxNav: [
       { heading: 'Commons', items: [{ label: 'Explore', to: '/workspace/commons' }, { label: 'Inquiries', to: '/workspace/commons', count: 38 }, { label: 'Knowledge', to: '/workspace/commons', count: 142 }, { label: 'Briefs', to: '/workspace/commons', count: 12 }, { label: 'Contribute' }] },
-      { heading: 'Institutions', items: [{ label: 'All institutions', count: 31 }, { label: 'Kibera Makerspace' }, { label: 'Mwea Water Coop' }, { label: 'Nyeri Education' }] },
-    ],
-  },
-  {
-    id: 'network',
-    path: '/workspace/network',
-    railLabel: 'Network',
-    title: 'Network',
-    pillar: 'exchange',
-    primitive: 'ACTOR · CAPABILITY · RESOURCE',
-    subtitle: 'Who acts, what they can do, and what they hold.',
-    icon: 'network',
-    ctxNav: [
       { heading: 'Actors', items: [{ label: 'People', to: '/workspace/network/people' }, { label: 'Institutions', to: '/workspace/network/institutions' }, { label: 'Capabilities', to: '/workspace/network/capabilities' }] },
       { heading: 'Relations', items: [{ label: 'Holds capability' }, { label: 'Custodies' }, { label: 'Acts on behalf of' }, { label: 'Located at' }] },
-    ],
-  },
-  {
-    id: 'coordination',
-    path: '/workspace/coordination',
-    railLabel: 'Coord',
-    title: 'Coordination',
-    pillar: 'stewardship',
-    primitive: 'AUTHORITY · COMMITMENT',
-    subtitle: 'Who authorised it, and what was promised against that standing.',
-    icon: 'coordination',
-    ctxNav: [
-      { heading: 'Commitments', items: [{ label: 'Open' }, { label: 'In progress' }, { label: 'Fulfilled' }, { label: 'Disputed' }] },
-      { heading: 'Authority', items: [{ label: 'Authorisers' }, { label: 'Scoped grants' }, { label: 'Delegated' }] },
     ],
   },
   {
@@ -140,31 +105,19 @@ export const WORKSPACE_MODULES: WorkspaceModule[] = [
     ],
   },
   {
-    id: 'proof',
-    path: '/workspace/proof',
-    railLabel: 'Proof',
-    title: 'Proof',
-    pillar: 'stewardship',
-    primitive: 'EVIDENCE · VERIFICATION',
-    subtitle: 'What can be shown, attested, and stood up to contest.',
-    icon: 'proof',
-    ctxNav: [
-      { heading: 'Evidence', items: [{ label: 'Receipts' }, { label: 'Attestations' }, { label: 'Disputes' }, { label: 'Expired' }] },
-      { heading: 'Standing', items: [{ label: 'Supported' }, { label: 'Verified' }, { label: 'Rejected' }] },
-    ],
-  },
-  {
-    id: 'records',
+    id: 'records-intelligence',
     path: '/workspace/records',
     railLabel: 'Records',
-    title: 'Records',
+    title: 'Records / Intelligence',
     pillar: 'stewardship',
-    primitive: 'KNOWLEDGE · MEMORY',
-    subtitle: 'Civilizational memory — canon, annals, and the immutable roll.',
-    icon: 'records',
+    primitive: 'KNOWLEDGE · MEMORY · matching · forecasting · agents',
+    subtitle: 'Civilizational memory — canon, annals, and the immutable roll. The model working — matching, forecasting, and running agents.',
+    icon: 'records-intelligence',
     ctxNav: [
       { heading: 'Stores', items: [{ label: 'Canon', to: '/workspace/records/canon' }, { label: 'Annals', to: '/workspace/records/annals' }, { label: 'Roll', to: '/workspace/records/roll' }] },
       { heading: 'Search', items: [{ label: 'Records' }, { label: 'Knowledge' }] },
+      { heading: 'Agents', items: [{ label: 'Matching' }, { label: 'Forecasting' }, { label: 'Agents', to: '/workspace/intelligence' }] },
+      { heading: 'Kemetos', items: [{ label: 'Coordinator', to: '/workspace/kemetos1' }] },
     ],
   },
   {
@@ -181,20 +134,6 @@ export const WORKSPACE_MODULES: WorkspaceModule[] = [
       { heading: 'Instrument', items: [{ label: 'Apt-coin', to: '/workspace/value' }] },
     ],
   },
-  {
-    id: 'intelligence',
-    path: '/workspace/intelligence',
-    railLabel: 'Intel',
-    title: 'Intelligence',
-    pillar: 'capacity',
-    primitive: 'matching · forecasting · agents',
-    subtitle: 'The model working — matching, forecasting, and running agents.',
-    icon: 'intelligence',
-    ctxNav: [
-      { heading: 'Capabilities', items: [{ label: 'Matching' }, { label: 'Forecasting' }, { label: 'Agents', to: '/workspace/intelligence' }] },
-      { heading: 'Kemetos', items: [{ label: 'Coordinator', to: '/workspace/kemetos1' }] },
-    ],
-  },
 ]
 
 export const MODULE_BY_ID = Object.fromEntries(WORKSPACE_MODULES.map((m) => [m.id, m])) as Record<ModuleId, WorkspaceModule>
@@ -203,17 +142,17 @@ export const MODULE_BY_ID = Object.fromEntries(WORKSPACE_MODULES.map((m) => [m.i
 export function moduleForPath(path: string): WorkspaceModule {
   if (path === '/workspace') return MODULE_BY_ID.overview
   const seg = path.replace(/^\/workspace\//, '').split('/')[0]
-  // network/people → network; records/canon → records; workbench/:pilot → workbench; value/coin-lab → value
   const known: Record<string, ModuleId> = {
-    commons: 'commons',
-    network: 'network',
-    coordination: 'coordination',
+    commons: 'commons-network',
+    network: 'commons-network',
     workbench: 'workbench',
-    proof: 'proof',
-    records: 'records',
+    records: 'records-intelligence',
     value: 'value',
-    intelligence: 'intelligence',
-    kemetos1: 'intelligence',
+    intelligence: 'records-intelligence',
+    kemetos1: 'records-intelligence',
+    canon: 'records-intelligence',
+    annals: 'records-intelligence',
+    roll: 'records-intelligence',
   }
   const id = known[seg] ?? 'overview'
   return MODULE_BY_ID[id]
