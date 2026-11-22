@@ -26,6 +26,7 @@ import Records from '@/pages/workspace/Records.vue';
 import Intelligence from '@/modules/intelligence/pages/Intelligence.vue';
 import Kemetos1App from '@/modules/kemetos1/pages/Coordinator.vue';
 import Value from '@/pages/workspace/Value.vue';
+import UserDashboard from '@/pages/workspace/UserDashboard.vue';
 
 const routes = [
   { path: '/', redirect: '/landing' },
@@ -39,6 +40,7 @@ const routes = [
     children: [
       // overview — the chain
       { path: '', component: WorkspaceOverview, name: 'workspace-overview' },
+      { path: 'dashboard', component: UserDashboard, name: 'workspace-dashboard' },
       // commons / network — intention + actor capability resource
       { path: 'commons', component: Commons, name: 'workspace-commons' },
       { path: 'network', component: Network, name: 'workspace-network' },
