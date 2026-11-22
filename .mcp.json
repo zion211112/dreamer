@@ -8,11 +8,6 @@
         "X-Better-Design-Client": "claude-code"
       }
     },
-    "codebase-memory": {
-      "type": "stdio",
-      "command": "c:\\Users\\zION\\.vscode\\extensions\\tunakite03.codebase-memory-mcp-0.5.23\\bin\\win32-x64\\codebase-memory-mcp.exe",
-      "args": []
-    },
     "sakaniui": {
       "type": "stdio",
       "command": "sakaniui-mcp",
