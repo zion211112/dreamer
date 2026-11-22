@@ -304,6 +304,9 @@ class ModelRegistry:
         candidates = self.all_healthy() if healthy_only else list(self.models.values())
         return sorted(candidates, key=lambda m: m.measured_tps, reverse=True)
 
+    def healthy_count(self) -> int:
+        return len(self.all_healthy())
+
     def select_for_complexity(self, complexity: TaskComplexity,
                               preferred: list[str] | None = None) -> list[ModelEntry]:
         """Select models appropriate for task complexity, sorted by tps.
@@ -452,6 +455,35 @@ class BatchOrchestrator:
 
         best = max(sweep_results, key=lambda r: r["agg_tps"]) if sweep_results else None
         return {"sweep": sweep_results, "best": best}
+
+    async def health_check(self, max_concurrent: int = 8) -> dict[str, bool]:
+        """Probe every model once with a tiny request; mark unhealthy ones circuit-open.
+
+        Returns {model_id: healthy}. Models that fail are tripped so they're
+        excluded from all subsequent selection/batching.
+        """
+        semaphore = asyncio.Semaphore(max_concurrent)
+        results: dict[str, bool] = {}
+
+        async def probe_one(m: ModelEntry) -> None:
+            async with semaphore:
+                task = TaskRequest(
+                    id=f"health-{m.id}",
+                    prompt="hi",
+                    complexity=TaskComplexity.CODING,
+                    max_tokens=5,
+                )
+                result = await self._call_model(task, m)
+                results[m.id] = result.success
+                if not result.success:
+                    m.failure_count += 1
+                    m.circuit_open = True
+                else:
+                    m.circuit_open = False
+                    m.failure_count = 0
+
+        await asyncio.gather(*[probe_one(m) for m in self.registry.models.values()])
+        return results
 
     async def _call_model(self, task: TaskRequest, model: ModelEntry) -> TaskResult:
         t0 = time.perf_counter()
@@ -671,6 +703,93 @@ class MultiModelPipeline:
                 } for r in results
             ],
             "aggregate_tps": round(agg_tps, 2),
+        }
+
+    async def simulate_subagents(self, n_agents: int = 6,
+                                 prompts_per_agent: int = 1,
+                                 max_tokens: int = 512,
+                                 complexity: TaskComplexity | None = None,
+                                 max_concurrent: int = 64) -> dict:
+        """Simulate N subagents running in parallel, each with its own pipeline.
+
+        Each subagent picks its own preferred model (auto-sorted by tps) and
+        runs prompts_per_agent tasks concurrently. Measures aggregate tok/s
+        across all subagents — this is the path to 10k/s.
+
+        Returns: dict with n_agents, total_prompts, aggregate_tps, per_agent results.
+        """
+        healthy = self.registry.all_healthy()
+        if not healthy:
+            return {"error": "no healthy models", "n_agents": n_agents}
+
+        # Distribute models round-robin across subagents so each subagent
+        # gets a distinct preferred model (avoids hammering one provider).
+        models = self.registry.sort_by_tps()
+        agent_models = [models[i % len(models)] for i in range(n_agents)]
+
+        prompts = [
+            "Write a Python function to calculate fibonacci with memoization.",
+            "Explain how transformer attention works in two paragraphs.",
+            "Compare monolithic vs microservices architecture trade-offs.",
+            "Write a SQL query to find the second-highest salary per department.",
+            "Analyze the pros and cons of async vs sync programming.",
+        ][:prompts_per_agent]
+
+        async def run_subagent(idx: int, model: ModelEntry) -> dict:
+            connector = SubagentConnector(
+                agent_name=f"subagent-{idx}",
+                preferred_model=model.id,
+                complexity=complexity,
+            )
+            agent_start = time.perf_counter()
+            agent_results = []
+            for j, prompt in enumerate(prompts):
+                result = await connector.execute(
+                    prompt,
+                    task_id=f"subagent-{idx}-task-{j}",
+                    max_tokens=max_tokens,
+                )
+                agent_results.append(result)
+            agent_wall = time.perf_counter() - agent_start
+            agent_tps = sum(r.get("aggregate_tps", 0) for r in agent_results)
+            await connector.close()
+            return {
+                "agent": idx,
+                "model": model.id,
+                "provider": model.provider,
+                "wall_s": round(agent_wall, 3),
+                "tps": round(agent_tps, 2),
+                "results": agent_results,
+            }
+
+        semaphore = asyncio.Semaphore(max_concurrent)
+        async def run_with_sem(idx: int, model: ModelEntry) -> dict:
+            async with semaphore:
+                return await run_subagent(idx, model)
+
+        overall_start = time.perf_counter()
+        agent_results = await asyncio.gather(
+            *[run_with_sem(i, m) for i, m in enumerate(agent_models)]
+        )
+        overall_wall = time.perf_counter() - overall_start
+
+        total_tps = sum(r["tps"] for r in agent_results)
+        total_prompts = n_agents * prompts_per_agent
+        successful = sum(
+            1 for r in agent_results
+            for ar in r["results"]
+            if ar.get("best_result") and ar["best_result"].get("model")
+        )
+
+        return {
+            "n_agents": n_agents,
+            "prompts_per_agent": prompts_per_agent,
+            "total_prompts": total_prompts,
+            "wall_s": round(overall_wall, 3),
+            "aggregate_tps": round(total_tps, 2),
+            "successful": successful,
+            "gap_to_10k": round(10000 / total_tps, 1) if total_tps > 0 else None,
+            "per_agent": agent_results,
         }
 
     def get_leaderboard(self) -> list[dict]:
