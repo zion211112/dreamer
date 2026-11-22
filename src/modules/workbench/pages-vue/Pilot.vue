@@ -25,7 +25,7 @@ const totalCap = computed(() => totalCommittedCapitalVue(items.value));
               {{ pilot.value?.character || '' }} · {{ pilot.value?.location || '' }}
             </p>
           </div>
-          <RouterLink to="/workbench" class="page-head-back-link">← Back to workbench</RouterLink>
+          <RouterLink to="/workspace/workbench" class="page-head-back-link">← Back to workbench</RouterLink>
         </header>
 
         <section v-if="pilot.value">

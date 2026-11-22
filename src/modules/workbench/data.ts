@@ -137,7 +137,7 @@ export const PILOTS: readonly Pilot[] = [
   {
     key: 'benbenos',
     label: 'Benbenos',
-    href: '/workspace/work/benbenos',
+    href: '/workspace/workbench/benbenos',
     character: 'Learning operations',
     location: 'Nairobi',
     terms: 'Example terms: steward-owned rates in KES; work stays with the local school.',
@@ -147,7 +147,7 @@ export const PILOTS: readonly Pilot[] = [
   {
     key: 'kemetos',
     label: 'Kemetos',
-    href: '/workspace/work/kemetos',
+    href: '/workspace/workbench/kemetos',
     character: 'Electrical and solar',
     location: 'Nairobi',
     terms: 'Example terms: participating electricians set a day rate before work is claimed.',
@@ -157,7 +157,7 @@ export const PILOTS: readonly Pilot[] = [
   {
     key: 'minihydro',
     label: 'Mini Hydro',
-    href: '/workspace/work/minihydro',
+    href: '/workspace/workbench/minihydro',
     character: 'Micro-hydro power',
     location: 'Thiba',
     terms: 'Example terms: community-owned power; crews are paid per trip and per task.',
@@ -167,7 +167,7 @@ export const PILOTS: readonly Pilot[] = [
   {
     key: 'mwea-animation-box',
     label: 'Mwea Animation Box',
-    href: '/workspace/work/mwea-animation-box',
+    href: '/workspace/workbench/mwea-animation-box',
     character: 'Irrigation and animation',
     location: 'Mwea',
     terms: 'Example terms: local operators run the box; animation value stays in Mwea.',
@@ -177,7 +177,7 @@ export const PILOTS: readonly Pilot[] = [
   {
     key: 'open',
     label: 'Open pilot',
-    href: '/workspace/work/open',
+    href: '/workspace/workbench/open',
     character: 'Open',
     location: '—',
     terms: 'Example setup slot. Terms require local steward agreement.',

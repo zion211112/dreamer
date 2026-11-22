@@ -138,7 +138,7 @@ export const WORKSPACE_MODULES: WorkspaceModule[] = [
     icon: 'intelligence',
     ctxNav: [
       { heading: 'Agents', items: [{ label: 'Matching' }, { label: 'Forecasting' }, { label: 'Agents', to: '/workspace/intelligence' }] },
-      { heading: 'Kemetos', items: [{ label: 'Coordinator', to: '/workspace/kemetos1' }] },
+      { heading: 'Kemetos', items: [{ label: 'Coordinator', to: '/workspace/intelligence' }] },
     ],
   },
 ]

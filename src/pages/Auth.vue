@@ -14,7 +14,7 @@ const { signUp, signIn, loading, error: authError, profile } = useAuth();
 const workspacePaths = {
   annals: '/workspace',
   people: '/workspace/network/people',
-  school: '/benben-os',
+  school: '/workspace/workbench',
   commons: '/workspace/commons',
   workbench: '/workspace/workbench',
   roll: '/workspace/records/roll',
