@@ -1,0 +1,130 @@
+{
+  "name": "APT-LABS Evidence Verification",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "evidence/verify",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "name": "Webhook - Evidence",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "operation": "find",
+        "collection": "evidence",
+        "filter": { "evidenceId": "={{ $json.body.evidenceId }}" },
+        "options": {}
+      },
+      "name": "Find Evidence Record",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [550, 200],
+      "credentials": {
+        "mongodbApi": "aptlabs-mongodb"
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "case": [
+              {
+                "value": "={{ $json[0].status }}",
+                "operation": "equals",
+                "value2": "unverified"
+              }
+            ]
+          }
+        }
+      },
+      "name": "Is Unverified?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "collection": "evidence",
+        "filter": { "evidenceId": "={{ $json.body.evidenceId }}" },
+        "document": { "$set": { "status": "verified", "verifiedAt": "={{ $now }}", "verifiedBy": "={{ $json.body.verifiedBy }}" } },
+        "options": {}
+      },
+      "name": "Mark Evidence Verified",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [1150, 200],
+      "credentials": {
+        "mongodbApi": "aptlabs-mongodb"
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "collection": "auditEvents",
+        "document": {
+          "action": "evidence.verify",
+          "evidenceId": "={{ $json.body.evidenceId }}",
+          "accountId": "={{ $json.body.verifiedBy }}",
+          "timestamp": "={{ $now }}",
+          "details": { "verificationStatus": "verified" }
+        },
+        "options": {}
+      },
+      "name": "Log Audit Event",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [1450, 200],
+      "credentials": {
+        "mongodbApi": "aptlabs-mongodb"
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "url": "http://localhost:59079/api/evidence/verify",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "name": "Notify DSH Orchestrator",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [1700, 200],
+      "authentication": "none"
+    }
+  ],
+  "connections": {
+    "Webhook - Evidence": {
+      "main": [[{ "node": "Find Evidence Record", "type": "main", "index": 0 }]]
+    },
+    "Find Evidence Record": {
+      "main": [[{ "node": "Is Unverified?", "type": "main", "index": 0 }]]
+    },
+    "Is Unverified?": {
+      "main": [
+        [
+          {
+            "node": "Mark Evidence Verified",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Mark Evidence Verified": {
+      "main": [[{ "node": "Log Audit Event", "type": "main", "index": 0 }]]
+    },
+    "Log Audit Event": {
+      "main": [[{ "node": "Notify DSH Orchestrator", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "version": 1
+}

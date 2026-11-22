@@ -1,0 +1,69 @@
+{
+  "name": "APT-LABS Commons Intake",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "commons/inquiry",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "collection": "inquiries",
+        "document": {
+          "={{ $json.body.need }}",
+          "requires": "={{ $json.body.requires }}",
+          "actorId": "={{ $json.body.actorId }}",
+          "status": "open",
+          "createdAt": "={{ $now }}"
+        },
+        "options": {}
+      },
+      "name": "Create Inquiry Record",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [550, 300],
+      "credentials": {
+        "mongodbApi": "aptlabs-mongodb"
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "collection": "notifications",
+        "document": {
+          "title": "New Inquiry",
+          "message": "New inquiry: {{ $json.body.need }}",
+          "createdAt": "={{ $now }}",
+          "read": false
+        },
+        "options": {}
+      },
+      "name": "Notify Commons Steward",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [850, 300],
+      "credentials": {
+        "mongodbApi": "aptlabs-mongodb"
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Create Inquiry Record", "type": "main", "index": 0 }]]
+    },
+    "Create Inquiry Record": {
+      "main": [[{ "node": "Notify Commons Steward", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "version": 1
+}

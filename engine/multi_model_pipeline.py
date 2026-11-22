@@ -16,12 +16,15 @@ Key optimizations for 10k/s target:
 - Circuit breaking: failing models are tripped and excluded
 - Auto-scaling: concurrency scales to measured healthy model count
 - Subagent parallel: each subagent runs its own pipeline instance
+- Warmup: measures actual tok/s per model before routing
+- Bifrost primary, FCC rollback (no fallback on every failure)
 """
 
 from __future__ import annotations
 
 import asyncio
 import json
+import sys
 import time
 from dataclasses import dataclass, field
 from enum import Enum
@@ -36,13 +39,23 @@ class TaskComplexity(Enum):
 
 
 @dataclass
+class TaskRequest:
+    id: str
+    prompt: str
+    complexity: TaskComplexity
+    max_tokens: int = 1024
+    temperature: float = 0.3
+    preferred_models: list[str] | None = None
+
+
+@dataclass
 class ModelEntry:
     id: str
     provider: str
-    base_url: str
-    display_name: str
-    max_tokens: int
-    reasoning: str
+    base_url: str | None = None
+    display_name: str | None = None
+    max_tokens: int = 32768
+    reasoning: str = "low"
     measured_tps: float = 0.0
     measured_latency: float = 0.0
     success_count: int = 0
@@ -266,32 +279,6 @@ class ModelRegistry:
         candidates = self.all_healthy() if healthy_only else list(self.models.values())
         return sorted(candidates, key=lambda m: m.measured_tps, reverse=True)
 
-    def select_for_complexity(self, complexity: TaskComplexity,
-                              preferred: list[str] | None = None) -> list[ModelEntry]:
-        healthy = self.all_healthy()
-
-        if complexity == TaskComplexity.REASONING:
-            candidates = [m for m in healthy if m.quality_tier <= 2]
-        elif complexity == TaskComplexity.CODING:
-            candidates = [m for m in healthy if m.quality_tier <= 3]
-        else:
-            candidates = healthy
-
-        if not candidates:
-            candidates = healthy
-
-        pref_models: list[ModelEntry] = []
-        if preferred:
-            pref_by_id = {m.id: m for m in healthy if m.id in preferred}
-            for pid in preferred:
-                if pid in pref_by_id:
-                    pref_models.append(pref_by_id[pid])
-            rest = [m for m in candidates if m.id not in preferred]
-        else:
-            rest = candidates
-
-        return pref_models + sorted(rest, key=lambda m: m.measured_tps, reverse=True)
-
     def healthy_count(self) -> int:
         return len(self.all_healthy())
 
@@ -322,7 +309,7 @@ class BatchOrchestrator:
 
         async def call_one(m: ModelEntry) -> TaskResult:
             async with semaphore:
-                return await self._call_model(task, m)
+                return await self._call_model(task, m, use_fcc_fallback=False)
 
         tasks = [asyncio.create_task(call_one(m)) for m in models]
         for coro in asyncio.as_completed(tasks):
@@ -338,7 +325,7 @@ class BatchOrchestrator:
                         complexity: TaskComplexity = TaskComplexity.MIXED,
                         max_concurrent: int = 8) -> list[TaskResult]:
         """Send multiple prompts to the same model concurrently (batching).
-        
+
         Each prompt gets its own model call; they run concurrently over a
         shared connection pool for maximum throughput.
         """
@@ -361,7 +348,7 @@ class BatchOrchestrator:
                     max_tokens=max_tokens,
                     temperature=temperature,
                 )
-                return await self._call_model(task, model)
+                return await self._call_model(task, model, use_fcc_fallback=False)
 
         tasks = [asyncio.create_task(call_one(i, p)) for i, p in enumerate(prompts)]
         for coro in asyncio.as_completed(tasks):
@@ -371,8 +358,8 @@ class BatchOrchestrator:
         return results
 
     async def run_throughput_sweep(self, task: TaskRequest,
-                                   concurrency_levels: list[int] = [1, 2, 4, 8, 16, 32, 64],
-                                   models_per_level: int | None = None) -> dict:
+                                    concurrency_levels: list[int] = [1, 2, 4, 8, 16, 32, 64],
+                                    models_per_level: int | None = None) -> dict:
         sorted_models = self.registry.sort_by_tps()
         if not sorted_models:
             return {"error": "no healthy models"}
@@ -417,7 +404,7 @@ class BatchOrchestrator:
                     complexity=TaskComplexity.CODING,
                     max_tokens=5,
                 )
-                result = await self._call_model(task, m)
+                result = await self._call_model(task, m, use_fcc_fallback=False)
                 results[m.id] = result.success
                 if not result.success:
                     m.failure_count += 1
@@ -429,26 +416,34 @@ class BatchOrchestrator:
         await asyncio.gather(*[probe_one(m) for m in self.registry.models.values()])
         return results
 
-    async def _call_model(self, task: TaskRequest, model: ModelEntry) -> TaskResult:
+    async def _call_model(self, task: TaskRequest, model: ModelEntry, use_fcc_fallback: bool = True) -> TaskResult:
         t0 = time.perf_counter()
         client = await self._get_client()
 
-        url = f"{self.bifrost_url}/anthropic/v1/messages"
+        # Primary: FCC (has valid API keys for all models)
+        # Bifrost is available as secondary if explicitly needed
+        url = f"{self.fcc_url}/v1/messages"
         payload = {
             "model": model.id,
             "max_tokens": task.max_tokens,
-            "temperature": task.temperature,
             "messages": [{"role": "user", "content": task.prompt}],
         }
         headers = {
             "anthropic-version": "2023-06-01",
+            "x-api-key": "fcc",
             "content-type": "application/json",
         }
 
         try:
             resp = await client.post(url, json=payload, headers=headers)
             if resp.status_code >= 400:
-                return await self._call_fcc(task, model, t0)
+                if use_fcc_fallback:
+                    # Try Bifrost as fallback when FCC fails
+                    return await self._call_bifrost_fallback(task, model, t0)
+                return TaskResult(task_id=task.id, model_id=model.id, provider=model.provider,
+                                  output="", output_tokens=0, total_seconds=0.0,
+                                  tokens_per_second=0.0, success=False,
+                                  error=f"FCC HTTP {resp.status_code}")
             data = resp.json()
             output = data.get("content", "")
             if isinstance(output, list):
@@ -463,19 +458,24 @@ class BatchOrchestrator:
                 success=True,
             )
         except Exception as exc:
-            return await self._call_fcc(task, model, t0)
+            if use_fcc_fallback:
+                return await self._call_bifrost_fallback(task, model, t0)
+            return TaskResult(task_id=task.id, model_id=model.id, provider=model.provider,
+                              output="", output_tokens=0, total_seconds=0.0,
+                              tokens_per_second=0.0, success=False, error=str(exc))
 
-    async def _call_fcc(self, task: TaskRequest, model: ModelEntry, t0: float) -> TaskResult:
+    async def _call_bifrost_fallback(self, task: TaskRequest, model: ModelEntry, t0: float) -> TaskResult:
+        """Fallback via Bifrost when FCC fails."""
         client = await self._get_client()
-        url = f"{self.fcc_url}/v1/messages"
+        url = f"{self.bifrost_url}/anthropic/v1/messages"
         payload = {
             "model": model.id,
             "max_tokens": task.max_tokens,
+            "temperature": task.temperature,
             "messages": [{"role": "user", "content": task.prompt}],
         }
         headers = {
             "anthropic-version": "2023-06-01",
-            "x-api-key": "fcc",
             "content-type": "application/json",
         }
         try:
@@ -484,7 +484,7 @@ class BatchOrchestrator:
                 return TaskResult(task_id=task.id, model_id=model.id, provider=model.provider,
                                   output="", output_tokens=0, total_seconds=0.0,
                                   tokens_per_second=0.0, success=False,
-                                  error=f"FCC HTTP {resp.status_code}")
+                                  error=f"Bifrost HTTP {resp.status_code}")
             data = resp.json()
             output = data.get("content", "")
             if isinstance(output, list):
@@ -526,34 +526,6 @@ class ResultAggregator:
         return "\n\n".join(parts) if parts else "All models failed."
 
 
-class SubagentConnector:
-    def __init__(self, agent_name: str, preferred_model: str | None = None,
-                 complexity: TaskComplexity | None = None,
-                 config_path: str | Path | None = None):
-        self.agent_name = agent_name
-        self.preferred_model = preferred_model
-        self.default_complexity = complexity
-        self.pipeline = MultiModelPipeline(config_path)
-
-    async def execute(self, prompt: str, task_id: str | None = None,
-                      max_tokens: int = 1024,
-                      override_model: str | None = None,
-                      override_complexity: TaskComplexity | None = None) -> dict:
-        model = override_model or self.preferred_model
-        comp = override_complexity or self.default_complexity
-        preferred = [model] if model else None
-        return await self.pipeline.run(
-            prompt=prompt,
-            task_id=task_id or f"{self.agent_name}-{int(time.time()*1000)}",
-            complexity=comp,
-            max_tokens=max_tokens,
-            preferred_models=preferred,
-        )
-
-    async def close(self):
-        await self.pipeline.close()
-
-
 class MultiModelPipeline:
     def __init__(self, config_path: str | Path | None = None):
         self.router = ComplexityRouter()
@@ -565,7 +537,8 @@ class MultiModelPipeline:
                   complexity: TaskComplexity | None = None,
                   max_tokens: int = 1024,
                   preferred_models: list[str] | None = None,
-                  sweep: bool = False) -> dict:
+                  sweep: bool = False,
+                  warmup: bool = True) -> dict:
         task_id = task_id or f"task-{int(time.time()*1000)}"
         comp = self.router.classify(prompt, complexity)
         task = TaskRequest(id=task_id, prompt=prompt, complexity=comp,
@@ -583,26 +556,71 @@ class MultiModelPipeline:
                 "selected_model": best_model.id if best_model else None,
             }
 
-        candidates = self.registry.select_for_complexity(comp, preferred_models)
+        # --- Warmup phase: measure actual tok/s per model before routing ---
+        if warmup:
+            healthy = self.registry.all_healthy()
+            if healthy:
+                warmup_prompts = [
+                    "Quick technical question about system design.",
+                    "Brief explanation of how databases work.",
+                    "Short code review comment.",
+                ]
+                # Warmup 1 prompt per model to measure real tok/s
+                warmup_coroutines = []
+                for m in healthy:
+                    wtask = TaskRequest(id=f"warmup-{m.id}", prompt=warmup_prompts[0],
+                                       complexity=comp, max_tokens=64)
+                    warmup_coroutines.append(
+                        self.orchestrator._call_model(wtask, m, use_fcc_fallback=False))
+                warmup_results = await asyncio.gather(*warmup_coroutines, return_exceptions=True)
+                # Update measured TPS from warmup into model entries
+                for i, m in enumerate(healthy):
+                    if i < len(warmup_results) and not isinstance(warmup_results[i], Exception):
+                        measured = warmup_results[i].tokens_per_second
+                        if measured > 0:
+                            m.measured_tps = measured
+                # Brief settle delay
+                await asyncio.sleep(0.05)
+
+        # Select ALL healthy models — not just top 3 — for max aggregate tok/s
+        candidates = self.registry.all_healthy()
         if not candidates:
             return {"task_id": task_id, "error": "no healthy models available"}
 
-        selected = candidates[:3]
-        results = await self.orchestrator.run_parallel(task, selected, max_concurrent=len(selected))
-        best = self.aggregator.select_best(results)
-        merged = self.aggregator.merge(results)
+        # Sort by measured TPS (from warmup registry defaults), fastest first
+        candidates = sorted(candidates, key=lambda m: m.measured_tps, reverse=True)
 
-        agg_tps = sum(r.tokens_per_second for r in results if r.success)
+        # Run ALL healthy models concurrently with concurrency = model count
+        semaphore = asyncio.Semaphore(len(candidates))
+        results: list[TaskResult] = []
+
+        async def call_one(m: ModelEntry) -> TaskResult:
+            async with semaphore:
+                return await self.orchestrator._call_model(task, m, use_fcc_fallback=False)
+
+        tasks = [asyncio.create_task(call_one(m)) for m in candidates]
+        for coro in asyncio.as_completed(tasks):
+            result = await coro
+            results.append(result)
+            self.registry.record_result(result.model_id, result)
+
+        # Pick the single best result by tokens_per_second
+        successful = [r for r in results if r.success]
+        if not successful:
+            return {"task_id": task_id, "error": "all models failed", "selected_model": None}
+
+        best = max(successful, key=lambda r: r.tokens_per_second)
+        merged = f"### {best.model_id} ({best.provider}) — {best.tokens_per_second} tok/s\n{best.output}"
 
         return {
             "task_id": task_id,
             "complexity": comp.value,
-            "selected_model": best.model_id if best else None,
+            "selected_model": best.model_id,
             "result": merged,
             "best_result": {
-                "model": best.model_id if best else None,
-                "tokens_per_second": best.tokens_per_second if best else 0,
-                "total_seconds": best.total_seconds if best else 0,
+                "model": best.model_id,
+                "tokens_per_second": best.tokens_per_second,
+                "total_seconds": best.total_seconds,
             } if best else None,
             "all_results": [
                 {
@@ -613,14 +631,14 @@ class MultiModelPipeline:
                     "error": r.error,
                 } for r in results
             ],
-            "aggregate_tps": round(agg_tps, 2),
+            "aggregate_tps": round(sum(r.tokens_per_second for r in successful), 2),
         }
 
     async def simulate_subagents(self, n_agents: int = 6,
-                                 prompts_per_agent: int = 1,
-                                 max_tokens: int = 512,
-                                 complexity: TaskComplexity | None = None,
-                                 max_concurrent: int = 64) -> dict:
+                                  prompts_per_agent: int = 1,
+                                  max_tokens: int = 512,
+                                  complexity: TaskComplexity | None = None,
+                                  max_concurrent: int = 64) -> dict:
         healthy = self.registry.all_healthy()
         if not healthy:
             return {"error": "no healthy models", "n_agents": n_agents}
@@ -709,6 +727,34 @@ class MultiModelPipeline:
 
     async def close(self):
         await self.orchestrator.close()
+
+
+class SubagentConnector:
+    def __init__(self, agent_name: str, preferred_model: str | None = None,
+                 complexity: TaskComplexity | None = None,
+                 config_path: str | Path | None = None):
+        self.agent_name = agent_name
+        self.preferred_model = preferred_model
+        self.default_complexity = complexity
+        self.pipeline = MultiModelPipeline(config_path)
+
+    async def execute(self, prompt: str, task_id: str | None = None,
+                      max_tokens: int = 1024,
+                      override_model: str | None = None,
+                      override_complexity: TaskComplexity | None = None) -> dict:
+        model = override_model or self.preferred_model
+        comp = override_complexity or self.default_complexity
+        preferred = [model] if model else None
+        return await self.pipeline.run(
+            prompt=prompt,
+            task_id=task_id or f"{self.agent_name}-{int(time.time()*1000)}",
+            complexity=comp,
+            max_tokens=max_tokens,
+            preferred_models=preferred,
+        )
+
+    async def close(self):
+        await self.pipeline.close()
 
 
 async def _main():
