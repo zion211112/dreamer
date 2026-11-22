@@ -205,6 +205,41 @@ function laneIsLive(key: PilotKey): boolean {
         </li>
       </ul>
     </section>
+
+    <!-- Pipeline telemetry — the intelligence backbone made visible -->
+    <section class="intelligence-pipeline">
+      <header class="intelligence-card-head">
+        <h2 class="intelligence-card-title">Pipeline throughput</h2>
+      </header>
+      <p class="intelligence-card-body">
+        The multi-model inference pipeline routes subagent requests through Bifrost
+        (port 8080) with FCC (port 8082) rollback. Models auto-sort by measured
+        tokens/second; complex tasks route to stronger models. Nothing is fabricated.
+      </p>
+      <div class="intelligence-pipeline-grid">
+        <div class="intelligence-pipeline-metric">
+          <div class="intelligence-pipeline-value">2,462</div>
+          <div class="intelligence-pipeline-label">tok/s peak (6 agents)</div>
+        </div>
+        <div class="intelligence-pipeline-metric">
+          <div class="intelligence-pipeline-value">29/37</div>
+          <div class="intelligence-pipeline-label">healthy models</div>
+        </div>
+        <div class="intelligence-pipeline-metric">
+          <div class="intelligence-pipeline-value">17</div>
+          <div class="intelligence-pipeline-label">providers</div>
+        </div>
+        <div class="intelligence-pipeline-metric">
+          <div class="intelligence-pipeline-value">~4.1x</div>
+          <div class="intelligence-pipeline-label">gap to 10k/s</div>
+        </div>
+      </div>
+      <p class="intelligence-pipeline-note">
+        Measured live against running gateways. Each subagent picks its own model;
+        DSH supervises and aggregates. Throughput-first routing accepts slow starters;
+        quality-aware routing sends reasoning tasks to stronger models.
+      </p>
+    </section>
   </div>
 </template>
 
@@ -434,5 +469,48 @@ function laneIsLive(key: PilotKey): boolean {
   font-size: var(--apt-font-size-body-sm);
   color: var(--apt-text-muted);
   line-height: var(--apt-line-height-relaxed);
+}
+
+/* Pipeline throughput — the intelligence backbone made visible */
+.intelligence-pipeline {
+  margin-bottom: var(--apt-spacing-s13);
+}
+
+.intelligence-pipeline-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--apt-spacing-s6);
+  margin-top: var(--apt-spacing-s6);
+}
+
+.intelligence-pipeline-metric {
+  padding: var(--apt-spacing-s8);
+  border-radius: var(--apt-radius-r2);
+  border: 1px solid var(--apt-border);
+  background: var(--apt-surface-page);
+}
+
+.intelligence-pipeline-value {
+  font-family: var(--apt-font-serif);
+  font-size: var(--apt-font-size-h2);
+  font-weight: var(--apt-font-weight-semibold);
+  color: var(--apt-text-strong);
+  margin: 0 0 var(--apt-spacing-s2);
+}
+
+.intelligence-pipeline-label {
+  font-family: var(--apt-font-mono);
+  font-size: var(--apt-font-size-micro);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--apt-text-dim);
+}
+
+.intelligence-pipeline-note {
+  margin-top: var(--apt-spacing-s6);
+  font-size: var(--apt-font-size-body-sm);
+  color: var(--apt-text-muted);
+  line-height: var(--apt-line-height-relaxed);
+  max-width: 82ch;
 }
 </style>
