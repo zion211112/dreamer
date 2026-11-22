@@ -21,11 +21,16 @@ import ModuleRail from './ModuleRail.vue'
 import ModuleNav from './ModuleNav.vue'
 import SessionReference from './SessionReference.vue'
 import AgentDock from './AgentDock.vue'
+import SettingsPanel from '@/components/ui/SettingsPanel.vue'
+import SettingsRow from '@/components/ui/SettingsRow.vue'
+import ToggleSwitch from '@/components/ui/ToggleSwitch.vue'
+import { settings, updateSettings, type Density } from '@/lib/settings'
 
 const route = useRoute()
 const active = computed(() => moduleForPath(route.path))
 const query = ref('')
-const dockOpen = ref(false)
+const dockOpen = ref(settings.openDockOnStart)
+const settingsOpen = ref(false)
 
 function toggleDock() { dockOpen.value = !dockOpen.value }
 
@@ -43,7 +48,11 @@ function onKeydown(e: KeyboardEvent) {
     ;(window as any).router?.push(WORKSPACE_MODULES[modIndex].path)
     return
   }
-  if (e.key === 'Escape') dockOpen.value = false
+  if (e.key === 'Escape') {
+    // Close the topmost open surface first, then the dock.
+    if (settingsOpen.value) settingsOpen.value = false
+    else dockOpen.value = false
+  }
 }
 
 onMounted(() => {
@@ -58,7 +67,7 @@ const searchPlaceholder = computed(() => `Search ${active.value.railLabel.toLowe
 </script>
 
 <template>
-  <div class="ws" :data-module="dataModule">
+  <div class="ws" :data-module="dataModule" :data-density="settings.density">
     <!-- Topbar -->
     <header class="ws-topbar">
       <RouterLink to="/workspace" class="ws-brand"><b>APT</b>·LABS</RouterLink>
@@ -69,6 +78,7 @@ const searchPlaceholder = computed(() => `Search ${active.value.railLabel.toLowe
         <RouterLink to="/workspace/records" class="ws-btn">Export</RouterLink>
         <RouterLink to="/workspace/commons" class="ws-btn ws-btn-hot">+ New inquiry</RouterLink>
         <button type="button" class="ws-agent-toggle" :class="{ 'ws-agent-toggle--on': dockOpen }" :aria-expanded="dockOpen" @click="toggleDock"><svg viewBox="0 0 24 24" class="ws-agent-ico" aria-hidden="true"><path d="M12 3l1.7 4.6L18 9.3l-4.3 1.7L12 15.6l-1.7-4.6L6 9.3l4.3-1.7z" /><path d="M18 14l.8 2.2 2.2.8-2.2.8L18 20l-.8-2.2-2.2-.8 2.2-.8z" /></svg><span>Agent</span><kbd>⌘J</kbd></button>
+        <button type="button" class="ws-settings-toggle" :class="{ 'ws-settings-toggle--on': settingsOpen }" :aria-expanded="settingsOpen" aria-label="Settings" @click="settingsOpen = !settingsOpen"><svg viewBox="0 0 24 24" class="ws-settings-ico" aria-hidden="true"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56v.18a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.56-1.03h-.18a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.56-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34 1.7 1.7 0 0 0 1.03-1.56v-.18a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1.11 1.56 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87 1.7 1.7 0 0 0 1.56 1.03h.18a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.56 1.11z" /></svg></button>
       </div>
     </header>
 
@@ -78,6 +88,32 @@ const searchPlaceholder = computed(() => `Search ${active.value.railLabel.toLowe
       <ModuleNav :module="active" />
       <main class="ws-content"><RouterView /></main>
       <AgentDock :module="active" :open="dockOpen" @close="dockOpen = false" />
+
+      <SettingsPanel :open="settingsOpen" :context="active.title" @close="settingsOpen = false">
+        <section class="sp-section">
+          <h3 class="sp-section-title">Display</h3>
+          <SettingsRow label="Flow rail" hint="Show the productive chain at the top of every module page.">
+            <ToggleSwitch :model-value="settings.showFlowRail" aria-label="Show flow rail" @update:model-value="(v) => updateSettings({ showFlowRail: v })" />
+          </SettingsRow>
+          <SettingsRow label="Shell density" hint="Compact tightens the top bar and spacing for small workspaces.">
+            <select
+              class="ws-density-select"
+              :value="settings.density"
+              aria-label="Shell density"
+              @change="updateSettings({ density: ($event.target as HTMLSelectElement).value as Density })"
+            >
+              <option value="comfortable">Comfortable</option>
+              <option value="compact">Compact</option>
+            </select>
+          </SettingsRow>
+        </section>
+        <section class="sp-section">
+          <h3 class="sp-section-title">Panels</h3>
+          <SettingsRow label="Open agent dock on start" hint="Restore the dock the next time the workspace loads.">
+            <ToggleSwitch :model-value="settings.openDockOnStart" aria-label="Open agent dock on start" @update:model-value="(v) => updateSettings({ openDockOnStart: v })" />
+          </SettingsRow>
+        </section>
+      </SettingsPanel>
     </div>
   </div>
 </template>
@@ -124,6 +160,15 @@ const searchPlaceholder = computed(() => `Search ${active.value.railLabel.toLowe
 .ws-agent-ico { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.6; flex-shrink: 0; }
 .ws-agent-toggle kbd { font: 500 9px / 1 var(--apt-font-mono); letter-spacing: 0.04em; padding: 2px 5px; border: 1px solid var(--line); border-radius: 4px; color: var(--apt-text-dim); }
 .ws-agent-toggle--on kbd { border-color: color-mix(in srgb, var(--apt-surface-page) 40%, transparent); color: var(--apt-surface-page); opacity: 0.8; }
+.ws-settings-toggle { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid var(--line); border-radius: var(--apt-radius-r1); background: var(--apt-surface-default); color: var(--apt-text-body); cursor: pointer; transition: all var(--apt-animation-fast); flex-shrink: 0; }
+.ws-settings-toggle:hover { border-color: var(--line-strong); background: var(--apt-surface-raised); }
+.ws-settings-toggle:focus-visible { outline: 2px solid var(--apt-module-accent, var(--apt-color-brand-primary)); outline-offset: 2px; }
+.ws-settings-toggle--on { background: var(--apt-module-accent, var(--apt-color-brand-primary)); color: var(--apt-surface-page); border-color: var(--apt-module-accent, var(--apt-color-brand-primary)); }
+.ws-settings-ico { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+.ws-density-select { font: 500 var(--apt-font-size-body-sm) / 1 var(--apt-font-sans); color: var(--apt-text-body); background: var(--apt-surface-default); border: 1px solid var(--line); border-radius: var(--apt-radius-r1); padding: 6px 8px; cursor: pointer; }
+.ws-density-select:focus-visible { outline: 2px solid var(--apt-module-accent, var(--apt-color-brand-primary)); outline-offset: 2px; }
+.ws[data-density='compact'] .ws-topbar { height: 44px; }
+.ws[data-density='compact'] .ws-search { padding: 6px 10px; }
 
 @media (max-width: 1180px) { .ws-app { grid-template-columns: 64px 232px minmax(0, 1fr); } }
 @media (max-width: 820px) { .ws-app { grid-template-columns: 64px minmax(0, 1fr); } .ws-app > .module-nav { display: none; } .ws-search { max-width: 200px; } .ws-agent-toggle span { display: none; } }

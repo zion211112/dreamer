@@ -15,6 +15,7 @@
  */
 import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
+import { settings } from '@/lib/settings';
 
 export type CycleStage =
   | 'commons'
@@ -56,10 +57,13 @@ const props = withDefaults(defineProps<{
 });
 
 const stages = computed<StageDef[]>(() => STAGES);
+
+/** Hidden globally when the user switches the flow rail off in Settings. */
+const show = computed(() => settings.showFlowRail);
 </script>
 
 <template>
-  <div class="flow-rail" data-flowrail>
+  <div v-if="show" class="flow-rail" data-flowrail>
     <div class="flow-rail-head">
       <span class="flow-rail-caption">{{ title }}</span>
       <span v-if="active" class="flow-rail-here">

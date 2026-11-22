@@ -16,7 +16,9 @@
  * The .sp-section / .sp-section-title classes are intentionally global
  * (unscoped) so callers can style sections against the same tokens.
  */
-withDefaults(defineProps<{
+import { nextTick, ref, watch } from 'vue';
+
+const props = withDefaults(defineProps<{
   open: boolean;
   title?: string;
   /** Short context line under the title, e.g. the active module. */
@@ -27,6 +29,16 @@ withDefaults(defineProps<{
 });
 
 const emit = defineEmits<{ close: [] }>();
+
+const closeBtn = ref<HTMLButtonElement | null>(null);
+
+// Move focus into the drawer when it opens (keyboard access, not just click).
+watch(
+  () => props.open,
+  (open) => {
+    if (open) void nextTick(() => closeBtn.value?.focus());
+  },
+);
 </script>
 
 <template>
@@ -42,6 +54,7 @@ const emit = defineEmits<{ close: [] }>();
         <div v-if="context" class="settings-panel-context">{{ context }}</div>
       </div>
       <button
+        ref="closeBtn"
         type="button"
         class="settings-panel-close"
         aria-label="Close settings"
