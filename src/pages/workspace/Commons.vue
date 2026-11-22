@@ -127,7 +127,7 @@ function briefLine(row: KnowledgeOutcome): string {
       <div v-if="store.openNeeds.length === 0" class="commons-quiet">
         <p class="commons-quiet-line">
           Nothing is open right now. Record a need in the
-          <RouterLink to="/workspace/coordination" class="commons-quiet-link">Coordination Workbench</RouterLink>,
+          <RouterLink to="/workspace/workbench" class="commons-quiet-link">Workbench</RouterLink>,
           or post one below — it appears here the moment it is registered.
         </p>
       </div>
@@ -149,7 +149,7 @@ function briefLine(row: KnowledgeOutcome): string {
               </span>
             </div>
           </div>
-          <RouterLink :to="`/workspace/coordination`" class="commons-signal-action">
+          <RouterLink :to="`/workspace/workbench`" class="commons-signal-action">
             Manage in Workbench
           </RouterLink>
         </article>
@@ -187,7 +187,7 @@ function briefLine(row: KnowledgeOutcome): string {
               <span class="commons-badge commons-badge--matched">In flight</span>
             </div>
           </div>
-          <RouterLink :to="`/workspace/coordination`" class="commons-signal-action">
+          <RouterLink :to="`/workspace/workbench`" class="commons-signal-action">
             Manage in Workbench
           </RouterLink>
         </article>

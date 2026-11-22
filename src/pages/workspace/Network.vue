@@ -47,8 +47,8 @@ const directoryCount = computed(() => {
         Register an actor with its assets and capabilities in the Coordination Workbench,
         and it will appear here as a discoverable profile.
       </p>
-      <RouterLink to="/workspace/coordination" class="network-empty-cta">
-        Open the Coordination Workbench
+      <RouterLink to="/workspace/workbench" class="network-empty-cta">
+        Open the Workbench
       </RouterLink>
     </section>
 
