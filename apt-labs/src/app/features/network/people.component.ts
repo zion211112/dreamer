@@ -12,7 +12,6 @@ import { NetworkService, type DirectoryRow } from '@apt-labs/shared/state';
   template: `
     <div class="plp" data-module="people">
       <div class="plp-pagehead">
-        <p class="plp-eyebrow">NETWORK · PEOPLE & CREWS</p>
         <h1 class="plp-h1">People and crews</h1>
         <p class="plp-sub">Individuals and teams who claim capability. Search by name, description, or capability.</p>
         <div class="plp-actions">
@@ -63,30 +62,67 @@ import { NetworkService, type DirectoryRow } from '@apt-labs/shared/state';
   `,
   styles: [
     `
-    .plp { font-family: var(--apt-font-sans); color: var(--apt-text-body); background: var(--apt-surface-default); min-height: 100%; display: flex; flex-direction: column; }
-
-    .plp-pagehead { display: flex; flex-direction: column; gap: var(--apt-spacing-s3); margin-bottom: var(--apt-spacing-s8); }
-    .plp-eyebrow { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); letter-spacing: 0.12em; color: var(--apt-text-dim); margin: 0; text-transform: uppercase; }
-    .plp-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s3); letter-spacing: -0.022em; line-height: 1.05; }
+    .plp {
+      font-family: var(--apt-font-sans);
+      color: var(--apt-text-body);
+      background: var(--apt-surface-default);
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .plp-pagehead { display: flex; flex-direction: column; gap: var(--apt-spacing-s3); margin-bottom: var(--apt-spacing-s8); padding-left: var(--apt-spacing-s10); }
+    .plp-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display-xl); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s3); line-height: 1.05; letter-spacing: -0.02em; }
     .plp-sub { font-size: var(--apt-font-size-body-md); color: var(--apt-text-muted); margin: 0; max-width: 72ch; line-height: var(--apt-line-height-relaxed); }
     .plp-actions { display: flex; gap: var(--apt-spacing-s3); margin-top: var(--apt-spacing-s4); align-items: center; }
-
-    .plp-search-input { flex: 1; min-width: 200px; padding: var(--apt-spacing-s3) var(--apt-spacing-s4); border-radius: var(--apt-radius-r1); border: 1px solid var(--apt-border); background: var(--apt-surface-page); color: var(--apt-text-body); font-size: var(--apt-font-size-body-md); font-family: inherit; }
+    .plp-search-input { flex: 1; min-width: 200px; padding: var(--apt-spacing-s3) var(--apt-spacing-s4); border-radius: var(--apt-radius-r1); border: 1px solid var(--apt-border); background: var(--apt-surface-page); color: var(--apt-text-body); font-size: var(--apt-font-size-body-sm); font-family: inherit; }
     .plp-search-input:focus { outline: none; border-color: var(--apt-color-brand-primary); }
-
     .plp-count { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); color: var(--apt-text-dim); white-space: nowrap; }
 
     .plp-table-wrap { overflow-x: auto; border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r2); background: var(--apt-surface-page); }
     .plp-table { width: 100%; border-collapse: collapse; font-size: var(--apt-font-size-body-sm); }
-    .plp-th { text-align: left; padding: var(--apt-spacing-s4) var(--apt-spacing-s5); font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: uppercase; letter-spacing: 0.08em; color: var(--apt-text-dim); border-bottom: 1px solid var(--apt-border); font-weight: var(--apt-font-weight-medium); white-space: nowrap; }
+    .plp-th {
+      text-align: left;
+      padding: var(--apt-spacing-s4) var(--apt-spacing-s5);
+      font-family: var(--apt-font-mono);
+      font-size: var(--apt-font-size-micro);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--apt-text-dim);
+      border-bottom: 1px solid var(--apt-border);
+      font-weight: var(--apt-font-weight-medium);
+      white-space: nowrap;
+    }
     .plp-tr { border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: background var(--apt-animation-fast); }
     .plp-tr:hover { background: var(--apt-surface-raised); }
     .plp-td { padding: var(--apt-spacing-s4) var(--apt-spacing-s5); border-bottom: 1px solid #f3f4f6; color: var(--apt-text-body); vertical-align: middle; }
     .plp-td--name { font-weight: var(--apt-font-weight-medium); color: var(--apt-text-strong); }
     .plp-td--dim { color: var(--apt-text-muted); font-size: var(--apt-font-size-body-sm); }
-    .plp-glyph { width: 32px; height: 32px; border-radius: 50%; background: color-mix(in srgb, var(--card-accent, var(--apt-color-brand-primary)) 15%, transparent); color: var(--card-accent, var(--apt-color-brand-primary)); font-family: var(--apt-font-serif); font-size: var(--apt-font-size-body-md); font-weight: var(--apt-font-weight-semibold); display: grid; place-items: center; flex: none; }
+    .plp-glyph {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--card-accent, var(--apt-color-brand-primary)) 15%, transparent);
+      color: var(--card-accent, var(--apt-color-brand-primary));
+      font-family: var(--apt-font-serif);
+      font-size: var(--apt-font-size-body-md);
+      font-weight: var(--apt-font-weight-semibold);
+      display: grid;
+      place-items: center;
+      flex: none;
+    }
     .plp-name { font-size: var(--apt-font-size-title-2); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); letter-spacing: -0.01em; display: block; }
-    .plp-type-badge { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: lowercase; letter-spacing: 0.04em; color: var(--apt-text-body); background: var(--apt-surface-raised); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r0); padding: 1px 6px; white-space: nowrap; }
+    .plp-type-badge {
+      font-family: var(--apt-font-mono);
+      font-size: var(--apt-font-size-micro);
+      text-transform: lowercase;
+      letter-spacing: 0.04em;
+      color: var(--apt-text-body);
+      background: var(--apt-surface-raised);
+      border: 1px solid var(--apt-border);
+      border-radius: var(--apt-radius-r0);
+      padding: 1px 6px;
+      white-space: nowrap;
+    }
     .plp-empty { grid-column: 1 / -1; padding: var(--apt-spacing-s8); border: 1px dashed var(--apt-border); border-radius: var(--apt-radius-r2); color: var(--apt-text-muted); font-size: var(--apt-font-size-body-sm); text-align: center; }
 
     .plp-btn {
@@ -103,6 +139,10 @@ import { NetworkService, type DirectoryRow } from '@apt-labs/shared/state';
       cursor: pointer;
     }
     .plp-btn:hover { background: var(--apt-surface-raised); }
+
+    @media (max-width: 760px) {
+      .plp-pagehead { padding-left: 0; }
+    }
     `,
   ],
 })

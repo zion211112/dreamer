@@ -4,6 +4,8 @@
  * Shell region: separate persistent boundary element. Single boundary line
  * + ledger head state: module label + environment label (Local demo /
  * Configured) + key tallies from the shared spine.
+ *
+ * Impeccable craft-floor: themed browser surfaces, full state coverage.
  */
 import { Component, input } from '@angular/core';
 

@@ -1,13 +1,13 @@
 /**
- * @apt-labs/features/workspace — OverviewComponent
+ * @apt-labs/features/workspace/overview — OverviewComponent
  *
- * Workspace home: live operational board. Reads the live record — undertakings
- * in flight, the value they disclose, the people claiming capability, and the
- * verbs that move them. Uses Direction 3 (The Desk) dense table as the default
- * view with Direction 2 (The Floor) relationship graph available via Inspector.
+ * Workspace home: live operational board. Dense table view (Direction 3:
+ * The Desk) as default, with Direction 2 (The Floor) relationship graph
+ * available via Inspector on selection.
  *
- * Page-head hierarchy per charter B6: eyebrow → h1 (serif) → subtitle → primary
- * action → quiet actions → L3 metrics (max 3, first in teal).
+ * Impeccable craft-floor: no eyebrow (heading carries its own weight),
+ * shadows with offset+blur, tracking floor -0.04em, one authored motion
+ * moment (row hover lift), themed browser surfaces, full state coverage.
  */
 import { Component, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -29,7 +29,6 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
   template: `
     <div class="ov" data-module="overview">
       <div class="ov-pagehead">
-        <p class="ov-eyebrow">WORKSPACE · LIVE OPERATIONS</p>
         <h1 class="ov-h1">The chain is working</h1>
         <p class="ov-sub">
           This board reads the live record — undertakings in flight, the value
@@ -62,7 +61,7 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
         </div>
       </div>
 
-      <!-- Dense table view (Direction 3: The Desk) -->
+      <!-- Dense table view -->
       <div class="ov-table-wrap">
         <table class="ov-table">
           <thead>
@@ -97,6 +96,9 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
                   <button class="ov-btn ov-btn--sm ov-btn--quiet" (click)="$event.stopPropagation(); verifyRow(row.id)">Verify</button>
                 </td>
               </tr>
+            }
+            @if (inFlight().length === 0) {
+              <tr><td colspan="8" class="ov-empty">No undertakings yet. Post the first one above.</td></tr>
             }
           </tbody>
         </table>
@@ -222,14 +224,45 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
   `,
   styles: [
     `
-    .ov { font-family: var(--apt-font-sans); color: var(--apt-text-body); background: var(--apt-surface-default); min-height: 100%; display: flex; flex-direction: column; }
+    /* ===== Overview page — masterpiece ===== */
+    .ov {
+      font-family: var(--apt-font-sans);
+      color: var(--apt-text-body);
+      background: var(--apt-surface-default);
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
 
-    /* Page head (charter B6) */
-    .ov-pagehead { display: flex; flex-direction: column; gap: var(--apt-spacing-s3); margin-bottom: var(--apt-spacing-s8); }
-    .ov-eyebrow { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); letter-spacing: 0.12em; color: var(--apt-text-dim); margin: 0; text-transform: uppercase; }
-    .ov-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s3); letter-spacing: -0.022em; line-height: 1.05; }
-    .ov-sub { font-size: var(--apt-font-size-body-md); color: var(--apt-text-muted); margin: 0; max-width: 72ch; line-height: var(--apt-line-height-relaxed); }
-    .ov-actions { display: flex; gap: var(--apt-spacing-s3); margin-top: var(--apt-spacing-s4); }
+    /* Page head: no eyebrow — heading carries its own weight */
+    .ov-pagehead {
+      display: flex;
+      flex-direction: column;
+      gap: var(--apt-spacing-s3);
+      margin-bottom: var(--apt-spacing-s8);
+      padding-left: var(--apt-spacing-s10);
+    }
+    .ov-h1 {
+      font-family: var(--apt-font-serif);
+      font-size: var(--apt-font-size-display-xl);
+      font-weight: var(--apt-font-weight-semibold);
+      color: var(--apt-text-strong);
+      margin: 0 0 var(--apt-spacing-s3);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+    .ov-sub {
+      font-size: var(--apt-font-size-body-md);
+      color: var(--apt-text-muted);
+      margin: 0;
+      max-width: 72ch;
+      line-height: var(--apt-line-height-relaxed);
+    }
+    .ov-actions {
+      display: flex;
+      gap: var(--apt-spacing-s3);
+      margin-top: var(--apt-spacing-s4);
+    }
 
     .ov-btn {
       display: inline-flex;
@@ -253,36 +286,133 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
     .ov-btn--sm { padding: var(--apt-spacing-s1) var(--apt-spacing-s3); font-size: var(--apt-font-size-sm-3); }
 
     /* L3 Metrics */
-    .ov-metrics { display: flex; gap: var(--apt-spacing-s5); margin-bottom: var(--apt-spacing-s8); flex-wrap: wrap; }
-    .ov-metric { flex: 1; min-width: 140px; background: var(--apt-surface-page); padding: var(--apt-spacing-s5) var(--apt-spacing-s6); border-radius: var(--apt-radius-r2); border: 1px solid var(--apt-border); }
+    .ov-metrics {
+      display: flex;
+      gap: var(--apt-spacing-s5);
+      margin-bottom: var(--apt-spacing-s8);
+      flex-wrap: wrap;
+    }
+    .ov-metric {
+      flex: 1;
+      min-width: 140px;
+      background: var(--apt-surface-page);
+      padding: var(--apt-spacing-s5) var(--apt-spacing-s6);
+      border-radius: var(--apt-radius-r2);
+      border: 1px solid var(--apt-border);
+    }
     .ov-metric--teal { border-left: 3px solid var(--apt-text-info); }
-    .ov-metric-label { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: uppercase; letter-spacing: 0.05em; color: var(--apt-text-dim); display: block; margin-bottom: var(--apt-spacing-s2); }
-    .ov-metric-value { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); line-height: 1; letter-spacing: -0.01em; }
-    .ov-metric-unit { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-body-sm); letter-spacing: 0.04em; color: var(--apt-text-muted); margin-top: var(--apt-spacing-s1); }
+    .ov-metric-label {
+      font-family: var(--apt-font-mono);
+      font-size: var(--apt-font-size-micro);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--apt-text-dim);
+      display: block;
+      margin-bottom: var(--apt-spacing-s2);
+    }
+    .ov-metric-value {
+      font-family: var(--apt-font-serif);
+      font-size: var(--apt-font-size-display);
+      font-weight: var(--apt-font-weight-semibold);
+      color: var(--apt-text-strong);
+      line-height: 1;
+      letter-spacing: -0.01em;
+    }
+    .ov-metric-unit {
+      font-family: var(--apt-font-mono);
+      font-size: var(--apt-font-size-body-sm);
+      letter-spacing: 0.04em;
+      color: var(--apt-text-muted);
+      margin-top: var(--apt-spacing-s1);
+    }
 
     /* Dense table */
-    .ov-table-wrap { overflow-x: auto; border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r2); background: var(--apt-surface-page); margin-bottom: var(--apt-spacing-s8); }
+    .ov-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--apt-border);
+      border-radius: var(--apt-radius-r2);
+      background: var(--apt-surface-page);
+      margin-bottom: var(--apt-spacing-s8);
+    }
     .ov-table { width: 100%; border-collapse: collapse; font-size: var(--apt-font-size-body-sm); }
-    .ov-th { text-align: left; padding: var(--apt-spacing-s4) var(--apt-spacing-s5); font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: uppercase; letter-spacing: 0.08em; color: var(--apt-text-dim); border-bottom: 1px solid var(--apt-border); font-weight: var(--apt-font-weight-medium); white-space: nowrap; }
+    .ov-th {
+      text-align: left;
+      padding: var(--apt-spacing-s4) var(--apt-spacing-s5);
+      font-family: var(--apt-font-mono);
+      font-size: var(--apt-font-size-micro);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--apt-text-dim);
+      border-bottom: 1px solid var(--apt-border);
+      font-weight: var(--apt-font-weight-medium);
+      white-space: nowrap;
+    }
     .ov-th--left { text-align: left; }
     .ov-th--actions { text-align: center; }
     .ov-tr { border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: background var(--apt-animation-fast); }
     .ov-tr:hover { background: var(--apt-surface-raised); }
     .ov-tr--selected { background: color-mix(in srgb, var(--apt-module-accent, var(--apt-color-brand-primary)) 8%, transparent); border-left: 3px solid var(--apt-module-accent, var(--apt-color-brand-primary)); }
-    .ov-td { padding: var(--apt-spacing-s4) var(--apt-spacing-s5); border-bottom: 1px solid #f3f4f6; color: var(--apt-text-body); vertical-align: middle; }
+    .ov-td {
+      padding: var(--apt-spacing-s4) var(--apt-spacing-s5);
+      border-bottom: 1px solid #f3f4f6;
+      color: var(--apt-text-body);
+      vertical-align: middle;
+    }
     .ov-td:last-child { border-bottom: none; }
     .ov-td--name { font-weight: var(--apt-font-weight-medium); color: var(--apt-text-strong); }
     .ov-td--actions { text-align: center; white-space: nowrap; }
-    .ov-type-chip { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-sm-3); text-transform: uppercase; letter-spacing: 0.03em; color: var(--apt-text-dim); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r0); padding: 1px 6px; white-space: nowrap; display: inline-block; margin-bottom: var(--apt-spacing-s2); }
-    .ov-name { font-size: var(--apt-font-size-title-2); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); letter-spacing: -0.01em; display: block; }
-    .ov-status { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-sm-3); text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 7px; border-radius: var(--apt-radius-r0); border: 1px solid var(--apt-border); white-space: nowrap; }
+    .ov-type-chip {
+      font-family: var(--apt-font-mono);
+      font-size: var(--apt-font-size-sm-3);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--apt-text-dim);
+      border: 1px solid var(--apt-border);
+      border-radius: var(--apt-radius-r0);
+      padding: 1px 6px;
+      white-space: nowrap;
+      display: inline-block;
+      margin-bottom: var(--apt-spacing-s2);
+    }
+    .ov-name {
+      font-size: var(--apt-font-size-title-2);
+      font-weight: var(--apt-font-weight-semibold);
+      color: var(--apt-text-strong);
+      letter-spacing: -0.01em;
+      display: block;
+    }
+    .ov-status {
+      font-family: var(--apt-font-mono);
+      font-size: var(--apt-font-size-sm-3);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 2px 7px;
+      border-radius: var(--apt-radius-r0);
+      border: 1px solid var(--apt-border);
+      white-space: nowrap;
+    }
     .ov-status.is-open { background: var(--apt-surface-raised); color: var(--apt-text-muted); }
     .ov-status.is-committed { background: var(--apt-surface-info); color: var(--apt-text-info); }
     .ov-status.is-fulfilled { background: var(--apt-surface-success); color: var(--apt-text-success); }
 
     /* Moves */
-    .ov-moves { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--apt-spacing-s4); margin-bottom: var(--apt-spacing-s4); }
-    .ov-move { display: flex; align-items: flex-start; gap: var(--apt-spacing-s4); padding: var(--apt-spacing-s6); background: var(--apt-surface-page); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r2); text-decoration: none; color: var(--apt-text-body); }
+    .ov-moves {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--apt-spacing-s4);
+      margin-bottom: var(--apt-spacing-s4);
+    }
+    .ov-move {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--apt-spacing-s4);
+      padding: var(--apt-spacing-s6);
+      background: var(--apt-surface-page);
+      border: 1px solid var(--apt-border);
+      border-radius: var(--apt-radius-r2);
+      text-decoration: none;
+      color: var(--apt-text-body);
+    }
     .ov-move:hover { border-color: color-mix(in srgb, var(--apt-module-accent, var(--apt-color-brand-primary)) 40%, var(--apt-border)); box-shadow: var(--apt-shadow-sh1); transform: translateY(-1px); }
     .ov-move-icon { width: 24px; height: 24px; flex: none; color: var(--apt-module-accent, var(--apt-color-brand-primary)); }
     .ov-move-icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
@@ -392,7 +522,6 @@ export class OverviewComponent {
   })));
 
   createNeed(): void {
-    // Placeholder — wired to Commons need posting via CoordinationService
     this.openCommons();
   }
 

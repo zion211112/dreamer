@@ -4,6 +4,8 @@
  * Shell region: contextual per-module change-set / evidence strip. Shows
  * what is staged, what is gated, and what is blocked for the current module.
  * One job per module; content is provided by the module.
+ *
+ * Impeccable craft-floor: shadows with offset+blur, full state coverage.
  */
 import { Component, input } from '@angular/core';
 
@@ -50,6 +52,7 @@ export interface DockItem {
       flex-direction: column;
       flex-shrink: 0;
       z-index: var(--apt-z-index-dropdown);
+      box-shadow: 0 -1px 3px 0 rgba(0,0,0,0.08), 0 -1px 2px -1px rgba(0,0,0,0.04);
     }
     .dock--empty { display: none; }
     .dock-head {

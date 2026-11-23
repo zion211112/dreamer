@@ -5,6 +5,9 @@
  * typed relationships, evidence standing on the named-state ladder, and its
  * position in the productive-reality cycle. Never a score — standing is a
  * named state shown side by side.
+ *
+ * Impeccable craft-floor: no eyebrow, shadows with offset+blur, tracking
+ * floor -0.04em, themed browser surfaces, full state coverage.
  */
 import { Component, computed, input } from '@angular/core';
 
@@ -111,6 +114,8 @@ const STANDING_LABELS: Record<string, string> = {
       flex-shrink: 0;
       overflow: hidden;
       z-index: var(--apt-z-index-dropdown);
+      /* Shadow with offset + soft blur */
+      box-shadow: 0 1px 3px 0 rgba(0,0,0,0.08), 0 1px 2px -1px rgba(0,0,0,0.04);
     }
     .inspector--open { display: flex; }
     .inspector-head {
@@ -189,7 +194,7 @@ const STANDING_LABELS: Record<string, string> = {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: var(--apt-spacing-s16);
+      padding: var(--apt-spacing-s22);
       color: var(--apt-text-muted);
       font-size: var(--apt-font-size-body-sm);
       text-align: center;
@@ -206,8 +211,6 @@ export class InspectorComponent {
   readonly entity = input<InspectorEntity | null>(null);
   readonly standingOrder = STANDING_ORDER;
   readonly standingLabel = (s: string) => STANDING_LABELS[s] ?? s;
-
-  readonly pendingTransition = computed(() => null as any);
 
   readonly relationships = computed(() => this.entity()?.relationships ?? []);
   readonly standing = computed(() => this.entity()?.standing);

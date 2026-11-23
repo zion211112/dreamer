@@ -15,7 +15,6 @@ import { CoordinationService } from '@apt-labs/shared/state';
   template: `
     <div class="cm" data-module="commons">
       <div class="cm-pagehead">
-        <p class="cm-eyebrow">WORKSPACE · COMMONS</p>
         <h1 class="cm-h1">The commons</h1>
         <p class="cm-sub">
           Open inquiries, in-flight commitments, delivered briefs, and the knowledge house —
@@ -106,17 +105,20 @@ import { CoordinationService } from '@apt-labs/shared/state';
   `,
   styles: [
     `
-    .cm { font-family: var(--apt-font-sans); color: var(--apt-text-body); background: var(--apt-surface-default); min-height: 100%; display: flex; flex-direction: column; }
-
-    .cm-pagehead { display: flex; flex-direction: column; gap: var(--apt-spacing-s3); margin-bottom: var(--apt-spacing-s10); }
-    .cm-eyebrow { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); letter-spacing: 0.12em; color: var(--apt-text-dim); margin: 0; text-transform: uppercase; }
-    .cm-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s3); letter-spacing: -0.022em; line-height: 1.05; }
+    .cm {
+      font-family: var(--apt-font-sans);
+      color: var(--apt-text-body);
+      background: var(--apt-surface-default);
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .cm-pagehead { display: flex; flex-direction: column; gap: var(--apt-spacing-s3); margin-bottom: var(--apt-spacing-s10); padding-left: var(--apt-spacing-s10); }
+    .cm-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display-xl); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s3); line-height: 1.05; letter-spacing: -0.02em; }
     .cm-sub { font-size: var(--apt-font-size-body-md); color: var(--apt-text-muted); margin: 0; max-width: 72ch; line-height: var(--apt-line-height-relaxed); }
     .cm-actions { display: flex; gap: var(--apt-spacing-s3); margin-top: var(--apt-spacing-s4); align-items: center; }
-
     .cm-need-input { flex: 1; min-width: 200px; padding: var(--apt-spacing-s3) var(--apt-spacing-s5); border-radius: var(--apt-radius-r1); border: 1px solid var(--apt-border); background: var(--apt-surface-raised); color: var(--apt-text-body); font-size: var(--apt-font-size-body-sm); font-family: inherit; }
     .cm-need-input:focus { outline: none; border-color: var(--apt-module-accent); }
-
     .cm-btn {
       display: inline-flex;
       align-items: center;
@@ -163,16 +165,10 @@ import { CoordinationService } from '@apt-labs/shared/state';
     .cm-knowledge-summary { font-size: var(--apt-font-size-body-sm); line-height: var(--apt-line-height-relaxed); color: var(--apt-text-muted); margin: 0; }
     .cm-knowledge-provenance { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); color: var(--apt-text-dim); margin-top: auto; }
 
-    .cm-form { display: flex; flex-direction: column; gap: var(--apt-spacing-s5); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r2); background: var(--apt-surface-page); padding: var(--apt-spacing-s7); max-width: 560px; }
-    .cm-form-row { display: flex; flex-direction: column; gap: var(--apt-spacing-s2); }
-    .cm-label { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: uppercase; letter-spacing: 0.08em; color: var(--apt-text-dim); }
-    .cm-input { width: 100%; padding: var(--apt-spacing-s3) var(--apt-spacing-s4); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r1); background: var(--apt-surface-raised); font-size: var(--apt-font-size-body-md); color: var(--apt-text-body); outline: none; }
-    .cm-input:focus { border-color: var(--apt-module-accent, var(--apt-color-brand-primary)); }
-    .cm-note { font-size: var(--apt-font-size-micro); color: var(--apt-text-dim); margin: 0; }
-    .cm-submit { align-self: flex-start; padding: var(--apt-spacing-s3) var(--apt-spacing-s7); background: var(--apt-module-accent, var(--apt-color-brand-primary)); color: var(--apt-action-on-primary); border: 0; border-radius: var(--apt-radius-r1); font-size: var(--apt-font-size-body-md); font-weight: var(--apt-font-weight-medium); cursor: pointer; }
-    .cm-submit:hover { background: var(--apt-color-neutral-n950); }
-
-    @media (max-width: 900px) { .cm-actions { flex-direction: column; align-items: stretch; } .cm-need-input { width: 100%; } }
+    @media (max-width: 900px) {
+      .cm-actions { flex-direction: column; align-items: stretch; }
+      .cm-need-input { width: 100%; }
+    }
     `,
   ],
 })

@@ -1,32 +1,20 @@
 /**
  * @apt-labs/features/workspace — ShellLayoutComponent
  *
- * Shell layout: six functional regions + separate persistent statusbar.
- * Each region has one job; no duplicate navigation systems (charter B3).
+ * Masterpiece shell: six functional regions + separate statusbar.
+ * Each region has one job; no duplicate navigation (charter B3).
+ * Impeccable craft-floor: no eyebrow, shadows with offset+blur,
+ * tracking floor -0.04em, one authored motion moment, themed browser
+ * surfaces, full state coverage.
  *
- * Regions:
- *   Topbar   — working-context identity
- *   Rail     — module switching (6 icons: Home + 5 productive modules)
- *   Sidebar  — within-module context only
- *   Main     — work surface (router outlet)
- *   Inspector — contextual, opens on selection
- *   Dock     — contextual per-module change-set / evidence strip
- *   Statusbar — single boundary line + ledger head state (separate)
- *
- * Responsive behavior:
- *   1440px: All regions visible; rail + sidebar fixed widths; inspector side panel;
- *           dock bottom; statusbar full width.
- *   1024px: Sidebar narrows; inspector narrows; item labels shrink.
- *   768px:  Sidebar hidden; inspector becomes bottom fixed panel; dock hidden;
- *           topbar hides context.
- *   390px:  Rail hidden; main full width; inspector bottom sheet; statusbar compact.
+ * Responsive: 1440 / 1024 / 768 / 390.
  */
 import { Component, inject, computed } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { TopbarComponent } from './topbar.component';
 import { SidebarComponent } from './sidebar.component';
 import { InspectorComponent } from './inspector.component';
-import { DockComponent, type DockItem } from './dock.component';
+import { DockComponent } from './dock.component';
 import { StatusbarComponent } from './statusbar.component';
 import { SelectionService } from '@apt-labs/shared/state';
 import { CommandPaletteComponent } from './command-palette.component';
@@ -40,7 +28,7 @@ const MODULES = [
   { path: 'records', label: 'Records', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
   { path: 'intelligence', label: 'Intelligence', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
   { path: 'ontology', label: 'Ontology', icon: 'M19 4H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 0H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2z' },
-  { path: 'sovereignty', label: 'Sovereignty', icon: 'M7 21a1 1 0 01-1 1c0 .55-.234 1-.523 1H4a1 1 0 01-1-1V4c0-.55.234-1 .523-1h3a1 1 0 011 1v16zm14-6a1 1 0 01-1 1h-3a1 1 0 01-1-1V4c0-.55.234-1 .523-1h3a1 1 0 011 1v16zm0 0H4a1 1 0 01-1-1V4c0-.55.234-1 .523-1h3a1 1 0 011 1v16zm11-5.5c0 .832-.448 1.5-1 1.5s-1-.668-1-1.5V11c0-.832.448-1.5 1-1.5s1 .668 1 1.5v5.5zM12 14c0 1.105-.448 2-1 2s-1-.895-1-2c0-.553-.09-1.086-.257-1.573A1 1 0 0110.747 11H13c.553 0 1 .447 1 1z' },
+  { path: 'sovereignty', label: 'Sovereignty', icon: 'M7 21a1 1 0 01-1 1c0 .55-.234 1-.523 1H4a1 1 0 01-1-1V4c0-.55.234-1 .523-1h3a1 1 0 011 1v16zm14-6a1 1 0 01-1 1h-3a1 1 0 011 1v16zm0 0H4a1 1 0 01-1-1V4c0-.55.234-1 .523-1h3a1 1 0 011 1v16zm11-5.5c0 .832-.448 1.5-1 1.5s-1-.668-1-1.5V11c0-.832.448-1.5 1-1.5s1 .668 1 1.5v5.5zM12 14c0 1.105-.448 2-1 2s-1-.895-1-2c0-.553-.09-1.086-.257-1.573A1 1 0 0110.747 11H13c.553 0 1 .447 1 1z' },
 ];
 
 @Component({
@@ -84,11 +72,18 @@ const MODULES = [
   `,
   styles: [
     `
-    .shell-layout { display: flex; flex-direction: column; height: 100dvh; background: var(--apt-surface-default); }
-    .shell-body { flex: 1; display: flex; overflow: hidden; }
-
-    /* Topbar - working-context identity */
-    .topbar { height: var(--apt-shell-topbar); border-bottom: 1px solid var(--apt-border); background: var(--apt-surface-page); flex-shrink: 0; z-index: var(--apt-z-index-dropdown); }
+    /* ===== Shell layout — masterpiece ===== */
+    .shell-layout {
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      background: var(--apt-surface-default);
+    }
+    .shell-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
 
     /* Module rail */
     .module-rail {
@@ -134,7 +129,13 @@ const MODULES = [
     .nav-icon { width: 18px; height: 18px; flex: none; }
 
     /* Main work surface */
-    .shell-main { flex: 1; overflow-y: auto; padding: var(--apt-spacing-s10); background: var(--apt-surface-default); min-width: 0; }
+    .shell-main {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--apt-spacing-s10);
+      background: var(--apt-surface-default);
+      min-width: 0;
+    }
 
     /* Responsive */
     @media (max-width: 1024px) {
@@ -182,7 +183,7 @@ export class ShellLayoutComponent {
     };
   });
   readonly dockModule = 'Workbench';
-  readonly dockItems: DockItem[] = [
+  readonly dockItems: import('./dock.component').DockItem[] = [
     { id: 'd-1', label: 'Need: Kibera workshop bench', status: 'ready', action: 'Open' },
     { id: 'd-2', label: 'Evidence: Build plan', status: 'staged', action: 'View' },
   ];

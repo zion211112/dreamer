@@ -22,7 +22,6 @@ const BOUNDARY_ITEMS = [
   template: `
     <div class="intel" data-module="intelligence">
       <div class="intel-pagehead">
-        <p class="intel-eyebrow">WORKSPACE · INTELLIGENCE</p>
         <h1 class="intel-h1">What the record says</h1>
         <p class="intel-sub">
           Derived patterns, learning outputs, and recommendations — every finding points back to the
@@ -112,7 +111,7 @@ const BOUNDARY_ITEMS = [
                 <span class="intel-rec-basis-text">{{ r.basis }}</span>
               </div>
               <div class="intel-rec-actions">
-                <button class="intel-rec-accept">Accept & file</button>
+                <button class="intel-rec-accept">Accept &amp; file</button>
                 <button class="intel-rec-reject">Reject</button>
               </div>
             </article>
@@ -139,11 +138,16 @@ const BOUNDARY_ITEMS = [
   `,
   styles: [
     `
-    .intel { font-family: var(--apt-font-sans); color: var(--apt-text-body); background: var(--apt-surface-default); min-height: 100%; display: flex; flex-direction: column; }
-
-    .intel-pagehead { display: flex; flex-direction: column; gap: var(--apt-spacing-s3); margin-bottom: var(--apt-spacing-s10); }
-    .intel-eyebrow { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); letter-spacing: 0.12em; color: var(--apt-text-dim); margin: 0; text-transform: uppercase; }
-    .intel-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s3); letter-spacing: -0.022em; line-height: 1.05; }
+    .intel {
+      font-family: var(--apt-font-sans);
+      color: var(--apt-text-body);
+      background: var(--apt-surface-default);
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .intel-pagehead { display: flex; flex-direction: column; gap: var(--apt-spacing-s3); margin-bottom: var(--apt-spacing-s10); padding-left: var(--apt-spacing-s10); }
+    .intel-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display-xl); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s3); line-height: 1.05; letter-spacing: -0.02em; }
     .intel-sub { font-size: var(--apt-font-size-body-md); color: var(--apt-text-muted); margin: 0; max-width: 72ch; line-height: var(--apt-line-height-relaxed); }
 
     .intel-forecast { border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r2); background: var(--apt-surface-page); padding: var(--apt-spacing-s7); margin-bottom: var(--apt-spacing-s10); }

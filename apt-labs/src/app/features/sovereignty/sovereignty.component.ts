@@ -37,7 +37,6 @@ const GOVERNANCE_TYPES: readonly { type: string; meaning: string }[] = [
   template: `
     <div class="sov" data-module="sovereignty">
       <div class="sov-pagehead">
-        <p class="sov-eyebrow">WORKSPACE · SOVEREIGNTY</p>
         <h1 class="sov-h1">Who governs, and over what</h1>
         <p class="sov-sub">
           A people-powered production system must say, plainly, who holds authority over each stage —
@@ -169,11 +168,16 @@ const GOVERNANCE_TYPES: readonly { type: string; meaning: string }[] = [
   `,
   styles: [
     `
-    .sov { font-family: var(--apt-font-sans); color: var(--apt-text-body); background: var(--apt-surface-default); min-height: 100%; display: flex; flex-direction: column; }
-
-    .sov-pagehead { display: flex; flex-direction: column; gap: var(--apt-spacing-s3); margin-bottom: var(--apt-spacing-s10); }
-    .sov-eyebrow { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); letter-spacing: 0.12em; color: var(--apt-text-dim); margin: 0; text-transform: uppercase; }
-    .sov-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s3); letter-spacing: -0.022em; line-height: 1.05; }
+    .sov {
+      font-family: var(--apt-font-sans);
+      color: var(--apt-text-body);
+      background: var(--apt-surface-default);
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .sov-pagehead { display: flex; flex-direction: column; gap: var(--apt-spacing-s3); margin-bottom: var(--apt-spacing-s10); padding-left: var(--apt-spacing-s10); }
+    .sov-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display-xl); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s3); line-height: 1.05; letter-spacing: -0.02em; }
     .sov-sub { font-size: var(--apt-font-size-body-md); color: var(--apt-text-muted); margin: 0; max-width: 74ch; line-height: var(--apt-line-height-relaxed); }
 
     .sov-section { margin-bottom: var(--apt-spacing-s10); }
@@ -186,7 +190,15 @@ const GOVERNANCE_TYPES: readonly { type: string; meaning: string }[] = [
     .sov-gov-meaning { font-size: var(--apt-font-size-body-sm); line-height: var(--apt-line-height-relaxed); color: var(--apt-text-muted); margin: 0; }
 
     .sov-gates { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--apt-spacing-s4); }
-    .sov-gate { display: flex; flex-direction: column; gap: 4px; padding: var(--apt-spacing-s5); border: 1px solid color-mix(in srgb, var(--apt-module-accent, var(--apt-color-brand-primary)) 40%, var(--apt-border)); border-radius: var(--apt-radius-r2); background: var(--apt-surface-page); }
+    .sov-gate {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: var(--apt-spacing-s5);
+      border: 1px solid color-mix(in srgb, var(--apt-module-accent, var(--apt-color-brand-primary)) 40%, var(--apt-border));
+      border-radius: var(--apt-radius-r2);
+      background: var(--apt-surface-page);
+    }
     .sov-gate-key { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-body-sm); text-transform: uppercase; letter-spacing: 0.06em; color: var(--apt-module-accent, var(--apt-color-brand-primary)); }
     .sov-gate-note { font-size: var(--apt-font-size-micro); color: var(--apt-text-dim); }
 
@@ -197,7 +209,15 @@ const GOVERNANCE_TYPES: readonly { type: string; meaning: string }[] = [
     .sov-lc-terminal { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); color: var(--apt-text-dim); }
 
     .sov-standing { display: flex; flex-wrap: wrap; gap: var(--apt-spacing-s2); }
-    .sov-standing-chip { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); color: var(--apt-text-body); background: var(--apt-surface-raised); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r0); padding: 3px 9px; }
+    .sov-standing-chip {
+      font-family: var(--apt-font-mono);
+      font-size: var(--apt-font-size-micro);
+      color: var(--apt-text-body);
+      background: var(--apt-surface-raised);
+      border: 1px solid var(--apt-border);
+      border-radius: var(--apt-radius-r0);
+      padding: 3px 9px;
+    }
 
     .sov-contrast { display: grid; grid-template-columns: 1fr 1fr; gap: var(--apt-spacing-s5); }
     .sov-col { border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r2); padding: var(--apt-spacing-s6); background: var(--apt-surface-page); }
@@ -209,7 +229,15 @@ const GOVERNANCE_TYPES: readonly { type: string; meaning: string }[] = [
 
     .sov-section--live { border-top: 1px solid var(--apt-border); padding-top: var(--apt-spacing-s8); }
     .sov-live { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--apt-spacing-s4); margin-bottom: var(--apt-spacing-s5); }
-    .sov-live-cell { display: flex; flex-direction: column; gap: 2px; padding: var(--apt-spacing-s5); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r2); background: var(--apt-surface-page); }
+    .sov-live-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: var(--apt-spacing-s5);
+      border: 1px solid var(--apt-border);
+      border-radius: var(--apt-radius-r2);
+      background: var(--apt-surface-page);
+    }
     .sov-live-num { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); letter-spacing: -0.02em; line-height: 1; }
     .sov-live-cap { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: uppercase; letter-spacing: 0.06em; color: var(--apt-text-dim); }
     .sov-live-link { font-size: var(--apt-font-size-body-sm); color: var(--apt-module-accent, var(--apt-color-brand-primary)); text-decoration: none; }

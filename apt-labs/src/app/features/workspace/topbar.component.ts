@@ -1,10 +1,9 @@
 /**
  * @apt-labs/features/workspace — TopbarComponent
  *
- * Shell region: working-context identity. Shows the current module context,
- * the active record/entity being worked on, and global actions (command
- * palette, account). One job: tell the user where they are and what context
- * they are operating in.
+ * Shell region: working-context identity.
+ * Impeccable craft-floor: no eyebrow, shadows with offset+blur,
+ * themed browser surfaces, full state coverage.
  */
 import { Component, input } from '@angular/core';
 
@@ -43,6 +42,8 @@ import { Component, input } from '@angular/core';
       padding: 0 var(--apt-spacing-s8);
       flex-shrink: 0;
       z-index: var(--apt-z-index-dropdown);
+      /* Shadow with offset + soft blur (craft-floor: not zero-offset colored halo) */
+      box-shadow: 0 1px 3px 0 rgba(0,0,0,0.08), 0 1px 2px -1px rgba(0,0,0,0.04);
     }
     .topbar-brand {
       display: flex;

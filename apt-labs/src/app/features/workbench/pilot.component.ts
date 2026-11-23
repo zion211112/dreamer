@@ -2,18 +2,13 @@
  * @apt-labs/features/workbench/pilot — PilotComponent
  *
  * Vertical slice: Intention → Commitment → Output/Outcome → Evidence.
+ * Masterpiece surface built to the impeccable craft-floor and operate-mode
+ * rules. The world lends four things only: type, palette, density, and one
+ * signature move. Everything else stays standard web.
  *
- * Renders the coordination journey live from the shared CoordinationService
- * and adds the ontology-driven UI:
- *   - Typed relationship graph (cytoscape)
- *   - Entity inspection (InspectorComponent, context-preserving via SelectionService)
- *   - Evidence standing with authority-gated transitions (EvidenceStandingComponent)
- *   - Command palette (Cmd-K, CommandPaletteComponent)
- *
- * All chain actions accept / fulfil come from CoordinationService (existing,
- * authoritative domain logic). Evidence standing transitions emit via
- * EvidenceStandingComponent.onTransition, to be wired to the domain/action
- * layer or n8n callback.
+ * Signature move: clicking any entity in the relationship graph opens the
+ * inspector with that entity's typed relationships, evidence standing, and
+ * cycle position — context-preserving navigation through the ontology.
  */
 import { Component, inject, signal, computed } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -24,6 +19,8 @@ import { EvidenceStandingComponent, EvidenceActorRole } from '@apt-labs/features
 import { RelationshipGraphComponent, GraphNode, GraphEdge } from '@apt-labs/features/workspace/relationship-graph.component';
 import { CommandPaletteComponent } from '@apt-labs/features/workspace/command-palette.component';
 import type { Journey, OperationalPilot } from '@apt-labs/domain';
+
+const ACTOR_ROLE: EvidenceActorRole = 'coordinator';
 
 @Component({
   selector: 'app-pilot',
@@ -41,36 +38,29 @@ import type { Journey, OperationalPilot } from '@apt-labs/domain';
 
     @if (journey(); as j) {
       <div class="pilot-page">
-        <div class="pilot-breadcrumb">
-          <a [routerLink]="['/workspace/workbench']" class="pilot-back">Back to Workbench</a>
+        <!-- Breadcrumb: context-preserving back through selection history -->
+        <nav class="pilot-bread" aria-label="Breadcrumb">
+          <a [routerLink]="['/workspace/workbench']" class="pilot-back">Workbench</a>
           @if (selection.hasSelection()) {
-            <span class="pilot-breadcrumb-sep">›</span>
-            <a class="pilot-back" (click)="goBack()">Back to {{ selection.selected()?.name }}</a>
+            <span class="pilot-sep">›</span>
+            <a class="pilot-back" (click)="goBack()">{{ selection.selected()?.name }}</a>
           }
-        </div>
+          <span class="pilot-current">{{ j.need?.data['need'] }}</span>
+        </nav>
 
         <header class="pilot-head">
-          <div class="pilot-pagehead">
-            <p class="pilot-eyebrow">WORKSPACE · WORKBENCH · {{ j.need?.data['need'] }}</p>
-            <h1 class="pilot-h1">{{ j.need?.data['need'] }}</h1>
-            <p class="pilot-sub">
-              Intention → Commitment → Output/Outcome → Evidence. One action ripples across every surface.
-            </p>
+          <div class="pilot-meta">
+            <span class="pilot-id">{{ needId }}</span>
+            <span class="pilot-status [status()]">{{ status() }}</span>
           </div>
-          <div class="pilot-actions">
-            @if (status() === 'open') {
-              <button class="pilot-btn pilot-btn--primary" type="button" (click)="accept()">Accept as provider</button>
-            } @else if (status() === 'committed') {
-              <input class="pilot-outcome-input" [ngModel]="outcomeText()" (ngModelChange)="outcomeText.set($event)" placeholder="Record the delivered outcome…" aria-label="Outcome" />
-              <button class="pilot-btn pilot-btn--primary" type="button" (click)="fulfil()">Record outcome</button>
-            } @else {
-              <span class="pilot-delivered">Delivered & verified — {{ j.outcomes[0]?.data['outcome'] }}</span>
-            }
-          </div>
+          <h1 class="pilot-title">{{ j.need?.data['need'] }}</h1>
+          <p class="pilot-lede">
+            Intention → Commitment → Output/Outcome → Evidence. One action ripples across every surface.
+          </p>
         </header>
 
-        <!-- Relationship graph -->
-        <section class="pilot-section">
+        <!-- Signature move: relationship graph as live working tool -->
+        <section class="pilot-section pilot-graph">
           <h2 class="pilot-section-title">Relationship graph</h2>
           <app-relationship-graph
             [nodes]="graphNodes()"
@@ -79,8 +69,8 @@ import type { Journey, OperationalPilot } from '@apt-labs/domain';
           ></app-relationship-graph>
         </section>
 
-        <!-- Coordination chain -->
-        <section class="pilot-section">
+        <!-- Coordination chain: clear timeline -->
+        <section class="pilot-section pilot-chain">
           <h2 class="pilot-section-title">Coordination chain</h2>
           <ol class="chain">
             <li class="chain-step is-live">
@@ -115,9 +105,9 @@ import type { Journey, OperationalPilot } from '@apt-labs/domain';
           </ol>
         </section>
 
-        <!-- Evidence with standing transitions -->
+        <!-- Evidence with authority-gated standing transitions -->
         @if (j.outcomes[0]; as o) {
-          <section class="pilot-section">
+          <section class="pilot-section pilot-evidence">
             <h2 class="pilot-section-title">Evidence</h2>
             <div class="evidence-wrap">
               <ul class="evidence-list">
@@ -137,10 +127,10 @@ import type { Journey, OperationalPilot } from '@apt-labs/domain';
           </section>
         }
 
-        <!-- Audit trail -->
+        <!-- Audit trail: provenance -->
         @if (j.auditEvents.length > 0) {
-          <section class="pilot-section">
-            <h2 class="pilot-section-title">Audit trail (provenance)</h2>
+          <section class="pilot-section pilot-audit">
+            <h2 class="pilot-section-title">Audit trail</h2>
             <ul class="audit">
               @for (ev of j.auditEvents; track ev.id) {
                 <li class="audit-item">
@@ -152,11 +142,22 @@ import type { Journey, OperationalPilot } from '@apt-labs/domain';
           </section>
         }
 
-        <!-- Inspector -->
+        <!-- Inspector: contextual, opens on selection -->
         <app-inspector
           [open]="inspectorOpen()"
           [entity]="inspectorEntity()"
         ></app-inspector>
+
+        <div class="pilot-actions">
+          @if (status() === 'open') {
+            <button class="pilot-btn pilot-btn--primary" type="button" (click)="accept()">Accept as provider</button>
+          } @else if (status() === 'committed') {
+            <input class="pilot-outcome-input" [ngModel]="outcomeText()" (ngModelChange)="outcomeText.set($event)" placeholder="Record the delivered outcome…" aria-label="Outcome" />
+            <button class="pilot-btn pilot-btn--primary" type="button" (click)="fulfil()">Record outcome</button>
+          } @else {
+            <span class="pilot-delivered">Delivered & verified — {{ j.outcomes[0]?.data['outcome'] }}</span>
+          }
+        </div>
       </div>
     } @else {
       <div class="pilot-page">
@@ -169,20 +170,152 @@ import type { Journey, OperationalPilot } from '@apt-labs/domain';
   `,
   styles: [
     `
-    .pilot-page { font-family: var(--apt-font-sans); color: var(--apt-text-body); background: var(--apt-surface-default); min-height: 100%; display: flex; flex-direction: column; }
+    /* ===== Pilot page — masterpiece surface ===== */
+    .pilot-page {
+      font-family: var(--apt-font-sans);
+      color: var(--apt-text-body);
+      background: var(--apt-surface-default);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
 
-    .pilot-breadcrumb { display: flex; align-items: center; gap: var(--apt-spacing-s3); font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); color: var(--apt-text-dim); margin-bottom: var(--apt-spacing-s4); }
-    .pilot-breadcrumb a { color: var(--apt-text-muted); text-decoration: none; }
-    .pilot-breadcrumb a:hover { color: var(--apt-module-accent, var(--apt-color-brand-primary)); }
-    .pilot-breadcrumb-sep { color: var(--apt-text-dim); }
+    /* Breadcrumb */
+    .pilot-bread {
+      display: flex;
+      align-items: center;
+      gap: var(--apt-spacing-s3);
+      font-family: var(--apt-font-mono);
+      font-size: var(--apt-font-size-sm-3);
+      color: var(--apt-text-dim);
+      margin-bottom: var(--apt-spacing-s6);
+      padding-left: var(--apt-spacing-s10);
+    }
+    .pilot-bread a {
+      color: var(--apt-text-muted);
+      text-decoration: none;
+    }
+    .pilot-bread a:hover { color: var(--apt-module-accent, var(--apt-color-brand-primary)); }
+    .pilot-sep { color: var(--apt-text-dim); }
+    .pilot-current { color: var(--apt-text-body); }
 
-    .pilot-head { margin-bottom: 0; }
-    .pilot-pagehead { margin-bottom: var(--apt-spacing-s8); }
-    .pilot-eyebrow { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); letter-spacing: 0.12em; color: var(--apt-text-dim); margin: 0 0 var(--apt-spacing-s2); text-transform: uppercase; }
-    .pilot-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s3); letter-spacing: -0.022em; line-height: 1.05; }
-    .pilot-sub { font-size: var(--apt-font-size-body-md); color: var(--apt-text-muted); margin: 0; max-width: 72ch; line-height: var(--apt-line-height-relaxed); }
-    .pilot-actions { display: flex; gap: var(--apt-spacing-s3); flex-wrap: wrap; align-items: center; }
+    /* Page head: no eyebrow — heading carries its own weight (craft-floor ban) */
+    .pilot-head {
+      margin-bottom: var(--apt-spacing-s10);
+      padding-left: var(--apt-spacing-s10);
+    }
+    .pilot-meta {
+      display: flex;
+      gap: var(--apt-spacing-s5);
+      margin-bottom: var(--apt-spacing-s3);
+      font-family: var(--apt-font-mono);
+      font-size: var(--apt-font-size-sm-3);
+      align-items: center;
+    }
+    .pilot-id { color: var(--apt-text-muted); }
+    .pilot-status {
+      font-weight: var(--apt-font-weight-medium);
+      text-transform: capitalize;
+      padding: var(--apt-spacing-s1) var(--apt-spacing-s3);
+      border-radius: var(--apt-radius-r0);
+      background: var(--apt-surface-raised);
+      color: var(--apt-text-body);
+      border: 1px solid var(--apt-border);
+    }
+    .pilot-status.open { color: var(--apt-text-muted); border-color: var(--apt-border-faint); }
+    .pilot-status.committed { background: var(--apt-surface-info); color: var(--apt-text-info); border-color: var(--apt-module-accent); }
+    .pilot-status.fulfilled { background: var(--apt-surface-success); color: var(--apt-text-success); border-color: var(--apt-color-success-base); }
 
+    .pilot-title {
+      font-family: var(--apt-font-serif);
+      font-size: var(--apt-font-size-display-xl);
+      font-weight: var(--apt-font-weight-semibold);
+      color: var(--apt-text-strong);
+      margin: 0 0 var(--apt-spacing-s3);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+    .pilot-lede {
+      font-size: var(--apt-font-size-body-md);
+      color: var(--apt-text-muted);
+      margin: 0;
+      max-width: 72ch;
+      line-height: var(--apt-line-height-relaxed);
+    }
+
+    /* Sections */
+    .pilot-section {
+      padding: var(--apt-spacing-s6);
+      border-radius: var(--apt-radius-r2);
+      border: 1px solid var(--apt-border);
+      background: var(--apt-surface-page);
+      margin-bottom: var(--apt-spacing-s8);
+      padding-left: var(--apt-spacing-s10);
+    }
+    .pilot-section-title {
+      font-family: var(--apt-font-mono);
+      font-size: var(--apt-font-size-micro);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--apt-text-dim);
+      margin: 0 0 var(--apt-spacing-s4);
+    }
+
+    /* Chain */
+    .chain {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--apt-spacing-s4);
+    }
+    .chain-step {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--apt-spacing-s3);
+      align-items: baseline;
+      padding: var(--apt-spacing-s3) var(--apt-spacing-s5);
+      border: 1px solid var(--apt-border-faint);
+      border-radius: var(--apt-radius-r1);
+      color: var(--apt-text-muted);
+      background: var(--apt-surface-raised);
+    }
+    .chain-step.is-live { border-color: var(--apt-module-accent); background: color-mix(in srgb, var(--apt-module-accent, var(--apt-color-brand-primary)) 6%, transparent); }
+    .chain-k {
+      font-family: var(--apt-font-mono);
+      font-size: var(--apt-font-size-micro);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--apt-text-dim);
+      min-width: 96px;
+      font-weight: var(--apt-font-weight-medium);
+    }
+    .chain-v { font-size: var(--apt-font-size-body-sm); color: var(--apt-text-strong); }
+    .chain-note { margin-left: auto; font-size: var(--apt-font-size-micro); color: var(--apt-text-muted); text-transform: capitalize; }
+
+    /* Evidence */
+    .evidence-wrap { display: flex; flex-direction: column; gap: var(--apt-spacing-s5); }
+    .evidence-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--apt-spacing-s2); }
+    .evidence-item { display: flex; justify-content: space-between; gap: var(--apt-spacing-s4); font-size: var(--apt-font-size-micro); padding: var(--apt-spacing-s2) var(--apt-spacing-s3); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r1); background: var(--apt-surface-raised); }
+    .evidence-title { color: var(--apt-text-strong); }
+    .evidence-layer { color: var(--apt-text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* Audit trail */
+    .audit { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--apt-spacing-s2); }
+    .audit-item { display: flex; justify-content: space-between; gap: var(--apt-spacing-s4); font-size: var(--apt-font-size-micro); padding: var(--apt-spacing-s2) var(--apt-spacing-s3); border: 1px solid var(--apt-border-faint); border-radius: var(--apt-radius-r1); background: var(--apt-surface-default); }
+    .audit-action { font-family: var(--apt-font-mono); color: var(--apt-text-body); }
+    .audit-time { font-family: var(--apt-font-mono); color: var(--apt-text-muted); }
+
+    /* Actions */
+    .pilot-actions {
+      display: flex;
+      gap: var(--apt-spacing-s4);
+      flex-wrap: wrap;
+      align-items: center;
+      padding-left: var(--apt-spacing-s10);
+      margin-bottom: var(--apt-spacing-s10);
+    }
     .pilot-btn {
       display: inline-flex;
       align-items: center;
@@ -200,37 +333,38 @@ import type { Journey, OperationalPilot } from '@apt-labs/domain';
     .pilot-btn:hover { border-color: var(--apt-module-accent, var(--apt-color-brand-primary)); }
     .pilot-btn--primary { background: var(--apt-module-accent, var(--apt-color-brand-primary)); color: var(--apt-action-on-primary); border-color: var(--apt-module-accent, var(--apt-color-brand-primary)); }
     .pilot-btn--primary:hover { background: color-mix(in srgb, var(--apt-color-brand-primary) 90%, var(--apt-surface-default)); }
-
-    .pilot-outcome-input { flex: 1; min-width: 200px; padding: var(--apt-spacing-s3) var(--apt-spacing-s5); border-radius: var(--apt-radius-r1); border: 1px solid var(--apt-border); background: var(--apt-surface-raised); color: var(--apt-text-strong); font-size: var(--apt-font-size-body-sm); font-family: inherit; }
-    .pilot-outcome-input:focus { outline: none; border-color: var(--apt-module-accent); }
-
     .pilot-delivered { font-size: var(--apt-font-size-body-sm); color: var(--apt-text-success); }
 
-    .pilot-section { padding: var(--apt-spacing-s6); border-radius: var(--apt-radius-r2); border: 1px solid var(--apt-border); background: var(--apt-surface-page); margin-bottom: var(--apt-spacing-s8); }
-    .pilot-section-title { font-size: var(--apt-font-size-micro); text-transform: uppercase; letter-spacing: 0.05em; color: var(--apt-text-muted); margin: 0 0 var(--apt-spacing-s4); }
+    .pilot-outcome-input {
+      flex: 1;
+      min-width: 200px;
+      padding: var(--apt-spacing-s3) var(--apt-spacing-s5);
+      border-radius: var(--apt-radius-r1);
+      border: 1px solid var(--apt-border);
+      background: var(--apt-surface-raised);
+      color: var(--apt-text-strong);
+      font-size: var(--apt-font-size-body-sm);
+      font-family: inherit;
+    }
+    .pilot-outcome-input:focus { outline: none; border-color: var(--apt-module-accent); }
 
-    .chain { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--apt-spacing-s4); }
-    .chain-step { display: flex; flex-wrap: wrap; gap: var(--apt-spacing-s3); align-items: baseline; padding: var(--apt-spacing-s3); border: 1px solid var(--apt-border-faint); border-radius: var(--apt-radius-r1); color: var(--apt-text-muted); }
-    .chain-step.is-live { border-color: var(--apt-module-accent); background: var(--apt-surface-raised); }
-    .chain-k { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: uppercase; letter-spacing: 0.05em; color: var(--apt-text-muted); min-width: 96px; }
-    .chain-v { font-size: var(--apt-font-size-body-sm); color: var(--apt-text-strong); }
-    .chain-note { margin-left: auto; font-size: var(--apt-font-size-micro); color: var(--apt-text-muted); text-transform: capitalize; }
+    .pilot-empty {
+      text-align: center;
+      padding: var(--apt-spacing-s22);
+      color: var(--apt-text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: var(--apt-spacing-s4);
+      align-items: center;
+    }
 
-    .evidence-wrap { display: flex; flex-direction: column; gap: var(--apt-spacing-s5); }
-    .evidence-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--apt-spacing-s2); }
-    .evidence-item { display: flex; justify-content: space-between; gap: var(--apt-spacing-s4); font-size: var(--apt-font-size-micro); padding: var(--apt-spacing-s2) var(--apt-spacing-s3); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r1); background: var(--apt-surface-raised); }
-    .evidence-title { color: var(--apt-text-strong); }
-    .evidence-layer { color: var(--apt-text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-
-    .audit { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--apt-spacing-s2); }
-    .audit-item { display: flex; justify-content: space-between; gap: var(--apt-spacing-s4); font-size: var(--apt-font-size-micro); padding: var(--apt-spacing-s2) var(--apt-spacing-s3); border: 1px solid var(--apt-border-faint); border-radius: var(--apt-radius-r1); background: var(--apt-surface-default); }
-    .audit-action { font-family: var(--apt-font-mono); color: var(--apt-text-body); }
-    .audit-time { font-family: var(--apt-font-mono); color: var(--apt-text-muted); }
-
-    .pilot-empty { text-align: center; padding: var(--apt-spacing-s16); color: var(--apt-text-muted); display: flex; flex-direction: column; gap: var(--apt-spacing-s4); align-items: center; }
-
+    /* Responsive */
     @media (max-width: 760px) {
       .pilot-page { padding: var(--apt-spacing-s8); }
+      .pilot-head { padding-left: 0; }
+      .pilot-section { padding-left: 0; }
+      .pilot-actions { padding-left: 0; }
+      .pilot-bread { padding-left: 0; }
       .pilot-actions { flex-direction: column; align-items: stretch; }
       .pilot-outcome-input { width: 100%; }
     }
