@@ -72,6 +72,7 @@ const TRANSITIONS: Record<string, EvidenceStandingTransition[]> = {
 
 @Component({
   selector: 'app-evidence-standing',
+  standalone: true,
   imports: [FormsModule],
   template: `
     <div class="evidence-standing">
@@ -178,7 +179,7 @@ const TRANSITIONS: Record<string, EvidenceStandingTransition[]> = {
     .es-current--verified { color: var(--apt-color-success-base, #166534); border-color: var(--apt-color-success-base, #166534); }
     .es-current--disputed { color: var(--apt-color-danger-base, #991b1b); border-color: var(--apt-color-danger-base, #991b1b); }
     .es-current--rejected { color: var(--apt-color-brand-geist-alert, #ef4444); border-color: var(--apt-color-brand-geist-alert, #ef4444); }
-    .es-current--expired { color: var(--apt-text-dim); border-color: var(--apt-border-faint, var(--apt-border)); }
+    .es-current--expired { color: var(--apt-text-dim); border-color: var(--apt-border-faint); }
     .es-ladder { display: flex; gap: var(--apt-spacing-s1); flex-wrap: wrap; }
     .es-chip {
       padding: var(--apt-spacing-s1) var(--apt-spacing-s3);
@@ -193,7 +194,7 @@ const TRANSITIONS: Record<string, EvidenceStandingTransition[]> = {
       cursor: default;
     }
     .es-chip--active { background: var(--apt-module-accent, var(--apt-color-brand-primary)); color: var(--apt-action-on-primary); border-color: var(--apt-module-accent, var(--apt-color-brand-primary)); font-weight: var(--apt-font-weight-medium); }
-    .es-chip--passed { border-color: var(--apt-border-faint, var(--apt-border)); background: var(--apt-surface-default); color: var(--apt-text-dim); }
+    .es-chip--passed { border-color: var(--apt-border-faint); background: var(--apt-surface-default); color: var(--apt-text-dim); }
     .es-chip--blocked { opacity: 0.4; }
     .es-transitions { display: flex; flex-direction: column; gap: var(--apt-spacing-s2); }
     .es-btn {
@@ -229,7 +230,7 @@ const TRANSITIONS: Record<string, EvidenceStandingTransition[]> = {
     .es-reason, .es-evidence { width: 100%; min-height: 80px; padding: var(--apt-spacing-s3) var(--apt-spacing-s4); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r1); background: var(--apt-surface-raised); color: var(--apt-text-body); font-family: inherit; font-size: var(--apt-font-size-body-sm); }
     .es-evidence { min-height: 36px; }
     .es-actions { display: flex; gap: var(--apt-spacing-s3); margin-top: var(--apt-spacing-s1); }
-    .es-btn-cancel { flex: 1; padding: var(--apt-spacing-s2) var(--apt-spacing-s4); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r1); background: transparent; color: var(--apt-text-muted); font-size: var(--apt-font-size-body-sm); cursor: pointer; }
+    .es-btn-cancel { flex: 1; padding: var(--apt-spacing-s2) var(--apt-spacing-s4); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r0); background: transparent; color: var(--apt-text-muted); font-size: var(--apt-font-size-body-sm); cursor: pointer; }
     .es-btn-cancel:hover { background: var(--apt-surface-raised); }
     .es-btn-submit { flex: 1; padding: var(--apt-spacing-s2) var(--apt-spacing-s4); border: 0; border-radius: var(--apt-radius-r1); background: var(--apt-module-accent, var(--apt-color-brand-primary)); color: var(--apt-action-on-primary); font-size: var(--apt-font-size-body-sm); font-weight: var(--apt-font-weight-medium); cursor: pointer; }
     .es-btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -281,7 +282,6 @@ export class EvidenceStandingComponent {
   }
 
   isActionable(standing: string): boolean {
-    // Per isActionableEvidence in ontology/evidence.ts
     if (standing === 'rejected' || standing === 'expired' || standing === 'disputed') return false;
     if (standing === 'unassessed') return false;
     return true;

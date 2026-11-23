@@ -11,6 +11,7 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
+  standalone: true,
   imports: [RouterLink],
   template: `
     <aside class="sidebar" [class.sidebar--collapsed]="collapsed()">
@@ -30,7 +31,7 @@ import { RouterLink } from '@angular/router';
   styles: [
     `
     .sidebar {
-      width: 252px;
+      width: var(--apt-shell-sidebar-max);
       border-right: 1px solid var(--apt-border);
       background: var(--apt-surface-page);
       display: flex;
@@ -44,7 +45,7 @@ import { RouterLink } from '@angular/router';
       align-items: center;
       justify-content: space-between;
       padding: var(--apt-spacing-s6);
-      border-bottom: 1px solid var(--apt-border-faint, var(--apt-border));
+      border-bottom: 1px solid var(--apt-border-faint);
       background: var(--apt-surface-raised);
       flex-shrink: 0;
     }
@@ -96,7 +97,7 @@ import { RouterLink } from '@angular/router';
     .sidebar--collapsed .sidebar-item-label { display: none; }
     .sidebar--collapsed .sidebar-item { justify-content: center; padding: var(--apt-spacing-s3); }
     @media (max-width: 1024px) {
-      .sidebar { width: 220px; }
+      .sidebar { width: var(--apt-shell-sidebar-min); }
       .sidebar-item-label { font-size: var(--apt-font-size-sm-3); }
     }
     @media (max-width: 760px) {

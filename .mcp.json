@@ -1,5 +1,10 @@
 {
   "mcpServers": {
+    "codebase-memory-mcp": {
+      "type": "stdio",
+      "command": "C:/Users/zION/AppData/Local/Programs/codebase-memory-mcp/codebase-memory-mcp.exe",
+      "args": []
+    },
     "better-design": {
       "type": "http",
       "url": "https://better-design.com/api/mcp",

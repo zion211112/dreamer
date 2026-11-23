@@ -2,9 +2,8 @@
  * @apt-labs/features/value — ValueComponent
  *
  * Home of what circulates: value moved between parties, in the open,
- * allocated by transparent rule. Ported from Vue `src/pages/workspace/Value.vue`.
+ * allocated by transparent rule. Dense table view.
  */
-
 import { Component, signal, computed, inject } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -12,34 +11,43 @@ import { ValueService, type ValueRow } from '@apt-labs/shared/state';
 
 @Component({
   selector: 'app-value',
+  standalone: true,
   imports: [RouterLink, DecimalPipe],
   template: `
     <div class="value-page">
       <header class="value-head">
-        <h1 class="value-title">Value — outcomes &amp; circulation</h1>
-        <p class="value-lede">The home of what circulates: value moved between parties, in the open.</p>
+        <div class="value-pagehead">
+          <p class="value-eyebrow">WORKSPACE · VALUE</p>
+          <h1 class="value-h1">Value — outcomes & circulation</h1>
+          <p class="value-sub">
+            The home of what circulates: value moved between parties, in the open.
+          </p>
+        </div>
+        <div class="value-actions">
+          <button class="value-btn value-btn--primary" (click)="openWorkbench()">Open Workbench →</button>
+        </div>
       </header>
 
       <div class="value-metrics">
-        <div class="metric">
-          <span class="metric-label">Disclosed</span>
-          <span class="metric-value">{{ metrics().outcomes }}</span>
+        <div class="value-metric value-metric--teal">
+          <div class="value-metric-label">Outcomes</div>
+          <div class="value-metric-value">{{ metrics().outcomes }}</div>
         </div>
-        <div class="metric">
-          <span class="metric-label">Total KES</span>
-          <span class="metric-value">{{ metrics().totalKes | number }}</span>
+        <div class="value-metric">
+          <div class="value-metric-label">Total KES</div>
+          <div class="value-metric-value">{{ metrics().totalKes | number }}</div>
         </div>
-        <div class="metric">
-          <span class="metric-label">Funding</span>
-          <span class="metric-value">{{ metrics().funding }}</span>
+        <div class="value-metric">
+          <div class="value-metric-label">Funding</div>
+          <div class="value-metric-value">{{ metrics().funding }}</div>
         </div>
-        <div class="metric">
-          <span class="metric-label">Settled</span>
-          <span class="metric-value">{{ metrics().settled }}</span>
+        <div class="value-metric">
+          <div class="value-metric-label">Settled</div>
+          <div class="value-metric-value">{{ metrics().settled }}</div>
         </div>
-        <div class="metric">
-          <span class="metric-label">Open</span>
-          <span class="metric-value">{{ metrics().open }}</span>
+        <div class="value-metric">
+          <div class="value-metric-label">Open</div>
+          <div class="value-metric-value">{{ metrics().open }}</div>
         </div>
       </div>
 
@@ -53,21 +61,23 @@ import { ValueService, type ValueRow } from '@apt-labs/shared/state';
       <table class="value-table">
         <thead>
           <tr>
-            <th>Pilot</th>
-            <th>Institution</th>
-            <th>Location</th>
-            <th>Amount</th>
-            <th>Status</th>
+            <th class="value-th">Pilot</th>
+            <th class="value-th">Institution</th>
+            <th class="value-th">Location</th>
+            <th class="value-th">Amount</th>
+            <th class="value-th">Status</th>
           </tr>
         </thead>
         <tbody>
           @for (row of visible(); track row.key) {
-            <tr>
-              <td><a [routerLink]="['/workspace/workbench', row.key]" class="row-label">{{ row.label }}</a></td>
-              <td>{{ row.institution }}</td>
-              <td>{{ row.location }}</td>
-              <td class="amount">{{ fmtAmount(row.amount) }}</td>
-              <td class="status">{{ row.settled ? 'Settled' : 'Open' }}</td>
+            <tr class="value-tr">
+              <td class="value-td value-td--name">
+                <a [routerLink]="['/workspace/workbench', row.key]" class="value-row-label">{{ row.label }}</a>
+              </td>
+              <td class="value-td">{{ row.institution }}</td>
+              <td class="value-td">{{ row.location }}</td>
+              <td class="value-td value-td--amount">{{ fmtAmount(row.amount) }}</td>
+              <td class="value-td"><span class="value-status [row.settled ? 'settled' : 'open']">{{ row.settled ? 'Settled' : 'Open' }}</span></td>
             </tr>
           }
         </tbody>
@@ -79,27 +89,59 @@ import { ValueService, type ValueRow } from '@apt-labs/shared/state';
       </div>
     </div>
   `,
-  styles: [`
-    .value-page { padding: var(--apt-spacing-s10); max-width: 1000px; margin: 0 auto; }
-    .value-head { margin-bottom: var(--apt-spacing-s10); }
-    .value-title { font-size: var(--apt-font-size-display); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s3); font-family: var(--apt-font-serif); }
-    .value-lede { font-size: var(--apt-font-size-body-sm); color: var(--apt-text-muted); margin: 0; }
+  styles: [
+    `
+    .value-page { font-family: var(--apt-font-sans); color: var(--apt-text-body); background: var(--apt-surface-default); min-height: 100%; display: flex; flex-direction: column; }
+
+    .value-head { display: flex; flex-direction: column; gap: var(--apt-spacing-s3); margin-bottom: var(--apt-spacing-s8); }
+    .value-pagehead { margin-bottom: 0; }
+    .value-eyebrow { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); letter-spacing: 0.12em; color: var(--apt-text-dim); margin: 0; text-transform: uppercase; }
+    .value-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s3); letter-spacing: -0.022em; line-height: 1.05; }
+    .value-sub { font-size: var(--apt-font-size-body-md); color: var(--apt-text-muted); margin: 0; max-width: 72ch; line-height: var(--apt-line-height-relaxed); }
+    .value-actions { display: flex; gap: var(--apt-spacing-s3); margin-top: var(--apt-spacing-s4); }
+
+    .value-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--apt-spacing-s2);
+      padding: var(--apt-button-padding);
+      border: 1px solid var(--apt-border);
+      border-radius: var(--apt-radius-r1);
+      background: var(--apt-surface-raised);
+      color: var(--apt-text-body);
+      font-size: var(--apt-font-size-body-sm);
+      font-weight: var(--apt-font-weight-medium);
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .value-btn:hover { border-color: var(--apt-module-accent, var(--apt-color-brand-primary)); }
+    .value-btn--primary { background: var(--apt-module-accent, var(--apt-color-brand-primary)); color: var(--apt-action-on-primary); border-color: var(--apt-module-accent, var(--apt-color-brand-primary)); }
+
     .value-metrics { display: flex; gap: var(--apt-spacing-s5); margin-bottom: var(--apt-spacing-s10); flex-wrap: wrap; }
-    .metric { background: var(--apt-surface-raised); padding: var(--apt-spacing-s5) var(--apt-spacing-s6); border-radius: var(--apt-radius-r2); border: 1px solid var(--apt-border); min-width: 120px; }
-    .metric-label { font-size: var(--apt-font-size-micro); text-transform: uppercase; color: var(--apt-text-muted); display: block; margin-bottom: var(--apt-spacing-s2); }
-    .metric-value { font-size: var(--apt-font-size-body-md); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); }
+    .value-metric { background: var(--apt-surface-raised); padding: var(--apt-spacing-s5) var(--apt-spacing-s6); border-radius: var(--apt-radius-r2); border: 1px solid var(--apt-border); min-width: 120px; }
+    .value-metric--teal { border-left: 3px solid var(--apt-text-info); }
+    .value-metric-label { font-size: var(--apt-font-size-micro); text-transform: uppercase; color: var(--apt-text-muted); display: block; margin-bottom: var(--apt-spacing-s2); font-family: var(--apt-font-mono); }
+    .value-metric-value { font-size: var(--apt-font-size-body-md); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); }
+
     .value-filter { display: flex; gap: var(--apt-spacing-s3); margin-bottom: var(--apt-spacing-s10); }
     .value-filter button { padding: var(--apt-spacing-s3) var(--apt-spacing-s5); border-radius: var(--apt-radius-r1); border: 1px solid var(--apt-border); background: transparent; color: var(--apt-text-muted); cursor: pointer; font-size: var(--apt-font-size-body-sm); }
     .value-filter button.active { background: var(--apt-surface-info); border-color: var(--apt-module-accent); color: var(--apt-module-accent); }
+
     .value-table { width: 100%; border-collapse: collapse; margin-bottom: var(--apt-spacing-s10); font-size: var(--apt-font-size-body-sm); }
-    .value-table th { text-align: left; padding: var(--apt-spacing-s5) var(--apt-spacing-s6); font-size: var(--apt-font-size-micro); text-transform: uppercase; color: var(--apt-text-muted); border-bottom: 1px solid var(--apt-border); font-weight: var(--apt-font-weight-medium); }
-    .value-table td { padding: var(--apt-spacing-s5) var(--apt-spacing-s6); border-bottom: 1px solid var(--apt-border); color: var(--apt-text-strong); }
+    .value-table th { text-align: left; padding: var(--apt-spacing-s5) var(--apt-spacing-s6); font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: uppercase; color: var(--apt-text-dim); border-bottom: 1px solid var(--apt-border); font-weight: var(--apt-font-weight-medium); white-space: nowrap; }
+    .value-table td { padding: var(--apt-spacing-s5) var(--apt-spacing-s6); border-bottom: 1px solid var(--apt-border); color: var(--apt-text-strong); vertical-align: middle; }
+    .value-table tr:hover td { background: var(--apt-surface-raised); }
+
     .row-label { font-weight: var(--apt-font-weight-medium); color: var(--apt-module-accent); text-decoration: none; }
     .amount { font-family: var(--apt-font-mono); }
-    .status { font-weight: var(--apt-font-weight-medium); }
+    .value-status { font-size: var(--apt-font-size-micro); font-weight: var(--apt-font-weight-medium); text-transform: capitalize; }
+    .value-status.settled { color: var(--apt-text-success); }
+    .value-status.open { color: var(--apt-text-info); }
+
     .value-docs { padding-top: var(--apt-spacing-s6); border-top: 1px solid var(--apt-border); }
-    .value-docs-title { font-size: var(--apt-font-size-body-sm); font-weight: var(--apt-font-weight-semibold); margin-bottom: var(--apt-spacing-s3); }
-  `],
+    .value-docs-title { font-size: var(--apt-font-size-body-sm); font-weight: var(--apt-font-weight-semibold); margin-bottom: var(--apt-spacing-s3); font-family: var(--apt-font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--apt-text-dim); }
+    `,
+  ],
 })
 export class ValueComponent {
   private readonly service = inject(ValueService);
@@ -114,8 +156,11 @@ export class ValueComponent {
   setFilter(v: 'all' | 'disclosed' | 'settled' | 'open'): void {
     this.filter.set(v);
   }
+
   fmtAmount(n: number | null): string {
     if (n === null) return '—';
     return n.toLocaleString('en-KE');
   }
+
+  openWorkbench(): void {}
 }

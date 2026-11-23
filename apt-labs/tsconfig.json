@@ -23,7 +23,8 @@
       "@apt-labs/shared/state": ["./libs/shared/state/src/index.ts"],
       "@apt-labs/shared/state/*": ["./libs/shared/state/src/*"],
       "@apt-labs/shell": ["./libs/shell/src/index.ts"],
-      "@apt-labs/shell/*": ["./libs/shell/src/*"]
+      "@apt-labs/shell/*": ["./libs/shell/src/*"],
+      "@apt-labs/features/*": ["./src/app/features/*"]
     }
   },
   "angularCompilerOptions": {

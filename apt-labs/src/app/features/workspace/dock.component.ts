@@ -16,6 +16,7 @@ export interface DockItem {
 
 @Component({
   selector: 'app-dock',
+  standalone: true,
   imports: [],
   template: `
     <footer class="dock" [class.dock--empty]="items().length === 0">
@@ -42,7 +43,7 @@ export interface DockItem {
   styles: [
     `
     .dock {
-      height: 174px;
+      height: var(--apt-shell-dock);
       border-top: 1px solid var(--apt-border);
       background: var(--apt-surface-page);
       display: flex;
@@ -56,7 +57,7 @@ export interface DockItem {
       justify-content: space-between;
       align-items: center;
       padding: var(--apt-spacing-s3) var(--apt-spacing-s6);
-      border-bottom: 1px solid var(--apt-border-faint, var(--apt-border));
+      border-bottom: 1px solid var(--apt-border-faint);
       background: var(--apt-surface-raised);
       flex-shrink: 0;
     }

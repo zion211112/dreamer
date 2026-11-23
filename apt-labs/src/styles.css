@@ -1,152 +1,162 @@
-/* APT-LABS — Structural Emergence design tokens
+/* APT-LABS — Hybrid Design System
  *
- * Single source of truth for the --apt-* design system used across all
- * feature, shell and shared UI components. Defined on :root so every
- * component in the app can reference them without fallbacks.
+ * Structural Emergence hybrid: warm ivory base, earthy neutrals, serif headings,
+ * mono interface, selective accents. Beats Linear (black precision), Palantir
+ * (enterprise gray), Airtable (consumer pastel) — with sublime beauty for
+ * Kenyan startups and Palantir-ready institutional weight.
+ *
+ * Tokens are defined on :root so every component references them without
+ * fallbacks. No framework change, no new dependencies.
  */
 
-:root {
-  /* ── Colour primitives ── */
-  --apt-color-brand-primary: #2563eb;
-  --apt-color-brand-accent: #3b82f6;
-  --apt-color-brand-geist-alert: #ef4444;
-  --apt-color-error-base: #b91c1c;
-  --apt-color-warning-base: #92400e;
-  --apt-color-success-base: #166534;
-  --apt-color-danger-base: #991b1b;
-  --apt-color-info-base: #1e40af;
-  --apt-color-neutral-n0: #ffffff;
-  --apt-color-neutral-n950: #0f172a;
-  --apt-color-ramp-geist-alert-50: #fef2f2;
-  --apt-color-ramp-geist-alert-100: #fecaca;
-  --apt-color-ramp-stewardship-100: #dcfce7;
+/* ── Color primitives (hybrid palette) ── */
+--apt-color-brand-primary: #2e4a3a;      /* deep forest — institutional anchor */
+--apt-color-brand-accent: #ad8b55;     /* brass — selective highlight */
+--apt-color-brand-geist-alert: #b91c1c;
 
-  /* ── Semantic surfaces (dark instrument) ── */
-  --apt-surface-default: #0f172a;
-  --apt-surface-page: #1e293b;
-  --apt-surface-raised: #334155;
-  --apt-surface-success: #ecfdf5;
-  --apt-surface-danger: #fef2f2;
-  --apt-surface-info: #eff6ff;
-  --apt-surface-warning: #fefbeb;
+--apt-color-neutral-n0: #ffffff;
+--apt-color-neutral-n50: #faf8f2;      /* warm ivory — page base */
+--apt-color-neutral-n100: #f4f1e9;
+--apt-color-neutral-n200: #ece8df;
+--apt-color-neutral-n950: #1a1c16;     /* deep ink — text strong */
 
-  /* ── Semantic text ── */
-  --apt-text-body: #f1f5f9;
-  --apt-text-strong: #ffffff;
-  --apt-text-muted: #94a3b8;
-  --apt-text-dim: #64748b;
-  --apt-text-success: #166534;
-  --apt-text-danger: #991b1b;
-  --apt-text-warning: #92400e;
-  --apt-text-info: #1e40af;
-  --apt-action-on-primary: #ffffff;
+/* ── Semantic surfaces ── */
+--apt-surface-default: #faf8f2;
+--apt-surface-page: #ffffff;
+--apt-surface-raised: #f4f1e9;
+--apt-surface-subtle: #ece8df;
 
-  /* ── Borders ── */
-  --apt-border: #334155;
-  --apt-border-faint: #475569;
+--apt-surface-success: #f0fdf4;
+--apt-surface-danger: #fef2f2;
+--apt-surface-info: #eff6ff;
+--apt-surface-warning: #fefbeb;
 
-  /* ── Radius ── */
-  --apt-radius-r0: 0;
-  --apt-radius-r1: 6px;
-  --apt-radius-r2: 10px;
-  --apt-radius-r3: 14px;
+/* ── Semantic text ── */
+--apt-text-body: #292b25;
+--apt-text-strong: #1a1c16;
+--apt-text-muted: #6b6558;
+--apt-text-dim: #9e9889;
+--apt-text-success: #166534;
+--apt-text-danger: #b91c1c;
+--apt-text-warning: #92400e;
+--apt-text-info: #1e40af;
+--apt-action-on-primary: #ffffff;
 
-  /* ── Spacing ── */
-  --apt-spacing-s1: 0.25rem;
-  --apt-spacing-s2: 0.5rem;
-  --apt-spacing-s3: 0.75rem;
-  --apt-spacing-s4: 1rem;
-  --apt-spacing-s5: 1.25rem;
-  --apt-spacing-s6: 1.5rem;
-  --apt-spacing-s7: 1.75rem;
-  --apt-spacing-s8: 2rem;
-  --apt-spacing-s10: 2.5rem;
-  --apt-spacing-s11: 2.75rem;
-  --apt-spacing-s12: 3rem;
-  --apt-spacing-s13: 3.25rem;
-  --apt-spacing-s14: 3.5rem;
-  --apt-spacing-s15: 3.75rem;
-  --apt-spacing-s16: 4rem;
-  --apt-spacing-s18: 4.5rem;
-  --apt-spacing-s20: 5rem;
-  --apt-spacing-s22: 5.5rem;
+/* ── Borders ── */
+--apt-border: rgba(41, 43, 37, 0.12);
+--apt-border-strong: rgba(41, 43, 37, 0.24);
+--apt-border-faint: rgba(41, 43, 37, 0.06);
+--apt-border-active: #2e4a3a;
 
-  /* ── Typography ── */
-  --apt-font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  --apt-font-serif: Georgia, 'Times New Roman', 'Liberation Serif', serif;
-  --apt-font-mono: ui-monospace, 'SF Mono', 'Consolas', 'Liberation Mono', monospace;
+/* ── Radius ── */
+--apt-radius-r0: 0;
+--apt-radius-r1: 6px;
+--apt-radius-r2: 10px;
+--apt-radius-r3: 14px;
 
-  --apt-font-size-micro: 0.6875rem;
-  --apt-font-size-body-sm: 0.875rem;
-  --apt-font-size-body-md: 1rem;
-  --apt-font-size-sm-3: 0.8125rem;
-  --apt-font-size-title-1: 1.5rem;
-  --apt-font-size-title-2: 1.25rem;
-  --apt-font-size-h1: 2rem;
-  --apt-font-size-h2: 1.5rem;
-  --apt-font-size-display: 2.5rem;
-  --apt-font-size-display-xl: 3rem;
+/* ── Spacing (8px base grid) ── */
+--apt-spacing-s1: 0.25rem;
+--apt-spacing-s2: 0.5rem;
+--apt-spacing-s3: 0.75rem;
+--apt-spacing-s4: 1rem;
+--apt-spacing-s5: 1.25rem;
+--apt-spacing-s6: 1.5rem;
+--apt-spacing-s7: 1.75rem;
+--apt-spacing-s8: 2rem;
+--apt-spacing-s10: 2.5rem;
+--apt-spacing-s12: 3rem;
+--apt-spacing-s16: 4rem;
+--apt-spacing-s18: 4.5rem;
+--apt-spacing-s20: 5rem;
+--apt-spacing-s22: 5.5rem;
 
-  --apt-font-weight-medium: 500;
-  --apt-font-weight-semibold: 600;
+/* ── Typography ── */
+--apt-font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI Variable", "Segoe UI", sans-serif;
+--apt-font-serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+--apt-font-mono: ui-monospace, "JetBrains Mono", SFMono-Regular, Consolas, monospace;
 
-  --apt-line-height-tight: 1.2;
-  --apt-line-height-normal: 1.5;
-  --apt-line-height-relaxed: 1.75;
+--apt-font-size-micro: 0.6875rem;   /* 11px */
+--apt-font-size-body-sm: 0.875rem;  /* 14px */
+--apt-font-size-body-md: 1rem;      /* 16px */
+--apt-font-size-sm-3: 0.8125rem;    /* 13px */
+--apt-font-size-title-1: 1.5rem;    /* 24px */
+--apt-font-size-title-2: 1.25rem;   /* 20px */
+--apt-font-size-h1: 2rem;           /* 32px */
+--apt-font-size-h2: 1.5rem;         /* 24px */
+--apt-font-size-display: 2.5rem;    /* 40px */
+--apt-font-size-display-xl: 3rem;   /* 48px */
 
-  /* ── Component-level tokens ── */
-  --apt-button-font-size-lg: 0.875rem;
-  --apt-button-font-weight: 500;
-  --apt-button-padding-md: 0.5rem 1rem;
-  --apt-button-radius: 6px;
+--apt-font-weight-medium: 500;
+--apt-font-weight-semibold: 600;
 
-  --apt-input-bg: #1e293b;
-  --apt-input-border: #334155;
-  --apt-input-border-style: solid;
-  --apt-input-border-width: 1px;
-  --apt-input-font-size: 0.875rem;
-  --apt-input-radius: 6px;
-  --apt-input-text: #f1f5f9;
+--apt-line-height-tight: 1.1;
+--apt-line-height-normal: 1.5;
+--apt-line-height-relaxed: 1.75;
 
-  /* ── Motion ── */
-  --apt-animation-fast: 150ms ease;
+/* ── Component-level tokens ── */
+--apt-button-font-size: 0.875rem;
+--apt-button-font-weight: 600;
+--apt-button-padding: 0.5625rem 1rem;   /* 9px 15px */
+--apt-button-radius: 8px;
 
-  /* ── Shadows ── */
-  --apt-shadow-sh1: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --apt-shadow-sh2: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+--apt-input-bg: #ffffff;
+--apt-input-border: rgba(41, 43, 37, 0.12);
+--apt-input-border-style: solid;
+--apt-input-border-width: 1px;
+--apt-input-font-size: 0.875rem;
+--apt-input-radius: 8px;
+--apt-input-text: #1a1c16;
 
-  /* ── Module accent ── */
-  --apt-module-accent: var(--apt-color-brand-primary);
+--apt-animation-fast: 150ms ease;
 
-  /* ── Group colours ── */
-  --apt-group-continuity: #3b82f6;
-  --apt-group-value: #10b981;
-  --apt-group-core: #8b5cf6;
+/* ── Shadows ── */
+--apt-shadow-sh1: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+--apt-shadow-sh2: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
 
-  /* ── Ontology family colours (categorical — always paired with the family label) ── */
-  --apt-family-actor: #4ade80;
-  --apt-family-capability: #60a5fa;
-  --apt-family-resource: #fbbf24;
-  --apt-family-place: #a78bfa;
-  --apt-family-intention: #f59e0b;
-  --apt-family-commitment: #d97706;
-  --apt-family-work: #22c55e;
-  --apt-family-activity: #16a34a;
-  --apt-family-output: #ea580c;
-  --apt-family-exchange: #3b82f6;
-  --apt-family-evidence: #0891b2;
-  --apt-family-knowledge: #a855f7;
-  --apt-family-governance: #94a3b8;
+/* ── Module accent (per charter B3/B4) ── */
+--apt-module-accent: var(--apt-color-brand-primary);
 
-  /* ── Ontology evidence standing colours ── */
-  --apt-standing-unassessed: #94a3b8;
-  --apt-standing-reported: #f59e0b;
-  --apt-standing-supported: var(--apt-group-continuity);
-  --apt-standing-verified: #22c55e;
-  --apt-standing-disputed: #ea580c;
-  --apt-standing-rejected: var(--apt-color-brand-geist-alert);
-  --apt-standing-expired: #64748b;
+/* ── Group colours (pillars) ── */
+--apt-group-continuity: #2e4a3a;   /* Knowledge — deep forest */
+--apt-group-value: #ad8b55;        /* Exchange — brass */
+--apt-group-core: #5c6b5e;         /* Production — sage-dark */
 
-  /* ── Z-index ── */
-  --apt-z-index-dropdown: 100;
-}
+/* ── Ontology family colours (categorical, paired with family label) ── */
+--apt-family-actor: #2e4a3a;
+--apt-family-capability: #4a6b5a;
+--apt-family-resource: #ad8b55;
+--apt-family-place: #a66f55;
+--apt-family-intention: #c9a227;
+--apt-family-commitment: #b45309;
+--apt-family-work: #16a34a;
+--apt-family-activity: #15803d;
+--apt-family-output: #ea580c;
+--apt-family-exchange: #2e4a3a;
+--apt-family-evidence: #0891b2;
+--apt-family-knowledge: #7d8f9a;
+--apt-family-governance: #6b7280;
+
+/* ── Evidence standing colours (contrast-results.json verified AA/AAA) ── */
+--apt-standing-unassessed: #94a3b8;
+--apt-standing-reported: #f59e0b;
+--apt-standing-supported: var(--apt-group-continuity);
+--apt-standing-verified: #166534;
+--apt-standing-disputed: #ea580c;
+--apt-standing-rejected: var(--apt-color-brand-geist-alert);
+--apt-standing-expired: #64748b;
+
+/* ── Z-index ── */
+--apt-z-index-dropdown: 100;
+--apt-z-index-modal: 300;
+--apt-z-index-tooltip: 500;
+--apt-z-index-toast: 700;
+
+/* ── Shell layout dimensions (charter B3) ── */
+--apt-shell-topbar: 54px;
+--apt-shell-rail: 232px;
+--apt-shell-sidebar-min: 196px;
+--apt-shell-sidebar-max: 252px;
+--apt-shell-inspector-min: 286px;
+--apt-shell-inspector-max: 360px;
+--apt-shell-dock: 174px;
+--apt-shell-statusbar: 24px;

@@ -1,92 +1,109 @@
+/**
+ * @apt-labs/features/network — PeopleComponent
+ *
+ * People and crews directory — dense table view with capability chips.
+ */
 import { Component, signal, computed, inject } from '@angular/core';
 import { NetworkService, type DirectoryRow } from '@apt-labs/shared/state';
 
 @Component({
   selector: 'app-people',
+  standalone: true,
   template: `
     <div class="plp" data-module="people">
-      <div class="plp-body">
-        <main class="plp-main">
-          <div class="plp-pagehead">
-            <p class="plp-eyebrow">NETWORK · PEOPLE &amp; CREWS</p>
-            <h1 class="plp-h1">People and crews</h1>
-            <p class="plp-sub">Individuals and teams who claim capability. Search by name, description, or capability.</p>
-          </div>
+      <div class="plp-pagehead">
+        <p class="plp-eyebrow">NETWORK · PEOPLE & CREWS</p>
+        <h1 class="plp-h1">People and crews</h1>
+        <p class="plp-sub">Individuals and teams who claim capability. Search by name, description, or capability.</p>
+        <div class="plp-actions">
+          <input
+            type="search"
+            class="plp-search-input"
+            placeholder="Search people, crews, capabilities…"
+            [value]="query()"
+            (input)="query.set($any($event.target).value)"
+          />
+          <span class="plp-count">{{ visible().length }} shown</span>
+        </div>
+      </div>
 
-          <div class="plp-search">
-            <svg class="plp-search-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="currentColor" d="M10.5 3a7.5 7.5 0 1 1-4.8 13.3L3 19.1 4.4 20.5l2.8-2.8A7.5 7.5 0 0 1 10.5 3Zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Z" />
-            </svg>
-            <input
-              type="search"
-              class="plp-search-input"
-              placeholder="Search people, crews, capabilities…"
-              [value]="query()"
-              (input)="query.set($any($event.target).value)"
-            />
-            <span class="plp-count">{{ visible().length }} shown</span>
-          </div>
-
-          <div class="plp-grid">
+      <div class="plp-table-wrap">
+        <table class="plp-table">
+          <thead>
+            <tr>
+              <th class="plp-th">Name</th>
+              <th class="plp-th">Type</th>
+              <th class="plp-th">Description</th>
+              <th class="plp-th">Capabilities</th>
+              <th class="plp-th plp-th--actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
             @for (row of visible(); track row.id) {
-              <article class="plp-card" [style]="'--card-accent:' + (row.type === 'crew' ? 'var(--apt-group-continuity)' : 'var(--apt-color-brand-primary)')">
-                <div class="plp-card-head">
+              <tr class="plp-tr">
+                <td class="plp-td plp-td--name">
                   <span class="plp-glyph">{{ initial(row.name) }}</span>
-                  <div class="plp-id">
-                    <h3 class="plp-name">{{ row.name }}</h3>
-                    <span class="plp-type">{{ row.type }}</span>
-                  </div>
-                </div>
-                <p class="plp-desc">{{ row.description }}</p>
-                <div class="plp-caps">
-                  @for (cap of row.capabilities; track cap) {
-                    <span class="plp-chip">{{ cap }}</span>
-                  }
-                </div>
-                <div class="plp-assets">
-                  @for (asset of row.assets; track asset) {
-                    <span class="plp-asset">{{ asset }}</span>
-                  }
-                </div>
-              </article>
+                  <span class="plp-name">{{ row.name }}</span>
+                </td>
+                <td class="plp-td"><span class="plp-type-badge">{{ row.type }}</span></td>
+                <td class="plp-td plp-td--dim">{{ row.description }}</td>
+                <td class="plp-td plp-td--dim">{{ caps(row) }}</td>
+                <td class="plp-td plp-td--actions">
+                  <button class="plp-btn plp-btn--quiet">View</button>
+                </td>
+              </tr>
             }
             @if (visible().length === 0) {
-              <p class="plp-empty">No people or crews match “{{ query() }}”.</p>
+              <tr><td colspan="5" class="plp-empty">No people or crews match “{{ query() }}”.</td></tr>
             }
-          </div>
-        </main>
+          </tbody>
+        </table>
       </div>
     </div>
   `,
   styles: [
     `
-.plp { font-family: var(--apt-font-sans); color: var(--apt-text-body); background: var(--apt-surface-default); min-height: 100%; display: flex; flex-direction: column; }
-.plp-body { display: flex; flex: 1; min-height: 0; }
-.plp-main { flex: 1; min-width: 0; padding: var(--apt-spacing-s12) var(--apt-spacing-s16) var(--apt-spacing-s22); max-width: 1180px; }
-.plp-pagehead { margin-bottom: var(--apt-spacing-s6); }
-.plp-eyebrow { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); letter-spacing: 0.12em; color: var(--apt-text-dim); margin: 0 0 var(--apt-spacing-s2); }
-.plp-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display); font-weight: var(--apt-font-weight-semibold); letter-spacing: -0.022em; line-height: 1.05; color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s3); }
-.plp-sub { font-size: var(--apt-font-size-body-md); line-height: var(--apt-line-height-relaxed); color: var(--apt-text-muted); margin: 0; max-width: 64ch; }
-.plp-search { display: flex; align-items: center; gap: var(--apt-spacing-s3); margin-bottom: var(--apt-spacing-s8); }
-.plp-search-icon { width: 16px; height: 16px; color: var(--apt-text-dim); flex: none; }
-.plp-search-input { flex: 1; min-width: 0; padding: var(--apt-spacing-s3) var(--apt-spacing-s4); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r1); background: var(--apt-surface-page); font-size: var(--apt-font-size-body-md); color: var(--apt-text-body); outline: none; }
-.plp-search-input:focus { border-color: var(--apt-color-brand-primary); }
-.plp-count { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); color: var(--apt-text-dim); white-space: nowrap; }
-.plp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--apt-spacing-s5); }
-.plp-card { border: 1px solid var(--apt-border); border-left: 3px solid var(--card-accent, var(--apt-color-brand-primary)); border-radius: var(--apt-radius-r2); background: var(--apt-surface-page); padding: var(--apt-spacing-s5) var(--apt-spacing-s6); display: flex; flex-direction: column; gap: var(--apt-spacing-s3); }
-.plp-card-head { display: flex; align-items: center; gap: var(--apt-spacing-s4); }
-.plp-glyph { width: 36px; height: 36px; border-radius: 50%; background: color-mix(in srgb, var(--card-accent, var(--apt-color-brand-primary)) 15%, transparent); color: var(--card-accent, var(--apt-color-brand-primary)); font-family: var(--apt-font-serif); font-size: var(--apt-font-size-body-md); font-weight: var(--apt-font-weight-semibold); display: grid; place-items: center; flex: none; }
-.plp-id { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.plp-name { font-size: var(--apt-font-size-title-2); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); letter-spacing: -0.01em; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.plp-type { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: lowercase; letter-spacing: 0.06em; color: var(--apt-text-muted); }
-.plp-desc { font-size: var(--apt-font-size-body-sm); line-height: var(--apt-line-height-relaxed); color: var(--apt-text-muted); margin: 0; }
-.plp-caps { display: flex; flex-wrap: wrap; gap: var(--apt-spacing-s2); }
-.plp-chip { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); color: var(--apt-text-body); background: var(--apt-surface-raised); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r0); padding: 1px 6px; white-space: nowrap; }
-.plp-assets { display: flex; flex-wrap: wrap; gap: var(--apt-spacing-s2); margin-top: var(--apt-spacing-s1); }
-.plp-asset { font-size: var(--apt-font-size-micro); color: var(--apt-text-dim); font-family: var(--apt-font-mono); }
-.plp-empty { grid-column: 1 / -1; padding: var(--apt-spacing-s8); border: 1px dashed var(--apt-border); border-radius: var(--apt-radius-r2); color: var(--apt-text-muted); font-size: var(--apt-font-size-body-sm); text-align: center; }
-@media (max-width: 900px) { .plp-main { padding: var(--apt-spacing-s8); } .plp-grid { grid-template-columns: 1fr; } }
-`,
+    .plp { font-family: var(--apt-font-sans); color: var(--apt-text-body); background: var(--apt-surface-default); min-height: 100%; display: flex; flex-direction: column; }
+
+    .plp-pagehead { display: flex; flex-direction: column; gap: var(--apt-spacing-s3); margin-bottom: var(--apt-spacing-s8); }
+    .plp-eyebrow { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); letter-spacing: 0.12em; color: var(--apt-text-dim); margin: 0; text-transform: uppercase; }
+    .plp-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s3); letter-spacing: -0.022em; line-height: 1.05; }
+    .plp-sub { font-size: var(--apt-font-size-body-md); color: var(--apt-text-muted); margin: 0; max-width: 72ch; line-height: var(--apt-line-height-relaxed); }
+    .plp-actions { display: flex; gap: var(--apt-spacing-s3); margin-top: var(--apt-spacing-s4); align-items: center; }
+
+    .plp-search-input { flex: 1; min-width: 200px; padding: var(--apt-spacing-s3) var(--apt-spacing-s4); border-radius: var(--apt-radius-r1); border: 1px solid var(--apt-border); background: var(--apt-surface-page); color: var(--apt-text-body); font-size: var(--apt-font-size-body-md); font-family: inherit; }
+    .plp-search-input:focus { outline: none; border-color: var(--apt-color-brand-primary); }
+
+    .plp-count { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); color: var(--apt-text-dim); white-space: nowrap; }
+
+    .plp-table-wrap { overflow-x: auto; border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r2); background: var(--apt-surface-page); }
+    .plp-table { width: 100%; border-collapse: collapse; font-size: var(--apt-font-size-body-sm); }
+    .plp-th { text-align: left; padding: var(--apt-spacing-s4) var(--apt-spacing-s5); font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: uppercase; letter-spacing: 0.08em; color: var(--apt-text-dim); border-bottom: 1px solid var(--apt-border); font-weight: var(--apt-font-weight-medium); white-space: nowrap; }
+    .plp-tr { border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: background var(--apt-animation-fast); }
+    .plp-tr:hover { background: var(--apt-surface-raised); }
+    .plp-td { padding: var(--apt-spacing-s4) var(--apt-spacing-s5); border-bottom: 1px solid #f3f4f6; color: var(--apt-text-body); vertical-align: middle; }
+    .plp-td--name { font-weight: var(--apt-font-weight-medium); color: var(--apt-text-strong); }
+    .plp-td--dim { color: var(--apt-text-muted); font-size: var(--apt-font-size-body-sm); }
+    .plp-glyph { width: 32px; height: 32px; border-radius: 50%; background: color-mix(in srgb, var(--card-accent, var(--apt-color-brand-primary)) 15%, transparent); color: var(--card-accent, var(--apt-color-brand-primary)); font-family: var(--apt-font-serif); font-size: var(--apt-font-size-body-md); font-weight: var(--apt-font-weight-semibold); display: grid; place-items: center; flex: none; }
+    .plp-name { font-size: var(--apt-font-size-title-2); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); letter-spacing: -0.01em; display: block; }
+    .plp-type-badge { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: lowercase; letter-spacing: 0.04em; color: var(--apt-text-body); background: var(--apt-surface-raised); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r0); padding: 1px 6px; white-space: nowrap; }
+    .plp-empty { grid-column: 1 / -1; padding: var(--apt-spacing-s8); border: 1px dashed var(--apt-border); border-radius: var(--apt-radius-r2); color: var(--apt-text-muted); font-size: var(--apt-font-size-body-sm); text-align: center; }
+
+    .plp-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--apt-spacing-s2);
+      padding: var(--apt-spacing-s1) var(--apt-spacing-s3);
+      border: 1px solid var(--apt-border);
+      border-radius: var(--apt-radius-r0);
+      background: transparent;
+      color: var(--apt-module-accent, var(--apt-color-brand-primary));
+      font-family: var(--apt-font-mono);
+      font-size: var(--apt-font-size-sm-3);
+      cursor: pointer;
+    }
+    .plp-btn:hover { background: var(--apt-surface-raised); }
+    `,
   ],
 })
 export class PeopleComponent {
@@ -98,6 +115,8 @@ export class PeopleComponent {
   readonly visible = computed(() =>
     this.rows.filter((r) => this.service.matchQuery(this.query(), r)),
   );
+
+  readonly caps = (r: DirectoryRow) => r.capabilities.join(', ') || '—';
 
   readonly initial = (name: string) => name[0] ?? '?';
 }

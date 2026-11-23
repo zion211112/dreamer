@@ -10,9 +10,6 @@
  *
  * Clicking a node selects it in the SelectionService, opening the Inspector
  * with that entity's context. Clicking an edge shows its metadata.
- *
- * Framework-free core: cytoscape is a DOM manipulation library; this component
- * owns the cytoscape instance lifecycle and bridges selection to Angular signals.
  */
 import { Component, input, output, effect, OnDestroy, inject } from '@angular/core';
 import cytoscape from 'cytoscape';
@@ -40,8 +37,9 @@ export interface GraphEdge {
 
 @Component({
   selector: 'app-relationship-graph',
+  standalone: true,
   imports: [],
-  template: `<div class="rg-container" id="rg-cy"></div>`,
+  template: `<div class="rg-container"><div id="rg-cy"></div></div>`,
   styles: [
     `
     .rg-container { width: 100%; height: 100%; position: relative; background: var(--apt-surface-page); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r2); }
@@ -61,7 +59,6 @@ export class RelationshipGraphComponent implements OnDestroy {
 
   constructor() {
     effect(() => {
-      // React to input changes: re-layout when nodes/edges change
       const n = this.nodes();
       const e = this.edges();
       if (this.cy && (n.length > 0 || e.length > 0)) {

@@ -4,8 +4,8 @@
  * Keyboard-accessible command palette (Cmd-K). Opens on `Mod+K` and lets the
  * user jump to a module, create a need, or open an entity by id.
  *
- * Lightweight custom implementation (~100 lines on signals) — avoids the
- * unverified @ngxpert/cmdk package on Angular 22. No new dependencies.
+ * Lightweight custom implementation on signals — avoids the unverified
+ * @ngxpert/cmdk package on Angular 22. No new dependencies.
  */
 import { Component, inject, output, signal, effect, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
@@ -19,6 +19,7 @@ export interface PaletteItem {
 
 @Component({
   selector: 'app-command-palette',
+  standalone: true,
   imports: [],
   template: `
     @if (open()) {
@@ -62,8 +63,8 @@ export interface PaletteItem {
   styles: [
     `
     .cp-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1000; }
-    .cp-panel { position: fixed; top: 120px; left: 50%; transform: translateX(-50%); width: 520px; max-width: 90vw; max-height: 70vh; background: var(--apt-surface-page); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r3); box-shadow: var(--apt-shadow-sh3, var(--apt-shadow-sh2)); z-index: 1001; display: flex; flex-direction: column; overflow: hidden; }
-    .cp-head { display: flex; align-items: center; gap: var(--apt-spacing-s3); padding: var(--apt-spacing-s5) var(--apt-spacing-s6); border-bottom: 1px solid var(--apt-border-faint, var(--apt-border)); background: var(--apt-surface-raised); }
+    .cp-panel { position: fixed; top: 120px; left: 50%; transform: translateX(-50%); width: 520px; max-width: 90vw; max-height: 70vh; background: var(--apt-surface-page); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r3); box-shadow: var(--apt-shadow-sh2); z-index: 1001; display: flex; flex-direction: column; overflow: hidden; }
+    .cp-head { display: flex; align-items: center; gap: var(--apt-spacing-s3); padding: var(--apt-spacing-s5) var(--apt-spacing-s6); border-bottom: 1px solid var(--apt-border-faint); background: var(--apt-surface-raised); }
     .cp-kbd { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-sm-3); background: var(--apt-surface-default); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r0); padding: 2px 6px; color: var(--apt-text-body); }
     .cp-title { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-title-1); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); }
     .cp-input { width: 100%; padding: var(--apt-spacing-s4) var(--apt-spacing-s6); border: 0; background: transparent; color: var(--apt-text-body); font-size: var(--apt-font-size-body-md); font-family: inherit; outline: none; }

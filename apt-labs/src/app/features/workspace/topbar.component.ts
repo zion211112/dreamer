@@ -2,19 +2,21 @@
  * @apt-labs/features/workspace — TopbarComponent
  *
  * Shell region: working-context identity. Shows the current module context,
- * the active record/entity being worked on, and global actions (search,
- * help, account). One job: tell the user where they are and what context
+ * the active record/entity being worked on, and global actions (command
+ * palette, account). One job: tell the user where they are and what context
  * they are operating in.
  */
 import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-topbar',
+  standalone: true,
   imports: [],
   template: `
     <header class="topbar" [attr.aria-label]="'Working context: ' + context()">
       <div class="topbar-brand">
-        <span class="brand-mark">APT-LABS</span>
+        <div class="brand-mark">APT</div>
+        <span class="brand-name">APT-LABS</span>
       </div>
       <div class="topbar-context">
         <span class="context-label">{{ context() }}</span>
@@ -32,14 +34,15 @@ import { Component, input } from '@angular/core';
   styles: [
     `
     .topbar {
+      height: var(--apt-shell-topbar);
+      border-bottom: 1px solid var(--apt-border);
+      background: var(--apt-surface-page);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 54px;
       padding: 0 var(--apt-spacing-s8);
-      border-bottom: 1px solid var(--apt-border);
-      background: var(--apt-surface-page);
       flex-shrink: 0;
+      z-index: var(--apt-z-index-dropdown);
     }
     .topbar-brand {
       display: flex;
@@ -62,6 +65,7 @@ import { Component, input } from '@angular/core';
       font-size: var(--apt-font-size-sm-3);
       font-weight: var(--apt-font-weight-semibold);
     }
+    .brand-name { letter-spacing: -0.01em; }
     .topbar-context {
       display: flex;
       align-items: center;
