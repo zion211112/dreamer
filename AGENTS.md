@@ -1,64 +1,80 @@
 # APT-LABS — Canonical Agent Instructions
 
-Single source of truth for agents working in this repository. Replaces duplicated instruction files. Where this file conflicts with `docs/design/charter.md`, the charter governs.
+Single source of truth for agents working in this repository. Replaces duplicated instruction
+files. Where this file conflicts with `docs/design/charter.md` or `docs/ontology.md`, the charter
+and ontology govern.
+
+This file anchors **facts about the current tree** and **how to run it**. It does not pin design
+decisions: the stack, layout, and module set below are *descriptive as of today* and are free to
+evolve. Design intent lives in `docs/design/charter.md` (constitution, B1–B8) and
+`docs/ontology.md`; durable structural decisions are recorded as ADRs in `docs/decisions/`. Read
+those before treating anything this file implies as a constraint.
 
 ## Stack
 
-Vue 3 (Composition API) + Pinia + Vue Router + Vite 6.4.x + TypeScript 5.6 strict + Vitest 5.x.
-Browser-local demo with Supabase fallback when env vars are unset.
+**What it is today** (not a ceiling): Angular 22.3, **zoneless** (`provideZonelessChangeDetection`),
+standalone-component monorepo under `apt-labs/`. TypeScript strict. Signal-based reactive state.
 
-Single entry (verified 2026-11-21): `index.html` → `src/main-vue.ts` (Vue 3, mounted at `#app-vue`).
-`index-vue.html` is a legacy duplicate of the same entry. There is **no** Preact entry and no
-`src/main.tsx` / `src/App.tsx` — the Vue migration permitted by ADR B9 has completed, and Preact is
-no longer a dependency. Route table: `src/modules/router.ts`.
+- App: `apt-labs/src/` — single entry `main.ts` → `app.ts`, router in `app.routes.ts`.
+- Libraries: `@apt-labs/ontology`, `@apt-labs/domain`, `@apt-labs/shared/{state,ui}`, `@apt-labs/shell`.
+- Feature screens read one shared spine — `CoordinationService` in `@apt-labs/shared/state` — so
+  every view reflects the same live record instead of siloed demo data.
+- Browser-local demo; Supabase fallback when env vars are set.
 
-## Key commands
+The stack can evolve: any move (e.g. changing state strategy, adding a framework concern, or
+replacing a library) is an ADR decision in `docs/decisions/`, not a breakage of this file. Note the
+root-level `vite.config.ts` / `vitest.config.ts` / `index.html` / `index-vue.html` are **leftovers
+from a retired Vue app** (removed in `b622f5b`) — the product is the Angular tree; do not extend the
+Vue leftovers.
 
-- `npm run dev` — dev server
-- `npm run build` — `tsc && vite build`
-- `npm run test:unit -- --run` — vitest (34 files, 318 tests — verified 2026-11-21)
+## Key commands (in `apt-labs/`)
+
+- `npm start` — `ng serve` dev server
+- `npm run build` — `ng build`
+- `npm test` — `ng test`
 - `npx tsc --noEmit` — type check
+
+(These are the commands for the Angular app today; if the tree changes, the commands may change too
+— check `apt-labs/package.json` scripts rather than trusting this list verbatim.)
 
 ## Where things live
 
+Descriptive map of the Angular tree **as it is today**. It will drift as the app grows — trust the
+tree over this list when they disagree.
+
 ```
-src/
-  main-vue.ts          — single entry: Vue app + Pinia + router
-  modules/router.ts    — full route table (source of truth for routes)
-  assets/css/          — design tokens & global styles (NOT src/tokens.css)
-  pages/
-    Landing.vue, Auth.vue, DesignLab.vue
-    workspace/         — WorkspaceOverview, Coordination, Commons, Network,
-                         People, Institutions, Records, AptCoinLab  (all .vue)
-  lib/
-    actors.ts              — Actor + membership, ActorType (individual/crew/institution)
-    identity.ts            — IdentityRecord; separates Person from Account
-    asset-registry.ts      — RESOURCE family, registerAsset/retireAsset
-    capability-registry.ts — CAPABILITY family, what an actor can do
-    commitment-journey.ts  — postNeed → acceptCommitment → fulfilCommitment
-    matching.ts            — declarative need↔capability matching (no opaque scoring)
-    evidence-store.ts      — EVIDENCE family + unverified→verified transition
-    knowledge-store.ts     — distillKnowledge (accepted outcome → Lesson)
-    record-envelope.ts     — versioned, append-only records + supersede
-    audit.ts               — append-only audit trail
-    authz.ts               — RBAC permission families
-    ontology/              — types.ts, relationships.ts, actions.ts, evidence.ts
-    db/roll.ts             — RollEntry, hash_anchor, evidence layers
-    people-network.ts      — demo graph (illustrative, not real people)
-  modules/
-    workbench/         — pilot routes; live work items are localStorage JSON
-    intelligence/      — matching / intelligence surface
-    kemetos1/          — Kemetos1 coordinator layer
-    assets/, benben-os/ — benben-os is a separate prototype, not an APT-LABS module
+apt-labs/
+  src/
+    main.ts              — entry
+    app.ts               — root component
+    app.routes.ts        — route table (source of truth for routes)
+    app.config.ts        — provideZonelessChangeDetection + browser config
+    features/            — one folder per screen, standalone components
+      landing/ commons/ network/ records/ workbench/ value/ intelligence/
+      ontology/ sovereignty/ workspace/ auth/
+  libs/
+    ontology/            — @apt-labs/ontology: domain types, cycles, commitment lifecycle,
+                           evidence standing
+    domain/              — @apt-labs/domain
+    shared/
+      state/             — @apt-labs/shared/state: CoordinationService spine, zoneless signal
+                           state (the shared record every feature reads)
+      ui/                — @apt-labs/shared/ui: shared UI primitives
+    shell/               — @apt-labs/shell: app shell / layout
+  public/                — static assets
 ```
 
-**Not in this repo** (previously documented, deleted): `src/App.tsx`, `src/main.tsx`,
-`src/components/*.tsx`, `src/lib/local-workbench.ts`, `src/lib/workbench-simulation.ts`,
-`src/lib/agent-host.ts`, `docs/STATE_MACHINES.md` references all of them.
+The retired Vue tree (`src/pages/*.vue`, `src/lib/*`, `src/modules/*`, `src/main-vue.ts`,
+`src/components/*.tsx`) no longer exists in this repo — `docs/STATE_MACHINES.md` and a few older
+notes still reference it; treat those references as historical, not live.
 
-## Workspace modules
+## Workspace modules (intended set — not a fixed contract)
 
-| Module | Job | Route |
+The *intended* module set. Today's Angular features (`apt-labs/src/app/features/`) cover a subset
+of it; the rest are targets to build out. Add, merge, or drop modules as the charter directs — this
+describes intent, not a lock. (Check `app.routes.ts` for what's actually wired right now.)
+
+| Module | Job | Intended route |
 |--------|-----|-------|
 | Commons | Discover needs, offers, resources, opportunities | `/workspace/commons` |
 | Network | People, crews, institutions, assets, capabilities | `/workspace/network/{people,institutions,capabilities}` |
@@ -71,7 +87,9 @@ src/
 | University | Universities post research needs, host students, issue credentials | `/workspace/university` |
 | High School | Students learn skills on real community projects | `/workspace/highschool` |
 
-School Console is nested under Workbench, not a primary module.
+School Console currently sits under Workbench (an operational boundary — where people take jobs —
+rather than a static record). That placement is a decision, not a law; revisit it per the charter
+if the reasoning stops holding.
 
 ## Auth
 
@@ -87,7 +105,9 @@ No universal reputation score (charter A8). No blockchain prerequisite for parti
 
 ## Build & test
 
-Run `npm run build` and `npm run test:unit -- --run` before shipping. Not a gate that blocks every edit.
+Before shipping, run `npm run build` and `npm test` in `apt-labs/` (or whatever `package.json`
+scripts name them today). This is a check to run before you call something done — not a gate that
+blocks every edit.
 
 ## Agent workforce
 
@@ -127,11 +147,15 @@ Operating invariants that override convenience:
 
 ## Codebase Memory MCP
 
-**MANDATORY: use Codebase Memory MCP graph tools FIRST — before reading files or making code changes.**
+**Preferred for structural questions, not mandatory.** The graph returns precise call/usage
+structure in a few hundred tokens where grep costs tens of thousands — so when you don't already
+know the answer structurally, reach for it first. It is a *preference*: fall back to a direct
+read/grep when the task is small, when you need exact raw lines to edit, or when the graph is stale
+(re-run `index_repository` after major refactors). No MCP or external tool is mandatory in this repo
+(see `.claude/CLAUDE.md`).
 
-This rule applies to every request involving this codebase.
-
-Always call `list_projects` first when you do not already know the project name, then use the `display_name` or exact `name` returned by that tool.
+When you do use it, call `list_projects` first if you don't already know the project name, then use
+the `display_name` or exact `name` that tool returns.
 
 ```json
 // Step 0 — discover project names

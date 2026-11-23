@@ -11,6 +11,10 @@
     {
       "name": "dev-attach",
       "url": "http://localhost:3001"
+    },
+    {
+      "name": "apt-labs",
+      "url": "http://localhost:4200"
     }
   ]
 }
