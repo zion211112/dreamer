@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "cd apt-labs && npx ng serve",
-    "build": "cd apt-labs && npx ng build",
+    "build": "cd apt-labs && npm install --no-audit --no-fund && npx ng build",
     "build:app": "cd apt-labs && npx ng build",
     "build:investor-deck": "npm install --prefix investor-deck --no-audit --no-fund && npm run build --prefix investor-deck/open-slide",
     "copy:investor-deck": "node scripts/copy-investor-deck.mjs",
