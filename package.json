@@ -6,9 +6,9 @@
     "node": "^20.19.0 || >=22.12.0"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build && npm run build:investor-deck && npm run copy:investor-deck",
-    "build:app": "tsc && vite build",
+    "dev": "cd apt-labs && ng serve",
+    "build": "cd apt-labs && ng build",
+    "build:app": "cd apt-labs && ng build",
     "build:investor-deck": "npm install --prefix investor-deck --no-audit --no-fund && npm run build --prefix investor-deck/open-slide",
     "copy:investor-deck": "node scripts/copy-investor-deck.mjs",
     "preview": "vite preview",
