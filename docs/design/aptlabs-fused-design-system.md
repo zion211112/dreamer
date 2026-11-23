@@ -62,49 +62,53 @@ Design was extracted from ten reference design systems using `design-extract` (C
 
 ## 3. Fused Design Tokens
 
-All tokens are DTCG v1 compliant. File: `src/lib/aptlabs-fused-design-tokens.json`
+All tokens are CSS custom properties defined on `:root` in `src/styles.css`, consumed directly by every feature, shell and shared UI component. No separate token JSON file or Tailwind config is used.
 
 ### Color system
 
-**Brand anchor:** Stewardship green `#2b5945` (Palantir) — the enduring civilizational color.
+Tokens live as `--apt-color-*`, `--apt-surface-*`, `--apt-text-*` and `--apt-border-*` custom properties on `:root` in `src/styles.css`.
 
-**Pillar colors** (each pillar maps to a color from the extracted sources):
+**Colour primitives**
+- Brand primary: `--apt-color-brand-primary` (`#2563eb`); brand accent: `--apt-color-brand-accent` (`#3b82f6`)
+- Error base: `--apt-color-error-base` (`#b91c1c`); warning base: `--apt-color-warning-base` (`#92400e`)
+- Success base: `--apt-color-success-base` (`#166534`); danger base: `--apt-color-danger-base` (`#991b1b`)
+- Info base: `--apt-color-info-base` (`#1e40af`)
+- Neutral ramp: `--apt-color-neutral-n0` (`#ffffff`) → `--apt-color-neutral-n950` (`#0f172a`)
 
-| Pillar | Color | Source | Meaning |
-|--------|-------|--------|---------|
-| Knowledge | `#166ee1` | Airtable blue | Clarity, learning, discovery |
-| Capacity | `#818378` | Retool warm neutral | Assembly, organization, people |
-| Production | `#549543` | GitHub green | Making, building, delivering |
-| Exchange | `#2dced6` | GitHub cyan | Flow, markets, circulation |
-| Stewardship | `#2b5945` | Palantir green | Preservation, verification, continuity |
+**Semantic surfaces** (dark instrument)
+- Default: `--apt-surface-default` (`#0f172a`); page: `--apt-surface-page` (`#1e293b`); raised: `--apt-surface-raised` (`#334155`)
+- Success: `--apt-surface-success` (`#ecfdf5`); danger: `--apt-surface-danger` (`#fef2f2`)
+- Info: `--apt-surface-info` (`#eff6ff`); warning: `--apt-surface-warning` (`#fefbeb`)
 
-**Neutral ramp:** 11 levels from `#ffffff` to `#000000`, synthesizing GitHub's 30-color system with Airtable's and Retool's warm neutrals.
+**Semantic text**
+- Body: `--apt-text-body` (`#f1f5f9`); strong: `--apt-text-strong` (`#ffffff`)
+- Muted: `--apt-text-muted` (`#94a3b8`); dim: `--apt-text-dim` (`#64748b`)
+- State text: `--apt-text-success`, `--apt-text-danger`, `--apt-text-warning`, `--apt-text-info`
 
-**Backgrounds:**
-- Light: `#F4F1E9` (Palantir parchment — warm, inviting)
-- Dark: `#151515` (Retool obsidian — operational, focused)
-- Elevated: `#FDFCF8` (light) / `#0e0e0e` (dark)
+**Borders**
+- `--apt-border` (`#334155`); `--apt-border-faint` (`#475569`)
 
 ### Typography
 
-| Role | Font | Source | Use |
-|------|------|--------|-----|
-| Display / Headings | Alliance No.1 + GeistSerif | Palantir + Geist | Institutional gravitas, page titles |
-| UI / Body | Inter Variable + GeistSans | Linear + Airtable + Geist | Clarity, readability, dense data |
-| Mono / Data | Mona Sans Mono + Geist Mono | GitHub + Geist | Codes, numbers, terminal, IDs |
-| Pixel / Readout | GeistPixelSquare | Geist | Technical codes, IDs, data readouts |
+| Role | Font stack | Use |
+|------|-----------|-----|
+| Sans / UI | `--apt-font-sans` (system-ui, Segoe UI, Roboto, sans-serif) | Interface and dense data |
+| Serif / Display | `--apt-font-serif` (Georgia, Times New Roman, serif) | Record names, page titles |
+| Mono / Data | `--apt-font-mono` (ui-monospace, SF Mono, Consolas, monospace) | Codes, numbers, IDs, readouts |
+
+Sizes run `--apt-font-size-micro` → `--apt-font-size-display-xl` with weights `--apt-font-weight-medium` / `--apt-font-weight-semibold` and line heights tight / normal / relaxed.
 
 ### Spacing
 
-**4px base grid** — consensus across GitHub, Airtable, Retool, and Supabase. Expanded to 25 levels (0–96px) incorporating Twenty UI's 25-step scale and Geist's 2px base increment for fine-grained control.
+`--apt-spacing-s1` → `--apt-spacing-s22` (0.25rem → 5.5rem) on a 4px-consistent scale, plus `--apt-radius-r0` → `--apt-radius-r3` (0 → 14px).
 
 ### Radius
 
-11 levels from `2px` (controls) to `9999px` (pills), fusing Retool's operational precision, GitHub's component softness, and Geist's expressive curve range.
+`--apt-radius-r0` (0) → `--apt-radius-r3` (14px): hairline controls, buttons/inputs, component containers, cards/panels.
 
 ### Shadows
 
-9 levels, from hairline border (`sh0`) to observatory dark depth (`sh8`), combining Retool's console elevation, GitHub's layered board shadows, Geist's hairline border, and designsystems.one's deep elevation.
+`--apt-shadow-sh1` (soft elevated) and `--apt-shadow-sh2` (raised); hairline border via `--apt-border`.
 
 ---
 
@@ -112,27 +116,27 @@ All tokens are DTCG v1 compliant. File: `src/lib/aptlabs-fused-design-tokens.jso
 
 ### Immediate next steps
 
-1. **Import the tokens** — `src/lib/aptlabs-fused-design-tokens.json` is DTCG v1 and can be consumed by Style Dictionary, Figma Variables, or Tailwind.
+1. **Use the tokens** — `--apt-*` custom properties are defined on `:root` in `src/styles.css` and are available to every component with no fallback or import step.
 
-2. **Map to existing APT-LABS modules** — The current `src/tailwind.css` already has an olive/umber/brass/clay/sage palette. Fuse the extracted pillar colors into the module accent themes:
+2. **Map to modules** — module accent is `--apt-module-accent` (defaults to `--apt-color-brand-primary` `#2563eb`), applied per module via `[data-module]`:
 
 ```css
-[data-module="commons"]   { --accent: #166ee1; } /* Knowledge — Airtable blue */
-[data-module="network"]   { --accent: #2dced6; } /* Exchange — GitHub cyan */
-[data-module="workbench"] { --accent: #2b5945; } /* Production — Stewardship green */
-[data-module="records"]   { --accent: #A8B0A0; } /* Stewardship — Palantir sage */
-[data-module="intelligence"] { --accent: #000000; } /* Intelligence — Linear black */
+[data-module="commons"]   { --apt-module-accent: var(--apt-group-continuity); } /* Knowledge — blue */
+[data-module="network"]   { --apt-module-accent: var(--apt-group-value); }      /* Exchange — green */
+[data-module="workbench"] { --apt-module-accent: var(--apt-group-core); }       /* Production — violet */
+[data-module="records"]   { --apt-module-accent: var(--apt-text-muted); }       /* Stewardship — muted */
+[data-module="intelligence"] { --apt-module-accent: var(--apt-color-danger-base); } /* Intelligence — dark red */
 ```
 
-3. **Apply the pillar visual language** — Each pillar's color should appear in its rail icons, active states, record badges, and status indicators.
+3. **Apply the visual language** — each module's accent appears in rail icons, active states, record badges, and status indicators using `--apt-surface-*` / `--apt-text-*` pairs.
 
-4. **Use the 13 downloaded Palantir ontology images** in `docs/design/palantir-ontology-images/` as visual references when designing object views, property editors, and navigation.
+4. **Visual references** — the 13 Palantir ontology images in `docs/design/palantir-ontology-images/` remain references for object views, property editors, and navigation.
 
 ---
 
 ## 5. Extraction Inventory
 
-All design was extracted via `design-extract` CLI, direct token-file fetching, and npm package inspection:
+Design was extracted from eleven sources and fused; the fused token output now lives as `--apt-*` custom properties in `src/styles.css` (the extraction sources below are retained for provenance).
 
 | # | Source | URL | Output | Files |
 |---|--------|-----|--------|-------|

@@ -58,13 +58,13 @@ A design system is "superior to all" when it:
 PostHog Quill pioneered primitive → semantic → component. We add a fourth layer: **block**. This prevents token sprawl while giving designers explicit control at every scale.
 
 ```
-primitive      →  Raw values (color #2b5945, spacing 4px, radius 2px)
+primitive      →  Raw values (color #2563eb, spacing 0.25rem, radius 0)
 semantic       →  Role-bound values (action.primary, surface.page)
 component      →  Component-specific values (button.primary, card.elevated)
 block          →  Layout-specific values (workbench.rail, records.canvas)
 ```
 
-**Token file:** `src/lib/aptlabs-fused-design-tokens.json` (DTCG v1 compliant, all 10 sources fused).
+**Token file:** tokens are CSS custom properties (`--apt-*`) defined on `:root` in `src/styles.css`; no separate JSON file.
 
 ---
 
@@ -72,41 +72,35 @@ block          →  Layout-specific values (workbench.rail, records.canvas)
 
 ### Brand Anchor
 
-**Stewardship green `#2b5945`** — the enduring civilizational color, extracted from Palantir Foundry's institutional palette.
+**Brand primary `#2563eb`** (`--apt-color-brand-primary`) — the enduring civilizational color; brand accent `#3b82f6` (`--apt-color-brand-accent`).
 
-### Pillar Colors (5 pillars, 11 levels each)
+### Pillar Colors (5 pillars, mapped to `--apt-*` group colours)
 
-| Pillar | Base | Source | Role |
-|--------|------|--------|------|
-| Knowledge | `#166ee1` | Airtable blue | Clarity, learning, discovery |
-| Capacity | `#818378` | Retool warm neutral | Assembly, organization, people |
-| Production | `#549543` | GitHub green | Making, building, delivering |
-| Exchange | `#2dced6` | GitHub cyan | Flow, markets, circulation |
-| Stewardship | `#2b5945` | Palantir green | Preservation, verification, continuity |
-
-Each pillar has an 11-level perceptually-uniform ramp (50–950), exceeding Supabase's 20-color family model by adding **temporal depth** — lighter levels for proposed states, darker for canon, wash levels for background emphasis.
-
-### Secondary Brands (beats Geist + designsystems.one)
-
-| Brand | Color | Source | Use |
-|-------|-------|--------|-----|
-| Geist blue | `#0072f5` | Vercel Geist | Precision UI, developer tools |
-| Geist red | `#ff0000` | Vercel Geist | Critical alerts, errors, stop states |
-| Geist dark-red | `#82182e` | designsystems.one | Alert emphasis, institutional gravity |
+| Pillar | Token | Role |
+|--------|-------|------|
+| Knowledge | `--apt-group-continuity` (`#3b82f6`) | Clarity, learning, discovery |
+| Capacity | `--apt-text-muted` (`#94a3b8`) | Assembly, organization, people |
+| Production | `--apt-group-core` (`#8b5cf6`) | Making, building, delivering |
+| Exchange | `--apt-group-value` (`#10b981`) | Flow, markets, circulation |
+| Stewardship | `--apt-color-brand-primary` (`#2563eb`) | Preservation, verification, continuity |
 
 ### Neutral Ramp (beats Retool + GitHub)
 
-13 levels from `#ffffff` to `#000000`, synthesizing GitHub's 30-color precision with Retool's warm neutrals and Geist's sharp black. Every level passes WCAG AA against both light `#F4F1E9` and dark `#151515` backgrounds.
+`--apt-color-neutral-n0` (`#ffffff`) → `--apt-color-neutral-n950` (`#0f172a`), synthesizing GitHub's precision with Retool's warm neutrals and Geist's sharp black.
+
+### Semantic Surfaces (dark instrument)
+
+`--apt-surface-default` (`#0f172a`), `--apt-surface-page` (`#1e293b`), `--apt-surface-raised` (`#334155`), plus `--apt-surface-success` / `--apt-surface-danger` / `--apt-surface-info` / `--apt-surface-warning` washes.
 
 ### State Colors (beats Linear + Retool)
 
-| State | Color | Wash | Meaning |
-|-------|-------|------|---------|
-| Canon | `#2b5945` | `#e0feef` | Verified, locked, authoritative |
-| Proposed | `#A8B0A0` | `#e4e8de` | Under review, not yet locked |
-| Risk | `#A66F55` | `#f0e0d4` | Attenuated, watch |
-| Caution | `#AD8B55` | `#f0e8d8` | Attention needed |
-| Alert | `#ff0000` | `#ffccb8` | Critical, stop, error |
+| State | Color token | Meaning |
+|-------|-------------|---------|
+| Canon | `--apt-text-success` (`#166534`) | Verified, locked, authoritative |
+| Proposed | `--apt-text-muted` (`#94a3b8`) | Under review, not yet locked |
+| Risk | `--apt-color-warning-base` (`#92400e`) | Attenuated, watch |
+| Caution | `--apt-color-warning-base` (`#92400e`) | Attention needed |
+| Alert | `--apt-color-danger-base` (`#991b1b`) | Critical, stop, error |
 
 ---
 
@@ -213,18 +207,18 @@ Explicit layering for complex civilizational interfaces:
 
 | Mode | Background | Text | Accent | Use |
 |------|-----------|------|--------|-----|
-| Light | `#F4F1E9` (Parchment) | `#1e2124` | Stewardship green | Daytime knowledge work |
-| Dark | `#151515` (Obsidian) | `#e9ebdf` | Stewardship green | Operational, focused work |
-| Observatory | `#0e0e0e` | `#e9ebdf` | Geist blue | Analytics, simulation, night |
+| Light | `--apt-surface-default` (`#0f172a`) | `--apt-text-strong` (`#ffffff`) | `--apt-module-accent` | Daytime knowledge work |
+| Dark | `--apt-surface-page` (`#1e293b`) | `--apt-text-body` (`#f1f5f9`) | `--apt-module-accent` | Operational, focused work |
+| Observatory | `--apt-surface-default` (`#0f172a`) | `--apt-text-body` (`#f1f5f9`) | `--apt-color-brand-accent` (`#3b82f6`) | Analytics, simulation, night |
 
-Each mode supports per-module accent themes:
+Each mode supports per-module accent themes via `--apt-module-accent`:
 
 ```css
-[data-module="commons"]   { --accent: #166ee1; }  /* Knowledge */
-[data-module="network"]   { --accent: #2dced6; }  /* Exchange */
-[data-module="workbench"] { --accent: #2b5945; }  /* Production + Stewardship */
-[data-module="records"]   { --accent: #A8B0A0; }  /* Stewardship (sage) */
-[data-module="intelligence"] { --accent: #000000; } /* Intelligence (Linear black) */
+[data-module="commons"]   { --apt-module-accent: var(--apt-group-continuity); }  /* Knowledge — blue */
+[data-module="network"]   { --apt-module-accent: var(--apt-group-value); }        /* Exchange — green */
+[data-module="workbench"] { --apt-module-accent: var(--apt-group-core); }         /* Production — violet */
+[data-module="records"]   { --apt-module-accent: var(--apt-text-muted); }         /* Stewardship — muted */
+[data-module="intelligence"] { --apt-module-accent: var(--apt-color-danger-base); } /* Intelligence — dark red */
 ```
 
 ---
@@ -241,10 +235,10 @@ Each mode supports per-module accent themes:
 
 ## 13. How to Apply This to APT-LABS
 
-1. **Import tokens** — `src/lib/aptlabs-fused-design-tokens.json` is DTCG v1, consumable by Style Dictionary, Figma Variables, or Tailwind.
-2. **Map to modules** — Apply pillar colors to the five APT-LABS module rail icons, active states, record badges, and status indicators.
-3. **Apply motion tiers** — Bind instant/fast/normal/slow to component behaviors (tooltips=fast, modals=normal, hero=slow).
-4. **Use 13 Palantir ontology images** in `docs/design/palantir-ontology-images/` as visual references for object views, property editors, and navigation.
+1. **Use the tokens** — `--apt-*` custom properties are defined on `:root` in `src/styles.css` and available to every component with no import step.
+2. **Map to modules** — apply `--apt-module-accent` per module to rail icons, active states, record badges, and status indicators.
+3. **Apply motion** — `--apt-animation-fast` (150ms ease) for toggles/tooltips; extend to normal/slow tiers for modals and page transitions.
+4. **Visual references** — 13 Palantir ontology images in `docs/design/palantir-ontology-images/` for object views, property editors, navigation.
 5. **Test against the Ultimate Test** (Section 14) before any design decision ships.
 
 ---

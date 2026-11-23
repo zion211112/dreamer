@@ -12,7 +12,19 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
-    "module": "preserve"
+    "module": "preserve",
+    "paths": {
+      "@apt-labs/ontology": ["./libs/ontology/src/index.ts"],
+      "@apt-labs/ontology/*": ["./libs/ontology/src/*"],
+      "@apt-labs/domain": ["./libs/domain/src/index.ts"],
+      "@apt-labs/domain/*": ["./libs/domain/src/*"],
+      "@apt-labs/shared/ui": ["./libs/shared/ui/src/index.ts"],
+      "@apt-labs/shared/ui/*": ["./libs/shared/ui/src/*"],
+      "@apt-labs/shared/state": ["./libs/shared/state/src/index.ts"],
+      "@apt-labs/shared/state/*": ["./libs/shared/state/src/*"],
+      "@apt-labs/shell": ["./libs/shell/src/index.ts"],
+      "@apt-labs/shell/*": ["./libs/shell/src/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
