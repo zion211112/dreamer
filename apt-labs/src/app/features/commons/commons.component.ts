@@ -1,76 +1,16 @@
-import { Component, signal, computed } from '@angular/core';
+/**
+ * @apt-labs/features/commons — CommonsComponent
+ *
+ * The commons is not a static fixture: it projects the live coordination spine
+ * (the same `JourneyStore` the Workbench and Records read). Open inquiries,
+ * in-flight commitments and delivered briefs are all the read-model of one
+ * store, and the contribute form posts a real Need that ripples out to Records
+ * (annals + roll) and Value in the same tick.
+ */
+
+import { Component, signal, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-
-const OPEN_NEEDS = [
-  {
-    id: 'need-001',
-    need: 'Borehole installation, 400m depth — Machakos',
-    isMissing: false,
-    matches: 2,
-    requires: 'Licensed drilling contractor',
-  },
-  {
-    id: 'need-002',
-    need: 'Curriculum audit — 12 KCSE schools, Nakuru',
-    isMissing: true,
-    matches: 0,
-    requires: 'Accredited curriculum auditor',
-  },
-  {
-    id: 'need-003',
-    need: 'Solar inverter replacement — Kisumu co-op',
-    isMissing: false,
-    matches: 3,
-    requires: 'Certified PV installer',
-  },
-] as const;
-
-const COMMITMENTS = [
-  {
-    id: 'com-001', needId: 'need-001', need: 'Borehole installation, 400m depth — Machakos',
-    providerName: 'James Otieno', status: 'accepted',
-  },
-  {
-    id: 'com-002', needId: 'need-003', need: 'Solar inverter replacement — Kisumu co-op',
-    providerName: 'Kisumu Solar Crew', status: 'accepted',
-  },
-  {
-    id: 'com-003', needId: 'need-003', need: 'Solar inverter replacement — Kisumu co-op',
-    providerName: 'Mombasa Makers Guild', status: 'pending',
-  },
-] as const;
-
-const OUTCOMES = [
-  {
-    id: 'out-001',
-    title: 'Load-bearing calculation methodology',
-    acceptedBy: 'Nairobi North Primary School',
-    distilled: true,
-  },
-  {
-    id: 'out-002',
-    title: 'PV sizing for off-grid classrooms',
-    acceptedBy: 'Kisumu Farmers Cooperative',
-    distilled: false,
-  },
-] as const;
-
-const KNOWLEDGE = [
-  {
-    id: 'know-001',
-    title: 'Hydraulic design principles for arid regions',
-    summary: 'Recorded methodology for water extraction in low-yield aquifers.',
-    status: 'distilled',
-    provenance: 'Field notes, Machakos borehole 2026-03',
-  },
-  {
-    id: 'know-002',
-    title: 'CNC tolerances for public facility fabrication',
-    summary: 'Tolerance standards derived from Nakuru Lab fabrication runs.',
-    status: 'active',
-    provenance: 'Nakuru Tech Lab, 2026-02',
-  },
-] as const;
+import { CoordinationService } from '@apt-labs/shared/state';
 
 @Component({
   selector: 'app-commons',
@@ -83,23 +23,28 @@ const KNOWLEDGE = [
             <p class="cm-eyebrow">WORKSPACE · COMMONS</p>
             <h1 class="cm-h1">The commons</h1>
             <p class="cm-sub">
-              Open inquiries, in-flight commitments, distilled outcomes, and the knowledge house —
-              what the network has agreed, what is moving, and what has settled.
+              Open inquiries, in-flight commitments, delivered briefs, and the knowledge house —
+              what the network has agreed, what is moving, and what has settled, all off one record.
             </p>
           </div>
 
           <div class="cm-section">
             <h2 class="cm-section-title">Open inquiries</h2>
             <div class="cm-list">
-              @for (need of openNeeds(); track need.id) {
-                <article class="cm-item" [class.cm-item--missing]="need.isMissing">
-                  <span class="cm-item-kicker">{{ need.isMissing ? 'no match' : need.matches + ' match' + (need.matches > 1 ? 'es' : '') }}</span>
+              @for (need of openInquiries(); track need.id) {
+                <article class="cm-item cm-item--missing">
+                  <span class="cm-item-kicker">open</span>
                   <div class="cm-item-main">
-                    <span class="cm-item-label">{{ need.need }}</span>
-                    <span class="cm-item-requires">Requires: {{ need.requires }}</span>
+                    <span class="cm-item-label">{{ need.label }}</span>
+                    @if (need.requires.length > 0) {
+                      <span class="cm-item-requires">Requires: {{ need.requires.join(', ') }}</span>
+                    }
                   </div>
                   <a [routerLink]="['/workspace', 'network']" class="cm-item-go">Find →</a>
                 </article>
+              }
+              @if (openInquiries().length === 0) {
+                <p class="cm-empty">No open inquiries — every posted need has a provider.</p>
               }
             </div>
           </div>
@@ -108,11 +53,11 @@ const KNOWLEDGE = [
             <h2 class="cm-section-title">In flight</h2>
             <div class="cm-list">
               @for (row of inFlight(); track row.id) {
-                <article class="cm-item" [class.cm-item--pending]="row.status !== 'accepted'">
-                  <span class="cm-item-kicker">{{ row.status }}</span>
+                <article class="cm-item cm-item--pending">
+                  <span class="cm-item-kicker">committed</span>
                   <div class="cm-item-main">
-                    <span class="cm-item-label">{{ row.need }}</span>
-                    <span class="cm-item-requires">{{ row.providerName }}</span>
+                    <span class="cm-item-label">{{ row.label }}</span>
+                    <span class="cm-item-requires">Provider: {{ row.provider }}</span>
                   </div>
                 </article>
               }
@@ -123,14 +68,14 @@ const KNOWLEDGE = [
           </div>
 
           <div class="cm-section">
-            <h2 class="cm-section-title">Briefs</h2>
+            <h2 class="cm-section-title">Delivered briefs</h2>
             <div class="cm-list">
-              @for (out of outcomes(); track out.id) {
+              @for (out of briefs(); track out.id) {
                 <article class="cm-item">
-                  <span class="cm-item-kicker">{{ out.distilled ? 'distilled' : 'pending' }}</span>
+                  <span class="cm-item-kicker">delivered</span>
                   <div class="cm-item-main">
                     <span class="cm-item-label">{{ out.title }}</span>
-                    <span class="cm-item-requires">Accepted by {{ out.acceptedBy }}</span>
+                    <span class="cm-item-requires">Accepted by {{ out.institution }}</span>
                   </div>
                 </article>
               }
@@ -143,11 +88,11 @@ const KNOWLEDGE = [
               @for (k of knowledge(); track k.id) {
                 <article class="cm-knowledge-item">
                   <div class="cm-knowledge-head">
-                    <span class="cm-knowledge-status" [class.cm-knowledge-status--distilled]="k.status === 'distilled'">{{ k.status }}</span>
+                    <span class="cm-knowledge-status cm-knowledge-status--distilled">distilled</span>
                     <h3 class="cm-knowledge-title">{{ k.title }}</h3>
                   </div>
                   <p class="cm-knowledge-summary">{{ k.summary }}</p>
-                  <span class="cm-knowledge-provenance">Provenance: {{ k.provenance }}</span>
+                  <span class="cm-knowledge-provenance">On the roll · {{ k.provenance }}</span>
                 </article>
               }
             </div>
@@ -158,17 +103,10 @@ const KNOWLEDGE = [
             <form class="cm-form" (ngSubmit)="onSubmit()">
               <div class="cm-form-row">
                 <label class="cm-label" for="cm-need">What is the need?</label>
-                <input id="cm-need" type="text" class="cm-input" placeholder="Describe the need or capability you're offering" [value]="needText()" (input)="needText.set($any($event.target).value)" />
-              </div>
-              <div class="cm-form-row">
-                <label class="cm-label" for="cm-kind">Type</label>
-                <select id="cm-kind" class="cm-input cm-select" [value]="kind()" (change)="kind.set($any($event.target).value)">
-                  <option value="need">Need</option>
-                  <option value="offer">Offer</option>
-                  <option value="knowledge">Knowledge</option>
-                </select>
+                <input id="cm-need" type="text" class="cm-input" placeholder="Describe the need you're posting to the record" [value]="needText()" (input)="needText.set($any($event.target).value)" />
               </div>
               <button type="submit" class="cm-submit">Post to commons</button>
+              <p class="cm-note">Posting writes an open inquiry to the record — it appears above and in Records.</p>
             </form>
           </div>
         </main>
@@ -194,6 +132,7 @@ const KNOWLEDGE = [
 .cm-item--pending { border-left: 3px solid var(--apt-color-warning-base, #92400e); }
 .cm-item-kicker { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: uppercase; letter-spacing: 0.08em; color: var(--apt-text-dim); min-width: 72px; white-space: nowrap; padding-top: 2px; }
 .cm-item--missing .cm-item-kicker { color: var(--apt-color-error-base, #b91c1c); }
+.cm-item--pending .cm-item-kicker { color: var(--apt-color-warning-base, #92400e); }
 .cm-item-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .cm-item-label { font-size: var(--apt-font-size-title-2); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); letter-spacing: -0.01em; }
 .cm-item-requires { font-size: var(--apt-font-size-body-sm); color: var(--apt-text-muted); }
@@ -213,7 +152,7 @@ const KNOWLEDGE = [
 .cm-label { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: uppercase; letter-spacing: 0.08em; color: var(--apt-text-dim); }
 .cm-input { width: 100%; padding: var(--apt-spacing-s3) var(--apt-spacing-s4); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r1); background: var(--apt-surface-raised); font-size: var(--apt-font-size-body-md); color: var(--apt-text-body); outline: none; }
 .cm-input:focus { border-color: var(--apt-module-accent, var(--apt-color-brand-primary)); }
-.cm-select { cursor: pointer; }
+.cm-note { font-size: var(--apt-font-size-micro); color: var(--apt-text-dim); margin: 0; }
 .cm-submit { align-self: flex-start; padding: var(--apt-spacing-s3) var(--apt-spacing-s7); background: var(--apt-module-accent, var(--apt-color-brand-primary)); color: var(--apt-action-on-primary); border: 0; border-radius: var(--apt-radius-r1); font-size: var(--apt-font-size-body-md); font-weight: var(--apt-font-weight-medium); cursor: pointer; }
 .cm-submit:hover { background: var(--apt-color-neutral-n950); }
 @media (max-width: 900px) { .cm-main { padding: var(--apt-spacing-s8); } .cm-knowledge { grid-template-columns: 1fr; } }
@@ -221,18 +160,49 @@ const KNOWLEDGE = [
   ],
 })
 export class CommonsComponent {
-  readonly openNeeds = signal(OPEN_NEEDS);
-  readonly outcomes = signal(OUTCOMES);
-  readonly knowledge = signal(KNOWLEDGE);
-
-  readonly inFlight = computed(() => COMMITMENTS.filter((c) => c.status === 'accepted'));
+  private readonly coordination = inject(CoordinationService);
 
   readonly needText = signal('');
-  readonly kind = signal<'need' | 'offer' | 'knowledge'>('need');
 
-  readonly onSubmit = () => {
-    if (this.needText().trim()) {
-      this.needText.set('');
-    }
+  /** Open inquiries — needs with no provider yet. */
+  readonly openInquiries = computed(() =>
+    this.coordination.needs().filter((n) => n.status === 'open')
+      .map((n) => ({ id: n.needId, label: n.label, requires: n.requires, status: n.status })),
+  );
+
+  /** In flight — needs a provider has accepted but not yet delivered. */
+  readonly inFlight = computed(() =>
+    this.coordination.needs().filter((n) => n.status === 'committed')
+      .map((n) => ({ id: n.needId, label: n.label, provider: this.institutionName(n.providerActorId), status: n.status })),
+  );
+
+  /** Delivered briefs — fulfilled outcomes, keyed by need. */
+  readonly briefs = computed(() =>
+    this.coordination.needs().filter((n) => n.status === 'fulfilled')
+      .map((n) => ({ id: n.needId, title: n.outcome ?? n.label, institution: this.institutionName(n.providerActorId), status: n.status })),
+  );
+
+  /** Knowledge house — settled, distilled from the delivered outcomes on the roll. */
+  readonly knowledge = computed(() =>
+    this.coordination.needs().filter((n) => n.status === 'fulfilled')
+      .map((n) => ({
+        id: `k-${n.needId}`,
+        title: n.outcome ?? n.label,
+        summary: `Sealed with ${n.evidenceIds.length} evidence item${n.evidenceIds.length === 1 ? '' : 's'} on the roll.`,
+        provenance: this.institutionName(n.providerActorId),
+      })),
+  );
+
+  readonly institutionName = (id: string | null): string => {
+    if (!id) return '—';
+    return this.coordination.institutions.get(id) ?? id;
+  };
+
+  /** Post a real Need to the record — it ripples into Records and Value. */
+  readonly onSubmit = (): void => {
+    const text = this.needText().trim();
+    if (!text) return;
+    this.coordination.createNeed({ need: text });
+    this.needText.set('');
   };
 }

@@ -1,29 +1,25 @@
 /**
  * @apt-labs/features/records — RecordsComponent
  *
- * Canon, annals, and the immutable roll. Ported from Vue `src/pages/workspace/Records.vue`.
+ * Canon, annals, and the immutable roll. Reads the shared L0 system of record
+ * via `RecordsService` (the same store the Workbench mutates), so records here
+ * are live, not a static fixture. The register is synced to the route — the
+ * canon/annals/roll sub-routes and the filter buttons stay in one state.
  */
 
-import { Component, signal, computed } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-
-interface RecordRow {
-  id: string;
-  title: string;
-  kind: 'canon' | 'annals' | 'roll';
-  institution: string;
-  createdAt: string;
-  status: 'sealed' | 'active' | 'disputed';
-}
+import { Component, OnInit, computed, signal, inject } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Router, RouterLink, RouterLinkActive, ActivatedRoute } from '@angular/router';
+import { RecordsService, type RecordsView } from '@apt-labs/shared/state';
 
 @Component({
   selector: 'app-records',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, DatePipe],
   template: `
     <div class="records-page">
       <header class="records-head">
         <h1 class="records-title">Records</h1>
-        <p class="records-lede">Canon, annals, and the immutable roll — the audit trail that makes work on record.</p>
+        <p class="records-lede">Canon, annals, and the immutable roll — the system of record that keeps work on record.</p>
       </header>
 
       <div class="records-subnav">
@@ -49,11 +45,11 @@ interface RecordRow {
               <span class="records-institution">{{ row.institution }}</span>
             </div>
             <span class="records-status" [class.sealed]="row.status === 'sealed'" [class.active-status]="row.status === 'active'" [class.disputed]="row.status === 'disputed'">{{ row.status }}</span>
-            <span class="records-date">{{ row.createdAt }}</span>
+            <span class="records-date">{{ row.createdAt | date: 'short' }}</span>
           </div>
         }
         @if (visible().length === 0) {
-          <div class="records-empty">No records in this view.</div>
+          <div class="records-empty">No records in this view yet.</div>
         }
       </div>
     </div>
@@ -86,23 +82,29 @@ interface RecordRow {
     .records-empty { padding: var(--apt-spacing-s14); text-align: center; color: var(--apt-text-muted); font-size: var(--apt-font-size-body-sm); }
   `],
 })
-export class RecordsComponent {
-  readonly filter = signal<'all' | 'canon' | 'annals' | 'roll'>('all');
+export class RecordsComponent implements OnInit {
+  private readonly service = inject(RecordsService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
-  readonly allRows: RecordRow[] = [
-    { id: 'r-001', title: 'Pilot 001 acceptance canon', kind: 'canon', institution: 'Nairobi County', createdAt: '2026-01-15', status: 'sealed' },
-    { id: 'r-002', title: 'Mombasa port drayage — active commitment', kind: 'annals', institution: 'Mombasa Port Authority', createdAt: '2026-02-05', status: 'active' },
-    { id: 'r-003', title: 'Kisumu agri supply — reconciliation', kind: 'canon', institution: 'Kisumu University', createdAt: '2026-02-20', status: 'sealed' },
-    { id: 'r-004', title: 'Nakuru PPE procurement — roll entry', kind: 'roll', institution: 'Nakuru Hospital', createdAt: '2026-03-10', status: 'active' },
-    { id: 'r-005', title: 'Eldoret logistics — disputed record', kind: 'annals', institution: 'Eldoret Gov', createdAt: '2026-03-15', status: 'disputed' },
-  ];
+  readonly filter = signal<RecordsView>('all');
+  readonly visible = computed<readonly { id: string; title: string; kind: string; institution: string; status: string; createdAt: string }[]>(() =>
+    this.service.view(this.filter()),
+  );
 
-  readonly visible = computed(() => {
-    if (this.filter() === 'all') return this.allRows;
-    return this.allRows.filter((r) => r.kind === this.filter());
-  });
+  ngOnInit(): void {
+    this.syncFromRoute();
+    this.route.url.subscribe(() => this.syncFromRoute());
+  }
 
-  setFilter(v: 'all' | 'canon' | 'annals' | 'roll'): void {
+  /** Read the active register off the route so sub-nav and filter agree. */
+  private syncFromRoute(): void {
+    const seg = this.route.snapshot.url.at(-1)?.['path'] ?? '';
+    this.filter.set(seg === 'canon' || seg === 'annals' || seg === 'roll' ? seg : 'all');
+  }
+
+  setFilter(v: RecordsView): void {
     this.filter.set(v);
+    this.router.navigate(v === 'all' ? ['/workspace/records'] : ['/workspace/records', v]);
   }
 }

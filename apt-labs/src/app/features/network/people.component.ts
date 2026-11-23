@@ -1,47 +1,8 @@
-import { Component, signal, computed } from '@angular/core';
-import { RouterLink } from '@angular/router';
-
-const PEOPLE_ROWS = [
-  {
-    id: 'p-001', name: 'Wanjiku Mwangi', type: 'person' as const,
-    description: 'Structural engineer, 12 years in Kenyan public works.',
-    capabilities: ['Structural design', 'Load calculations'],
-    assets: ['Licensed PE (Kenya)'],
-    createdAt: '2025-11-04',
-  },
-  {
-    id: 'p-002', name: 'Kisumu Solar Crew', type: 'crew' as const,
-    description: 'Four-person crew with PV install capability.',
-    capabilities: ['PV installation', 'Inverter commissioning'],
-    assets: ['Mobile workshop', 'Certified team'],
-    createdAt: '2025-12-10',
-  },
-  {
-    id: 'p-003', name: 'James Otieno', type: 'person' as const,
-    description: 'Civil engineer, water infrastructure.',
-    capabilities: ['Hydraulic systems', 'Borehole design'],
-    assets: ['Licensed PE (Kenya)'],
-    createdAt: '2025-10-22',
-  },
-  {
-    id: 'p-004', name: 'Mombasa Makers Guild', type: 'crew' as const,
-    description: 'Woodworking and metal finishing team.',
-    capabilities: ['Wood joinery', 'Metal finishing'],
-    assets: ['CNC router', 'Sanding line'],
-    createdAt: '2026-01-15',
-  },
-  {
-    id: 'p-005', name: 'Amina Hassan', type: 'person' as const,
-    description: 'Architect, public building specialist.',
-    capabilities: ['Building design', 'LEED consulting'],
-    assets: ['Architect license', 'BIM proficiency'],
-    createdAt: '2025-09-30',
-  },
-] as const;
+import { Component, signal, computed, inject } from '@angular/core';
+import { NetworkService, type DirectoryRow } from '@apt-labs/shared/state';
 
 @Component({
   selector: 'app-people',
-  imports: [RouterLink],
   template: `
     <div class="plp" data-module="people">
       <div class="plp-body">
@@ -129,16 +90,14 @@ const PEOPLE_ROWS = [
   ],
 })
 export class PeopleComponent {
-  readonly query = signal('');
-  readonly rows = PEOPLE_ROWS;
+  private readonly service = inject(NetworkService);
 
-  readonly visible = computed(() => {
-    const q = this.query().toLowerCase();
-    if (!q) return [...this.rows];
-    return this.rows.filter((r) =>
-      (r.name + ' ' + r.description + ' ' + r.capabilities.join(' ')).toLowerCase().includes(q)
-    );
-  });
+  readonly query = signal('');
+  readonly rows: readonly DirectoryRow[] = this.service.people;
+
+  readonly visible = computed(() =>
+    this.rows.filter((r) => this.service.matchQuery(this.query(), r)),
+  );
 
   readonly initial = (name: string) => name[0] ?? '?';
 }

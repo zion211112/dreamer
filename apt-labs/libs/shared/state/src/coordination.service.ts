@@ -1,224 +1,188 @@
 /**
  * @apt-labs/shared/state — CoordinationService
  *
- * Angular signal-based replacement for the Pinia `useCoordinationStore`.
- * Wraps domain functions with `signal()` + `computed()`, zoneless-friendly.
- *
- * Domain functions come from @apt-labs/domain (framework-free pure functions).
+ * The reactivity owner for the coordination chain
+ * (INTENTION → COMMITMENT → OUTPUT_OUTCOME). It owns one `JourneyStore`, seeds
+ * it from the operational pilot corpus, and exposes live needs and their
+ * composed journeys to the UI. All coordination *logic* lives in the
+ * framework-free `@apt-labs/domain` layer; this service only wires it to
+ * Angular signals and the store.
  */
 
-import { Injectable, signal, computed, linkedSignal } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
+import {
+  createJourneyStore,
+  postNeed,
+  acceptCommitment,
+  fulfilCommitment,
+  getJourney,
+  OPERATIONAL_PILOTS,
+  type JourneyStore,
+  type Journey,
+  type JourneyRecord,
+  type OperationalPilot,
+} from '@apt-labs/domain';
 
-// Domain imports (to be wired once libs/domain is populated)
-// import { listActors, getDemoAccountId, type ActorType } from '@apt-labs/domain/actors';
-// import {
-//   onboardActor,
-//   getProductiveProfile,
-//   type ProductiveProfile,
-// } from '@apt-labs/domain/onboarding-journey';
-// import {
-//   postNeed as postNeedLib,
-//   acceptCommitment,
-//   fulfilCommitment as fulfilCommitmentLib,
-//   type CommitmentStatus,
-// } from '@apt-labs/domain/commitment-journey';
-// import {
-//   matchOpenNeeds,
-//   findMissingNeeds,
-//   providersFromProfiles,
-//   type NeedMatching,
-//   type Provider,
-// } from '@apt-labs/domain/matching';
-// import {
-//   registerEvidence,
-//   markEvidenceVerified,
-//   listEvidence,
-//   type EvidenceStatus,
-// } from '@apt-labs/domain/evidence-store';
-// import { listRecords, getRecord, type RecordEnvelope } from '@apt-labs/domain/record-envelope';
-// import { getAuditEvents, type AuditEvent } from '@apt-labs/domain/audit';
-// import {
-//   listKnowledge,
-//   distillKnowledge,
-//   markKnowledgeConfirmed,
-//   knowledgeForOutcome,
-// } from '@apt-labs/domain/knowledge-store';
-// import { queryRollEntries } from '@apt-labs/domain/db/roll';
-// import { seedCoordinationIfEmpty } from '@apt-labs/domain/coordination-seed';
+export type NeedStatus = 'open' | 'committed' | 'fulfilled';
 
-// ---------------------------------------------------------------------------
-// Types (mirror the Pinia store's exported types)
-// ---------------------------------------------------------------------------
-
-export interface CommitmentRow {
-  id: string;
+/** A need and its live coordination state, as surfaced to the Workbench. */
+export interface NeedRow {
   needId: string;
-  need: string;
-  providerActorId: string;
-  providerName: string;
-  status: string; // CommitmentStatus
-}
-
-export interface KnowledgeOutcome {
-  id: string;
-  title: string;
-  acceptedBy: string;
-  distilled: boolean;
-}
-
-export interface OnboardProviderInput {
-  type: string; // ActorType
-  name: string;
-  capability?: { name: string; type: string };
-  asset?: { name: string; type: string };
-}
-
-export interface PostNeedInput {
-  need: string;
+  label: string;
+  status: NeedStatus;
+  /** Capability requirements the need is answered by (INTENTION data). */
   requires: string[];
+  providerActorId: string | null;
+  outcome: string | null;
+  evidenceIds: string[];
 }
-
-export interface EvidenceInput {
-  summary: string;
-  type: string;
-  sourceUri?: string;
-}
-
-const DEMO_ACCOUNT = 'demo';
-const DEMO_DEMAND_ACTOR = 'demand';
-
-// ---------------------------------------------------------------------------
-// Service
-// ---------------------------------------------------------------------------
 
 @Injectable({ providedIn: 'root' })
 export class CoordinationService {
-  // Acting principal (falls back to stable demo id in demo mode)
-  readonly accountId = signal<string>(DEMO_ACCOUNT);
+  /** The single system-of-record the coordination logic reads and writes. */
+  readonly store: JourneyStore = createJourneyStore();
 
-  // Read-model signals (snapshots of the system of record)
-  readonly profiles = signal<unknown[]>([]);
-  readonly providers = signal<unknown[]>([]);
-  readonly openNeeds = signal<unknown[]>([]);
-  readonly gaps = computed(() => []); // computed(() => findMissingNeeds(this.openNeeds()))
-  readonly commitments = signal<CommitmentRow[]>([]);
-  readonly evidence = signal<unknown[]>([]);
-  readonly audit = signal<unknown[]>([]);
-  readonly knowledge = signal<unknown[]>([]);
-  readonly outcomes = signal<KnowledgeOutcome[]>([]);
+  /** The acting principal (a stable demo account in demo mode). */
+  readonly accountId = signal<string>('demo');
+
+  /** Institutional context joined beside the pure coordination records. */
+  private readonly pilotByNeedId = new Map<string, OperationalPilot>();
+
+  /** Institution id → display name, shared with Records / Value projections. */
+  readonly institutions = new Map<string, string>();
+
+  /** Read-model: one row per INTENTION/Need record, live from the store. */
+  readonly needs = signal<NeedRow[]>([]);
+  /** Bumped after every mutation so computed detail views re-read the store. */
+  readonly version = signal(0);
   readonly seeded = signal(false);
 
-  readonly inFlight = computed(() =>
-    this.commitments().filter((c) => c.status === 'accepted'),
-  );
-  readonly evidenceVerified = computed(() =>
-    this.evidence().filter(
-      (e: any) => (e?.data?.status as string | undefined) === 'verified',
-    ).length,
-  );
+  constructor() {
+    if (this.store.records.length === 0) this.seed();
+  }
 
-  // -----------------------------------------------------------------------
-  // Refresh
-  // -----------------------------------------------------------------------
+  // ------------------------------------------------------------------
+  // Seeding
+  // ------------------------------------------------------------------
 
+  /**
+   * Seed the beachhead: each operational pilot becomes a Need; an accepted
+   * pilot runs the full chain (accept → fulfil with its evidence) so it renders
+   * as delivered with a trustworthy audit trail. Unaccepted pilots stay open.
+   */
+  private seed(): void {
+    for (const pilot of OPERATIONAL_PILOTS) {
+      const need = postNeed(this.store, {
+        need: pilot.label,
+        actorId: pilot.institution.id,
+        postedBy: pilot.recordedBy,
+        requires: [...new Set(pilot.participants.flatMap((p) => p.capabilityClaims))],
+      });
+      this.pilotByNeedId.set(need.id, pilot);
+      this.institutions.set(pilot.institution.id, pilot.institution.name);
+
+      if (pilot.acceptance.acceptedAt !== null) {
+        const commitment = acceptCommitment(this.store, {
+          needId: need.id,
+          providerActorId: pilot.institution.coordinatorId,
+          acceptedBy: pilot.acceptance.acceptedBy,
+        });
+        fulfilCommitment(this.store, {
+          commitmentId: commitment.id,
+          outcome: pilot.deliverables.join(' · '),
+          evidenceIds: pilot.evidence.map((e) => e.id),
+          fulfilledBy: pilot.recordedBy,
+        });
+      }
+    }
+    this.refresh();
+    this.seeded.set(true);
+  }
+
+  // ------------------------------------------------------------------
+  // Read-model refresh
+  // ------------------------------------------------------------------
+
+  /** Re-read the store into the read-model signals (call after any action). */
   refresh(): void {
-    // Will be wired when domain functions are available
+    this.needs.set(
+      this.store.records
+        .filter((r) => r.family === 'INTENTION' && r.type === 'Need')
+        .map((r) => {
+          const data = r.data as { need?: string; status?: NeedStatus; requires?: string[] };
+          const journey = getJourney(this.store, r.id);
+          const commitment = journey.commitments[0];
+          const outcome = journey.outcomes[0];
+          const commitmentData = commitment?.data as { providerActorId?: string } | undefined;
+          const outcomeData = outcome?.data as { outcome?: string } | undefined;
+          return {
+            needId: r.id,
+            label: data.need ?? 'Untitled need',
+            status: data.status ?? 'open',
+            requires: data.requires ?? [],
+            providerActorId: commitmentData?.providerActorId ?? null,
+            outcome: outcomeData?.outcome ?? null,
+            evidenceIds: outcome ? [...outcome.evidenceIds] : [],
+          } satisfies NeedRow;
+        }),
+    );
+    this.version.update((v) => v + 1);
   }
 
-  // -----------------------------------------------------------------------
-  // Actions (stubs until domain libs are populated)
-  // -----------------------------------------------------------------------
+  // ------------------------------------------------------------------
+  // Actions (the live coordination chain)
+  // ------------------------------------------------------------------
 
-  onboardProvider(input: OnboardProviderInput): unknown {
-    // const profile = onboardActor({
-    //   type: input.type,
-    //   name: input.name,
-    //   ownerId: this.accountId(),
-    //   createdBy: this.accountId(),
-    //   capabilities: input.capability ? [input.capability] : undefined,
-    //   assets: input.asset ? [input.asset] : undefined,
-    // });
-    // this.refresh();
-    // return profile;
-    throw new Error('Domain not yet wired');
+  /** Register a new open Need (INTENTION record). */
+  createNeed(input: { need: string; requires?: string[] }): JourneyRecord {
+    const rec = postNeed(this.store, {
+      need: input.need,
+      actorId: this.accountId(),
+      postedBy: this.accountId(),
+      requires: input.requires,
+    });
+    this.refresh();
+    return rec;
   }
 
-  postNeed(input: PostNeedInput): unknown {
-    // const rec = postNeedLib({
-    //   need: input.need,
-    //   actorId: DEMO_DEMAND_ACTOR,
-    //   postedBy: this.accountId(),
-    //   requires: input.requires,
-    // });
-    // this.refresh();
-    // return rec;
-    throw new Error('Domain not yet wired');
+  /** A provider accepts the need → COMMITMENT + ANSWERS link; need → committed. */
+  acceptNeed(needId: string, providerActorId: string): JourneyRecord {
+    const rec = acceptCommitment(this.store, { needId, providerActorId, acceptedBy: this.accountId() });
+    this.refresh();
+    return rec;
   }
 
-  assignNeed(needId: string, providerActorId: string): unknown {
-    // const rec = acceptCommitment({ needId, providerActorId, acceptedBy: this.accountId() });
-    // this.refresh();
-    // return rec;
-    throw new Error('Domain not yet wired');
+  /** The provider delivers → OUTPUT_OUTCOME with evidence; need → fulfilled. */
+  fulfilNeed(commitmentId: string, outcome: string, evidenceIds?: string[]): JourneyRecord {
+    const rec = fulfilCommitment(this.store, { commitmentId, outcome, evidenceIds, fulfilledBy: this.accountId() });
+    this.refresh();
+    return rec;
   }
 
-  fulfilCommitment(commitmentId: string, outcome: string, evidenceId?: string): unknown {
-    // const rec = fulfilCommitmentLib({
-    //   commitmentId,
-    //   outcome,
-    //   evidenceIds: evidenceId ? [evidenceId] : undefined,
-    //   fulfilledBy: this.accountId(),
-    // });
-    // this.refresh();
-    // return rec;
-    throw new Error('Domain not yet wired');
+  // ------------------------------------------------------------------
+  // Composed reads
+  // ------------------------------------------------------------------
+
+  /** The composed, trustworthy picture of one need (for the detail view). */
+  journey(needId: string): Journey {
+    this.version(); // establish reactivity for computed consumers
+    return getJourney(this.store, needId);
   }
 
-  addEvidence(input: EvidenceInput): unknown {
-    // const rec = registerEvidence({
-    //   type: input.type,
-    //   summary: input.summary,
-    //   sourceUri: input.sourceUri,
-    //   actorId: null,
-    //   createdBy: this.accountId(),
-    // });
-    // this.refresh();
-    // return rec;
-    throw new Error('Domain not yet wired');
+  /** Institutional context beside a need (undefined for ad-hoc needs). */
+  pilot(needId: string): OperationalPilot | undefined {
+    return this.pilotByNeedId.get(needId);
   }
 
-  verifyEvidence(evidenceId: string): void {
-    // markEvidenceVerified(evidenceId, this.accountId());
-    // this.refresh();
-    throw new Error('Domain not yet wired');
-  }
-
-  // -----------------------------------------------------------------------
-  // Knowledge
-  // -----------------------------------------------------------------------
-
-  async loadKnowledge(): Promise<void> {
-    // const entries = await queryRollEntries();
-    // this.outcomes.set(
-    //   entries
-    //     .filter((entry) => entry.acceptance.accepted_by)
-    //     .map((entry) => ({
-    //       id: entry.id,
-    //       title: entry.title,
-    //       acceptedBy: entry.acceptance.accepted_by,
-    //       distilled: Boolean(knowledgeForOutcome(entry.id)),
-    //     })),
-    // );
-    // this.knowledge.set(listKnowledge().slice(0, 8));
-  }
-
-  async distillOutcome(entryId: string): Promise<void> {
-    // await distillKnowledge(entryId, this.accountId());
-    // await this.loadKnowledge();
-  }
-
-  async confirmKnowledge(knowledgeId: string): Promise<void> {
-    // markKnowledgeConfirmed(knowledgeId, this.accountId());
-    // await this.loadKnowledge();
-  }
+  /** Live status tallies for the Workbench header. */
+  readonly counts = computed(() => {
+    this.version();
+    const rows = this.needs();
+    return {
+      total: rows.length,
+      open: rows.filter((r) => r.status === 'open').length,
+      inProgress: rows.filter((r) => r.status === 'committed').length,
+      delivered: rows.filter((r) => r.status === 'fulfilled').length,
+    };
+  });
 }

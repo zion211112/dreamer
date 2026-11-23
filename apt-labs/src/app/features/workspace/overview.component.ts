@@ -1,58 +1,13 @@
 import { Component, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
-
-const UNDERTAKINGS = [
-  {
-    id: 'undertaking-1',
-    label: 'Nairobi North Primary Repair',
-    institution: { id: 'inst-1', name: 'Nairobi North Primary School' },
-    location: 'Nairobi, Kenya',
-    undertakingType: 'physical',
-    deliverables: ['fence', 'pump', 'paint'],
-    evidence: ['receipt-1', 'photo-1'],
-    acceptance: { costDisclosed: { amount: 45000, currency: 'KES' }, acceptedAt: '2026-01-12T09:00:00Z' },
-  },
-  {
-    id: 'undertaking-2',
-    label: 'Kisumu Co-op Solar Install',
-    institution: { id: 'inst-2', name: 'Kisumu Farmers Cooperative' },
-    location: 'Kisumu, Kenya',
-    undertakingType: 'digital',
-    deliverables: ['array', 'inverter'],
-    evidence: ['cert-1', 'photo-2'],
-    acceptance: { costDisclosed: { amount: 120000, currency: 'KES' }, acceptedAt: '2026-02-04T10:15:00Z' },
-  },
-  {
-    id: 'undertaking-3',
-    label: 'Mombasa Community Hall',
-    institution: { id: 'inst-3', name: 'Mombasa Community Centre' },
-    location: 'Mombasa, Kenya',
-    undertakingType: 'creative',
-    deliverables: ['roof', 'seats'],
-    evidence: ['photo-3'],
-    acceptance: { costDisclosed: { amount: 89000, currency: 'KES' }, acceptedAt: '2026-02-18T14:00:00Z' },
-  },
-  {
-    id: 'undertaking-4',
-    label: 'Nakuru Lab Fabrication',
-    institution: { id: 'inst-1', name: 'Nakuru Tech Lab' },
-    location: 'Nakuru, Kenya',
-    undertakingType: 'hybrid',
-    deliverables: ['bench', 'press'],
-    evidence: ['photo-4', 'photo-5', 'receipt-2'],
-    acceptance: { costDisclosed: { amount: 62000, currency: 'KES' }, acceptedAt: '2026-03-01T11:30:00Z' },
-  },
-  {
-    id: 'undertaking-5',
-    label: 'Eldoret School Kitchen',
-    institution: { id: 'inst-2', name: 'Eldoret Boarding School' },
-    location: 'Eldoret, Kenya',
-    undertakingType: 'physical',
-    deliverables: ['stove', 'tanks'],
-    evidence: ['photo-6'],
-    acceptance: { costDisclosed: null, acceptedAt: null },
-  },
-] as const;
+import { OPERATIONAL_PILOTS } from '@apt-labs/domain';
+import {
+  FAMILY,
+  EVIDENCE_STANDING,
+  EVIDENCE_STANDING_LABELS,
+  CANONICAL_DISTINCTIONS,
+  RELATIONSHIP_KIND,
+} from '@apt-labs/ontology';
 
 @Component({
   selector: 'app-overview',
@@ -336,13 +291,13 @@ const UNDERTAKINGS = [
   ],
 })
 export class OverviewComponent {
-  readonly pilots = UNDERTAKINGS;
+  readonly pilots = OPERATIONAL_PILOTS;
   readonly undertakings = computed(() => this.pilots.length);
   readonly institutionCount = computed(() => new Set(this.pilots.map((p) => p.institution.id)).size);
-  readonly peopleCount = computed(() => new Set(this.pilots.filter((p) => p.acceptance.acceptedAt !== null).map((p) => p.institution.id)).size);
+  readonly peopleCount = computed(() => new Set(this.pilots.flatMap((p) => p.participants).map((x) => x.personId)).size);
   readonly evidenceCount = computed(() => this.pilots.reduce((n, p) => n + p.evidence.length, 0));
   readonly deliverableCount = computed(() => this.pilots.reduce((n, p) => n + p.deliverables.length, 0));
-  readonly valueDisclosed = computed(() => this.pilots.reduce((n, p) => n + ((p.acceptance.costDisclosed?.amount ?? 0)), 0));
+  readonly valueDisclosed = computed(() => this.pilots.reduce((n, p) => n + (p.acceptance.costDisclosed?.amount ?? 0), 0));
 
   readonly metrics = computed(() => [
     { display: String(this.undertakings()), unit: 'undertakings', label: 'In flight' },
@@ -361,7 +316,7 @@ export class OverviewComponent {
     deliverables: p.deliverables.length,
     evidence: p.evidence.length,
     cost: p.acceptance.costDisclosed ? p.acceptance.costDisclosed.amount.toLocaleString('en-KE') + ' ' + p.acceptance.costDisclosed.currency : 'Undisclosed',
-    acceptedAt: p.acceptance.acceptedAt ? p.acceptance.acceptedAt.slice(0, 10) : '—',
+    acceptedAt: (p.acceptance.acceptedAt ?? '').slice(0, 10) || '—',
   })));
 
   readonly moves = computed(() => [
@@ -371,41 +326,40 @@ export class OverviewComponent {
     { to: '/workspace/commons', verb: 'Start an inquiry', consequence: `KES ${this.valueDisclosed().toLocaleString('en-KE')} disclosed across the settlements — bind the next one to a testable proposition.`, icon: 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z' },
   ] as const);
 
-  readonly relationKindCount = 14;
-  readonly familyCount = 11;
-  readonly standingStates = ['UNASSESSED', 'REPORTED', 'SUPPORTED', 'VERIFIED', 'DISPUTED', 'REJECTED', 'EXPIRED'];
-  readonly canonicalDistinctions = ['Actor vs Capability', 'Need vs Intention', 'Commitment vs Work', 'Evidence vs Knowledge', 'Value vs Price', 'Roll vs Annals', 'Pattern vs Recommendation'];
+  // The reference is the real ontology, not a private copy.
+  readonly familyCount = Object.keys(FAMILY).length;
+  readonly relationKindCount = Object.keys(RELATIONSHIP_KIND).length;
+  readonly standingStates = Object.values(EVIDENCE_STANDING);
+  readonly standingLabels: Record<string, string> = EVIDENCE_STANDING_LABELS as unknown as Record<string, string>;
+  readonly canonicalDistinctions = CANONICAL_DISTINCTIONS;
+
+  readonly standingMeaning: Record<string, string> = {
+    [EVIDENCE_STANDING.UNASSESSED]: 'Recorded, nobody has looked yet.',
+    [EVIDENCE_STANDING.REPORTED]: 'Someone said so. No artefact behind it.',
+    [EVIDENCE_STANDING.SUPPORTED]: 'Artefacts exist and were checked.',
+    [EVIDENCE_STANDING.VERIFIED]: 'An authorised party confirmed it.',
+    [EVIDENCE_STANDING.DISPUTED]: 'Challenged, and not yet resolved.',
+    [EVIDENCE_STANDING.REJECTED]: 'Challenged, and found wanting.',
+    [EVIDENCE_STANDING.EXPIRED]: 'Was true. The conditions moved.',
+  };
 
   readonly query = signal('');
   readonly familyLabels: Record<string, string> = {
     ACTOR: 'Actor', CAPABILITY: 'Capability', RESOURCE: 'Resource', PLACE: 'Place', INTENTION: 'Intention',
-    COMMITMENT: 'Commitment', WORK: 'Work', ACTIVITY: 'Activity', OUTPUT_OUTCOME: 'Output/Outcome',
-    EXCHANGE: 'Exchange', EVIDENCE: 'Evidence', KNOWLEDGE: 'Knowledge', GOVERNANCE: 'Governance',
-  };
-  readonly standingLabels: Record<string, string> = {
-    UNASSESSED: 'Unassessed', REPORTED: 'Reported', SUPPORTED: 'Supported', VERIFIED: 'Verified',
-    DISPUTED: 'Disputed', REJECTED: 'Rejected', EXPIRED: 'Expired',
-  };
-  readonly standingMeaning: Record<string, string> = {
-    UNASSESSED: 'Recorded, nobody has looked yet.',
-    REPORTED: 'Someone said so. No artefact behind it.',
-    SUPPORTED: 'Artefacts exist and were checked.',
-    VERIFIED: 'An authorised party confirmed it.',
-    DISPUTED: 'Challenged, and not yet resolved.',
-    REJECTED: 'Challenged, and found wanting.',
-    EXPIRED: 'Was true. The conditions moved.',
+    COMMITMENT: 'Commitment', WORK: 'Work', ACTIVITY: 'Activity', EVENT: 'Event', OUTPUT_OUTCOME: 'Output/Outcome',
+    EXCHANGE: 'Exchange', VALUE: 'Value', EVIDENCE: 'Evidence', KNOWLEDGE: 'Knowledge', GOVERNANCE: 'Governance',
   };
 
   readonly visibleGroups = computed(() => {
     const groups: { key: string; label: string; accent: string; families: string[]; note: string }[] = [
       { key: 'core', label: 'Operational core', accent: 'var(--apt-group-core)', families: ['ACTOR','CAPABILITY','RESOURCE','INTENTION','COMMITMENT','WORK'], note: 'Who acts, what they can do, what they hold, what they want, what they promise, what is done.' },
-      { key: 'continuity', label: 'Continuity & learning', accent: 'var(--apt-group-continuity)', families: ['ACTIVITY','OUTPUT_OUTCOME','EVIDENCE','KNOWLEDGE'], note: 'How work is carried out, what results, what can be shown, what is retained.' },
-      { key: 'value', label: 'Value & legitimacy', accent: 'var(--apt-group-value)', families: ['EXCHANGE','GOVERNANCE','PLACE'], note: 'What circulates between parties, and who had the standing to authorise it.' },
+      { key: 'continuity', label: 'Continuity & learning', accent: 'var(--apt-group-continuity)', families: ['ACTIVITY','EVENT','OUTPUT_OUTCOME','EVIDENCE','KNOWLEDGE'], note: 'How work is carried out, what results, what can be shown, what is retained.' },
+      { key: 'value', label: 'Value & legitimacy', accent: 'var(--apt-group-value)', families: ['EXCHANGE','VALUE','GOVERNANCE','PLACE'], note: 'What circulates between parties, and who had the standing to authorise it.' },
     ];
     const q = this.query();
     if (!q) return groups;
     const hay = (s: string[]) => s.join(' ').toLowerCase();
-    return groups.map((g) => ({ ...g, families: g.families.filter((f) => hay([this.familyLabels[f], f].concat(this.relations[f] ?? [])).includes(q)) })).filter((g) => g.families.length > 0);
+    return groups.map((g) => ({ ...g, families: g.families.filter((f) => hay([this.familyLabels[f] ?? f, f].concat(this.relations[f] ?? [])).includes(q)) })).filter((g) => g.families.length > 0);
   });
 
   readonly visibleDistinctions = computed(() => this.canonicalDistinctions.filter((d) => !this.query() || d.toLowerCase().includes(this.query())));
@@ -416,19 +370,21 @@ export class OverviewComponent {
     ACTOR: ['AFFILIATED_WITH','ACTS_ON_BEHALF_OF'], CAPABILITY: ['HOLDS_CAPABILITY','OFFERS_CAPACITY','OPERATES'],
     RESOURCE: ['CONTROLS_RESOURCE','CUSTODIES','REQUIRES'], PLACE: ['LOCATED_AT'], INTENTION: ['RESPONDS_TO','DERIVED_FROM'],
     COMMITMENT: ['COMMITTED_TO','AUTHORIZED_BY','FULFILLS'], WORK: ['ASSIGNED_TO','USES','PRODUCES'],
-    ACTIVITY: ['DEPENDS_ON','USES'], OUTPUT_OUTCOME: ['PRODUCES','DERIVED_FROM'], EXCHANGE: ['SETTLES','FUNDS'],
+    ACTIVITY: ['DEPENDS_ON','USES'], EVENT: ['OCCURS_IN','TIMES','TRIGGERS'],
+    OUTPUT_OUTCOME: ['PRODUCES','DERIVED_FROM'], EXCHANGE: ['SETTLES','FUNDS'],
+    VALUE: ['VALUED_AT','ALLOCATES','RECONCILES'],
     EVIDENCE: ['SUPPORTED_BY','VERIFIED_BY','ATTESTS'], KNOWLEDGE: ['DERIVED_FROM','CONTRIBUTES_TO'], GOVERNANCE: ['GOVERNED_BY','AUTHORIZED_BY'],
   };
   readonly contextFamily = 'PLACE';
 
   readonly familyIcon = (f: string) => {
-    const m: Record<string, string> = { ACTOR:'A', CAPABILITY:'C', RESOURCE:'R', PLACE:'P', INTENTION:'I', COMMITMENT:'M', WORK:'W', ACTIVITY:'Y', OUTPUT_OUTCOME:'O', EXCHANGE:'X', EVIDENCE:'E', KNOWLEDGE:'K', GOVERNANCE:'G' };
+    const m: Record<string, string> = { ACTOR:'A', CAPABILITY:'C', RESOURCE:'R', PLACE:'P', INTENTION:'I', COMMITMENT:'M', WORK:'W', ACTIVITY:'Y', EVENT:'T', OUTPUT_OUTCOME:'O', EXCHANGE:'X', VALUE:'$' , EVIDENCE:'E', KNOWLEDGE:'K', GOVERNANCE:'G' };
     return m[f] ?? '?';
   };
 
-  readonly familyAccent = (f: string) => `var(--apt-family-${f.toLowerCase().replace('_outcome','')})`;
+  readonly familyAccent = (f: string) => `var(--apt-family-${f.toLowerCase().replace('_outcome', '')}, var(--apt-module-accent))`;
 
-  readonly standingAccent = (s: string) => `var(--apt-standing-${s.toLowerCase()})`;
+  readonly standingAccent = (s: string) => `var(--apt-standing-${s}, var(--apt-module-accent))`;
 
   readonly contextLabel = () => this.contextFamily;
 }

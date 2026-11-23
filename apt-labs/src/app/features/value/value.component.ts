@@ -5,24 +5,14 @@
  * allocated by transparent rule. Ported from Vue `src/pages/workspace/Value.vue`.
  */
 
-import { Component, signal, computed } from "@angular/core";
-import { DecimalPipe, CurrencyPipe } from "@angular/common";
+import { Component, signal, computed, inject } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-
-interface Row {
-  key: string;
-  label: string;
-  institution: string;
-  location: string;
-  amount: number | null;
-  currency: string;
-  settled: boolean;
-  acceptedAt: string | null;
-}
+import { ValueService, type ValueRow } from '@apt-labs/shared/state';
 
 @Component({
   selector: 'app-value',
-  imports: [RouterLink, DecimalPipe, CurrencyPipe],
+  imports: [RouterLink, DecimalPipe],
   template: `
     <div class="value-page">
       <header class="value-head">
@@ -112,40 +102,14 @@ interface Row {
   `],
 })
 export class ValueComponent {
+  private readonly service = inject(ValueService);
+
   readonly filter = signal<'all' | 'disclosed' | 'settled' | 'open'>('all');
 
-  readonly allRows: Row[] = [
-    { key: 'pilot-001', label: 'Nairobi Procurement Pilot', institution: 'Nairobi County', location: 'Nairobi', amount: 4500000, currency: 'KES', settled: true, acceptedAt: '2026-01-15' },
-    { key: 'pilot-002', label: 'Mombasa Port Drayage', institution: 'Mombasa Port Authority', location: 'Mombasa', amount: 8200000, currency: 'KES', settled: false, acceptedAt: null },
-    { key: 'pilot-003', label: 'Kisumu Agri Supply', institution: 'Kisumu University', location: 'Kisumu', amount: 3100000, currency: 'KES', settled: true, acceptedAt: '2026-02-20' },
-    { key: 'pilot-004', label: 'Eldoret Logistics Hub', institution: 'Eldoret Gov', location: 'Eldoret', amount: 12000000, currency: 'KES', settled: false, acceptedAt: null },
-    { key: 'pilot-005', label: 'Nakuru Health Supply', institution: 'Nakuru Hospital', location: 'Nakuru', amount: 6800000, currency: 'KES', settled: true, acceptedAt: '2026-03-10' },
-  ];
-
-  readonly rows = computed(() => this.allRows);
-
-  readonly metrics = computed(() => {
-    const disclosed = this.allRows.filter((r) => r.amount != null);
-    const total = disclosed.reduce((s, r) => s + (r.amount ?? 0), 0);
-    const settledCount = disclosed.filter((r) => r.settled).length;
-    return {
-      outcomes: disclosed.length,
-      totalKes: total,
-      funding: this.allRows.length,
-      settled: settledCount,
-      open: disclosed.length - settledCount,
-    };
-  });
-
-  readonly visible = computed(() => {
-    if (this.filter() === 'disclosed')
-      return this.allRows.filter((r) => r.amount != null);
-    if (this.filter() === 'settled')
-      return this.allRows.filter((r) => r.amount != null && r.settled);
-    if (this.filter() === 'open')
-      return this.allRows.filter((r) => r.amount != null && !r.settled);
-    return this.allRows;
-  });
+  readonly visible = computed<ValueRow[]>(() =>
+    this.service.filterRows(this.service.rows(), this.filter()),
+  );
+  readonly metrics = this.service.metrics;
 
   setFilter(v: 'all' | 'disclosed' | 'settled' | 'open'): void {
     this.filter.set(v);

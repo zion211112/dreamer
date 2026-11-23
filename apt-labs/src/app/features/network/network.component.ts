@@ -1,60 +1,6 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-
-type NetworkGroup = 'all' | 'people' | 'crews' | 'institutions' | 'organizations';
-
-const GROUP_LABELS: Record<NetworkGroup, string> = {
-  all: 'All',
-  people: 'People',
-  crews: 'Crews',
-  institutions: 'Institutions',
-  organizations: 'Organizations',
-};
-
-const DIRECTORY = [
-  {
-    id: 'row-001',
-    actor: { name: 'Wanjiku Mwangi', description: 'Structural engineer, 12 years in Kenyan public works.', createdAt: '2025-11-04', type: 'person' as const },
-    type: 'person' as const,
-    capabilities: ['Structural design', 'Load calculations'],
-    assets: ['Licensed PE (Kenya)'],
-  },
-  {
-    id: 'row-002',
-    actor: { name: 'Kisumu Solar Crew', description: 'Four-person crew with PV install capability.', createdAt: '2025-12-10', type: 'crew' as const },
-    type: 'crew' as const,
-    capabilities: ['PV installation', 'Inverter commissioning'],
-    assets: ['Mobile workshop', 'Certified team'],
-  },
-  {
-    id: 'row-003',
-    actor: { name: 'Nairobi North Primary School', description: 'Public primary school, 620 pupils.', createdAt: '2026-01-08', type: 'institution' as const },
-    type: 'institution' as const,
-    capabilities: ['Facility commissioning', 'Curriculum oversight'],
-    assets: ['Campus land', 'School board'],
-  },
-  {
-    id: 'row-004',
-    actor: { name: 'Nakuru Fab Collective', description: 'Fabrication workshop serving East Africa regional markets.', createdAt: '2026-02-15', type: 'organization' as const },
-    type: 'organization' as const,
-    capabilities: ['CNC machining', 'Sheet metal'],
-    assets: ['CNC rig', 'Press-brake'],
-  },
-  {
-    id: 'row-005',
-    actor: { name: 'James Otieno', description: 'Civil engineer, water infrastructure.', createdAt: '2025-10-22', type: 'person' as const },
-    type: 'person' as const,
-    capabilities: ['Hydraulic systems', 'Borehole design'],
-    assets: ['Licensed PE (Kenya)'],
-  },
-] as const;
-
-function groupOf(type: string): NetworkGroup {
-  if (type === 'person') return 'people';
-  if (type === 'crew') return 'crews';
-  if (type === 'institution') return 'institutions';
-  return 'organizations';
-}
+import { NetworkService, GROUP_LABELS, type NetworkGroup, type DirectoryRow } from '@apt-labs/shared/state';
 
 @Component({
   selector: 'app-network',
@@ -67,12 +13,13 @@ function groupOf(type: string): NetworkGroup {
             <p class="net-eyebrow">WORKSPACE · DIRECTORY</p>
             <h1 class="net-h1">Who is in the network</h1>
             <p class="net-sub">
-              Every entity that acts, claims capability, or holds a resource. Filter by type or browse the full directory.
+              Every person, crew, institution and organization in the operational record. Filter by
+              type or browse the full directory.
             </p>
           </div>
 
           <div class="net-pills">
-            @for (g of groups(); track g.id) {
+            @for (g of groups; track g.id) {
               <button
                 class="net-pill"
                 [class.net-pill--active]="filter() === g.id"
@@ -88,22 +35,27 @@ function groupOf(type: string): NetworkGroup {
             @for (row of visible(); track row.id) {
               <article class="net-card">
                 <div class="net-card-head">
-                  <span class="net-card-glyph" [style]="'--card-accent:' + cardAccent(row.type)">{{ initial(row.actor.name) }}</span>
+                  <span class="net-card-glyph" [style]="'--card-accent:' + cardAccent(row.type)">{{ initial(row.name) }}</span>
                   <div class="net-card-id">
-                    <h3 class="net-card-name">{{ row.actor.name }}</h3>
+                    <h3 class="net-card-name">{{ row.name }}</h3>
                     <span class="net-card-type">{{ typeLabel(row.type) }}</span>
                   </div>
                 </div>
-                <p class="net-card-desc">{{ row.actor.description }}</p>
+                <p class="net-card-desc">{{ row.description }}</p>
                 <div class="net-card-meta">
-                  <span class="net-card-meta-item">Registered {{ row.actor.createdAt }}</span>
+                  <span class="net-card-meta-item">On record since {{ row.registered }}</span>
+                  @if (row.institution) {
+                    <span class="net-card-meta-item">· {{ row.institution }}</span>
+                  }
                 </div>
                 <div class="net-card-caps">
                   @for (cap of row.capabilities; track cap) {
                     <span class="net-chip">{{ cap }}</span>
                   }
                 </div>
-                <a [routerLink]="['/workspace', 'network', 'institutions']" class="net-card-link">View in institutions →</a>
+                <a [routerLink]="rowLink(row.type)" class="net-card-link">
+                  {{ row.type === 'person' || row.type === 'crew' ? 'View in people' : 'View in institutions' }} →
+                </a>
               </article>
             }
             @if (visible().length === 0) {
@@ -153,32 +105,23 @@ function groupOf(type: string): NetworkGroup {
   ],
 })
 export class NetworkComponent {
+  private readonly service = inject(NetworkService);
+
   protected readonly GROUP_LABELS = GROUP_LABELS;
-  readonly filter = signal<NetworkGroup>('all');
-  readonly directory = DIRECTORY;
 
-  readonly groups = computed(() => (Object.keys(GROUP_LABELS) as NetworkGroup[]).map((g) => ({ id: g, label: GROUP_LABELS[g] })));
-
-  readonly counts = computed(() => {
-    const c: Record<NetworkGroup, number> = { all: this.directory.length, people: 0, crews: 0, institutions: 0, organizations: 0 };
-    for (const row of this.directory) { c[groupOf(row.type)]++; }
-    return c;
-  });
-
-  readonly visible = computed(() => {
-    const f = this.filter();
-    if (f === 'all') return [...this.directory];
-    return this.directory.filter((row) => groupOf(row.type) === f);
-  });
+  readonly filter = this.service.filter;
+  readonly groups = this.service.groups;
+  readonly counts = this.service.counts;
+  readonly visible = this.service.visible;
 
   readonly initial = (name: string) => name[0] ?? '?';
 
-  readonly typeLabel = (type: string) => {
+  readonly typeLabel = (type: DirectoryRow['type']) => {
     const m: Record<string, string> = { person: 'person', crew: 'crew', institution: 'institution', organization: 'organization' };
     return m[type] ?? type;
   };
 
-  readonly cardAccent = (type: string) => {
+  readonly cardAccent = (type: DirectoryRow['type']) => {
     const m: Record<string, string> = {
       person: 'var(--apt-color-brand-primary)',
       crew: 'var(--apt-group-continuity)',
@@ -187,4 +130,9 @@ export class NetworkComponent {
     };
     return m[type] ?? 'var(--apt-text-muted)';
   };
+
+  readonly rowLink = (type: DirectoryRow['type']): (string | number)[] =>
+    type === 'person' || type === 'crew'
+      ? ['/workspace', 'network', 'people']
+      : ['/workspace', 'network', 'institutions'];
 }

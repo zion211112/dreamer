@@ -1,47 +1,8 @@
-import { Component, signal, computed } from '@angular/core';
-import { RouterLink } from '@angular/router';
-
-const INSTITUTION_ROWS = [
-  {
-    id: 'i-001', name: 'Nairobi North Primary School', type: 'institution' as const,
-    focus: 'Primary education, 620 pupils',
-    can: 'Facility commissioning, Curriculum oversight',
-    has: 'Campus land, School board',
-    registered: '2026-01-08',
-  },
-  {
-    id: 'i-002', name: 'Kisumu Farmers Cooperative', type: 'organization' as const,
-    focus: 'Agricultural inputs and produce aggregation',
-    can: 'PV commissioning, Cold storage',
-    has: 'Warehouse network, Member base',
-    registered: '2025-11-20',
-  },
-  {
-    id: 'i-003', name: 'Mombasa Community Centre', type: 'institution' as const,
-    focus: 'Community services and training',
-    can: 'Hall operations, Youth programmes',
-    has: 'Multifunction hall, Training rooms',
-    registered: '2026-02-02',
-  },
-  {
-    id: 'i-004', name: 'Eldoret Boarding School', type: 'institution' as const,
-    focus: 'Secondary education, boarding',
-    can: 'Kitchen commissioning, Dorm maintenance',
-    has: 'Dorm blocks, Kitchen facilities',
-    registered: '2025-12-05',
-  },
-  {
-    id: 'i-005', name: 'Nakuru Tech Lab', type: 'organization' as const,
-    focus: 'Fabrication and prototyping services',
-    can: 'CNC machining, Sheet metal, 3D printing',
-    has: 'CNC rig, Press-brake, Laser cutter',
-    registered: '2026-02-15',
-  },
-] as const;
+import { Component, signal, computed, inject } from '@angular/core';
+import { NetworkService, type DirectoryRow } from '@apt-labs/shared/state';
 
 @Component({
   selector: 'app-institutions',
-  imports: [RouterLink],
   template: `
     <div class="ins" data-module="institutions">
       <div class="ins-body">
@@ -83,9 +44,9 @@ const INSTITUTION_ROWS = [
                   <tr class="ins-tr">
                     <td class="ins-td ins-td-name">{{ row.name }}</td>
                     <td class="ins-td"><span class="ins-type-badge">{{ row.type }}</span></td>
-                    <td class="ins-td ins-td-dim">{{ row.focus }}</td>
-                    <td class="ins-td ins-td-dim">{{ row.can }}</td>
-                    <td class="ins-td ins-td-dim">{{ row.has }}</td>
+                    <td class="ins-td ins-td-dim">{{ row.description }}</td>
+                    <td class="ins-td ins-td-dim">{{ caps(row) }}</td>
+                    <td class="ins-td ins-td-dim">{{ assets(row) }}</td>
                     <td class="ins-td ins-td-dim ins-td-nowrap">{{ row.registered }}</td>
                   </tr>
                 }
@@ -130,14 +91,15 @@ const INSTITUTION_ROWS = [
   ],
 })
 export class InstitutionsComponent {
-  readonly query = signal('');
-  readonly rows = INSTITUTION_ROWS;
+  private readonly service = inject(NetworkService);
 
-  readonly visible = computed(() => {
-    const q = this.query().toLowerCase();
-    if (!q) return [...this.rows];
-    return this.rows.filter((r) =>
-      (r.name + ' ' + r.type + ' ' + r.focus + ' ' + r.can + ' ' + r.has).toLowerCase().includes(q)
-    );
-  });
+  readonly query = signal('');
+  readonly rows: readonly DirectoryRow[] = this.service.bodies;
+
+  readonly visible = computed(() =>
+    this.rows.filter((r) => this.service.matchQuery(this.query(), r)),
+  );
+
+  readonly caps = (r: DirectoryRow) => r.capabilities.join(', ') || '—';
+  readonly assets = (r: DirectoryRow) => r.assets.join(', ') || '—';
 }

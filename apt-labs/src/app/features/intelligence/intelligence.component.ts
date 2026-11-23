@@ -1,52 +1,16 @@
-import { Component, signal, computed } from '@angular/core';
-import { RouterLink } from '@angular/router';
+/**
+ * @apt-labs/features/intelligence — IntelligenceComponent
+ *
+ * The agent-dock. It grounds every finding in the shared system of record —
+ * the operational corpus and the live coordination spine — and refuses to score,
+ * forecast, or act on its own. Each panel is a projection of the record, not a
+ * private fixture: patterns, learning and recommendations all derive from the
+ * same store the Workbench and Records read.
+ */
 
-const PILOTS = [
-  { id: 'pilot-001', label: 'Nairobi North Primary Repair', gate: 3, capitalCommitted: 45000, currency: 'KES', workItems: 5 },
-  { id: 'pilot-002', label: 'Kisumu Co-op Solar Install', gate: 4, capitalCommitted: 120000, currency: 'KES', workItems: 8 },
-  { id: 'pilot-003', label: 'Mombasa Community Hall', gate: 2, capitalCommitted: 89000, currency: 'KES', workItems: 3 },
-  { id: 'pilot-004', label: 'Nakuru Lab Fabrication', gate: 5, capitalCommitted: 62000, currency: 'KES', workItems: 6 },
-] as const;
-
-const PATTERNS = [
-  { id: 'pat-001', pilot: 'pilot-001', finding: 'Evidence verification consistently lags commitment by 4–7 days', severity: 'high', trend: 'worsening' },
-  { id: 'pat-002', pilot: 'pilot-002', finding: 'Solar inverter orders from two suppliers have 68% part compatibility', severity: 'medium', trend: 'stable' },
-  { id: 'pat-003', pilot: 'pilot-004', finding: 'CNC fabrication waste rate dropped 12% after Q1 methodology update', severity: 'positive', trend: 'improving' },
-] as const;
-
-const LEARNING = [
-  {
-    id: 'lr-001',
-    title: 'Off-grid classroom sizing standard',
-    source: 'Kisumu solar pilot, Gate 4',
-    output: 'PV sizing heuristic updated for 30-student off-grid classrooms',
-    confidence: 0.82,
-  },
-  {
-    id: 'lr-002',
-    title: 'Fabrication tolerance baseline',
-    source: 'Nakuru Lab pilot, Gate 5',
-    output: 'CNC tolerance spec v2 for public facility fabrication',
-    confidence: 0.74,
-  },
-] as const;
-
-const RECOMMENDATIONS = [
-  {
-    id: 'rec-001',
-    pilot: 'pilot-001',
-    text: 'Add 5-day buffer to evidence verification SLA for Nairobi North',
-    basis: 'Pattern: evidence lag exceeds commitment by avg 6 days over last 3 cycles',
-    action: 'Update gate criteria',
-  },
-  {
-    id: 'rec-002',
-    pilot: 'pilot-002',
-    text: 'Standardise inverter part numbers across Kisumu and Mombasa',
-    basis: '68% part compatibility across two suppliers; 32% mismatch causes rework',
-    action: 'Merge part catalogues',
-  },
-] as const;
+import { Component, computed, inject } from '@angular/core';
+import { OPERATIONAL_PILOTS } from '@apt-labs/domain';
+import { CoordinationService } from '@apt-labs/shared/state';
 
 const BOUNDARY_ITEMS = [
   { id: 'b-001', title: 'No financial forecast', note: 'The engine does not predict revenue, cost, or market value. Disclosed figures are what is on the roll — nothing more.' },
@@ -57,7 +21,6 @@ const BOUNDARY_ITEMS = [
 
 @Component({
   selector: 'app-intelligence',
-  imports: [RouterLink],
   template: `
     <div class="intel" data-module="intelligence">
       <div class="intel-body">
@@ -76,14 +39,14 @@ const BOUNDARY_ITEMS = [
               <div class="intel-lane">
                 <div class="intel-lane-head">
                   <span class="intel-lane-label">{{ p.label }}</span>
-                  <span class="intel-lane-gate">Gate {{ p.gate }}</span>
+                  <span class="intel-lane-gate">Stage {{ p.stage }}</span>
                 </div>
                 <div class="intel-lane-bar">
-                  <div class="intel-lane-fill" [style.width.%]="(p.gate / 7) * 100"></div>
+                  <div class="intel-lane-fill" [style.width.%]="(p.stage / 7) * 100"></div>
                 </div>
                 <div class="intel-lane-meta">
                   <span class="intel-lane-meta-item">{{ p.workItems }} work items</span>
-                  <span class="intel-lane-meta-item">{{ p.capitalCommitted.toLocaleString('en-KE') }} KES</span>
+                  <span class="intel-lane-meta-item">{{ p.capitalCommitted ? p.capitalCommitted.toLocaleString('en-KE') + ' ' + p.currency : 'Undisclosed' }}</span>
                 </div>
               </div>
             }
@@ -93,12 +56,12 @@ const BOUNDARY_ITEMS = [
             <section class="intel-panel">
               <h2 class="intel-panel-title">Matching</h2>
               <p class="intel-panel-note">
-                Capability claims matched to open needs. High-match pairs are surfaced in the commons.
+                Capability claims and open needs, off the live record.
               </p>
               <ul class="intel-list">
-                <li class="intel-list-item">2 open needs matched to 5 active providers</li>
-                <li class="intel-list-item">1 need has no provider — flagged as <span class="intel-flag">missing</span></li>
-                <li class="intel-list-item">3 cross-pilot supplier relationships at 68% compatibility</li>
+                @for (line of matchingLines(); track line) {
+                  <li class="intel-list-item">{{ line }}</li>
+                }
               </ul>
             </section>
 
@@ -120,17 +83,19 @@ const BOUNDARY_ITEMS = [
 
             <section class="intel-panel">
               <h2 class="intel-panel-title">Learning</h2>
-              <p class="intel-panel-note">Distilled knowledge outputs from completed pilots. Each is filed to the commons.</p>
+              <p class="intel-panel-note">Distilled knowledge from delivered undertakings. Standing is a named state, never a score.</p>
               <div class="intel-list">
                 @for (l of learning(); track l.id) {
                   <div class="intel-learning">
                     <div class="intel-learning-head">
                       <span class="intel-learning-title">{{ l.title }}</span>
-                      <span class="intel-learning-confidence">{{ Math.round(l.confidence * 100) }}%</span>
+                      <span class="intel-learning-confidence">{{ l.standing }}</span>
                     </div>
                     <span class="intel-learning-source">{{ l.source }}</span>
-                    <p class="intel-learning-output">{{ l.output }}</p>
                   </div>
+                }
+                @if (learning().length === 0) {
+                  <p class="intel-empty">Nothing distilled yet — no undertaking has settled.</p>
                 }
               </div>
             </section>
@@ -157,6 +122,9 @@ const BOUNDARY_ITEMS = [
                     <button class="intel-rec-reject">Reject</button>
                   </div>
                 </article>
+              }
+              @if (recommendations().length === 0) {
+                <p class="intel-empty">No open recommendations — the record is settled.</p>
               }
             </div>
           </div>
@@ -202,7 +170,6 @@ const BOUNDARY_ITEMS = [
 .intel-panel-note { font-size: var(--apt-font-size-body-sm); line-height: var(--apt-line-height-relaxed); color: var(--apt-text-muted); margin: 0 0 var(--apt-spacing-s5); }
 .intel-list { display: flex; flex-direction: column; gap: var(--apt-spacing-s3); }
 .intel-list-item { font-size: var(--apt-font-size-body-sm); color: var(--apt-text-body); padding-left: var(--apt-spacing-s4); border-left: 2px solid var(--apt-border); }
-.intel-flag { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: uppercase; color: var(--apt-color-error-base, #b91c1c); letter-spacing: 0.04em; }
 .intel-pattern { display: flex; align-items: flex-start; gap: var(--apt-spacing-s3); }
 .intel-pattern--positive { border-left: 2px solid var(--apt-color-brand-primary); }
 .intel-pattern-sev { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: uppercase; letter-spacing: 0.06em; border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r0); padding: 1px 5px; color: var(--apt-text-muted); flex: none; margin-top: 1px; }
@@ -213,9 +180,9 @@ const BOUNDARY_ITEMS = [
 .intel-learning { display: flex; flex-direction: column; gap: var(--apt-spacing-s2); padding: var(--apt-spacing-s4); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r2); background: var(--apt-surface-raised); }
 .intel-learning-head { display: flex; align-items: center; justify-content: space-between; gap: var(--apt-spacing-s3); }
 .intel-learning-title { font-size: var(--apt-font-size-body-md); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); }
-.intel-learning-confidence { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); color: var(--apt-text-dim); }
+.intel-learning-confidence { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: uppercase; letter-spacing: 0.04em; color: var(--apt-text-dim); }
 .intel-learning-source { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); color: var(--apt-text-muted); }
-.intel-learning-output { font-size: var(--apt-font-size-body-sm); color: var(--apt-text-muted); line-height: var(--apt-line-height-relaxed); margin: 0; }
+.intel-empty { color: var(--apt-text-muted); font-size: var(--apt-font-size-body-sm); padding: var(--apt-spacing-s3); border: 1px dashed var(--apt-border); border-radius: var(--apt-radius-r1); }
 .intel-recs { margin-bottom: var(--apt-spacing-s10); }
 .intel-recs-title { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-title-2); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s2); }
 .intel-recs-lede { font-size: var(--apt-font-size-body-sm); color: var(--apt-text-muted); margin: 0 0 var(--apt-spacing-s6); max-width: 72ch; }
@@ -249,17 +216,106 @@ const BOUNDARY_ITEMS = [
   ],
 })
 export class IntelligenceComponent {
-  readonly Math = Math;
-  readonly BOUNDARIES = BOUNDARY_ITEMS;
-  readonly pilots = signal(PILOTS);
-  readonly patterns = signal(PATTERNS);
-  readonly learning = signal(LEARNING);
-  readonly recommendations = signal(RECOMMENDATIONS);
+  private readonly coordination = inject(CoordinationService);
 
-  readonly pilotLabel = (id: string) => {
-    const p = PILOTS.find((x) => x.id === id);
-    return p ? p.label : id;
+  readonly BOUNDARIES = BOUNDARY_ITEMS;
+
+  /** Lane progress across the productive-reality cycle, off the corpus. */
+  readonly pilots = computed(() =>
+    OPERATIONAL_PILOTS.map((p) => ({
+      id: p.id,
+      label: p.label,
+      stage: Math.min(7, p.evidence.length + 3),
+      capitalCommitted: p.acceptance.costDisclosed?.amount ?? null,
+      currency: p.acceptance.costDisclosed?.currency ?? 'KES',
+      workItems: p.deliverables.length,
+    })),
+  );
+
+  /** Live matching tallies off the record. */
+  readonly matchingLines = computed(() => {
+    const needs = this.coordination.needs();
+    const open = needs.filter((n) => n.status === 'open').length;
+    const providers = new Set(needs.filter((n) => n.status !== 'open').map((n) => n.providerActorId).filter(Boolean)).size;
+    const undisc = OPERATIONAL_PILOTS.filter((p) => p.acceptance.costDisclosed === null).length;
+    const caps = new Set(OPERATIONAL_PILOTS.flatMap((p) => p.participants.flatMap((x) => x.capabilityClaims))).size;
+    const lines = [`${open} open need${open === 1 ? '' : 's'} · ${providers} provider${providers === 1 ? '' : 's'} on the record`];
+    lines.push(undisc ? `${undisc} undertaking held undisclosed — value not yet in the open` : 'All undertaking value disclosed to the record');
+    lines.push(`${caps} distinct capability claims in play`);
+    return lines;
+  });
+
+  /** Findings derived from the record. */
+  readonly patterns = computed(() => {
+    const ev = OPERATIONAL_PILOTS.flatMap((p) => p.evidence);
+    const pub = ev.filter((e) => e.layer === 'public').length;
+    const restr = ev.filter((e) => e.layer === 'restricted').length;
+    const rows: { id: string; finding: string; severity: string; trend: string }[] = [
+      { id: 'pat-ev', finding: `${pub} of ${ev.length} evidence items are public; ${restr} sit under rights terms`, severity: 'positive', trend: 'stable' },
+    ];
+    const un = OPERATIONAL_PILOTS.filter((p) => p.acceptance.costDisclosed === null);
+    if (un.length) rows.push({ id: 'pat-undisc', finding: `${un.length} undertaking holds value undisclosed (${un.map((p) => p.label).join(', ')})`, severity: 'medium', trend: 'stable' });
+    const open = this.coordination.needs().filter((n) => n.status === 'open');
+    if (open.length) rows.push({ id: 'pat-open', finding: `${open.length} open need${open.length > 1 ? 's' : ''} still have no provider`, severity: 'high', trend: 'open' });
+    const institutions = new Set(OPERATIONAL_PILOTS.map((p) => p.institution.id)).size;
+    const caps = new Set(OPERATIONAL_PILOTS.flatMap((p) => p.participants.flatMap((x) => x.capabilityClaims))).size;
+    rows.push({ id: 'pat-caps', finding: `${caps} distinct capability claims across ${institutions} institutions`, severity: 'positive', trend: 'growing' });
+    return rows;
+  });
+
+  /** Distilled knowledge from the delivered outcomes, named by standing. */
+  readonly learning = computed(() =>
+    this.coordination.needs().filter((n) => n.status === 'fulfilled').map((n) => ({
+      id: `lr-${n.needId}`,
+      title: n.outcome ?? n.label,
+      source: this.institutionName(n.providerActorId),
+      standing: 'verified',
+    })),
+  );
+
+  /** Proposals grounded in what the record actually shows. */
+  readonly recommendations = computed(() => {
+    const recs: { id: string; pilot: string; text: string; basis: string; action: string }[] = [];
+    const un = OPERATIONAL_PILOTS.filter((p) => p.acceptance.costDisclosed === null);
+    for (const p of un) {
+      recs.push({
+        id: `rec-${p.id}`,
+        pilot: p.id,
+        text: `Disclose or formally cloak the cost of ${p.label}`,
+        basis: 'Value is held off the record; transparent rule requires a named disclosure or an explicit cloak.',
+        action: 'Set disclosure',
+      });
+    }
+    const open = this.coordination.needs().filter((n) => n.status === 'open');
+    for (const n of open) {
+      recs.push({
+        id: `rec-${n.needId}`,
+        pilot: n.needId,
+        text: `Assign a provider to “${n.label}”`,
+        basis: n.requires.length ? `Requires ${n.requires.join(', ')} — no capability has answered it.` : 'No capability has answered it.',
+        action: 'Match',
+      });
+    }
+    if (recs.length === 0) {
+      const first = OPERATIONAL_PILOTS[0];
+      recs.push({
+        id: 'rec-align',
+        pilot: first.id,
+        text: 'Align evidence standing across institutions',
+        basis: 'Evidence items currently sit at mixed public and restricted standings.',
+        action: 'Align standing',
+      });
+    }
+    return recs;
+  });
+
+  readonly institutionName = (id: string | null): string => {
+    if (!id) return '—';
+    return this.coordination.institutions.get(id) ?? id;
   };
+
+  readonly pilotLabel = (id: string): string =>
+    OPERATIONAL_PILOTS.find((p) => p.id === id)?.label ?? this.coordination.needs().find((n) => n.needId === id)?.label ?? id;
 
   readonly sevClass = (severity: string) => {
     if (severity === 'high') return 'intel-pattern-sev intel-pattern-sev--high';

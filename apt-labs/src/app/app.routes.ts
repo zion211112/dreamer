@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 /**
  * APT-LABS — Route table (migrated from Vue router)
  *
- * 17 routes: /, /landing, /sign-in, /sign-up, /workspace (shell + 13 children)
+ * 19 routes: /, /landing, /sign-in, /sign-up, /workspace (shell + 15 children)
  */
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/landing' },
@@ -32,6 +32,8 @@ export const routes: Routes = [
       { path: 'records/annals', loadComponent: () => import('./features/records/records.component').then(m => m.RecordsComponent) },
       { path: 'records/roll', loadComponent: () => import('./features/records/records.component').then(m => m.RecordsComponent) },
       { path: 'intelligence', loadComponent: () => import('./features/intelligence/intelligence.component').then(m => m.IntelligenceComponent) },
+      { path: 'ontology', loadComponent: () => import('./features/ontology/ontology.component').then(m => m.OntologyComponent) },
+      { path: 'sovereignty', loadComponent: () => import('./features/sovereignty/sovereignty.component').then(m => m.SovereigntyComponent) },
     ],
   },
 ];

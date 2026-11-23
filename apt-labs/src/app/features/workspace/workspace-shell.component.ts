@@ -50,5 +50,7 @@ export class WorkspaceShellComponent {
     { path: 'value', label: 'Value' },
     { path: 'records', label: 'Records' },
     { path: 'intelligence', label: 'Intelligence' },
+    { path: 'ontology', label: 'Ontology' },
+    { path: 'sovereignty', label: 'Sovereignty' },
   ];
 }

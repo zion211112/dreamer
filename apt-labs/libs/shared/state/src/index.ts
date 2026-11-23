@@ -5,13 +5,13 @@
  */
 
 export { CoordinationService } from './coordination.service';
-export type {
-  CommitmentRow,
-  KnowledgeOutcome,
-  OnboardProviderInput,
-  PostNeedInput,
-  EvidenceInput,
-} from './coordination.service';
+export type { NeedRow, NeedStatus } from './coordination.service';
+
+export { RecordsService } from './records.service';
+export type { RecordsView, RecordsRow } from './records.service';
+
+export { ValueService } from './value.service';
+export type { ValueRow, ValueMetrics, ValueFilter } from './value.service';
 
 export { NetworkService, GROUP_LABELS, groupOf } from './network.service';
 export type { NetworkGroup, DirectoryRow } from './network.service';
