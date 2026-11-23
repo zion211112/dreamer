@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APT-LABS — Direction 1: The Ledger</title>
+<link rel="stylesheet" href="apt-labs/src/styles.css">
+<style>
+  /* Direction 1: The Ledger — Evidence & proof first. Light mode. */
+  :root {
+    --d1-bg: #faf8f2;            /* warm ivory base */
+    --d1-panel: #ffffff;
+    --d1-raised: #f4f1ea;
+    --d1-border: #d8d3c8;
+    --d1-fg: #1a1f1a;            /* deep ink */
+    --d1-muted: #6b7270;
+    --d1-dim: #9ca39f;
+    --d1-accent: #2e4a3a;        /* deep forest */
+    --d1-accent-pale: #d8e3d8;
+    --d1-state-verified: #166534;
+    --d1-state-supported: #7d8f78;
+    --d1-state-disputed: #e89670;
+    --d1-state-rejected: #b91c1c;
+    --d1-state-expired: #64748b;
+    --d1-serif: Georgia, "Times New Roman", serif;
+    --d1-sans: system-ui, -apple-system, "Segoe UI Variable", sans-serif;
+    --d1-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: var(--d1-bg); color: var(--d1-fg); font-family: var(--d1-sans); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  body { padding: 0 2rem; }
+
+  /* Shell: topbar */
+  .topbar { height: 54px; border-bottom: 1px solid var(--d1-border); background: var(--d1-panel); display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; flex-shrink: 0; position: sticky; top: 0; z-index: 100; }
+  .topbar-brand { font-family: var(--d1-serif); font-size: 1.5rem; font-weight: 600; color: var(--d1-fg); letter-spacing: -0.02em; display: flex; align-items: center; gap: 0.75rem; }
+  .brand-mark { width: 28px; height: 28px; background: var(--d1-accent); color: #fff; border-radius: 6px; display: grid; place-items: center; font-size: 0.8125rem; font-weight: 600; }
+  .topbar-context { font-family: var(--d1-mono); font-size: 0.8125rem; color: var(--d1-muted); display: flex; gap: 1rem; }
+
+  /* Shell body: rail + main + inspector */
+  .shell-body { display: flex; gap: 0; height: calc(100vh - 54px); overflow: hidden; }
+  .rail { width: 232px; border-right: 1px solid var(--d1-border); background: var(--d1-panel); display: flex; flex-direction: column; padding: 2rem 1rem; flex-shrink: 0; }
+  .rail-brand { font-family: var(--d1-serif); font-size: 1.5rem; font-weight: 600; color: var(--d1-fg); margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #e8e3d9; }
+  .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 10px; text-decoration: none; color: var(--d1-muted); font-size: 0.875rem; font-weight: 500; border: 1px solid transparent; }
+  .nav-item:hover { background: var(--d1-raised); color: var(--d1-fg); }
+  .nav-item.active { background: rgba(46, 74, 58, 0.12); color: var(--d1-accent); border-left: 3px solid var(--d1-accent); border-color: transparent; }
+
+  .main { flex: 1; overflow-y: auto; padding: 2.5rem 4rem 3rem; background: var(--d1-bg); }
+
+  /* Inspector: opens on right */
+  .inspector { width: 360px; border-left: 1px solid var(--d1-border); background: var(--d1-panel); display: flex; flex-direction: column; flex-shrink: 0; }
+
+  /* Page head (charter B6) */
+  .page-head { margin-bottom: 2rem; }
+  .eyebrow { font-family: var(--d1-mono); font-size: 0.6875rem; letter-spacing: 0.12em; color: var(--d1-dim); text-transform: uppercase; margin: 0 0 0.5rem; }
+  .h1 { font-family: var(--d1-serif); font-size: 2.5rem; font-weight: 600; letter-spacing: -0.022em; line-height: 1.05; color: var(--d1-fg); margin: 0 0 0.75rem; }
+  .sub { font-size: 1rem; color: var(--d1-muted); max-width: 64ch; margin: 0; }
+
+  /* Metrics (L3, max 3, first in teal) */
+  .metrics { display: flex; gap: 1.25rem; margin-bottom: 2rem; flex-wrap: wrap; }
+  .metric { flex: 1; min-width: 140px; background: var(--d1-raised); padding: 1.25rem 1.5rem; border-radius: 10px; border: 1px solid var(--d1-border); }
+  .metric-label { font-family: var(--d1-mono); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--d1-dim); display: block; margin-bottom: 0.5rem; }
+  .metric-value { font-family: var(--d1-serif); font-size: 2.5rem; font-weight: 600; color: var(--d1-fg); line-height: 1; letter-spacing: -0.01em; }
+  .metric-value.teal { color: var(--d1-accent); }
+
+  /* Cards: dense list mode (Airtable-density inspired but APT identity) */
+  .card-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  .card { display: grid; grid-template-columns: 96px minmax(0, 1.4fr) auto auto; gap: 1.5rem; align-items: center; padding: 1.25rem 2rem; border-radius: 10px; border: 1px solid var(--d1-border); background: var(--d1-panel); text-decoration: none; color: inherit; }
+  .card:hover { border-color: var(--d1-accent); }
+  .card-type { font-family: var(--d1-mono); font-size: 0.8125rem; letter-spacing: 0.03em; text-transform: lowercase; color: var(--d1-muted); border: 1px solid var(--d1-border); border-radius: 0; padding: 2px 7px; white-space: nowrap; }
+  .card-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .card-label { font-size: 1.25rem; font-weight: 600; color: var(--d1-fg); letter-spacing: -0.01em; }
+  .card-meta { font-size: 0.875rem; color: var(--d1-muted); }
+  .card-stats { display: flex; gap: 1.25rem; font-size: 0.875rem; color: var(--d1-muted); white-space: nowrap; }
+  .card-stats b { font-family: var(--d1-serif); font-weight: 600; color: var(--d1-fg); }
+  .card-go { font-size: 0.875rem; font-weight: 500; color: var(--d1-accent); text-decoration: none; padding: 0.5rem 1rem; border: 1px solid var(--d1-border); border-radius: 6px; background: var(--d1-raised); white-space: nowrap; }
+  .card-go:hover { border-color: var(--d1-accent); }
+
+  /* Evidence standing ladder (named-state, never a score) */
+  .standing-wrap { margin-bottom: 2rem; }
+  .standing-title { font-family: var(--d1-mono); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--d1-dim); margin: 0 0 0.75rem; }
+  .standing-ladder { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .standing-chip { padding: 0.25rem 0.75rem; border-radius: 0; font-family: var(--d1-mono); font-size: 0.8125rem; border: 1px solid var(--d1-border); background: var(--d1-raised); color: var(--d1-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .standing-chip.active { background: var(--d1-accent); color: #fff; border-color: var(--d1-accent); font-weight: 600; }
+  .standing-chip.verified { color: var(--d1-state-verified); border-color: var(--d1-state-verified); }
+  .standing-chip.supported { color: var(--d1-state-supported); border-color: var(--d1-state-supported); }
+  .standing-chip.disputed { color: var(--d1-state-disputed); border-color: var(--d1-state-disputed); }
+  .standing-note { font-family: var(--d1-mono); font-size: 0.8125rem; color: var(--d1-dim); margin: 0.5rem 0 0; }
+
+  /* Relationship list */
+  .rel-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+  .rel-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; border: 1px solid #e8e3d9; border-radius: 6px; background: var(--d1-bg); font-size: 0.875rem; }
+  .rel-kind { font-family: var(--d1-mono); font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--d1-dim); flex-shrink: 0; }
+  .rel-arrow { color: var(--d1-dim); font-size: 0.8125rem; }
+  .rel-target { color: var(--d1-fg); font-weight: 600; min-width: 0; }
+
+  /* Chain */
+  .chain { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+  .chain-step { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: baseline; padding: 0.75rem; border: 1px solid #e8e3d9; border-radius: 6px; color: var(--d1-muted); }
+  .chain-step.live { border-color: var(--d1-accent); background: var(--d1-raised); }
+  .chain-k { font-family: var(--d1-mono); font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--d1-dim); min-width: 96px; }
+  .chain-v { font-size: 0.875rem; color: var(--d1-fg); }
+  .chain-note { margin-left: auto; font-size: 0.8125rem; color: var(--d1-muted); text-transform: capitalize; }
+
+  /* Statusbar */
+  .statusbar { height: 24px; border-top: 1px solid var(--d1-border); background: var(--d1-panel); flex-shrink: 0; }
+  .statusbar-content { display: flex; align-items: center; gap: 1rem; padding: 0 2rem; font-family: var(--d1-mono); font-size: 0.8125rem; color: var(--d1-muted); height: 24px; }
+  .statusbar-divider { color: var(--d1-dim); }
+  .statusbar-module { color: var(--d1-fg); font-weight: 500; }
+  .tally { display: flex; gap: 1.25rem; margin-left: auto; }
+  .tally-item { display: flex; align-items: center; gap: 0.25rem; }
+  .tally-num { color: var(--d1-fg); font-weight: 600; }
+  .tally-label { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  @media (max-width: 760px) {
+    .shell-body { flex-direction: column; height: auto; }
+    .rail { width: 100%; flex-direction: row; padding: 1rem; border-right: none; border-bottom: 1px solid var(--d1-border); }
+    .nav-item { font-size: 0.8125rem; padding: 0.5rem 0.75rem; }
+    .main { padding: 1.5rem; }
+    .inspector { width: 100%; border-left: none; border-top: 1px solid var(--d1-border); }
+    .card { grid-template-columns: 1fr auto; row-gap: 0.5rem; }
+    .metrics { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="brand-mark">APT</div>
+    <span>Workspace</span>
+  </div>
+  <div class="topbar-context">
+    <span>Context: Workbench</span>
+    <span>·</span>
+    <span>Record: undertaking-kibera-workshop-bench</span>
+  </div>
+</header>
+
+<div class="shell-body">
+  <nav class="rail" aria-label="Modules">
+    <div class="rail-brand">APT-LABS</div>
+    <a href="#" class="nav-item active">Overview</a>
+    <a href="#" class="nav-item">Commons</a>
+    <a href="#" class="nav-item">Network</a>
+    <a href="#" class="nav-item">Workbench</a>
+    <a href="#" class="nav-item">Value</a>
+    <a href="#" class="nav-item">Records</a>
+    <a href="#" class="nav-item">Intelligence</a>
+  </nav>
+
+  <main class="main">
+    <div class="page-head">
+      <p class="eyebrow">WORKSPACE · WORKBENCH</p>
+      <h1 class="h1">Kibera workshop bench</h1>
+      <p class="sub">Convert a shared room into a flexible community workshop bench set for local producers. Evidence standing is a named state, never a score.</p>
+    </div>
+
+    <div class="metrics">
+      <div class="metric"><span class="metric-label">Open</span><span class="metric-value">2</span></div>
+      <div class="metric"><span class="metric-label">Committed</span><span class="metric-value">1</span></div>
+      <div class="metric"><span class="metric-label">Delivered</span><span class="metric-value teal">3</span></div>
+    </div>
+
+    <h2 style="font-family:var(--d1-serif);font-size:1.5rem;font-weight:600;color:var(--d1-fg);margin-bottom:1rem;">In flight</h2>
+    <div class="card-list">
+      <a href="#" class="card">
+        <span class="card-type">physical</span>
+        <div class="card-main">
+          <span class="card-label">Kibera workshop bench</span>
+          <span class="card-meta">Kibera Makerspace · Kibera, Nairobi · settled 2026-10-15</span>
+        </div>
+        <div class="card-stats"><span><b>4</b> deliverables</span><span><b>3</b> evidence</span></div>
+        <span class="card-go">Open →</span>
+      </a>
+      <a href="#" class="card">
+        <span class="card-type">digital</span>
+        <div class="card-main">
+          <span class="card-label">Kemetos AGI1 research station</span>
+          <span class="card-meta">APT-LABS Commons · Distributed · settled 2026-10-12</span>
+        </div>
+        <div class="card-stats"><span><b>3</b> deliverables</span><span><b>2</b> evidence</span></div>
+        <span class="card-go">Open →</span>
+      </a>
+    </div>
+
+    <!-- Evidence standing section -->
+    <div class="standing-wrap">
+      <h2 style="font-family:var(--d1-serif);font-size:1.5rem;font-weight:600;color:var(--d1-fg);margin-bottom:1rem;">Evidence standing</h2>
+      <h4 class="standing-title">Build plan · public</h4>
+      <div class="standing-ladder">
+        <span class="standing-chip">unassessed</span>
+        <span class="standing-chip">reported</span>
+        <span class="standing-chip supported active">supported</span>
+        <span class="standing-chip verified">verified</span>
+        <span class="standing-chip disputed">disputed</span>
+        <span class="standing-chip rejected">rejected</span>
+        <span class="standing-chip expired">expired</span>
+      </div>
+      <p class="standing-note">Standing is a named state, never a score. Disagreement is the signal.</p>
+    </div>
+
+    <!-- Coordination chain -->
+    <div style="margin-bottom:2rem;">
+      <h2 style="font-family:var(--d1-serif);font-size:1.5rem;font-weight:600;color:var(--d1-fg);margin-bottom:1rem;">Coordination chain</h2>
+      <ol class="chain">
+        <li class="chain-step live">
+          <span class="chain-k">Intention</span>
+          <span class="chain-v">Kibera workshop bench</span>
+          <span class="chain-note">need · reported</span>
+        </li>
+        <li class="chain-step">
+          <span class="chain-k">Commitment</span>
+          <span class="chain-v">Not yet accepted</span>
+        </li>
+        <li class="chain-step live">
+          <span class="chain-k">Outcome</span>
+          <span class="chain-v">Workbench tops ×4 delivered</span>
+          <span class="chain-note">3 evidence</span>
+        </li>
+      </ol>
+    </div>
+
+    <!-- Relationships -->
+    <div style="margin-bottom:2rem;">
+      <h2 style="font-family:var(--d1-serif);font-size:1.5rem;font-weight:600;color:var(--d1-fg);margin-bottom:1rem;">Typed relationships</h2>
+      <ul class="rel-list">
+        <li class="rel-item"><span class="rel-kind">COMMITTED_TO</span><span class="rel-arrow">→</span><span class="rel-target">Need: Kibera workshop bench</span></li>
+        <li class="rel-item"><span class="rel-kind">FULFILLS</span><span class="rel-arrow">→</span><span class="rel-target">Outcome: Workbench tops</span></li>
+        <li class="rel-item"><span class="rel-kind">SUPPORTED_BY</span><span class="rel-arrow">→</span><span class="rel-target">Evidence: Build plan</span></li>
+        <li class="rel-item"><span class="rel-kind">VERIFIED_BY</span><span class="rel-arrow">→</span><span class="rel-target">Actor: K. Njogu</span></li>
+      </ul>
+    </div>
+  </main>
+
+  <aside class="inspector">
+    <div style="padding:1.5rem 2rem;border-bottom:1px solid var(--d1-border);background:var(--d1-raised);">
+      <h3 style="font-family:var(--d1-serif);font-size:1.25rem;font-weight:600;color:var(--d1-fg);margin:0;">No selection</h3>
+      <p style="font-family:var(--d1-mono);font-size:0.8125rem;color:var(--d1-muted);margin:0.5rem 0 0;">Select an entity to inspect its relationships, standing, and cycle position.</p>
+    </div>
+  </aside>
+</div>
+
+<footer class="statusbar">
+  <div class="statusbar-content">
+    <span class="statusbar-module">Workbench</span>
+    <span class="statusbar-divider">·</span>
+    <span style="color:var(--d1-state-disputed)">Local demo</span>
+    <span class="statusbar-divider">·</span>
+    <div class="tally">
+      <div class="tally-item"><span class="tally-num">2</span><span class="tally-label">open</span></div>
+      <div class="tally-item"><span class="tally-num">1</span><span class="tally-label">committed</span></div>
+      <div class="tally-item"><span class="tally-num teal">3</span><span class="tally-label">delivered</span></div>
+      <div class="tally-item"><span class="tally-num">9</span><span class="tally-label">evidence</span></div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
