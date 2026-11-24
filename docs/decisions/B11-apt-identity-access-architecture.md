@@ -4,7 +4,7 @@
 |-------|-------|
 | Decision ID | B11 |
 | Date | 2026-11-24 |
-| Status | Proposed |
+| Status | Accepted |
 | Scope | Personal identity, authentication methods, participation, organization membership, and scoped authority |
 | Decision | Prefer Better Auth for production authentication, subject to a Supabase Postgres/RLS integration proof-of-concept. Keep APT identity and authorization provider-independent. |
 | Supersedes | None |
