@@ -37,6 +37,11 @@ Vue leftovers.
 (These are the commands for the Angular app today; if the tree changes, the commands may change too
 — check `apt-labs/package.json` scripts rather than trusting this list verbatim.)
 
+On shared Windows hosts, run builds and tests sequentially. If Vitest reports worker-startup
+timeouts under `npm test -- --watch=false`, run each spec separately with
+`npm test -- --watch=false --include=src/app/path/to/file.spec.ts`; do not change runner
+configuration for a transient worker-pool failure.
+
 ## Where things live
 
 Descriptive map of the Angular tree **as it is today**. It will drift as the app grows — trust the
