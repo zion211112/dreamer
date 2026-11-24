@@ -9,8 +9,9 @@
  * fallbacks. No framework change, no new dependencies.
  */
 
-/* ── Color primitives (hybrid palette) ── */
---apt-color-brand-primary: #2e4a3a;      /* deep forest — institutional anchor */
+:root {
+  /* ── Color primitives (hybrid palette) ── */
+  --apt-color-brand-primary: #2e4a3a;      /* deep forest — institutional anchor */
 --apt-color-brand-accent: #ad8b55;     /* brass — selective highlight */
 --apt-color-brand-geist-alert: #b91c1c;
 
@@ -69,6 +70,23 @@
 --apt-spacing-s18: 4.5rem;
 --apt-spacing-s20: 5rem;
 --apt-spacing-s22: 5.5rem;
+
+/* Extended spacing scale (landing + dense rows) */
+--apt-spacing-s9: 2.25rem;
+--apt-spacing-s11: 2.75rem;
+--apt-spacing-s13: 3.25rem;
+--apt-spacing-s14: 3.5rem;
+--apt-spacing-s15: 3.75rem;
+
+/* Block sizing (landing composition) */
+--apt-block-landing-max-width: 1200px;
+--apt-block-landing-content-max-width: 560px;
+--apt-block-landing-radius-lg: 14px;
+
+/* Extended component tokens */
+--apt-button-padding-md: 0.625rem 1.25rem;
+--apt-button-font-size-lg: 1.0625rem;
+--apt-color-ramp-stewardship-100: #dde6de;
 
 /* ── Typography ── */
 --apt-font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI Variable", "Segoe UI", sans-serif;
@@ -151,12 +169,75 @@
 --apt-z-index-tooltip: 500;
 --apt-z-index-toast: 700;
 
-/* ── Shell layout dimensions (charter B3) ── */
---apt-shell-topbar: 54px;
---apt-shell-rail: 232px;
---apt-shell-sidebar-min: 196px;
---apt-shell-sidebar-max: 252px;
---apt-shell-inspector-min: 286px;
---apt-shell-inspector-max: 360px;
---apt-shell-dock: 174px;
---apt-shell-statusbar: 24px;
+  /* ── Shell layout dimensions (charter B3) ── */
+  --apt-shell-topbar: 54px;
+  --apt-shell-rail: 232px;
+  --apt-shell-sidebar-min: 196px;
+  --apt-shell-sidebar-max: 252px;
+  --apt-shell-inspector-min: 286px;
+  --apt-shell-inspector-max: 360px;
+  --apt-shell-dock: 174px;
+  --apt-shell-statusbar: 24px;
+}
+
+/* ── Browser surfaces (themed, not defaults) ── */
+html {
+  color-scheme: light;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--apt-surface-default);
+  color: var(--apt-text-body);
+  font-family: var(--apt-font-sans);
+  font-size: var(--apt-font-size-body-md);
+  line-height: var(--apt-line-height-normal);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--apt-color-brand-primary) 22%, transparent);
+  color: var(--apt-text-strong);
+}
+
+:focus-visible {
+  outline: 2px solid var(--apt-color-brand-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--apt-text-dim) 55%, transparent) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--apt-text-dim) 55%, transparent);
+  border-radius: 5px;
+  border: 2px solid var(--apt-surface-default);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--apt-text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

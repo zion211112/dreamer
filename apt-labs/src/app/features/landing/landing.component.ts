@@ -69,7 +69,41 @@ const MODULES = [
               </div>
             </div>
             <div class="hero-image">
-              <img src="/.playwright-mcp/landing-desktop-final.png" alt="APT-LABS workspace" class="hero-img" />
+              <div class="hero-frame" role="img" aria-label="Preview of the APT-LABS workspace shell">
+                <div class="hf-topbar">
+                  <span class="hf-wordmark">aptlabs</span>
+                  <span class="hf-chip">Workbench</span>
+                  <span class="hf-dot"></span>
+                </div>
+                <div class="hf-body">
+                  <div class="hf-rail">
+                    @for (r of [0,1,2,3,4,5]; track r) {
+                      <span class="hf-rail-item" [class.hf-rail-item--active]="r === 1"></span>
+                    }
+                  </div>
+                  <div class="hf-main">
+                    <div class="hf-headline"></div>
+                    <div class="hf-subline"></div>
+                    @for (row of [86, 72, 91, 64, 78]; track row) {
+                      <div class="hf-row">
+                        <span class="hf-row-dot"></span>
+                        <span class="hf-row-line" [style.width.%]="row"></span>
+                        <span class="hf-row-state"></span>
+                      </div>
+                    }
+                  </div>
+                  <div class="hf-inspector">
+                    <span class="hf-insp-head"></span>
+                    <span class="hf-insp-line"></span>
+                    <span class="hf-insp-line hf-insp-line--short"></span>
+                  </div>
+                </div>
+                <div class="hf-status">
+                  <span class="hf-status-cell"></span>
+                  <span class="hf-status-cell hf-status-cell--filled"></span>
+                  <span class="hf-status-note">on record</span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -90,7 +124,26 @@ const MODULES = [
               }
             </ol>
             <div class="path-visual">
-              <img src="/imagesinspo-1.jpg" alt="Work coordination interface" class="path-img" />
+              <svg viewBox="0 0 920 150" class="path-svg" role="img" aria-label="Diagram: need becomes work, work becomes evidence, evidence becomes record">
+                <line x1="90" y1="56" x2="330" y2="56" class="pv-link" />
+                <line x1="380" y1="56" x2="620" y2="56" class="pv-link" />
+                <line x1="670" y1="56" x2="830" y2="56" class="pv-link" />
+                <polygon points="330,56 322,52 322,60" class="pv-arrow" />
+                <polygon points="620,56 612,52 612,60" class="pv-arrow" />
+                <polygon points="830,56 822,52 822,60" class="pv-arrow" />
+                <circle cx="62" cy="56" r="26" class="pv-node pv-node--intention" />
+                <circle cx="356" cy="56" r="26" class="pv-node pv-node--work" />
+                <circle cx="646" cy="56" r="26" class="pv-node pv-node--evidence" />
+                <circle cx="858" cy="56" r="26" class="pv-node pv-node--knowledge" />
+                <text x="62" y="61" class="pv-glyph">N</text>
+                <text x="356" y="61" class="pv-glyph">W</text>
+                <text x="646" y="61" class="pv-glyph">E</text>
+                <text x="858" y="61" class="pv-glyph">R</text>
+                <text x="62" y="106" class="pv-label">Need defined</text>
+                <text x="356" y="106" class="pv-label">Work coordinated</text>
+                <text x="646" y="106" class="pv-label">Delivery evidenced</text>
+                <text x="858" y="106" class="pv-label">Record retained</text>
+              </svg>
             </div>
           </div>
         </section>
@@ -111,9 +164,6 @@ const MODULES = [
                 </article>
               }
             </div>
-            <div class="registers-visual">
-              <img src="/palantir-ontology-overview.png" alt="Ontology management interface" class="register-img" />
-            </div>
           </div>
         </section>
 
@@ -133,7 +183,6 @@ const MODULES = [
                     <p class="module-hint">{{ m.hint }}</p>
                     <a [routerLink]="m.to" class="module-link module-link--hero">Open {{ m.label }} →</a>
                   </div>
-                  <img [src]="'/.playwright-mcp/' + m.id + '.png'" [alt]="m.label + ' module'" class="module-img" />
                 </div>
               }
             </div>
@@ -220,7 +269,49 @@ const MODULES = [
     }
     .hero-primary:hover { background: var(--apt-color-neutral-n950); }
     .hero-image { display: flex; justify-content: center; }
-    .hero-img { width: 100%; max-width: 560px; height: auto; border-radius: var(--apt-block-landing-radius-lg); border: 1px solid var(--apt-border); box-shadow: var(--apt-shadow-sh2); display: block; }
+    .hero-frame {
+      width: 100%; max-width: 560px; display: flex; flex-direction: column;
+      border-radius: var(--apt-block-landing-radius-lg); border: 1px solid var(--apt-border);
+      box-shadow: var(--apt-shadow-sh2); background: var(--apt-surface-page); overflow: hidden;
+    }
+    .hf-topbar {
+      display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+      background: var(--apt-surface-raised); border-bottom: 1px solid var(--apt-border);
+    }
+    .hf-wordmark { font-family: var(--apt-font-serif); font-size: 0.875rem; font-weight: var(--apt-font-weight-semibold); color: var(--apt-color-brand-primary); }
+    .hf-chip {
+      font-family: var(--apt-font-mono); font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--apt-text-muted); border: 1px solid var(--apt-border); border-radius: 999px; padding: 2px 8px;
+    }
+    .hf-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--apt-color-brand-accent); margin-left: auto; }
+    .hf-body { display: grid; grid-template-columns: 34px 1fr 108px; min-height: 232px; }
+    .hf-rail {
+      display: flex; flex-direction: column; align-items: center; gap: 10px; padding-top: 14px;
+      background: var(--apt-surface-raised); border-right: 1px solid var(--apt-border);
+    }
+    .hf-rail-item { width: 12px; height: 12px; border-radius: 3px; background: var(--apt-border-strong); }
+    .hf-rail-item--active { background: var(--apt-color-brand-primary); }
+    .hf-main { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+    .hf-headline { height: 13px; width: 58%; border-radius: 3px; background: var(--apt-text-strong); opacity: 0.85; }
+    .hf-subline { height: 7px; width: 40%; border-radius: 3px; background: var(--apt-border-strong); }
+    .hf-row { display: flex; align-items: center; gap: 9px; padding: 7px 0; border-bottom: 1px solid var(--apt-border-faint); }
+    .hf-row-dot { width: 8px; height: 8px; border-radius: 2px; background: var(--apt-color-brand-primary); opacity: 0.55; flex: none; }
+    .hf-row-line { height: 7px; border-radius: 3px; background: color-mix(in srgb, var(--apt-text-body) 28%, transparent); }
+    .hf-row-state { margin-left: auto; width: 34px; height: 11px; border-radius: 999px; background: color-mix(in srgb, var(--apt-group-continuity, var(--apt-color-brand-primary)) 18%, transparent); flex: none; }
+    .hf-inspector {
+      border-left: 1px solid var(--apt-border); background: var(--apt-surface-raised);
+      padding: 14px 12px; display: flex; flex-direction: column; gap: 9px;
+    }
+    .hf-insp-head { height: 9px; width: 70%; border-radius: 3px; background: var(--apt-text-strong); opacity: 0.8; }
+    .hf-insp-line { height: 6px; width: 90%; border-radius: 3px; background: var(--apt-border-strong); }
+    .hf-insp-line--short { width: 55%; }
+    .hf-status {
+      display: flex; align-items: center; gap: 8px; padding: 7px 14px;
+      border-top: 1px solid var(--apt-border); background: var(--apt-surface-page);
+    }
+    .hf-status-cell { width: 26px; height: 5px; border-radius: 3px; background: var(--apt-border-strong); }
+    .hf-status-cell--filled { background: var(--apt-color-brand-primary); }
+    .hf-status-note { font-family: var(--apt-font-mono); font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--apt-text-dim); margin-left: auto; }
     .path { padding: var(--apt-spacing-s18) var(--apt-spacing-s16); background: var(--apt-surface-default); }
     .path-inner { max-width: 960px; margin: 0 auto; }
     .path-title { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-h1); font-weight: var(--apt-font-weight-semibold); margin: 0 0 var(--apt-spacing-s6) 0; color: var(--apt-text-strong); letter-spacing: -0.01em; }
@@ -229,8 +320,17 @@ const MODULES = [
     .path-stage { display: flex; flex-direction: column; gap: var(--apt-spacing-s4); }
     .path-num { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-body-md); font-weight: var(--apt-font-weight-medium); color: var(--apt-color-brand-primary); letter-spacing: 0.08em; }
     .path-title-text { font-size: var(--apt-font-size-title-2); color: var(--apt-text-muted); line-height: 1.5; }
-    .path-visual { margin-top: var(--apt-spacing-s12); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r2); overflow: hidden; background: var(--apt-surface-page); }
-    .path-img { width: 100%; height: auto; display: block; }
+    .path-visual { margin-top: var(--apt-spacing-s12); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r2); overflow: hidden; background: var(--apt-surface-page); padding: var(--apt-spacing-s6) var(--apt-spacing-s4); }
+    .path-svg { width: 100%; height: auto; display: block; }
+    .pv-link { stroke: var(--apt-border-strong); stroke-width: 1.5; }
+    .pv-arrow { fill: var(--apt-border-strong); }
+    .pv-node { fill: var(--apt-surface-page); stroke-width: 2; }
+    .pv-node--intention { stroke: #c9a227; }
+    .pv-node--work { stroke: #16a34a; }
+    .pv-node--evidence { stroke: #0891b2; }
+    .pv-node--knowledge { stroke: #7d8f9a; }
+    .pv-glyph { font-family: var(--apt-font-mono); font-size: 15px; fill: var(--apt-text-strong); text-anchor: middle; }
+    .pv-label { font-family: var(--apt-font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; fill: var(--apt-text-muted); text-anchor: middle; }
     .registers { padding: var(--apt-spacing-s18) var(--apt-spacing-s16); background: var(--apt-surface-page); border-bottom: 1px solid var(--apt-border); }
     .registers-inner { max-width: 960px; margin: 0 auto; }
     .registers-head { margin-bottom: var(--apt-spacing-s10); }
@@ -240,8 +340,6 @@ const MODULES = [
     .register-card { padding: var(--apt-spacing-s11); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r2); background: var(--apt-surface-raised); display: flex; flex-direction: column; gap: var(--apt-spacing-s4); }
     .register-title { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-title-1); font-weight: var(--apt-font-weight-semibold); margin: 0; color: var(--apt-text-strong); }
     .register-detail { font-size: var(--apt-font-size-body-sm); color: var(--apt-text-muted); margin: 0; line-height: 1.5; flex: 1; }
-    .registers-visual { margin-top: var(--apt-spacing-s12); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r2); overflow: hidden; background: var(--apt-surface-page); }
-    .register-img { width: 100%; height: auto; display: block; }
     .modules { padding: var(--apt-spacing-s18) var(--apt-spacing-s16); background: var(--apt-surface-default); }
     .modules-inner { max-width: 960px; margin: 0 auto; }
     .modules-head { margin-bottom: var(--apt-spacing-s10); }
