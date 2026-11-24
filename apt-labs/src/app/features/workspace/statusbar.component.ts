@@ -4,8 +4,7 @@
  * Shell region: separate persistent boundary element. Single boundary line
  * + ledger head state: module label + environment label (Local demo /
  * Configured) + key tallies from the shared spine.
- *
- * Impeccable craft-floor: themed browser surfaces, full state coverage.
+ * Structural Emergence.
  */
 import { Component, input } from '@angular/core';
 
@@ -17,6 +16,11 @@ export interface LedgerHead {
   delivered: number;
   evidence: number;
 }
+
+const ENV_COLORS: Record<string, string> = {
+  'local-demo': 'var(--apt-state-caution)',
+  configured: 'var(--apt-state-canon)',
+};
 
 @Component({
   selector: 'app-statusbar',
@@ -48,30 +52,30 @@ export interface LedgerHead {
       border-top: 1px solid var(--apt-border);
       background: var(--apt-surface-page);
       flex-shrink: 0;
-      z-index: var(--apt-z-index-dropdown);
+      z-index: var(--apt-z-dropdown);
     }
     .statusbar-line { height: 1px; background: var(--apt-border-faint); flex-shrink: 0; }
     .statusbar-content {
       display: flex;
       align-items: center;
-      gap: var(--apt-spacing-s3);
-      padding: 0 var(--apt-spacing-s8);
+      gap: var(--apt-space-3);
+      padding: 0 var(--apt-space-8);
       font-family: var(--apt-font-mono);
-      font-size: var(--apt-font-size-sm-3);
+      font-size: var(--apt-size-sm);
       color: var(--apt-text-muted);
       height: var(--apt-shell-statusbar);
     }
     .statusbar-divider { color: var(--apt-text-dim); }
-    .statusbar-module { color: var(--apt-text-body); font-weight: var(--apt-font-weight-medium); }
-    .statusbar-env.env-local-demo { color: var(--apt-color-warning-base, #92400e); }
-    .statusbar-env.env-configured { color: var(--apt-color-success-base, #166534); }
-    .statusbar-tally { display: flex; gap: var(--apt-spacing-s5); margin-left: auto; }
-    .tally-item { display: flex; align-items: center; gap: var(--apt-spacing-s1); }
-    .tally-num { color: var(--apt-text-strong); font-weight: var(--apt-font-weight-semibold); }
-    .tally-label { text-transform: uppercase; letter-spacing: 0.04em; font-size: var(--apt-font-size-micro); }
+    .statusbar-module { color: var(--apt-text-body); font-weight: var(--apt-weight-medium); }
+    .statusbar-env.env-local-demo { color: var(--apt-state-caution); }
+    .statusbar-env.env-configured { color: var(--apt-state-canon); }
+    .statusbar-tally { display: flex; gap: var(--apt-space-5); margin-left: auto; }
+    .tally-item { display: flex; align-items: center; gap: var(--apt-space-1); }
+    .tally-num { color: var(--apt-text-strong); font-weight: var(--apt-weight-semibold); }
+    .tally-label { text-transform: uppercase; letter-spacing: 0.04em; font-size: var(--apt-size-micro); }
     @media (max-width: 760px) {
-      .statusbar-content { padding: 0 var(--apt-spacing-s6); font-size: var(--apt-font-size-micro); }
-      .statusbar-tally { gap: var(--apt-spacing-s3); }
+      .statusbar-content { padding: 0 var(--apt-space-6); font-size: var(--apt-size-micro); }
+      .statusbar-tally { gap: var(--apt-space-3); }
       .tally-label { display: none; }
     }
     `,

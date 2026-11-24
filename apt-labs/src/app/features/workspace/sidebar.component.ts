@@ -5,6 +5,7 @@
  * currently selected record within the active module — never duplicate
  * module navigation (that is the rail's job). Collapsible to icons-only
  * at 1024px and below.
+ * Structural Emergence.
  */
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -44,15 +45,15 @@ import { RouterLink } from '@angular/router';
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: var(--apt-spacing-s6);
+      padding: var(--apt-space-6);
       border-bottom: 1px solid var(--apt-border-faint);
       background: var(--apt-surface-raised);
       flex-shrink: 0;
     }
     .sidebar-title {
       font-family: var(--apt-font-serif);
-      font-size: var(--apt-font-size-title-2);
-      font-weight: var(--apt-font-weight-semibold);
+      font-size: var(--apt-size-title);
+      font-weight: var(--apt-weight-semibold);
       color: var(--apt-text-strong);
       margin: 0;
       white-space: nowrap;
@@ -69,36 +70,36 @@ import { RouterLink } from '@angular/router';
       background: transparent;
       color: var(--apt-text-muted);
       cursor: pointer;
-      font-size: var(--apt-font-size-body-sm);
+      font-size: var(--apt-size-body);
     }
     .sidebar-toggle:hover { color: var(--apt-text-strong); }
     .sidebar--collapsed .sidebar-toggle { transform: rotate(180deg); }
-    .sidebar-nav { flex: 1; overflow-y: auto; padding: var(--apt-spacing-s4); }
+    .sidebar-nav { flex: 1; overflow-y: auto; padding: var(--apt-space-4); }
     .sidebar-item {
       display: flex;
       align-items: center;
-      gap: var(--apt-spacing-s4);
-      padding: var(--apt-spacing-s3) var(--apt-spacing-s5);
-      border-radius: var(--apt-radius-r1);
+      gap: var(--apt-space-4);
+      padding: var(--apt-space-3) var(--apt-space-5);
+      border-radius: var(--apt-button-radius);
       text-decoration: none;
       color: var(--apt-text-muted);
-      font-size: var(--apt-font-size-body-sm);
-      font-weight: var(--apt-font-weight-medium);
+      font-size: var(--apt-size-body);
+      font-weight: var(--apt-weight-medium);
       border: 1px solid transparent;
     }
     .sidebar-item:hover { background: var(--apt-surface-raised); color: var(--apt-text-body); }
     .sidebar-item.active {
-      background: color-mix(in srgb, var(--apt-module-accent, var(--apt-color-brand-primary)) 12%, transparent);
+      background: color-mix(in srgb, var(--apt-module-accent, var(--apt-accent)) 12%, transparent);
       color: var(--apt-text-strong);
-      border-left: 3px solid var(--apt-module-accent, var(--apt-color-brand-primary));
+      border-left: 3px solid var(--apt-module-accent, var(--apt-accent));
       border-color: transparent;
     }
     .sidebar-item-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .sidebar--collapsed .sidebar-item-label { display: none; }
-    .sidebar--collapsed .sidebar-item { justify-content: center; padding: var(--apt-spacing-s3); }
+    .sidebar--collapsed .sidebar-item { justify-content: center; padding: var(--apt-space-3); }
     @media (max-width: 1024px) {
       .sidebar { width: var(--apt-shell-sidebar-min); }
-      .sidebar-item-label { font-size: var(--apt-font-size-sm-3); }
+      .sidebar-item-label { font-size: var(--apt-size-sm); }
     }
     @media (max-width: 760px) {
       .sidebar { display: none; }

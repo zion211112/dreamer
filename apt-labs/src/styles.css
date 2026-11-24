@@ -1,183 +1,175 @@
-/* APT-LABS — Hybrid Design System
+/* APT-LABS — Structural Emergence Design System
  *
- * Structural Emergence hybrid: warm ivory base, earthy neutrals, serif headings,
- * mono interface, selective accents. Beats Linear (black precision), Palantir
- * (enterprise gray), Airtable (consumer pastel) — with sublime beauty for
- * Kenyan startups and Palantir-ready institutional weight.
+ * One direction: warm ivory base, earthy neutrals, serif headings,
+ * mono interface, selective deep-forest / brass / sage accents.
+ * Institutional weight with editorial precision. Beats Linear (black
+ * precision), Palantir (enterprise gray), Airtable (consumer pastel).
  *
- * Tokens are defined on :root so every component references them without
- * fallbacks. No framework change, no new dependencies.
+ * Constraints (design-system skill):
+ *   One neutral ramp — 5–7 steps, same hue family.
+ *   One accent — deep forest, primary action only.
+ *   Type scale — 6 sizes, consistent ratio, used everywhere.
+ *   One radius — 10px cards, 6px buttons.
+ *   One shadow — soft offset+blur, no colored halos.
+ *   Space on a 4px grid.
+ *   Full states: hover/disabled/loading/error/empty.
  */
 
+/* ── Root tokens ── */
 :root {
-  /* ── Color primitives (hybrid palette) ── */
-  --apt-color-brand-primary: #2e4a3a;      /* deep forest — institutional anchor */
---apt-color-brand-accent: #ad8b55;     /* brass — selective highlight */
---apt-color-brand-geist-alert: #b91c1c;
+  /* ── Neutral ramp — warm ivory → deep ink, same hue family ── */
+  --apt-neutral-0: #ffffff;
+  --apt-neutral-50: #faf8f2;    /* warm ivory — page base */
+  --apt-neutral-100: #f4f1e9;
+  --apt-neutral-200: #ece8df;
+  --apt-neutral-300: #d9d4c8;
+  --apt-neutral-400: #b9b2a3;
+  --apt-neutral-500: #8c8473;
+  --apt-neutral-600: #5f5849;
+  --apt-neutral-700: #3a352d;
+  --apt-neutral-800: #22201a;
+  --apt-neutral-900: #14130d;   /* deep ink — never pure black */
 
---apt-color-neutral-n0: #ffffff;
---apt-color-neutral-n50: #faf8f2;      /* warm ivory — page base */
---apt-color-neutral-n100: #f4f1e9;
---apt-color-neutral-n200: #ece8df;
---apt-color-neutral-n950: #1a1c16;     /* deep ink — text strong */
+  /* ── One accent ── */
+  --apt-accent: #2e4a3a;        /* deep forest — institutional anchor */
+  --apt-accent-hover: #3d5e4a;
+  --apt-accent-on: #ffffff;
 
-/* ── Semantic surfaces ── */
---apt-surface-default: #faf8f2;
---apt-surface-page: #ffffff;
---apt-surface-raised: #f4f1e9;
---apt-surface-subtle: #ece8df;
+  /* ── Secondary accent — brass, selective only ── */
+  --apt-accent-2: #ad8b55;      /* brass — selective highlight */
+  --apt-accent-2-hover: #b99965;
 
---apt-surface-success: #f0fdf4;
---apt-surface-danger: #fef2f2;
---apt-surface-info: #eff6ff;
---apt-surface-warning: #fefbeb;
+  /* ── Sage ── */
+  --apt-sage: #5c6b5e;
+  --apt-sage-light: #d9dede;
 
-/* ── Semantic text ── */
---apt-text-body: #292b25;
---apt-text-strong: #1a1c16;
---apt-text-muted: #6b6558;
---apt-text-dim: #9e9889;
---apt-text-success: #166534;
---apt-text-danger: #b91c1c;
---apt-text-warning: #92400e;
---apt-text-info: #1e40af;
---apt-action-on-primary: #ffffff;
+  /* ── Semantic surfaces ── */
+  --apt-surface-default: #faf8f2;
+  --apt-surface-page: #ffffff;
+  --apt-surface-raised: #f4f1e9;
+  --apt-surface-subtle: #ece8df;
 
-/* ── Borders ── */
---apt-border: rgba(41, 43, 37, 0.12);
---apt-border-strong: rgba(41, 43, 37, 0.24);
---apt-border-faint: rgba(41, 43, 37, 0.06);
---apt-border-active: #2e4a3a;
+  /* ── Semantic text ── */
+  --apt-text-body: #22201a;
+  --apt-text-strong: #14130d;
+  --apt-text-muted: #8c8473;
+  --apt-text-dim: #b9b2a3;
 
-/* ── Radius ── */
---apt-radius-r0: 0;
---apt-radius-r1: 6px;
---apt-radius-r2: 10px;
---apt-radius-r3: 14px;
+  /* ── State colors (forest family, never averaged) ── */
+  --apt-state-canon: #166534;       /* verified / accepted */
+  --apt-state-proposed: #c9a227;    /* draft / under review */
+  --apt-state-risk: #b45309;        /* risk / exception */
+  --apt-state-caution: #ad8b55;     /* caution / attention */
+  --apt-state-info: #0891b2;        /* informational */
 
-/* ── Spacing (8px base grid) ── */
---apt-spacing-s1: 0.25rem;
---apt-spacing-s2: 0.5rem;
---apt-spacing-s3: 0.75rem;
---apt-spacing-s4: 1rem;
---apt-spacing-s5: 1.25rem;
---apt-spacing-s6: 1.5rem;
---apt-spacing-s7: 1.75rem;
---apt-spacing-s8: 2rem;
---apt-spacing-s10: 2.5rem;
---apt-spacing-s12: 3rem;
---apt-spacing-s16: 4rem;
---apt-spacing-s18: 4.5rem;
---apt-spacing-s20: 5rem;
---apt-spacing-s22: 5.5rem;
+  /* ── Action colors ── */
+  --apt-action-on-accent: #ffffff;
+  --apt-action-hover-bg: #ece8df;
 
-/* Extended spacing scale (landing + dense rows) */
---apt-spacing-s9: 2.25rem;
---apt-spacing-s11: 2.75rem;
---apt-spacing-s13: 3.25rem;
---apt-spacing-s14: 3.5rem;
---apt-spacing-s15: 3.75rem;
+  /* ── Borders ── */
+  --apt-border: #d9d4c8;
+  --apt-border-strong: #b9b2a3;
+  --apt-border-faint: #f1efe6;
+  --apt-border-active: #2e4a3a;
 
-/* Block sizing (landing composition) */
---apt-block-landing-max-width: 1200px;
---apt-block-landing-content-max-width: 560px;
---apt-block-landing-radius-lg: 14px;
+  /* ── Radius ── one system ── */
+  --apt-radius-sm: 4px;   /* buttons, badges, pills */
+  --apt-radius-md: 8px;   /* cards, panels */
+  --apt-radius-lg: 12px;  /* sections, modals, large containers */
+  --apt-radius-pill: 9999px;
 
-/* Extended component tokens */
---apt-button-padding-md: 0.625rem 1.25rem;
---apt-button-font-size-lg: 1.0625rem;
---apt-color-ramp-stewardship-100: #dde6de;
+  /* ── Spacing — 4px base grid ── */
+  --apt-space-1: 0.25rem;   /* 4px */
+  --apt-space-2: 0.5rem;    /* 8px */
+  --apt-space-3: 0.75rem;   /* 12px */
+  --apt-space-4: 1rem;      /* 16px */
+  --apt-space-5: 1.25rem;   /* 20px */
+  --apt-space-6: 1.5rem;    /* 24px */
+  --apt-space-8: 2rem;      /* 32px */
+  --apt-space-10: 2.5rem;   /* 40px */
+  --apt-space-12: 3rem;     /* 48px */
+  --apt-space-16: 4rem;     /* 64px */
 
-/* ── Typography ── */
---apt-font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI Variable", "Segoe UI", sans-serif;
---apt-font-serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
---apt-font-mono: ui-monospace, "JetBrains Mono", SFMono-Regular, Consolas, monospace;
+  /* ── Typography — 6 sizes, consistent ratio ── */
+  --apt-font-serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --apt-font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI Variable", "Segoe UI", sans-serif;
+  --apt-font-mono: ui-monospace, "JetBrains Mono", SFMono-Regular, Consolas, monospace;
 
---apt-font-size-micro: 0.6875rem;   /* 11px */
---apt-font-size-body-sm: 0.875rem;  /* 14px */
---apt-font-size-body-md: 1rem;      /* 16px */
---apt-font-size-sm-3: 0.8125rem;    /* 13px */
---apt-font-size-title-1: 1.5rem;    /* 24px */
---apt-font-size-title-2: 1.25rem;   /* 20px */
---apt-font-size-h1: 2rem;           /* 32px */
---apt-font-size-h2: 1.5rem;         /* 24px */
---apt-font-size-display: 2.5rem;    /* 40px */
---apt-font-size-display-xl: 3rem;   /* 48px */
+  --apt-size-micro: 0.6875rem;   /* 11px — instrument readout */
+  --apt-size-sm: 0.8125rem;      /* 13px — captions, labels */
+  --apt-size-body: 0.875rem;     /* 14px — body text */
+  --apt-size-md: 1rem;           /* 16px — body text, dense */
+  --apt-size-title: 1.25rem;     /* 20px — section headings */
+  --apt-size-h1: 1.5rem;         /* 24px — page titles */
+  --apt-size-display: 2rem;      /* 32px — landing hero */
 
---apt-font-weight-medium: 500;
---apt-font-weight-semibold: 600;
+  --apt-weight-medium: 500;
+  --apt-weight-semibold: 600;
 
---apt-line-height-tight: 1.1;
---apt-line-height-normal: 1.5;
---apt-line-height-relaxed: 1.75;
+  --apt-line-tight: 1.1;
+  --apt-line-normal: 1.5;
+  --apt-line-relaxed: 1.75;
 
-/* ── Component-level tokens ── */
---apt-button-font-size: 0.875rem;
---apt-button-font-weight: 600;
---apt-button-padding: 0.5625rem 1rem;   /* 9px 15px */
---apt-button-radius: 8px;
+  /* ── Component tokens ── */
+  --apt-button-radius: 6px;
+  --apt-button-padding: 0.5625rem 1rem;   /* 9px 16px */
+  --apt-button-font-size: 0.875rem;
+  --apt-button-font-weight: 600;
 
---apt-input-bg: #ffffff;
---apt-input-border: rgba(41, 43, 37, 0.12);
---apt-input-border-style: solid;
---apt-input-border-width: 1px;
---apt-input-font-size: 0.875rem;
---apt-input-radius: 8px;
---apt-input-text: #1a1c16;
+  --apt-input-radius: 6px;
+  --apt-input-border: #d9d4c8;
+  --apt-input-bg: #ffffff;
 
---apt-animation-fast: 150ms ease;
+  /* ── Animation ── one authored motion moment ── */
+  --apt-motion-fast: 150ms ease;
+  --apt-motion-normal: 280ms ease;
 
-/* ── Shadows ── */
---apt-shadow-sh1: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
---apt-shadow-sh2: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  /* ── Shadows — one soft level, offset+blur ── */
+  --apt-shadow-1: 0 1px 3px 0 rgba(20, 19, 13, 0.08), 0 1px 2px -1px rgba(20, 19, 13, 0.04);
 
-/* ── Module accent (per charter B3/B4) ── */
---apt-module-accent: var(--apt-color-brand-primary);
+  /* ── Module accents (per charter B3/B4) ── */
+  --apt-module-accent: var(--apt-accent);
 
-/* ── Group colours (pillars) ── */
---apt-group-continuity: #2e4a3a;   /* Knowledge — deep forest */
---apt-group-value: #ad8b55;        /* Exchange — brass */
---apt-group-core: #5c6b5e;         /* Production — sage-dark */
+  /* ── Ontology family colours (categorical, paired with family label) ── */
+  --apt-family-actor: #2e4a3a;
+  --apt-family-capability: #4a6b5a;
+  --apt-family-resource: #ad8b55;
+  --apt-family-place: #a66f55;
+  --apt-family-intention: #c9a227;
+  --apt-family-commitment: #b45309;
+  --apt-family-work: #16a34a;
+  --apt-family-activity: #15803d;
+  --apt-family-output: #ea580c;
+  --apt-family-exchange: #2e4a3a;
+  --apt-family-evidence: #0891b2;
+  --apt-family-knowledge: #7d8f9a;
+  --apt-family-governance: #6b7280;
 
-/* ── Ontology family colours (categorical, paired with family label) ── */
---apt-family-actor: #2e4a3a;
---apt-family-capability: #4a6b5a;
---apt-family-resource: #ad8b55;
---apt-family-place: #a66f55;
---apt-family-intention: #c9a227;
---apt-family-commitment: #b45309;
---apt-family-work: #16a34a;
---apt-family-activity: #15803d;
---apt-family-output: #ea580c;
---apt-family-exchange: #2e4a3a;
---apt-family-evidence: #0891b2;
---apt-family-knowledge: #7d8f9a;
---apt-family-governance: #6b7280;
-
-/* ── Evidence standing colours (contrast-results.json verified AA/AAA) ── */
---apt-standing-unassessed: #94a3b8;
---apt-standing-reported: #f59e0b;
---apt-standing-supported: var(--apt-group-continuity);
---apt-standing-verified: #166534;
---apt-standing-disputed: #ea580c;
---apt-standing-rejected: var(--apt-color-brand-geist-alert);
---apt-standing-expired: #64748b;
-
-/* ── Z-index ── */
---apt-z-index-dropdown: 100;
---apt-z-index-modal: 300;
---apt-z-index-tooltip: 500;
---apt-z-index-toast: 700;
+  /* ── Evidence standing colours ── */
+  --apt-standing-unassessed: #94a3b8;
+  --apt-standing-reported: #c9a227;
+  --apt-standing-supported: #2e4a3a;
+  --apt-standing-verified: #166534;
+  --apt-standing-disputed: #b45309;
+  --apt-standing-rejected: #b91c1c;
+  --apt-standing-expired: #8c8473;
 
   /* ── Shell layout dimensions (charter B3) ── */
   --apt-shell-topbar: 54px;
-  --apt-shell-rail: 232px;
+  --apt-shell-rail: 64px;        /* slim icon-only rail */
+  --apt-shell-rail-expanded: 232px;
   --apt-shell-sidebar-min: 196px;
   --apt-shell-sidebar-max: 252px;
   --apt-shell-inspector-min: 286px;
   --apt-shell-inspector-max: 360px;
   --apt-shell-dock: 174px;
   --apt-shell-statusbar: 24px;
+
+  /* ── Z-index ── */
+  --apt-z-dropdown: 100;
+  --apt-z-modal: 300;
+  --apt-z-tooltip: 500;
+  --apt-z-toast: 700;
 }
 
 /* ── Browser surfaces (themed, not defaults) ── */
@@ -191,26 +183,26 @@ body {
   background: var(--apt-surface-default);
   color: var(--apt-text-body);
   font-family: var(--apt-font-sans);
-  font-size: var(--apt-font-size-body-md);
-  line-height: var(--apt-line-height-normal);
+  font-size: var(--apt-size-body);
+  line-height: var(--apt-line-normal);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--apt-color-brand-primary) 22%, transparent);
+  background: color-mix(in srgb, var(--apt-accent) 20%, transparent);
   color: var(--apt-text-strong);
 }
 
 :focus-visible {
-  outline: 2px solid var(--apt-color-brand-primary);
+  outline: 2px solid var(--apt-accent);
   outline-offset: 2px;
-  border-radius: 2px;
+  border-radius: var(--apt-radius-sm);
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--apt-text-dim) 55%, transparent) transparent;
+  scrollbar-color: color-mix(in srgb, var(--apt-text-muted) 55%, transparent) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -223,7 +215,7 @@ body {
 }
 
 *::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--apt-text-dim) 55%, transparent);
+  background: color-mix(in srgb, var(--apt-text-muted) 55%, transparent);
   border-radius: 5px;
   border: 2px solid var(--apt-surface-default);
 }
@@ -240,4 +232,26 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ── Base element reset ── */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+ol, ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }

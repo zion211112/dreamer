@@ -2,8 +2,9 @@
  * @apt-labs/features/workspace — TopbarComponent
  *
  * Shell region: working-context identity.
- * Impeccable craft-floor: no eyebrow, shadows with offset+blur,
- * themed browser surfaces, full state coverage.
+ * Structural Emergence — warm ivory base, earthy neutrals, serif headings,
+ * mono interface, selective deep-forest / brass / sage accents.
+ * Shadow with offset + soft blur (craft-floor: not zero-offset colored halo).
  */
 import { Component, input } from '@angular/core';
 
@@ -39,19 +40,18 @@ import { Component, input } from '@angular/core';
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 var(--apt-spacing-s8);
+      padding: 0 var(--apt-space-8);
       flex-shrink: 0;
-      z-index: var(--apt-z-index-dropdown);
-      /* Shadow with offset + soft blur (craft-floor: not zero-offset colored halo) */
-      box-shadow: 0 1px 3px 0 rgba(0,0,0,0.08), 0 1px 2px -1px rgba(0,0,0,0.04);
+      z-index: var(--apt-z-dropdown);
+      box-shadow: var(--apt-shadow-1);
     }
     .topbar-brand {
       display: flex;
       align-items: center;
-      gap: var(--apt-spacing-s3);
+      gap: var(--apt-space-3);
       font-family: var(--apt-font-serif);
-      font-size: var(--apt-font-size-title-1);
-      font-weight: var(--apt-font-weight-semibold);
+      font-size: var(--apt-size-title);
+      font-weight: var(--apt-weight-semibold);
       color: var(--apt-text-strong);
       letter-spacing: -0.02em;
     }
@@ -60,19 +60,19 @@ import { Component, input } from '@angular/core';
       height: 28px;
       display: grid;
       place-items: center;
-      background: var(--apt-module-accent, var(--apt-color-brand-primary));
-      color: var(--apt-action-on-primary);
-      border-radius: var(--apt-radius-r1);
-      font-size: var(--apt-font-size-sm-3);
-      font-weight: var(--apt-font-weight-semibold);
+      background: var(--apt-module-accent, var(--apt-accent));
+      color: var(--apt-action-on-accent);
+      border-radius: var(--apt-button-radius);
+      font-size: var(--apt-size-sm);
+      font-weight: var(--apt-weight-semibold);
     }
     .brand-name { letter-spacing: -0.01em; }
     .topbar-context {
       display: flex;
       align-items: center;
-      gap: var(--apt-spacing-s3);
+      gap: var(--apt-space-3);
       font-family: var(--apt-font-mono);
-      font-size: var(--apt-font-size-sm-3);
+      font-size: var(--apt-size-sm);
       color: var(--apt-text-muted);
     }
     .context-divider { color: var(--apt-text-dim); }
@@ -80,7 +80,7 @@ import { Component, input } from '@angular/core';
     .topbar-actions {
       display: flex;
       align-items: center;
-      gap: var(--apt-spacing-s3);
+      gap: var(--apt-space-3);
     }
     .topbar-action {
       display: flex;
@@ -89,15 +89,15 @@ import { Component, input } from '@angular/core';
       width: 32px;
       height: 32px;
       border: 1px solid var(--apt-border);
-      border-radius: var(--apt-radius-r1);
+      border-radius: var(--apt-button-radius);
       background: var(--apt-surface-raised);
       color: var(--apt-text-body);
-      font-size: var(--apt-font-size-sm-3);
+      font-size: var(--apt-size-sm);
       cursor: pointer;
     }
-    .topbar-action:hover { border-color: var(--apt-module-accent, var(--apt-color-brand-primary)); }
+    .topbar-action:hover { border-color: var(--apt-border-active); }
     @media (max-width: 760px) {
-      .topbar { height: 48px; padding: 0 var(--apt-spacing-s6); }
+      .topbar { height: 48px; padding: 0 var(--apt-space-6); }
       .topbar-context { display: none; }
     }
     `,

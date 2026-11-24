@@ -3,6 +3,7 @@
  *
  * Dense operational view of needs with cycle progress, deliverables, and
  * contextual actions per row. Direction 3: The Desk.
+ * Structural Emergence.
  */
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -36,7 +37,6 @@ import type { Journey, OperationalPilot } from '@apt-labs/domain';
         </div>
       </header>
 
-      <!-- L3 Metrics -->
       <div class="wb-metrics">
         <div class="wb-metric wb-metric--teal">
           <div class="wb-metric-label">Total needs</div>
@@ -56,7 +56,6 @@ import type { Journey, OperationalPilot } from '@apt-labs/domain';
         </div>
       </div>
 
-      <!-- Dense table -->
       <div class="wb-table-wrap">
         <table class="wb-table">
           <thead>
@@ -103,63 +102,63 @@ import type { Journey, OperationalPilot } from '@apt-labs/domain';
       display: flex;
       flex-direction: column;
     }
-    .wb-head { display: flex; flex-direction: column; gap: var(--apt-spacing-s3); margin-bottom: var(--apt-spacing-s8); padding-left: var(--apt-spacing-s10); }
-    .wb-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display-xl); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s3); line-height: 1.05; letter-spacing: -0.02em; }
-    .wb-sub { font-size: var(--apt-font-size-body-md); color: var(--apt-text-muted); margin: 0; max-width: 72ch; line-height: var(--apt-line-height-relaxed); }
-    .wb-actions { display: flex; align-items: center; gap: var(--apt-spacing-s3); margin-top: var(--apt-spacing-s4); }
+    .wb-head { display: flex; flex-direction: column; gap: var(--apt-space-3); margin-bottom: var(--apt-space-8); padding-left: var(--apt-space-10); }
+    .wb-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-size-display); font-weight: var(--apt-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-space-3); line-height: 1.05; letter-spacing: -0.02em; }
+    .wb-sub { font-size: var(--apt-size-body); color: var(--apt-text-muted); margin: 0; max-width: 72ch; line-height: var(--apt-line-relaxed); }
+    .wb-actions { display: flex; align-items: center; gap: var(--apt-space-3); margin-top: var(--apt-space-4); }
 
-    .wb-post-input { flex: 1; min-width: 200px; padding: var(--apt-spacing-s3) var(--apt-spacing-s5); border-radius: var(--apt-radius-r1); border: 1px solid var(--apt-border); background: var(--apt-surface-raised); color: var(--apt-text-strong); font-size: var(--apt-font-size-body-sm); font-family: inherit; }
-    .wb-post-input:focus { outline: none; border-color: var(--apt-module-accent); }
+    .wb-post-input { flex: 1; min-width: 200px; padding: var(--apt-space-3) var(--apt-space-5); border-radius: var(--apt-button-radius); border: 1px solid var(--apt-border); background: var(--apt-surface-raised); color: var(--apt-text-strong); font-size: var(--apt-size-body); font-family: inherit; }
+    .wb-post-input:focus { outline: none; border-color: var(--apt-accent); }
 
     .wb-btn {
       display: inline-flex;
       align-items: center;
-      gap: var(--apt-spacing-s2);
+      gap: var(--apt-space-2);
       padding: var(--apt-button-padding);
       border: 1px solid var(--apt-border);
-      border-radius: var(--apt-radius-r1);
+      border-radius: var(--apt-button-radius);
       background: var(--apt-surface-raised);
       color: var(--apt-text-body);
-      font-size: var(--apt-font-size-body-sm);
-      font-weight: var(--apt-font-weight-medium);
+      font-size: var(--apt-button-font-size);
+      font-weight: var(--apt-button-font-weight);
       font-family: inherit;
       cursor: pointer;
     }
-    .wb-btn:hover { border-color: var(--apt-module-accent, var(--apt-color-brand-primary)); }
-    .wb-btn--primary { background: var(--apt-module-accent, var(--apt-color-brand-primary)); color: var(--apt-action-on-primary); border-color: var(--apt-module-accent, var(--apt-color-brand-primary)); }
-    .wb-btn--primary:hover { background: color-mix(in srgb, var(--apt-color-brand-primary) 90%, var(--apt-surface-default)); }
+    .wb-btn:hover { border-color: var(--apt-accent); }
+    .wb-btn--primary { background: var(--apt-accent); color: var(--apt-action-on-accent); border-color: var(--apt-accent); }
+    .wb-btn--primary:hover { background: color-mix(in srgb, var(--apt-accent) 90%, var(--apt-surface-default)); }
     .wb-btn--quiet { background: transparent; border-color: transparent; color: var(--apt-text-muted); }
     .wb-btn--quiet:hover { background: var(--apt-surface-raised); color: var(--apt-text-body); }
-    .wb-btn--sm { padding: var(--apt-spacing-s1) var(--apt-spacing-s3); font-size: var(--apt-font-size-sm-3); }
+    .wb-btn--sm { padding: var(--apt-space-1) var(--apt-space-3); font-size: var(--apt-size-sm); }
 
     .wb-metrics {
       display: flex;
-      gap: var(--apt-spacing-s5);
-      margin-bottom: var(--apt-spacing-s8);
+      gap: var(--apt-space-5);
+      margin-bottom: var(--apt-space-8);
       flex-wrap: wrap;
     }
     .wb-metric {
       flex: 1;
       min-width: 140px;
       background: var(--apt-surface-page);
-      padding: var(--apt-spacing-s5) var(--apt-spacing-s6);
-      border-radius: var(--apt-radius-r2);
+      padding: var(--apt-space-5) var(--apt-space-6);
+      border-radius: var(--apt-radius-md);
       border: 1px solid var(--apt-border);
     }
     .wb-metric--teal { border-left: 3px solid var(--apt-text-info); }
     .wb-metric-label {
       font-family: var(--apt-font-mono);
-      font-size: var(--apt-font-size-micro);
+      font-size: var(--apt-size-micro);
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--apt-text-dim);
       display: block;
-      margin-bottom: var(--apt-spacing-s2);
+      margin-bottom: var(--apt-space-2);
     }
     .wb-metric-value {
       font-family: var(--apt-font-serif);
-      font-size: var(--apt-font-size-display);
-      font-weight: var(--apt-font-weight-semibold);
+      font-size: var(--apt-size-display);
+      font-weight: var(--apt-weight-semibold);
       color: var(--apt-text-strong);
       line-height: 1;
       letter-spacing: -0.01em;
@@ -168,51 +167,51 @@ import type { Journey, OperationalPilot } from '@apt-labs/domain';
     .wb-table-wrap {
       overflow-x: auto;
       border: 1px solid var(--apt-border);
-      border-radius: var(--apt-radius-r2);
+      border-radius: var(--apt-radius-md);
       background: var(--apt-surface-page);
     }
-    .wb-table { width: 100%; border-collapse: collapse; font-size: var(--apt-font-size-body-sm); }
+    .wb-table { width: 100%; border-collapse: collapse; font-size: var(--apt-size-body); }
     .wb-th {
       text-align: left;
-      padding: var(--apt-spacing-s4) var(--apt-spacing-s5);
+      padding: var(--apt-space-4) var(--apt-space-5);
       font-family: var(--apt-font-mono);
-      font-size: var(--apt-font-size-micro);
+      font-size: var(--apt-size-micro);
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--apt-text-dim);
       border-bottom: 1px solid var(--apt-border);
-      font-weight: var(--apt-font-weight-medium);
+      font-weight: var(--apt-weight-medium);
       white-space: nowrap;
     }
-    .wb-tr { border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: background var(--apt-animation-fast); }
+    .wb-tr { border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: background var(--apt-motion-fast); }
     .wb-tr:hover { background: var(--apt-surface-raised); }
-    .wb-tr--selected { background: color-mix(in srgb, var(--apt-module-accent, var(--apt-color-brand-primary)) 8%, transparent); border-left: 3px solid var(--apt-module-accent, var(--apt-color-brand-primary)); }
+    .wb-tr--selected { background: color-mix(in srgb, var(--apt-accent) 8%, transparent); border-left: 3px solid var(--apt-accent); }
     .wb-td {
-      padding: var(--apt-spacing-s4) var(--apt-spacing-s5);
+      padding: var(--apt-space-4) var(--apt-space-5);
       border-bottom: 1px solid #f3f4f6;
       color: var(--apt-text-body);
       vertical-align: middle;
     }
-    .wb-td--name { font-weight: var(--apt-font-weight-medium); color: var(--apt-text-strong); }
-    .wb-name { font-size: var(--apt-font-size-title-2); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); letter-spacing: -0.01em; display: block; }
-    .wb-id { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-sm-3); color: var(--apt-text-muted); display: block; margin-top: var(--apt-spacing-s2); }
+    .wb-td--name { font-weight: var(--apt-weight-medium); color: var(--apt-text-strong); }
+    .wb-name { font-size: var(--apt-size-title); font-weight: var(--apt-weight-semibold); color: var(--apt-text-strong); letter-spacing: -0.01em; display: block; }
+    .wb-id { font-family: var(--apt-font-mono); font-size: var(--apt-size-sm); color: var(--apt-text-dim); display: block; margin-top: var(--apt-space-2); }
     .wb-status {
       font-family: var(--apt-font-mono);
-      font-size: var(--apt-font-size-sm-3);
+      font-size: var(--apt-size-sm);
       text-transform: uppercase;
       letter-spacing: 0.06em;
       padding: 2px 7px;
-      border-radius: var(--apt-radius-r0);
+      border-radius: var(--apt-button-radius);
       border: 1px solid var(--apt-border);
       white-space: nowrap;
     }
     .wb-status.is-open { background: var(--apt-surface-raised); color: var(--apt-text-muted); }
     .wb-status.is-committed { background: var(--apt-surface-info); color: var(--apt-text-info); }
     .wb-status.is-fulfilled { background: var(--apt-surface-success); color: var(--apt-text-success); }
-    .wb-empty { grid-column: 1 / -1; padding: var(--apt-spacing-s8); border: 1px dashed var(--apt-border); border-radius: var(--apt-radius-r2); color: var(--apt-text-muted); font-size: var(--apt-font-size-body-sm); text-align: center; }
+    .wb-empty { grid-column: 1 / -1; padding: var(--apt-space-8); border: 1px dashed var(--apt-border); border-radius: var(--apt-radius-md); color: var(--apt-text-muted); font-size: var(--apt-size-body); text-align: center; }
 
     @media (max-width: 760px) {
-      .wb-page { padding: var(--apt-spacing-s8); }
+      .wb-page { padding: var(--apt-space-8); }
       .wb-head { padding-left: 0; }
       .wb-actions { flex-direction: column; align-items: stretch; }
       .wb-post-input { width: 100%; }

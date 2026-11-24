@@ -2,6 +2,7 @@
  * @apt-labs/features/network — PeopleComponent
  *
  * People and crews directory — dense table view with capability chips.
+ * Structural Emergence.
  */
 import { Component, signal, computed, inject } from '@angular/core';
 import { NetworkService, type DirectoryRow } from '@apt-labs/shared/state';
@@ -70,72 +71,72 @@ import { NetworkService, type DirectoryRow } from '@apt-labs/shared/state';
       display: flex;
       flex-direction: column;
     }
-    .plp-pagehead { display: flex; flex-direction: column; gap: var(--apt-spacing-s3); margin-bottom: var(--apt-spacing-s8); padding-left: var(--apt-spacing-s10); }
-    .plp-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display-xl); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s3); line-height: 1.05; letter-spacing: -0.02em; }
-    .plp-sub { font-size: var(--apt-font-size-body-md); color: var(--apt-text-muted); margin: 0; max-width: 72ch; line-height: var(--apt-line-height-relaxed); }
-    .plp-actions { display: flex; gap: var(--apt-spacing-s3); margin-top: var(--apt-spacing-s4); align-items: center; }
-    .plp-search-input { flex: 1; min-width: 200px; padding: var(--apt-spacing-s3) var(--apt-spacing-s4); border-radius: var(--apt-radius-r1); border: 1px solid var(--apt-border); background: var(--apt-surface-page); color: var(--apt-text-body); font-size: var(--apt-font-size-body-sm); font-family: inherit; }
-    .plp-search-input:focus { outline: none; border-color: var(--apt-color-brand-primary); }
-    .plp-count { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); color: var(--apt-text-dim); white-space: nowrap; }
+    .plp-pagehead { display: flex; flex-direction: column; gap: var(--apt-space-3); margin-bottom: var(--apt-space-8); padding-left: var(--apt-space-10); }
+    .plp-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-size-display); font-weight: var(--apt-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-space-3); line-height: 1.05; letter-spacing: -0.02em; }
+    .plp-sub { font-size: var(--apt-size-body); color: var(--apt-text-muted); margin: 0; max-width: 72ch; line-height: var(--apt-line-relaxed); }
+    .plp-actions { display: flex; gap: var(--apt-space-3); margin-top: var(--apt-space-4); align-items: center; }
+    .plp-search-input { flex: 1; min-width: 200px; padding: var(--apt-space-3) var(--apt-space-4); border-radius: var(--apt-button-radius); border: 1px solid var(--apt-border); background: var(--apt-surface-page); color: var(--apt-text-body); font-size: var(--apt-size-body); font-family: inherit; }
+    .plp-search-input:focus { outline: none; border-color: var(--apt-accent); }
+    .plp-count { font-family: var(--apt-font-mono); font-size: var(--apt-size-micro); color: var(--apt-text-dim); white-space: nowrap; }
 
-    .plp-table-wrap { overflow-x: auto; border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r2); background: var(--apt-surface-page); }
-    .plp-table { width: 100%; border-collapse: collapse; font-size: var(--apt-font-size-body-sm); }
+    .plp-table-wrap { overflow-x: auto; border: 1px solid var(--apt-border); border-radius: var(--apt-radius-md); background: var(--apt-surface-page); }
+    .plp-table { width: 100%; border-collapse: collapse; font-size: var(--apt-size-body); }
     .plp-th {
       text-align: left;
-      padding: var(--apt-spacing-s4) var(--apt-spacing-s5);
+      padding: var(--apt-space-4) var(--apt-space-5);
       font-family: var(--apt-font-mono);
-      font-size: var(--apt-font-size-micro);
+      font-size: var(--apt-size-micro);
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--apt-text-dim);
       border-bottom: 1px solid var(--apt-border);
-      font-weight: var(--apt-font-weight-medium);
+      font-weight: var(--apt-weight-medium);
       white-space: nowrap;
     }
-    .plp-tr { border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: background var(--apt-animation-fast); }
+    .plp-tr { border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: background var(--apt-motion-fast); }
     .plp-tr:hover { background: var(--apt-surface-raised); }
-    .plp-td { padding: var(--apt-spacing-s4) var(--apt-spacing-s5); border-bottom: 1px solid #f3f4f6; color: var(--apt-text-body); vertical-align: middle; }
-    .plp-td--name { font-weight: var(--apt-font-weight-medium); color: var(--apt-text-strong); }
-    .plp-td--dim { color: var(--apt-text-muted); font-size: var(--apt-font-size-body-sm); }
+    .plp-td { padding: var(--apt-space-4) var(--apt-space-5); border-bottom: 1px solid #f3f4f6; color: var(--apt-text-body); vertical-align: middle; }
+    .plp-td--name { font-weight: var(--apt-weight-medium); color: var(--apt-text-strong); }
+    .plp-td--dim { color: var(--apt-text-muted); font-size: var(--apt-size-body); }
     .plp-glyph {
       width: 32px;
       height: 32px;
       border-radius: 50%;
-      background: color-mix(in srgb, var(--card-accent, var(--apt-color-brand-primary)) 15%, transparent);
-      color: var(--card-accent, var(--apt-color-brand-primary));
+      background: color-mix(in srgb, var(--apt-accent) 15%, transparent);
+      color: var(--apt-accent);
       font-family: var(--apt-font-serif);
-      font-size: var(--apt-font-size-body-md);
-      font-weight: var(--apt-font-weight-semibold);
+      font-size: var(--apt-size-md);
+      font-weight: var(--apt-weight-semibold);
       display: grid;
       place-items: center;
       flex: none;
     }
-    .plp-name { font-size: var(--apt-font-size-title-2); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); letter-spacing: -0.01em; display: block; }
+    .plp-name { font-size: var(--apt-size-title); font-weight: var(--apt-weight-semibold); color: var(--apt-text-strong); letter-spacing: -0.01em; display: block; }
     .plp-type-badge {
       font-family: var(--apt-font-mono);
-      font-size: var(--apt-font-size-micro);
+      font-size: var(--apt-size-micro);
       text-transform: lowercase;
       letter-spacing: 0.04em;
       color: var(--apt-text-body);
       background: var(--apt-surface-raised);
       border: 1px solid var(--apt-border);
-      border-radius: var(--apt-radius-r0);
+      border-radius: var(--apt-button-radius);
       padding: 1px 6px;
       white-space: nowrap;
     }
-    .plp-empty { grid-column: 1 / -1; padding: var(--apt-spacing-s8); border: 1px dashed var(--apt-border); border-radius: var(--apt-radius-r2); color: var(--apt-text-muted); font-size: var(--apt-font-size-body-sm); text-align: center; }
+    .plp-empty { grid-column: 1 / -1; padding: var(--apt-space-8); border: 1px dashed var(--apt-border); border-radius: var(--apt-radius-md); color: var(--apt-text-muted); font-size: var(--apt-size-body); text-align: center; }
 
     .plp-btn {
       display: inline-flex;
       align-items: center;
-      gap: var(--apt-spacing-s2);
-      padding: var(--apt-spacing-s1) var(--apt-spacing-s3);
+      gap: var(--apt-space-2);
+      padding: var(--apt-space-1) var(--apt-space-3);
       border: 1px solid var(--apt-border);
-      border-radius: var(--apt-radius-r0);
+      border-radius: var(--apt-button-radius);
       background: transparent;
-      color: var(--apt-module-accent, var(--apt-color-brand-primary));
+      color: var(--apt-module-accent, var(--apt-accent));
       font-family: var(--apt-font-mono);
-      font-size: var(--apt-font-size-sm-3);
+      font-size: var(--apt-size-sm);
       cursor: pointer;
     }
     .plp-btn:hover { background: var(--apt-surface-raised); }

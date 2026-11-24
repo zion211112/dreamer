@@ -4,6 +4,7 @@
  * The ontology explorer. Every panel reads from @apt-labs/ontology — the
  * fifteen-family schema with canonical distinctions, standing ladder, and
  * productive-reality cycle.
+ * Structural Emergence.
  */
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -159,14 +160,14 @@ import {
       display: flex;
       flex-direction: column;
     }
-    .onto-pagehead { display: flex; flex-direction: column; gap: var(--apt-spacing-s3); margin-bottom: var(--apt-spacing-s10); padding-left: var(--apt-spacing-s10); }
-    .onto-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display-xl); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s3); line-height: 1.05; letter-spacing: -0.02em; }
-    .onto-sub { font-size: var(--apt-font-size-body-md); color: var(--apt-text-muted); margin: 0; max-width: 74ch; line-height: var(--apt-line-height-relaxed); }
+    .onto-pagehead { display: flex; flex-direction: column; gap: var(--apt-space-3); margin-bottom: var(--apt-space-10); padding-left: var(--apt-space-10); }
+    .onto-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-size-display); font-weight: var(--apt-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-space-3); line-height: 1.05; letter-spacing: -0.02em; }
+    .onto-sub { font-size: var(--apt-size-body); color: var(--apt-text-muted); margin: 0; max-width: 74ch; line-height: var(--apt-line-relaxed); }
 
-    .onto-section { margin-bottom: var(--apt-spacing-s10); }
-    .onto-section-title { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-title-1); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); letter-spacing: -0.01em; margin: 0 0 var(--apt-spacing-s2); }
-    .onto-section-note { font-size: var(--apt-font-size-body-sm); line-height: var(--apt-line-height-relaxed); color: var(--apt-text-muted); margin: 0 0 var(--apt-spacing-s5); max-width: 74ch; }
-    .onto-gatechip { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: uppercase; letter-spacing: 0.06em; color: var(--apt-module-accent, var(--apt-color-brand-primary)); }
+    .onto-section { margin-bottom: var(--apt-space-10); }
+    .onto-section-title { font-family: var(--apt-font-serif); font-size: var(--apt-size-title); font-weight: var(--apt-weight-semibold); color: var(--apt-text-strong); letter-spacing: -0.01em; margin: 0 0 var(--apt-space-2); }
+    .onto-section-note { font-size: var(--apt-size-body); line-height: var(--apt-line-relaxed); color: var(--apt-text-muted); margin: 0 0 var(--apt-space-5); max-width: 74ch; }
+    .onto-gatechip { font-family: var(--apt-font-mono); font-size: var(--apt-size-micro); text-transform: uppercase; letter-spacing: 0.06em; color: var(--apt-module-accent, var(--apt-accent)); }
 
     .onto-cycle {
       list-style: none;
@@ -174,68 +175,68 @@ import {
       padding: 0;
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: var(--apt-spacing-s3);
+      gap: var(--apt-space-3);
       counter-reset: cycle;
     }
     .onto-cycle-step {
       display: flex;
       align-items: flex-start;
-      gap: var(--apt-spacing-s3);
-      padding: var(--apt-spacing-s4);
+      gap: var(--apt-space-3);
+      padding: var(--apt-space-4);
       border: 1px solid var(--apt-border);
-      border-radius: var(--apt-radius-r1);
+      border-radius: var(--apt-button-radius);
       background: var(--apt-surface-page);
     }
-    .onto-cycle-step--gated { border-color: color-mix(in srgb, var(--apt-module-accent, var(--apt-color-brand-primary)) 40%, var(--apt-border)); }
-    .onto-cycle-idx { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-body-md); color: var(--apt-text-dim); flex: none; }
-    .onto-cycle-step--gated .onto-cycle-idx { color: var(--apt-module-accent, var(--apt-color-brand-primary)); }
+    .onto-cycle-step--gated { border-color: color-mix(in srgb, var(--apt-module-accent, var(--apt-accent)) 40%, var(--apt-border)); }
+    .onto-cycle-idx { font-family: var(--apt-font-mono); font-size: var(--apt-size-md); color: var(--apt-text-dim); flex: none; }
+    .onto-cycle-step--gated .onto-cycle-idx { color: var(--apt-module-accent, var(--apt-accent)); }
     .onto-cycle-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-    .onto-cycle-label { font-size: var(--apt-font-size-body-md); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); }
-    .onto-cycle-family { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); color: var(--apt-text-dim); }
-    .onto-cycle-note { font-size: var(--apt-font-size-micro); color: var(--apt-text-muted); }
+    .onto-cycle-label { font-size: var(--apt-size-md); font-weight: var(--apt-weight-semibold); color: var(--apt-text-strong); }
+    .onto-cycle-family { font-family: var(--apt-font-mono); font-size: var(--apt-size-micro); color: var(--apt-text-dim); }
+    .onto-cycle-note { font-size: var(--apt-size-micro); color: var(--apt-text-muted); }
 
-    .onto-groups { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--apt-spacing-s4); }
-    .onto-group { border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r2); background: var(--apt-surface-page); padding: var(--apt-spacing-s5); }
-    .onto-group-label { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: uppercase; letter-spacing: 0.08em; color: var(--apt-text-dim); margin: 0 0 var(--apt-spacing-s3); }
-    .onto-group-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--apt-spacing-s2); }
-    .onto-family { display: flex; align-items: baseline; justify-content: space-between; gap: var(--apt-spacing-s3); }
-    .onto-family-name { font-size: var(--apt-font-size-body-sm); color: var(--apt-text-body); }
-    .onto-family-key { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); color: var(--apt-text-dim); }
+    .onto-groups { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--apt-space-4); }
+    .onto-group { border: 1px solid var(--apt-border); border-radius: var(--apt-radius-md); background: var(--apt-surface-page); padding: var(--apt-space-5); }
+    .onto-group-label { font-family: var(--apt-font-mono); font-size: var(--apt-size-micro); text-transform: uppercase; letter-spacing: 0.08em; color: var(--apt-text-dim); margin: 0 0 var(--apt-space-3); }
+    .onto-group-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--apt-space-2); }
+    .onto-family { display: flex; align-items: baseline; justify-content: space-between; gap: var(--apt-space-3); }
+    .onto-family-name { font-size: var(--apt-size-body); color: var(--apt-text-body); }
+    .onto-family-key { font-family: var(--apt-font-mono); font-size: var(--apt-size-micro); color: var(--apt-text-dim); }
 
-    .onto-standmat { display: grid; grid-template-columns: 1fr 1fr; gap: var(--apt-spacing-s6); }
-    .onto-subhead { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: uppercase; letter-spacing: 0.08em; color: var(--apt-text-dim); margin: 0 0 var(--apt-spacing-s3); }
-    .onto-ladder-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--apt-spacing-s2); }
+    .onto-standmat { display: grid; grid-template-columns: 1fr 1fr; gap: var(--apt-space-6); }
+    .onto-subhead { font-family: var(--apt-font-mono); font-size: var(--apt-size-micro); text-transform: uppercase; letter-spacing: 0.08em; color: var(--apt-text-dim); margin: 0 0 var(--apt-space-3); }
+    .onto-ladder-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--apt-space-2); }
     .onto-ladder-row {
       display: flex;
       align-items: center;
-      gap: var(--apt-spacing-s3);
-      padding: var(--apt-spacing-s2) var(--apt-spacing-s3);
+      gap: var(--apt-space-3);
+      padding: var(--apt-space-2) var(--apt-space-3);
       border: 1px solid var(--apt-border);
-      border-radius: var(--apt-radius-r1);
+      border-radius: var(--apt-button-radius);
       background: var(--apt-surface-page);
     }
-    .onto-ladder-ord { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); color: var(--apt-text-dim); }
-    .onto-ladder-name { font-size: var(--apt-font-size-body-sm); color: var(--apt-text-body); }
-    .onto-maturity-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--apt-spacing-s2); }
-    .onto-maturity-row { font-size: var(--apt-font-size-body-sm); color: var(--apt-text-body); padding: var(--apt-spacing-s2) var(--apt-spacing-s4); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r1); background: var(--apt-surface-page); }
+    .onto-ladder-ord { font-family: var(--apt-font-mono); font-size: var(--apt-size-micro); color: var(--apt-text-dim); }
+    .onto-ladder-name { font-size: var(--apt-size-body); color: var(--apt-text-body); }
+    .onto-maturity-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--apt-space-2); }
+    .onto-maturity-row { font-size: var(--apt-size-body); color: var(--apt-text-body); padding: var(--apt-space-2) var(--apt-space-4); border: 1px solid var(--apt-border); border-radius: var(--apt-button-radius); background: var(--apt-surface-page); }
 
-    .onto-distinctions { display: flex; flex-wrap: wrap; gap: var(--apt-spacing-s2); }
-    .onto-dist { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); color: var(--apt-text-muted); background: var(--apt-surface-raised); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r0); padding: 3px 8px; }
+    .onto-distinctions { display: flex; flex-wrap: wrap; gap: var(--apt-space-2); }
+    .onto-dist { font-family: var(--apt-font-mono); font-size: var(--apt-size-micro); color: var(--apt-text-muted); background: var(--apt-surface-raised); border: 1px solid var(--apt-border); border-radius: var(--apt-button-radius); padding: 3px 8px; }
 
-    .onto-section--live { border-top: 1px solid var(--apt-border); padding-top: var(--apt-spacing-s8); }
-    .onto-live { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--apt-spacing-s4); margin-bottom: var(--apt-spacing-s5); }
+    .onto-section--live { border-top: 1px solid var(--apt-border); padding-top: var(--apt-space-8); }
+    .onto-live { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--apt-space-4); margin-bottom: var(--apt-space-5); }
     .onto-live-cell {
       display: flex;
       flex-direction: column;
       gap: 2px;
-      padding: var(--apt-spacing-s5);
+      padding: var(--apt-space-5);
       border: 1px solid var(--apt-border);
-      border-radius: var(--apt-radius-r2);
+      border-radius: var(--apt-radius-md);
       background: var(--apt-surface-page);
     }
-    .onto-live-num { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); letter-spacing: -0.02em; line-height: 1; }
-    .onto-live-cap { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: uppercase; letter-spacing: 0.06em; color: var(--apt-text-dim); }
-    .onto-live-link { font-size: var(--apt-font-size-body-sm); color: var(--apt-module-accent, var(--apt-color-brand-primary)); text-decoration: none; }
+    .onto-live-num { font-family: var(--apt-font-serif); font-size: var(--apt-size-display); font-weight: var(--apt-weight-semibold); color: var(--apt-text-strong); letter-spacing: -0.02em; line-height: 1; }
+    .onto-live-cap { font-family: var(--apt-font-mono); font-size: var(--apt-size-micro); text-transform: uppercase; letter-spacing: 0.06em; color: var(--apt-text-dim); }
+    .onto-live-link { font-size: var(--apt-size-body); color: var(--apt-module-accent, var(--apt-accent)); text-decoration: none; }
     .onto-live-link:hover { text-decoration: underline; }
 
     @media (max-width: 900px) {

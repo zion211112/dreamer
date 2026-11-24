@@ -3,9 +3,8 @@
  *
  * Masterpiece shell: six functional regions + separate statusbar.
  * Each region has one job; no duplicate navigation (charter B3).
- * Impeccable craft-floor: no eyebrow, shadows with offset+blur,
- * tracking floor -0.04em, one authored motion moment, themed browser
- * surfaces, full state coverage.
+ * Structural Emergence — warm ivory base, earthy neutrals, serif headings,
+ * mono interface, selective deep-forest / brass / sage accents.
  *
  * Responsive: 1440 / 1024 / 768 / 390.
  */
@@ -72,7 +71,7 @@ const MODULES = [
   `,
   styles: [
     `
-    /* ===== Shell layout — masterpiece ===== */
+    /* ===== Shell layout — Structural Emergence ===== */
     .shell-layout {
       display: flex;
       flex-direction: column;
@@ -85,69 +84,83 @@ const MODULES = [
       overflow: hidden;
     }
 
-    /* Module rail */
+    /* Module rail — slim icon-only, expands on hover */
     .module-rail {
       width: var(--apt-shell-rail);
       border-right: 1px solid var(--apt-border);
-      padding: var(--apt-spacing-s8) var(--apt-spacing-s4);
+      padding: var(--apt-space-8) var(--apt-space-2);
       display: flex;
       flex-direction: column;
-      gap: var(--apt-spacing-s2);
+      gap: var(--apt-space-1);
       background: var(--apt-surface-page);
       flex-shrink: 0;
+      transition: width var(--apt-motion-normal);
     }
+    .module-rail:hover { width: var(--apt-shell-rail-expanded); }
     .rail-brand {
       font-family: var(--apt-font-serif);
-      font-size: var(--apt-font-size-title-1);
-      font-weight: var(--apt-font-weight-semibold);
+      font-size: var(--apt-size-title);
+      font-weight: var(--apt-weight-semibold);
       color: var(--apt-text-strong);
       letter-spacing: -0.02em;
-      margin-bottom: var(--apt-spacing-s8);
-      padding-bottom: var(--apt-spacing-s4);
+      margin-bottom: var(--apt-space-8);
+      padding-bottom: var(--apt-space-4);
       border-bottom: 1px solid var(--apt-border-faint);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
     }
+    .module-rail:hover .rail-brand { max-width: none; }
     .nav-item {
       display: flex;
       align-items: center;
-      gap: var(--apt-spacing-s3);
-      padding: var(--apt-spacing-s4) var(--apt-spacing-s6);
-      border-radius: var(--apt-radius-r2);
+      gap: var(--apt-space-3);
+      padding: var(--apt-space-3) var(--apt-space-2);
+      border-radius: var(--apt-radius-md);
       text-decoration: none;
       color: var(--apt-text-muted);
-      font-size: var(--apt-font-size-body-sm);
-      font-weight: var(--apt-font-weight-medium);
+      font-size: var(--apt-size-sm);
+      font-weight: var(--apt-weight-medium);
       border: 1px solid transparent;
       white-space: nowrap;
+      transition: background var(--apt-motion-fast), color var(--apt-motion-fast), border-color var(--apt-motion-fast);
     }
     .nav-item:hover { background: var(--apt-surface-raised); color: var(--apt-text-body); border-color: var(--apt-border-faint); }
     .nav-item.active {
-      background: color-mix(in srgb, var(--apt-module-accent, var(--apt-color-brand-primary)) 12%, transparent);
+      background: color-mix(in srgb, var(--apt-module-accent, var(--apt-accent)) 12%, transparent);
       color: var(--apt-text-strong);
-      border-left: 3px solid var(--apt-module-accent, var(--apt-color-brand-primary));
+      border-left: 3px solid var(--apt-module-accent, var(--apt-accent));
       border-color: transparent;
     }
+    .nav-item.active .nav-label { font-weight: var(--apt-weight-semibold); }
     .nav-icon { width: 18px; height: 18px; flex: none; }
+    .nav-label {
+      opacity: 0;
+      transition: opacity var(--apt-motion-fast);
+    }
+    .module-rail:hover .nav-label { opacity: 1; }
 
     /* Main work surface */
     .shell-main {
       flex: 1;
       overflow-y: auto;
-      padding: var(--apt-spacing-s10);
+      padding: var(--apt-space-10);
       background: var(--apt-surface-default);
       min-width: 0;
     }
 
     /* Responsive */
     @media (max-width: 1024px) {
-      .module-rail { width: 200px; padding: var(--apt-spacing-s6) var(--apt-spacing-s4); }
-      .nav-item { font-size: var(--apt-font-size-sm-3); padding: var(--apt-spacing-s3) var(--apt-spacing-s5); }
+      .module-rail { width: var(--apt-shell-rail); }
+      .shell-main { padding: var(--apt-space-8); }
     }
     @media (max-width: 760px) {
       .module-rail { display: none; }
-      .shell-main { padding: var(--apt-spacing-s8); }
+      .shell-main { padding: var(--apt-space-6); }
     }
     @media (max-width: 390px) {
-      .shell-main { padding: var(--apt-spacing-s6); }
+      .shell-main { padding: var(--apt-space-4); }
     }
     `,
   ],

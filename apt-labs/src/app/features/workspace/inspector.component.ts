@@ -5,9 +5,7 @@
  * typed relationships, evidence standing on the named-state ladder, and its
  * position in the productive-reality cycle. Never a score — standing is a
  * named state shown side by side.
- *
- * Impeccable craft-floor: no eyebrow, shadows with offset+blur, tracking
- * floor -0.04em, themed browser surfaces, full state coverage.
+ * Structural Emergence — Palantir-style object type view.
  */
 import { Component, computed, input } from '@angular/core';
 
@@ -40,6 +38,16 @@ const STANDING_LABELS: Record<string, string> = {
   disputed: 'Disputed',
   rejected: 'Rejected',
   expired: 'Expired',
+};
+
+const STANDING_COLORS: Record<string, string> = {
+  unassessed: 'var(--apt-standing-unassessed)',
+  reported: 'var(--apt-standing-reported)',
+  supported: 'var(--apt-standing-supported)',
+  verified: 'var(--apt-standing-verified)',
+  disputed: 'var(--apt-standing-disputed)',
+  rejected: 'var(--apt-standing-rejected)',
+  expired: 'var(--apt-standing-expired)',
 };
 
 @Component({
@@ -75,6 +83,8 @@ const STANDING_LABELS: Record<string, string> = {
                 class="standing-chip"
                 [class.standing-chip--active]="s === standing()"
                 [class.standing-chip--passed]="standingIndex(s) < standingIndex(standing() ?? '')"
+                [style.border-color]="standingColor(s)"
+                [style.color]="s === standing() ? 'var(--apt-text-strong)' : standingColor(s)"
               >{{ standingLabel(s) }}</span>
             }
           </div>
@@ -113,24 +123,23 @@ const STANDING_LABELS: Record<string, string> = {
       flex-direction: column;
       flex-shrink: 0;
       overflow: hidden;
-      z-index: var(--apt-z-index-dropdown);
-      /* Shadow with offset + soft blur */
-      box-shadow: 0 1px 3px 0 rgba(0,0,0,0.08), 0 1px 2px -1px rgba(0,0,0,0.04);
+      z-index: var(--apt-z-dropdown);
+      box-shadow: var(--apt-shadow-1);
     }
     .inspector--open { display: flex; }
     .inspector-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: var(--apt-spacing-s6);
+      padding: var(--apt-space-6);
       border-bottom: 1px solid var(--apt-border-faint);
       background: var(--apt-surface-raised);
       flex-shrink: 0;
     }
     .inspector-title {
       font-family: var(--apt-font-serif);
-      font-size: var(--apt-font-size-title-1);
-      font-weight: var(--apt-font-weight-semibold);
+      font-size: var(--apt-size-title);
+      font-weight: var(--apt-weight-semibold);
       color: var(--apt-text-strong);
       margin: 0;
     }
@@ -145,58 +154,92 @@ const STANDING_LABELS: Record<string, string> = {
       cursor: pointer;
     }
     .inspector-close:hover { color: var(--apt-text-strong); }
-    .inspector-meta { display: flex; flex-direction: column; gap: var(--apt-spacing-s2); padding: var(--apt-spacing-s4) var(--apt-spacing-s6); border-bottom: 1px solid var(--apt-border-faint); }
-    .meta-row { display: flex; gap: var(--apt-spacing-s3); }
-    .meta-label { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-sm-3); text-transform: uppercase; letter-spacing: 0.08em; color: var(--apt-text-dim); min-width: 100px; }
-    .meta-value { font-size: var(--apt-font-size-body-sm); color: var(--apt-text-body); }
-    .inspector-section { padding: var(--apt-spacing-s6); border-bottom: 1px solid var(--apt-border-faint); }
-    .inspector-section:last-child { border-bottom: none; }
-    .inspector-section-title {
+    .inspector-meta {
+      display: flex;
+      flex-direction: column;
+      gap: var(--apt-space-2);
+      padding: var(--apt-space-4) var(--apt-space-6);
+      border-bottom: 1px solid var(--apt-border-faint);
+    }
+    .meta-row { display: flex; gap: var(--apt-space-3); }
+    .meta-label {
       font-family: var(--apt-font-mono);
-      font-size: var(--apt-font-size-micro);
+      font-size: var(--apt-size-sm);
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--apt-text-dim);
-      margin: 0 0 var(--apt-spacing-s3);
+      min-width: 100px;
     }
-    .standing-ladder { display: flex; gap: var(--apt-spacing-s1); flex-wrap: wrap; }
-    .standing-chip {
-      padding: var(--apt-spacing-s1) var(--apt-spacing-s3);
-      border-radius: var(--apt-radius-r0);
+    .meta-value { font-size: var(--apt-size-body); color: var(--apt-text-body); }
+    .inspector-section { padding: var(--apt-space-6); border-bottom: 1px solid var(--apt-border-faint); }
+    .inspector-section:last-child { border-bottom: none; }
+    .inspector-section-title {
       font-family: var(--apt-font-mono);
-      font-size: var(--apt-font-size-sm-3);
+      font-size: var(--apt-size-micro);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--apt-text-dim);
+      margin: 0 0 var(--apt-space-3);
+    }
+    .standing-ladder { display: flex; gap: var(--apt-space-1); flex-wrap: wrap; }
+    .standing-chip {
+      padding: var(--apt-space-1) var(--apt-space-3);
+      border-radius: var(--apt-button-radius);
+      font-family: var(--apt-font-mono);
+      font-size: var(--apt-size-sm);
       border: 1px solid var(--apt-border);
       background: var(--apt-surface-raised);
       color: var(--apt-text-muted);
       text-transform: uppercase;
       letter-spacing: 0.04em;
     }
-    .standing-chip--active { background: var(--apt-module-accent, var(--apt-color-brand-primary)); color: var(--apt-action-on-primary); border-color: var(--apt-module-accent, var(--apt-color-brand-primary)); font-weight: var(--apt-font-weight-medium); }
-    .standing-chip--passed { border-color: var(--apt-border-faint); background: var(--apt-surface-default); color: var(--apt-text-dim); }
-    .standing-note { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-sm-3); color: var(--apt-text-dim); margin: var(--apt-spacing-s2) 0 0; }
-    .relationship-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--apt-spacing-s2); }
+    .standing-chip--active {
+      background: var(--apt-module-accent, var(--apt-accent));
+      color: var(--apt-action-on-accent);
+      border-color: var(--apt-module-accent, var(--apt-accent));
+      font-weight: var(--apt-weight-semibold);
+    }
+    .standing-chip--passed {
+      border-color: var(--apt-border-faint);
+      background: var(--apt-surface-default);
+      color: var(--apt-text-dim);
+    }
+    .standing-note {
+      font-family: var(--apt-font-mono);
+      font-size: var(--apt-size-sm);
+      color: var(--apt-text-dim);
+      margin: var(--apt-space-2) 0 0;
+    }
+    .relationship-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--apt-space-2); }
     .relationship-item {
       display: flex;
       align-items: center;
-      gap: var(--apt-spacing-s2);
-      padding: var(--apt-spacing-s2) var(--apt-spacing-s3);
+      gap: var(--apt-space-2);
+      padding: var(--apt-space-2) var(--apt-space-3);
       border: 1px solid var(--apt-border-faint);
-      border-radius: var(--apt-radius-r1);
+      border-radius: var(--apt-button-radius);
       background: var(--apt-surface-default);
-      font-size: var(--apt-font-size-body-sm);
+      font-size: var(--apt-size-body);
     }
-    .rel-kind { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-sm-3); text-transform: uppercase; letter-spacing: 0.06em; color: var(--apt-text-dim); flex-shrink: 0; }
-    .rel-arrow { color: var(--apt-text-dim); font-size: var(--apt-font-size-sm-3); }
-    .rel-target { color: var(--apt-text-body); font-weight: var(--apt-font-weight-medium); min-width: 0; }
-    .rel-roles { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); color: var(--apt-text-dim); margin-left: auto; }
+    .rel-kind {
+      font-family: var(--apt-font-mono);
+      font-size: var(--apt-size-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--apt-text-dim);
+      flex-shrink: 0;
+    }
+    .rel-arrow { color: var(--apt-text-dim); font-size: var(--apt-size-sm); }
+    .rel-target { color: var(--apt-text-body); font-weight: var(--apt-weight-medium); min-width: 0; }
+    .rel-roles { font-family: var(--apt-font-mono); font-size: var(--apt-size-micro); color: var(--apt-text-dim); margin-left: auto; }
     .inspector-empty {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: var(--apt-spacing-s22);
+      padding: var(--apt-space-22);
       color: var(--apt-text-muted);
-      font-size: var(--apt-font-size-body-sm);
+      font-size: var(--apt-size-body);
       text-align: center;
     }
     @media (max-width: 1024px) { .inspector { width: 320px; } }
@@ -211,6 +254,7 @@ export class InspectorComponent {
   readonly entity = input<InspectorEntity | null>(null);
   readonly standingOrder = STANDING_ORDER;
   readonly standingLabel = (s: string) => STANDING_LABELS[s] ?? s;
+  readonly standingColor = (s: string) => STANDING_COLORS[s] ?? 'var(--apt-text-dim)';
 
   readonly relationships = computed(() => this.entity()?.relationships ?? []);
   readonly standing = computed(() => this.entity()?.standing);
