@@ -126,6 +126,7 @@ const STANDING_COLORS: Record<string, string> = {
       z-index: var(--apt-z-dropdown);
       box-shadow: var(--apt-shadow-1);
     }
+    .inspector { display: none; }
     .inspector--open { display: flex; }
     .inspector-head {
       display: flex;
