@@ -27,10 +27,10 @@ import { Component, input } from '@angular/core';
     </div>
   `,
   styles: [`
-    .session-reference { padding: var(--apt-spacing-s5) var(--apt-spacing-s6); border-bottom: 1px solid var(--apt-border); background: var(--apt-surface-raised); font-size: var(--apt-font-size-micro); }
-    .session-line { display: flex; gap: var(--apt-spacing-s3); margin-bottom: var(--apt-spacing-s1); }
-    .session-key { color: var(--apt-text-muted); min-width: 64px; font-weight: var(--apt-font-weight-medium); }
-    .session-value { color: var(--apt-text-strong); font-weight: var(--apt-font-weight-medium); }
+    .session-reference { padding: var(--apt-space-5) var(--apt-space-6); border-bottom: 1px solid var(--apt-border); background: var(--apt-surface-raised); font-size: var(--apt-size-micro); }
+    .session-line { display: flex; gap: var(--apt-space-3); margin-bottom: var(--apt-space-1); }
+    .session-key { color: var(--apt-text-muted); min-width: 64px; font-weight: var(--apt-weight-medium); }
+    .session-value { color: var(--apt-text-strong); font-weight: var(--apt-weight-medium); }
   `],
 })
 export class SessionReferenceComponent {

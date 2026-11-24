@@ -63,22 +63,23 @@ export interface ModuleAgentSpec {
   `,
   styles: [`
     .agent-dock { width: 360px; border-left: 1px solid var(--apt-border); background: var(--apt-surface-page); }
-    .agent-dock-head { padding: var(--apt-spacing-s7) var(--apt-spacing-s4); border-bottom: 1px solid var(--apt-border); }
-    .agent-dock-title { font-weight: var(--apt-font-weight-semibold); font-size: var(--apt-font-size-body-sm); color: var(--apt-text-strong); }
-    .agent-dock-sub { font-size: var(--apt-font-size-micro); color: var(--apt-text-muted); margin-top: var(--apt-spacing-s2); }
-    .agent-dock-actions { padding: var(--apt-spacing-s6); display: flex; flex-direction: column; gap: var(--apt-spacing-s3); }
-    .agent-intent { width: 100%; padding: var(--apt-spacing-s4) var(--apt-spacing-s5); border-radius: var(--apt-radius-r2); border: 1px solid var(--apt-border); background: var(--apt-surface-raised); text-align: left; cursor: pointer; font-size: var(--apt-font-size-body-sm); color: var(--apt-text-strong); display: flex; justify-content: space-between; align-items: center; }
-    .agent-intent.active { border-color: var(--apt-module-accent); background: var(--apt-surface-info); color: var(--apt-module-accent); font-weight: var(--apt-font-weight-medium); }
+    .agent-dock-head { padding: var(--apt-space-8) var(--apt-space-4); border-bottom: 1px solid var(--apt-border); }
+    .agent-dock-title { font-weight: var(--apt-weight-semibold); font-size: var(--apt-size-sm); color: var(--apt-text-strong); }
+    .agent-dock-sub { font-size: var(--apt-size-micro); color: var(--apt-text-muted); margin-top: var(--apt-space-2); }
+    .agent-dock-actions { padding: var(--apt-space-6); display: flex; flex-direction: column; gap: var(--apt-space-3); }
+    .agent-intent { width: 100%; padding: var(--apt-space-4) var(--apt-space-5); border-radius: var(--apt-radius-md); border: 1px solid var(--apt-border); background: var(--apt-surface-raised); text-align: left; cursor: pointer; font-size: var(--apt-size-sm); color: var(--apt-text-strong); display: flex; justify-content: space-between; align-items: center; }
+    .agent-intent:hover { background: var(--apt-surface-subtle); }
+    .agent-intent.active { border-color: var(--apt-module-accent); background: var(--apt-surface-raised); color: var(--apt-module-accent); font-weight: var(--apt-weight-medium); }
     .agent-intent.gated { opacity: 0.5; }
-    .gate-chip { font-size: var(--apt-font-size-micro); background: var(--apt-surface-warning); color: var(--apt-color-warning-base); padding: var(--apt-spacing-s1) var(--apt-spacing-s3); border-radius: var(--apt-radius-r1); }
-    .intent-hint { font-size: var(--apt-font-size-micro); color: var(--apt-text-dim); font-weight: var(--apt-font-weight-medium); }
-    .agent-dock-receipts { padding: var(--apt-spacing-s6); }
-    .receipt { font-size: var(--apt-font-size-micro); padding: var(--apt-spacing-s3); border-radius: var(--apt-radius-r1); margin-bottom: var(--apt-spacing-s3); }
-    .receipt.executed { background: var(--apt-surface-success); color: var(--apt-text-success); }
-    .receipt.gated { background: var(--apt-surface-warning); color: var(--apt-text-warning); }
-    .receipt-outcome { font-weight: var(--apt-font-weight-semibold); text-transform: uppercase; font-size: var(--apt-font-size-micro); margin-bottom: var(--apt-spacing-s1); display: block; }
-    .receipt-text { font-size: var(--apt-font-size-micro); }
-    .receipts-empty { font-size: var(--apt-font-size-micro); color: var(--apt-text-muted); font-style: italic; }
+    .gate-chip { font-size: var(--apt-size-micro); background: var(--apt-surface-subtle); color: var(--apt-text-muted); padding: var(--apt-space-1) var(--apt-space-3); border-radius: var(--apt-radius-sm); }
+    .intent-hint { font-size: var(--apt-size-micro); color: var(--apt-text-dim); font-weight: var(--apt-weight-medium); }
+    .agent-dock-receipts { padding: var(--apt-space-6); }
+    .receipt { font-size: var(--apt-size-micro); padding: var(--apt-space-3); border-radius: var(--apt-radius-sm); margin-bottom: var(--apt-space-3); }
+    .receipt.executed { background: var(--apt-surface-page); color: var(--apt-text-strong); }
+    .receipt.gated { background: var(--apt-surface-subtle); color: var(--apt-text-muted); }
+    .receipt-outcome { font-weight: var(--apt-weight-semibold); text-transform: uppercase; font-size: var(--apt-size-micro); margin-bottom: var(--apt-space-1); display: block; }
+    .receipt-text { font-size: var(--apt-size-micro); }
+    .receipts-empty { font-size: var(--apt-size-micro); color: var(--apt-text-muted); font-style: italic; }
   `],
 })
 export class AgentDockComponent {

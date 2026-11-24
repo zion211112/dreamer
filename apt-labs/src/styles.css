@@ -49,6 +49,16 @@
   --apt-surface-raised: #f4f1e9;
   --apt-surface-subtle: #ece8df;
 
+  /* ── Semantic state surfaces/text ── */
+  --apt-surface-info: #e0f2f1;
+  --apt-surface-warning: #fdf6ec;
+  --apt-surface-danger: #fdf3f2;
+
+  --apt-text-info: #0891b2;
+  --apt-text-success: #166534;
+  --apt-text-warning: #ad8b55;
+  --apt-text-danger: #b91c1c;
+
   /* ── Semantic text ── */
   --apt-text-body: #22201a;
   --apt-text-strong: #14130d;
@@ -66,6 +76,10 @@
   --apt-action-on-accent: #ffffff;
   --apt-action-hover-bg: #ece8df;
 
+  /* ── Brand color aliases (compat) ── */
+  --apt-color-brand-primary: var(--apt-accent);
+  --apt-action-on-primary: var(--apt-action-on-accent);
+
   /* ── Borders ── */
   --apt-border: #d9d4c8;
   --apt-border-strong: #b9b2a3;
@@ -78,6 +92,12 @@
   --apt-radius-lg: 12px;  /* sections, modals, large containers */
   --apt-radius-pill: 9999px;
 
+  /* ── Radius aliases (compat with legacy shell components) ── */
+  --apt-radius-r0: var(--apt-radius-sm);
+  --apt-radius-r1: var(--apt-radius-sm);
+  --apt-radius-r2: var(--apt-radius-md);
+  --apt-radius-r3: var(--apt-radius-lg);
+
   /* ── Spacing — 4px base grid ── */
   --apt-space-1: 0.25rem;   /* 4px */
   --apt-space-2: 0.5rem;    /* 8px */
@@ -89,6 +109,15 @@
   --apt-space-10: 2.5rem;   /* 40px */
   --apt-space-12: 3rem;     /* 48px */
   --apt-space-16: 4rem;     /* 64px */
+
+  /* ── Spacing aliases (compat) ── */
+  --apt-spacing-s1: var(--apt-space-1);
+  --apt-spacing-s2: var(--apt-space-2);
+  --apt-spacing-s3: var(--apt-space-3);
+  --apt-spacing-s4: var(--apt-space-4);
+  --apt-spacing-s5: var(--apt-space-5);
+  --apt-spacing-s6: var(--apt-space-6);
+  --apt-spacing-s7: var(--apt-space-8);
 
   /* ── Typography — 6 sizes, consistent ratio ── */
   --apt-font-serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
@@ -103,8 +132,22 @@
   --apt-size-h1: 1.5rem;         /* 24px — page titles */
   --apt-size-display: 2rem;      /* 32px — landing hero */
 
+  /* ── Type-size aliases (compat) ── */
+  --apt-font-size-micro: var(--apt-size-micro);
+  --apt-font-size-sm: var(--apt-size-sm);
+  --apt-font-size-body-sm: var(--apt-size-sm);
+  --apt-font-size-body-md: var(--apt-size-body);
+  --apt-font-size-body: var(--apt-size-body);
+  --apt-font-size-title-1: var(--apt-size-title);
+  --apt-font-size-title-2: var(--apt-size-h1);
+  --apt-font-size-sm-3: var(--apt-size-sm);
+
   --apt-weight-medium: 500;
   --apt-weight-semibold: 600;
+
+  /* ── Font-weight aliases (compat) ── */
+  --apt-font-weight-medium: var(--apt-weight-medium);
+  --apt-font-weight-semibold: var(--apt-weight-semibold);
 
   --apt-line-tight: 1.1;
   --apt-line-normal: 1.5;

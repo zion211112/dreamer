@@ -42,6 +42,8 @@ const MODULES = [
     <app-command-palette (execute)="onPaletteExecute($event)"></app-command-palette>
 
     <div class="shell-layout">
+      <a class="skip-link" href="#shell-main">Skip to main content</a>
+
       <app-topbar [context]="context" [activeRecord]="activeRecord"></app-topbar>
 
       <div class="shell-body">
@@ -57,7 +59,7 @@ const MODULES = [
 
         <app-sidebar [title]="sidebarTitle" [collapsed]="sidebarCollapsed" [items]="sidebarItems"></app-sidebar>
 
-        <main class="shell-main">
+        <main class="shell-main" id="shell-main">
           <router-outlet />
         </main>
 
@@ -77,6 +79,24 @@ const MODULES = [
       flex-direction: column;
       height: 100dvh;
       background: var(--apt-surface-default);
+    }
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: var(--apt-space-4);
+      z-index: var(--apt-z-toast);
+      padding: var(--apt-space-3) var(--apt-space-4);
+      background: var(--apt-surface-page);
+      color: var(--apt-text-strong);
+      border: 1px solid var(--apt-border);
+      border-radius: var(--apt-radius-sm);
+      font-size: var(--apt-size-sm);
+      text-decoration: none;
+    }
+    .skip-link:focus-visible {
+      left: var(--apt-space-4);
+      outline: 2px solid var(--apt-accent);
+      outline-offset: 2px;
     }
     .shell-body {
       flex: 1;

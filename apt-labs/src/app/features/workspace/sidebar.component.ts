@@ -15,7 +15,7 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [RouterLink],
   template: `
-    <aside class="sidebar" [class.sidebar--collapsed]="collapsed()">
+    <aside class="sidebar" [class.sidebar--collapsed]="collapsed()" aria-label="Within-module context">
       <div class="sidebar-head">
         <h3 class="sidebar-title">{{ title() }}</h3>
         <button class="sidebar-toggle" (click)="toggle()" aria-label="Collapse sidebar">‹</button>
@@ -94,7 +94,7 @@ import { RouterLink } from '@angular/router';
       border-left: 3px solid var(--apt-module-accent, var(--apt-accent));
       border-color: transparent;
     }
-    .sidebar-item-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-item-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
     .sidebar--collapsed .sidebar-item-label { display: none; }
     .sidebar--collapsed .sidebar-item { justify-content: center; padding: var(--apt-space-3); }
     @media (max-width: 1024px) {

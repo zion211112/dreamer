@@ -26,7 +26,7 @@ import { Component, input } from '@angular/core';
         }
       </div>
       <div class="topbar-actions">
-        <button class="topbar-action" aria-label="Command palette">⌘K</button>
+        <button class="topbar-action" aria-label="Command palette">⌘&nbsp;K</button>
         <button class="topbar-action" aria-label="Account">👤</button>
       </div>
     </header>

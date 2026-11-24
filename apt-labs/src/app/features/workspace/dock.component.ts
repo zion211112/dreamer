@@ -26,7 +26,7 @@ const STATUS_COLORS: Record<string, string> = {
   standalone: true,
   imports: [],
   template: `
-    <footer class="dock" [class.dock--empty]="items().length === 0">
+    <footer class="dock" [class.dock--empty]="items().length === 0" aria-label="Dock staged items">
       <div class="dock-head">
         <span class="dock-label">{{ module() }}</span>
         <span class="dock-count">{{ items().length }}</span>
