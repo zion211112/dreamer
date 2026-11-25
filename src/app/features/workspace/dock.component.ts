@@ -50,7 +50,10 @@ const STATUS_COLORS: Record<string, string> = {
   styles: [
     `
     .dock {
-      height: var(--apt-shell-dock);
+      height: 100%;
+      min-height: 0;
+      box-sizing: border-box;
+      overflow: hidden;
       border-top: 1px solid var(--apt-border);
       background: var(--apt-surface-page);
       display: flex;
@@ -71,7 +74,7 @@ const STATUS_COLORS: Record<string, string> = {
     }
     .dock-label { font-family: var(--apt-font-mono); font-size: var(--apt-size-micro); text-transform: uppercase; letter-spacing: 0.08em; color: var(--apt-text-dim); }
     .dock-count { font-family: var(--apt-font-mono); font-size: var(--apt-size-micro); color: var(--apt-text-body); }
-    .dock-items { flex: 1; overflow-y: auto; padding: var(--apt-space-4); display: flex; flex-direction: column; gap: var(--apt-space-3); }
+    .dock-items { flex: 1; min-height: 0; overflow-y: auto; padding: var(--apt-space-4); display: flex; flex-direction: column; gap: var(--apt-space-3); }
     .dock-item {
       display: flex;
       align-items: center;

@@ -91,11 +91,11 @@ export class CommandPaletteComponent {
   readonly execute = output<{ action: string; payload?: any }>();
 
   private readonly items: PaletteItem[] = [
+    { id: 'module-home', label: 'Open Home', hint: '/workspace', action: () => this.router.navigate(['/workspace']) },
     { id: 'module-workbench', label: 'Open Workbench', hint: '/workspace/workbench', action: () => this.router.navigate(['/workspace', 'workbench']) },
     { id: 'module-commons', label: 'Open Commons', hint: '/workspace/commons', action: () => this.router.navigate(['/workspace', 'commons']) },
     { id: 'module-network', label: 'Open Network', hint: '/workspace/network', action: () => this.router.navigate(['/workspace', 'network']) },
     { id: 'module-records', label: 'Open Records', hint: '/workspace/records', action: () => this.router.navigate(['/workspace', 'records']) },
-    { id: 'module-value', label: 'Open Value', hint: '/workspace/value', action: () => this.router.navigate(['/workspace', 'value']) },
     { id: 'module-intelligence', label: 'Open Intelligence', hint: '/workspace/intelligence', action: () => this.router.navigate(['/workspace', 'intelligence']) },
     { id: 'create-need', label: 'Create a new need', hint: 'Workbench → post need', action: () => this.execute.emit({ action: 'create-need' }) },
     { id: 'open-entity', label: 'Open entity by id', hint: 'Enter an entity id', action: () => this.execute.emit({ action: 'open-entity' }) },

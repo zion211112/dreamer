@@ -2,6 +2,4 @@
 .env
 .env.*
 bin
-node_modules
-dist
 *.log

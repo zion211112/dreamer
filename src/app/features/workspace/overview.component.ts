@@ -57,18 +57,19 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
         </div>
       </div>
 
-      <div class="ov-table-wrap">
+      <div class="ov-table-wrap" role="region" aria-label="In-flight undertakings" tabindex="0">
         <table class="ov-table">
+          <caption class="ov-sr-only">In-flight undertakings, their institutions, status, deliverables, evidence, and disclosed cost</caption>
           <thead>
             <tr>
-              <th class="ov-th">Undertaking</th>
-              <th class="ov-th ov-th--left">Institution</th>
-              <th class="ov-th ov-th--left">Location</th>
-              <th class="ov-th">Status</th>
-              <th class="ov-th">Deliverables</th>
-              <th class="ov-th">Evidence</th>
-              <th class="ov-th ov-th--left">Cost disclosed</th>
-              <th class="ov-th ov-th--actions">Actions</th>
+              <th class="ov-th" scope="col">Undertaking</th>
+              <th class="ov-th ov-th--left" scope="col">Institution</th>
+              <th class="ov-th ov-th--left" scope="col">Location</th>
+              <th class="ov-th" scope="col">Status</th>
+              <th class="ov-th" scope="col">Deliverables</th>
+              <th class="ov-th" scope="col">Evidence</th>
+              <th class="ov-th ov-th--left" scope="col">Cost disclosed</th>
+              <th class="ov-th ov-th--actions" scope="col">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -114,7 +115,7 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
 
       <details class="ov-ref">
         <summary class="ov-ref-summary">
-          <span class="ov-ref-title">The reference</span>
+          <h2 class="ov-ref-title">The reference</h2>
           <span class="ov-ref-count">{{ familyCount }} families · {{ relationKindCount }} relation kinds · {{ standingStates.length }} standings · {{ canonicalDistinctions.length }} distinctions</span>
           <span class="ov-ref-caret" aria-hidden="true">▸</span>
         </summary>
@@ -122,8 +123,9 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
         <div class="ov-ref-body">
           <div class="ov-ref-tools">
             <div class="ov-search">
+              <label class="ov-search-label" for="reference-filter">Filter the reference</label>
               <svg class="ov-search-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10.5 3a7.5 7.5 0 1 1-4.8 13.3L3 19.1 4.4 20.5l2.8-2.8A7.5 7.5 0 0 1 10.5 3Zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Z" /></svg>
-              <input class="ov-search-input" type="search" placeholder="Filter the reference — families, relations, distinctions…" aria-label="Filter the reference" [value]="query()" (input)="query.set($any($event.target).value)" />
+              <input id="reference-filter" class="ov-search-input" type="search" placeholder="Families, relations, distinctions…" [value]="query()" (input)="query.set($any($event.target).value)" />
             </div>
             <a [routerLink]="['/workspace', 'intelligence']" class="ov-quiet">Open Intelligence →</a>
           </div>
@@ -217,7 +219,10 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
   `,
   styles: [
     `
+    :host { display: block; }
     .ov {
+      --ov-text-muted: color-mix(in srgb, var(--apt-text-body) 46%, var(--apt-text-muted));
+      --ov-text-dim: color-mix(in srgb, var(--apt-text-body) 58%, var(--apt-text-dim));
       font-family: var(--apt-font-sans);
       color: var(--apt-text-body);
       background: var(--apt-surface-default);
@@ -225,13 +230,40 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
       display: flex;
       flex-direction: column;
     }
+    .ov-ref-title {
+      margin: 0;
+      color: var(--apt-text-strong);
+      font: var(--apt-weight-semibold) var(--apt-size-title)/var(--apt-line-tight) var(--apt-font-serif);
+    }
+    .ov-search {
+      display: flex;
+      align-items: center;
+      gap: var(--apt-space-3);
+      min-width: 0;
+    }
+    .ov-search-label {
+      flex: 0 0 auto;
+      color: var(--apt-text-body);
+      font-size: var(--apt-size-sm);
+      font-weight: var(--apt-weight-medium);
+    }
+    .ov-search-icon { width: 18px; height: 18px; flex: 0 0 auto; color: var(--apt-text-muted); }
+    .ov-search-input {
+      flex: 1 1 auto;
+      min-width: 0;
+      padding: var(--apt-space-2) var(--apt-space-3);
+      border: 1px solid var(--apt-border);
+      border-radius: var(--apt-input-radius);
+      background: var(--apt-input-bg);
+      color: var(--apt-text-body);
+      font: inherit;
+    }
 
     .ov-pagehead {
       display: flex;
       flex-direction: column;
       gap: var(--apt-space-3);
-      margin-bottom: var(--apt-space-8);
-      padding-left: var(--apt-space-10);
+      margin-bottom: var(--apt-space-6);
     }
     .ov-h1 {
       font-family: var(--apt-font-serif);
@@ -244,13 +276,14 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
     }
     .ov-sub {
       font-size: var(--apt-size-body);
-      color: var(--apt-text-muted);
+      color: var(--ov-text-muted);
       margin: 0;
-      max-width: 72ch;
+      max-width: 70ch;
       line-height: var(--apt-line-relaxed);
     }
     .ov-actions {
       display: flex;
+      flex-wrap: wrap;
       gap: var(--apt-space-3);
       margin-top: var(--apt-space-4);
     }
@@ -272,31 +305,32 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
     .ov-btn:hover { border-color: var(--apt-accent); }
     .ov-btn--primary { background: var(--apt-accent); color: var(--apt-action-on-accent); border-color: var(--apt-accent); }
     .ov-btn--primary:hover { background: color-mix(in srgb, var(--apt-accent) 90%, var(--apt-surface-default)); }
-    .ov-btn--quiet { background: transparent; border-color: transparent; color: var(--apt-text-muted); }
+    .ov-btn--quiet { background: transparent; border-color: transparent; color: var(--ov-text-muted); }
     .ov-btn--quiet:hover { background: var(--apt-surface-raised); color: var(--apt-text-body); }
     .ov-btn--sm { padding: var(--apt-space-1) var(--apt-space-3); font-size: var(--apt-size-sm); }
 
     .ov-metrics {
-      display: flex;
-      gap: var(--apt-space-5);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+      gap: var(--apt-space-4);
       margin-bottom: var(--apt-space-8);
-      flex-wrap: wrap;
+    }
+    @media (min-width: 761px) and (max-width: 900px) {
+      .ov-metrics { grid-template-columns: 1fr; }
     }
     .ov-metric {
-      flex: 1;
-      min-width: 140px;
       background: var(--apt-surface-page);
       padding: var(--apt-space-5) var(--apt-space-6);
       border-radius: var(--apt-radius-md);
       border: 1px solid var(--apt-border);
     }
-    .ov-metric--teal { border-left: 3px solid var(--apt-text-info); }
+    .ov-metric--teal { border-color: color-mix(in srgb, var(--apt-text-info) 35%, var(--apt-border)); }
     .ov-metric-label {
       font-family: var(--apt-font-mono);
       font-size: var(--apt-size-micro);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--apt-text-dim);
+      color: var(--ov-text-dim);
       display: block;
       margin-bottom: var(--apt-space-2);
     }
@@ -307,23 +341,55 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
       color: var(--apt-text-strong);
       line-height: 1;
       letter-spacing: -0.01em;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
     }
     .ov-metric-unit {
       font-family: var(--apt-font-mono);
       font-size: var(--apt-size-body);
       letter-spacing: 0.04em;
-      color: var(--apt-text-muted);
+      color: var(--ov-text-muted);
       margin-top: var(--apt-space-1);
     }
 
     .ov-table-wrap {
       overflow-x: auto;
+      max-width: 100%;
+      overscroll-behavior-x: contain;
       border: 1px solid var(--apt-border);
       border-radius: var(--apt-radius-md);
       background: var(--apt-surface-page);
       margin-bottom: var(--apt-space-8);
     }
-    .ov-table { width: 100%; border-collapse: collapse; font-size: var(--apt-size-body); }
+    .ov-table { width: 100%; min-width: 960px; table-layout: fixed; border-collapse: collapse; font-size: var(--apt-size-body); }
+    .ov-table th:nth-child(1), .ov-table td:nth-child(1) { width: 22%; }
+    .ov-table th:nth-child(2), .ov-table td:nth-child(2) { width: 14%; }
+    .ov-table th:nth-child(3), .ov-table td:nth-child(3) { width: 11%; }
+    .ov-table th:nth-child(4), .ov-table td:nth-child(4) { width: 10%; }
+    .ov-table th:nth-child(5), .ov-table td:nth-child(5) { width: 9%; }
+    .ov-table th:nth-child(6), .ov-table td:nth-child(6) { width: 8%; }
+    .ov-table th:nth-child(7), .ov-table td:nth-child(7) { width: 12%; }
+    .ov-table th:nth-child(8), .ov-table td:nth-child(8) { width: 14%; }
+    .ov-table th:first-child, .ov-table td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+    }
+    .ov-table th:first-child { background: var(--apt-surface-raised); }
+    .ov-table td:first-child { background: var(--apt-surface-page); }
+    .ov-tr:hover .ov-td:first-child { background: var(--apt-surface-raised); }
+    .ov-tr--selected .ov-td:first-child { background: color-mix(in srgb, var(--apt-accent) 8%, var(--apt-surface-page)); }
+    .ov-sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
     .ov-th {
       text-align: left;
       padding: var(--apt-space-4) var(--apt-space-5);
@@ -331,7 +397,7 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
       font-size: var(--apt-size-micro);
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: var(--apt-text-dim);
+      color: var(--ov-text-dim);
       border-bottom: 1px solid var(--apt-border);
       font-weight: var(--apt-weight-medium);
       white-space: nowrap;
@@ -350,12 +416,13 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
     .ov-td:last-child { border-bottom: none; }
     .ov-td--name { font-weight: var(--apt-weight-medium); color: var(--apt-text-strong); }
     .ov-td--actions { text-align: center; white-space: nowrap; }
+    .ov-td--actions .ov-btn + .ov-btn { margin-left: var(--apt-space-1); }
     .ov-type-chip {
       font-family: var(--apt-font-mono);
       font-size: var(--apt-size-sm);
       text-transform: uppercase;
       letter-spacing: 0.03em;
-      color: var(--apt-text-dim);
+      color: var(--ov-text-dim);
       border: 1px solid var(--apt-border);
       border-radius: var(--apt-button-radius);
       padding: 1px 6px;
@@ -380,7 +447,7 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
       border: 1px solid var(--apt-border);
       white-space: nowrap;
     }
-    .ov-status.is-open { background: var(--apt-surface-raised); color: var(--apt-text-muted); }
+    .ov-status.is-open { background: var(--apt-surface-raised); color: var(--ov-text-muted); }
     .ov-status.is-committed { background: var(--apt-surface-info); color: var(--apt-text-info); }
     .ov-status.is-fulfilled { background: var(--apt-surface-success); color: var(--apt-text-success); }
 
@@ -406,7 +473,7 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
     .ov-move-icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
     .ov-move-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
     .ov-move-verb { font-size: var(--apt-size-title); font-weight: var(--apt-weight-semibold); color: var(--apt-text-strong); letter-spacing: -0.01em; }
-    .ov-move-consequence { font-size: var(--apt-size-body); line-height: var(--apt-line-relaxed); color: var(--apt-text-muted); }
+    .ov-move-consequence { font-size: var(--apt-size-body); line-height: var(--apt-line-relaxed); color: var(--ov-text-muted); }
     .ov-move-go { margin-left: auto; align-self: center; flex: none; color: var(--apt-accent); font-size: var(--apt-size-title); }
 
     @media (max-width: 760px) {
@@ -414,7 +481,7 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
       .ov-table-wrap { font-size: var(--apt-size-sm); }
       .ov-table { font-size: var(--apt-size-sm); }
       .ov-th, .ov-td { padding: var(--apt-space-3) var(--apt-space-4); }
-      .ov-actions { flex-direction: column; }
+      .ov-btn { min-height: 44px; }
     }
     `,
   ],

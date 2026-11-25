@@ -1,57 +1,55 @@
 # APT-LABS (dreamer)
 
-Infrastructure for making fragmented productive capacity visible, connectable, governable, locally retained, and cumulative.
+APT-LABS makes fragmented productive capacity visible, connectable, governable,
+locally retained, and cumulative.
 
-One workspace, one shared graph, five modules: **Commons, Network, Workbench, Records, Intelligence**. School Console is a nested operational boundary under Workbench.
+The application is a standalone, zoneless Angular workspace with six primary
+contexts: Home, Commons, Network, Workbench, Records, and Intelligence. Value,
+Ontology, and Sovereignty remain accessible as secondary pages.
 
 ## Stack
 
-- Preact 10.24 + Vite 6.4.5 + TypeScript 5.6
-- Wouter client-side routing
-- Vitest 5.0.5 (unit tests)
-- Supabase (demo mode fallback when env vars unset)
+- Angular 22.3 + strict TypeScript
+- Angular CLI build and unit-test runners
+- Playwright route smoke tests
+- Browser-local demo; Supabase fallback when configured
 
-## Key commands
+## Commands
 
 ```sh
-npm ci              # install dependencies
-npm run dev         # start dev server (localhost:3000)
-npm run build       # tsc + vite build → dist/
-npm run test:unit -- --run  # vitest
-npx tsc --noEmit    # type check
+npm ci
+npm start
+npm run build
+npm test
+npm run test:e2e:chromium
 ```
-
-Seed demo data from the browser console: `window.seedAPTLabsDemo()`
 
 ## Routes
 
-| Route | Module |
-|-------|--------|
-| `/` | Landing |
+| Route | Context |
+|-------|---------|
+| `/landing` | Public landing |
 | `/sign-in`, `/sign-up` | Demo auth |
-| `/workspace/commons` | Commons — field signals, steward decisions |
-| `/workspace/network/people` | Network — people & crews |
-| `/workspace/network/institutions` | Network — institution & asset register |
-| `/workspace/network/capabilities` | Network — capability directory |
-| `/workspace/workbench` | Workbench — scope, assemble, coordinate work |
-| `/workspace/workbench/:pilot` | Workbench — pilot lane |
-| `/workspace/workbench/school-console` | School Console (nested under Workbench) |
-| `/workspace/records/canon` | Records — canon lens |
-| `/workspace/records/annals` | Records — annals lens |
-| `/workspace/records/roll` | Records — roll lens |
-| `/workspace/intelligence` | Intelligence — research page |
-| `/workspace/intelligence/coin-lab` | Intelligence — coin lab (research only) |
-| `/benben-os` | BenbenOS (separate prototype, not an APT-LABS module) |
+| `/workspace` | Home |
+| `/workspace/commons` | Commons |
+| `/workspace/network` | Network directory |
+| `/workspace/network/people` | People |
+| `/workspace/network/institutions` | Institutions |
+| `/workspace/network/capabilities` | Capability claims |
+| `/workspace/workbench`, `/workspace/workbench/:pilot` | Workbench |
+| `/workspace/value` | Value (secondary) |
+| `/workspace/records`, `/workspace/records/{canon,annals,roll}` | Records |
+| `/workspace/intelligence` | Intelligence |
+| `/workspace/ontology` | Ontology (secondary) |
+| `/workspace/sovereignty` | Sovereignty (secondary) |
 
-## Docs
+Unknown routes render an explicit not-found page.
 
-- `docs/architecture.md` — verified current technical architecture
-- `docs/domain-model.md` — approved six-structure domain model
-- `docs/decisions/` — accepted architectural decisions (ADRs)
-- `docs/design/charter.md` — constitution (enduring principles + mutable decisions)
-- `docs/APT-LABS-SYSTEM.md` — system reference (what exists, how pieces fit)
+## Documentation
 
-## Guardrails
-
-- Read the file before changing it.
-- `npm run build` and `npm run test:unit -- --run` should be green before shipping.
+- `AGENTS.md` — repository guardrails and current stack map
+- `QUICKSTART.md` — development tools and setup
+- `docs/architecture.md` — current technical architecture
+- `docs/domain-model.md` — six-structure domain model
+- `docs/decisions/` — accepted architectural decisions
+- `docs/design/charter.md` — constitution and design principles

@@ -13,29 +13,28 @@ those before treating anything this file implies as a constraint.
 ## Stack
 
 **What it is today** (not a ceiling): Angular 22.3, **zoneless** (`provideZonelessChangeDetection`),
-standalone-component monorepo under `apt-labs/`. TypeScript strict. Signal-based reactive state.
+standalone-component app at the repository root. TypeScript strict. Signal-based reactive state.
 
-- App: `apt-labs/src/` — single entry `main.ts` → `app.ts`, router in `app.routes.ts`.
+- App: `src/` — single entry `main.ts` → `app.ts`, router in `app/app.routes.ts`.
 - Libraries: `@apt-labs/ontology`, `@apt-labs/domain`, `@apt-labs/shared/{state,ui}`, `@apt-labs/shell`.
 - Feature screens read one shared spine — `CoordinationService` in `@apt-labs/shared/state` — so
   every view reflects the same live record instead of siloed demo data.
 - Browser-local demo; Supabase fallback when env vars are set.
 
 The stack can evolve: any move (e.g. changing state strategy, adding a framework concern, or
-replacing a library) is an ADR decision in `docs/decisions/`, not a breakage of this file. Note the
-root-level `vite.config.ts` / `vitest.config.ts` / `index.html` / `index-vue.html` are **leftovers
-from a retired Vue app** (removed in `b622f5b`) — the product is the Angular tree; do not extend the
-Vue leftovers.
+replacing a library) is an ADR decision in `docs/decisions/`, not a breakage of this file. The
+retired Vite/Vue application and investor deck have been removed; historical references in archive
+material are not active product code.
 
-## Key commands (in `apt-labs/`)
+## Key commands (from the repository root)
 
 - `npm start` — `ng serve` dev server
 - `npm run build` — `ng build`
-- `npm test` — `ng test`
+- `npm test` — `ng test --watch=false`
 - `npx tsc --noEmit` — type check
 
 (These are the commands for the Angular app today; if the tree changes, the commands may change too
-— check `apt-labs/package.json` scripts rather than trusting this list verbatim.)
+— check the root `package.json` scripts rather than trusting this list verbatim.)
 
 On shared Windows hosts, run builds and tests sequentially. If Vitest reports worker-startup
 timeouts under `npm test -- --watch=false`, run each spec separately with
@@ -48,25 +47,25 @@ Descriptive map of the Angular tree **as it is today**. It will drift as the app
 tree over this list when they disagree.
 
 ```
-apt-labs/
-  src/
-    main.ts              — entry
-    app.ts               — root component
-    app.routes.ts        — route table (source of truth for routes)
-    app.config.ts        — provideZonelessChangeDetection + browser config
-    features/            — one folder per screen, standalone components
+src/
+  main.ts              — entry
+  app.ts               — root component
+  app/
+    app.routes.ts      — route table (source of truth for routes)
+    app.config.ts      — provideZonelessChangeDetection + browser config
+    features/          — one folder per screen, standalone components
       landing/ commons/ network/ records/ workbench/ value/ intelligence/
       ontology/ sovereignty/ workspace/ auth/
-  libs/
-    ontology/            — @apt-labs/ontology: domain types, cycles, commitment lifecycle,
-                           evidence standing
-    domain/              — @apt-labs/domain
-    shared/
-      state/             — @apt-labs/shared/state: CoordinationService spine, zoneless signal
-                           state (the shared record every feature reads)
-      ui/                — @apt-labs/shared/ui: shared UI primitives
-    shell/               — @apt-labs/shell: app shell / layout
-  public/                — static assets
+libs/
+  ontology/            — @apt-labs/ontology: domain types, cycles, commitment lifecycle,
+                         evidence standing
+  domain/              — @apt-labs/domain
+  shared/
+    state/             — @apt-labs/shared/state: CoordinationService spine, zoneless signal
+                         state (the shared record every feature reads)
+    ui/                — @apt-labs/shared/ui: shared UI primitives
+  shell/               — @apt-labs/shell: app shell / layout
+public/                — static assets (only configured assets are copied to the build)
 ```
 
 The retired Vue tree (`src/pages/*.vue`, `src/lib/*`, `src/modules/*`, `src/main-vue.ts`,
@@ -75,7 +74,7 @@ notes still reference it; treat those references as historical, not live.
 
 ## Workspace modules (intended set — not a fixed contract)
 
-The *intended* module set. Today's Angular features (`apt-labs/src/app/features/`) cover a subset
+The *intended* module set. Today's Angular features (`src/app/features/`) cover a subset
 of it; the rest are targets to build out. Add, merge, or drop modules as the charter directs — this
 describes intent, not a lock. (Check `app.routes.ts` for what's actually wired right now.)
 
@@ -98,7 +97,7 @@ if the reasoning stops holding.
 
 ## Auth
 
-Demo mode (localStorage) when `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` are unset. Platform roles: `public`, `authenticated`, `admin`, `moderator`, `trustAdmin`, `credentialIssuerAdmin`. Actor roles: `owner`, `administrator`, `manager`, `member`, `contributor`, `viewer`, `authorizedRepresentative`. Actor types: `individual` (includes `graduate`, `developer`, `sociologist`, `politician`, `student`), `crew`, `institution` (includes `university`, `school`, `hospital`, `cooperative`, `government body`).
+Demo mode (localStorage) with a Supabase fallback when configured. Platform roles: `public`, `authenticated`, `admin`, `moderator`, `trustAdmin`, `credentialIssuerAdmin`. Actor roles: `owner`, `administrator`, `manager`, `member`, `contributor`, `viewer`, `authorizedRepresentative`. Actor types: `individual` (includes `graduate`, `developer`, `sociologist`, `politician`, `student`), `crew`, `institution` (includes `university`, `school`, `hospital`, `cooperative`, `government body`).
 
 No universal reputation score (charter A8). No blockchain prerequisite for participation (charter A8).
 
@@ -110,9 +109,9 @@ No universal reputation score (charter A8). No blockchain prerequisite for parti
 
 ## Build & test
 
-Before shipping, run `npm run build` and `npm test` in `apt-labs/` (or whatever `package.json`
-scripts name them today). This is a check to run before you call something done — not a gate that
-blocks every edit.
+Before shipping, run `npm run build` and `npm test` from the repository root (or whatever
+`package.json` scripts name them today). This is a check to run before you call something done —
+not a gate that blocks every edit.
 
 ## Agent workforce
 

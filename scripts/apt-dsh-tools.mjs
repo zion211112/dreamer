@@ -10,9 +10,9 @@
  * build pipeline and from any agent session.
  *
  * Usage:
- *   node scripts/apt-dsh-tools.mjs recommend "<query>" [--stack vue] [--variance 7] [--motion 4] [--density 8] [--project name]
+ *   node scripts/apt-dsh-tools.mjs recommend "<query>" [--stack angular] [--variance 7] [--motion 4] [--density 8] [--project name]
  *   node scripts/apt-dsh-tools.mjs review "<target>" [--platform web] [--max 10]
- *   node scripts/apt-dsh-tools.mjs search "<query>" [--domain style|color|chart|landing|product|ux|typography|icons|gsap|react|web|google-fonts] [--stack vue] [--max 5]
+ *   node scripts/apt-dsh-tools.mjs search "<query>" [--domain style|color|chart|landing|product|ux|typography|icons|gsap|react|web|google-fonts] [--stack angular] [--max 5]
  *   node scripts/apt-dsh-tools.mjs list
  */
 import { createRequire } from 'node:module'
@@ -79,7 +79,7 @@ async function main() {
     const params = { query: positional() || '' }
     if (cmd === 'recommend') {
       params.projectName = flag('project', 'APT-LABS')
-      params.stack = flag('stack', 'vue')
+      params.stack = flag('stack', 'angular')
       params.variance = Number(flag('variance', 6))
       params.motion = Number(flag('motion', 4))
       params.density = Number(flag('density', 7))

@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 /**
  * APT-LABS — Route table (migrated from Vue router)
  *
- * 19 routes: /, /landing, /sign-in, /sign-up, /workspace (shell + 15 children)
+ * 22 route records: public routes, workspace shell and children, and fallback.
  */
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/landing' },
@@ -23,7 +23,7 @@ export const routes: Routes = [
       { path: 'network', loadComponent: () => import('./features/network/network.component').then(m => m.NetworkComponent) },
       { path: 'network/people', loadComponent: () => import('./features/network/people.component').then(m => m.PeopleComponent) },
       { path: 'network/institutions', loadComponent: () => import('./features/network/institutions.component').then(m => m.InstitutionsComponent) },
-      { path: 'network/capabilities', loadComponent: () => import('./features/network/network.component').then(m => m.NetworkComponent) },
+      { path: 'network/capabilities', loadComponent: () => import('./features/network/capabilities.component').then(m => m.CapabilitiesComponent) },
       { path: 'workbench', loadComponent: () => import('./features/workbench/home.component').then(m => m.HomeComponent) },
       { path: 'workbench/:pilot', loadComponent: () => import('./features/workbench/pilot.component').then(m => m.PilotComponent) },
       { path: 'value', loadComponent: () => import('./features/value/value.component').then(m => m.ValueComponent) },
@@ -36,4 +36,5 @@ export const routes: Routes = [
       { path: 'sovereignty', loadComponent: () => import('./features/sovereignty/sovereignty.component').then(m => m.SovereigntyComponent) },
     ],
   },
+  { path: '**', loadComponent: () => import('./features/not-found/not-found.component').then(m => m.NotFoundComponent) },
 ];

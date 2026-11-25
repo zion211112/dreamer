@@ -99,6 +99,7 @@ import { Component, input } from '@angular/core';
     @media (max-width: 760px) {
       .topbar { height: 48px; padding: 0 var(--apt-space-6); }
       .topbar-context { display: none; }
+      .topbar-action { width: 44px; height: 44px; flex: none; }
     }
     `,
   ],

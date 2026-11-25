@@ -7,31 +7,36 @@
  * at 1024px and below.
  * Structural Emergence.
  */
-import { Component, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, input, signal } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, RouterLinkActive],
   template: `
     <aside class="sidebar" [class.sidebar--collapsed]="collapsed()" aria-label="Within-module context">
       <div class="sidebar-head">
-        <h3 class="sidebar-title">{{ title() }}</h3>
-        <button class="sidebar-toggle" (click)="toggle()" aria-label="Collapse sidebar">‹</button>
+        <div class="sidebar-title">{{ title() }}</div>
+        <button class="sidebar-toggle" type="button" (click)="toggle()" [attr.aria-label]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'">{{ collapsed() ? '›' : '‹' }}</button>
       </div>
-      <nav class="sidebar-nav" aria-label="Within-module context">
-        @for (item of items(); track item.id) {
-          <a [routerLink]="item.path" class="sidebar-item" [class.active]="item.active">
-            <span class="sidebar-item-label">{{ item.label }}</span>
-          </a>
-        }
-      </nav>
+      @if (items().length) {
+        <nav class="sidebar-nav" aria-label="Within-module links">
+          @for (item of items(); track item.id) {
+            <a [routerLink]="item.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-item">
+              <span class="sidebar-item-label">{{ item.label }}</span>
+            </a>
+          }
+        </nav>
+      } @else {
+        <p class="sidebar-empty">No related destinations for this view.</p>
+      }
     </aside>
   `,
   styles: [
     `
     .sidebar {
+      box-sizing: border-box;
       width: var(--apt-shell-sidebar-max);
       border-right: 1px solid var(--apt-border);
       background: var(--apt-surface-page);
@@ -75,6 +80,8 @@ import { RouterLink } from '@angular/router';
     .sidebar-toggle:hover { color: var(--apt-text-strong); }
     .sidebar--collapsed .sidebar-toggle { transform: rotate(180deg); }
     .sidebar-nav { flex: 1; overflow-y: auto; padding: var(--apt-space-4); }
+    .sidebar-empty { padding: var(--apt-space-4); color: var(--apt-text-muted); font-size: var(--apt-size-sm); }
+    .sidebar--collapsed .sidebar-empty { display: none; }
     .sidebar-item {
       display: flex;
       align-items: center;
@@ -109,8 +116,10 @@ import { RouterLink } from '@angular/router';
 })
 export class SidebarComponent {
   readonly title = input<string>('Context');
-  readonly collapsed = input<boolean>(false);
+  readonly collapsed = signal(false);
   readonly items = input<{ id: string; label: string; path: string[]; active?: boolean }[]>([]);
 
-  toggle(): void {}
+  toggle(): void {
+    this.collapsed.update((value) => !value);
+  }
 }

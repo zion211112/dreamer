@@ -1,162 +1,82 @@
-# APT-LABS — Architecture Reference
+# APT-LABS — Current Architecture
 
-Verified current technical architecture. Describes what exists; does not define intent.
+This document describes the active application. Product principles and durable
+design decisions live in `docs/design/charter.md` and `docs/decisions/`.
 
 ## Stack
 
-| Layer | Tool | Version |
-|-------|------|---------|
-| Build | Vite | 6.4.5 |
-| UI framework | Preact | 10.24 |
-| Type safety | TypeScript | 5.6 strict |
-| Routing | Wouter | 3.3.5 |
-| Testing | Vitest | 5.0.5 |
-| Auth/DB | Supabase | demo mode fallback |
+| Layer | Technology |
+|---|---|
+| Application | Angular 22.3 standalone components |
+| Change detection | Zoneless (`provideZonelessChangeDetection`) |
+| Language | Strict TypeScript |
+| Build and unit tests | Angular CLI |
+| Browser route tests | Playwright |
 
-## Build & test
+The repository root is the Angular CLI project. The retired Vite/Vue site and
+investor deck are no longer active applications.
 
-- `npm run build` → `tsc && vite build` → `dist/`
-- `npm run test:unit -- --run` → 13 test files, 78 tests
-- `npx tsc --noEmit` → type check
+## Commands
 
-## Architecture
+Run from the repository root:
 
-```
+- `npm start` — start the Angular development server
+- `npm run build` — create the production build
+- `npm test` — run Angular unit tests
+- `npm run test:e2e:chromium` — run Playwright route smoke tests
+
+Vercel serves `dist/apt-labs/browser` with an SPA fallback for Angular routes.
+
+## Repository layout
+
+```text
 src/
-  App.tsx              — route switch (wouter Switch/Route), canonical routes under /workspace/{module}
-  tokens.css           — design tokens (:root light luxury default, [data-skin="dark"] variant)
-  styles.css           — shared visual tokens and application styles
-  src/styles/*.css     — module-scoped styles (commons, institutions, network, people, records, shell, workbench, workspace-foundation)
-  main.tsx             — entry point
-
-  lib/
-    demo-seed.ts               — browser-console seeder, 5 synthetic local scenarios (Kibera workshop, Kemetos AGI1, Thiba Hydro, Nyeri repair/apprenticeship, Embu solar drying)
-    roll-sbt-bridge.ts         — accepted Workbench handoff to Roll entries and SBT attestations
-    sbt-attestations.ts        — mint/list/verify/export SBT attestations (localStorage)
-    agent-host.ts              — AgentHost class, proposes-never-executes
-    people-network.ts          — 31 entities, 34 relationships
-    people-discovery.ts
-    people-profiles.ts
-    local-workbench.ts         — applications, workStatus state machine
-    local-workflows.ts         — field signals, work opportunities
-    school-console-storage.ts  — tender drafts, IndexedDB snapshots
-    workbench-simulation.ts    — 6-stage simulation pipeline, RollPreview
-    workbench-simulation-store.ts — persistence for simulations
-    supabase/client.ts         — Supabase client + demo-mode flag
-    auth/types.ts              — UserRole, Profile, AuthState
-    auth/hooks.ts
-    auth/index.ts
-    auth/permissions.ts
-    db/roll.ts                 — RollEntry, hash_anchor, evidence layers, and 3 synthetic pitch fixtures
-    db/roll-hash.ts
-    db/network.ts
-    db/work.ts
-    db/index.ts
-    storage/evidence.ts
-    storage/index.ts
-    ecosystem-examples.ts
-    intelligence/registry.ts
-    intelligence/types.ts
-    radar-view.ts
-    records-view.ts
-    school-marking.ts
-    studio-navigation.ts
-    workspace-activity.ts
-    workspace-overview.ts
-    workspace-search.ts
-
-  components/
-    WorkspaceShell.tsx         — app shell, agentAvailable flag
-    WorkspaceContextSwitcher.tsx
-    WorkspaceQuickSearch.tsx
-    PageHead.tsx
-    StudioNavigation.tsx
-    EngineCommandDock.tsx      — scoped request dialog ("Ask engine")
-    NetworkMap.tsx
-    RecordInspector.tsx
-    RollDirectory.tsx
-    RollEntryCard.tsx
-    RollEntryRow.tsx
-    RollFilterBar.tsx
-    RollViewToggle.tsx
-    DirectoryEntryCard.tsx
-    DirectoryEntryRow.tsx
-    FilterBar.tsx
-    ViewToggle.tsx
-    BrandMark.tsx
-    Button.tsx
-    Card.tsx
-    Input.tsx
-    ChangeSetDock.tsx
-    ContextBackLink.tsx
-    EngineActivityStrip.tsx
-    ForkGlyph.tsx
-    IdentityCabinet.tsx
-    RadarSpatialPanel.tsx
-    RingedEvidenceMarker.tsx
-    ui/Button.tsx
-    ui/Input.tsx
-    ui/Select.tsx
-    ui/index.ts
-    landing/OperatingMap.tsx
-    people/EntityInspector.tsx
-    people/PeopleDirectory.tsx
-    people/PeopleProfileEditor.tsx
-    workbench/PageAgentPanel.tsx
-
-  pages/
-    Auth.tsx
-    Landing.tsx
-    workspace/
-      WorkspaceLayout.tsx
-      WorkspaceOverview.tsx
-      Annals.tsx
-      AptCoinLab.tsx
-      Commons.tsx
-      Institutions.tsx
-      Network.tsx
-      People.tsx
-      Records.tsx
-      Roll.tsx
-      commons/CommonsExchange.tsx
-      commons/CommonsSignalDetail.tsx
-      commons/CommonsSignalQueue.tsx
-      commons/GovernancePanel.tsx
-      commons/OpportunitiesPanel.tsx
-      commons/ReportForm.tsx
-      commons/useCommons.ts
-      institutions/InstitutionInspector.tsx
-
-  modules/
-    workbench/          — Home, Pilot pages, data, styles
-    kemetos1/           — Coordinator layer (App, coordinator, llm, styles)
-    benben-os/          — separate school-management prototype (NOT an APT-LABS module)
-
-  vite-env.d.ts
+  main.ts
+  app.ts
+  app/
+    app.routes.ts       — route table
+    app.config.ts       — browser and zoneless configuration
+    features/           — standalone screens
+libs/
+  ontology/             — domain types, cycles, commitments, evidence standing
+  domain/               — domain library
+  shared/state/         — shared reactive state and CoordinationService
+  shared/ui/            — shared UI primitives
+  shell/                — shared shell components
+public/                 — retained static assets; only configured assets are built
 ```
 
-The investor deck is authored in `investor-deck/open-slide/` and served as static output at `/investor-memo/`.
+Feature screens read the shared state spine from `@apt-labs/shared/state` so
+records remain consistent across the workspace.
 
-## Domain modules
+## Routes and contexts
 
-- **Commons** — field signals, proposals, stewards
-- **Network** — people, entities, relationships
-- **Workbench** — opportunities, applications, delivery, simulation
-- **Records** — canon / annals / roll lenses
-- **Intelligence** — APT Coin Lab research (static page)
+`src/app/app.routes.ts` is the route source of truth. The workspace shell exposes
+six primary contexts: Home, Commons, Network, Workbench, Records, and Intelligence.
+Value, Ontology, and Sovereignty are secondary destinations.
 
-## School Console
+- Public: `/landing`, `/sign-in`, `/sign-up`
+- Home: `/workspace`
+- Commons: `/workspace/commons`
+- Network: `/workspace/network`, `/workspace/network/people`,
+  `/workspace/network/institutions`, `/workspace/network/capabilities`
+- Workbench: `/workspace/workbench`, `/workspace/workbench/:pilot`
+- Value: `/workspace/value`
+- Records: `/workspace/records`, `/workspace/records/canon`,
+  `/workspace/records/annals`, `/workspace/records/roll`
+- Intelligence: `/workspace/intelligence`
+- Ontology: `/workspace/ontology`
+- Sovereignty: `/workspace/sovereignty`
 
-Nested operational boundary under Workbench (workplace where people take jobs), not a primary module. Tender drafts for three demo scenarios: Kibera Makerspace workshop bench, Kemetos AGI1 research station, Thiba Hydro fabrication rig.
+Network and Records subroutes select their view from the URL. Unrecognized paths
+render the explicit not-found page.
 
-## Auth
+## Auth and persistence
 
-Demo mode (localStorage) when Supabase env vars unset. Roles: `institution` | `founder` | `coordinator` | `admin`. No live authentication; browser-local only.
+The app supports browser-local demo auth and a Supabase fallback when its
+environment variables are configured. Platform roles include `public`,
+`authenticated`, `admin`, `moderator`, `trustAdmin`, and
+`credentialIssuerAdmin`; actor roles and types are defined in the auth domain.
 
-## Persistence
-
-Browser storage: localStorage keys `aptlabs:sbt-attestations:v1`, `aptlabs:agent-proposals:v1`, `aptlabs:workbench-local-flow:v1`, `demo_roll_entries`; IndexedDB for school-console-storage.
-
-## Test files (verified, 13 files / 78 tests)
-
-`src/lib/db/roll.test.ts`, `src/lib/institutions-register.test.ts`, `src/lib/intelligence.test.ts`, `src/lib/intelligence/registry.test.ts`, `src/lib/mock-radar-map-provider.test.ts`, `src/lib/people-discovery.test.ts`, `src/lib/people-profiles.test.ts`, `src/lib/radar-view.test.ts`, `src/lib/records-view.test.ts`, `src/lib/studio-navigation.test.ts`, `src/lib/workspace-activity.test.ts`, `src/lib/workspace-overview.test.ts`, `src/lib/workspace-search.test.ts`
+No universal reputation score or blockchain prerequisite is required for
+participation (charter A8).

@@ -8,8 +8,10 @@
  *
  * Responsive: 1440 / 1024 / 768 / 390.
  */
-import { Component, inject, computed } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, DestroyRef, inject, computed, signal } from '@angular/core';
+import { NavigationEnd, Router, RouterOutlet, RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter } from 'rxjs';
 import { TopbarComponent } from './topbar.component';
 import { SidebarComponent } from './sidebar.component';
 import { InspectorComponent } from './inspector.component';
@@ -19,22 +21,19 @@ import { SelectionService } from '@apt-labs/shared/state';
 import { CommandPaletteComponent } from './command-palette.component';
 
 const MODULES = [
-  { path: '', label: 'Overview', icon: 'M4 5h16M4 12h16M4 19h10' },
+  { path: '', label: 'Home', icon: 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z' },
   { path: 'commons', label: 'Commons', icon: 'M7 4h7l4 4v12H7zM14 4v4h4M10 12h5M10 16h4' },
   { path: 'network', label: 'Network', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 008 0z' },
   { path: 'workbench', label: 'Workbench', icon: 'M3 10h18M3 10v10a4 4 0 004 4h10a4 4 0 004-4V10M3 15l6-6m6 6l6-6' },
-  { path: 'value', label: 'Value', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2-3-.895-3-3 1.343-2 3-2' },
   { path: 'records', label: 'Records', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
   { path: 'intelligence', label: 'Intelligence', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
-  { path: 'ontology', label: 'Ontology', icon: 'M19 4H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 0H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2z' },
-  { path: 'sovereignty', label: 'Sovereignty', icon: 'M7 21a1 1 0 01-1 1c0 .55-.234 1-.523 1H4a1 1 0 01-1-1V4c0-.55.234-1 .523-1h3a1 1 0 011 1v16zm14-6a1 1 0 01-1 1h-3a1 1 0 011 1v16zm0 0H4a1 1 0 01-1-1V4c0-.55.234-1 .523-1h3a1 1 0 011 1v16zm11-5.5c0 .832-.448 1.5-1 1.5s-1-.668-1-1.5V11c0-.832.448-1.5 1-1.5s1 .668 1 1.5v5.5zM12 14c0 1.105-.448 2-1 2s-1-.895-1-2c0-.553-.09-1.086-.257-1.573A1 1 0 0110.747 11H13c.553 0 1 .447 1 1z' },
 ];
 
 @Component({
   selector: 'app-shell-layout',
   standalone: true,
   imports: [
-    RouterOutlet, RouterLink, RouterLinkActive,
+    RouterOutlet, RouterLink,
     TopbarComponent, SidebarComponent, InspectorComponent,
     DockComponent, StatusbarComponent, CommandPaletteComponent,
   ],
@@ -48,25 +47,24 @@ const MODULES = [
 
       <div class="shell-body">
         <nav class="module-rail" aria-label="Modules">
-          <div class="rail-brand">APT-LABS</div>
           @for (item of modules; track item.path) {
-            <a [routerLink]="['/workspace', item.path]" [routerLinkActive]="['active']" class="nav-item" [class.active]="isActive(item.path)" [attr.aria-label]="item.label">
+            <a [routerLink]="['/workspace', item.path]" class="nav-item" [class.active]="isActive(item.path)" [attr.aria-current]="isActive(item.path) ? 'page' : null" [attr.aria-label]="item.label">
               <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="item.icon" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <span class="nav-label">{{ item.label }}</span>
             </a>
           }
         </nav>
 
-        <app-sidebar [title]="sidebarTitle" [collapsed]="sidebarCollapsed" [items]="sidebarItems"></app-sidebar>
+        <app-sidebar [title]="sidebarTitle()" [items]="sidebarItems()"></app-sidebar>
 
         <main class="shell-main" id="shell-main">
           <router-outlet />
         </main>
 
         <app-inspector [open]="inspectorOpen()" [entity]="inspectorEntity()"></app-inspector>
-
-        <app-dock [module]="dockModule" [items]="dockItems"></app-dock>
       </div>
+
+      <app-dock class="shell-dock" [module]="dockModule" [items]="dockItems"></app-dock>
 
       <app-statusbar [ledger]="ledger"></app-statusbar>
     </div>
@@ -78,7 +76,13 @@ const MODULES = [
       display: flex;
       flex-direction: column;
       height: 100dvh;
+      min-width: 0;
+      overflow: hidden;
       background: var(--apt-surface-default);
+      --apt-text-muted: #5f5849;
+      --apt-text-dim: #6b655a;
+      --apt-text-info: #0b6376;
+      --apt-state-caution: #755222;
     }
     .skip-link {
       position: absolute;
@@ -99,14 +103,25 @@ const MODULES = [
       outline-offset: 2px;
     }
     .shell-body {
-      flex: 1;
+      flex: 1 1 0;
       display: flex;
       overflow: hidden;
+      min-height: 0;
+    }
+    .shell-dock {
+      display: block;
+      width: 100%;
+      height: var(--apt-shell-dock);
+      min-width: 0;
+      box-sizing: border-box;
+      flex: 0 0 var(--apt-shell-dock);
     }
 
     /* Module rail — slim icon-only, expands on hover */
     .module-rail {
       width: var(--apt-shell-rail);
+      box-sizing: border-box;
+      overflow: hidden;
       border-right: 1px solid var(--apt-border);
       padding: var(--apt-space-8) var(--apt-space-2);
       display: flex;
@@ -117,21 +132,6 @@ const MODULES = [
       transition: width var(--apt-motion-normal);
     }
     .module-rail:hover { width: var(--apt-shell-rail-expanded); }
-    .rail-brand {
-      font-family: var(--apt-font-serif);
-      font-size: var(--apt-size-title);
-      font-weight: var(--apt-weight-semibold);
-      color: var(--apt-text-strong);
-      letter-spacing: -0.02em;
-      margin-bottom: var(--apt-space-8);
-      padding-bottom: var(--apt-space-4);
-      border-bottom: 1px solid var(--apt-border-faint);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 100%;
-    }
-    .module-rail:hover .rail-brand { max-width: none; }
     .nav-item {
       display: flex;
       align-items: center;
@@ -165,9 +165,10 @@ const MODULES = [
     .shell-main {
       flex: 1;
       overflow-y: auto;
-      padding: var(--apt-space-10);
+      padding: var(--apt-space-8) var(--apt-space-10);
       background: var(--apt-surface-default);
       min-width: 0;
+      min-height: 0;
     }
 
     /* Responsive */
@@ -176,10 +177,31 @@ const MODULES = [
       .shell-main { padding: var(--apt-space-8); }
     }
     @media (max-width: 760px) {
-      .module-rail { display: none; }
+      .shell-body { flex-direction: column; }
+      .module-rail {
+        width: 100%;
+        box-sizing: border-box;
+        flex: 0 0 auto;
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: var(--apt-space-2) var(--apt-space-3);
+        border-right: 0;
+        border-bottom: 1px solid var(--apt-border);
+      }
+      .module-rail:hover { width: 100%; }
+      .nav-item {
+        flex: 0 0 auto;
+        gap: var(--apt-space-1);
+        min-height: 44px;
+        padding: var(--apt-space-2) var(--apt-space-1);
+      }
+      .nav-label { opacity: 1; }
       .shell-main { padding: var(--apt-space-6); }
+      .shell-dock { display: none; }
     }
     @media (max-width: 390px) {
+      .module-rail { padding-inline: var(--apt-space-2); }
       .shell-main { padding: var(--apt-space-4); }
     }
     `,
@@ -187,23 +209,38 @@ const MODULES = [
 })
 export class ShellLayoutComponent {
   readonly selection = inject(SelectionService);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly currentUrl = signal(this.router.url);
 
   readonly modules = MODULES;
   readonly context = 'Workspace';
   readonly activeRecord = '';
-  readonly sidebarTitle = 'Context';
-  readonly sidebarCollapsed = false;
-  readonly sidebarItems = [
-    { id: 'overview', label: 'Overview', path: ['/workspace', ''], active: true },
-    { id: 'commons', label: 'Commons', path: ['/workspace', 'commons'] },
-    { id: 'network', label: 'Network', path: ['/workspace', 'network'] },
-    { id: 'workbench', label: 'Workbench', path: ['/workspace', 'workbench'] },
-    { id: 'records', label: 'Records', path: ['/workspace', 'records'] },
-    { id: 'value', label: 'Value', path: ['/workspace', 'value'] },
-    { id: 'intelligence', label: 'Intelligence', path: ['/workspace', 'intelligence'] },
-    { id: 'ontology', label: 'Ontology', path: ['/workspace', 'ontology'] },
-    { id: 'sovereignty', label: 'Sovereignty', path: ['/workspace', 'sovereignty'] },
-  ];
+  readonly sidebarTitle = computed(() => {
+    if (this.currentUrl().startsWith('/workspace/network')) return 'Network';
+    if (this.currentUrl().startsWith('/workspace/records')) return 'Records';
+    if (this.currentUrl() === '/workspace') return 'References';
+    return 'Context';
+  });
+  readonly sidebarItems = computed(() => {
+    if (this.currentUrl().startsWith('/workspace/network')) {
+      return [
+        { id: 'people', label: 'People', path: ['/workspace', 'network', 'people'] },
+        { id: 'institutions', label: 'Institutions', path: ['/workspace', 'network', 'institutions'] },
+        { id: 'capabilities', label: 'Capabilities', path: ['/workspace', 'network', 'capabilities'] },
+      ];
+    }
+
+    if (this.currentUrl() === '/workspace') {
+      return [
+        { id: 'value', label: 'Value', path: ['/workspace', 'value'] },
+        { id: 'ontology', label: 'Ontology', path: ['/workspace', 'ontology'] },
+        { id: 'sovereignty', label: 'Sovereignty', path: ['/workspace', 'sovereignty'] },
+      ];
+    }
+
+    return [];
+  });
   readonly inspectorOpen = computed(() => this.selection.hasSelection());
   readonly inspectorEntity = computed<import('./inspector.component').InspectorEntity | null>(() => {
     const s = this.selection.selected();
@@ -226,8 +263,19 @@ export class ShellLayoutComponent {
     open: 2, committed: 1, delivered: 3, evidence: 9,
   };
 
+  constructor() {
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((event) => this.currentUrl.set(event.urlAfterRedirects));
+  }
+
   isActive(path: string): boolean {
-    return path === '';
+    const url = this.currentUrl().split('?')[0].replace(/\/+$/, '') || '/';
+    const target = path ? `/workspace/${path}` : '/workspace';
+    return path ? url === target || url.startsWith(`${target}/`) : url === target;
   }
 
   onPaletteExecute(exec: { action: string; payload?: any }): void {

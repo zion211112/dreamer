@@ -1,11 +1,7 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "apt-labs/dist/apt-labs/browser",
+  "outputDirectory": "dist/apt-labs/browser",
   "rewrites": [
-    {
-      "source": "/investor-memo/:path*",
-      "destination": "/investor-memo/index.html"
-    },
     {
       "source": "/(.*)",
       "destination": "/index.html"

@@ -2,8 +2,8 @@
 
 Single source of truth for tools, skills, MCPs, and setup. Read this before starting any coding session.
 
-> **Verified 2026-11-21.** Frontend is **Vue 3** (ADR B9 completed the Preact migration; Preact and
-> `wouter` are gone). Counts below are measured, not remembered.
+> **Verified 2026-11-25.** The product frontend is the root-level Angular 22.3 app (standalone,
+> zoneless components). The retired Vite/Vue setup and investor deck are removed.
 
 ## Canonical locations
 
@@ -11,8 +11,8 @@ Single source of truth for tools, skills, MCPs, and setup. Read this before star
 |------|-------|-------|
 | Agent instructions | `AGENTS.md` | Guardrails, commands, architecture |
 | Design constitution | `docs/design/charter.md` | Principles + decisions B1–B9 |
-| Design system | `docs/design/superior-fusion-design-system.md` | 11-source fusion; tokens in `src/assets/css/apt-tokens.css` |
-| Skills (all agents) | `.agents/skills/` | 10 skills (canonical) |
+| Design system | `docs/design/superior-fusion-design-system.md` | 11-source fusion; tokens in `src/styles.css` |
+| Skills (all agents) | `.agents/skills/` | 11 skills (canonical) |
 | MCP servers (shared) | `.mcp.json` | better-design, codebase-memory, sakaniui, systembridge, designlang |
 | MCP servers (Kilo) | `.kilo/kilo.jsonc` | playwright, context7 |
 | Codebase index | `.codebase-memory/` | codebase-memory-mcp (index_repository, search_graph, …) |
@@ -29,21 +29,20 @@ Single source of truth for tools, skills, MCPs, and setup. Read this before star
 npm install
 
 # 2. Run dev server
-npm run dev          # Vite on :3000, auto-opens browser
+npm start            # Angular CLI dev server
 
-# 3. Build gate — app only (fast; does NOT rebuild the React deck)
-npm run build:app    # tsc + vite build → dist/
+# 3. Production build
+npm run build
 
 # 4. Test gate
-npm run test:unit -- --run   # 34 files, 318 tests
+npm test              # Angular unit tests
+npm run test:e2e:chromium  # Playwright route smoke tests
 
 # 5. Type check
 npx tsc --noEmit
 ```
 
-`npm run build` = `build:app` **+ investor-deck build + copy**. The deck is a separate React
-(Open Slide) app under `investor-deck/open-slide`. Use `build:app` while iterating on the Vue app;
-use `build` only when the deck or a deploy is involved.
+Run `npm run build` from the repository root; the Angular CLI app is the sole frontend build.
 
 ## Engine (Python) quick setup
 
@@ -58,6 +57,7 @@ engine/.venv/Scripts/python.exe engine/bench_models.py   # needs FCC at 127.0.0.
 
 | Skill | Use when |
 |-------|----------|
+| `premium-frontend-ui` | Premium frontend refinements, motion, and visual polish |
 | `impeccable` | UI/UX design, front-end polish, audit, critique |
 | `diagram-design` | Architecture, flowchart, state machine, ER diagram |
 | `ui-workflow` | Web UI build/design/test in this repo |
@@ -66,6 +66,10 @@ engine/.venv/Scripts/python.exe engine/bench_models.py   # needs FCC at 127.0.0.
 | `webapp-testing` | Playwright-based web app testing |
 | `ponytail` | Lazy senior dev mode — smallest change that ships |
 | `caveman` / `megacave` / `ultracave` | Terse caveman voice (3 compression levels) |
+
+Apply `premium-frontend-ui` selectively: preserve this app's design system, accessibility, and
+performance constraints; add elaborate motion, preloaders, or libraries only when the request calls
+for them.
 
 ## DSH design engine — offline, local, deeper than any hosted MCP
 
@@ -79,13 +83,13 @@ rules, 25 chart types, 192 product recipes** — plus `dsh-design` (design disci
 ```bash
 node scripts/apt-dsh-tools.mjs list
 node scripts/apt-dsh-tools.mjs recommend "operational ontology dashboard dark institutional" \
-  --project "APT-LABS" --stack vue --variance 7 --motion 4 --density 8
+  --project "APT-LABS" --stack angular --variance 7 --motion 4 --density 8
 node scripts/apt-dsh-tools.mjs review "workspace rail navigation, dense table, empty states" --max 10
 node scripts/apt-dsh-tools.mjs search "data-dense dashboard" --domain style --max 5
 ```
 
 Use it for style selection, palette and type pairings, UX rule lookup, and chart-type choice.
-**This repo already has its own design system** (`apt-tokens.css` + the fusion doc) — the engine
+**This repo already has its own design system** (`src/styles.css` + the fusion doc) — the engine
 supplies the *vocabulary and rules*, the repo's tokens supply the *identity*.
 
 ## MCP servers
@@ -103,12 +107,12 @@ If one times out at startup, check the global install rather than the config.
 
 ## Build & test
 
-`npm run build:app` and `npm run test:unit -- --run` should be green before shipping. Run them as
-needed — not as a gate that blocks every edit.
+`npm run build` and `npm test` should be green before shipping. Run them as needed — not as a gate
+that blocks every edit.
 
 ## Known conflicts
 
 - **Design tokens:** governed by `docs/design/charter.md`; implementation in
-  `src/assets/css/apt-tokens.css`. Any token change needs a charter update.
-- **Investor deck is React; the app is Vue.** They share no components. `build:investor-deck`
-  installs its own `node_modules` — do not add deck packages to the root `package.json`.
+  `src/styles.css`. Any token change needs a charter update.
+- **Frontend:** the Angular CLI app at the repository root is the sole product UI. Historical
+  Vue and investor-deck references are archive material, not active code.
