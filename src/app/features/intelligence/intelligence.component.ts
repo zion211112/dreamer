@@ -1,13 +1,11 @@
 /**
  * @apt-labs/features/intelligence — IntelligenceComponent
  *
- * Grounded intelligence: matching, patterns, learning, recommendations —
- * all derived from the shared system of record. No external data, no
- * autonomous action.
+ * Intelligence surfaces stay empty unless backed by connected records and
+ * grounded analysis. No external data or autonomous action.
  * Structural Emergence.
  */
 import { Component, computed, inject } from '@angular/core';
-import { OPERATIONAL_PILOTS } from '@apt-labs/domain';
 import { CoordinationService } from '@apt-labs/shared/state';
 
 const BOUNDARY_ITEMS = [
@@ -25,8 +23,7 @@ const BOUNDARY_ITEMS = [
       <div class="intel-pagehead">
         <h1 class="intel-h1">What the record says</h1>
         <p class="intel-sub">
-          Derived patterns, learning outputs, and recommendations — every finding points back to the
-          evidence on the roll. No external data. No autonomous action.
+          Intelligence is not connected to shared records in this local demo. No findings, forecasts, or recommendations are available.
         </p>
       </div>
 
@@ -46,38 +43,43 @@ const BOUNDARY_ITEMS = [
             </div>
           </div>
         }
+        @if (pilots().length === 0) {
+          <p class="intel-empty">No connected undertaking records to analyze.</p>
+        }
       </div>
 
       <div class="intel-panels">
         <section class="intel-panel">
           <h2 class="intel-panel-title">Matching</h2>
-          <p class="intel-panel-note">Capability claims and open needs, off the live record.</p>
+          <p class="intel-panel-note">Matching is unavailable until needs and capability records are connected.</p>
           <ul class="intel-list">
             @for (line of matchingLines(); track line) {
               <li class="intel-list-item">{{ line }}</li>
             }
+            @if (matchingLines().length === 0) { <li class="intel-empty">No connected needs or capability records.</li> }
           </ul>
         </section>
 
         <section class="intel-panel">
           <h2 class="intel-panel-title">Patterns</h2>
-          <p class="intel-panel-note">Findings derived from the roll. Each finding links to the evidence that supports it.</p>
+          <p class="intel-panel-note">No connected analytic record or evidence-backed finding is available.</p>
           <div class="intel-list">
             @for (pat of patterns(); track pat.id) {
               <div class="intel-pattern" [class.intel-pattern--positive]="pat.severity === 'positive'">
-                <span class="intel-pattern-sev [pat.severity === 'high' ? 'intel-pattern-sev--high' : '']">{{ pat.severity }}</span>
+                <span class="intel-pattern-sev" [class.intel-pattern-sev--high]="pat.severity === 'high'">{{ pat.severity }}</span>
                 <div class="intel-pattern-main">
                   <span class="intel-pattern-text">{{ pat.finding }}</span>
                   <span class="intel-pattern-trend">Trend: {{ pat.trend }}</span>
                 </div>
               </div>
             }
+            @if (patterns().length === 0) { <p class="intel-empty">No evidence-backed patterns to report.</p> }
           </div>
         </section>
 
         <section class="intel-panel">
           <h2 class="intel-panel-title">Learning</h2>
-          <p class="intel-panel-note">Distilled knowledge from delivered undertakings. Standing is a named state, never a score.</p>
+          <p class="intel-panel-note">Knowledge records are separate from reported outcomes. Standing is a named state, never a score.</p>
           <div class="intel-list">
             @for (l of learning(); track l.id) {
               <div class="intel-learning">
@@ -89,7 +91,7 @@ const BOUNDARY_ITEMS = [
               </div>
             }
             @if (learning().length === 0) {
-              <p class="intel-empty">Nothing distilled yet — no undertaking has settled.</p>
+              <p class="intel-empty">No independently created knowledge records are available.</p>
             }
           </div>
         </section>
@@ -98,7 +100,7 @@ const BOUNDARY_ITEMS = [
       <div class="intel-recs">
         <h2 class="intel-recs-title">Recommendations</h2>
         <p class="intel-recs-lede">
-          Each recommendation requires human review. The engine proposes; it does not act.
+          AI recommendations are not decisions. No recommendations are available in this local demo.
         </p>
         <div class="intel-recs-grid">
           @for (r of recommendations(); track r.id) {
@@ -118,7 +120,7 @@ const BOUNDARY_ITEMS = [
             </article>
           }
           @if (recommendations().length === 0) {
-            <p class="intel-empty">No open recommendations — the record is settled.</p>
+            <p class="intel-empty">No recommendations are available; the record is not connected to an analysis engine.</p>
           }
         </div>
       </div>
@@ -222,89 +224,28 @@ export class IntelligenceComponent {
 
   readonly BOUNDARIES = BOUNDARY_ITEMS;
 
-  readonly pilots = computed(() =>
-    OPERATIONAL_PILOTS.map((p) => ({
-      id: p.id,
-      label: p.label,
-      stage: Math.min(7, p.evidence.length + 3),
-      capitalCommitted: p.acceptance.costDisclosed?.amount ?? null,
-      currency: p.acceptance.costDisclosed?.currency ?? 'KES',
-      workItems: p.deliverables.length,
-    })),
-  );
+  readonly pilots = computed<{
+    id: string;
+    label: string;
+    stage: number;
+    workItems: number;
+    capitalCommitted: number | null;
+    currency: string;
+  }[]>(() => []);
 
   readonly matchingLines = computed(() => {
     const needs = this.coordination.needs();
+    if (needs.length === 0) return [];
     const open = needs.filter((n) => n.status === 'open').length;
     const providers = new Set(needs.filter((n) => n.status !== 'open').map((n) => n.providerActorId).filter(Boolean)).size;
-    const undisc = OPERATIONAL_PILOTS.filter((p) => p.acceptance.costDisclosed === null).length;
-    const caps = new Set(OPERATIONAL_PILOTS.flatMap((p) => p.participants.flatMap((x) => x.capabilityClaims))).size;
-    const lines = [`${open} open need${open === 1 ? '' : 's'} · ${providers} provider${providers === 1 ? '' : 's'} on the record`];
-    lines.push(undisc ? `${undisc} undertaking held undisclosed — value not yet in the open` : 'All undertaking value disclosed to the record');
-    lines.push(`${caps} distinct capability claims in play`);
-    return lines;
+    return [`${open} open need${open === 1 ? '' : 's'} · ${providers} provider${providers === 1 ? '' : 's'} on the record`];
   });
 
-  readonly patterns = computed(() => {
-    const ev = OPERATIONAL_PILOTS.flatMap((p) => p.evidence);
-    const pub = ev.filter((e) => e.layer === 'public').length;
-    const restr = ev.filter((e) => e.layer === 'restricted').length;
-    const rows: { id: string; finding: string; severity: string; trend: string }[] = [
-      { id: 'pat-ev', finding: `${pub} of ${ev.length} evidence items are public; ${restr} sit under rights terms`, severity: 'positive', trend: 'stable' },
-    ];
-    const un = OPERATIONAL_PILOTS.filter((p) => p.acceptance.costDisclosed === null);
-    if (un.length) rows.push({ id: 'pat-undisc', finding: `${un.length} undertaking holds value undisclosed (${un.map((p) => p.label).join(', ')})`, severity: 'medium', trend: 'stable' });
-    const open = this.coordination.needs().filter((n) => n.status === 'open');
-    if (open.length) rows.push({ id: 'pat-open', finding: `${open.length} open need${open.length > 1 ? 's' : ''} still have no provider`, severity: 'high', trend: 'open' });
-    const institutions = new Set(OPERATIONAL_PILOTS.map((p) => p.institution.id)).size;
-    const caps = new Set(OPERATIONAL_PILOTS.flatMap((p) => p.participants.flatMap((x) => x.capabilityClaims))).size;
-    rows.push({ id: 'pat-caps', finding: `${caps} distinct capability claims across ${institutions} institutions`, severity: 'positive', trend: 'growing' });
-    return rows;
-  });
+  readonly patterns = computed<{ id: string; finding: string; severity: string; trend: string }[]>(() => []);
 
-  readonly learning = computed(() =>
-    this.coordination.needs().filter((n) => n.status === 'fulfilled').map((n) => ({
-      id: `lr-${n.needId}`,
-      title: n.outcome ?? n.label,
-      source: this.institutionName(n.providerActorId),
-      standing: 'verified',
-    })),
-  );
+  readonly learning = computed<{ id: string; title: string; source: string; standing: string }[]>(() => []);
 
-  readonly recommendations = computed(() => {
-    const recs: { id: string; pilot: string; text: string; basis: string; action: string }[] = [];
-    const un = OPERATIONAL_PILOTS.filter((p) => p.acceptance.costDisclosed === null);
-    for (const p of un) {
-      recs.push({
-        id: `rec-${p.id}`,
-        pilot: p.id,
-        text: `Disclose or formally cloak the cost of ${p.label}`,
-        basis: 'Value is held off the record; transparent rule requires a named disclosure or an explicit cloak.',
-        action: 'Set disclosure',
-      });
-    }
-    const open = this.coordination.needs().filter((n) => n.status === 'open');
-    for (const n of open) {
-      recs.push({
-        id: `rec-${n.needId}`,
-        pilot: n.needId,
-        text: `Assign a provider to “${n.label}”`,
-        basis: n.requires.length ? `Requires ${n.requires.join(', ')} — no capability has answered it.` : 'No capability has answered it.',
-        action: 'Match',
-      });
-    }
-    if (recs.length === 0) {
-      const first = OPERATIONAL_PILOTS[0];
-      recs.push({
-        id: 'rec-align',
-        pilot: first.id,
-        text: 'Align evidence standing across institutions',
-        basis: 'Evidence items currently sit at mixed public and restricted standings.',
-        action: 'Align standing',
-      });
-    }
-    return recs;
-  });
+  readonly recommendations = computed(() => [] as { id: string; pilot: string; text: string; basis: string; action: string }[]);
 
   readonly institutionName = (id: string | null): string => {
     if (!id) return '—';
@@ -312,5 +253,5 @@ export class IntelligenceComponent {
   };
 
   readonly pilotLabel = (id: string): string =>
-    OPERATIONAL_PILOTS.find((p) => p.id === id)?.label ?? this.coordination.needs().find((n) => n.needId === id)?.label ?? id;
+    this.coordination.needs().find((n) => n.needId === id)?.label ?? id;
 }

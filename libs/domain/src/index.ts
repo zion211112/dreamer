@@ -8,6 +8,7 @@
 
 export * from './actors';
 export * from './identity';
+export * from './identity-contracts';
 export * from './economic-records';
 export * from './contribution-value';
 export * from './demo-seed';

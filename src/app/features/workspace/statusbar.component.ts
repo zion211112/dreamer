@@ -2,8 +2,8 @@
  * @apt-labs/features/workspace — StatusbarComponent
  *
  * Shell region: separate persistent boundary element. Single boundary line
- * + ledger head state: module label + environment label (Local demo /
- * Configured) + key tallies from the shared spine.
+ * + local activity: module label, local-demo environment, and current
+ * in-memory coordination tallies.
  * Structural Emergence.
  */
 import { Component, input } from '@angular/core';
@@ -13,7 +13,7 @@ export interface LedgerHead {
   environment: 'local-demo' | 'configured';
   open: number;
   committed: number;
-  delivered: number;
+  reported: number;
   evidence: number;
 }
 
@@ -39,7 +39,7 @@ const ENV_COLORS: Record<string, string> = {
         <span class="statusbar-tally">
           <span class="tally-item"><span class="tally-num">{{ ledger().open }}</span><span class="tally-label">open</span></span>
           <span class="tally-item"><span class="tally-num">{{ ledger().committed }}</span><span class="tally-label">committed</span></span>
-          <span class="tally-item"><span class="tally-num">{{ ledger().delivered }}</span><span class="tally-label">delivered</span></span>
+          <span class="tally-item"><span class="tally-num">{{ ledger().reported }}</span><span class="tally-label">reported</span></span>
           <span class="tally-item"><span class="tally-num">{{ ledger().evidence }}</span><span class="tally-label">evidence</span></span>
         </span>
       </div>
@@ -87,7 +87,7 @@ export class StatusbarComponent {
     environment: 'local-demo',
     open: 0,
     committed: 0,
-    delivered: 0,
+    reported: 0,
     evidence: 0,
   });
 }

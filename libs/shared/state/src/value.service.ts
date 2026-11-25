@@ -1,13 +1,9 @@
 /**
  * @apt-labs/shared/state — ValueService
  *
- * The Value surface is not its own data island: it projects the shared
- * coordination spine (the same `JourneyStore` the Workbench and Records read)
- * into value rows, joining each need to the institutional context of its
- * operational pilot (disclosed cost, location, acceptance). Because it reads
- * the same store the Workbench mutates, a fulfilment there appears here: a
- * new delivered need lands as a value row, and its disclosed cost (when the
- * pilot carries one) folds into the circulation totals.
+ * The Value surface reads explicit value records only. Work status is not
+ * financial value or settlement, so this read model stays empty until
+ * authoritative value records exist.
  *
  * The deeper economic layer — per-undertaking `EconomicUndertakingRecord`
  * (rates, contributions, funding, amounts owed) and `computeReconciliation`
@@ -46,24 +42,10 @@ export type ValueFilter = 'all' | 'disclosed' | 'settled' | 'open';
 export class ValueService {
   private readonly coordination = inject(CoordinationService);
 
-  /** Live value rows — one per need on the shared spine, joined to its pilot. */
+  /** No value rows are inferred from work records. */
   readonly rows = computed<ValueRow[]>(() => {
     this.coordination.version();
-    return this.coordination.needs().map((n) => {
-      const pilot = this.coordination.pilot(n.needId);
-      const cost = pilot?.acceptance.costDisclosed ?? null;
-      return {
-        key: n.needId,
-        label: n.label,
-        institution: pilot?.institution.name ?? 'Ad-hoc need',
-        location: pilot?.location ?? '—',
-        amount: cost?.amount ?? null,
-        currency: cost?.currency ?? 'KES',
-        settled: n.status === 'fulfilled' && cost != null,
-        acceptedAt: pilot?.acceptance.acceptedAt ?? null,
-        status: n.status,
-      } satisfies ValueRow;
-    });
+    return [];
   });
 
   /** Circulation tallies derived from the live rows. */
@@ -73,7 +55,7 @@ export class ValueService {
     const total = disclosed.reduce((sum, r) => sum + (r.amount ?? 0), 0);
     const settledCount = rows.filter((r) => r.settled).length;
     return {
-      outcomes: rows.filter((r) => r.status === 'fulfilled').length,
+      outcomes: 0,
       totalKes: total,
       funding: rows.length,
       settled: settledCount,

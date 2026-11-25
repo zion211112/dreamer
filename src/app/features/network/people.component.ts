@@ -14,7 +14,7 @@ import { NetworkService, type DirectoryRow } from '@apt-labs/shared/state';
     <div class="plp" data-module="people">
       <div class="plp-pagehead">
         <h1 class="plp-h1">People and crews</h1>
-        <p class="plp-sub">Individuals and teams who claim capability. Search by name, description, or capability.</p>
+        <p class="plp-sub">People are participants, not assets or scores. No connected participant records are available in this local demo.</p>
         <div class="plp-actions">
           <input
             type="search"
@@ -54,7 +54,7 @@ import { NetworkService, type DirectoryRow } from '@apt-labs/shared/state';
               </tr>
             }
             @if (visible().length === 0) {
-              <tr><td colspan="5" class="plp-empty">No people or crews match “{{ query() }}”.</td></tr>
+              <tr><td colspan="5" class="plp-empty">No connected people or crews are available.</td></tr>
             }
           </tbody>
         </table>

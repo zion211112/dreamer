@@ -2,17 +2,20 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter, Router, UrlSegment } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthComponent } from './auth.component';
+import { AuthService } from '../../auth/auth.service';
 
-const routeStub = { snapshot: { url: [] as UrlSegment[] } };
+const routeStub = { snapshot: { url: [] as UrlSegment[], queryParamMap: { get: (_key: string) => null as string | null } } };
 
 describe('AuthComponent', () => {
   beforeEach(async () => {
     routeStub.snapshot.url = [new UrlSegment('sign-in', {})];
+    routeStub.snapshot.queryParamMap = { get: () => null };
     await TestBed.configureTestingModule({
       imports: [AuthComponent],
       providers: [
         provideRouter([]),
         { provide: ActivatedRoute, useValue: routeStub },
+        { provide: AuthService, useValue: { getSession: vi.fn(), signIn: vi.fn(), signUp: vi.fn() } },
       ],
     }).compileComponents();
   });
@@ -54,9 +57,15 @@ describe('AuthComponent', () => {
       const fixture = createFixture(path);
       const disclosure = (fixture.nativeElement as HTMLElement).querySelector('.auth-footer-note');
 
-      expect(disclosure?.textContent).toContain('Demo mode');
+      expect(disclosure?.textContent).toContain('no demo sign-in');
       fixture.destroy();
     }
+  });
+
+  it('reportsAuthUnavailableAfterFailClosedGuardRedirect', () => {
+    routeStub.snapshot.queryParamMap = { get: (key: string) => key === 'unavailable' ? '1' : null };
+    const fixture = createFixture();
+    expect(fixture.componentInstance.error()).toContain('service is unavailable');
   });
 
   it('showsValidationErrorsForInvalidSignup', () => {
@@ -79,17 +88,19 @@ describe('AuthComponent', () => {
     expect((fixture.nativeElement as HTMLElement).querySelector('#auth-email')?.getAttribute('aria-invalid')).toBe('true');
   });
 
-  it('validDemoEntryNavigatesToWorkspace', async () => {
+  it('showsServiceUnavailableWithoutNavigatingIntoTheWorkspace', async () => {
     const fixture = createFixture();
     const router = TestBed.inject(Router);
     const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    const auth = TestBed.inject(AuthService);
+    vi.mocked(auth.signIn).mockRejectedValue(new Error('offline'));
     const component = fixture.componentInstance;
     component.email.set('person@example.org');
-    component.password.set('demo-password');
+    component.password.set('valid-password');
 
-    component.onSubmit(new Event('submit'));
-    await new Promise((resolve) => setTimeout(resolve, 220));
+    await component.onSubmit(new Event('submit'));
 
-    expect(navigate).toHaveBeenCalledWith(['/workspace']);
+    expect(component.error()).toContain('service is unavailable');
+    expect(navigate).not.toHaveBeenCalled();
   });
 });

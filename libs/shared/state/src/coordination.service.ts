@@ -2,8 +2,8 @@
  * @apt-labs/shared/state — CoordinationService
  *
  * The reactivity owner for the coordination chain
- * (INTENTION → COMMITMENT → OUTPUT_OUTCOME). It owns one `JourneyStore`, seeds
- * it from the operational pilot corpus, and exposes live needs and their
+ * (INTENTION → COMMITMENT → OUTPUT_OUTCOME). It owns one empty local-demo
+ * `JourneyStore` and exposes live needs and their
  * composed journeys to the UI. All coordination *logic* lives in the
  * framework-free `@apt-labs/domain` layer; this service only wires it to
  * Angular signals and the store.
@@ -16,11 +16,9 @@ import {
   acceptCommitment,
   fulfilCommitment,
   getJourney,
-  OPERATIONAL_PILOTS,
   type JourneyStore,
   type Journey,
   type JourneyRecord,
-  type OperationalPilot,
 } from '@apt-labs/domain';
 
 export type NeedStatus = 'open' | 'committed' | 'fulfilled';
@@ -45,9 +43,6 @@ export class CoordinationService {
   /** The acting principal (a stable demo account in demo mode). */
   readonly accountId = signal<string>('demo');
 
-  /** Institutional context joined beside the pure coordination records. */
-  private readonly pilotByNeedId = new Map<string, OperationalPilot>();
-
   /** Institution id → display name, shared with Records / Value projections. */
   readonly institutions = new Map<string, string>();
 
@@ -55,48 +50,9 @@ export class CoordinationService {
   readonly needs = signal<NeedRow[]>([]);
   /** Bumped after every mutation so computed detail views re-read the store. */
   readonly version = signal(0);
-  readonly seeded = signal(false);
 
   constructor() {
-    if (this.store.records.length === 0) this.seed();
-  }
-
-  // ------------------------------------------------------------------
-  // Seeding
-  // ------------------------------------------------------------------
-
-  /**
-   * Seed the beachhead: each operational pilot becomes a Need; an accepted
-   * pilot runs the full chain (accept → fulfil with its evidence) so it renders
-   * as delivered with a trustworthy audit trail. Unaccepted pilots stay open.
-   */
-  private seed(): void {
-    for (const pilot of OPERATIONAL_PILOTS) {
-      const need = postNeed(this.store, {
-        need: pilot.label,
-        actorId: pilot.institution.id,
-        postedBy: pilot.recordedBy,
-        requires: [...new Set(pilot.participants.flatMap((p) => p.capabilityClaims))],
-      });
-      this.pilotByNeedId.set(need.id, pilot);
-      this.institutions.set(pilot.institution.id, pilot.institution.name);
-
-      if (pilot.acceptance.acceptedAt !== null) {
-        const commitment = acceptCommitment(this.store, {
-          needId: need.id,
-          providerActorId: pilot.institution.coordinatorId,
-          acceptedBy: pilot.acceptance.acceptedBy,
-        });
-        fulfilCommitment(this.store, {
-          commitmentId: commitment.id,
-          outcome: pilot.deliverables.join(' · '),
-          evidenceIds: pilot.evidence.map((e) => e.id),
-          fulfilledBy: pilot.recordedBy,
-        });
-      }
-    }
     this.refresh();
-    this.seeded.set(true);
   }
 
   // ------------------------------------------------------------------
@@ -167,11 +123,6 @@ export class CoordinationService {
   journey(needId: string): Journey {
     this.version(); // establish reactivity for computed consumers
     return getJourney(this.store, needId);
-  }
-
-  /** Institutional context beside a need (undefined for ad-hoc needs). */
-  pilot(needId: string): OperationalPilot | undefined {
-    return this.pilotByNeedId.get(needId);
   }
 
   /** Live status tallies for the Workbench header. */

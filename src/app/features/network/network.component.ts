@@ -1,29 +1,23 @@
 /**
  * @apt-labs/features/network — NetworkComponent
  *
- * Network directory: people, crews, institutions, capabilities — one derived
- * directory from the shared operational corpus. Uses Direction 3 (The Desk)
- * dense table as default with Direction 2 (The Floor) relationship graph
- * available via Inspector on selection.
+ * Network directory for real, connected actor records. No synthetic entries
+ * are presented as participants.
  */
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { NetworkService, GROUP_LABELS, type NetworkGroup, type DirectoryRow } from '@apt-labs/shared/state';
-import { SelectionService } from '@apt-labs/shared/state';
-import { InspectorEntity } from '@apt-labs/features/workspace/inspector.component';
 
 @Component({
   selector: 'app-network',
   standalone: true,
-  imports: [RouterLink],
+  imports: [],
   template: `
     <div class="net" data-module="network">
       <div class="net-pagehead">
         <p class="net-eyebrow">WORKSPACE · DIRECTORY</p>
         <h1 class="net-h1">Who is in the network</h1>
         <p class="net-sub">
-          Every person, crew, institution and organization in the operational record.
-          Filter by type or browse the full directory.
+          People and institutions appear here when connected records are available. No participant records are loaded in this local demo.
         </p>
 
         <div class="net-actions">
@@ -73,9 +67,9 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
                   <button class="net-btn net-btn--sm net-btn--quiet" (click)="$event.stopPropagation(); inspectRow(row)">Inspect</button>
                 </td>
               </tr>
-              @if (visible().length === 0) {
-                <tr><td colspan="6" class="net-empty">No entities match this filter yet.</td></tr>
-              }
+            }
+            @if (visible().length === 0) {
+              <tr><td colspan="6" class="net-empty">No connected people or institutions are available.</td></tr>
             }
           </tbody>
         </table>

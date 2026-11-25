@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: apt_labs
+      POSTGRES_USER: apt_labs
+      POSTGRES_PASSWORD: local-only-change-me
+    ports:
+      - "127.0.0.1:54329:5432"
+    volumes:
+      - aptlabs-identity-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U apt_labs -d apt_labs"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  aptlabs-identity-postgres:

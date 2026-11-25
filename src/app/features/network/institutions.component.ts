@@ -14,7 +14,7 @@ import { NetworkService, type DirectoryRow } from '@apt-labs/shared/state';
     <div class="ins" data-module="institutions">
       <div class="ins-pagehead">
         <h1 class="ins-h1">Institutions and organizations</h1>
-        <p class="ins-sub">The entities that commission, govern, and hold resources. Browse by focus, capability, or registration date.</p>
+        <p class="ins-sub">Institutions and organizations appear here when connected records are available. No participant or institution records are loaded in this local demo.</p>
         <div class="ins-actions">
           <input
             type="search"
@@ -55,7 +55,7 @@ import { NetworkService, type DirectoryRow } from '@apt-labs/shared/state';
               </tr>
             }
             @if (visible().length === 0) {
-              <tr><td colspan="7" class="ins-empty">No institutions match “{{ query() }}”.</td></tr>
+              <tr><td colspan="7" class="ins-empty">No connected institutions or organizations are available.</td></tr>
             }
           </tbody>
         </table>

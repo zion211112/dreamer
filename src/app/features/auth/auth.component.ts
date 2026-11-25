@@ -1,5 +1,6 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -45,6 +46,9 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
             <a [routerLink]="['/sign-up']" [class.auth-mode-active]="isSignUp()" [attr.aria-current]="isSignUp() ? 'page' : null">Create account</a>
           </nav>
 
+          @if (error()) {
+            <p class="auth-field-error" role="alert">{{ error() }}</p>
+          }
           <form (submit)="onSubmit($event)" class="auth-form" autocomplete="on" novalidate>
             @if (isSignUp()) {
               <div class="auth-field">
@@ -139,7 +143,7 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
       </div>
 
       <footer class="auth-footer">
-        <p class="auth-footer-note">Demo mode. Authentication is not connected.</p>
+        <p class="auth-footer-note">Authentication is provided by APT-LABS. If the service is unavailable, access is denied; there is no demo sign-in.</p>
       </footer>
     </div>
   `,
@@ -291,9 +295,11 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 export class AuthComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly auth = inject(AuthService);
 
   readonly isSignUp = signal(false);
   readonly loading = signal(false);
+  readonly error = signal('');
   readonly email = signal('');
   readonly password = signal('');
   readonly confirmPassword = signal('');
@@ -310,6 +316,9 @@ export class AuthComponent implements OnInit {
       ? this.route.snapshot.url[this.route.snapshot.url.length - 1].path
       : '';
     this.isSignUp.set(seg === 'sign-up');
+    if (this.route.snapshot.queryParamMap.get('unavailable') === '1') {
+      this.error.set('Authentication service is unavailable. Try again later.');
+    }
   }
 
   private validateEmail(value: string): string {
@@ -348,7 +357,7 @@ export class AuthComponent implements OnInit {
     this.fieldErrors.update((f) => ({ ...f, displayName: this.validateDisplayName(this.displayName()) }));
   }
 
-  onSubmit(event: Event): void {
+  async onSubmit(event: Event): Promise<void> {
     event.preventDefault();
     this.fieldErrors.set({});
 
@@ -368,10 +377,24 @@ export class AuthComponent implements OnInit {
     }
 
     this.loading.set(true);
-    // No live auth in the browser-local demo: validate, then land the user in their workspace.
-    setTimeout(() => {
+    this.error.set('');
+    try {
+      const result = this.isSignUp()
+        ? await this.auth.signUp(this.displayName().trim(), this.email().trim(), this.password())
+        : await this.auth.signIn(this.email().trim(), this.password());
+      if (result.error) {
+        this.error.set(result.error.message || 'Authentication failed. Check your details and try again.');
+        return;
+      }
+      if (this.isSignUp()) {
+        this.error.set('Account created. Email verification and password recovery are not configured yet. Sign in with your new account.');
+        return;
+      }
+      await this.router.navigate(['/workspace']);
+    } catch {
+      this.error.set('Authentication service is unavailable. Try again later.');
+    } finally {
       this.loading.set(false);
-      this.router.navigate(['/workspace']);
-    }, 200);
+    }
   }
 }

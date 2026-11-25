@@ -1,22 +1,17 @@
 /**
  * @apt-labs/features/workbench/pilot — PilotComponent
  *
- * Vertical slice: Intention → Commitment → Output/Outcome → Evidence.
- * Signature move: clicking any entity in the relationship graph opens the
- * inspector with that entity's typed relationships, evidence standing, and
- * cycle position — context-preserving navigation through the ontology.
+ * Local in-memory coordination journey with explicitly reported outcomes.
+ * Reported work is not independently verified and is not shared or persistent.
  */
 import { Component, inject, signal, computed } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CoordinationService, SelectionService } from '@apt-labs/shared/state';
 import { InspectorComponent, InspectorEntity } from '@apt-labs/features/workspace/inspector.component';
-import { EvidenceStandingComponent, EvidenceActorRole } from '@apt-labs/features/workspace/evidence-standing.component';
 import { RelationshipGraphComponent, GraphNode, GraphEdge } from '@apt-labs/features/workspace/relationship-graph.component';
 import { CommandPaletteComponent } from '@apt-labs/features/workspace/command-palette.component';
-import type { Journey, OperationalPilot } from '@apt-labs/domain';
-
-const ACTOR_ROLE: EvidenceActorRole = 'coordinator';
+import type { Journey } from '@apt-labs/domain';
 
 @Component({
   selector: 'app-pilot',
@@ -25,7 +20,6 @@ const ACTOR_ROLE: EvidenceActorRole = 'coordinator';
     RouterLink,
     FormsModule,
     InspectorComponent,
-    EvidenceStandingComponent,
     RelationshipGraphComponent,
     CommandPaletteComponent,
   ],
@@ -46,11 +40,11 @@ const ACTOR_ROLE: EvidenceActorRole = 'coordinator';
         <header class="pilot-head">
           <div class="pilot-meta">
             <span class="pilot-id">{{ needId }}</span>
-            <span class="pilot-status [status()]">{{ status() }}</span>
+            <span class="pilot-status" [class]="'pilot-status ' + status()">{{ status() }}</span>
           </div>
           <h1 class="pilot-title">{{ j.need?.data['need'] }}</h1>
           <p class="pilot-lede">
-            Intention → Commitment → Output/Outcome → Evidence. One action ripples across every surface.
+            This local record is held in memory only. Reported work is not independently verified.
           </p>
         </header>
 
@@ -69,7 +63,7 @@ const ACTOR_ROLE: EvidenceActorRole = 'coordinator';
             <li class="chain-step is-live">
               <span class="chain-k">Intention</span>
               <span class="chain-v">{{ j.need?.data['need'] }}</span>
-              <span class="chain-note">need · {{ status() }}</span>
+              <span class="chain-note">need · {{ status() === 'fulfilled' ? 'reported' : status() }}</span>
             </li>
             @if (j.commitments[0]; as c) {
               <li class="chain-step is-live">
@@ -85,14 +79,14 @@ const ACTOR_ROLE: EvidenceActorRole = 'coordinator';
             }
             @if (j.outcomes[0]; as o) {
               <li class="chain-step is-live">
-                <span class="chain-k">Outcome</span>
+                <span class="chain-k">Reported outcome</span>
                 <span class="chain-v">{{ o.data['outcome'] }}</span>
-                <span class="chain-note">{{ o.evidenceIds.length }} evidence</span>
+                <span class="chain-note">{{ o.evidenceIds.length }} evidence references</span>
               </li>
             } @else {
               <li class="chain-step">
                 <span class="chain-k">Outcome</span>
-                <span class="chain-v">Not yet delivered</span>
+                <span class="chain-v">Not yet reported</span>
               </li>
             }
           </ol>
@@ -110,11 +104,11 @@ const ACTOR_ROLE: EvidenceActorRole = 'coordinator';
                   </li>
                 }
               </ul>
-              <app-evidence-standing
-                [current]="evidenceStanding()"
-                [actorRole]="actorRole"
-                (onTransition)="onEvidenceTransition($event)"
-              ></app-evidence-standing>
+              @if (evidence().length === 0) {
+                <p class="pilot-evidence-note">No evidence artefacts are attached. The outcome is a participant report only.</p>
+              } @else {
+                <p class="pilot-evidence-note">These are evidence references only; the artefacts and any independent assessment are not connected.</p>
+              }
             </div>
           </section>
         }
@@ -140,12 +134,12 @@ const ACTOR_ROLE: EvidenceActorRole = 'coordinator';
 
         <div class="pilot-actions">
           @if (status() === 'open') {
-            <button class="pilot-btn pilot-btn--primary" type="button" (click)="accept()">Accept as provider</button>
+            <button class="pilot-btn pilot-btn--primary" type="button" (click)="accept()">Record commitment</button>
           } @else if (status() === 'committed') {
-            <input class="pilot-outcome-input" [ngModel]="outcomeText()" (ngModelChange)="outcomeText.set($event)" placeholder="Record the delivered outcome…" aria-label="Outcome" />
-            <button class="pilot-btn pilot-btn--primary" type="button" (click)="fulfil()">Record outcome</button>
-          } @else {
-            <span class="pilot-delivered">Delivered & verified — {{ j.outcomes[0]?.data['outcome'] }}</span>
+            <input class="pilot-outcome-input" [ngModel]="outcomeText()" (ngModelChange)="outcomeText.set($event)" placeholder="Record the reported outcome…" aria-label="Outcome" />
+            <button class="pilot-btn pilot-btn--primary" type="button" (click)="fulfil()">Record reported outcome</button>
+          } @else if (status() === 'fulfilled') {
+            <span class="pilot-delivered">Reported outcome — {{ j.outcomes[0]?.data['outcome'] }}. Independent verification is not recorded.</span>
           }
         </div>
       </div>
@@ -330,6 +324,8 @@ const ACTOR_ROLE: EvidenceActorRole = 'coordinator';
     }
     .pilot-outcome-input:focus { outline: none; border-color: var(--apt-accent); }
 
+    .pilot-evidence-note { color: var(--apt-text-muted); font-size: var(--apt-size-body); margin: var(--apt-space-4) 0 0; }
+
     .pilot-empty {
       text-align: center;
       padding: var(--apt-space-22);
@@ -360,33 +356,19 @@ export class PilotComponent {
 
   readonly needId: string;
   private readonly journey_ = signal<Journey | null>(null);
-  private readonly pilot_ = signal<OperationalPilot | undefined>(undefined);
   private readonly outcomeText = signal('');
 
   readonly journey = this.journey_;
-  readonly pilot = this.pilot_;
-  readonly actorRole: EvidenceActorRole = 'coordinator';
-
   constructor() {
     this.needId = this.route.snapshot.paramMap.get('pilot') ?? '';
-    this.journey_.set(this.service.journey(this.needId));
-    this.pilot_.set(this.service.pilot(this.needId));
+    const journey = this.service.journey(this.needId);
+    this.journey_.set(journey.need ? journey : null);
   }
 
   readonly evidence = computed(() => {
     const j = this.journey_();
     const ids = j?.outcomes[0]?.evidenceIds ?? [];
-    const catalog = this.pilot_()?.evidence ?? [];
-    return ids.map((id) => {
-      const found = catalog.find((e) => e.id === id);
-      return { id, title: found?.title ?? id, layer: found?.layer ?? 'unknown' };
-    });
-  });
-
-  readonly evidenceStanding = computed(() => {
-    const j = this.journey_();
-    const hasOutcome = j?.outcomes.length ?? 0 > 0;
-    return hasOutcome ? 'reported' : 'unassessed';
+    return ids.map((id) => ({ id, title: id, layer: 'unclassified' }));
   });
 
   status(): string {
@@ -448,25 +430,16 @@ export class PilotComponent {
   });
 
   accept(): void {
-    const provider = this.pilot_()?.institution.coordinatorId ?? 'provider';
-    this.service.acceptNeed(this.needId, provider);
+    this.service.acceptNeed(this.needId, this.service.accountId());
     this.journey_.set(this.service.journey(this.needId));
   }
 
   fulfil(): void {
     const commitmentId = this.journey_()?.commitments[0]?.id;
     if (!commitmentId) return;
-    const fallback = this.pilot_()?.deliverables.join(' · ') ?? 'Delivered';
-    const outcome = this.outcomeText().trim() || fallback;
-    const evidenceIds = this.pilot_()?.evidence.map((e) => e.id);
-    this.service.fulfilNeed(commitmentId, outcome, evidenceIds);
-    this.journey_.set(this.service.journey(this.needId));
-  }
-
-  onEvidenceTransition(t: { from: string; to: string; reason: string; evidenceIds: string[] }): void {
-    console.group('Evidence standing transition');
-    console.log('Transition:', t);
-    console.groupEnd();
+    const outcome = this.outcomeText().trim();
+    if (!outcome) return;
+    this.service.fulfilNeed(commitmentId, outcome);
     this.journey_.set(this.service.journey(this.needId));
   }
 

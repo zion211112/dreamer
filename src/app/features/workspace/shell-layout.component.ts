@@ -17,7 +17,7 @@ import { SidebarComponent } from './sidebar.component';
 import { InspectorComponent } from './inspector.component';
 import { DockComponent } from './dock.component';
 import { StatusbarComponent } from './statusbar.component';
-import { SelectionService } from '@apt-labs/shared/state';
+import { CoordinationService, SelectionService } from '@apt-labs/shared/state';
 import { CommandPaletteComponent } from './command-palette.component';
 
 const MODULES = [
@@ -64,9 +64,9 @@ const MODULES = [
         <app-inspector [open]="inspectorOpen()" [entity]="inspectorEntity()"></app-inspector>
       </div>
 
-      <app-dock class="shell-dock" [module]="dockModule" [items]="dockItems"></app-dock>
+      <app-dock class="shell-dock" [class.shell-dock--empty]="dockItems.length === 0" [module]="dockModule" [items]="dockItems"></app-dock>
 
-      <app-statusbar [ledger]="ledger"></app-statusbar>
+      <app-statusbar [ledger]="ledger()"></app-statusbar>
     </div>
   `,
   styles: [
@@ -108,6 +108,7 @@ const MODULES = [
       overflow: hidden;
       min-height: 0;
     }
+    .shell-dock--empty { display: none; }
     .shell-dock {
       display: block;
       width: 100%;
@@ -209,6 +210,7 @@ const MODULES = [
 })
 export class ShellLayoutComponent {
   readonly selection = inject(SelectionService);
+  private readonly coordination = inject(CoordinationService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly currentUrl = signal(this.router.url);
@@ -252,16 +254,21 @@ export class ShellLayoutComponent {
       cycleStage: s.cycleStage, authorityGated: s.authorityGated,
     };
   });
-  readonly dockModule = 'Workbench';
-  readonly dockItems: import('./dock.component').DockItem[] = [
-    { id: 'd-1', label: 'Need: Kibera workshop bench', status: 'ready', action: 'Open' },
-    { id: 'd-2', label: 'Evidence: Build plan', status: 'staged', action: 'View' },
-  ];
-  readonly ledger = {
-    module: 'Workspace',
-    environment: 'local-demo' as const,
-    open: 2, committed: 1, delivered: 3, evidence: 9,
-  };
+  readonly dockModule = 'Workspace';
+  readonly dockItems: import('./dock.component').DockItem[] = [];
+  readonly ledger = computed(() => {
+    const counts = this.coordination.counts();
+    const url = this.currentUrl();
+    const module = MODULES.find((item) => item.path && url.startsWith(`/workspace/${item.path}`))?.label ?? 'Home';
+    return {
+      module,
+      environment: 'local-demo' as const,
+      open: counts.open,
+      committed: counts.inProgress,
+      reported: counts.delivered,
+      evidence: this.coordination.needs().reduce((total, need) => total + need.evidenceIds.length, 0),
+    };
+  });
 
   constructor() {
     this.router.events

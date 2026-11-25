@@ -1,7 +1,7 @@
 /**
  * @apt-labs/features/records — RecordsComponent
  *
- * Canon, annals, and the immutable roll. Dense table view with standing badges.
+ * Canon, annals, and the local session roll. Dense table view with record-state badges.
  * Structural Emergence.
  */
 import { Component, OnInit, computed, signal, inject } from '@angular/core';
@@ -19,7 +19,7 @@ import { RecordsService, type RecordsView } from '@apt-labs/shared/state';
         <div class="records-pagehead">
           <h1 class="records-h1">Records</h1>
           <p class="records-sub">
-            Canon, annals, and the immutable roll — the system of record that keeps work on record.
+            Canon, annals, and the roll. Entries shown here are local to this browser session and reset on reload; a reported outcome is not independent verification.
           </p>
         </div>
         <div class="records-actions">
@@ -56,11 +56,11 @@ import { RecordsService, type RecordsView } from '@apt-labs/shared/state';
             @for (row of visible(); track row.id) {
               <tr class="records-tr">
                 <td class="records-td">
-                  <span class="records-kind [row.kind]">{{ row.kind }}</span>
+                  <span class="records-kind" [class]="'records-kind ' + row.kind">{{ row.kind }}</span>
                 </td>
                 <td class="records-td records-td--name">{{ row.title }}</td>
                 <td class="records-td">{{ row.institution }}</td>
-                <td class="records-td"><span class="records-status [row.status]">{{ row.status }}</span></td>
+                <td class="records-td"><span class="records-status" [class]="'records-status ' + row.status">{{ row.status }}</span></td>
                 <td class="records-td">{{ row.createdAt | date: 'short' }}</td>
               </tr>
             }
@@ -147,7 +147,7 @@ import { RecordsService, type RecordsView } from '@apt-labs/shared/state';
       font-weight: var(--apt-weight-medium);
       text-transform: capitalize;
     }
-    .records-status.sealed { color: var(--apt-text-success); }
+    .records-status.reported { color: var(--apt-text-info); }
     .records-status.active { color: var(--apt-text-info); }
     .records-status.disputed { color: var(--apt-text-danger); }
 

@@ -1,9 +1,8 @@
 /**
  * @apt-labs/features/commons — CommonsComponent
  *
- * The commons projects the live coordination spine. Open inquiries,
- * in-flight commitments and delivered briefs ripple out from one record.
- * Structural Emergence.
+ * Commons projects the local coordination spine. Open inquiries,
+ * commitments and reported outcomes are held in memory for this session only.
  */
 import { Component, signal, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -18,8 +17,8 @@ import { CoordinationService } from '@apt-labs/shared/state';
       <div class="cm-pagehead">
         <h1 class="cm-h1">The commons</h1>
         <p class="cm-sub">
-          Open inquiries, in-flight commitments, delivered briefs, and the knowledge house —
-          what the network has agreed, what is moving, and what has settled, all off one record.
+          Open inquiries, commitments, reported outcomes, and knowledge records —
+          shown from this local session only. These records are not shared or persistent.
         </p>
         <div class="cm-actions">
           <input
@@ -49,7 +48,7 @@ import { CoordinationService } from '@apt-labs/shared/state';
             </article>
           }
           @if (openInquiries().length === 0) {
-            <p class="cm-empty">No open inquiries — every posted need has a provider.</p>
+            <p class="cm-empty">No open inquiries have been recorded in this local session.</p>
           }
         </div>
       </div>
@@ -67,22 +66,25 @@ import { CoordinationService } from '@apt-labs/shared/state';
             </article>
           }
           @if (inFlight().length === 0) {
-            <p class="cm-empty">No commitments in flight right now.</p>
+            <p class="cm-empty">No commitments have been recorded in this local session.</p>
           }
         </div>
       </div>
 
       <div class="cm-section">
-        <h2 class="cm-section-title">Delivered briefs</h2>
+        <h2 class="cm-section-title">Reported outcomes</h2>
         <div class="cm-list">
           @for (out of briefs(); track out.id) {
             <article class="cm-item">
-              <span class="cm-item-kicker">delivered</span>
+              <span class="cm-item-kicker">reported</span>
               <div class="cm-item-main">
                 <span class="cm-item-label">{{ out.title }}</span>
-                <span class="cm-item-requires">Accepted by {{ out.institution }}</span>
+                <span class="cm-item-requires">Provider recorded: {{ out.institution }}</span>
               </div>
             </article>
+          }
+          @if (briefs().length === 0) {
+            <p class="cm-empty">No outcomes have been reported in this local session.</p>
           }
         </div>
       </div>
@@ -90,16 +92,7 @@ import { CoordinationService } from '@apt-labs/shared/state';
       <div class="cm-section">
         <h2 class="cm-section-title">Knowledge house</h2>
         <div class="cm-knowledge">
-          @for (k of knowledge(); track k.id) {
-            <article class="cm-knowledge-item">
-              <div class="cm-knowledge-head">
-                <span class="cm-knowledge-status cm-knowledge-status--distilled">distilled</span>
-                <h3 class="cm-knowledge-title">{{ k.title }}</h3>
-              </div>
-              <p class="cm-knowledge-summary">{{ k.summary }}</p>
-              <span class="cm-knowledge-provenance">On the roll · {{ k.provenance }}</span>
-            </article>
-          }
+          <p class="cm-empty">No knowledge records have been independently created from this session.</p>
         </div>
       </div>
     </div>
@@ -191,16 +184,6 @@ export class CommonsComponent {
   readonly briefs = computed(() =>
     this.coordination.needs().filter((n) => n.status === 'fulfilled')
       .map((n) => ({ id: n.needId, title: n.outcome ?? n.label, institution: this.institutionName(n.providerActorId), status: n.status })),
-  );
-
-  readonly knowledge = computed(() =>
-    this.coordination.needs().filter((n) => n.status === 'fulfilled')
-      .map((n) => ({
-        id: `k-${n.needId}`,
-        title: n.outcome ?? n.label,
-        summary: `Sealed with ${n.evidenceIds.length} evidence item${n.evidenceIds.length === 1 ? '' : 's'} on the roll.`,
-        provenance: this.institutionName(n.providerActorId),
-      })),
   );
 
   readonly institutionName = (id: string | null): string => {

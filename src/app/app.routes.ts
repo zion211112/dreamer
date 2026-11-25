@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { requireSession } from './auth/auth.guard';
 
 /**
  * APT-LABS — Route table (migrated from Vue router)
@@ -16,6 +17,7 @@ export const routes: Routes = [
   // Workspace shell (parent with nested children)
   {
     path: 'workspace',
+    canActivate: [requireSession],
     loadComponent: () => import('./features/workspace/workspace-shell.component').then(m => m.WorkspaceShellComponent),
     children: [
       { path: '', loadComponent: () => import('./features/workspace/overview.component').then(m => m.OverviewComponent) },

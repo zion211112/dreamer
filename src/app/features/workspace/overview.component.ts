@@ -8,7 +8,6 @@
  */
 import { Component, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { OPERATIONAL_PILOTS } from '@apt-labs/domain';
 import {
   FAMILY,
   EVIDENCE_STANDING,
@@ -16,8 +15,6 @@ import {
   CANONICAL_DISTINCTIONS,
   RELATIONSHIP_KIND,
 } from '@apt-labs/ontology';
-import { SelectionService } from '@apt-labs/shared/state';
-import { InspectorEntity } from '@apt-labs/features/workspace/inspector.component';
 
 @Component({
   selector: 'app-overview',
@@ -26,79 +23,52 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
   template: `
     <div class="ov" data-module="overview">
       <div class="ov-pagehead">
-        <h1 class="ov-h1">The chain is working</h1>
+        <h1 class="ov-h1">Your capability record</h1>
         <p class="ov-sub">
-          This board reads the live record — undertakings in flight, the value
-          they disclose, the people claiming capability, and the verbs that move
-          them. Open one and start.
+          This local demo has no connected personal profile. Claims, evidence, and assessment remain distinct, and participation does not depend on having a credential.
         </p>
 
         <div class="ov-actions">
-          <button class="ov-btn ov-btn--primary" (click)="createNeed()">Post a need</button>
-          <button class="ov-btn ov-btn--quiet" (click)="openCommons()">Open Commons →</button>
+          <a class="ov-btn ov-btn--primary" [routerLink]="['/workspace', 'commons']">Explore Commons</a>
+          <a class="ov-btn ov-btn--quiet" [routerLink]="['/workspace', 'network', 'capabilities']">Open capability reference →</a>
         </div>
       </div>
 
-      <div class="ov-metrics">
+      <div class="ov-metrics" aria-label="Capability record status">
         <div class="ov-metric ov-metric--teal">
-          <div class="ov-metric-label">Undertakings</div>
-          <div class="ov-metric-value">{{ undertakings() }}</div>
-          <div class="ov-metric-unit">in flight</div>
+          <div class="ov-metric-label">Claims recorded</div>
+          <div class="ov-metric-value">{{ capabilityCount() }}</div>
+          <div class="ov-metric-unit">not a score</div>
         </div>
         <div class="ov-metric">
-          <div class="ov-metric-label">Institutions</div>
-          <div class="ov-metric-value">{{ institutionCount() }}</div>
-          <div class="ov-metric-unit">commissioning</div>
+          <div class="ov-metric-label">Evidence references</div>
+          <div class="ov-metric-value">{{ evidenceCount() }}</div>
+          <div class="ov-metric-unit">none recorded</div>
         </div>
         <div class="ov-metric">
-          <div class="ov-metric-label">Value disclosed</div>
-          <div class="ov-metric-value">{{ valueDisclosed().toLocaleString('en-KE') }}</div>
-          <div class="ov-metric-unit">KES</div>
+          <div class="ov-metric-label">Assessment</div>
+          <div class="ov-metric-value">Not assessed</div>
+          <div class="ov-metric-unit">no assessor recorded</div>
         </div>
       </div>
 
-      <div class="ov-table-wrap" role="region" aria-label="In-flight undertakings" tabindex="0">
+      <section class="ov-table-wrap" aria-labelledby="ov-capabilities-title">
+        <h2 id="ov-capabilities-title" class="ov-section-title">Your capabilities</h2>
         <table class="ov-table">
-          <caption class="ov-sr-only">In-flight undertakings, their institutions, status, deliverables, evidence, and disclosed cost</caption>
+          <caption class="ov-sr-only">Your capability claims and attached evidence</caption>
           <thead>
             <tr>
-              <th class="ov-th" scope="col">Undertaking</th>
-              <th class="ov-th ov-th--left" scope="col">Institution</th>
-              <th class="ov-th ov-th--left" scope="col">Location</th>
-              <th class="ov-th" scope="col">Status</th>
-              <th class="ov-th" scope="col">Deliverables</th>
-              <th class="ov-th" scope="col">Evidence</th>
-              <th class="ov-th ov-th--left" scope="col">Cost disclosed</th>
-              <th class="ov-th ov-th--actions" scope="col">Actions</th>
+              <th class="ov-th" scope="col">Capability claim</th>
+              <th class="ov-th ov-th--left" scope="col">Evidence</th>
+              <th class="ov-th" scope="col">Standing</th>
+              <th class="ov-th" scope="col">Visibility</th>
             </tr>
           </thead>
           <tbody>
-            @for (row of inFlight(); track row.id) {
-              <tr class="ov-tr" [class.ov-tr--selected]="selectedRow() === row.id" (click)="selectRow(row)">
-                <td class="ov-td ov-td--name">
-                  <span class="ov-type-chip is-{{ row.type }}">{{ row.type }}</span>
-                  <span class="ov-name">{{ row.label }}</span>
-                </td>
-                <td class="ov-td">{{ row.institution }}</td>
-                <td class="ov-td">{{ row.location }}</td>
-                <td class="ov-td">
-                  <span class="ov-status is-{{ row.status }}">{{ row.status }}</span>
-                </td>
-                <td class="ov-td"><b>{{ row.deliverables }}</b></td>
-                <td class="ov-td"><b>{{ row.evidence }}</b></td>
-                <td class="ov-td">{{ row.cost }}</td>
-                <td class="ov-td ov-td--actions">
-                  <button class="ov-btn ov-btn--sm ov-btn--quiet" (click)="$event.stopPropagation(); openPilot(row.id)">Open</button>
-                  <button class="ov-btn ov-btn--sm ov-btn--quiet" (click)="$event.stopPropagation(); verifyRow(row.id)">Verify</button>
-                </td>
-              </tr>
-            }
-            @if (inFlight().length === 0) {
-              <tr><td colspan="8" class="ov-empty">No undertakings yet. Post the first one above.</td></tr>
-            }
+            <tr><td colspan="4" class="ov-empty">No capability claims or evidence are recorded in this local demo.</td></tr>
           </tbody>
         </table>
-      </div>
+      </section>
 
       <div class="ov-moves">
         @for (m of moves(); track m.to) {
@@ -290,6 +260,7 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
 
     .ov-btn {
       display: inline-flex;
+      text-decoration: none;
       align-items: center;
       gap: var(--apt-space-2);
       padding: var(--apt-button-padding);
@@ -352,6 +323,7 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
       margin-top: var(--apt-space-1);
     }
 
+    .ov-section-title { margin: 0; padding: var(--apt-space-5) var(--apt-space-6) 0; color: var(--apt-text-strong); font: var(--apt-weight-semibold) var(--apt-size-title)/var(--apt-line-tight) var(--apt-font-serif); }
     .ov-table-wrap {
       overflow-x: auto;
       max-width: 100%;
@@ -361,15 +333,11 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
       background: var(--apt-surface-page);
       margin-bottom: var(--apt-space-8);
     }
-    .ov-table { width: 100%; min-width: 960px; table-layout: fixed; border-collapse: collapse; font-size: var(--apt-size-body); }
-    .ov-table th:nth-child(1), .ov-table td:nth-child(1) { width: 22%; }
-    .ov-table th:nth-child(2), .ov-table td:nth-child(2) { width: 14%; }
-    .ov-table th:nth-child(3), .ov-table td:nth-child(3) { width: 11%; }
-    .ov-table th:nth-child(4), .ov-table td:nth-child(4) { width: 10%; }
-    .ov-table th:nth-child(5), .ov-table td:nth-child(5) { width: 9%; }
-    .ov-table th:nth-child(6), .ov-table td:nth-child(6) { width: 8%; }
-    .ov-table th:nth-child(7), .ov-table td:nth-child(7) { width: 12%; }
-    .ov-table th:nth-child(8), .ov-table td:nth-child(8) { width: 14%; }
+    .ov-table { width: 100%; min-width: 560px; table-layout: fixed; border-collapse: collapse; font-size: var(--apt-size-body); }
+    .ov-table th:nth-child(1), .ov-table td:nth-child(1) { width: 38%; }
+    .ov-table th:nth-child(2), .ov-table td:nth-child(2) { width: 30%; }
+    .ov-table th:nth-child(3), .ov-table td:nth-child(3) { width: 16%; }
+    .ov-table th:nth-child(4), .ov-table td:nth-child(4) { width: 16%; }
     .ov-table th:first-child, .ov-table td:first-child {
       position: sticky;
       left: 0;
@@ -487,23 +455,17 @@ import { InspectorEntity } from '@apt-labs/features/workspace/inspector.componen
   ],
 })
 export class OverviewComponent {
-  readonly pilots = OPERATIONAL_PILOTS;
-  readonly undertakings = computed(() => this.pilots.length);
-  readonly institutionCount = computed(() => new Set(this.pilots.map((p) => p.institution.id)).size);
-  readonly peopleCount = computed(() => new Set(this.pilots.flatMap((p) => p.participants).map((x) => x.personId)).size);
-  readonly evidenceCount = computed(() => this.pilots.reduce((n, p) => n + p.evidence.length, 0));
-  readonly deliverableCount = computed(() => this.pilots.reduce((n, p) => n + p.deliverables.length, 0));
-  readonly valueDisclosed = computed(() => this.pilots.reduce((n, p) => n + (p.acceptance.costDisclosed?.amount ?? 0), 0));
+  readonly capabilityCount = computed(() => 0);
+  readonly evidenceCount = computed(() => 0);
 
   readonly moves = computed(() => [
-    { to: '/workspace/workbench', verb: 'Open the workbench', consequence: `${this.undertakings()} undertakings across ${this.institutionCount()} institutions — pick one up and see exactly what blocks it.`, icon: 'M4 5h16M4 12h16M4 19h10' },
-    { to: '/workspace/records/roll', verb: 'Verify evidence', consequence: `${this.evidenceCount()} items on the ledger — move a claim up a standing, or dispute one that has drifted.`, icon: 'M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z M9 12l2 2 4-4' },
-    { to: '/workspace/records', verb: 'File a record', consequence: `Put a claim in provenance intact — ${this.deliverableCount()} deliverables and ${this.evidenceCount()} evidence items back the ledger.`, icon: 'M7 4h7l4 4v12H7zM14 4v4h4M10 12h5M10 16h4' },
-    { to: '/workspace/commons', verb: 'Start an inquiry', consequence: `KES ${this.valueDisclosed().toLocaleString('en-KE')} disclosed across the settlements — bind the next one to a testable proposition.`, icon: 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z' },
+    { to: '/workspace/network/capabilities', verb: 'Explore capability claims', consequence: 'See how claimed capability differs from evidence and independent assessment.', icon: 'M12 5v14M5 12h14' },
+    { to: '/workspace/commons', verb: 'Explore opportunities', consequence: 'Browse published needs and decide whether one fits your interests.', icon: 'M4 6h16M4 12h10M4 18h7' },
+    { to: '/workspace/workbench', verb: 'Open the workbench', consequence: 'Record work and deliverables when you are part of an undertaking.', icon: 'M3 10h18M3 10v10a4 4 0 004 4h10a4 4 0 004-4V10' },
+    { to: '/workspace/records', verb: 'Review the record', consequence: 'See attributable records as they are created. Nothing is pre-filled here.', icon: 'M7 4h7l4 4v12H7zM14 4v4h4M10 12h5' },
   ] as const);
 
   readonly query = signal('');
-  readonly selectedRow = signal<string>('');
 
   readonly familyCount = Object.keys(FAMILY).length;
   readonly relationKindCount = Object.keys(RELATIONSHIP_KIND).length;
@@ -563,36 +525,6 @@ export class OverviewComponent {
 
   readonly standingAccent = (s: string) => `var(--apt-standing-${s}, var(--apt-module-accent))`;
 
-  readonly inFlight = computed(() => this.pilots.map((p) => ({
-    id: p.id,
-    label: p.label,
-    institution: p.institution.name,
-    location: p.location,
-    type: p.undertakingType,
-    deliverables: p.deliverables.length,
-    evidence: p.evidence.length,
-    cost: p.acceptance.costDisclosed ? p.acceptance.costDisclosed.amount.toLocaleString('en-KE') + ' ' + p.acceptance.costDisclosed.currency : 'Undisclosed',
-    status: p.acceptance.acceptedAt !== null ? 'fulfilled' : 'open',
-    acceptedAt: (p.acceptance.acceptedAt ?? '').slice(0, 10) || '—',
-  })));
+  readonly inFlight = computed(() => []);
 
-  createNeed(): void {
-    this.openCommons();
-  }
-
-  openCommons(): void {
-    // Navigate to Commons — handled by router
-  }
-
-  openPilot(id: string): void {
-    // Navigate to pilot detail
-  }
-
-  verifyRow(id: string): void {
-    // Verify evidence — handled by pilot detail
-  }
-
-  selectRow(row: { id: string }): void {
-    this.selectedRow.set(row.id);
-  }
 }

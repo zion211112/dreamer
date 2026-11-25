@@ -3,10 +3,9 @@
  *
  * The Records surface is not its own data island: it projects the L0 system of
  * record (the shared `JourneyStore` owned by `CoordinationService`) into its
- * three registers — canon (sealed deliverables), annals (the log of
- * undertakings), and the immutable roll (append-only audit). Because it reads
- * the same store the Workbench mutates, a fulfilment in the Workbench ripples
- * here: a new outcome lands in the canon and the audit trail grows in the roll.
+ * three registers — canon (recorded outcomes), annals (commitments), and the
+ * roll (local append-only audit). Because it reads the same store the Workbench
+ * mutates, a reported outcome appears here with its audit history.
  */
 
 import { Injectable, computed, inject } from '@angular/core';
@@ -21,7 +20,7 @@ export interface RecordsRow {
   title: string;
   kind: Exclude<RecordsView, 'all'>;
   institution: string;
-  status: 'sealed' | 'active' | 'disputed';
+  status: 'sealed' | 'reported' | 'active' | 'disputed' | 'recorded';
   createdAt: string;
 }
 
@@ -29,7 +28,7 @@ export interface RecordsRow {
 export class RecordsService {
   private readonly coordination = inject(CoordinationService);
 
-  /** Canon — sealed, delivered outcomes (OUTPUT_OUTCOME records). */
+  /** Canon — recorded outcomes (OUTPUT_OUTCOME records); standing is reported. */
   readonly canon = computed<RecordsRow[]>(() => {
     this.coordination.version();
     return this.coordination.store.records
@@ -45,7 +44,7 @@ export class RecordsService {
       .map((r) => this.commitmentRow(r));
   });
 
-  /** Roll — the immutable, append-only audit trail. */
+  /** Roll — the append-only audit trail for this in-memory session. */
   readonly roll = computed<RecordsRow[]>(() => {
     this.coordination.version();
     return [...this.coordination.store.auditEvents]
@@ -82,10 +81,10 @@ export class RecordsService {
     const data = r.data as { outcome?: string; providerActorId?: string };
     return {
       id: r.id,
-      title: data.outcome?.trim() ? `Delivered — ${data.outcome}` : 'Sealed outcome',
+      title: data.outcome?.trim() ? `Reported — ${data.outcome}` : 'Reported outcome',
       kind: 'canon',
       institution: this.institutionName(r.actorId),
-      status: 'sealed',
+      status: 'reported',
       createdAt: r.updatedAt,
     };
   }
@@ -95,10 +94,10 @@ export class RecordsService {
     const sealed = data.status === 'fulfilled';
     return {
       id: r.id,
-      title: `Undertaking — ${this.actorLabel(data.providerActorId ?? r.actorId)}`,
+      title: `Commitment — ${this.actorLabel(data.providerActorId ?? r.actorId)}`,
       kind: 'annals',
       institution: this.institutionName(r.actorId),
-      status: sealed ? 'sealed' : 'active',
+      status: sealed ? 'reported' : 'active',
       createdAt: r.updatedAt,
     };
   }
@@ -109,7 +108,7 @@ export class RecordsService {
       title: e.action,
       kind: 'roll',
       institution: this.institutionName(e.actorId),
-      status: 'sealed',
+      status: 'recorded',
       createdAt: e.timestamp,
     };
   }

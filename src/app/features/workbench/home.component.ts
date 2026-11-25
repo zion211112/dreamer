@@ -7,21 +7,20 @@
  */
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { CoordinationService } from '@apt-labs/shared/state';
-import type { Journey, OperationalPilot } from '@apt-labs/domain';
 
 @Component({
   selector: 'app-workbench-home',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [FormsModule],
   template: `
     <div class="wb-page">
       <header class="wb-head">
         <div class="wb-pagehead">
           <h1 class="wb-h1">Workbench</h1>
           <p class="wb-sub">
-            Every need is a commitment with evidence. Post one, accept it, deliver it against the record.
+            Record a need, a commitment, and a reported outcome. This local session is in-memory only; reported work is not independently verified.
           </p>
         </div>
 
@@ -51,7 +50,7 @@ import type { Journey, OperationalPilot } from '@apt-labs/domain';
           <div class="wb-metric-value">{{ counts().inProgress }}</div>
         </div>
         <div class="wb-metric">
-          <div class="wb-metric-label">Delivered</div>
+          <div class="wb-metric-label">Reported outcomes</div>
           <div class="wb-metric-value">{{ counts().delivered }}</div>
         </div>
       </div>
@@ -61,10 +60,10 @@ import type { Journey, OperationalPilot } from '@apt-labs/domain';
           <thead>
             <tr>
               <th class="wb-th">Need</th>
-              <th class="wb-th">Institution</th>
+              <th class="wb-th">Commissioning party</th>
               <th class="wb-th">Status</th>
-              <th class="wb-th">Deliverables</th>
-              <th class="wb-th">Evidence</th>
+              <th class="wb-th">Reported outcome</th>
+              <th class="wb-th">Evidence references</th>
               <th class="wb-th wb-th--actions">Actions</th>
             </tr>
           </thead>
@@ -75,10 +74,10 @@ import type { Journey, OperationalPilot } from '@apt-labs/domain';
                   <span class="wb-name">{{ row.label }}</span>
                   <span class="wb-id">{{ row.needId }}</span>
                 </td>
-                <td class="wb-td">{{ pilotLabel(row.needId) }}</td>
-                <td class="wb-td"><span class="wb-status is-{{ row.status }}">{{ row.status }}</span></td>
-                <td class="wb-td"><b>-</b></td>
-                <td class="wb-td"><b>-</b></td>
+                <td class="wb-td">Not recorded</td>
+                <td class="wb-td"><span class="wb-status" [class]="'wb-status is-' + row.status">{{ row.status === 'fulfilled' ? 'reported' : row.status }}</span></td>
+                <td class="wb-td">{{ row.outcome ?? 'Not reported' }}</td>
+                <td class="wb-td">{{ row.evidenceIds.length || '—' }}</td>
                 <td class="wb-td wb-td--actions">
                   <button class="wb-btn wb-btn--sm wb-btn--quiet" (click)="$event.stopPropagation(); openPilot(row.needId)">Open</button>
                 </td>
@@ -238,11 +237,6 @@ export class HomeComponent {
 
   selectRow(row: { needId: string }): void {
     this.selectedRow.set(row.needId);
-  }
-
-  pilotLabel(needId: string): string {
-    const pilot = this.service.pilot(needId);
-    return pilot ? pilot.institution.name : 'Ad-hoc need';
   }
 
   openPilot(id: string): void {

@@ -1,0 +1,3 @@
+ALTER TABLE "opportunities" ADD CONSTRAINT "opportunities_status_check" CHECK ("opportunities"."status" in ('draft', 'published', 'closed'));--> statement-breakpoint
+ALTER TABLE "organization_memberships" ADD CONSTRAINT "organization_memberships_role_check" CHECK ("organization_memberships"."role" in ('owner', 'administrator', 'manager', 'member', 'viewer'));--> statement-breakpoint
+ALTER TABLE "organizations" ADD CONSTRAINT "organizations_standing_check" CHECK ("organizations"."standing" in ('provisional', 'community_validated', 'formally_verified'));

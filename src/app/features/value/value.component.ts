@@ -18,9 +18,9 @@ import { ValueService, type ValueRow } from '@apt-labs/shared/state';
     <div class="value-page">
       <header class="value-head">
         <div class="value-pagehead">
-          <h1 class="value-h1">Value — outcomes &amp; circulation</h1>
+          <h1 class="value-h1">Value records</h1>
           <p class="value-sub">
-            The home of what circulates: value moved between parties, in the open.
+            Financial value and settlement appear here only when explicit value records exist. Work status does not imply money moved.
           </p>
         </div>
         <div class="value-actions">
@@ -30,7 +30,7 @@ import { ValueService, type ValueRow } from '@apt-labs/shared/state';
 
       <div class="value-metrics">
         <div class="value-metric value-metric--teal">
-          <div class="value-metric-label">Outcomes</div>
+          <div class="value-metric-label">Value records</div>
           <div class="value-metric-value">{{ metrics().outcomes }}</div>
         </div>
         <div class="value-metric">
@@ -38,15 +38,15 @@ import { ValueService, type ValueRow } from '@apt-labs/shared/state';
           <div class="value-metric-value">{{ metrics().totalKes | number }}</div>
         </div>
         <div class="value-metric">
-          <div class="value-metric-label">Funding</div>
+          <div class="value-metric-label">Funding records</div>
           <div class="value-metric-value">{{ metrics().funding }}</div>
         </div>
         <div class="value-metric">
-          <div class="value-metric-label">Settled</div>
+          <div class="value-metric-label">Settlements</div>
           <div class="value-metric-value">{{ metrics().settled }}</div>
         </div>
         <div class="value-metric">
-          <div class="value-metric-label">Open</div>
+          <div class="value-metric-label">Unsettled records</div>
           <div class="value-metric-value">{{ metrics().open }}</div>
         </div>
       </div>
@@ -77,15 +77,18 @@ import { ValueService, type ValueRow } from '@apt-labs/shared/state';
               <td class="value-td">{{ row.institution }}</td>
               <td class="value-td">{{ row.location }}</td>
               <td class="value-td value-td--amount">{{ fmtAmount(row.amount) }}</td>
-              <td class="value-td"><span class="value-status [row.settled ? 'settled' : 'open']">{{ row.settled ? 'Settled' : 'Open' }}</span></td>
+              <td class="value-td"><span class="value-status" [class]="'value-status ' + (row.settled ? 'settled' : 'open')">{{ row.settled ? 'Settled' : 'Open' }}</span></td>
             </tr>
+          }
+          @if (visible().length === 0) {
+            <tr><td colspan="5" class="value-empty">No financial value or settlement records exist in this local session.</td></tr>
           }
         </tbody>
       </table>
 
       <div class="value-docs">
-        <h3 class="value-docs-title">Commercial model (cloak-compatible)</h3>
-        <p>Replacement Engine routes institutional procurement through verified local producers, 3–5% transaction fee. Roll density is the defensibility layer.</p>
+        <h3 class="value-docs-title">Commercial model — reference</h3>
+        <p>Commercial mechanisms are not active or connected in this local demo.</p>
       </div>
     </div>
   `,

@@ -28,8 +28,11 @@ Single source of truth for tools, skills, MCPs, and setup. Read this before star
 # 1. Install frontend deps
 npm install
 
-# 2. Run dev server
-npm start            # Angular CLI dev server
+# 2. Local identity prototype (requires Docker Desktop running)
+cp .env.example .env
+npm run db:local:up
+npm run db:migrate
+npm start            # API + Angular dev server; http://localhost:4200
 
 # 3. Production build
 npm run build
@@ -39,7 +42,10 @@ npm test              # Angular unit tests
 npm run test:e2e:chromium  # Playwright route smoke tests
 
 # 5. Type check
-npx tsc --noEmit
+npm run typecheck
+
+# Stop local PostgreSQL without deleting its volume
+npm run db:local:down
 ```
 
 Run `npm run build` from the repository root; the Angular CLI app is the sole frontend build.
