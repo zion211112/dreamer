@@ -29,7 +29,7 @@ decomposition.
 | **Operating and economic network for productive activity** | Work must increase the network's capacity to create, coordinate, retain, and multiply real economic value. Feature volume is not the measure. |
 | **Six structures, six domain entities** | Tasks name what they change and preserve the canonical distinctions. Person ≠ Asset; Person ≠ Crew; Institution ≠ Venture; Asset ≠ Capability; Claim ≠ Evidence; AI suggestion ≠ institutional decision. |
 | **Evidence before certainty** | Every claim in a task report, artifact, or status carries one label: `VERIFIED`, `PROTOTYPE`, `TARGET`, `PLANNED`, or `UNKNOWN`. |
-| **Single-workspace product direction** | One workspace, one shared graph. No new primary module, route, shell pane, or navigation system without a recorded decision (charter B1, B3). |
+| **Shared-network product direction** | One shared graph-shaped product model, domain protocols and focused experiences over shared authorized records (B13). The six current Angular surfaces are present navigation, not a permanent ceiling; new surfaces still require a product decision. |
 | **Preserve existing implementation** | Working functionality is not deleted, rewritten, or silently replaced. Replacement requires a task, a migration note, and independent verification. |
 | **Never invent features** | `TARGET` and `PLANNED` work is never described as delivered. Demo data is labelled as demo data. |
 | **No new architecture or dependencies without demonstrated need** | A new dependency, storage engine, service boundary, or runtime requires demonstrated need, a recorded decision, and human authorization. |
@@ -46,9 +46,9 @@ orchestrates and does not implement.
 |------|---------|----------|----------|
 | **Build Director** (orchestrator) | Own the objective, the decomposition, the shared state, and the integrated result | Task graph, dispatch briefs, integration commits, final diff review, budget record | Write product code, tests, schemas, or design documents; substitute self-review for independent verification |
 | **Domain Intelligence Architect** | Own semantic fidelity to the ontology and the evidence model | Domain types, ontology and domain-model amendments, canonical distinction rulings, domain ADR proposals | Touch UI, storage, integrations, or accepted ADRs unilaterally |
-| **Systems & Data Architect** | Own data model, persistence boundaries, module contracts, and technical decisions | Data and storage changes, architecture and state-machine docs, ADRs, migration notes | Change domain semantics, UI, or production infrastructure |
-| **Product Interface Engineer** | Own the workspace interface: routes, components, design language, accessibility | Vue/Preact pages and components, styles, interaction states, UI tests, screenshots | Change domain types, persistence, engine contracts, or the Preact entry during Vue migration |
-| **Backend & Integration Engineer** | Own services, persistence flows, engine behavior, and external integration adapters | `src/lib` services, Python engine code, Supabase/n8n adapters, integration tests | Change UI, ontology semantics, or live infrastructure without authorization |
+| **Systems & Data Architect** | Own PostgreSQL/Drizzle persistence, server authorization contracts, migration strategy, and technical ADRs | Data/schema changes, architecture docs, local migration plans | Change domain semantics, UI, or production infrastructure |
+| **Product Interface Engineer** | Own the active Angular workspace interface: routes, components, design language, accessibility | Angular standalone pages/components, styles, interaction states, UI tests, screenshots | Change domain types, persistence, or integrations |
+| **Backend & Integration Engineer** | Own server/API/auth runtime and optional integration adapters | Scoped `src/server` runtime changes, optional n8n adapters and tests | Change UI, ontology semantics, database schema/migrations, or live infrastructure without authorization |
 | **Verification & Security Engineer** | Independently establish whether claimed work meets its criteria | Evidence ledger, pass/fail verdicts, security and regression findings | Modify the working tree, fix defects, or verify work it authored or helped author |
 
 Role boundaries are contracts, not job descriptions. The exact fields and path scopes for each

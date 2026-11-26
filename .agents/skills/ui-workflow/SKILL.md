@@ -26,11 +26,11 @@ Use this skill for user-facing interface work in the active application. Follow 
 
 ### Repository Conventions
 
-- The active application is Vite + Preact + TypeScript with Wouter. Do not introduce Next.js, React-only patterns, or a backend as part of a UI iteration.
-- Reuse controls and patterns from `src/components/`; keep shared visual tokens and auth-page styles in `src/styles.css` where applicable.
-- Follow current route, state, data, and CSS conventions. Do not add a dependency when existing project or browser capabilities are enough.
-- Keep authentication explicit as a browser-local demo. Do not store passwords or imply that demo identities, OAuth, workspace records, or actions are connected to live services or transactions.
-- Leave unrelated routes and behavior unchanged. Historical code and design experiments in `bin/` are reference-only unless the user asks otherwise.
+- The active application is Angular 22, standalone and zoneless, with strict TypeScript and Angular Router. Work in the root `src/app/` and `libs/` tree; do not migrate frameworks or add a parallel UI runtime.
+- Reuse current Angular components/services and shared tokens in `src/styles.css` where applicable.
+- Follow current route, signal-state, data, and component-style conventions. Do not add a dependency when existing project or browser capabilities are enough.
+- Authentication uses the Better Auth client/server prototype. Do not claim workspace data is persistent/shared unless the relevant server-backed route proves it; current coordination state remains local in-memory.
+- Leave unrelated routes and behavior unchanged. Historical Vue/Preact code and migration documents are reference-only, not active implementation constraints.
 
 ### Design Handoffs
 

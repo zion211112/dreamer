@@ -1,8 +1,10 @@
 # APT-LABS — Productive Network Architecture and First Pilot
 
-**Status:** Proposed for review; not an implementation claim
+**Status:** Historical first-pilot proposal; provider and product-architecture portions superseded by accepted decisions B12 and B13. Do not execute its conditional Supabase proposal or treat its six surfaces as a permanent product ceiling.
 **Date:** 2026-11-25
-**Evidence label:** Architecture is `PLANNED`; current-state statements below are `VERIFIED` from the inspected repository; unproven external integrations are `UNKNOWN`.
+**Evidence label:** The original current-state statements reflect the inspection at the time this proposal was drafted; consult B12 and current `docs/architecture.md` for later implementation status. Unproven external integrations remain `UNKNOWN`.
+
+**Current architecture authority:** `docs/decisions/B13-shared-network-and-domain-protocols.md`, `docs/architecture/network-kernel-and-domain-protocols.md`, `docs/ontology.md`, and technical decision `docs/decisions/B12-permanent-identity-infrastructure.md`. This document remains a historical source of pilot workflow and security requirements where consistent with those decisions.
 
 ## 1. Product direction
 

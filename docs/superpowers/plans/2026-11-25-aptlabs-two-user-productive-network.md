@@ -1,6 +1,8 @@
 # APT-LABS Two-User Productive Network Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task after the spec and provider decision are approved.
+> **Status:** Historical, not executable as written. Its conditional Supabase Auth/RLS provider path and six-surface product assumptions are superseded by accepted decisions B12 and B13. Use the accepted product contract in `docs/architecture/network-kernel-and-domain-protocols.md` and technical decision `docs/decisions/B12-permanent-identity-infrastructure.md` before planning follow-on work.
+>
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task only after rewriting it against current decisions and receiving the required approval.
 
 **Goal:** Enable independent people and an institutional participant to discover, accept, and record a real undertaking using shared, persistent, least-privilege data.
 

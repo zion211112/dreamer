@@ -24,25 +24,24 @@ the change set.
 
 ---
 
-## Path ownership matrix
+## Path ownership matrix (active Angular tree)
 
 | Path | Owner | Notes |
 |------|-------|-------|
-| `src/lib/ontology/**` | Domain Intelligence Architect | Includes colocated `*.test.ts` |
-| `src/lib/db/**` | Systems & Data Architect | Includes colocated `*.test.ts` |
-| `src/lib/**` (except `ontology/`, `db/`) | Backend & Integration Engineer | Includes colocated `*.test.ts` |
-| `src/components/**`, `src/pages/**`, `src/modules/**` | Product Interface Engineer | Includes routes and module UI |
-| `src/tailwind.css`, `src/assets/css/**` | Product Interface Engineer | Design tokens and styles |
-| `engine/src/engine/contracts.py` | Systems & Data Architect | Engine contract surface |
-| `engine/**` (except `contracts.py`) | Backend & Integration Engineer | Runtime, probes, engine tests |
-| `supabase/migrations/**`, `supabase/schema.sql` | Systems & Data Architect | Reversible, never applied without authorization |
-| `supabase/seed.sql`, client config | Backend & Integration Engineer | Seed data and connection setup |
-| `n8n/**`, `scripts/**` | Backend & Integration Engineer | Automation and tooling |
+| `libs/ontology/**` | Domain Intelligence Architect | Includes colocated specs; semantic changes require review |
+| `libs/domain/**` | Domain Intelligence Architect | Provider-independent domain contracts and transitions |
+| `libs/shared/state/**` | Systems & Data Architect | Shared state/repository boundaries; UI consumes this surface |
+| `src/server/db/**`, `src/server/authorization.ts` | Systems & Data Architect | PostgreSQL/Drizzle schema and server authorization; migrations never applied to production without authorization |
+| `src/server/**` (except DB schema/migrations and authorization contracts) | Backend & Integration Engineer | API/auth runtime; no production secrets in source |
+| `src/app/features/**`, `src/app/app.routes.ts`, `src/styles.css` | Product Interface Engineer | Angular screens, routes and visual language; task-scoped |
+| `src/app/auth/**` | Backend & Integration Engineer | Better Auth client/session integration; coordinate UI work via task scope |
+| `n8n/**`, `scripts/**` | Backend & Integration Engineer | Optional automation/tooling; no implied production execution |
+| Legacy `supabase/**` | Systems & Data Architect | Historical/legacy; not active auth/runtime; preserve unless explicitly tasked |
 | `docs/domain-model.md`, `docs/ontology.md` | Domain Intelligence Architect | Ontology amendments require authorization |
-| `docs/architecture.md`, `docs/STATE_MACHINES.md`, `docs/decisions/**` | Systems & Data Architect | Accepted ADRs are superseded, never rewritten |
-| `docs/agents/**`, `tmp/integration/**` | Build Director | Process docs and merge scratch |
+| `docs/architecture.md`, `docs/STATE_MACHINES.md`, `docs/decisions/**` | Systems & Data Architect | Accepted decisions are superseded with notes, never silently rewritten |
+| `docs/agents/**`, `tmp/integration/**` | Build Director | Process docs and integration scratch |
 | `tmp/research/**`, `tmp/ui/**` | Task-scoped | Prefix per role, e.g. `tmp/research/domain-*.md` |
-| `tests/**` | Behavior owner | Playwright specs, only when the task records the path |
+| `tests/**`, colocated specs | Behavior owner | Browser tests only when task records the path |
 | Verify-only | Verification & Security Engineer | No writes of any kind |
 
 **Colocated tests.** `src/lib/foo.test.ts` follows `src/lib/foo.ts` and is owned by the same
@@ -67,12 +66,12 @@ role. A role that owns code also owns the tests for that code.
 
 | Field | Contract |
 |-------|----------|
-| `task_scope` | Own semantic correctness: keep the six structures and six domain entities distinct, define and repair domain types, rule on evidence and provenance semantics, review domain-touching changes, and propose ontology amendments. Does not implement UI, persistence, or integrations. |
-| `permitted_area` | `src/lib/ontology/**` including colocated `*.test.ts`; `docs/domain-model.md`; `docs/ontology.md` only for amendments that carry explicit human authorization and a recorded decision id. |
-| `protected_area` | `src/components/**`, `src/pages/**`, `src/modules/**`, `src/lib/db/**`, `src/lib/**` outside `src/lib/ontology/`, `engine/**`, `supabase/**`, `n8n/**`, `tests/**`, `docs/decisions/**`, accepted ADRs B1–B10. |
-| `unchanged_contracts` | Canonical distinctions (Person ≠ Asset, Person ≠ Crew, Institution ≠ Venture, Asset ≠ Capability, Claim ≠ Evidence, AI suggestion ≠ institutional decision); evidence labels; record integrity and provenance; no universal reputation score; the ontology governs implementation, not the reverse. |
-| `allowed_side_effects` | File writes only inside `permitted_area`; local type check and test runs. No runtime state, external systems, dependency changes, or writes to accepted ADRs. |
-| `escalation` | A change would break a canonical distinction or an accepted ADR; a new domain entity or structure is required; an evidence label cannot be determined; implementation and ontology conflict; an amendment needs human authority. |
+| `task_scope` | Own semantic correctness: keep kernel structures and domain entities distinct, define provider-independent types, and rule on evidence/provenance. Does not implement UI, persistence, or integrations. |
+| `permitted_area` | `libs/ontology/**` and `libs/domain/**` when task-scoped; `docs/domain-model.md`; `docs/ontology.md` only for human-authorized amendments with a decision ID. |
+| `protected_area` | `src/app/**`, `src/server/**`, `libs/shared/**`, migrations, external integrations, tests outside task scope, and accepted ADRs. |
+| `unchanged_contracts` | Person ≠ Asset/Crew; Institution ≠ Venture; Asset ≠ Capability; Claim ≠ Evidence; AI suggestion ≠ institutional decision; no universal reputation score; provenance and evidence labels remain explicit. |
+| `allowed_side_effects` | Scoped source/docs writes, local type check and targeted tests. No production/runtime state or external service changes. |
+| `escalation` | A shared semantic or accepted decision must change; a new kernel family is proposed; evidence standing cannot be determined; implementation conflicts with ontology. |
 
 ---
 
@@ -80,12 +79,12 @@ role. A role that owns code also owns the tests for that code.
 
 | Field | Contract |
 |-------|----------|
-| `task_scope` | Own the data and technical architecture: entity persistence, storage boundaries, migration strategy, module and engine contracts, state machines, and architecture decision records. Produces designs and implements contract-level changes. Does not own domain semantics or UI. |
-| `permitted_area` | `src/lib/db/**` including colocated `*.test.ts`; `engine/src/engine/contracts.py`; `supabase/migrations/**`; `supabase/schema.sql`; `docs/architecture.md`; `docs/STATE_MACHINES.md`; `docs/decisions/**` for new ADRs and supersession notes. |
-| `protected_area` | `src/lib/ontology/**`, `src/components/**`, `src/pages/**`, `src/modules/**`, `engine/src/engine/*.py` other than `contracts.py`, `src/lib/auth/**`, `src/lib/supabase/**`, `n8n/**`, `supabase/seed.sql`, `tests/**`, accepted ADRs (supersede them; never rewrite their decisions). |
-| `unchanged_contracts` | Record integrity, provenance, and append-only history; canonical distinctions; demo-mode fallback; existing public storage keys and hash-anchor semantics; single-workspace direction; no live schema change without authorization. |
-| `allowed_side_effects` | File writes only inside `permitted_area`; local type check, build, and test runs; reversible migration files that are not applied to any hosted database. No destructive migration, production database writes, or infrastructure changes. |
-| `escalation` | Irreversible or data-loss migration; hosted Supabase change; new storage engine or dependency; contract break with existing consumers; conflict with an accepted ADR or the ontology. |
+| `task_scope` | Own PostgreSQL/Drizzle data architecture, persistence boundaries, migration strategy, server authorization contracts, and technical ADRs. Does not own domain semantics or UI. |
+| `permitted_area` | `src/server/db/**`, `src/server/authorization.ts`, `docs/architecture.md`, and `docs/decisions/**` for new decisions/supersession notes. |
+| `protected_area` | `libs/ontology/**`, `libs/domain/**`, `src/app/features/**`, production infrastructure/data, and accepted ADR decisions outside an explicit supersession note. |
+| `unchanged_contracts` | Stable identity and provenance; server-side fail-closed authorization; additive migration/recovery policy; B12 PostgreSQL + Better Auth + Drizzle; B13 shared network contract. |
+| `allowed_side_effects` | Scoped source/docs writes; local type/test/build; local-only reversible migrations. No production DB writes or infrastructure changes. |
+| `escalation` | Data-loss/irreversible migration, production DB or infrastructure change, new storage/dependency, contract break, or conflict with accepted ADR/ontology. |
 
 ---
 
@@ -93,12 +92,12 @@ role. A role that owns code also owns the tests for that code.
 
 | Field | Contract |
 |-------|----------|
-| `task_scope` | Own the workspace interface: build and repair routes, pages, components, interaction states, accessibility, and the Structural Emergence design language. Migrate one Vue route at a time per B9 and keep the Preact entry untouched. Does not change domain types, persistence, or engine behavior. |
-| `permitted_area` | `src/pages/**` including `src/pages/workspace/**`; `src/components/**`; `src/modules/**` including `src/modules/router.ts` and module UI; `src/tailwind.css`; `src/assets/css/**`; colocated UI tests. `tests/**` only when the task records that path. |
-| `protected_area` | `src/lib/ontology/**`, `src/lib/db/**`, `src/lib/auth/**`, `src/lib/supabase/**`, `engine/**`, `supabase/**`, `n8n/**`, `src/main.tsx`, `index.html`, `index-vue.html`, `docs/decisions/**`, accepted ADRs. |
-| `unchanged_contracts` | Charter B1 module set and routes; B3 shell pane ownership; B4 Structural Emergence and B5 design tests; B6 page-head hierarchy; auth roles and demo-mode behavior; existing working routes remain reachable; Preact and Vue runtimes remain isolated. |
+| `task_scope` | Own the active Angular workspace interface: build and repair routes, standalone components, interaction states, accessibility, and the Structural Emergence design language. Does not change domain types, persistence, or server behavior. |
+| `permitted_area` | `src/app/features/**`; `src/app/auth/**` only for client presentation/integration; `src/app/app.routes.ts` when task-scoped; `src/styles.css`; colocated UI tests. `tests/**` only when the task records that path. |
+| `protected_area` | `libs/ontology/**`, `libs/domain/**`, `libs/shared/state/**`, `src/server/**`, database migrations, production credentials, `docs/decisions/**`, accepted ADRs outside an explicitly scoped supersession note. |
+| `unchanged_contracts` | Current charter decisions including B13; Structural Emergence and B5 design tests; B6 page-head hierarchy; fail-closed Better Auth prototype; existing working routes remain reachable; client code never owns authorization. |
 | `allowed_side_effects` | File writes only inside `permitted_area`; local dev server, build, type check, and test runs; screenshots and visual artifacts under `tmp/ui/`. No analytics, external calls, or user-data mutation. |
-| `escalation` | A new route, module, shell pane, or navigation system; a new UI dependency; a design decision outside B4–B6; a change to a shared component other owners depend on; a missing API or domain contract; an accessibility or contrast failure that needs a token change. |
+| `escalation` | A new route, experience, shell pane, or navigation system; a new UI dependency; a design decision outside active charter decisions; a change to a shared component other owners depend on; a missing API or domain contract; an accessibility or contrast failure that needs a token change. |
 
 ---
 
@@ -106,12 +105,12 @@ role. A role that owns code also owns the tests for that code.
 
 | Field | Contract |
 |-------|----------|
-| `task_scope` | Own services and integrations: `src/lib` service behavior, auth and Supabase adapters, localStorage and IndexedDB flows, the Roll/SBT bridge, AgentHost behavior, the Python engine runtime, and n8n adapters. Implements behavior against existing contracts. Does not change domain semantics or UI. |
-| `permitted_area` | `src/lib/**` excluding `src/lib/ontology/**` and `src/lib/db/**`, including colocated `*.test.ts`; `engine/**` excluding `engine/src/engine/contracts.py`; `supabase/seed.sql` and client config; `n8n/**`; `scripts/**`; `tests/**` only when the task records that path. |
-| `protected_area` | `src/lib/ontology/**`, `src/lib/db/**`, `engine/src/engine/contracts.py`, `supabase/migrations/**`, `supabase/schema.sql`, `src/components/**`, `src/pages/**`, `src/modules/**`, `docs/decisions/**`, production credentials and environment files. |
-| `unchanged_contracts` | AgentHost proposes, never executes; demo-mode fallback when Supabase env vars are unset; auth roles and permissions; evidence and provenance semantics; hash-anchor and attestation formats; existing localStorage keys and portability; no secrets in source. |
-| `allowed_side_effects` | File writes only inside `permitted_area`; local dev server, engine, and test runs; local build artifacts. No live Supabase or n8n calls, production data access, pushes, deploys, or infrastructure changes. |
-| `escalation` | A credential or secret is required; a live endpoint must be called; a schema or migration change is needed; a new external dependency or service; integration behavior conflicts with a domain or storage contract; data-loss risk. |
+| `task_scope` | Own server/API/auth runtime behavior and optional external adapters against existing domain and data contracts. Does not change domain semantics or UI. |
+| `permitted_area` | Task-scoped `src/server/**` excluding data schema/migrations and authorization contract; `n8n/**` and `scripts/**` where explicitly assigned; related tests only when recorded. |
+| `protected_area` | `libs/ontology/**`, `libs/domain/**`, `libs/shared/state/**`, `src/app/features/**`, database migrations, production secrets and infrastructure, accepted ADR decisions. |
+| `unchanged_contracts` | Better Auth server owns session resolution; domain remains provider-independent; deny-by-default authorization; no secrets in source; AI/n8n are optional and never authoritative. |
+| `allowed_side_effects` | Scoped source writes and local service/test runs. No production data/service calls, deployment, push, or infrastructure changes. |
+| `escalation` | A secret/live endpoint, schema/migration, new dependency/service, production change, data-loss risk, or domain/storage contract conflict is required. |
 
 ---
 

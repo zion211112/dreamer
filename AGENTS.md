@@ -6,7 +6,7 @@ and ontology govern.
 
 This file anchors **facts about the current tree** and **how to run it**. It does not pin design
 decisions: the stack, layout, and module set below are *descriptive as of today* and are free to
-evolve. Design intent lives in `docs/design/charter.md` (constitution, B1–B8) and
+evolve. Design intent lives in `docs/design/charter.md` (constitution and current decisions) and
 `docs/ontology.md`; durable structural decisions are recorded as ADRs in `docs/decisions/`. Read
 those before treating anything this file implies as a constraint.
 
@@ -17,9 +17,11 @@ standalone-component app at the repository root. TypeScript strict. Signal-based
 
 - App: `src/` — single entry `main.ts` → `app.ts`, router in `app/app.routes.ts`.
 - Libraries: `@apt-labs/ontology`, `@apt-labs/domain`, `@apt-labs/shared/{state,ui}`, `@apt-labs/shell`.
-- Feature screens read one shared spine — `CoordinationService` in `@apt-labs/shared/state` — so
-  every view reflects the same live record instead of siloed demo data.
-- Browser-local demo; Supabase fallback when env vars are set.
+- Feature screens currently combine shared Angular services and local/in-memory projections. The
+  Workbench coordination journey is **not persistent or shared across accounts**; server APIs cover
+  only Better Auth identity, organizations/memberships, and organization-scoped opportunities.
+- Better Auth + PostgreSQL/Drizzle is the active prototype. There is no supported localStorage auth
+  fallback; Supabase files are legacy and are not a runtime fallback.
 
 The stack can evolve: any move (e.g. changing state strategy, adding a framework concern, or
 replacing a library) is an ADR decision in `docs/decisions/`, not a breakage of this file. The
@@ -61,16 +63,16 @@ libs/
                          evidence standing
   domain/              — @apt-labs/domain
   shared/
-    state/             — @apt-labs/shared/state: CoordinationService spine, zoneless signal
-                         state (the shared record every feature reads)
+    state/             — @apt-labs/shared/state: Angular services and signal projections;
+                         CoordinationService currently owns in-memory Workbench journey state
     ui/                — @apt-labs/shared/ui: shared UI primitives
   shell/               — @apt-labs/shell: app shell / layout
 public/                — static assets (only configured assets are copied to the build)
 ```
 
-The retired Vue tree (`src/pages/*.vue`, `src/lib/*`, `src/modules/*`, `src/main-vue.ts`,
-`src/components/*.tsx`) no longer exists in this repo — `docs/STATE_MACHINES.md` and a few older
-notes still reference it; treat those references as historical, not live.
+Older Vue/Preact implementation paths and the migration decision B9 are historical, not active
+application code or constraints. The active application and its UI workflow are Angular; use the
+actual `src/app/` and `libs/` tree.
 
 ## Workspace modules (intended set — not a fixed contract)
 
@@ -97,7 +99,12 @@ if the reasoning stops holding.
 
 ## Auth
 
-Demo mode (localStorage) with a Supabase fallback when configured. Platform roles: `public`, `authenticated`, `admin`, `moderator`, `trustAdmin`, `credentialIssuerAdmin`. Actor roles: `owner`, `administrator`, `manager`, `member`, `contributor`, `viewer`, `authorizedRepresentative`. Actor types: `individual` (includes `graduate`, `developer`, `sociologist`, `politician`, `student`), `crew`, `institution` (includes `university`, `school`, `hospital`, `cooperative`, `government body`).
+Better Auth provides the current prototype sign-in/session path; PostgreSQL/Drizzle are the
+canonical infrastructure decision (B12). Do not present localStorage or legacy Supabase behavior as
+a real fallback. Database-backed registration/session behavior, two-account tenant isolation,
+recovery, email delivery, backups, and production operations are not yet verified. Platform and
+actor role/type vocabulary is governed by the identity contract and current code; do not assume a
+client role or actor label confers authority.
 
 No universal reputation score (charter A8). No blockchain prerequisite for participation (charter A8).
 
@@ -139,8 +146,8 @@ Operating invariants that override convenience:
 - `QUICKSTART.md` — tools, skills, MCPs, setup, design gates (read first for coding sessions)
 - `docs/architecture.md` — current technical architecture
 - `docs/domain-model.md` — six-structure quick reference (points to ontology.md)
-- `docs/decisions/` — accepted ADRs (B1–B8)
-- `docs/design/charter.md` — constitution (principles + decisions)
+- `docs/decisions/` — accepted ADRs (including B12/B13); check each decision's status and supersession notice
+- `docs/design/charter.md` — constitution (principles + decisions, including current B13)
 
 ## Tool / skill / MCP layout
 

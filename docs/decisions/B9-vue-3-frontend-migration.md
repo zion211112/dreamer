@@ -1,12 +1,13 @@
-# B9 — Frontend Migration: Preact → Vue 3
+# B9 — Frontend Migration: Preact → Vue 3 (Superseded / Historical)
 
 | Field | Value |
 |-------|-------|
 | Decision ID | B9 |
+| Current status | Superseded; historical record only. The active root application is Angular 22. Do not use this ADR as implementation guidance. |
 | Date | 2026-11-19 |
 | Rationale | User directive: "not angular but vue js". APT-LABS AUTONOMOUS TRANSFORMATION MANDATE §5 specifies Vue 3 + TypeScript as the frontend target. Preact 10.24 is the current UI framework; it must be migrated to Vue 3 to align with the mandate. |
 | Scope | All UI components, routes, shell, state management, and the frontend entry point. The ontology layer (`src/lib/ontology/`) is framework-agnostic TypeScript and is not affected. Existing Preact code remains in place until each route is migrated incrementally. |
-| Status | Accepted |
+| Status | Superseded (historical record; not current authority) |
 | Dependencies | Vue 3, TypeScript, Vite 6.4.5 (retained), Vue Router (or Wouter — TBD per route migration), Pinia, TanStack Query, Tailwind 4, APT fused design-system tokens, Reka UI / shadcn-vue, Lucide Vue icons, Zod, Vitest, Vue Test Utils |
 | Supersedes | AGENTS.md §Stack ("Preact 10.24 + Vite 6.4.5 + TypeScript 5.6 strict + Wouter routing + Vitest 5.0.5") |
 
