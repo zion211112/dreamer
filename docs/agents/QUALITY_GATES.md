@@ -43,7 +43,7 @@ presented as real. `UNKNOWN` is a legitimate answer; a guess labelled `VERIFIED`
 | **G0 — Scope and authorization** | Is the work inside a recorded write scope, with no protected path, new dependency, or architecture change? | Task card with write scope; `git diff --name-only`; authorization record for any exception | Build Director |
 | **G1 — Artifact completeness** | Do the claimed outputs exist, contain real content, and avoid placeholders? | File listing with non-zero sizes; placeholder scan; rendered artifact where applicable | Verifier |
 | **G2 — Static correctness** | Does the repository type-check and lint under its configured tooling? | `npx tsc --noEmit` output; lint result or an explicit "not configured" record | Verifier |
-| **G3 — Tests** | Do the relevant tests pass on the current tree? | `npm run test:unit -- --run` output; targeted or end-to-end runs where the task requires them | Verifier |
+| **G3 — Tests** | Do the relevant tests pass on the current tree? | `npm test` output; targeted or end-to-end runs where the task requires them | Verifier |
 | **G4 — Independent verification** | Does every criterion have evidence and a `PASS` verdict from an agent that did not produce the work? | Complete evidence ledger; `verified = true` | Verification & Security Engineer |
 | **G5 — Integration** | Does the merged tree still build and test, and does the final diff stay in scope? | Merged-tree build and test output; final diff review | Build Director |
 | **G6 — Release authorization** | Has a human authorized the irreversible action? | Explicit authorization for push, deploy, data deletion, or infrastructure change | Human |
@@ -60,8 +60,8 @@ changes; only *which checks* run at each tier.
 | Tier | When it applies | Required checks | Explicitly NOT required |
 |------|-----------------|-----------------|--------------------------|
 | **T0 — Per edit** | Every individual change an agent makes while working | Read back the file you changed; placeholder scan on **touched files only**; `git diff --name-only` stays in scope | Full test suite, full type check, build |
-| **T1 — Per task** | When a task's own work is complete | Targeted tests for the touched modules (`npm run test:unit -- --run <path>`); `npx tsc --noEmit` | Full suite, build |
-| **T2 — Integration** | Before merge / at a lifecycle gate | Full `npm run test:unit -- --run`, full `npx tsc --noEmit`, `npm run build`, full scope review | — |
+| **T1 — Per task** | When a task's own work is complete | Targeted tests for the touched modules (`npx vitest run <path>`); `npx tsc --noEmit` | Full suite, build |
+| **T2 — Integration** | Before merge / at a lifecycle gate | Full `npm test`, full `npx tsc --noEmit`, `npm run build`, full scope review | — |
 | **T3 — Release** | Irreversible action proposed | T2 plus human authorization (G6) | — |
 
 Rules for applying tiers:
@@ -139,7 +139,7 @@ For **every** criterion, with actual evidence:
 5. **Lint.** Run the configured linter if one exists. If no linter is configured, record
    `UNVERIFIED — no linter configured` and escalate to the Build Director; never record `PASS`
    for a check that did not run.
-6. **Tests.** Run `npm run test:unit -- --run`. All tests must pass. A skipped or filtered suite
+6. **Tests.** Run `npm test`. All tests must pass. A skipped or filtered suite
    is not a full pass; the ledger records exactly what ran.
 7. **Build.** Run `npm run build`. It must exit 0. The current package also builds the investor
    deck; a failure anywhere in that chain is a build failure and must be reported, not waived.
@@ -170,8 +170,8 @@ The failure is recorded even if the underlying artifact later proves correct.
 | Check | Command | Pass condition |
 |-------|---------|----------------|
 | Type check | `npx tsc --noEmit` | Exit 0, no diagnostics |
-| Unit tests | `npm run test:unit -- --run` | Exit 0, every test passes |
-| Targeted tests | `npm run test:unit -- --run <path>` | Exit 0; supports a criterion but does not replace the full suite |
+| Unit tests | `npm test` | Exit 0, every test passes |
+| Targeted tests | `npx vitest run <path>` | Exit 0; supports a criterion but does not replace the full suite |
 | Build | `npm run build` | Exit 0, no TypeScript or build errors, `dist/` produced |
 | Placeholder scan | `git grep -n -E 'TODO\|TBD\|FIXME\|\[INSERT\]' -- <claimed paths>` | No matches (exit 1 with no output is the expected clean result) |
 | Scope check | `git diff --name-only <base>...HEAD` | Every path is inside the recorded write scope |
@@ -204,7 +204,7 @@ verifier produces it; the Build Director records it; no one edits a verdict afte
 | criterion | evidence command/path | observed result | verdict (PASS/FAIL/UNVERIFIED) | timestamp |
 |-----------|-----------------------|-----------------|--------------------------------|-----------|
 | Type check clean | `npx tsc --noEmit` | Exit 0, no diagnostics | PASS | `YYYY-MM-DDThh:mm:ssZ` |
-| Unit suite green | `npm run test:unit -- --run` | Exit 0, all tests pass | PASS | `YYYY-MM-DDThh:mm:ssZ` |
+| Unit suite green | `npm test` | Exit 0, all tests pass | PASS | `YYYY-MM-DDThh:mm:ssZ` |
 | No placeholders in claimed files | Scan of `src/lib/...` | No matches for TODO/TBD/FIXME/[INSERT] | PASS | `YYYY-MM-DDThh:mm:ssZ` |
 | Lint clean | Configured linter | No linter configured in `package.json` | UNVERIFIED | `YYYY-MM-DDThh:mm:ssZ` |
 
