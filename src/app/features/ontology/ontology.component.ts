@@ -8,6 +8,7 @@
  */
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { ObjectExplorerComponent } from './object-explorer.component';
 import { CoordinationService } from '@apt-labs/shared/state';
 import {
   FAMILY,
@@ -29,7 +30,7 @@ import {
 @Component({
   selector: 'app-ontology',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, ObjectExplorerComponent],
   template: `
     <div class="onto" data-module="ontology">
       <div class="onto-pagehead">
@@ -39,6 +40,8 @@ import {
           and a standing ladder that keeps evidence a named state — never a score.
         </p>
       </div>
+
+      <app-object-explorer />
 
       <section class="onto-section">
         <h2 class="onto-section-title">The productive-reality cycle</h2>

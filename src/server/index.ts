@@ -7,6 +7,7 @@ import { aptPersons, auditEvents, opportunities, organizationMemberships, organi
 import { withOrganizationAuthorization } from './authorization';
 import { createBenbenosRouter } from './benbenos/router';
 import { createWorkbenchRouter } from './workbench/routes';
+import { createStudioRouter } from './studio/routes';
 
 const app = express();
 app.disable('x-powered-by');
@@ -35,6 +36,8 @@ app.get('/api/health', async (_req, res) => {
 
 // The workbench router owns the undertaking read model and its decision routes.
 app.use('/api', createWorkbenchRouter());
+// The Studio query engine answers typed object queries and authorized neighborhoods.
+app.use('/api', createStudioRouter());
 
 app.get('/api/me/network', async (req, res) => {
   const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });

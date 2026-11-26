@@ -20,3 +20,5 @@ export type { SelectedEntity } from './selection.service';
 export { WorkspaceDataService } from './workspace-data.service';
 export type { WorkActions, WorkbenchSummary, WorkspaceEvent, WorkspaceNetwork, WorkspaceOrganization, WorkspaceUndertaking, UndertakingDetail, UndertakingReview } from './workspace-data.service';
 export { describeWorkspaceError } from './workspace-data.service';
+export { StudioDataService } from './studio-data.service';
+export type { StudioGraph, StudioGraphEdge, StudioGraphNode, StudioObject, StudioObjectSet, StudioOverview, StudioQueryInput, StudioTypeDefinition } from './studio-data.service';

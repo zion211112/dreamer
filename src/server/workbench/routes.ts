@@ -19,8 +19,8 @@ async function currentPerson(headers: Record<string, string | string[] | undefin
 /** Undertakings a person may open: everything open, plus what they belong to. */
 function visibleWork(personId: string) {
   return sql`(${undertakings.status} = 'open'
-    or exists (select 1 from organization_memberships m where m.organization_id = ${undertakings.organizationId} and m.person_id = ${personId} and m.revoked_at is null)
-    or exists (select 1 from undertaking_participants p where p.undertaking_id = ${undertakings.id} and p.person_id = ${personId}))`;
+    or exists (select 1 from organization_memberships m where m.organization_id = undertakings.organization_id and m.person_id = ${personId} and m.revoked_at is null)
+    or exists (select 1 from undertaking_participants p where p.undertaking_id = undertakings.id and p.person_id = ${personId}))`;
 }
 
 export function createWorkbenchRouter(): Router {
@@ -97,8 +97,8 @@ export function createWorkbenchRouter(): Router {
       .where(and(
         inArray(undertakings.organizationId, managedOrganizationIds),
         sql`${undertakings.status} <> 'closed'`,
-        sql`not exists (select 1 from undertaking_offers o where o.interest_id = ${undertakingInterests.id})`,
-        sql`not exists (select 1 from audit_events a where a.subject_id = ${undertakingInterests.id} and a.action = 'undertaking.interest_declined')`,
+        sql`not exists (select 1 from undertaking_offers o where o.interest_id = undertaking_interests.id)`,
+        sql`not exists (select 1 from audit_events a where a.subject_id = undertaking_interests.id and a.action = 'undertaking.interest_declined')`,
       ))
       .orderBy(desc(undertakingInterests.createdAt)).limit(50) : [];
 
@@ -117,7 +117,7 @@ export function createWorkbenchRouter(): Router {
       .where(and(
         inArray(undertakings.organizationId, managedOrganizationIds),
         sql`${workReports.authorPersonId} <> ${person.id}`,
-        sql`not exists (select 1 from work_reviews r where r.report_id = ${workReports.id})`,
+        sql`not exists (select 1 from work_reviews r where r.report_id = work_reports.id)`,
       ))
       .orderBy(desc(workReports.createdAt)).limit(50) : [];
 
@@ -128,10 +128,10 @@ export function createWorkbenchRouter(): Router {
       organizationId: undertakings.organizationId,
       organizationName: organizations.name,
       createdAt: undertakings.createdAt,
-      interestCount: sql<number>`(select count(*) from undertaking_interests i where i.undertaking_id = ${undertakings.id})`,
-      offerCount: sql<number>`(select count(*) from undertaking_offers o where o.undertaking_id = ${undertakings.id})`,
-      participantCount: sql<number>`(select count(*) from undertaking_participants p where p.undertaking_id = ${undertakings.id})`,
-      reportCount: sql<number>`(select count(*) from work_reports r where r.undertaking_id = ${undertakings.id})`,
+      interestCount: sql<number>`(select count(*) from undertaking_interests i where i.undertaking_id = undertakings.id)`,
+      offerCount: sql<number>`(select count(*) from undertaking_offers o where o.undertaking_id = undertakings.id)`,
+      participantCount: sql<number>`(select count(*) from undertaking_participants p where p.undertaking_id = undertakings.id)`,
+      reportCount: sql<number>`(select count(*) from work_reports r where r.undertaking_id = undertakings.id)`,
     }).from(undertakings)
       .innerJoin(organizations, eq(organizations.id, undertakings.organizationId))
       .where(inArray(undertakings.organizationId, managedOrganizationIds))
@@ -283,7 +283,7 @@ export function createWorkbenchRouter(): Router {
       personName: aptPersons.displayName,
       message: undertakingInterests.message,
       createdAt: undertakingInterests.createdAt,
-      declined: sql<boolean>`exists(select 1 from audit_events a where a.subject_id = ${undertakingInterests.id} and a.action = 'undertaking.interest_declined')`,
+      declined: sql<boolean>`exists(select 1 from audit_events a where a.subject_id = undertaking_interests.id and a.action = 'undertaking.interest_declined')`,
     })
       .from(undertakingInterests).innerJoin(aptPersons, eq(aptPersons.id, undertakingInterests.personId))
       .where(eq(undertakingInterests.undertakingId, record.id)).orderBy(desc(undertakingInterests.createdAt)) : [];

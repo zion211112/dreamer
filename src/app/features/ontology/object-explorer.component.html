@@ -1,0 +1,182 @@
+<section class="explorer" aria-labelledby="explorer-title">
+  <header class="explorer-head">
+    <div class="explorer-intro">
+      <p class="eyebrow">Live objects · scoped to you</p>
+      <h2 id="explorer-title" class="explorer-title">Explore the record</h2>
+      <p class="explorer-lede">
+        Every object below is a row the server authorized for this account. Query it by type,
+        then open its neighborhood — ownership, interest, offers, delivery, review, and the
+        audit trail that witnessed each step.
+      </p>
+    </div>
+    <div class="explorer-stat" aria-live="polite">
+      <span class="stat-value">{{ result()?.total ?? '—' }}</span>
+      <span class="stat-label">{{ activeType().plural }}</span>
+    </div>
+  </header>
+
+  <div class="type-rail" role="tablist" aria-label="Object types">
+    @for (type of types(); track type.id) {
+      <button
+        type="button"
+        role="tab"
+        class="type-chip"
+        [class.type-chip--active]="type.id === activeId()"
+        [attr.aria-selected]="type.id === activeId()"
+        (click)="selectType(type.id)"
+      >
+        <span class="type-swatch" [style.background]="typeColor(type.id)"></span>
+        <span class="type-name">{{ type.plural }}</span>
+        <span class="type-count">{{ counts()[type.id] ?? 0 }}</span>
+      </button>
+    }
+  </div>
+
+  <div class="explorer-bar">
+    <label class="field">
+      <span class="field-label">Search</span>
+      <input
+        class="field-input"
+        type="search"
+        autocomplete="off"
+        [value]="search()"
+        (input)="onSearch($event)"
+        [attr.placeholder]="'Search ' + activeType().plural.toLowerCase()"
+      />
+    </label>
+
+    <label class="field field--compact">
+      <span class="field-label">Order</span>
+      <select class="field-input" [value]="sort()" (change)="onSort($event)">
+        <option value="recent">Most recent</option>
+        <option value="title">Title A–Z</option>
+        <option value="status">Status</option>
+      </select>
+    </label>
+
+    @if (facets().length) {
+      <div class="facets" aria-label="Filter by status">
+        @for (facet of facets(); track facet.value) {
+          <button
+            type="button"
+            class="facet"
+            [class.facet--on]="statuses().includes(facet.value)"
+            (click)="toggleStatus(facet.value)"
+          >
+            {{ facetLabel(facet.value) }} <span class="facet-count">{{ facet.count }}</span>
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="explorer-body">
+    <div class="results-panel">
+      @if (error()) {
+        <p class="notice notice--error" role="alert">{{ error() }}</p>
+      }
+
+      @if (loading()) {
+        <p class="notice" role="status">Querying the record…</p>
+      } @else if (!objects().length) {
+        <div class="empty">
+          <p class="empty-title">No {{ activeType().plural.toLowerCase() }} match this view.</p>
+          <p class="empty-body">Clear the search or status filters. Visibility is decided server-side; an empty set can mean “nothing here” or “not yours to see”.</p>
+        </div>
+      } @else {
+        <div class="table-scroll">
+          <table class="object-table">
+            <caption class="sr-only">{{ activeType().plural }} visible to this account</caption>
+            <thead>
+              <tr>
+                <th scope="col">Record</th>
+                <th scope="col">Context</th>
+                <th scope="col">State</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (object of objects(); track object.type + object.id) {
+                <tr
+                  class="object-row"
+                  [class.object-row--active]="selected()?.id === object.id"
+                  (click)="inspect(object)"
+                  tabindex="0"
+                  (keydown.enter)="inspect(object)"
+                >
+                  <td class="cell-title">{{ object.title }}</td>
+                  <td class="cell-context">{{ object.subtitle }}</td>
+                  <td class="cell-state">
+                    @if (object.status) {
+                      <span class="state" [class]="'state state--' + stateTone(object.status)">{{ facetLabel(object.status) }}</span>
+                    } @else {
+                      <span class="state state--none">recorded</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        @if (result() && result()!.total > objects().length) {
+          <button type="button" class="more" (click)="loadMore()">Load more · {{ result()!.total - objects().length }} remaining</button>
+        }
+      }
+    </div>
+
+    <aside class="inspector" aria-label="Selected object">
+      @if (selected(); as object) {
+        <div class="inspector-head">
+          <div>
+            <p class="eyebrow">{{ typeLabel(object.type) }}</p>
+            <h3 class="inspector-title">{{ object.title }}</h3>
+            <p class="inspector-sub">{{ object.subtitle }}</p>
+          </div>
+          <button type="button" class="icon-button" aria-label="Close inspector" (click)="clearSelection()">×</button>
+        </div>
+
+        <dl class="properties">
+          @for (property of activeProperties(); track property.key) {
+            @if (object.properties[property.key]) {
+              <div class="property">
+                <dt>{{ property.label }}</dt>
+                <dd [class.property-long]="property.kind === 'text'">{{ formatValue(property.key, object.properties[property.key]) }}</dd>
+              </div>
+            }
+          }
+        </dl>
+
+        <div class="inspector-actions">
+          @if (object.href) {
+            <a class="button button--primary" [routerLink]="object.href">Open the record</a>
+          }
+          <div class="depth" role="group" aria-label="Neighborhood depth">
+            <button type="button" class="depth-button" [class.depth-button--on]="depth() === 1" (click)="setDepth(1)">1 hop</button>
+            <button type="button" class="depth-button" [class.depth-button--on]="depth() === 2" (click)="setDepth(2)">2 hops</button>
+          </div>
+        </div>
+
+        <div class="graph-frame">
+          <div class="graph-head">
+            <span class="graph-title">Neighborhood</span>
+            <span class="graph-meta">{{ graph()?.nodes?.length ?? 0 }} nodes · {{ graph()?.edges?.length ?? 0 }} links</span>
+          </div>
+          @if (graphLoading()) {
+            <p class="notice notice--small" role="status">Tracing links…</p>
+          }
+          <div #graphHost class="graph-canvas" role="img" [attr.aria-label]="'Neighborhood of ' + object.title"></div>
+          @if (!graphLoading() && !(graph()?.edges?.length)) {
+            <p class="graph-empty">No traceable links for this record yet.</p>
+          }
+        </div>
+
+        <p class="inspector-foot">Links are authorized one hop at a time. A missing link is not a missing fact; it is outside this account’s view.</p>
+      } @else {
+        <div class="inspector-placeholder">
+          <p class="eyebrow">Inspector</p>
+          <p class="placeholder-title">Select a record</p>
+          <p class="placeholder-body">Its typed properties and authorized links appear here. The graph is drawn from the server’s neighborhood query, not from what the table happened to load.</p>
+        </div>
+      }
+    </aside>
+  </div>
+</section>

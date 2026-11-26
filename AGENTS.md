@@ -22,6 +22,11 @@ standalone-component app at the repository root. TypeScript strict. Signal-based
   (`undertakings`, `undertaking_interests`, `undertaking_offers`, `undertaking_participants`,
   `work_reports`, `work_reviews`, plus an append-only audit trail). Commons, Network, Records and
   Workbench read the same authorized records through `WorkspaceDataService`.
+- **Studio is the workspace's read layer, not a module.** The typed object registry
+  (`libs/domain/src/studio-ontology.ts`), the shared zod query contract
+  (`libs/domain/src/studio-query.ts`), and `/api/studio`, `/api/studio/query`, `/api/studio/graph`
+  expose the same work records as objects and authorized neighborhoods. It is surfaced inside
+  Ontology (`/workspace/ontology`); do not add a `/workspace/studio` route or nav item.
 - Still local or simulated: capability claims and the Intelligence surfaces. Network shows only what the signed-in person may see.
 - Server APIs otherwise cover Better Auth identity, organizations/memberships, organization-scoped
   opportunities, and the `/api/benbenos` school console.
@@ -38,7 +43,9 @@ material are not active product code.
 - `npm start` — `ng serve` dev server
 - `npm run build` — `ng build`
 - `npm test` — `ng test --watch=false`
-- `npx tsc --noEmit` — type check
+- `npm run typecheck` — `tsc -p tsconfig.app.json --noEmit` (the solution-style `tsc --noEmit` checks nothing)
+- `npm run test:workbench-api` — journey and isolation regression against a running local API
+- `npm run test:studio-api` — typed studio query, validation and graph isolation against a running local API
 
 (These are the commands for the Angular app today; if the tree changes, the commands may change too
 — check the root `package.json` scripts rather than trusting this list verbatim.)
