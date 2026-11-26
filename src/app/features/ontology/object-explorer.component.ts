@@ -7,9 +7,11 @@
  * data, and nothing is aggregated that the API did not authorize.
  */
 import { Component, DestroyRef, ElementRef, afterNextRender, computed, effect, inject, signal, viewChild } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { skip } from 'rxjs';
+import { ActivatedRoute, Router, RouterLink, type ParamMap } from '@angular/router';
 import cytoscape, { type Core, type ElementDefinition } from 'cytoscape';
-import { STUDIO_OBJECT_TYPES, type StudioObjectTypeId } from '@apt-labs/domain';
+import { STUDIO_OBJECT_TYPES, studioQueryFromParams, studioQueryRecord, type StudioObjectTypeId } from '@apt-labs/domain';
 import { StudioDataService, type StudioGraph, type StudioObject, type StudioTypeDefinition } from '@apt-labs/shared/state';
 
 const TYPE_COLORS: Record<StudioObjectTypeId, string> = {
@@ -75,9 +77,13 @@ const GRAPH_STYLE = [
 export class ObjectExplorerComponent {
   private readonly studio = inject(StudioDataService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly graphHost = viewChild<ElementRef<HTMLDivElement>>('graphHost');
   private graphInstance: Core | null = null;
   private searchTimer: ReturnType<typeof setTimeout> | null = null;
+  private booted = false;
+  private readonly initial = studioQueryFromParams(this.toSearchParams(this.route.snapshot.queryParamMap));
 
   readonly result = this.studio.result;
   readonly graph = this.studio.graph;
@@ -86,10 +92,10 @@ export class ObjectExplorerComponent {
   readonly graphLoading = this.studio.graphLoading;
   readonly error = this.studio.error;
 
-  readonly activeId = signal<StudioObjectTypeId>('undertaking');
-  readonly search = signal('');
-  readonly sort = signal<'recent' | 'title' | 'status'>('recent');
-  readonly statuses = signal<string[]>([]);
+  readonly activeId = signal<StudioObjectTypeId>(this.initial.type);
+  readonly search = signal(this.initial.search ?? '');
+  readonly sort = signal<'recent' | 'title' | 'status'>(this.initial.sort);
+  readonly statuses = signal<string[]>([...(this.initial.status ?? [])]);
   readonly depth = signal<1 | 2>(1);
   readonly objects = signal<StudioObject[]>([]);
 
@@ -99,8 +105,19 @@ export class ObjectExplorerComponent {
   });
   readonly counts = computed<Record<string, number>>(() => this.studio.overview()?.counts ?? {});
   readonly activeType = computed<StudioTypeDefinition>(() => this.types().find((type) => type.id === this.activeId()) ?? this.types()[0]!);
-  readonly activeProperties = computed(() => this.activeType().properties);
+  readonly selectedType = computed<StudioTypeDefinition | null>(() => {
+    const object = this.selected();
+    return object ? this.types().find((type) => type.id === object.type) ?? null : null;
+  });
+  readonly selectedProperties = computed(() => this.selectedType()?.properties ?? []);
   readonly facets = computed(() => this.result()?.facets ?? []);
+  readonly exportHref = computed(() => {
+    const params = new URLSearchParams({ type: this.activeId(), sort: this.sort() });
+    const search = this.search().trim();
+    if (search) params.set('search', search);
+    for (const status of this.statuses()) params.append('status', status);
+    return '/api/studio/export?' + params.toString();
+  });
 
   constructor() {
     afterNextRender(() => { void this.boot(); });
@@ -125,6 +142,46 @@ export class ObjectExplorerComponent {
   async boot(): Promise<void> {
     await this.studio.loadOverview();
     await this.runQuery();
+    this.booted = true;
+    // Skip the initial emission: boot already applied the deep link, and this emission
+    // can arrive before the first syncUrl navigation commits.
+    this.route.queryParamMap.pipe(skip(1), takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      if (!this.booted) return;
+      const next = studioQueryFromParams(this.toSearchParams(params));
+      const current = this.currentQuery();
+      if (next.type === current.type && (next.search ?? '') === (current.search ?? '')
+        && next.sort === current.sort && (next.status ?? []).join(',') === (current.status ?? []).join(',')) return;
+      this.activeId.set(next.type);
+      this.search.set(next.search ?? '');
+      this.sort.set(next.sort);
+      this.statuses.set([...(next.status ?? [])]);
+      this.objects.set([]);
+      this.studio.clearGraph();
+      void this.runQuery(0, false);
+    });
+  }
+
+  private toSearchParams(params: ParamMap): URLSearchParams {
+    const search = new URLSearchParams();
+    for (const key of params.keys) {
+      for (const value of params.getAll(key)) search.append(key, value);
+    }
+    return search;
+  }
+
+  private currentQuery() {
+    return {
+      type: this.activeId(),
+      search: this.search().trim() || undefined,
+      status: this.statuses().length ? this.statuses() : undefined,
+      sort: this.sort(),
+      limit: 40,
+      offset: 0,
+    } as const;
+  }
+
+  private syncUrl(): void {
+    void this.router.navigate([], { relativeTo: this.route, queryParams: studioQueryRecord({ ...this.currentQuery() }), replaceUrl: true });
   }
 
   selectType(id: StudioObjectTypeId): void {
@@ -152,20 +209,14 @@ export class ObjectExplorerComponent {
     void this.runQuery();
   }
 
-  async runQuery(offset = 0): Promise<void> {
-    const set = await this.studio.query({
-      type: this.activeId(),
-      search: this.search().trim() || undefined,
-      status: this.statuses().length ? this.statuses() : undefined,
-      sort: this.sort(),
-      limit: 40,
-      offset,
-    });
+  async runQuery(offset = 0, syncUrl = true): Promise<void> {
+    const set = await this.studio.query({ ...this.currentQuery(), offset });
     if (!set) return;
     this.objects.update((current) => offset === 0 ? set.objects : [...current, ...set.objects]);
     if (offset === 0) {
       this.studio.selected.set(null);
       this.studio.clearGraph();
+      if (syncUrl) this.syncUrl();
     }
   }
 

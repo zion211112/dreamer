@@ -582,6 +582,13 @@ async function buildGraph(personId: string, type: StudioObjectTypeId, id: string
   return { root: key(root.type, root.id), nodes: [...nodes.values()], edges: [...edges.values()] };
 }
 
+function csvCell(value: string | null | undefined): string {
+  const text = (value ?? '').replaceAll('"', '""');
+  // Spreadsheet formula injection is a real export risk; neutralise the leading character.
+  const guarded = /^[=+\-@\t\r]/.test(text) ? "'" + text : text;
+  return '"' + guarded + '"';
+}
+
 export function createStudioRouter(): Router {
   const router = Router();
 
@@ -617,6 +624,39 @@ export function createStudioRouter(): Router {
     if (!studioObjectType(parsed.data.type)) return res.status(400).json({ error: 'unknown_object_type' });
     const set = await SETS[parsed.data.type](person.id, parsed.data);
     return res.json({ data: set });
+  });
+
+  router.get('/studio/export', async (req, res) => {
+    const person = await currentPerson(req.headers);
+    if (!person) return res.status(401).json({ error: 'unauthenticated' });
+    const rawStatus = req.query['status'];
+    const parsed = parseStudioQuery({
+      type: req.query['type'],
+      search: req.query['search'],
+      sort: req.query['sort'],
+      status: Array.isArray(rawStatus) ? rawStatus : typeof rawStatus === 'string' ? [rawStatus] : undefined,
+      limit: 100,
+      offset: 0,
+    });
+    if (!parsed.success || !studioObjectType(parsed.data.type)) return res.status(400).json({ error: 'invalid_query' });
+    const query = parsed.data;
+    const type = studioObjectType(query.type)!;
+    const set = await SETS[query.type](person.id, { ...query, limit: 5000, offset: 0 });
+    const propertyKeys = type.properties.map((property) => property.key);
+    const header = ['type', 'id', 'title', 'subtitle', 'status', ...propertyKeys];
+    const lines = [header.map(csvCell).join(',')];
+    for (const object of set.objects) {
+      lines.push([
+        object.type, object.id, object.title, object.subtitle, object.status ?? '',
+        ...propertyKeys.map((key) => object.properties[key] ?? ''),
+      ].map(csvCell).join(','));
+    }
+    const stamp = new Date().toISOString().slice(0, 10);
+    res.setHeader('content-type', 'text/csv; charset=utf-8');
+    res.setHeader('content-disposition', `attachment; filename="studio-${query.type}-${stamp}.csv"`);
+    res.setHeader('cache-control', 'no-store');
+    if (set.total > set.objects.length) res.setHeader('x-studio-truncated', 'true');
+    return res.send('\uFEFF' + lines.join('\r\n') + '\r\n');
   });
 
   router.get('/studio/graph', async (req, res) => {

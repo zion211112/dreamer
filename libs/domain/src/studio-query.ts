@@ -51,6 +51,17 @@ export function studioQueryParams(query: StudioQuery): URLSearchParams {
   return params;
 }
 
+/** Plain object form for Angular/router APIs, which do not enumerate URLSearchParams. */
+export function studioQueryRecord(query: StudioQuery): Record<string, string | string[]> {
+  const record: Record<string, string | string[]> = {};
+  const params = studioQueryParams(query);
+  for (const key of new Set(params.keys())) {
+    const values = params.getAll(key);
+    record[key] = values.length > 1 ? values : values[0]!;
+  }
+  return record;
+}
+
 /** Reads a deep-linkable Studio view back into the same query contract. */
 export function studioQueryFromParams(params: URLSearchParams, fallbackType: StudioQuery['type'] = 'undertaking'): StudioQuery {
   const type = params.get('type') ?? fallbackType;

@@ -33,41 +33,47 @@
   </div>
 
   <div class="explorer-bar">
-    <label class="field">
-      <span class="field-label">Search</span>
-      <input
-        class="field-input"
-        type="search"
-        autocomplete="off"
-        [value]="search()"
-        (input)="onSearch($event)"
-        [attr.placeholder]="'Search ' + activeType().plural.toLowerCase()"
-      />
-    </label>
+    <div class="bar-fields">
+      <label class="field">
+        <span class="field-label">Search</span>
+        <input
+          class="field-input"
+          type="search"
+          autocomplete="off"
+          [value]="search()"
+          (input)="onSearch($event)"
+          [attr.placeholder]="'Search ' + activeType().plural.toLowerCase()"
+        />
+      </label>
 
-    <label class="field field--compact">
-      <span class="field-label">Order</span>
-      <select class="field-input" [value]="sort()" (change)="onSort($event)">
-        <option value="recent">Most recent</option>
-        <option value="title">Title A–Z</option>
-        <option value="status">Status</option>
-      </select>
-    </label>
+      <label class="field field--compact">
+        <span class="field-label">Order</span>
+        <select class="field-input" [value]="sort()" (change)="onSort($event)">
+          <option value="recent">Most recent</option>
+          <option value="title">Title A–Z</option>
+          <option value="status">Status</option>
+        </select>
+      </label>
+    </div>
 
-    @if (facets().length) {
-      <div class="facets" aria-label="Filter by status">
-        @for (facet of facets(); track facet.value) {
-          <button
-            type="button"
-            class="facet"
-            [class.facet--on]="statuses().includes(facet.value)"
-            (click)="toggleStatus(facet.value)"
-          >
-            {{ facetLabel(facet.value) }} <span class="facet-count">{{ facet.count }}</span>
-          </button>
-        }
-      </div>
-    }
+    <div class="bar-filters">
+      @if (facets().length) {
+        <div class="facets" aria-label="Filter by status">
+          @for (facet of facets(); track facet.value) {
+            <button
+              type="button"
+              class="facet"
+              [class.facet--on]="statuses().includes(facet.value)"
+              (click)="toggleStatus(facet.value)"
+            >
+              {{ facetLabel(facet.value) }} <span class="facet-count">{{ facet.count }}</span>
+            </button>
+          }
+        </div>
+      }
+
+      <a class="export-link" [href]="exportHref()" download>Export CSV</a>
+    </div>
   </div>
 
   <div class="explorer-body">
@@ -135,7 +141,7 @@
         </div>
 
         <dl class="properties">
-          @for (property of activeProperties(); track property.key) {
+          @for (property of selectedProperties(); track property.key) {
             @if (object.properties[property.key]) {
               <div class="property">
                 <dt>{{ property.label }}</dt>

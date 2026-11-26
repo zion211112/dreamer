@@ -151,7 +151,33 @@ assert.equal(crossTenant.data.objects.some((object) => object.id === undertaking
 const crossTenantDetail = await outsider2.request(`/api/undertakings/${undertakingId}`);
 assert.equal(crossTenantDetail.status, 403, 'the undertaking detail refuses a non-member once the scope is active');
 
-// 6. The graph stays inside the published registry.
+// 7. CSV export uses the same contract and the same authorization.
+const exportResponse = await fetch(`${baseUrl}/api/studio/export?type=undertaking&search=${encodeURIComponent(suffix)}`, {
+  headers: { origin, cookie: commissioner.cookie },
+});
+assert.equal(exportResponse.status, 200);
+assert.match(exportResponse.headers.get('content-type') ?? '', /text\/csv/);
+const csv = await exportResponse.text();
+assert.ok(csv.startsWith('"type","id","title"'), 'the export has a stable header');
+assert.ok(csv.includes(undertakingId), 'the export contains the authorized undertaking');
+assert.ok(csv.includes('"undertaking"'), 'the export names the object type');
+const outsiderExport = await fetch(`${baseUrl}/api/studio/export?type=undertaking&search=${encodeURIComponent(suffix)}`, {
+  headers: { origin, cookie: outsider2.cookie },
+});
+assert.equal(outsiderExport.status, 200);
+assert.equal((await outsiderExport.text()).includes(undertakingId), false, 'export does not leak another organization’s work');
+const anonymousExport = await fetch(`${baseUrl}/api/studio/export?type=undertaking`, { headers: { origin } });
+assert.equal(anonymousExport.status, 401, 'export requires a session');
+const brokenExport = await fetch(`${baseUrl}/api/studio/export?type=secrets`, { headers: { origin, cookie: commissioner.cookie } });
+assert.equal(brokenExport.status, 400, 'export rejects an unknown object type');
+
+// 8. Spreadsheet formulas in exported values are neutralised.
+const formula = new Account();
+await formula.register(`studio-formula-${suffix}@example.test`, '=2+2');
+const formulaCsv = await (await fetch(`${baseUrl}/api/studio/export?type=person`, { headers: { origin, cookie: formula.cookie } })).text();
+assert.ok(formulaCsv.includes('"\'=2+2"'), 'a leading equals sign is prefixed so spreadsheets do not execute it');
+
+// 9. The graph stays inside the published registry.
 for (const node of undertakingGraph.data.nodes) {
   assert.ok(['organization', 'undertaking', 'person', 'interest', 'offer', 'report', 'review', 'event'].includes(node.type), `unexpected node type ${node.type}`);
 }
