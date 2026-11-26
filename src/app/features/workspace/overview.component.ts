@@ -29,7 +29,7 @@ import { WorkspaceDataService } from '@apt-labs/shared/state';
           @if (undertakings().length) {
             <div class="records">
               @for (item of undertakings(); track item.id) {
-                <a class="record" [routerLink]="['/workspace/workbench']" [queryParams]="{ undertaking: item.id }">
+                <a class="record" [routerLink]="['/workspace/workbench', item.id]">
                   <span class="record-state" [attr.data-status]="item.status">{{ item.status }}</span>
                   <span class="record-main"><strong>{{ item.title }}</strong><span>{{ item.organizationName }} · {{ item.scope }}</span></span>
                   <span class="record-date">{{ item.createdAt | date:'mediumDate' }}</span>

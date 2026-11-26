@@ -22,8 +22,7 @@ standalone-component app at the repository root. TypeScript strict. Signal-based
   (`undertakings`, `undertaking_interests`, `undertaking_offers`, `undertaking_participants`,
   `work_reports`, `work_reviews`, plus an append-only audit trail). Commons, Network, Records and
   Workbench read the same authorized records through `WorkspaceDataService`.
-- Still local or simulated: capability claims, the Intelligence surfaces, and most Workspace
-  overview tiles. Network shows only what the signed-in person may see.
+- Still local or simulated: capability claims and the Intelligence surfaces. Network shows only what the signed-in person may see.
 - Server APIs otherwise cover Better Auth identity, organizations/memberships, organization-scoped
   opportunities, and the `/api/benbenos` school console.
 - Better Auth + PostgreSQL/Drizzle is the active prototype. There is no supported localStorage auth
@@ -91,7 +90,7 @@ describes intent, not a lock. (Check `app.routes.ts` for what's actually wired r
 |--------|-----|-------|
 | Commons | Discover needs, offers, resources, opportunities | `/workspace/commons` |
 | Network | People, crews, institutions, assets, capabilities | `/workspace/network/{people,institutions,capabilities}` |
-| Workbench | Scope, assemble, coordinate productive work | `/workspace/workbench`, `/workspace/workbench/:pilot` |
+| Workbench | Scope, assemble, coordinate productive work | `/workspace/workbench`, `/workspace/workbench/:undertakingId` |
 | Records | Canon, Annals, Roll lenses | `/workspace/records/{canon,annals,roll}` |
 | Intelligence | Agents, matching, forecasting, analytics | `/workspace/intelligence` |
 | Tenders | Government and institutional tenders — who bids, who wins, what was delivered | `/workspace/tenders` |

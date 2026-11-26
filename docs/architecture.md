@@ -18,7 +18,7 @@ See `docs/decisions/B13-shared-network-and-domain-protocols.md` and `docs/archit
 
 Decision B12 selects PostgreSQL as the authoritative system of record, Better Auth for authentication and session lifecycle, and Drizzle ORM for application schema and migrations. Domain contracts must not depend on provider SDK types. This is current infrastructure, not the product architecture or a permanent promise that these vendors can never change.
 
-The codebase is Angular 22 standalone, zoneless, and strict TypeScript at the repository root, with a local Express API for Better Auth, organizations and opportunities, and the undertaking journey (publish, interest, offer, acceptance, report, review, audit). Commons, Network, Records and Workbench read those authorized records through `WorkspaceDataService`. Capability claims, Intelligence, and most overview tiles are still local projections, so the connected network architecture is implemented for one workflow, not yet across every surface.
+The codebase is Angular 22 standalone, zoneless, and strict TypeScript at the repository root, with a local Express API for Better Auth, organizations and opportunities, and the undertaking journey (publish, interest, offer, acceptance, report, review, audit). Commons, Network, Records and Workbench read those authorized records through `WorkspaceDataService`. The Home overview, Commons, Network, Records, Workbench hub and Workbench detail read the same authorized records. Capability claims, Intelligence, and some overview copy remain local or reference-only, so the connected network architecture is implemented for one workflow, not yet across every surface.
 
 ### Verified boundaries
 

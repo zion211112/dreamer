@@ -6,6 +6,7 @@ import { db } from './db/client';
 import { aptPersons, auditEvents, opportunities, organizationMemberships, organizations, undertakingInterests, undertakingOffers, undertakingParticipants, undertakings, workReports, workReviews } from './db/schema';
 import { withOrganizationAuthorization } from './authorization';
 import { createBenbenosRouter } from './benbenos/router';
+import { createWorkbenchRouter } from './workbench/routes';
 
 const app = express();
 app.disable('x-powered-by');
@@ -31,6 +32,9 @@ app.get('/api/health', async (_req, res) => {
     return res.status(503).json({ status: 'unavailable', database: 'unavailable' });
   }
 });
+
+// The workbench router owns the undertaking read model and its decision routes.
+app.use('/api', createWorkbenchRouter());
 
 app.get('/api/me/network', async (req, res) => {
   const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
@@ -123,26 +127,6 @@ app.post('/api/organizations/:organizationId/opportunities', async (req, res) =>
   return res.status(201).json({ data: result.value });
 });
 
-app.get('/api/undertakings', async (req, res) => {
-  const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
-  if (!session) return res.status(401).json({ error: 'unauthenticated' });
-  const [person] = await db.select({ id: aptPersons.id }).from(aptPersons).where(eq(aptPersons.authUserId, session.user.id)).limit(1);
-  if (!person) return res.status(403).json({ error: 'person_identity_missing' });
-  const rows = await db.select({
-    id: undertakings.id,
-    organizationId: undertakings.organizationId,
-    organizationName: organizations.name,
-    organizationStanding: organizations.standing,
-    title: undertakings.title,
-    scope: undertakings.scope,
-    status: undertakings.status,
-    createdAt: undertakings.createdAt,
-  }).from(undertakings).innerJoin(organizations, eq(organizations.id, undertakings.organizationId))
-    .where(sql`${undertakings.status} = 'open' or exists (select 1 from organization_memberships m where m.organization_id = ${undertakings.organizationId} and m.person_id = ${person.id} and m.revoked_at is null) or exists (select 1 from undertaking_participants p where p.undertaking_id = ${undertakings.id} and p.person_id = ${person.id})`)
-    .orderBy(desc(undertakings.createdAt));
-  return res.json({ data: rows });
-});
-
 app.get('/api/records', async (req, res) => {
   const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
   if (!session) return res.status(401).json({ error: 'unauthenticated' });
@@ -208,10 +192,11 @@ app.post('/api/organizations/:organizationId/undertakings/:undertakingId/offers'
   const { interestId, proposal } = req.body as { interestId?: unknown; proposal?: unknown };
   if (typeof interestId !== 'string' || typeof proposal !== 'string' || !proposal.trim() || proposal.length > 4_000) return res.status(400).json({ error: 'invalid_offer' });
   const result = await withOrganizationAuthorization(session.user.id, req.params['organizationId'], 'undertaking:decide', async (tx, membership) => {
-    const [parent] = await tx.select({ id: undertakings.id, organizationId: undertakings.organizationId }).from(undertakings)
+    const [parent] = await tx.select({ id: undertakings.id, organizationId: undertakings.organizationId, status: undertakings.status }).from(undertakings)
       .where(and(eq(undertakings.id, req.params['undertakingId']), eq(undertakings.organizationId, membership.organizationId))).limit(1);
     const [interest] = await tx.select().from(undertakingInterests).where(and(eq(undertakingInterests.id, interestId), eq(undertakingInterests.undertakingId, req.params['undertakingId']))).limit(1);
     if (!parent || !interest) return { kind: 'not_found' as const };
+    if (parent.status === 'closed') return { kind: 'closed' as const };
     const [offer] = await tx.insert(undertakingOffers).values({ undertakingId: parent.id, interestId: interest.id, issuedByPersonId: membership.personId, offeredToPersonId: interest.personId, proposal: proposal.trim() }).onConflictDoNothing().returning();
     if (!offer) return { kind: 'conflict' as const };
     await tx.insert(auditEvents).values({ organizationId: membership.organizationId, actorPersonId: membership.personId, action: 'undertaking.offer_issued', subjectType: 'offer', subjectId: offer.id });
@@ -219,6 +204,7 @@ app.post('/api/organizations/:organizationId/undertakings/:undertakingId/offers'
   });
   if (!result.authorized) return res.status(403).json({ error: 'forbidden' });
   if (result.value.kind === 'not_found') return res.status(404).json({ error: 'interest_not_found' });
+  if (result.value.kind === 'closed') return res.status(409).json({ error: 'undertaking_closed' });
   if (result.value.kind === 'conflict') return res.status(409).json({ error: 'offer_already_exists' });
   return res.status(201).json({ data: result.value.data });
 });
@@ -231,9 +217,11 @@ app.post('/api/undertaking-offers/:offerId/decision', async (req, res) => {
   const result = await db.transaction(async (tx) => {
     const [person] = await tx.select({ id: aptPersons.id }).from(aptPersons).where(eq(aptPersons.authUserId, session.user.id)).limit(1);
     if (!person) return { kind: 'forbidden' as const };
-    const [offer] = await tx.select({ offer: undertakingOffers, organizationId: undertakings.organizationId }).from(undertakingOffers)
+    const [offer] = await tx.select({ offer: undertakingOffers, organizationId: undertakings.organizationId, status: undertakings.status }).from(undertakingOffers)
       .innerJoin(undertakings, eq(undertakings.id, undertakingOffers.undertakingId)).where(eq(undertakingOffers.id, req.params['offerId'])).limit(1);
-    if (!offer || offer.offer.offeredToPersonId !== person.id || offer.offer.status !== 'pending') return { kind: 'unavailable' as const };
+    if (!offer || offer.offer.offeredToPersonId !== person.id) return { kind: 'unavailable' as const };
+    if (offer.status === 'closed') return { kind: 'closed' as const };
+    if (offer.offer.status !== 'pending') return { kind: 'unavailable' as const };
     const [changed] = await tx.update(undertakingOffers).set({ status: decision, decidedByPersonId: person.id, decidedAt: new Date() })
       .where(and(eq(undertakingOffers.id, offer.offer.id), eq(undertakingOffers.status, 'pending'))).returning();
     if (!changed) return { kind: 'conflict' as const };
@@ -246,29 +234,9 @@ app.post('/api/undertaking-offers/:offerId/decision', async (req, res) => {
   }, { isolationLevel: 'serializable' });
   if (result.kind === 'forbidden') return res.status(403).json({ error: 'forbidden' });
   if (result.kind === 'unavailable') return res.status(404).json({ error: 'offer_unavailable' });
+  if (result.kind === 'closed') return res.status(409).json({ error: 'undertaking_closed' });
   if (result.kind === 'conflict') return res.status(409).json({ error: 'offer_already_decided' });
   return res.json({ data: result.data });
-});
-
-app.get('/api/undertakings/:undertakingId', async (req, res) => {
-  const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
-  if (!session) return res.status(401).json({ error: 'unauthenticated' });
-  const [person] = await db.select({ id: aptPersons.id }).from(aptPersons).where(eq(aptPersons.authUserId, session.user.id)).limit(1);
-  if (!person) return res.status(403).json({ error: 'person_identity_missing' });
-  const [undertaking] = await db.select().from(undertakings).where(eq(undertakings.id, req.params['undertakingId'])).limit(1);
-  if (!undertaking) return res.status(404).json({ error: 'not_found' });
-  const [membership] = await db.select({ id: organizationMemberships.id, role: organizationMemberships.role }).from(organizationMemberships).where(and(eq(organizationMemberships.organizationId, undertaking.organizationId), eq(organizationMemberships.personId, person.id), isNull(organizationMemberships.revokedAt))).limit(1);
-  const [participant] = await db.select({ id: undertakingParticipants.id }).from(undertakingParticipants).where(and(eq(undertakingParticipants.undertakingId, undertaking.id), eq(undertakingParticipants.personId, person.id))).limit(1);
-  const member = membership ? { id: membership.id } : undefined;
-  if (!member && !participant && undertaking.status !== 'open') return res.status(403).json({ error: 'forbidden' });
-  const canReview = !!membership && ['owner', 'administrator', 'manager'].includes(membership.role);
-  const interests = canReview ? await db.select({ id: undertakingInterests.id, personId: undertakingInterests.personId, message: undertakingInterests.message, createdAt: undertakingInterests.createdAt }).from(undertakingInterests).where(eq(undertakingInterests.undertakingId, undertaking.id)) : [];
-  const offers = await db.select({ id: undertakingOffers.id, offeredToPersonId: undertakingOffers.offeredToPersonId, proposal: undertakingOffers.proposal, status: undertakingOffers.status, createdAt: undertakingOffers.createdAt }).from(undertakingOffers).where(and(eq(undertakingOffers.undertakingId, undertaking.id), canReview ? sql`true` : eq(undertakingOffers.offeredToPersonId, person.id)));
-  const reports = member || participant ? await db.select({ id: workReports.id, authorPersonId: workReports.authorPersonId, report: workReports.report, createdAt: workReports.createdAt }).from(workReports).where(eq(workReports.undertakingId, undertaking.id)) : [];
-  const reportIds = reports.map((report) => report.id);
-  const reviews = reportIds.length ? await db.select({ id: workReviews.id, reportId: workReviews.reportId, decision: workReviews.decision, rationale: workReviews.rationale, createdAt: workReviews.createdAt }).from(workReviews).where(sql`${workReviews.reportId} in (${sql.join(reportIds.map((reportId) => sql`${reportId}`), sql`, `)})`) : [];
-  const ownInterest = member ? false : !!(await db.select({ id: undertakingInterests.id }).from(undertakingInterests).where(and(eq(undertakingInterests.undertakingId, undertaking.id), eq(undertakingInterests.personId, person.id))).limit(1))[0];
-  return res.json({ data: { ...undertaking, isMember: !!member, isParticipant: !!participant, canReview, ownInterest, interests, offers, reports, reviews } });
 });
 
 app.post('/api/undertakings/:undertakingId/reports', async (req, res) => {
@@ -278,13 +246,15 @@ app.post('/api/undertakings/:undertakingId/reports', async (req, res) => {
   if (typeof report !== 'string' || !report.trim() || report.length > 10_000) return res.status(400).json({ error: 'invalid_report' });
   const result = await db.transaction(async (tx) => {
     const [person] = await tx.select({ id: aptPersons.id }).from(aptPersons).where(eq(aptPersons.authUserId, session.user.id)).limit(1);
-    const [participation] = person ? await tx.select({ organizationId: undertakings.organizationId }).from(undertakingParticipants).innerJoin(undertakings, eq(undertakings.id, undertakingParticipants.undertakingId)).where(and(eq(undertakingParticipants.undertakingId, req.params['undertakingId']), eq(undertakingParticipants.personId, person.id))).limit(1) : [];
+    const [participation] = person ? await tx.select({ organizationId: undertakings.organizationId, status: undertakings.status }).from(undertakingParticipants).innerJoin(undertakings, eq(undertakings.id, undertakingParticipants.undertakingId)).where(and(eq(undertakingParticipants.undertakingId, req.params['undertakingId']), eq(undertakingParticipants.personId, person.id))).limit(1) : [];
     if (!person || !participation) return { kind: 'forbidden' as const };
+    if (participation.status === 'closed') return { kind: 'closed' as const };
     const [created] = await tx.insert(workReports).values({ undertakingId: req.params['undertakingId'], authorPersonId: person.id, report: report.trim() }).returning();
     await tx.insert(auditEvents).values({ organizationId: participation.organizationId, actorPersonId: person.id, action: 'undertaking.report_submitted', subjectType: 'report', subjectId: created.id });
     return { kind: 'created' as const, data: created };
   });
   if (result.kind === 'forbidden') return res.status(403).json({ error: 'participant_required' });
+  if (result.kind === 'closed') return res.status(409).json({ error: 'undertaking_closed' });
   return res.status(201).json({ data: result.data });
 });
 

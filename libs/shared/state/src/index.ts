@@ -18,4 +18,5 @@ export type { NetworkGroup, DirectoryRow } from './network.service';
 export { SelectionService } from './selection.service';
 export type { SelectedEntity } from './selection.service';
 export { WorkspaceDataService } from './workspace-data.service';
-export type { WorkspaceEvent, WorkspaceNetwork, WorkspaceOrganization, WorkspaceUndertaking } from './workspace-data.service';
+export type { WorkActions, WorkbenchSummary, WorkspaceEvent, WorkspaceNetwork, WorkspaceOrganization, WorkspaceUndertaking, UndertakingDetail, UndertakingReview } from './workspace-data.service';
+export { describeWorkspaceError } from './workspace-data.service';

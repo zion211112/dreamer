@@ -15,7 +15,7 @@ import { WorkspaceDataService } from '@apt-labs/shared/state';
         @if (data.loading() && undertakings().length === 0) {<p class="state" role="status">Loading open undertakings…</p>}
         @else if (visible().length === 0 && !query()) {<section class="empty"><h2>No open undertakings yet</h2><p>When an organization publishes a scoped undertaking, it becomes discoverable here. Posting is available to an authorized organization member.</p><a routerLink="/workspace/workbench">Open Workbench →</a></section>}
         @else if (visible().length === 0) {<p class="empty" role="status">No open work matches “{{ query() }}”. Try another search.</p>}
-        @else {<section class="list" aria-label="Open undertakings">@for (item of visible(); track item.id) {<article class="row"><div class="row-head"><span class="state-tag">Open</span><span class="org">{{ item.organizationName }}</span></div><h2>{{ item.title }}</h2><p>{{ item.scope }}</p><footer><span>Organization standing · {{ item.organizationStanding.replaceAll('_', ' ') }}</span><a [routerLink]="['/workspace/workbench']" [queryParams]="{ undertaking: item.id }">Inspect undertaking <span aria-hidden="true">→</span></a></footer></article>}</section>}
+        @else {<section class="list" aria-label="Open undertakings">@for (item of visible(); track item.id) {<article class="row"><div class="row-head"><span class="state-tag">Open</span><span class="org">{{ item.organizationName }}</span></div><h2>{{ item.title }}</h2><p>{{ item.scope }}</p><footer><span>Organization standing · {{ item.organizationStanding.replaceAll('_', ' ') }}</span><a [routerLink]="['/workspace/workbench', item.id]">Inspect undertaking <span aria-hidden="true">→</span></a></footer></article>}</section>}
       }
     </section>
   `,
