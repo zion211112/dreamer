@@ -31,6 +31,23 @@ export {
   getProductiveRealityCycleStage,
 } from './types';
 
+// Shared network and domain protocol contracts
+export type { NetworkStructure, NetworkStructureId } from './network';
+export { NETWORK_STRUCTURES, NETWORK_CONTEXT_FAMILIES, NETWORK_CROSS_CUTTING_FAMILIES } from './network';
+export type {
+  DomainProtocolStatus,
+  ProtocolFieldType,
+  ProtocolDataClassification,
+  DomainProtocolField,
+  DomainRecordDefinition,
+  DomainRelationshipMapping,
+  DomainProtocolTransition,
+  DomainProtocolExceptionPath,
+  DomainProtocolDefinition,
+  ProtocolValidationResult,
+} from './protocols';
+export { validateDomainProtocolDefinition, isDomainProtocolDefinition } from './protocols';
+
 // Relationships
 export type { RelationshipKind, RelationshipCardinality, RelationshipMetadata } from './relationships';
 export {

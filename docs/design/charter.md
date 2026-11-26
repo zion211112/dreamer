@@ -84,7 +84,7 @@ These are reasoned, revisable decisions. Each carries a decision identifier, dat
 | Dependencies | None |
 | Supersedes | charter §4 "Hard navigation constraints" (permanent bans converted to revisable decision); prior B1 five-module limit |
 
-The six modules are Home, Commons, Network, Workbench, Records, Intelligence. Home is the personal shell context (`/workspace`) where a user chooses quick acts, sees personal assignments and linked updates, and selects a productive module. School Console remains a nested operational boundary under Workbench, not a primary module. Home is not a seventh constraint; it is the context in which the five productive modules are entered.
+The six current surfaces are Home, Commons, Network, Workbench, Records, and Intelligence. Home is the personal shell context (`/workspace`) where a user chooses relevant actions, sees personal assignments and linked updates, and enters productive work. These surfaces describe today's navigation, not a permanent limit: under B13, role-, task-, and domain-focused experiences may be introduced over the same shared network when justified. A specialist experience is not a separate identity, authority system, or canonical store.
 
 ### B2. Main/Branch prohibition
 
@@ -112,7 +112,7 @@ No Main/Branch workspace modes. The fork glyph (└─) may remain as an identit
 | Dependencies | None |
 | Supersedes | Fixed panel and shell assumptions from prior direction memos |
 
-Topbar: working-context identity. Rail: module switching (six icons: Home plus exactly five productive module icons). Sidebar: within-module context only. Main: work surface. Inspector: contextual, opens on selection. Dock: contextual per-module change-set/evidence strip. Statusbar: single boundary line + ledger head state.
+Current shell ownership: topbar shows working context; rail switches the current primary surfaces; sidebar gives within-experience context; main is the work surface; inspector opens contextually on selection; dock shows contextual changes/evidence; statusbar shows the current boundary and ledger state. This describes the existing shell, not a requirement that future focused experiences be forced into six fixed modules (B13).
 
 ### B4. Visual design direction
 
@@ -194,6 +194,20 @@ Canon (what is structurally recorded), Annals (what happened over time), Roll (w
 | Supersedes | None |
 
 Run `npm run build` and `npm run test:unit -- --run` before shipping. Not a gate that blocks every edit.
+
+### B13. Shared network kernel, domain protocols, and focused experiences
+
+| Field | Value |
+|-------|-------|
+| Decision ID | B13 |
+| Date | 2026-11-25 |
+| Rationale | One connected productive network must support diverse activity without forcing one workflow or fragmenting identity, authority, and records into isolated apps. |
+| Scope | Product architecture, network ontology, domain extension, and experience composition |
+| Status | Active |
+| Dependencies | A1–A10; B1–B7; B11–B12 |
+| Supersedes | None; refines B1 so today's six workspace surfaces are not a permanent interface ceiling. |
+
+APT-LABS is one shared productive network: a typed, graph-shaped record reality over a shared kernel; versioned domain protocols define their own bounded lifecycle and evidence rules; focused experiences reveal relevant tools and views over the same authorized records. No domain owns a parallel identity, authority system, or disconnected canonical store. PostgreSQL + Better Auth + Drizzle (B12) are current technical infrastructure—not this product architecture. “Canonical record” does not erase source provenance, disagreement, correction, or privacy boundaries. See `docs/decisions/B13-shared-network-and-domain-protocols.md` and `docs/architecture/network-kernel-and-domain-protocols.md`.
 
 ---
 

@@ -18,7 +18,7 @@ This file is a quick-reference index to the six structures and canonical distinc
 
 ## Canonical entity distinctions
 
-See `docs/ontology.md` §"The six structures" for the full list.
+See `docs/ontology.md` §"Shared network orientation" for the full list.
 Quick reference: Person ≠ Asset, Person ≠ Crew, Institution ≠ Venture,
 Asset ≠ Capability, Claim ≠ Evidence,
 Approval ≠ Authorization ≠ Execution ≠ Acceptance ≠ Settlement,

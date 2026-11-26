@@ -1,14 +1,14 @@
 /**
  * APT-LABS — Ontology Core Types
  *
- * Canonical TypeScript definitions of the 13 APTO (APT Core Ontology) semantic
+ * Canonical TypeScript definitions of the APTO (APT Core Ontology) semantic
  * families, plus the entity base, relationship base, and event envelope.
  *
  * Framework-agnostic: no UI framework dependencies. Survives any UI-framework
  * choice (Preact, Vue 3, or other). Migrations, API schemas, permissions, and
  * UI property definitions derive from this single canonical language.
  *
- * Consolidates the pasted 13-family ontology with the existing 6-structure
+ * Consolidates the APTO family ontology with the existing 6-structure
  * ontology (`docs/ontology.md`, `docs/domain-model.md`).
  */
 
