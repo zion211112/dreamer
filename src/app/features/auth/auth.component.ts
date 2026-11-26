@@ -321,6 +321,11 @@ export class AuthComponent implements OnInit {
     }
   }
 
+  private redirectTarget(): string {
+    const target = this.route.snapshot.queryParamMap.get('redirect');
+    return target && target.startsWith('/') && !target.startsWith('//') ? target : '/workspace';
+  }
+
   private validateEmail(value: string): string {
     if (!value) return 'Email is required.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Enter a valid email address.';
@@ -390,7 +395,7 @@ export class AuthComponent implements OnInit {
         this.error.set('Account created. Email verification and password recovery are not configured yet. Sign in with your new account.');
         return;
       }
-      await this.router.navigate(['/workspace']);
+      await this.router.navigateByUrl(this.redirectTarget());
     } catch {
       this.error.set('Authentication service is unavailable. Try again later.');
     } finally {

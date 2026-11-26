@@ -38,5 +38,13 @@ export const routes: Routes = [
       { path: 'sovereignty', loadComponent: () => import('./features/sovereignty/sovereignty.component').then(m => m.SovereigntyComponent) },
     ],
   },
+  // Benben-OS: standalone school console. Its own shell, deliberately outside
+  // the workspace chrome so it can later nest into APT-LABS without rewriting.
+  {
+    path: 'benben-os',
+    canActivate: [requireSession],
+    loadChildren: () => import('./features/benben-os/benben.routes').then(m => m.BENBEN_ROUTES),
+  },
+
   { path: '**', loadComponent: () => import('./features/not-found/not-found.component').then(m => m.NotFoundComponent) },
 ];

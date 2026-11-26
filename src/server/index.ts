@@ -5,10 +5,13 @@ import { auth } from './auth';
 import { db } from './db/client';
 import { aptPersons, opportunities, organizationMemberships, organizations } from './db/schema';
 import { withOrganizationAuthorization } from './authorization';
+import { createBenbenosRouter } from './benbenos/router';
 
 const app = express();
 app.disable('x-powered-by');
 app.all('/api/auth/*splat', toNodeHandler(auth));
+// Benben-OS accepts marked answer sheets, so its body limit is larger than the identity API's.
+app.use('/api/benbenos', express.json({ limit: '256kb' }));
 app.use(express.json({ limit: '32kb' }));
 app.use('/api/organizations', (req, res, next) => {
   if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) return next();
@@ -104,6 +107,15 @@ app.post('/api/organizations/:organizationId/opportunities', async (req, res) =>
   if (!result.authorized) return res.status(403).json({ error: 'forbidden' });
   return res.status(201).json({ data: result.value });
 });
+
+app.use('/api/benbenos', createBenbenosRouter({
+  db,
+  identify: async (req) => {
+    const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
+    if (!session) return null;
+    return { authUserId: session.user.id, email: session.user.email, name: session.user.name };
+  },
+}));
 
 const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
   console.error('Request failed', error instanceof Error ? error.message : 'unknown error');
