@@ -8,7 +8,7 @@ APT-LABS is one shared productive network capable of expressing many forms of ec
 
 1. **Shared network kernel:** stable, typed concepts for Actors, Resources, Intentions, Commitments, Activity, and Knowledge, crossed by identity, relationships, permissions, provenance, history, privacy, and explicit economic records.
 2. **Domain protocols:** versioned, stewarded contracts for domain-specific records, lifecycle, terminology, evidence, validation, and authority. They reuse the kernel rather than creating parallel identities or canonical stores.
-3. **Focused experiences:** general and specialist interfaces over the same authorized records and actions. The six current surfaces—Home, Commons, Network, Workbench, Records, Intelligence—are today's navigation, not a permanent ceiling.
+3. **Focused experiences:** general and specialist interfaces over the same authorized records and actions. The current primary navigation is Home, Commons, Workbench, Network, and Records; Reference is secondary. This interface choice is not a permanent ceiling on focused experiences.
 
 The product model is graph-shaped, not a universal linear workflow. Records can begin at different points, connect through typed and governed relationships, branch, recur, conflict, pause, fail, or be corrected. One canonical store preserves source provenance and disagreement; it does not make every claim true or every record globally visible.
 
@@ -18,11 +18,11 @@ See `docs/decisions/B13-shared-network-and-domain-protocols.md` and `docs/archit
 
 Decision B12 selects PostgreSQL as the authoritative system of record, Better Auth for authentication and session lifecycle, and Drizzle ORM for application schema and migrations. Domain contracts must not depend on provider SDK types. This is current infrastructure, not the product architecture or a permanent promise that these vendors can never change.
 
-The codebase is Angular 22 standalone, zoneless, and strict TypeScript at the repository root, with a local Express API for Better Auth, organizations and opportunities, and the undertaking journey (publish, interest, offer, acceptance, report, review, audit). Commons, Network, Records and Workbench read those authorized records through `WorkspaceDataService`. The Home overview, Commons, Network, Records, Workbench hub and Workbench detail read the same authorized records. Commons, Network, Records, Workbench and the Ontology object explorer read those records; the studio query engine lives in `src/server/studio/`. Capability claims, Intelligence, and some overview copy remain local or reference-only, so the connected network architecture is implemented for one workflow, not yet across every surface.
+The codebase is Angular 22 standalone, zoneless, and strict TypeScript at the repository root, with a local Express API for Better Auth, organizations and opportunities, and the undertaking journey (publish, interest, offer, acceptance, report, review, audit). Commons, Network, Records and Workbench read those authorized records through `WorkspaceDataService`. The Home overview, Commons, Network, Records, Workbench hub and Workbench detail read the same authorized records. Commons, Network, Records, Workbench and the Reference object explorer read those records; the studio query engine lives in `src/server/studio/`. Capability claims, Intelligence, and some overview copy remain local or reference-only, so the connected network architecture is implemented for one workflow, not yet across every surface.
 
 ### The workspace studio (PROTOTYPE, exercised against the local API)
 
-The studio is not a separate module or route: it is the workspace's typed read layer, surfaced today inside the Ontology screen (`/workspace/ontology`). The registry in `libs/domain/src/studio-ontology.ts` publishes eight object types (organization, undertaking, person, interest, offer, report, review, event), each with properties, filterable keys, link types, and an optional detail-link template. `libs/domain/src/studio-query.ts` is the zod contract shared by browser and server: type, trimmed search, status list, typed filters, sort, and a bounded 1–100 page (default 40). Unknown fields and out-of-range pages are rejected instead of ignored.
+The studio is not a separate module or route: it is the workspace's typed read layer, surfaced today inside Reference (`/workspace/reference`). The registry in `libs/domain/src/studio-ontology.ts` publishes eight object types (organization, undertaking, person, interest, offer, report, review, event), each with properties, filterable keys, link types, and an optional detail-link template. `libs/domain/src/studio-query.ts` is the zod contract shared by browser and server: type, trimmed search, status list, typed filters, sort, and a bounded 1–100 page (default 40). Unknown fields and out-of-range pages are rejected instead of ignored.
 
 `src/server/studio/routes.ts` answers three routes:
 
@@ -64,8 +64,8 @@ Do not claim live authentication, tenant isolation, recovery, production readine
 
 - Public: `/landing`, `/sign-in`, `/sign-up`
 - Workspace shell (session guarded): `/workspace`
-- Current primary surfaces: Home (`/workspace`), Commons, Network, Workbench, Records, Intelligence
-- Additional current destinations: Value, Ontology, Sovereignty, and Network/Records subviews
+- Current primary destinations: Home (`/workspace`), Commons, Workbench, Network, Records; Reference is secondary (`/workspace/reference`)
+- Supporting and nested destinations: Workbench Value; Network People, Institutions and Capabilities; Records Canon, Annals and Roll; Reference. Legacy Value, Ontology, Sovereignty and Intelligence URLs redirect to current destinations.
 
 The route list is descriptive. It does not define the permanent product topology; future focused experiences require product and domain-protocol design and must operate on the shared authorized network.
 

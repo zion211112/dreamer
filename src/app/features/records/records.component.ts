@@ -1,35 +1,64 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { WorkspaceDataService, type WorkspaceEvent, type WorkspaceUndertaking } from '@apt-labs/shared/state';
+import { Component, OnInit, inject } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { WorkspaceDataService } from '@apt-labs/shared/state';
+import { SectionTabsComponent, type SectionTab } from '../workspace/section-tabs.component';
 
+/**
+ * Records: what the workspace recorded, when, and how far it reached the
+ * evidence chain. Three lenses over the same permission-scoped data:
+ * Canon (structure), Annals (dated sequence), Roll (evidence chain).
+ */
 @Component({
   selector: 'app-records',
   standalone: true,
-  imports: [DatePipe],
+  imports: [RouterOutlet, SectionTabsComponent],
   template: `
-    <section class="records">
-      <header class="head"><p class="eyebrow">APT-LABS · Records</p><h1>What was recorded</h1><p>Organization-visible undertaking records and an attributed activity trail. An activity entry shows that an action was recorded; it is not proof that work was completed or independently verified.</p></header>
-      @if (data.error()) {<section class="state error" role="alert"><div><h2>Records could not be loaded</h2><p>{{ data.error().replaceAll('_', ' ') }}.</p></div><button type="button" (click)="data.refresh()">Retry</button></section>}
-      <nav class="filters" aria-label="Filter records"><button type="button" [class.active]="filter() === 'all'" [attr.aria-pressed]="filter() === 'all'" (click)="filter.set('all')">All <span>{{ allRows().length }}</span></button><button type="button" [class.active]="filter() === 'undertaking'" [attr.aria-pressed]="filter() === 'undertaking'" (click)="filter.set('undertaking')">Undertakings <span>{{ undertakingRows().length }}</span></button><button type="button" [class.active]="filter() === 'activity'" [attr.aria-pressed]="filter() === 'activity'" (click)="filter.set('activity')">Activity <span>{{ eventRows().length }}</span></button></nav>
-      @if (data.loading() && allRows().length === 0) {<p class="state" role="status">Loading records you can access…</p>}
-      @else if (visible().length) {<ol class="timeline" aria-label="Shared record timeline">@for (row of visible(); track row.id) {<li><span class="marker" [attr.data-kind]="row.kind" aria-hidden="true"></span><div class="entry"><div class="entry-head"><span class="kind">{{ row.kind === 'undertaking' ? 'Undertaking' : 'Activity' }}</span><time [attr.datetime]="row.date">{{ row.date | date:'medium' }}</time></div><h2>{{ row.title }}</h2><p>{{ row.summary }}</p><footer><span>{{ row.organization }}</span><span class="status">{{ row.status }}</span></footer></div></li>}</ol>}
-      @else {<section class="empty"><h2>No records in this view yet</h2><p>Open undertakings and organization-visible activity appear as they are recorded. Private interest and offer details are not included in this timeline.</p></section>}
-      <p class="boundary"><strong>Standing boundary</strong> Participant reports and independent reviews are separate records. Neither is represented here as payment, credential, or proof beyond its recorded state.</p>
+    <section class="records" data-module="records">
+      <header class="records-head">
+        <p class="records-eyebrow">APT-LABS · Records</p>
+        <h1 class="records-title">Records</h1>
+        <p class="records-lede">
+          What was recorded, when, and how far it reached the evidence chain. A record shows that an action
+          was entered and who entered it. It does not verify that work was done or that an outcome was achieved,
+          and a report or review is one party's recorded statement, not an independent check.
+        </p>
+      </header>
+
+      <app-section-tabs label="Records lenses" [tabs]="tabs" />
+
+      @if (data.error()) {
+        <section class="records-state records-state--error" role="alert">
+          <p>Records could not be loaded: {{ data.error().replaceAll('_', ' ') }}.</p>
+          <button type="button" class="records-retry" (click)="data.refresh()">Retry</button>
+        </section>
+      }
+
+      <router-outlet />
     </section>
   `,
-  styles: [`
-    :host{display:block;font-family:var(--apt-font-sans);color:var(--apt-text-body)}.records{max-width:1120px;margin:auto}.head{padding:8px 0 24px;border-bottom:1px solid var(--apt-border)}.eyebrow{margin:0 0 7px;color:var(--apt-accent);font:600 11px var(--apt-font-mono);letter-spacing:.09em;text-transform:uppercase}.head h1{margin:0;color:var(--apt-text-strong);font:600 36px/1.12 var(--apt-font-serif)}.head>p:last-child{max-width:76ch;color:var(--apt-text-muted);line-height:1.55}.filters{display:flex;gap:8px;padding:18px 0}.filters button{display:flex;gap:8px;align-items:center;min-height:38px;padding:0 12px;border:1px solid var(--apt-border);border-radius:var(--apt-button-radius);background:transparent;color:var(--apt-text-muted);font:500 13px var(--apt-font-sans);cursor:pointer}.filters button.active{border-color:var(--apt-accent);background:var(--apt-surface-info);color:var(--apt-accent)}.filters span{font:11px var(--apt-font-mono);opacity:.8}.timeline{list-style:none;margin:0;padding:4px 0 10px}.timeline li{position:relative;display:grid;grid-template-columns:16px minmax(0,1fr);gap:16px;padding:0 0 18px}.timeline li:not(:last-child):before{position:absolute;top:15px;bottom:-2px;left:6px;width:1px;background:var(--apt-border);content:''}.marker{z-index:1;width:13px;height:13px;margin-top:4px;border:2px solid var(--apt-accent);border-radius:50%;background:var(--apt-surface-page)}.marker[data-kind=activity]{border-color:var(--apt-text-info)}.entry{min-width:0;padding:0 0 15px;border-bottom:1px solid var(--apt-border-faint)}.entry-head,footer{display:flex;justify-content:space-between;align-items:center;gap:12px}.kind{color:var(--apt-accent);font:600 10px var(--apt-font-mono);letter-spacing:.06em;text-transform:uppercase}.entry-head time{color:var(--apt-text-muted);font:11px var(--apt-font-mono)}.entry h2{margin:7px 0 5px;color:var(--apt-text-strong);font:600 19px var(--apt-font-serif)}.entry p{margin:0;color:var(--apt-text-muted);font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}.entry footer{margin-top:12px;color:var(--apt-text-muted);font-size:12px}.status{text-transform:capitalize}.empty,.state{margin:12px 0;padding:22px 18px;border:1px dashed var(--apt-border);border-radius:var(--apt-radius-md);color:var(--apt-text-muted);line-height:1.5}.empty h2,.state h2{margin:0 0 6px;color:var(--apt-text-strong);font:600 21px var(--apt-font-serif)}.empty p,.state p{margin:0}.state.error{display:flex;justify-content:space-between;gap:16px;border-color:var(--apt-text-danger)}button{min-height:40px;padding:8px 14px;border:1px solid var(--apt-border);border-radius:var(--apt-button-radius);background:transparent;color:var(--apt-text-body);font:600 13px var(--apt-font-sans);cursor:pointer}.boundary{margin-top:18px;padding:14px;border-left:2px solid var(--apt-border);color:var(--apt-text-muted);font-size:12px;line-height:1.5}.boundary strong{display:block;margin-bottom:3px;color:var(--apt-text-strong)}@media(max-width:600px){.head h1{font-size:31px}.entry-head,footer{align-items:flex-start;flex-direction:column;gap:5px}}
-  `],
+  styles: [
+    `
+    :host { display: block; font-family: var(--apt-font-sans); color: var(--apt-text-body); }
+    .records { max-width: 1120px; margin: 0 auto; padding: var(--apt-space-8) var(--apt-space-10); }
+    .records-eyebrow { margin: 0 0 var(--apt-space-2); font-family: var(--apt-font-mono); font-size: var(--apt-size-micro); letter-spacing: 0.1em; text-transform: uppercase; color: var(--apt-text-dim); }
+    .records-title { margin: 0 0 var(--apt-space-3); font-family: var(--apt-font-serif); font-size: var(--apt-size-display); font-weight: var(--apt-weight-semibold); color: var(--apt-text-strong); line-height: 1.1; }
+    .records-lede { margin: 0 0 var(--apt-space-6); max-width: 72ch; font-size: var(--apt-size-body); line-height: var(--apt-line-relaxed); color: var(--apt-text-muted); }
+    .records-state { display: flex; align-items: center; justify-content: space-between; gap: var(--apt-space-4); padding: var(--apt-space-4); margin-bottom: var(--apt-space-5); border: 1px solid var(--apt-destructive-surface, var(--apt-border)); border-radius: var(--apt-radius-md); color: var(--apt-text-body); }
+    .records-state p { margin: 0; }
+    .records-retry { padding: var(--apt-space-2) var(--apt-space-4); border: 1px solid var(--apt-border); border-radius: var(--apt-button-radius); background: var(--apt-surface-raised); color: var(--apt-text-strong); cursor: pointer; }
+    @media (max-width: 760px) { .records { padding: var(--apt-space-6) var(--apt-space-4); } }
+    `,
+  ],
 })
 export class RecordsComponent implements OnInit {
   readonly data = inject(WorkspaceDataService);
-  readonly filter = signal<'all' | 'undertaking' | 'activity'>('all');
-  readonly undertakingRows = computed(() => this.data.recordsState().undertakings.map((item) => this.fromUndertaking(item)));
-  readonly eventRows = computed(() => this.data.recordsState().events.map((event) => this.fromEvent(event)));
-  readonly allRows = computed(() => [...this.undertakingRows(), ...this.eventRows()].sort((a, b) => Date.parse(b.date) - Date.parse(a.date)));
-  readonly visible = computed(() => this.filter() === 'undertaking' ? this.undertakingRows() : this.filter() === 'activity' ? this.eventRows() : this.allRows());
+  readonly tabs: readonly SectionTab[] = [
+    { label: 'Canon', path: '/workspace/records/canon' },
+    { label: 'Annals', path: '/workspace/records/annals' },
+    { label: 'Roll', path: '/workspace/records/roll' },
+  ];
 
-  ngOnInit(): void { void this.data.refresh(); }
-  private fromUndertaking(item: WorkspaceUndertaking) { return { id: `undertaking-${item.id}`, kind: 'undertaking' as const, title: item.title, summary: item.scope, organization: item.organizationName, status: item.status, date: item.createdAt }; }
-  private fromEvent(event: WorkspaceEvent) { return { id: `event-${event.id}`, kind: 'activity' as const, title: event.action.replaceAll('.', ' ').replaceAll('_', ' '), summary: `${event.actorName} recorded ${event.subjectType} ${event.subjectId}.`, organization: event.organizationName ?? 'Shared network', status: 'recorded', date: event.occurredAt }; }
+  ngOnInit(): void {
+    void this.data.refresh();
+  }
 }

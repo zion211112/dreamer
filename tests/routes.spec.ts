@@ -13,10 +13,12 @@ const implementedRoutes = [
   '/workspace/workbench',
   '/workspace/workbench/undertaking-kibera-workshop-bench',
   '/workspace/value',
+  '/workspace/workbench/value',
   '/workspace/records',
   '/workspace/records/canon',
   '/workspace/records/annals',
   '/workspace/records/roll',
+  '/workspace/reference',
   '/workspace/intelligence',
   '/workspace/ontology',
   '/workspace/sovereignty',
@@ -37,7 +39,7 @@ test('root redirects to landing', async ({ page }) => {
 test('records subroutes select the matching view', async ({ page }) => {
   for (const view of ['canon', 'annals', 'roll']) {
     await page.goto(`/workspace/records/${view}`);
-    await expect(page.locator('.records-filter button.active')).toHaveText(new RegExp(view, 'i'));
+    await expect(page.locator('.section-tab--active')).toHaveText(new RegExp(view, 'i'));
   }
 });
 
@@ -46,64 +48,49 @@ test('capabilities route opens the capability directory', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Capabilities' })).toBeVisible();
 });
 
-test('workspace rail contains only the six primary contexts', async ({ page }) => {
+test('workspace rail contains only the five primary modules', async ({ page }) => {
   await page.goto('/workspace');
-  await expect(page.getByRole('navigation', { name: 'Modules' }).locator('.nav-item')).toHaveCount(6);
+  await expect(page.getByRole('navigation', { name: 'Modules' }).locator('.nav-item')).toHaveCount(5);
+  await expect(page.getByRole('link', { name: 'Reference' })).toBeVisible();
 });
 
-test('module navigation remains usable on narrow screens', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/workspace');
-  const modules = page.getByRole('navigation', { name: 'Modules' });
-  const networkLink = modules.getByRole('link', { name: 'Network' });
+test('module navigation is accessible at 390px and 621px', async ({ page }) => {
+  for (const width of [390, 621]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/workspace');
+    const modules = page.getByRole('navigation', { name: 'Modules' });
+    const toggle = modules.getByRole('button', { name: /Menu: Home/ });
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
 
-  await expect(modules).toBeVisible({ timeout: 20_000 });
-  const navBox = await modules.boundingBox();
-  expect(navBox).not.toBeNull();
-
-  const links = await modules.locator('.nav-item').all();
-  for (const link of links) {
-    const box = await link.boundingBox();
-    expect(box).not.toBeNull();
-    expect(box!.height).toBeGreaterThanOrEqual(44);
+    const links = modules.locator('.nav-item');
+    await expect(links).toHaveCount(5);
+    for (const link of await links.all()) {
+      const box = await link.boundingBox();
+      expect(box).not.toBeNull();
+      expect(box!.height).toBeGreaterThanOrEqual(44);
+    }
+    const networkLink = modules.getByRole('link', { name: 'Network' });
+    await networkLink.click();
+    await expect(page).toHaveURL(/\/workspace\/network\/people$/);
+    await expect(page.locator('#shell-main')).toBeFocused();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   }
-
-  for (const link of links.slice(0, 4)) {
-    const box = await link.boundingBox();
-    expect(box).not.toBeNull();
-    expect(box!.x).toBeGreaterThanOrEqual(navBox!.x);
-    expect(box!.x + box!.width).toBeLessThanOrEqual(navBox!.x + navBox!.width + 1);
-  }
-
-  for (const action of await page.locator('.topbar-action').all()) {
-    const box = await action.boundingBox();
-    expect(box).not.toBeNull();
-    expect(box!.height).toBeGreaterThanOrEqual(44);
-  }
-
-  await networkLink.click();
-  await expect(page).toHaveURL(/\/workspace\/network$/);
-  await expect(networkLink).toHaveAttribute('aria-current', 'page');
 });
 
-test('workspace shell keeps fixed regions outside the main scroll area', async ({ page }) => {
-  for (const width of [1440, 1024, 820, 768, 390]) {
+test('workspace main scroll area ends above the persistent status footer', async ({ page }) => {
+  for (const width of [1440, 1024, 820, 768, 621, 390]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/workspace');
 
     const main = await page.locator('.shell-main').boundingBox();
-    const dock = await page.locator('.shell-dock').boundingBox();
     const statusbar = await page.locator('app-statusbar').boundingBox();
     expect(main).not.toBeNull();
     expect(statusbar).not.toBeNull();
-    if (width <= 760) {
-      expect(dock).toBeNull();
-      expect(main!.y + main!.height).toBeLessThanOrEqual(statusbar!.y + 1);
-    } else {
-      expect(dock).not.toBeNull();
-      expect(main!.y + main!.height).toBeLessThanOrEqual(dock!.y + 1);
-      expect(dock!.y + dock!.height).toBeLessThanOrEqual(statusbar!.y + 1);
-    }
+    expect(main!.y + main!.height).toBeLessThanOrEqual(statusbar!.y + 1);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   }
 });
 
@@ -125,14 +112,18 @@ test('workspace table rows stay inside the main scroll area', async ({ page }) =
   }
 });
 
-test('workspace reference has a visible search label and ordered headings', async ({ page }) => {
-  await page.goto('/workspace');
+test('Reference keeps the object explorer and schema inside one destination', async ({ page }) => {
+  await page.goto('/workspace/reference');
+  await expect(page.getByRole('heading', { name: 'Reference', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Explore the record', level: 2 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'The productive-reality cycle' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Forms of authority' })).toBeVisible();
+});
 
-  const referenceHeading = page.getByRole('heading', { name: 'The reference', level: 2 });
-  await expect(referenceHeading).toBeVisible();
-  await referenceHeading.click();
-  await expect(page.getByLabel('Filter the reference')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Operational core', level: 3 })).toBeVisible();
+test('legacy ontology route redirects to Reference without losing the explorer', async ({ page }) => {
+  await page.goto('/workspace/ontology');
+  await expect(page).toHaveURL(/\/workspace\/reference$/);
+  await expect(page.getByRole('heading', { name: 'Explore the record', level: 2 })).toBeVisible();
 });
 
 test('unknown paths show a not-found page', async ({ page }) => {

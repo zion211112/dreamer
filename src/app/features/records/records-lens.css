@@ -1,0 +1,72 @@
+/* Shared by the Canon, Annals and Roll lenses. */
+:host { display: block; }
+
+.lens-section + .lens-section { margin-top: var(--apt-space-8); }
+
+.lens-title {
+  margin: 0 0 var(--apt-space-2);
+  font-family: var(--apt-font-serif);
+  font-size: var(--apt-size-title);
+  font-weight: var(--apt-weight-semibold);
+  color: var(--apt-text-strong);
+}
+
+.lens-note {
+  margin: 0 0 var(--apt-space-4);
+  max-width: 72ch;
+  font-size: var(--apt-size-body);
+  line-height: var(--apt-line-relaxed);
+  color: var(--apt-text-muted);
+}
+
+.lens-empty {
+  padding: var(--apt-space-5);
+  border: 1px dashed var(--apt-border);
+  border-radius: var(--apt-radius-md);
+  color: var(--apt-text-muted);
+  font-size: var(--apt-size-body);
+}
+
+.lens-table-wrap { overflow-x: auto; border: 1px solid var(--apt-border); border-radius: var(--apt-radius-md); }
+
+.lens-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--apt-size-body);
+}
+
+.lens-table th,
+.lens-table td {
+  padding: var(--apt-space-3) var(--apt-space-4);
+  border-bottom: 1px solid var(--apt-border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.lens-table th {
+  font-family: var(--apt-font-mono);
+  font-size: var(--apt-size-micro);
+  font-weight: normal;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--apt-text-dim);
+  background: var(--apt-surface-raised);
+}
+
+.lens-table tr:last-child td { border-bottom: 0; }
+
+.lens-link { color: var(--apt-text-strong); text-decoration: underline; text-underline-offset: 3px; }
+.lens-link:focus-visible { outline: 2px solid var(--apt-focus-ring, var(--apt-accent)); outline-offset: 2px; border-radius: 3px; }
+
+.lens-muted { color: var(--apt-text-muted); }
+.lens-mono { font-family: var(--apt-font-mono); font-size: var(--apt-size-micro); color: var(--apt-text-dim); }
+
+.lens-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid var(--apt-border);
+  border-radius: 999px;
+  font-size: var(--apt-size-micro);
+  color: var(--apt-text-muted);
+  white-space: nowrap;
+}

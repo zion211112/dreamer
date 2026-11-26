@@ -6,7 +6,7 @@
  * mono interface, selective deep-forest / brass / sage accents.
  * Shadow with offset + soft blur (craft-floor: not zero-offset colored halo).
  */
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 
 @Component({
   selector: 'app-topbar',
@@ -26,8 +26,7 @@ import { Component, input } from '@angular/core';
         }
       </div>
       <div class="topbar-actions">
-        <button class="topbar-action" aria-label="Command palette">⌘&nbsp;K</button>
-        <button class="topbar-action" aria-label="Account">👤</button>
+        <button type="button" class="topbar-action" aria-label="Command palette" (click)="paletteRequest.emit()">⌘&nbsp;K</button>
       </div>
     </header>
   `,
@@ -107,4 +106,5 @@ import { Component, input } from '@angular/core';
 export class TopbarComponent {
   readonly context = input<string>('Workspace');
   readonly activeRecord = input<string>('');
+  readonly paletteRequest = output<void>();
 }

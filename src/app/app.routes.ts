@@ -22,20 +22,36 @@ export const routes: Routes = [
     children: [
       { path: '', loadComponent: () => import('./features/workspace/overview.component').then(m => m.OverviewComponent) },
       { path: 'commons', loadComponent: () => import('./features/commons/commons.component').then(m => m.CommonsComponent) },
-      { path: 'network', loadComponent: () => import('./features/network/network.component').then(m => m.NetworkComponent) },
-      { path: 'network/people', loadComponent: () => import('./features/network/people.component').then(m => m.PeopleComponent) },
-      { path: 'network/institutions', loadComponent: () => import('./features/network/institutions.component').then(m => m.InstitutionsComponent) },
-      { path: 'network/capabilities', loadComponent: () => import('./features/network/capabilities.component').then(m => m.CapabilitiesComponent) },
+      {
+        path: 'network',
+        loadComponent: () => import('./features/network/network.component').then(m => m.NetworkComponent),
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: 'people' },
+          { path: 'people', loadComponent: () => import('./features/network/people.component').then(m => m.PeopleComponent) },
+          { path: 'institutions', loadComponent: () => import('./features/network/institutions.component').then(m => m.InstitutionsComponent) },
+          { path: 'capabilities', loadComponent: () => import('./features/network/capabilities.component').then(m => m.CapabilitiesComponent) },
+        ],
+      },
       { path: 'workbench', loadComponent: () => import('./features/workbench/workbench.component').then(m => m.WorkbenchComponent) },
+      { path: 'workbench/value', loadComponent: () => import('./features/workbench/value.component').then(m => m.ValueComponent) },
       { path: 'workbench/:undertakingId', loadComponent: () => import('./features/workbench/undertaking.component').then(m => m.UndertakingComponent) },
-      { path: 'value', loadComponent: () => import('./features/value/value.component').then(m => m.ValueComponent) },
-      { path: 'records', loadComponent: () => import('./features/records/records.component').then(m => m.RecordsComponent) },
-      { path: 'records/canon', loadComponent: () => import('./features/records/records.component').then(m => m.RecordsComponent) },
-      { path: 'records/annals', loadComponent: () => import('./features/records/records.component').then(m => m.RecordsComponent) },
-      { path: 'records/roll', loadComponent: () => import('./features/records/records.component').then(m => m.RecordsComponent) },
-      { path: 'intelligence', loadComponent: () => import('./features/intelligence/intelligence.component').then(m => m.IntelligenceComponent) },
-      { path: 'ontology', loadComponent: () => import('./features/ontology/ontology.component').then(m => m.OntologyComponent) },
-      { path: 'sovereignty', loadComponent: () => import('./features/sovereignty/sovereignty.component').then(m => m.SovereigntyComponent) },
+      {
+        path: 'records',
+        loadComponent: () => import('./features/records/records.component').then(m => m.RecordsComponent),
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: 'canon' },
+          { path: 'canon', loadComponent: () => import('./features/records/canon.component').then(m => m.CanonComponent) },
+          { path: 'annals', loadComponent: () => import('./features/records/annals.component').then(m => m.AnnalsComponent) },
+          { path: 'roll', loadComponent: () => import('./features/records/roll.component').then(m => m.RollComponent) },
+        ],
+      },
+      { path: 'reference', loadComponent: () => import('./features/reference/reference.component').then(m => m.ReferenceComponent) },
+
+      // Legacy URLs, kept so bookmarks and older links still resolve.
+      { path: 'value', pathMatch: 'full', redirectTo: 'workbench/value' },
+      { path: 'ontology', pathMatch: 'full', redirectTo: 'reference' },
+      { path: 'sovereignty', pathMatch: 'full', redirectTo: 'reference' },
+      { path: 'intelligence', pathMatch: 'full', redirectTo: 'records/annals' },
     ],
   },
   // Benben-OS: standalone school console. Its own shell, deliberately outside

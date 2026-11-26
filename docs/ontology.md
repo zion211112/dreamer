@@ -80,7 +80,7 @@ APT-LABS is one productive network capable of expressing many forms of economic 
 2. **Domain protocols** — versioned contracts that specialize bounded terminology, records, lifecycles, evidence standards, validation, and scoped authority.
 3. **Focused experiences** — role-, task-, or domain-shaped interfaces over the same authorized records and actions.
 
-A domain experience may have its own interface and workflow without becoming a separate application truth. It must not fork identity, membership, authority, record history, or canonical storage. The six current surfaces—Home, Commons, Network, Workbench, Records, and Intelligence—are useful present navigation, not a permanent topology or ceiling.
+A domain experience may have its own interface and workflow without becoming a separate application truth. It must not fork identity, membership, authority, record history, or canonical storage. The current primary navigation is Home, Commons, Workbench, Network, and Records, with Reference as a secondary destination. This is a current interface choice, not a permanent topology or ceiling; B13 allows justified focused experiences over the shared network.
 
 The full product contract is in [`docs/architecture/network-kernel-and-domain-protocols.md`](architecture/network-kernel-and-domain-protocols.md), accepted by decision B13. PostgreSQL + Better Auth + Drizzle are current technical infrastructure under B12, not the product architecture and not permanent vendor guarantees.
 

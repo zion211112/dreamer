@@ -72,19 +72,19 @@ Representations must not imply functionality or evidence that does not exist. No
 
 These are reasoned, revisable decisions. Each carries a decision identifier, date, rationale, scope, status, dependencies, and supersession history. A decision may be binding for a particular release but is not an eternal product principle.
 
-### B1. Six-module navigation scope
+### B1. Workspace navigation scope
 
 | Field | Value |
 |-------|-------|
 | Decision ID | B1 |
-| Date | 2026-11-13 |
-| Rationale | One workspace, one shared graph, six distinct user jobs. Home is the user's personal entry point for quick acts, personal context, and module selection; Commons, Network, Workbench, Records, and Intelligence remain the productive modules. |
+| Date | 2026-11-26 |
+| Rationale | One workspace and shared graph, with a small set of primary destinations and reference material kept secondary to daily work. |
 | Scope | Module structure and navigation |
 | Status | Active |
 | Dependencies | None |
-| Supersedes | charter §4 "Hard navigation constraints" (permanent bans converted to revisable decision); prior B1 five-module limit |
+| Supersedes | B1 six-surface navigation decision (2026-11-13); charter §4 "Hard navigation constraints" (permanent bans converted to revisable decision); prior B1 five-module limit |
 
-The six current surfaces are Home, Commons, Network, Workbench, Records, and Intelligence. Home is the personal shell context (`/workspace`) where a user chooses relevant actions, sees personal assignments and linked updates, and enters productive work. These surfaces describe today's navigation, not a permanent limit: under B13, role-, task-, and domain-focused experiences may be introduced over the same shared network when justified. A specialist experience is not a separate identity, authority system, or canonical store.
+The five primary workspace destinations are Home (`/workspace`), Commons, Workbench, Network, and Records. Reference (`/workspace/reference`) is supporting material, reached from the shell footer and command palette rather than the primary rail. Intelligence is not a primary destination in this navigation; its earlier distinct route redirects to the Records Annals lens, without asserting that intelligence analysis itself is implemented there. This is a navigation decision, not a claim that those five destinations exhaust APT-LABS experiences: B13 permits justified role-, task-, and domain-focused experiences over the same authorized records, without separate identities, authority systems, or canonical stores.
 
 ### B2. Main/Branch prohibition
 
@@ -107,12 +107,12 @@ No Main/Branch workspace modes. The fork glyph (└─) may remain as an identit
 | Decision ID | B3 |
 | Date | 2026-11-10 |
 | Rationale | Each shell pane has one job; no duplicate navigation systems |
-| Scope | Shell layout (topbar, rail, sidebar, main, inspector, dock, statusbar) |
+| Scope | Workspace shell regions and navigation |
 | Status | Active |
 | Dependencies | None |
 | Supersedes | Fixed panel and shell assumptions from prior direction memos |
 
-Current shell ownership: topbar shows working context; rail switches the current primary surfaces; sidebar gives within-experience context; main is the work surface; inspector opens contextually on selection; dock shows contextual changes/evidence; statusbar shows the current boundary and ledger state. This describes the existing shell, not a requirement that future focused experiences be forced into six fixed modules (B13).
+Current shell ownership: topbar shows working context; the primary rail switches among Home, Commons, Workbench, Network, and Records; the sidebar is reserved for relevant within-experience context; main is the work surface; the footer identifies the current module, communicates that content is the viewer’s authorized view, and links to Reference. The former empty dock and unused shell-level selection inspector are retired; object-level inspection remains within the Object Explorer. This layout does not force future focused experiences into five fixed modules (B13).
 
 ### B4. Visual design direction
 

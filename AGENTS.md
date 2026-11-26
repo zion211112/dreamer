@@ -26,7 +26,7 @@ standalone-component app at the repository root. TypeScript strict. Signal-based
   (`libs/domain/src/studio-ontology.ts`), the shared zod query contract
   (`libs/domain/src/studio-query.ts`), and `/api/studio`, `/api/studio/query`, `/api/studio/graph`
   expose the same work records as objects and authorized neighborhoods. It is surfaced inside
-  Ontology (`/workspace/ontology`); do not add a `/workspace/studio` route or nav item.
+  Reference (`/workspace/reference`); do not add a `/workspace/studio` route or nav item.
 - Still local or simulated: capability claims and the Intelligence surfaces. Network shows only what the signed-in person may see.
 - Server APIs otherwise cover Better Auth identity, organizations/memberships, organization-scoped
   opportunities, and the `/api/benbenos` school console.

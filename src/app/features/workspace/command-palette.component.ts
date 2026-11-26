@@ -2,12 +2,12 @@
  * @apt-labs/features/workspace — CommandPaletteComponent
  *
  * Keyboard-accessible command palette (Cmd-K). Opens on `Mod+K` and lets the
- * user jump to a module, create a need, or open an entity by id.
+ * user jump to a module or to Reference.
  *
  * Lightweight custom implementation on signals — avoids the unverified
  * @ngxpert/cmdk package on Angular 22. No new dependencies.
  */
-import { Component, inject, output, signal, effect, HostListener } from '@angular/core';
+import { Component, ElementRef, inject, signal, effect, HostListener, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 export interface PaletteItem {
@@ -24,7 +24,7 @@ export interface PaletteItem {
   template: `
     @if (open()) {
       <button class="cp-backdrop" (click)="close()" aria-label="Close command palette" tabindex="-1"></button>
-      <div class="cp-panel" role="dialog" aria-modal="true" aria-label="Command palette">
+      <div #panel class="cp-panel" role="dialog" aria-modal="true" aria-label="Command palette" (keydown)="onDialogKeydown($event)">
         <div class="cp-head">
           <span class="cp-kbd">⌘&nbsp;K</span>
           <span class="cp-title">Command palette</span>
@@ -37,7 +37,7 @@ export interface PaletteItem {
           (keydown.ArrowDown)="move(1)"
           (keydown.ArrowUp)="move(-1)"
           (keydown.Enter)="select()"
-          placeholder="Jump to module, create need, or open entity…"
+          placeholder="Jump to a module or to Reference…"
           autofocus
         />
         <div class="cp-list">
@@ -87,8 +87,9 @@ export class CommandPaletteComponent {
   readonly open = signal(false);
   readonly query = signal('');
   readonly highlighted = signal(0);
-
-  readonly execute = output<{ action: string; payload?: any }>();
+  private readonly panel = viewChild<ElementRef<HTMLElement>>('panel');
+  private returnFocusTo: HTMLElement | null = null;
+  private wasOpen = false;
 
   private readonly items: PaletteItem[] = [
     { id: 'module-home', label: 'Open Home', hint: '/workspace', action: () => this.router.navigate(['/workspace']) },
@@ -96,9 +97,7 @@ export class CommandPaletteComponent {
     { id: 'module-commons', label: 'Open Commons', hint: '/workspace/commons', action: () => this.router.navigate(['/workspace', 'commons']) },
     { id: 'module-network', label: 'Open Network', hint: '/workspace/network', action: () => this.router.navigate(['/workspace', 'network']) },
     { id: 'module-records', label: 'Open Records', hint: '/workspace/records', action: () => this.router.navigate(['/workspace', 'records']) },
-    { id: 'module-intelligence', label: 'Open Intelligence', hint: '/workspace/intelligence', action: () => this.router.navigate(['/workspace', 'intelligence']) },
-    { id: 'create-need', label: 'Create a new need', hint: 'Workbench → post need', action: () => this.execute.emit({ action: 'create-need' }) },
-    { id: 'open-entity', label: 'Open entity by id', hint: 'Enter an entity id', action: () => this.execute.emit({ action: 'open-entity' }) },
+    { id: 'module-reference', label: 'Open Reference', hint: '/workspace/reference', action: () => this.router.navigate(['/workspace', 'reference']) },
   ];
 
   constructor() {
@@ -106,8 +105,13 @@ export class CommandPaletteComponent {
       if (this.open()) {
         document.body.style.overflow = 'hidden';
         this.highlighted.set(0);
+        this.wasOpen = true;
       } else {
         document.body.style.overflow = '';
+        if (this.wasOpen) {
+          this.wasOpen = false;
+          requestAnimationFrame(() => this.returnFocusTo?.focus());
+        }
       }
     });
   }
@@ -117,16 +121,40 @@ export class CommandPaletteComponent {
     if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
       event.preventDefault();
       this.toggle();
+    } else if (event.key === 'Escape' && this.open()) {
+      event.preventDefault();
+      this.close();
     }
   }
 
   toggle(): void {
-    this.open.set(!this.open());
-    if (this.open()) this.query.set('');
+    if (!this.open()) {
+      this.returnFocusTo = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      this.open.set(true);
+      this.query.set('');
+    } else {
+      this.close();
+    }
   }
 
   close(): void {
     this.open.set(false);
+  }
+
+  onDialogKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Tab') return;
+    const focusable = [...(this.panel()?.nativeElement.querySelectorAll<HTMLElement>('input, button:not([disabled])') ?? [])]
+      .filter((element) => element.getClientRects().length > 0);
+    const first = focusable[0];
+    const last = focusable.at(-1);
+    if (!first || !last) return;
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   }
 
   onInput(event: Event): void {

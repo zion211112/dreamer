@@ -10,7 +10,8 @@ import { CapabilitiesComponent } from './features/network/capabilities.component
 import { PeopleComponent } from './features/network/people.component';
 import { InstitutionsComponent } from './features/network/institutions.component';
 import { RecordsComponent } from './features/records/records.component';
-import { IntelligenceComponent } from './features/intelligence/intelligence.component';
+import { AnnalsComponent } from './features/records/annals.component';
+import { RollComponent } from './features/records/roll.component';
 
 const work = {
   id: 'work-1', organizationId: 'org-1', organizationName: 'Common Ground Cooperative', organizationStanding: 'provisional',
@@ -32,6 +33,7 @@ function workspaceData() {
     error: signal(''),
     refresh: vi.fn().mockResolvedValue(undefined),
     organizations: vi.fn(), undertakings: vi.fn(), network: vi.fn(), records: vi.fn(), get: vi.fn(),
+    undertaking: vi.fn().mockReturnValue(new Promise(() => {})),
   } as unknown as WorkspaceDataService;
 }
 
@@ -40,7 +42,7 @@ describe('shared workspace surfaces', () => {
   beforeEach(async () => {
     data = workspaceData();
     await TestBed.configureTestingModule({
-      imports: [OverviewComponent, CommonsComponent, NetworkComponent, CapabilitiesComponent, PeopleComponent, InstitutionsComponent, RecordsComponent, IntelligenceComponent],
+      imports: [OverviewComponent, CommonsComponent, NetworkComponent, CapabilitiesComponent, PeopleComponent, InstitutionsComponent, RecordsComponent, AnnalsComponent, RollComponent],
       providers: [provideRouter([]), { provide: WorkspaceDataService, useValue: data }],
     }).compileComponents();
   });
@@ -66,17 +68,19 @@ describe('shared workspace surfaces', () => {
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('No open work matches');
   });
 
-  it('shows a loading state instead of an empty Network result while records are pending', async () => {
+  it('shows a loading state in People instead of an empty Network result while records are pending', async () => {
     data.loading.set(true);
-    const fixture = TestBed.createComponent(NetworkComponent);
+    data.networkState.set({ organizations: [], members: [] });
+    expect(data.networkState().members).toHaveLength(0);
+    const fixture = TestBed.createComponent(PeopleComponent);
     fixture.detectChanges();
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
-    expect(text).toContain('Loading authorized network records');
-    expect(text).not.toContain('No other active organization members');
+    expect(text).toContain('Loading authorized memberships');
+    expect(text).not.toContain('No other active members are visible yet');
   });
 
-  it('shows only connected organization members in Network', async () => {
-    const fixture = TestBed.createComponent(NetworkComponent);
+  it('shows only connected organization members in People', async () => {
+    const fixture = TestBed.createComponent(PeopleComponent);
     fixture.detectChanges(); await fixture.whenStable(); fixture.detectChanges();
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(text).toContain('Amina Okafor');
@@ -102,22 +106,33 @@ describe('shared workspace surfaces', () => {
     expect((organizations.nativeElement as HTMLElement).textContent).toContain('provisional');
   });
 
-  it('filters the Records timeline between undertakings and activity', async () => {
+  it('keeps Records as a lens shell and states its record limits once', async () => {
     const fixture = TestBed.createComponent(RecordsComponent);
     fixture.detectChanges(); await fixture.whenStable(); fixture.detectChanges();
-    const buttons = (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('.filters button');
-    buttons[2].click(); fixture.detectChanges();
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain('undertaking created');
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Amina Okafor');
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(text).toContain('Canon');
+    expect(text).toContain('Annals');
+    expect(text).toContain('Roll');
+    expect(text).toContain('It does not verify that work was done or that an outcome was achieved');
   });
 
-  it('summarizes authorized activity without inventing forecasts or scores', async () => {
-    const fixture = TestBed.createComponent(IntelligenceComponent);
+  it('shows Annals as a dated account of recorded actions', async () => {
+    const fixture = TestBed.createComponent(AnnalsComponent);
     fixture.detectChanges(); await fixture.whenStable(); fixture.detectChanges();
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
-    expect(text).toContain('Recent record changes');
-    expect(text).toContain('There is no forecasting');
-    expect(text).toContain('No universal reputation score');
-    expect(text).not.toContain('Recommendations');
+    expect(text).toContain('Recorded events');
+    expect(text).toContain('Amina Okafor');
+    expect(text).toContain('Undertaking created');
+  });
+
+  it('loads a Roll chain only when its undertaking is opened', async () => {
+    const undertaking = vi.spyOn(data, 'undertaking');
+    const fixture = TestBed.createComponent(RollComponent);
+    fixture.detectChanges(); await fixture.whenStable(); fixture.detectChanges();
+    expect(undertaking).not.toHaveBeenCalled();
+    const details = (fixture.nativeElement as HTMLElement).querySelector('details')!;
+    details.open = true;
+    details.dispatchEvent(new Event('toggle'));
+    expect(undertaking).toHaveBeenCalledWith('work-1');
   });
 });

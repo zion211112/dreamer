@@ -2,11 +2,12 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { WorkspaceDataService, describeWorkspaceError, type WorkbenchSummary } from '@apt-labs/shared/state';
+import { SectionTabsComponent, type SectionTab } from '../workspace/section-tabs.component';
 
 @Component({
   selector: 'app-workbench',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, SectionTabsComponent],
   template: `
     <section class="workbench">
       <header class="head">
@@ -14,6 +15,8 @@ import { WorkspaceDataService, describeWorkspaceError, type WorkbenchSummary } f
         <h1>Work, with someone accountable on both ends.</h1>
         <p class="intro">Publish a scoped undertaking, invite a person through an offer, deliver against it, and review the delivery as a different person. Every step is a record on the same undertaking — not a message thread that disappears.</p>
       </header>
+
+      <app-section-tabs label="Workbench sections" [tabs]="tabs" />
 
       @if (error()) {
         <section class="state error" role="alert"><div><h2>The workbench could not be loaded</h2><p>{{ error() }}</p></div><button type="button" (click)="load()">Retry</button></section>
@@ -239,6 +242,10 @@ import { WorkspaceDataService, describeWorkspaceError, type WorkbenchSummary } f
 })
 export class WorkbenchComponent implements OnInit {
   readonly data = inject(WorkspaceDataService);
+  readonly tabs: readonly SectionTab[] = [
+    { label: 'Undertakings', path: '/workspace/workbench' },
+    { label: 'Value', path: '/workspace/workbench/value' },
+  ];
   readonly summary = signal<WorkbenchSummary | null>(null);
   readonly loading = signal(true);
   readonly error = signal('');

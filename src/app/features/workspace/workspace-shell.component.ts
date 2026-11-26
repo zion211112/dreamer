@@ -1,9 +1,9 @@
 /**
  * @apt-labs/features/workspace — WorkspaceShellComponent
  *
- * Workspace shell parent. Delegates layout to ShellLayoutComponent which
- * defines the six functional regions (topbar, rail, sidebar, main,
- * inspector, dock) plus a separate persistent statusbar (charter B3).
+ * Workspace shell parent. Delegates layout to ShellLayoutComponent, which
+ * owns the topbar, primary navigation, contextual sidebar, work surface and
+ * status footer (charter B3).
  */
 import { Component } from '@angular/core';
 import { ShellLayoutComponent } from './shell-layout.component';
