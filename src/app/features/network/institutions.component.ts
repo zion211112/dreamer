@@ -1,147 +1,27 @@
-/**
- * @apt-labs/features/network — InstitutionsComponent
- *
- * Institutions and organizations directory — dense table view.
- * Structural Emergence.
- */
-import { Component, signal, computed, inject } from '@angular/core';
-import { NetworkService, type DirectoryRow } from '@apt-labs/shared/state';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { WorkspaceDataService } from '@apt-labs/shared/state';
 
 @Component({
   selector: 'app-institutions',
   standalone: true,
   template: `
-    <div class="ins" data-module="institutions">
-      <div class="ins-pagehead">
-        <h1 class="ins-h1">Institutions and organizations</h1>
-        <p class="ins-sub">Institutions and organizations appear here when connected records are available. No participant or institution records are loaded in this local demo.</p>
-        <div class="ins-actions">
-          <input
-            type="search"
-            class="ins-search-input"
-            placeholder="Search institutions…"
-            [value]="query()"
-            (input)="query.set($any($event.target).value)"
-          />
-          <span class="ins-count">{{ visible().length }} shown</span>
-        </div>
-      </div>
-
-      <div class="ins-table-wrap">
-        <table class="ins-table">
-          <thead>
-            <tr>
-              <th class="ins-th">Name</th>
-              <th class="ins-th ins-th--nowrap">Type</th>
-              <th class="ins-th">Focus</th>
-              <th class="ins-th">Can do</th>
-              <th class="ins-th">Has</th>
-              <th class="ins-th ins-th--nowrap">Registered</th>
-              <th class="ins-th ins-th--actions">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (row of visible(); track row.id) {
-              <tr class="ins-tr">
-                <td class="ins-td ins-td--name">{{ row.name }}</td>
-                <td class="ins-td"><span class="ins-type-badge">{{ row.type }}</span></td>
-                <td class="ins-td ins-td--dim">{{ row.description }}</td>
-                <td class="ins-td ins-td--dim">{{ caps(row) }}</td>
-                <td class="ins-td ins-td--dim">{{ assets(row) }}</td>
-                <td class="ins-td ins-td--dim ins-td--nowrap">{{ row.registered }}</td>
-                <td class="ins-td ins-td--actions">
-                  <button class="ins-btn ins-btn--quiet">View</button>
-                </td>
-              </tr>
-            }
-            @if (visible().length === 0) {
-              <tr><td colspan="7" class="ins-empty">No connected institutions or organizations are available.</td></tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <section class="page"><header><p class="eyebrow">APT-LABS · Network / Organizations</p><h1>Organizations in your network</h1><p>Organizations appear through your active memberships. The recorded standing is descriptive; identity, membership, capabilities, and formal authority remain separate.</p></header>
+      @if (data.error()) {<p class="notice" role="alert">Organization records unavailable: {{ data.error().replaceAll('_', ' ') }} <button type="button" (click)="data.refresh()">Retry</button></p>}
+      <div class="toolbar"><label for="organization-search">Search organizations</label><input id="organization-search" type="search" [value]="query()" (input)="query.set($any($event.target).value)" placeholder="Organization or membership role"><span>{{ visible().length }} visible</span></div>
+      @if (data.loading() && organizations().length === 0) {<p class="empty" role="status">Loading your memberships…</p>}
+      @else if (visible().length) {<ul class="list">@for (organization of visible(); track organization.id) {<li><span class="seal" aria-hidden="true">O</span><span class="main"><strong>{{ organization.name }}</strong><span>{{ organization.role }} membership</span></span><span class="standing">{{ organization.standing.replaceAll('_', ' ') }}</span></li>}</ul>}
+      @else {<p class="empty">{{ query() ? 'No organizations match your search.' : 'No active organization memberships yet. An organization becomes visible to you when your membership is recorded.' }}</p>}
+      <p class="boundary"><strong>Standing is not authority.</strong> Provisional standing is not formal verification. Membership alone does not grant decision rights; protected actions are checked by the server.</p>
+    </section>
   `,
-  styles: [
-    `
-    .ins {
-      font-family: var(--apt-font-sans);
-      color: var(--apt-text-body);
-      background: var(--apt-surface-default);
-      min-height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
-    .ins-pagehead { display: flex; flex-direction: column; gap: var(--apt-space-3); margin-bottom: var(--apt-space-8); padding-left: var(--apt-space-10); }
-    .ins-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-size-display); font-weight: var(--apt-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-space-3); line-height: 1.05; letter-spacing: -0.02em; }
-    .ins-sub { font-size: var(--apt-size-body); color: var(--apt-text-muted); margin: 0; max-width: 72ch; line-height: var(--apt-line-relaxed); }
-    .ins-actions { display: flex; gap: var(--apt-space-3); margin-top: var(--apt-space-4); align-items: center; }
-    .ins-search-input { flex: 1; min-width: 200px; padding: var(--apt-space-3) var(--apt-space-4); border-radius: var(--apt-button-radius); border: 1px solid var(--apt-border); background: var(--apt-surface-page); color: var(--apt-text-body); font-size: var(--apt-size-body); font-family: inherit; }
-    .ins-search-input:focus { outline: none; border-color: var(--apt-accent); }
-    .ins-count { font-family: var(--apt-font-mono); font-size: var(--apt-size-micro); color: var(--apt-text-dim); white-space: nowrap; }
-
-    .ins-table-wrap { overflow-x: auto; border: 1px solid var(--apt-border); border-radius: var(--apt-radius-md); background: var(--apt-surface-page); }
-    .ins-table { width: 100%; border-collapse: collapse; text-align: left; font-size: var(--apt-size-body); }
-    .ins-th {
-      font-family: var(--apt-font-mono);
-      font-size: var(--apt-size-micro);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--apt-text-dim);
-      padding: var(--apt-space-4) var(--apt-space-5);
-      border-bottom: 1px solid var(--apt-border-faint);
-      white-space: nowrap;
-      font-weight: var(--apt-weight-medium);
-    }
-    .ins-td { padding: var(--apt-space-4) var(--apt-space-5); border-bottom: 1px solid var(--apt-border-faint); color: var(--apt-text-body); vertical-align: middle; }
-    .ins-td--name { font-weight: var(--apt-weight-medium); color: var(--apt-text-strong); white-space: nowrap; }
-    .ins-td--dim { color: var(--apt-text-muted); font-size: var(--apt-size-body); }
-    .ins-td--nowrap { white-space: nowrap; }
-    .ins-type-badge {
-      font-family: var(--apt-font-mono);
-      font-size: var(--apt-size-micro);
-      text-transform: lowercase;
-      letter-spacing: 0.04em;
-      color: var(--apt-text-body);
-      background: var(--apt-surface-raised);
-      border: 1px solid var(--apt-border);
-      border-radius: var(--apt-button-radius);
-      padding: 1px 6px;
-      white-space: nowrap;
-    }
-    .ins-empty { padding: var(--apt-space-7); color: var(--apt-text-muted); font-size: var(--apt-size-body); text-align: center; }
-
-    .ins-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--apt-space-2);
-      padding: var(--apt-space-1) var(--apt-space-3);
-      border: 1px solid var(--apt-border);
-      border-radius: var(--apt-button-radius);
-      background: transparent;
-      color: var(--apt-module-accent, var(--apt-accent));
-      font-family: var(--apt-font-mono);
-      font-size: var(--apt-size-sm);
-      cursor: pointer;
-    }
-    .ins-btn:hover { background: var(--apt-surface-raised); }
-
-    @media (max-width: 760px) {
-      .ins-pagehead { padding-left: 0; }
-    }
-    `,
-  ],
+  styles: [`
+    :host{display:block;font-family:var(--apt-font-sans);color:var(--apt-text-body)}.page{max-width:1120px;margin:auto}header{padding:8px 0 24px;border-bottom:1px solid var(--apt-border)}.eyebrow{margin:0 0 7px;color:var(--apt-accent);font:600 11px var(--apt-font-mono);letter-spacing:.09em;text-transform:uppercase}h1{margin:0;color:var(--apt-text-strong);font:600 36px/1.12 var(--apt-font-serif)}header>p:last-child{max-width:76ch;color:var(--apt-text-muted);line-height:1.55}.toolbar{display:flex;align-items:center;gap:12px;padding:18px 0}.toolbar label{color:var(--apt-text-strong);font-size:13px;font-weight:600}.toolbar input{flex:1;max-width:480px;min-width:0;padding:10px 12px;border:1px solid var(--apt-border);border-radius:var(--apt-input-radius);background:var(--apt-surface-page);color:var(--apt-text-body);font:inherit}.toolbar span{margin-left:auto;color:var(--apt-text-muted);font:11px var(--apt-font-mono)}.list{list-style:none;margin:0;padding:0;border-top:1px solid var(--apt-border)}.list li{display:flex;align-items:center;gap:13px;padding:15px 10px;border-bottom:1px solid var(--apt-border-faint)}.seal{display:grid;place-items:center;width:36px;height:36px;flex:none;border:1px solid var(--apt-border);border-radius:8px;color:var(--apt-accent);font:600 16px var(--apt-font-serif)}.main{display:grid;gap:4px;min-width:0;flex:1}.main strong{color:var(--apt-text-strong);font-size:14px}.main span{color:var(--apt-text-muted);font-size:12px;text-transform:capitalize}.standing{padding:4px 7px;border:1px solid var(--apt-border);border-radius:4px;color:var(--apt-text-muted);font:10px var(--apt-font-mono);text-transform:capitalize}.empty,.notice{padding:18px;border:1px dashed var(--apt-border);border-radius:var(--apt-radius-md);color:var(--apt-text-muted);font-size:13px;line-height:1.5}.notice{display:flex;justify-content:space-between;gap:12px;border-color:var(--apt-text-danger)}button{min-height:38px;padding:7px 12px;border:1px solid var(--apt-border);border-radius:var(--apt-button-radius);background:transparent;color:var(--apt-text-body);font:600 12px var(--apt-font-sans);cursor:pointer}.boundary{margin-top:18px;padding:13px;border-left:2px solid var(--apt-border);color:var(--apt-text-muted);font-size:12px;line-height:1.5}.boundary strong{display:block;margin-bottom:3px;color:var(--apt-text-strong)}@media(max-width:600px){h1{font-size:31px}.toolbar{align-items:stretch;flex-direction:column}.toolbar input{max-width:none}.toolbar span{margin:0}.notice{align-items:flex-start;flex-direction:column}.standing{max-width:120px;text-align:right}}
+  `],
 })
-export class InstitutionsComponent {
-  private readonly service = inject(NetworkService);
-
+export class InstitutionsComponent implements OnInit {
+  readonly data = inject(WorkspaceDataService);
   readonly query = signal('');
-  readonly rows: readonly DirectoryRow[] = this.service.bodies;
-
-  readonly visible = computed(() =>
-    this.rows.filter((r) => this.service.matchQuery(this.query(), r)),
-  );
-
-  readonly caps = (r: DirectoryRow) => r.capabilities.join(', ') || '—';
-  readonly assets = (r: DirectoryRow) => r.assets.join(', ') || '—';
+  readonly organizations = computed(() => this.data.networkState().organizations);
+  readonly visible = computed(() => { const q = this.query().trim().toLocaleLowerCase(); return this.organizations().filter((organization) => !q || `${organization.name} ${organization.role} ${organization.standing}`.toLocaleLowerCase().includes(q)); });
+  ngOnInit(): void { void this.data.refresh(); }
 }

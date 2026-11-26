@@ -1,191 +1,35 @@
-/**
- * @apt-labs/features/records — RecordsComponent
- *
- * Canon, annals, and the local session roll. Dense table view with record-state badges.
- * Structural Emergence.
- */
-import { Component, OnInit, computed, signal, inject } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { Router, RouterLink, RouterLinkActive, ActivatedRoute } from '@angular/router';
-import { RecordsService, type RecordsView } from '@apt-labs/shared/state';
+import { WorkspaceDataService, type WorkspaceEvent, type WorkspaceUndertaking } from '@apt-labs/shared/state';
 
 @Component({
   selector: 'app-records',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, DatePipe],
+  imports: [DatePipe],
   template: `
-    <div class="records-page">
-      <header class="records-head">
-        <div class="records-pagehead">
-          <h1 class="records-h1">Records</h1>
-          <p class="records-sub">
-            Canon, annals, and the roll. Entries shown here are local to this browser session and reset on reload; a reported outcome is not independent verification.
-          </p>
-        </div>
-        <div class="records-actions">
-          <button class="records-btn records-btn--primary" (click)="openRoll()">Open Roll →</button>
-        </div>
-      </header>
-
-      <div class="records-subnav">
-        <a [routerLink]="['/workspace/records']" [routerLinkActive]="['active']" class="subnav-item">All</a>
-        <a [routerLink]="['/workspace/records/canon']" [routerLinkActive]="['active']" class="subnav-item">Canon</a>
-        <a [routerLink]="['/workspace/records/annals']" [routerLinkActive]="['active']" class="subnav-item">Annals</a>
-        <a [routerLink]="['/workspace/records/roll']" [routerLinkActive]="['active']" class="subnav-item">Roll</a>
-      </div>
-
-      <div class="records-filter">
-        <button [class.active]="filter() === 'all'" (click)="setFilter('all')">All</button>
-        <button [class.active]="filter() === 'canon'" (click)="setFilter('canon')">Canon</button>
-        <button [class.active]="filter() === 'annals'" (click)="setFilter('annals')">Annals</button>
-        <button [class.active]="filter() === 'roll'" (click)="setFilter('roll')">Roll</button>
-      </div>
-
-      <div class="records-table-wrap">
-        <table class="records-table">
-          <thead>
-            <tr>
-              <th class="records-th">Kind</th>
-              <th class="records-th">Title</th>
-              <th class="records-th">Institution</th>
-              <th class="records-th">Status</th>
-              <th class="records-th">Created</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (row of visible(); track row.id) {
-              <tr class="records-tr">
-                <td class="records-td">
-                  <span class="records-kind" [class]="'records-kind ' + row.kind">{{ row.kind }}</span>
-                </td>
-                <td class="records-td records-td--name">{{ row.title }}</td>
-                <td class="records-td">{{ row.institution }}</td>
-                <td class="records-td"><span class="records-status" [class]="'records-status ' + row.status">{{ row.status }}</span></td>
-                <td class="records-td">{{ row.createdAt | date: 'short' }}</td>
-              </tr>
-            }
-            @if (visible().length === 0) {
-              <tr><td colspan="5" class="records-empty">No records in this view yet.</td></tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <section class="records">
+      <header class="head"><p class="eyebrow">APT-LABS · Records</p><h1>What was recorded</h1><p>Organization-visible undertaking records and an attributed activity trail. An activity entry shows that an action was recorded; it is not proof that work was completed or independently verified.</p></header>
+      @if (data.error()) {<section class="state error" role="alert"><div><h2>Records could not be loaded</h2><p>{{ data.error().replaceAll('_', ' ') }}.</p></div><button type="button" (click)="data.refresh()">Retry</button></section>}
+      <nav class="filters" aria-label="Filter records"><button type="button" [class.active]="filter() === 'all'" [attr.aria-pressed]="filter() === 'all'" (click)="filter.set('all')">All <span>{{ allRows().length }}</span></button><button type="button" [class.active]="filter() === 'undertaking'" [attr.aria-pressed]="filter() === 'undertaking'" (click)="filter.set('undertaking')">Undertakings <span>{{ undertakingRows().length }}</span></button><button type="button" [class.active]="filter() === 'activity'" [attr.aria-pressed]="filter() === 'activity'" (click)="filter.set('activity')">Activity <span>{{ eventRows().length }}</span></button></nav>
+      @if (data.loading() && allRows().length === 0) {<p class="state" role="status">Loading records you can access…</p>}
+      @else if (visible().length) {<ol class="timeline" aria-label="Shared record timeline">@for (row of visible(); track row.id) {<li><span class="marker" [attr.data-kind]="row.kind" aria-hidden="true"></span><div class="entry"><div class="entry-head"><span class="kind">{{ row.kind === 'undertaking' ? 'Undertaking' : 'Activity' }}</span><time [attr.datetime]="row.date">{{ row.date | date:'medium' }}</time></div><h2>{{ row.title }}</h2><p>{{ row.summary }}</p><footer><span>{{ row.organization }}</span><span class="status">{{ row.status }}</span></footer></div></li>}</ol>}
+      @else {<section class="empty"><h2>No records in this view yet</h2><p>Open undertakings and organization-visible activity appear as they are recorded. Private interest and offer details are not included in this timeline.</p></section>}
+      <p class="boundary"><strong>Standing boundary</strong> Participant reports and independent reviews are separate records. Neither is represented here as payment, credential, or proof beyond its recorded state.</p>
+    </section>
   `,
-  styles: [
-    `
-    .records-page {
-      font-family: var(--apt-font-sans);
-      color: var(--apt-text-body);
-      background: var(--apt-surface-default);
-      min-height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
-    .records-head { display: flex; flex-direction: column; gap: var(--apt-space-3); margin-bottom: var(--apt-space-8); padding-left: var(--apt-space-10); }
-    .records-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-size-display); font-weight: var(--apt-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-space-3); line-height: 1.05; letter-spacing: -0.02em; }
-    .records-sub { font-size: var(--apt-size-body); color: var(--apt-text-muted); margin: 0; max-width: 72ch; line-height: var(--apt-line-relaxed); }
-    .records-actions { display: flex; gap: var(--apt-space-3); margin-top: var(--apt-space-4); }
-    .records-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--apt-space-2);
-      padding: var(--apt-button-padding);
-      border: 1px solid var(--apt-border);
-      border-radius: var(--apt-button-radius);
-      background: var(--apt-surface-raised);
-      color: var(--apt-text-body);
-      font-size: var(--apt-button-font-size);
-      font-weight: var(--apt-button-font-weight);
-      font-family: inherit;
-      cursor: pointer;
-    }
-    .records-btn:hover { border-color: var(--apt-accent); }
-    .records-btn--primary { background: var(--apt-accent); color: var(--apt-action-on-accent); border-color: var(--apt-accent); }
-
-    .records-subnav { display: flex; gap: var(--apt-space-4); margin-bottom: var(--apt-space-6); border-bottom: 1px solid var(--apt-border); padding-bottom: var(--apt-space-3); }
-    .subnav-item { text-decoration: none; font-size: var(--apt-size-body); color: var(--apt-text-muted); padding: var(--apt-space-3) var(--apt-space-5); border-radius: var(--apt-button-radius); }
-    .subnav-item.active { color: var(--apt-text-strong); font-weight: var(--apt-weight-medium); background: var(--apt-surface-info); }
-
-    .records-filter { display: flex; gap: var(--apt-space-3); margin-bottom: var(--apt-space-10); }
-    .records-filter button { padding: var(--apt-space-3) var(--apt-space-5); border-radius: var(--apt-button-radius); border: 1px solid var(--apt-border); background: transparent; color: var(--apt-text-muted); cursor: pointer; font-size: var(--apt-size-body); }
-    .records-filter button.active { background: var(--apt-surface-info); border-color: var(--apt-accent); color: var(--apt-accent); }
-
-    .records-table-wrap { overflow-x: auto; border: 1px solid var(--apt-border); border-radius: var(--apt-radius-md); background: var(--apt-surface-page); }
-    .records-table { width: 100%; border-collapse: collapse; font-size: var(--apt-size-body); }
-    .records-th {
-      text-align: left;
-      padding: var(--apt-space-4) var(--apt-space-5);
-      font-family: var(--apt-font-mono);
-      font-size: var(--apt-size-micro);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--apt-text-dim);
-      border-bottom: 1px solid var(--apt-border);
-      font-weight: var(--apt-weight-medium);
-      white-space: nowrap;
-    }
-    .records-tr { border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: background var(--apt-motion-fast); }
-    .records-tr:hover { background: var(--apt-surface-raised); }
-    .records-td { padding: var(--apt-space-4) var(--apt-space-5); border-bottom: 1px solid #f3f4f6; color: var(--apt-text-body); vertical-align: middle; }
-    .records-td--name { font-weight: var(--apt-weight-medium); color: var(--apt-text-strong); }
-
-    .records-kind {
-      font-size: var(--apt-size-micro);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-weight: var(--apt-weight-medium);
-      padding: var(--apt-space-1) var(--apt-space-3);
-      border-radius: 9999px;
-    }
-    .records-kind.canon { background: var(--apt-surface-success); color: var(--apt-text-success); }
-    .records-kind.annals { background: var(--apt-surface-info); color: var(--apt-text-info); }
-    .records-kind.roll { background: var(--apt-surface-raised); color: var(--apt-text-strong); }
-
-    .records-status {
-      font-size: var(--apt-size-micro);
-      font-weight: var(--apt-weight-medium);
-      text-transform: capitalize;
-    }
-    .records-status.reported { color: var(--apt-text-info); }
-    .records-status.active { color: var(--apt-text-info); }
-    .records-status.disputed { color: var(--apt-text-danger); }
-
-    .records-empty { padding: var(--apt-space-8); border: 1px dashed var(--apt-border); border-radius: var(--apt-radius-md); color: var(--apt-text-muted); font-size: var(--apt-size-body); text-align: center; }
-
-    @media (max-width: 760px) {
-      .records-page { padding: var(--apt-space-8); }
-      .records-head { padding-left: 0; }
-    }
-    `,
-  ],
+  styles: [`
+    :host{display:block;font-family:var(--apt-font-sans);color:var(--apt-text-body)}.records{max-width:1120px;margin:auto}.head{padding:8px 0 24px;border-bottom:1px solid var(--apt-border)}.eyebrow{margin:0 0 7px;color:var(--apt-accent);font:600 11px var(--apt-font-mono);letter-spacing:.09em;text-transform:uppercase}.head h1{margin:0;color:var(--apt-text-strong);font:600 36px/1.12 var(--apt-font-serif)}.head>p:last-child{max-width:76ch;color:var(--apt-text-muted);line-height:1.55}.filters{display:flex;gap:8px;padding:18px 0}.filters button{display:flex;gap:8px;align-items:center;min-height:38px;padding:0 12px;border:1px solid var(--apt-border);border-radius:var(--apt-button-radius);background:transparent;color:var(--apt-text-muted);font:500 13px var(--apt-font-sans);cursor:pointer}.filters button.active{border-color:var(--apt-accent);background:var(--apt-surface-info);color:var(--apt-accent)}.filters span{font:11px var(--apt-font-mono);opacity:.8}.timeline{list-style:none;margin:0;padding:4px 0 10px}.timeline li{position:relative;display:grid;grid-template-columns:16px minmax(0,1fr);gap:16px;padding:0 0 18px}.timeline li:not(:last-child):before{position:absolute;top:15px;bottom:-2px;left:6px;width:1px;background:var(--apt-border);content:''}.marker{z-index:1;width:13px;height:13px;margin-top:4px;border:2px solid var(--apt-accent);border-radius:50%;background:var(--apt-surface-page)}.marker[data-kind=activity]{border-color:var(--apt-text-info)}.entry{min-width:0;padding:0 0 15px;border-bottom:1px solid var(--apt-border-faint)}.entry-head,footer{display:flex;justify-content:space-between;align-items:center;gap:12px}.kind{color:var(--apt-accent);font:600 10px var(--apt-font-mono);letter-spacing:.06em;text-transform:uppercase}.entry-head time{color:var(--apt-text-muted);font:11px var(--apt-font-mono)}.entry h2{margin:7px 0 5px;color:var(--apt-text-strong);font:600 19px var(--apt-font-serif)}.entry p{margin:0;color:var(--apt-text-muted);font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}.entry footer{margin-top:12px;color:var(--apt-text-muted);font-size:12px}.status{text-transform:capitalize}.empty,.state{margin:12px 0;padding:22px 18px;border:1px dashed var(--apt-border);border-radius:var(--apt-radius-md);color:var(--apt-text-muted);line-height:1.5}.empty h2,.state h2{margin:0 0 6px;color:var(--apt-text-strong);font:600 21px var(--apt-font-serif)}.empty p,.state p{margin:0}.state.error{display:flex;justify-content:space-between;gap:16px;border-color:var(--apt-text-danger)}button{min-height:40px;padding:8px 14px;border:1px solid var(--apt-border);border-radius:var(--apt-button-radius);background:transparent;color:var(--apt-text-body);font:600 13px var(--apt-font-sans);cursor:pointer}.boundary{margin-top:18px;padding:14px;border-left:2px solid var(--apt-border);color:var(--apt-text-muted);font-size:12px;line-height:1.5}.boundary strong{display:block;margin-bottom:3px;color:var(--apt-text-strong)}@media(max-width:600px){.head h1{font-size:31px}.entry-head,footer{align-items:flex-start;flex-direction:column;gap:5px}}
+  `],
 })
 export class RecordsComponent implements OnInit {
-  private readonly service = inject(RecordsService);
-  private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
+  readonly data = inject(WorkspaceDataService);
+  readonly filter = signal<'all' | 'undertaking' | 'activity'>('all');
+  readonly undertakingRows = computed(() => this.data.recordsState().undertakings.map((item) => this.fromUndertaking(item)));
+  readonly eventRows = computed(() => this.data.recordsState().events.map((event) => this.fromEvent(event)));
+  readonly allRows = computed(() => [...this.undertakingRows(), ...this.eventRows()].sort((a, b) => Date.parse(b.date) - Date.parse(a.date)));
+  readonly visible = computed(() => this.filter() === 'undertaking' ? this.undertakingRows() : this.filter() === 'activity' ? this.eventRows() : this.allRows());
 
-  readonly filter = signal<RecordsView>('all');
-  readonly visible = computed<readonly { id: string; title: string; kind: string; institution: string; status: string; createdAt: string }[]>(() =>
-    this.service.view(this.filter()),
-  );
-
-  ngOnInit(): void {
-    this.syncFromRoute();
-    this.route.url.subscribe(() => this.syncFromRoute());
-  }
-
-  private syncFromRoute(): void {
-    const seg = this.route.snapshot.url.at(-1)?.['path'] ?? '';
-    this.filter.set(seg === 'canon' || seg === 'annals' || seg === 'roll' ? seg : 'all');
-  }
-
-  setFilter(v: RecordsView): void {
-    this.filter.set(v);
-    this.router.navigate(v === 'all' ? ['/workspace/records'] : ['/workspace/records', v]);
-  }
-
-  openRoll(): void {
-    this.router.navigate(['/workspace/records/roll']);
-  }
+  ngOnInit(): void { void this.data.refresh(); }
+  private fromUndertaking(item: WorkspaceUndertaking) { return { id: `undertaking-${item.id}`, kind: 'undertaking' as const, title: item.title, summary: item.scope, organization: item.organizationName, status: item.status, date: item.createdAt }; }
+  private fromEvent(event: WorkspaceEvent) { return { id: `event-${event.id}`, kind: 'activity' as const, title: event.action.replaceAll('.', ' ').replaceAll('_', ' '), summary: `${event.actorName} recorded ${event.subjectType} ${event.subjectId}.`, organization: event.organizationName ?? 'Shared network', status: 'recorded', date: event.occurredAt }; }
 }

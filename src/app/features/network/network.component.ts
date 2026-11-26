@@ -4,85 +4,64 @@
  * Network directory for real, connected actor records. No synthetic entries
  * are presented as participants.
  */
-import { Component, inject } from '@angular/core';
-import { NetworkService, GROUP_LABELS, type NetworkGroup, type DirectoryRow } from '@apt-labs/shared/state';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { WorkspaceDataService } from '@apt-labs/shared/state';
 
 @Component({
   selector: 'app-network',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   template: `
     <div class="net" data-module="network">
       <div class="net-pagehead">
-        <p class="net-eyebrow">WORKSPACE · DIRECTORY</p>
-        <h1 class="net-h1">Who is in the network</h1>
-        <p class="net-sub">
-          People and institutions appear here when connected records are available. No participant records are loaded in this local demo.
-        </p>
-
-        <div class="net-actions">
-          <button class="net-btn net-btn--primary" (click)="openPeople()">Open people →</button>
-          <button class="net-btn net-btn--quiet" (click)="openInstitutions()">Open institutions →</button>
-        </div>
+        <p class="net-eyebrow">APT-LABS · Network</p>
+        <h1 class="net-h1">People and institutions</h1>
+        <p class="net-sub">See organizations you belong to and people connected through their active memberships. This view is permission-scoped, not a public people directory.</p>
+        <div class="net-actions"><a class="net-btn net-btn--quiet" routerLink="/workspace/network/people">People and crews →</a><a class="net-btn net-btn--quiet" routerLink="/workspace/network/institutions">Institutions →</a><a class="net-btn net-btn--quiet" routerLink="/workspace/network/capabilities">Capabilities →</a></div>
       </div>
-
-      <div class="net-pills">
-        @for (g of groups; track g.id) {
-          <button
-            class="net-pill"
-            [class.net-pill--active]="filter() === g.id"
-            (click)="filter.set(g.id)"
-          >
-            <span class="net-pill-label">{{ GROUP_LABELS[g.id] }}</span>
-            <span class="net-pill-count">{{ counts()[g.id] }}</span>
-          </button>
-        }
-      </div>
+      @if (data.loading() && !data.error()) { <p class="net-empty" role="status">Loading authorized network records…</p> }
+      @else if (data.error()) { <p class="net-empty" role="alert">Network records are unavailable: {{ data.error().replaceAll('_', ' ') }} <button type="button" (click)="data.refresh()">Retry</button></p> }
+      @else {
+      <div class="net-summary"><section><span>Organizations you belong to</span><strong>{{ data.networkState().organizations.length }}</strong></section><section><span>Other active members in those organizations</span><strong>{{ members().length }}</strong></section></div>
 
       <div class="net-table-wrap">
         <table class="net-table">
           <thead>
             <tr>
-              <th class="net-th">Name</th>
-              <th class="net-th">Type</th>
-              <th class="net-th">Description</th>
-              <th class="net-th">Capabilities</th>
-              <th class="net-th">Registered</th>
-              <th class="net-th net-th--actions">Actions</th>
+              <th class="net-th">Person</th>
+              <th class="net-th">Organization</th>
+              <th class="net-th">Membership</th>
+              <th class="net-th net-th--actions">Context</th>
             </tr>
           </thead>
           <tbody>
-            @for (row of visible(); track row.id) {
-              <tr class="net-tr" (click)="selectRow(row)">
-                <td class="net-td net-td--name">
-                  <span class="net-glyph" [style]="'--card-accent:' + cardAccent(row.type)">{{ initial(row.name) }}</span>
-                  <span class="net-name">{{ row.name }}</span>
-                </td>
-                <td class="net-td"><span class="net-type-badge">{{ typeLabel(row.type) }}</span></td>
-                <td class="net-td">{{ row.description }}</td>
-                <td class="net-td">{{ caps(row) }}</td>
-                <td class="net-td">{{ row.registered }}</td>
-                <td class="net-td net-td--actions">
-                  <button class="net-btn net-btn--sm net-btn--quiet" (click)="$event.stopPropagation(); viewRow(row)">View</button>
-                  <button class="net-btn net-btn--sm net-btn--quiet" (click)="$event.stopPropagation(); inspectRow(row)">Inspect</button>
-                </td>
+            @for (row of members(); track row.id + row.organizationId) {
+              <tr class="net-tr">
+                <td class="net-td net-td--name"><span class="net-name">{{ row.name }}</span></td>
+                <td class="net-td">{{ row.organizationName }}</td>
+                <td class="net-td"><span class="net-type-badge">{{ row.role }}</span></td>
+                <td class="net-td net-td--actions"><a class="net-btn net-btn--sm net-btn--quiet" routerLink="/workspace/workbench">Open work</a></td>
               </tr>
             }
-            @if (visible().length === 0) {
-              <tr><td colspan="6" class="net-empty">No connected people or institutions are available.</td></tr>
+            @if (members().length === 0) {
+              <tr><td colspan="4" class="net-empty">No other active organization members are visible in your current network.</td></tr>
             }
           </tbody>
         </table>
       </div>
+      }
     </div>
   `,
   styles: [
     `
     .net { font-family: var(--apt-font-sans); color: var(--apt-text-body); background: var(--apt-surface-default); min-height: 100%; display: flex; flex-direction: column; }
+    .net-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0 26px}.net-summary section{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--apt-border);border-radius:var(--apt-radius-md);background:var(--apt-surface-page)}.net-summary span{color:var(--apt-text-muted);font-size:13px}.net-summary strong{color:var(--apt-text-strong);font:600 22px var(--apt-font-serif)}
 
     .net-pagehead { display: flex; flex-direction: column; gap: var(--apt-spacing-s3); margin-bottom: var(--apt-spacing-s8); }
     .net-eyebrow { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); letter-spacing: 0.12em; color: var(--apt-text-dim); margin: 0; text-transform: uppercase; }
     .net-h1 { font-family: var(--apt-font-serif); font-size: var(--apt-font-size-display); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); margin: 0 0 var(--apt-spacing-s3); letter-spacing: -0.022em; line-height: 1.05; }
+    @media(max-width:760px){.net-h1{font-size:clamp(30px,8vw,36px)}}
     .net-sub { font-size: var(--apt-font-size-body-md); color: var(--apt-text-muted); margin: 0; max-width: 72ch; line-height: var(--apt-line-height-relaxed); }
     .net-actions { display: flex; gap: var(--apt-spacing-s3); margin-top: var(--apt-spacing-s4); }
 
@@ -128,41 +107,12 @@ import { NetworkService, GROUP_LABELS, type NetworkGroup, type DirectoryRow } fr
     .net-name { font-size: var(--apt-font-size-title-2); font-weight: var(--apt-font-weight-semibold); color: var(--apt-text-strong); letter-spacing: -0.01em; display: block; }
     .net-type-badge { font-family: var(--apt-font-mono); font-size: var(--apt-font-size-micro); text-transform: lowercase; letter-spacing: 0.04em; color: var(--apt-text-body); background: var(--apt-surface-raised); border: 1px solid var(--apt-border); border-radius: var(--apt-radius-r0); padding: 1px 6px; white-space: nowrap; }
     .net-empty { grid-column: 1 / -1; padding: var(--apt-spacing-s8); border: 1px dashed var(--apt-border); border-radius: var(--apt-radius-r2); color: var(--apt-text-muted); font-size: var(--apt-font-size-body-sm); text-align: center; }
+    @media(max-width:600px){.net-summary{grid-template-columns:1fr}.net-table{table-layout:fixed}.net-th,.net-td{padding:10px 7px;white-space:normal;overflow-wrap:anywhere}.net-th:nth-child(4),.net-td:nth-child(4){display:none}.net-th:nth-child(1){width:26%}.net-th:nth-child(2){width:42%}.net-th:nth-child(3){width:32%}.net-empty{padding:14px 8px}}
     `,
   ],
 })
-export class NetworkComponent {
-  private readonly service = inject(NetworkService);
-
-  protected readonly GROUP_LABELS = GROUP_LABELS;
-
-  readonly filter = this.service.filter;
-  readonly groups = this.service.groups;
-  readonly counts = this.service.counts;
-  readonly visible = this.service.visible;
-
-  readonly initial = (name: string) => name[0] ?? '?';
-
-  readonly typeLabel = (type: DirectoryRow['type']) => {
-    const m: Record<string, string> = { person: 'person', crew: 'crew', institution: 'institution', organization: 'organization' };
-    return m[type] ?? type;
-  };
-
-  readonly cardAccent = (type: DirectoryRow['type']) => {
-    const m: Record<string, string> = {
-      person: 'var(--apt-color-brand-primary)',
-      crew: 'var(--apt-group-continuity)',
-      institution: 'var(--apt-group-value)',
-      organization: 'var(--apt-group-core)',
-    };
-    return m[type] ?? 'var(--apt-text-muted)';
-  };
-
-  readonly caps = (r: DirectoryRow) => r.capabilities.join(', ') || '—';
-
-  openPeople(): void {}
-  openInstitutions(): void {}
-  selectRow(row: DirectoryRow): void {}
-  viewRow(row: DirectoryRow): void {}
-  inspectRow(row: DirectoryRow): void {}
+export class NetworkComponent implements OnInit {
+  readonly data = inject(WorkspaceDataService);
+  readonly members = computed(() => this.data.networkState().members);
+  ngOnInit(): void { void this.data.refresh(); }
 }

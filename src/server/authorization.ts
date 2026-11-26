@@ -4,13 +4,32 @@ import { db } from './db/client';
 import { aptPersons, organizationMemberships } from './db/schema';
 
 type Transaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
-type Membership = { personId: string; organizationId: string; role: string };
+type Membership = { id: string; personId: string; organizationId: string; role: string; grantedAt: Date };
+type OrganizationAction = ProtectedAction | 'undertaking:create' | 'undertaking:decide';
+
+function canAct(membership: Membership, authUserId: string, action: OrganizationAction): boolean {
+  if (action === 'undertaking:create') return ['owner', 'administrator', 'manager'].includes(membership.role);
+  if (action === 'undertaking:decide') return ['owner', 'administrator', 'manager'].includes(membership.role);
+  return isAuthorizedForOrganization({
+    principal: { personId: membership.personId as PersonId, accountId: authUserId as AccountId },
+    organizationId: membership.organizationId as OrganizationId,
+    action,
+  }, [{
+    id: membership.id as never,
+    personId: membership.personId as PersonId,
+    organizationId: membership.organizationId as OrganizationId,
+    role: membership.role as 'owner' | 'administrator' | 'manager' | 'member' | 'viewer',
+    status: 'active',
+    grantedAt: membership.grantedAt.toISOString(),
+    revokedAt: null,
+  }]);
+}
 
 /** Authorizes from current server-resolved account and keeps the protected access in one serializable transaction. */
 export async function withOrganizationAuthorization<T>(
   authUserId: string,
   organizationId: string,
-  action: ProtectedAction,
+  action: OrganizationAction,
   work: (tx: Transaction, membership: Membership) => Promise<T>,
 ): Promise<{ authorized: false } | { authorized: true; value: T }> {
   return db.transaction(async (tx) => {
@@ -25,19 +44,7 @@ export async function withOrganizationAuthorization<T>(
       ))
       .limit(1);
 
-    if (!membership || !isAuthorizedForOrganization({
-      principal: { personId: membership.personId as PersonId, accountId: authUserId as AccountId },
-      organizationId: membership.organizationId as OrganizationId,
-      action,
-    }, [{
-      id: membership.id as never,
-      personId: membership.personId as PersonId,
-      organizationId: membership.organizationId as OrganizationId,
-      role: membership.role as 'owner' | 'administrator' | 'manager' | 'member' | 'viewer',
-      status: 'active',
-      grantedAt: membership.grantedAt.toISOString(),
-      revokedAt: null,
-    }])) return { authorized: false as const };
+    if (!membership || !canAct(membership, authUserId, action)) return { authorized: false as const };
     const value = await work(tx, membership);
     return { authorized: true as const, value };
   }, { isolationLevel: 'serializable' });

@@ -26,7 +26,7 @@ export const routes: Routes = [
       { path: 'network/people', loadComponent: () => import('./features/network/people.component').then(m => m.PeopleComponent) },
       { path: 'network/institutions', loadComponent: () => import('./features/network/institutions.component').then(m => m.InstitutionsComponent) },
       { path: 'network/capabilities', loadComponent: () => import('./features/network/capabilities.component').then(m => m.CapabilitiesComponent) },
-      { path: 'workbench', loadComponent: () => import('./features/workbench/home.component').then(m => m.HomeComponent) },
+      { path: 'workbench', loadComponent: () => import('./features/workbench/shared-workbench.component').then(m => m.SharedWorkbenchComponent) },
       { path: 'workbench/:pilot', loadComponent: () => import('./features/workbench/pilot.component').then(m => m.PilotComponent) },
       { path: 'value', loadComponent: () => import('./features/value/value.component').then(m => m.ValueComponent) },
       { path: 'records', loadComponent: () => import('./features/records/records.component').then(m => m.RecordsComponent) },

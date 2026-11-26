@@ -1,7 +1,8 @@
 /**
  * APT-LABS — Coordination Journey (Gate 1 → Gate 3 bridge)
  *
- * Composes the Gate 1 foundations into one real, end-to-end coordination flow:
+ * Composes a prototype coordination flow in an injected in-memory store. It is not a
+ * persistent, multi-user, authorized, or independently verified workflow:
  *
  *   1. postNeed          — an actor registers a Need (INTENTION record).
  *   2. acceptCommitment  — a provider actor accepts the need, creating a
@@ -11,16 +12,12 @@
  *                          evidence; the commitment and need both move to
  *                          "fulfilled".
  *
- * Every step is a versioned record, every link is a first-class relationship,
- * every step is gated by the permission layer and logged to the append-only
- * audit trail. `getJourney` returns the composed, trustworthy picture.
+ * The helper appends events to the in-memory store and assigns versions, but it does not
+ * enforce server authorization, durable audit guarantees, or evidence verification.
  *
- * Pure domain layer: the Vue monolith persisted records/relationships/audit via
- * localStorage-backed `record-envelope` / `relationship-store` / `audit`
- * modules, none of which are part of this Angular port. Those stores are
- * abstracted here as an injected in-memory `JourneyStore`, so the coordination
- * logic itself is framework-, storage-, and reactivity-free. The caller owns
- * persistence (Supabase, IndexedDB, test doubles, …).
+ * The former Vue/localStorage persistence modules are not part of the active Angular
+ * application. The current Angular CoordinationService supplies browser-memory storage;
+ * callers must provide persistence and authorization before using this as a shared workflow.
  */
 
 import type { Family } from '@apt-labs/ontology';
@@ -440,7 +437,7 @@ export function fulfilCommitment(store: JourneyStore, input: FulfilCommitmentInp
 // ---------------------------------------------------------------------------
 
 /**
- * Return the composed, trustworthy picture of a coordination journey: the
+ * Return a composed local projection of a coordination journey:
  * need, its commitments, its outcomes, the ANSWERS relationships, and the
  * audit trail across all of them. Pure read — no storage writes.
  */

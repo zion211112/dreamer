@@ -17,3 +17,5 @@ export { NetworkService, GROUP_LABELS, groupOf } from './network.service';
 export type { NetworkGroup, DirectoryRow } from './network.service';
 export { SelectionService } from './selection.service';
 export type { SelectedEntity } from './selection.service';
+export { WorkspaceDataService } from './workspace-data.service';
+export type { WorkspaceEvent, WorkspaceNetwork, WorkspaceOrganization, WorkspaceUndertaking } from './workspace-data.service';

@@ -33,8 +33,9 @@ const ENV_COLORS: Record<string, string> = {
         <span class="statusbar-module">{{ ledger().module }}</span>
         <span class="statusbar-divider">·</span>
         <span class="statusbar-env" [class]="'env-' + ledger().environment">
-          {{ ledger().environment === 'local-demo' ? 'Local demo' : 'Configured' }}
+          {{ ledger().environment === 'local-demo' ? 'Local demo' : 'PostgreSQL · shared records' }}
         </span>
+        @if (ledger().environment === 'local-demo') {
         <span class="statusbar-divider">·</span>
         <span class="statusbar-tally">
           <span class="tally-item"><span class="tally-num">{{ ledger().open }}</span><span class="tally-label">open</span></span>
@@ -42,6 +43,7 @@ const ENV_COLORS: Record<string, string> = {
           <span class="tally-item"><span class="tally-num">{{ ledger().reported }}</span><span class="tally-label">reported</span></span>
           <span class="tally-item"><span class="tally-num">{{ ledger().evidence }}</span><span class="tally-label">evidence</span></span>
         </span>
+        }
       </div>
     </footer>
   `,

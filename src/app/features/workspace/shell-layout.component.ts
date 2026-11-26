@@ -181,8 +181,9 @@ const MODULES = [
       .shell-body { flex-direction: column; }
       .module-rail {
         width: 100%;
+        height: 56px;
         box-sizing: border-box;
-        flex: 0 0 auto;
+        flex: 0 0 56px;
         flex-direction: row;
         overflow-x: auto;
         overflow-y: hidden;
@@ -193,11 +194,12 @@ const MODULES = [
       .module-rail:hover { width: 100%; }
       .nav-item {
         flex: 0 0 auto;
-        gap: var(--apt-space-1);
-        min-height: 44px;
-        padding: var(--apt-space-2) var(--apt-space-1);
+        gap: var(--apt-space-2);
+        min-height: 42px;
+        padding: var(--apt-space-2) var(--apt-space-3);
       }
-      .nav-label { opacity: 1; }
+      .nav-label { opacity: 1; font-size: 12px; }
+      .module-rail .nav-item .nav-label { display: inline; }
       .shell-main { padding: var(--apt-space-6); }
       .shell-dock { display: none; }
     }
@@ -233,6 +235,27 @@ export class ShellLayoutComponent {
       ];
     }
 
+    if (this.currentUrl() === '/workspace/commons') {
+      return [
+        { id: 'workbench', label: 'Workbench', path: ['/workspace', 'workbench'] },
+        { id: 'network', label: 'Network', path: ['/workspace', 'network'] },
+      ];
+    }
+
+    if (this.currentUrl().startsWith('/workspace/records')) {
+      return [
+        { id: 'commons', label: 'Commons', path: ['/workspace', 'commons'] },
+        { id: 'workbench', label: 'Workbench', path: ['/workspace', 'workbench'] },
+      ];
+    }
+
+    if (this.currentUrl().startsWith('/workspace/intelligence')) {
+      return [
+        { id: 'records', label: 'Records', path: ['/workspace', 'records'] },
+        { id: 'commons', label: 'Commons', path: ['/workspace', 'commons'] },
+      ];
+    }
+
     if (this.currentUrl() === '/workspace') {
       return [
         { id: 'value', label: 'Value', path: ['/workspace', 'value'] },
@@ -262,7 +285,7 @@ export class ShellLayoutComponent {
     const module = MODULES.find((item) => item.path && url.startsWith(`/workspace/${item.path}`))?.label ?? 'Home';
     return {
       module,
-      environment: 'local-demo' as const,
+      environment: ['/workspace', '/workspace/commons', '/workspace/network', '/workspace/records', '/workspace/intelligence'].some((path) => url === path || (path !== '/workspace' && url.startsWith(`${path}/`))) || url.startsWith('/workspace/workbench') ? 'configured' as const : 'local-demo' as const,
       open: counts.open,
       committed: counts.inProgress,
       reported: counts.delivered,

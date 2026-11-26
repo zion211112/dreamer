@@ -1,12 +1,11 @@
 /**
  * @apt-labs/shared/state — CoordinationService
  *
- * The reactivity owner for the coordination chain
- * (INTENTION → COMMITMENT → OUTPUT_OUTCOME). It owns one empty local-demo
- * `JourneyStore` and exposes live needs and their
- * composed journeys to the UI. All coordination *logic* lives in the
- * framework-free `@apt-labs/domain` layer; this service only wires it to
- * Angular signals and the store.
+ * The reactivity owner for a local prototype coordination chain
+ * (INTENTION → COMMITMENT → OUTPUT_OUTCOME). It owns one browser-memory
+ * `JourneyStore` and exposes local needs and their composed journeys to the UI.
+ * State is neither persistent nor shared across accounts; domain helpers do not
+ * enforce server authorization.
  */
 
 import { Injectable, signal, computed } from '@angular/core';
@@ -37,10 +36,10 @@ export interface NeedRow {
 
 @Injectable({ providedIn: 'root' })
 export class CoordinationService {
-  /** The single system-of-record the coordination logic reads and writes. */
+  /** In-memory prototype store; not an authoritative or durable system of record. */
   readonly store: JourneyStore = createJourneyStore();
 
-  /** The acting principal (a stable demo account in demo mode). */
+  /** Prototype actor label; the server must resolve a real principal for shared actions. */
   readonly accountId = signal<string>('demo');
 
   /** Institution id → display name, shared with Records / Value projections. */
@@ -119,7 +118,7 @@ export class CoordinationService {
   // Composed reads
   // ------------------------------------------------------------------
 
-  /** The composed, trustworthy picture of one need (for the detail view). */
+  /** A composed local projection of one need (not an authoritative record). */
   journey(needId: string): Journey {
     this.version(); // establish reactivity for computed consumers
     return getJourney(this.store, needId);
