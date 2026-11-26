@@ -17,9 +17,15 @@ standalone-component app at the repository root. TypeScript strict. Signal-based
 
 - App: `src/` — single entry `main.ts` → `app.ts`, router in `app/app.routes.ts`.
 - Libraries: `@apt-labs/ontology`, `@apt-labs/domain`, `@apt-labs/shared/{state,ui}`, `@apt-labs/shell`.
-- Feature screens currently combine shared Angular services and local/in-memory projections. The
-  Workbench coordination journey is **not persistent or shared across accounts**; server APIs cover
-  only Better Auth identity, organizations/memberships, and organization-scoped opportunities.
+- The Workbench undertaking journey — publish scope, submit interest, issue an offer, accept it,
+  report, and review by a different person — is **server-backed and shared across accounts**
+  (`undertakings`, `undertaking_interests`, `undertaking_offers`, `undertaking_participants`,
+  `work_reports`, `work_reviews`, plus an append-only audit trail). Commons, Network, Records and
+  Workbench read the same authorized records through `WorkspaceDataService`.
+- Still local or simulated: capability claims, the Intelligence surfaces, and most Workspace
+  overview tiles. Network shows only what the signed-in person may see.
+- Server APIs otherwise cover Better Auth identity, organizations/memberships, organization-scoped
+  opportunities, and the `/api/benbenos` school console.
 - Better Auth + PostgreSQL/Drizzle is the active prototype. There is no supported localStorage auth
   fallback; Supabase files are legacy and are not a runtime fallback.
 
@@ -64,7 +70,8 @@ libs/
   domain/              — @apt-labs/domain
   shared/
     state/             — @apt-labs/shared/state: Angular services and signal projections;
-                         CoordinationService currently owns in-memory Workbench journey state
+                         WorkspaceDataService reads authorized network/record state from the API,
+                         CoordinationService still holds local drafting state
     ui/                — @apt-labs/shared/ui: shared UI primitives
   shell/               — @apt-labs/shell: app shell / layout
 public/                — static assets (only configured assets are copied to the build)
