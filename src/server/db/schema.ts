@@ -164,6 +164,24 @@ export const workReviews = pgTable('work_reviews', {
   check('work_reviews_decision_check', sql`${table.decision} in ('accepted', 'disputed', 'needs_revision')`),
 ]);
 
+export const participantReflections = pgTable('participant_reflections', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  reflectionId: uuid('reflection_id').notNull(),
+  undertakingId: uuid('undertaking_id').notNull().references(() => undertakings.id, { onDelete: 'restrict' }),
+  authorPersonId: uuid('author_person_id').notNull().references(() => aptPersons.id, { onDelete: 'restrict' }),
+  learning: text('learning').notNull(),
+  localValue: text('local_value').notNull(),
+  financialRecordAssessment: varchar('financial_record_assessment', { length: 24 }).notNull(),
+  financialRecordRationale: text('financial_record_rationale').notNull(),
+  version: integer('version').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [
+  uniqueIndex('participant_reflections_reflection_version_unique').on(table.reflectionId, table.version),
+  uniqueIndex('participant_reflections_author_undertaking_version_unique').on(table.undertakingId, table.authorPersonId, table.version),
+  index('participant_reflections_undertaking_idx').on(table.undertakingId, table.createdAt),
+  check('participant_reflections_financial_assessment_check', sql`${table.financialRecordAssessment} in ('consider', 'not_indicated', 'uncertain')`),
+]);
+
 export const auditEvents = pgTable('audit_events', {
   id: uuid('id').primaryKey().defaultRandom(),
   organizationId: uuid('organization_id').references(() => organizations.id, { onDelete: 'restrict' }),

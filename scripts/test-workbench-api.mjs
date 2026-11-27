@@ -40,11 +40,13 @@ class Account {
 const commissioner = new Account();
 const participant = new Account();
 const unrelated = new Account();
+const observer = new Account();
 
 await Promise.all([
   commissioner.register(`commissioner-${suffix}@example.test`, 'Achieng Commissioner'),
   participant.register(`participant-${suffix}@example.test`, 'Brian Participant'),
   unrelated.register(`unrelated-${suffix}@example.test`, 'Cynthia Unrelated'),
+  observer.register(`observer-${suffix}@example.test`, 'Dara Observer'),
 ]);
 
 const createdOrg = await commissioner.request('/api/organizations', {
@@ -177,6 +179,15 @@ assert.ok(triageDetail.data.events.some((event) => event.action === 'undertaking
 const triageQueue = await commissioner.request('/api/workbench', { expected: 200 });
 assert.equal(triageQueue.data.needsYou.some((item) => item.undertakingId === triageWork.data.id), false, 'a declined interest leaves the triage queue');
 
+const openReflectionAttempt = await participant.request(`/api/undertakings/${undertakingId}/reflection`, {
+  method: 'POST', body: { learning: 'Too early.', localValue: 'Too early.', financialRecordAssessment: 'uncertain', financialRecordRationale: 'Not closed.', expectedVersion: 0 },
+});
+assert.equal(openReflectionAttempt.status, 409, 'participant reflection is unavailable until close');
+const nonParticipantReflection = await unrelated.request(`/api/undertakings/${undertakingId}/reflection`, {
+  method: 'POST', body: { learning: 'Forged.', localValue: 'Forged.', financialRecordAssessment: 'uncertain', financialRecordRationale: 'Not a participant.', expectedVersion: 0 },
+});
+assert.equal(nonParticipantReflection.status, 403, 'only an accepted participant may reflect');
+
 const closed = await commissioner.request(`/api/organizations/${organizationId}/undertakings/${undertakingId}/close`, { method: 'POST', body: {}, expected: 200 });
 assert.equal(closed.data.status, 'closed');
 const closedAgain = await commissioner.request(`/api/organizations/${organizationId}/undertakings/${undertakingId}/close`, { method: 'POST', body: {} });
@@ -187,6 +198,70 @@ const closedDetail = await participant.request(`/api/undertakings/${undertakingI
 assert.equal(closedDetail.data.status, 'closed');
 assert.equal(closedDetail.data.actions.canReport, false, 'a closed undertaking offers no delivery action');
 assert.equal(closedDetail.data.position.isParticipant, true, 'history remains readable after close');
+assert.equal(closedDetail.data.actions.canReflect, true, 'a closed participant may write a reflection');
+const invalidFinancialNarrative = await participant.request(`/api/undertakings/${undertakingId}/reflection`, {
+  method: 'POST', body: { learning: 'A lesson.', localValue: 'A value.', financialRecordAssessment: 'uncertain', financialRecordRationale: 'Use bank account details.', expectedVersion: 0 },
+});
+assert.equal(invalidFinancialNarrative.status, 400, 'financial narrative rejects account or payment details');
+const reflectionInput = {
+  learning: 'I learned to test the press alignment before long runs.',
+  localValue: 'The neighborhood can print notices locally again.',
+  financialRecordAssessment: 'uncertain',
+  financialRecordRationale: 'No separate financial record was established by this undertaking.',
+  expectedVersion: 0,
+};
+const reflection = await participant.request(`/api/undertakings/${undertakingId}/reflection`, {
+  method: 'POST', body: reflectionInput, expected: 201,
+});
+assert.equal(reflection.data.version, 1, 'the participant authored version one');
+assert.equal(reflection.data.authorName, 'Brian Participant', 'reflection author comes from the session identity');
+const managerReflectionView = await commissioner.request(`/api/undertakings/${undertakingId}`, { expected: 200 });
+assert.equal(managerReflectionView.data.reflections.length, 1, 'managing organization role can read the participant reflection');
+assert.equal(managerReflectionView.data.reflections[0].learning, reflectionInput.learning);
+const participantReflectionView = await participant.request(`/api/undertakings/${undertakingId}`, { expected: 200 });
+assert.equal(participantReflectionView.data.myReflection.version, 1, 'author can read their current reflection');
+const observerMembership = await commissioner.request(`/api/organizations/${organizationId}/members`, {
+  method: 'POST', body: { email: `observer-${suffix}@example.test`, role: 'viewer' }, expected: 201,
+});
+assert.equal(observerMembership.data.role, 'viewer');
+const nonManagingReflectionView = await observer.request(`/api/undertakings/${undertakingId}`, { expected: 200 });
+assert.equal(nonManagingReflectionView.data.reflections.length, 0, 'ordinary organization members cannot read participant reflections');
+const observerRecords = await observer.request('/api/records', { expected: 200 });
+assert.equal(observerRecords.data.events.some((event) => event.action.startsWith('undertaking.reflection_')), false, 'ordinary organization members cannot see reflection audit activity');
+const observerStudioEvents = await observer.request('/api/studio/query', {
+  method: 'POST', body: { type: 'event', search: 'undertaking.reflection_', limit: 20 }, expected: 200,
+});
+assert.equal(observerStudioEvents.data.objects.length, 0, 'Studio event queries do not disclose reflection audit activity to ordinary members');
+const managerStudioEvents = await commissioner.request('/api/studio/query', {
+  method: 'POST', body: { type: 'event', search: 'undertaking.reflection_', limit: 20 }, expected: 200,
+});
+const reflectionEvent = managerStudioEvents.data.objects.find((event) => event.properties['action'] === 'undertaking.reflection_submitted');
+assert.ok(reflectionEvent, 'manager Studio query can find reflection event');
+const observerStudioGraph = await observer.request(`/api/studio/graph?type=event&id=${reflectionEvent.id}&depth=1`);
+assert.equal(observerStudioGraph.status, 404, 'ordinary viewer cannot open the reflection audit event graph');
+const managerRecords = await commissioner.request('/api/records', { expected: 200 });
+assert.ok(managerRecords.data.events.some((event) => event.action === 'undertaking.reflection_submitted'), 'managing organization roles can see attributed reflection activity');
+const authorRecords = await participant.request('/api/records', { expected: 200 });
+assert.ok(authorRecords.data.events.some((event) => event.action === 'undertaking.reflection_submitted'), 'the author can see their own attributed reflection activity');
+const nonParticipantReflectionByMember = await observer.request(`/api/undertakings/${undertakingId}/reflection`, {
+  method: 'POST', body: { ...reflectionInput, expectedVersion: 0 },
+});
+assert.equal(nonParticipantReflectionByMember.status, 403, 'organization membership alone does not authorize participant authorship');
+const staleReflection = await participant.request(`/api/undertakings/${undertakingId}/reflection`, {
+  method: 'POST', body: { ...reflectionInput, learning: 'Stale overwrite.', expectedVersion: 0 },
+});
+assert.equal(staleReflection.status, 409, 'stale reflection revision cannot overwrite the latest');
+const revisedReflection = await participant.request(`/api/undertakings/${undertakingId}/reflection`, {
+  method: 'POST', body: { ...reflectionInput, learning: 'I also learned to let the ink settle before stacking.', expectedVersion: 1 }, expected: 201,
+});
+assert.equal(revisedReflection.data.version, 2, 'revision creates a new immutable version');
+const finalReflectionView = await participant.request(`/api/undertakings/${undertakingId}`, { expected: 200 });
+assert.equal(finalReflectionView.data.myReflection.version, 2, 'the author revision form uses the latest version');
+assert.deepEqual(finalReflectionView.data.reflections.map((entry) => entry.version), [2, 1], 'the author can read the complete immutable version history');
+const managerFinalReflectionView = await commissioner.request(`/api/undertakings/${undertakingId}`, { expected: 200 });
+assert.deepEqual(managerFinalReflectionView.data.reflections.map((entry) => entry.version), [2, 1], 'managers can read the complete authorized reflection history');
+assert.ok(finalReflectionView.data.events.some((event) => event.action === 'undertaking.reflection_submitted'), 'reflection submission is attributed in the audit trail');
+assert.ok(finalReflectionView.data.events.some((event) => event.action === 'undertaking.reflection_revised'), 'reflection revision is attributed in the audit trail');
 
 const added = await commissioner.request(`/api/organizations/${organizationId}/members`, {
   method: 'POST', body: { email: `unrelated-${suffix}@example.test`, role: 'manager' }, expected: 201,
@@ -221,6 +296,10 @@ console.log(JSON.stringify({
     'declining an interest preserves the message and records the decision',
     'search and status filters narrow the visible work',
     'closing stops new offers and reports while the record stays readable',
+    'only a closed accepted participant can author a reflection; managers see it and ordinary members do not',
+    'participant reflection revisions are append-only, version-checked, and attributed in audit history',
+    'financial narrative rejects account/payment details before persistence',
+    'ordinary members cannot see reflection activity through Records, Studio query, or Studio graph',
     'owner adds a colleague as manager; duplicate and outsider additions are refused',
     'the colleague can then read closed work and sees the recorded role',
   ],

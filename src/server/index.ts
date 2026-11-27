@@ -8,6 +8,7 @@ import { withOrganizationAuthorization } from './authorization';
 import { createBenbenosRouter } from './benbenos/router';
 import { createWorkbenchRouter } from './workbench/routes';
 import { createStudioRouter } from './studio/routes';
+import { isTrustedRequestOrigin, parseTrustedOrigins } from './trusted-origins';
 
 const app = express();
 app.disable('x-powered-by');
@@ -15,11 +16,10 @@ app.all('/api/auth/*splat', toNodeHandler(auth));
 // Benben-OS accepts marked answer sheets, so its body limit is larger than the identity API's.
 app.use('/api/benbenos', express.json({ limit: '256kb' }));
 app.use(express.json({ limit: '32kb' }));
+const trustedOrigins = parseTrustedOrigins(process.env['BETTER_AUTH_URL'], process.env['APT_EXTRA_TRUSTED_ORIGINS']);
 app.use((req, res, next) => {
   if (!req.path.startsWith('/api/') || !['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) return next();
-  const origin = req.get('origin');
-  const configuredOrigin = process.env['BETTER_AUTH_URL'];
-  if (!origin || !configuredOrigin || new URL(origin).origin !== new URL(configuredOrigin).origin) {
+  if (!isTrustedRequestOrigin(req.get('origin'), trustedOrigins)) {
     return res.status(403).json({ error: 'origin_forbidden' });
   }
   return next();
@@ -141,7 +141,14 @@ app.get('/api/records', async (req, res) => {
     .orderBy(desc(undertakings.createdAt)).limit(100);
   const events = await db.select({ id: auditEvents.id, organizationId: auditEvents.organizationId, organizationName: organizations.name, actorName: aptPersons.displayName, action: auditEvents.action, subjectType: auditEvents.subjectType, subjectId: auditEvents.subjectId, occurredAt: auditEvents.occurredAt })
     .from(auditEvents).leftJoin(organizations, eq(organizations.id, auditEvents.organizationId)).innerJoin(aptPersons, eq(aptPersons.id, auditEvents.actorPersonId))
-    .where(sql`exists (select 1 from organization_memberships m where m.organization_id = ${auditEvents.organizationId} and m.person_id = ${person.id} and m.revoked_at is null) or (${auditEvents.actorPersonId} = ${person.id} and exists (select 1 from undertaking_participants p where p.person_id = ${person.id} and ((p.undertaking_id = ${auditEvents.subjectId} and ${auditEvents.subjectType} = 'undertaking') or exists (select 1 from undertaking_offers o where o.id = ${auditEvents.subjectId} and o.undertaking_id = p.undertaking_id and ${auditEvents.subjectType} = 'offer') or exists (select 1 from work_reports r where r.id = ${auditEvents.subjectId} and r.undertaking_id = p.undertaking_id and ${auditEvents.subjectType} = 'report'))))`)
+    .where(sql`(
+      exists (select 1 from organization_memberships m where m.organization_id = ${auditEvents.organizationId} and m.person_id = ${person.id} and m.revoked_at is null)
+      or (${auditEvents.actorPersonId} = ${person.id} and exists (select 1 from undertaking_participants p where p.person_id = ${person.id} and ((p.undertaking_id = ${auditEvents.subjectId} and ${auditEvents.subjectType} = 'undertaking') or exists (select 1 from undertaking_offers o where o.id = ${auditEvents.subjectId} and o.undertaking_id = p.undertaking_id and ${auditEvents.subjectType} = 'offer') or exists (select 1 from work_reports r where r.id = ${auditEvents.subjectId} and r.undertaking_id = p.undertaking_id and ${auditEvents.subjectType} = 'report') or exists (select 1 from participant_reflections pr where pr.id = ${auditEvents.subjectId} and pr.undertaking_id = p.undertaking_id and pr.author_person_id = ${person.id} and ${auditEvents.subjectType} = 'participant_reflection'))))
+    ) and (
+      ${auditEvents.subjectType} <> 'participant_reflection'
+      or (${auditEvents.actorPersonId} = ${person.id} and ${auditEvents.subjectType} = 'participant_reflection')
+      or exists (select 1 from participant_reflections pr join undertakings u on u.id = pr.undertaking_id join organization_memberships m on m.organization_id = u.organization_id where pr.id = ${auditEvents.subjectId} and m.person_id = ${person.id} and m.revoked_at is null and m.role in ('owner', 'administrator', 'manager'))
+    )`)
     .orderBy(desc(auditEvents.occurredAt)).limit(150);
   return res.json({ data: { undertakings: visibleUndertakings, events } });
 });

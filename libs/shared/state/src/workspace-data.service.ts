@@ -20,6 +20,7 @@ export interface WorkActions {
   canRegisterInterest: boolean;
   canAcceptPendingOffer: boolean;
   canReport: boolean;
+  canReflect: boolean;
 }
 
 export interface WorkspaceUndertaking {
@@ -74,6 +75,20 @@ export interface UndertakingReview {
   createdAt: string;
 }
 
+export interface ParticipantReflection {
+  id: string;
+  latestVersionId: string;
+  undertakingId: string;
+  authorPersonId: string;
+  authorName: string;
+  learning: string;
+  localValue: string;
+  financialRecordAssessment: 'consider' | 'not_indicated' | 'uncertain';
+  financialRecordRationale: string;
+  version: number;
+  createdAt: string;
+}
+
 export interface UndertakingDetail {
   id: string;
   organizationId: string;
@@ -94,6 +109,8 @@ export interface UndertakingDetail {
     canReview: boolean;
   };
   actions: WorkActions;
+  myReflection: ParticipantReflection | null;
+  reflections: ParticipantReflection[];
   interests: Array<{ id: string; personId: string; personName: string; message: string; createdAt: string; declined: boolean }>;
   offers: Array<{ id: string; offeredToPersonId: string; offeredToPersonName: string; issuedByName: string; proposal: string; status: OfferStatus; createdAt: string; decidedAt: string | null }>;
   participants: Array<{ personId: string; name: string; joinedAt: string }>;
@@ -235,6 +252,16 @@ export class WorkspaceDataService {
 
   submitReport(undertakingId: string, report: string): Promise<unknown> {
     return this.send(`/api/undertakings/${undertakingId}/reports`, 'POST', { report });
+  }
+
+  saveReflection(undertakingId: string, body: {
+    learning: string;
+    localValue: string;
+    financialRecordAssessment: 'consider' | 'not_indicated' | 'uncertain';
+    financialRecordRationale: string;
+    expectedVersion: number;
+  }): Promise<unknown> {
+    return this.send(`/api/undertakings/${encodeURIComponent(undertakingId)}/reflection`, 'POST', body);
   }
 
   submitReview(organizationId: string, reportId: string, decision: ReviewDecision, rationale: string): Promise<unknown> {

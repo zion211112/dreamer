@@ -139,6 +139,35 @@ import { WorkspaceDataService, describeWorkspaceError, type UndertakingDetail } 
               }
             </section>
 
+            @if (work.status === 'closed' && (work.actions.canReflect || work.reflections.length > 0)) {
+              <section class="panel" aria-labelledby="reflection-title">
+                <h2 id="reflection-title">Personal reflection</h2>
+                <p class="muted">Post-close learning and local value, written by each participant. This is not a delivery report or organizational review.</p>
+                @for (reflection of work.reflections; track reflection.latestVersionId) {
+                  <article class="report">
+                    <div class="row-head"><strong>{{ reflection.authorName }}</strong><span class="chip">Version {{ reflection.version }}</span><time>{{ when(reflection.createdAt) }}</time></div>
+                    <h3>What I learned</h3><p class="body small">{{ reflection.learning }}</p>
+                    <h3>Value for the local community</h3><p class="body small">{{ reflection.localValue }}</p>
+                    <h3>Financial-record assessment</h3><p class="body small">{{ reflection.financialRecordAssessment.replaceAll('_', ' ') }} · {{ reflection.financialRecordRationale }}</p>
+                  </article>
+                }
+                @if (work.actions.canReflect) {
+                  <form class="inline-form" (submit)="saveReflection(work, $event)">
+                    <label for="reflection-learning">What did you learn?</label>
+                    <textarea id="reflection-learning" name="learning" rows="3" maxlength="10000" [(ngModel)]="reflectionLearning" required></textarea>
+                    <label for="reflection-local-value">What value did the work create for the local community?</label>
+                    <textarea id="reflection-local-value" name="localValue" rows="3" maxlength="10000" [(ngModel)]="reflectionLocalValue" required></textarea>
+                    <label for="reflection-assessment">Does a separate financial record need consideration?</label>
+                    <select id="reflection-assessment" name="assessment" [(ngModel)]="reflectionAssessment"><option value="consider">Consider separately</option><option value="not_indicated">Not indicated</option><option value="uncertain">Uncertain</option></select>
+                    <label for="reflection-rationale">Context for this assessment</label>
+                    <textarea id="reflection-rationale" name="rationale" rows="3" maxlength="4000" [(ngModel)]="reflectionRationale" required></textarea>
+                    <p class="muted">Narrative context only. Do not include amounts, account details, payment instructions or obligations. This reflection creates no payment action or entitlement.</p>
+                    <button type="submit" class="primary" [disabled]="saving() || !reflectionLearning.trim() || !reflectionLocalValue.trim() || !reflectionRationale.trim()">{{ work.myReflection ? 'Save new version' : 'Record reflection' }}</button>
+                  </form>
+                }
+              </section>
+            }
+
             <section class="panel" aria-labelledby="history-title">
               <h2 id="history-title">History</h2>
               @if (work.events.length === 0) {
@@ -277,6 +306,10 @@ export class UndertakingComponent implements OnInit {
   readonly message = signal('');
   interestText = '';
   reportText = '';
+  reflectionLearning = '';
+  reflectionLocalValue = '';
+  reflectionAssessment: 'consider' | 'not_indicated' | 'uncertain' = 'uncertain';
+  reflectionRationale = '';
   offerText: Record<string, string> = {};
   reviewText: Record<string, string> = {};
   reviewDecision: Record<string, string> = {};
@@ -292,7 +325,14 @@ export class UndertakingComponent implements OnInit {
     this.loading.set(true);
     this.error.set('');
     try {
-      this.undertaking.set(await this.data.undertaking(id));
+      const work = await this.data.undertaking(id);
+      this.undertaking.set(work);
+      if (work.myReflection) {
+        this.reflectionLearning = work.myReflection.learning;
+        this.reflectionLocalValue = work.myReflection.localValue;
+        this.reflectionAssessment = work.myReflection.financialRecordAssessment;
+        this.reflectionRationale = work.myReflection.financialRecordRationale;
+      }
     } catch (error) {
       this.error.set(describeWorkspaceError(error));
     } finally {
@@ -351,6 +391,25 @@ export class UndertakingComponent implements OnInit {
     } finally {
       this.saving.set(false);
     }
+  }
+
+  async saveReflection(work: UndertakingDetail, event: Event): Promise<void> {
+    event.preventDefault();
+    if (!this.reflectionLearning.trim() || !this.reflectionLocalValue.trim() || !this.reflectionRationale.trim()) return;
+    await this.mutate('reflection', async () => {
+      await this.data.saveReflection(work.id, {
+        learning: this.reflectionLearning.trim(),
+        localValue: this.reflectionLocalValue.trim(),
+        financialRecordAssessment: this.reflectionAssessment,
+        financialRecordRationale: this.reflectionRationale.trim(),
+        expectedVersion: work.myReflection?.version ?? 0,
+      });
+      this.reflectionLearning = '';
+      this.reflectionLocalValue = '';
+      this.reflectionRationale = '';
+      this.message.set('Your reflection was recorded separately from reports and organizational reviews.');
+      await this.load(work.id);
+    });
   }
 
   async review(work: UndertakingDetail, reportId: string): Promise<void> {

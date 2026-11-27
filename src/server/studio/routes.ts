@@ -322,8 +322,15 @@ async function eventSet(personId: string, query: StudioQuery): Promise<ObjectSet
   const filters = query.filters ?? {};
   const seenByOrganization = sql`${auditEvents.organizationId} in (select organization_id from organization_memberships where person_id = ${personId} and revoked_at is null)`;
   const seenOnVisibleWork = sql`${auditEvents.subjectId} in (select ${undertakings.id} from ${undertakings} where ${visibleWork(personId)})`;
+  const reflectionEventVisibility = sql`(${auditEvents.subjectType} <> 'participant_reflection' or ${auditEvents.actorPersonId} = ${personId} or exists (
+    select 1 from participant_reflections pr
+    join undertakings u on u.id = pr.undertaking_id
+    join organization_memberships m on m.organization_id = u.organization_id
+    where pr.id = ${auditEvents.subjectId} and m.person_id = ${personId} and m.revoked_at is null and m.role in ('owner', 'administrator', 'manager')
+  ))`;
   const conditions: Array<SQL | undefined> = [
     or(eq(auditEvents.actorPersonId, personId), seenByOrganization, seenOnVisibleWork),
+    reflectionEventVisibility,
     search(query.search, sql`${auditEvents.action}`, sql`${aptPersons.displayName}`, sql`${auditEvents.subjectType}`),
     textFilter(filters['action'], auditEvents.action),
     textFilter(filters['actorName'], aptPersons.displayName),
@@ -385,7 +392,12 @@ async function canSee(personId: string, type: StudioObjectTypeId, id: string): P
         eq(auditEvents.actorPersonId, personId),
         sql`${auditEvents.organizationId} in (select organization_id from organization_memberships where person_id = ${personId} and revoked_at is null)`,
         sql`${auditEvents.subjectId} in (select ${undertakings.id} from ${undertakings} where ${visibleWork(personId)})`,
-      ))).limit(1);
+      ), sql`(${auditEvents.subjectType} <> 'participant_reflection' or ${auditEvents.actorPersonId} = ${personId} or exists (
+        select 1 from participant_reflections pr
+        join undertakings u on u.id = pr.undertaking_id
+        join organization_memberships m on m.organization_id = u.organization_id
+        where pr.id = ${auditEvents.subjectId} and m.person_id = ${personId} and m.revoked_at is null and m.role in ('owner', 'administrator', 'manager')
+      ))`)).limit(1);
     return Boolean(row);
   }
   const table = type === 'interest' ? undertakingInterests : type === 'offer' ? undertakingOffers : type === 'report' ? workReports : workReviews;

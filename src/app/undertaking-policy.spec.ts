@@ -5,6 +5,7 @@ import {
   statusAfterAcceptance,
   statusAfterClose,
   workActions,
+  participantReflectionInputSchema,
   type OrganizationRole,
   type UndertakingStatus,
 } from '@apt-labs/domain';
@@ -32,6 +33,7 @@ describe('workbench authority', () => {
     expect(actions.canClose).toBe(false);
     expect(actions.canIssueOffer).toBe(false);
     expect(actions.canReport).toBe(false);
+    expect(actions.canReflect).toBe(false);
     expect(actions.canRegisterInterest).toBe(false);
   });
 
@@ -48,6 +50,8 @@ describe('workbench authority', () => {
     expect(invited.canReport).toBe(false);
     const participant = workActions({ ...base, role: null, status: 'active', isParticipant: true });
     expect(participant.canReport).toBe(true);
+    expect(participant.canReflect).toBe(false);
+    expect(workActions({ ...base, role: null, status: 'closed', isParticipant: true }).canReflect).toBe(true);
     expect(participant.canRegisterInterest).toBe(false);
   });
 
@@ -71,6 +75,32 @@ describe('review separation of duties', () => {
 
   it('is one review per report', () => {
     expect(canReviewReport({ ...reviewer, alreadyReviewed: true })).toBe(false);
+  });
+});
+
+describe('participant reflection contract', () => {
+  const reflection = {
+    learning: 'I learned to test alignment before printing.',
+    localValue: 'Local notices can now be printed nearby.',
+    financialRecordAssessment: 'uncertain',
+    financialRecordRationale: 'No separate record was established by this undertaking.',
+    expectedVersion: 0,
+  };
+
+  it('accepts a narrative-only financial assessment', () => {
+    expect(participantReflectionInputSchema.safeParse(reflection).success).toBe(true);
+  });
+
+  it.each(['The amount was 250.', 'Use bank account details.', 'The payment is owed.', 'Card PIN is 1234.'])(
+    'rejects financial instructions or identifiers: %s',
+    (financialRecordRationale) => {
+      expect(participantReflectionInputSchema.safeParse({ ...reflection, financialRecordRationale }).success).toBe(false);
+    },
+  );
+
+  it('rejects client-supplied identity, undertaking, or extra fields', () => {
+    expect(participantReflectionInputSchema.safeParse({ ...reflection, authorPersonId: 'forged' }).success).toBe(false);
+    expect(participantReflectionInputSchema.safeParse({ ...reflection, undertakingId: 'forged' }).success).toBe(false);
   });
 });
 

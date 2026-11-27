@@ -3,6 +3,7 @@ import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from '@better-auth/drizzle-adapter';
 import { db } from './db/client';
 import { account, aptPersons, session, user, verification } from './db/schema';
+import { parseTrustedOrigins } from './trusted-origins';
 
 const authSecret = process.env['BETTER_AUTH_SECRET'];
 const baseURL = process.env['BETTER_AUTH_URL'];
@@ -25,7 +26,7 @@ export const auth = betterAuth({
     },
   },
   session: { expiresIn: 60 * 60 * 24 * 7, updateAge: 60 * 60 * 12, cookieCache: { enabled: false } },
-  trustedOrigins: [baseURL],
+  trustedOrigins: parseTrustedOrigins(baseURL, process.env['APT_EXTRA_TRUSTED_ORIGINS']),
   databaseHooks: {
     user: {
       create: {

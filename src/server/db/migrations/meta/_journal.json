@@ -36,6 +36,13 @@
       "when": 1795738400000,
       "tag": "0005_workflow_audit_append_only",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1795798409908,
+      "tag": "0006_participant-reflections",
+      "breakpoints": true
     }
   ]
 }

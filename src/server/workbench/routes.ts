@@ -1,11 +1,13 @@
+import { randomUUID } from 'node:crypto';
 import { Router } from 'express';
 import { and, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
 import { fromNodeHeaders } from 'better-auth/node';
 import { auth } from '../auth';
 import { db } from '../db/client';
-import { aptPersons, auditEvents, organizationMemberships, organizations, undertakingInterests, undertakingOffers, undertakingParticipants, undertakings, workReports, workReviews, user } from '../db/schema';
+import { aptPersons, auditEvents, organizationMemberships, organizations, participantReflections, undertakingInterests, undertakingOffers, undertakingParticipants, undertakings, workReports, workReviews, user } from '../db/schema';
 import { withOrganizationAuthorization } from '../authorization';
 import { isManagingRole, statusAfterClose, workActions, type OrganizationRole, type UndertakingStatus } from '../../../libs/domain/src/undertaking-policy';
+import { participantReflectionInputSchema } from '../../../libs/domain/src/participant-reflection';
 
 type Person = { id: string; name: string };
 
@@ -313,6 +315,26 @@ export function createWorkbenchRouter(): Router {
       .from(workReviews).innerJoin(aptPersons, eq(aptPersons.id, workReviews.reviewerPersonId))
       .where(inArray(workReviews.reportId, reportIds)) : [];
 
+    const reflectionVersions = isManagingRole(role) || isParticipant ? await db.select({
+      id: participantReflections.reflectionId,
+      latestVersionId: participantReflections.id,
+      undertakingId: participantReflections.undertakingId,
+      authorPersonId: participantReflections.authorPersonId,
+      authorName: aptPersons.displayName,
+      learning: participantReflections.learning,
+      localValue: participantReflections.localValue,
+      financialRecordAssessment: participantReflections.financialRecordAssessment,
+      financialRecordRationale: participantReflections.financialRecordRationale,
+      version: participantReflections.version,
+      createdAt: participantReflections.createdAt,
+    }).from(participantReflections).innerJoin(aptPersons, eq(aptPersons.id, participantReflections.authorPersonId))
+      .where(and(
+        eq(participantReflections.undertakingId, record.id),
+        isManagingRole(role) ? sql`true` : eq(participantReflections.authorPersonId, person.id),
+      )).orderBy(desc(participantReflections.version)) : [];
+    const latestReflections = new Map<string, typeof reflectionVersions[number]>();
+    for (const reflection of reflectionVersions) if (!latestReflections.has(reflection.authorPersonId)) latestReflections.set(reflection.authorPersonId, reflection);
+    const reflections = reflectionVersions;
     const events = isMember || isParticipant ? await db.select({ id: auditEvents.id, actorName: aptPersons.displayName, action: auditEvents.action, subjectType: auditEvents.subjectType, subjectId: auditEvents.subjectId, occurredAt: auditEvents.occurredAt })
       .from(auditEvents).innerJoin(aptPersons, eq(aptPersons.id, auditEvents.actorPersonId))
       .where(and(
@@ -320,7 +342,8 @@ export function createWorkbenchRouter(): Router {
         sql`(${auditEvents.subjectId} = ${record.id}
           or exists (select 1 from undertaking_interests i where i.id = ${auditEvents.subjectId} and i.undertaking_id = ${record.id})
           or exists (select 1 from undertaking_offers o where o.id = ${auditEvents.subjectId} and o.undertaking_id = ${record.id})
-          or exists (select 1 from work_reports r where r.id = ${auditEvents.subjectId} and r.undertaking_id = ${record.id}))`,
+          or exists (select 1 from work_reports r where r.id = ${auditEvents.subjectId} and r.undertaking_id = ${record.id})
+          or exists (select 1 from participant_reflections pr where pr.id = ${auditEvents.subjectId} and pr.undertaking_id = ${record.id} and (pr.author_person_id = ${person.id} or ${isManagingRole(role)})))`,
       ))
       .orderBy(desc(auditEvents.occurredAt)).limit(100) : [];
 
@@ -336,6 +359,8 @@ export function createWorkbenchRouter(): Router {
           canReview: isManagingRole(role),
         },
         actions,
+        myReflection: latestReflections.get(person.id) ?? null,
+        reflections,
         interests,
         offers,
         participants,
@@ -343,6 +368,82 @@ export function createWorkbenchRouter(): Router {
         events,
       },
     });
+  });
+
+  /**
+   * A closed undertaking participant records their own revisable reflection.
+   * It is not a delivery report, organizational review, evidence claim, or
+   * financial instruction; only the author and managing organization roles
+   * can read it from the undertaking detail.
+   */
+  router.post('/undertakings/:undertakingId/reflection', async (req, res) => {
+    const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
+    if (!session) return res.status(401).json({ error: 'unauthenticated' });
+    const parsed = participantReflectionInputSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ error: 'invalid_participant_reflection' });
+
+    try {
+      const result = await db.transaction(async (tx) => {
+        const [person] = await tx.select({ id: aptPersons.id, name: aptPersons.displayName }).from(aptPersons)
+          .where(eq(aptPersons.authUserId, session.user.id)).limit(1);
+        if (!person) return { kind: 'forbidden' as const };
+        const [participation] = await tx.select({ status: undertakings.status, organizationId: undertakings.organizationId }).from(undertakingParticipants)
+          .innerJoin(undertakings, eq(undertakings.id, undertakingParticipants.undertakingId))
+          .where(and(eq(undertakingParticipants.undertakingId, req.params['undertakingId']), eq(undertakingParticipants.personId, person.id))).limit(1);
+        if (!participation) return { kind: 'forbidden' as const };
+        if (participation.status !== 'closed') return { kind: 'not_closed' as const };
+
+        const [latest] = await tx.select({ reflectionId: participantReflections.reflectionId, version: participantReflections.version })
+          .from(participantReflections)
+          .where(and(eq(participantReflections.undertakingId, req.params['undertakingId']), eq(participantReflections.authorPersonId, person.id)))
+          .orderBy(desc(participantReflections.version)).limit(1);
+        const currentVersion = latest?.version ?? 0;
+        if (parsed.data.expectedVersion !== currentVersion) return { kind: 'stale' as const };
+        const reflectionId = latest?.reflectionId ?? randomUUID();
+        const nextVersion = currentVersion + 1;
+        const [created] = await tx.insert(participantReflections).values({
+          reflectionId,
+          undertakingId: req.params['undertakingId'],
+          authorPersonId: person.id,
+          learning: parsed.data.learning,
+          localValue: parsed.data.localValue,
+          financialRecordAssessment: parsed.data.financialRecordAssessment,
+          financialRecordRationale: parsed.data.financialRecordRationale,
+          version: nextVersion,
+        }).onConflictDoNothing().returning();
+        if (!created) return { kind: 'stale' as const };
+        await tx.insert(auditEvents).values({
+          organizationId: participation.organizationId,
+          actorPersonId: person.id,
+          action: latest ? 'undertaking.reflection_revised' : 'undertaking.reflection_submitted',
+          subjectType: 'participant_reflection',
+          subjectId: created.id,
+          details: { version: nextVersion },
+        });
+        return { kind: 'created' as const, data: {
+          id: reflectionId,
+          latestVersionId: created.id,
+          undertakingId: created.undertakingId,
+          authorPersonId: person.id,
+          authorName: person.name,
+          learning: created.learning,
+          localValue: created.localValue,
+          financialRecordAssessment: created.financialRecordAssessment,
+          financialRecordRationale: created.financialRecordRationale,
+          version: created.version,
+          createdAt: created.createdAt,
+        } };
+      }, { isolationLevel: 'serializable' });
+
+      if (result.kind === 'forbidden') return res.status(403).json({ error: 'participant_required' });
+      if (result.kind === 'not_closed') return res.status(409).json({ error: 'undertaking_not_closed' });
+      if (result.kind === 'stale') return res.status(409).json({ error: 'reflection_version_conflict' });
+      return res.status(201).json({ data: result.data });
+    } catch (error) {
+      const code = typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : '';
+      if (code === '40001' || code === '23505') return res.status(409).json({ error: 'reflection_version_conflict' });
+      throw error;
+    }
   });
 
   /** Closing is a decision by the owning organization, not a participant. */

@@ -13,6 +13,7 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests',
+  testIgnore: ['**/preact/**', '**/*.api.spec.ts'],
   timeout: 60_000,
   /* Run tests in files in parallel */
   fullyParallel: true,

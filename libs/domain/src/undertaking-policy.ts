@@ -36,6 +36,7 @@ export interface WorkActions {
   canRegisterInterest: boolean;
   canAcceptPendingOffer: boolean;
   canReport: boolean;
+  canReflect: boolean;
 }
 
 /**
@@ -54,6 +55,7 @@ export function workActions(position: WorkPosition): WorkActions {
     canRegisterInterest: !managing && open && !position.hasInterest && !position.isParticipant,
     canAcceptPendingOffer: !managing && live && Boolean(position.pendingOfferId) && !position.isParticipant,
     canReport: position.isParticipant && live,
+    canReflect: position.isParticipant && position.status === 'closed',
   };
 }
 

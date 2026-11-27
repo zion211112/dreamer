@@ -15,5 +15,6 @@ export * from './demo-seed';
 export * from './commitment-journey';
 export * from './journey-store';
 export * from './undertaking-policy';
+export * from './participant-reflection';
 export * from './studio-ontology';
 export * from './studio-query';
